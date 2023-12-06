@@ -1,5 +1,5 @@
-import "@react-navigation/native";
-declare module "@react-navigation/native" {
+import '@react-navigation/native';
+declare module '@react-navigation/native' {
   export type ExtendedTheme = {
     dark: boolean;
     colors: {
