@@ -26,3 +26,25 @@ export type IResOrganization = {
   mobile_no?: string;
   status?: string;
 };
+
+export type ILoginResponse = {
+  key_details: {
+    api_key: string;
+    api_secret: string;
+  };
+  user: {
+    date_of_birth: string;
+    department: string;
+    designation: string | null;
+    employee: string;
+    employee_name: string;
+    gender: string;
+    image: string | null;
+    salutation: string | null;
+    shift: {
+      shift_status: string;
+      shift_type_now: boolean;
+    };
+    user_id: string;
+  };
+};
