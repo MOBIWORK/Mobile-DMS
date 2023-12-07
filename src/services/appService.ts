@@ -30,7 +30,7 @@ export const resetPassword = (email: string, deleteHeader: boolean) =>
   });
 
 export const verifyOrganization = (data: object) =>
-  createApi().get(ApiConstant.POST_USER_ORGANIZATION, data, {
+  createApi(true).get(ApiConstant.POST_USER_ORGANIZATION, data, {
     baseURL: BASE_URL,
   });
 

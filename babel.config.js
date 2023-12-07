@@ -1,5 +1,10 @@
 module.exports = {
   presets: ['babel-preset-expo'],
+  env: {
+    production: {
+      plugins: ['react-native-paper/babel'],
+    },
+  },
   plugins: [
     [
       'module:react-native-dotenv',
@@ -16,5 +21,6 @@ module.exports = {
         verbose: false,
       },
     ],
+    ['react-native-reanimated/plugin'],
   ],
 };

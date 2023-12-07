@@ -11,6 +11,7 @@ import {AppDarkTheme, AppLightTheme} from '../layouts';
 // import MainTab from "./MainTab";
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
+import {SelectOrganization, SignIn} from '../screens';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
@@ -54,8 +55,13 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
-        }}
-      />
+        }}>
+        <Stack.Screen
+          name={ScreenConstant.SELECT_ORGANIZATION}
+          component={SelectOrganization}
+        />
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
+      </Stack.Navigator>
       {children}
     </NavigationContainer>
   );
@@ -67,7 +73,12 @@ interface AppNavigationContainerProps {
 
 export default AppNavigationContainer;
 
-export type RootStackParamList = {};
+export type RootStackParamList = {
+  [ScreenConstant.SIGN_IN]: {organizationName?: string};
+  [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
+  [ScreenConstant.SCANNER]: undefined;
+  [ScreenConstant.FORGOT_PASSWORD]: undefined;
+};
 
 // Define prop type for useNavigation and useRoute
 export type NavigationProp =
