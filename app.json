@@ -1,4 +1,10 @@
 {
   "name": "DMS",
-  "displayName": "DMS"
+  "displayName": "DMS",
+  "android": {
+    "package": "mbw.next.dms"
+  },
+  "ios": {
+    "bundleIdentifier": "mbw.next.dms"
+  }
 }

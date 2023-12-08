@@ -60,7 +60,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
+        {/*<Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />*/}
       </Stack.Navigator>
       {children}
     </NavigationContainer>
