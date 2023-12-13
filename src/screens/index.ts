@@ -6,7 +6,10 @@ import ListProduct from './Product/ProductList/ListProduct';
 import SearchProduct from './Product/ProductList/SearchProduct';
 import ProductDetail from './Product/ProductDetail/ProductDetail';
 import ImageView from './Product/ProductDetail/ImageView';
-
+import Customer from './Customer/Customer'
+import Visits from './Visit/Visits';
+import Home from './Home/Home';
+import LookingMore from './LookingMore/LookingMore';
 export {
   SelectOrganization,
   SignIn,
@@ -16,4 +19,8 @@ export {
   SearchProduct,
   ProductDetail,
   ImageView,
+  Customer,
+  Visits,
+  Home,
+  LookingMore
 };

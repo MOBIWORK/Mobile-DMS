@@ -21,5 +21,6 @@ declare module '@react-navigation/native' {
       text_disable: string;
     };
   };
+  export type ColorSchema = ExtendedTheme
   export function useTheme(): ExtendedTheme;
 }

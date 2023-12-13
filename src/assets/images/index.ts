@@ -32,4 +32,4 @@ export {
   BarCodeIcon,
   ImgFile,
   HomeFillIcon,
-};
+} ;

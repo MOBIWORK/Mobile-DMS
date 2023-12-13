@@ -25,7 +25,7 @@ const AppHeader: FC<AppHeaderProps> = ({
 }) => {
   const {colors} = useTheme();
   return (
-    <View style={[styles.header, style]}>
+    <View style={[styles.header as any, style]}>
       {!hiddenBackButton && (
         <TouchableOpacity
           onPress={() => {
@@ -34,7 +34,7 @@ const AppHeader: FC<AppHeaderProps> = ({
               onBack && onBack();
             });
           }}
-          style={styles.backButton}>
+          style={styles.backButton as any}>
           {backButtonIcon ? (
             backButtonIcon
           ) : (
@@ -48,7 +48,7 @@ const AppHeader: FC<AppHeaderProps> = ({
         </TouchableOpacity>
       )}
       {label && (
-        <Text style={[styles.label, {color: colors.text_primary}, labelStyle]}>
+        <Text style={[styles.label as any, {color: colors.text_primary}, labelStyle]}>
           {label}
         </Text>
       )}

@@ -58,7 +58,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         initialRouteName={
           loginFirst && organiztion?.company_name
             ? ScreenConstant.SIGN_IN
-            : ScreenConstant.PRODUCT_DETAIL
+            : ScreenConstant.CUSTOMER
         }
         screenOptions={{
           headerShown: false,
@@ -113,6 +113,7 @@ export type RootStackParamList = {
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: undefined;
   [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.CUSTOMER]:undefined
 };
 
 // Define prop type for useNavigation and useRoute
