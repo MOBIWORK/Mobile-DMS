@@ -177,6 +177,7 @@ export type RootStackParamList = {
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.VISIT_DETAIL]: undefined;
+  [ScreenConstant.CUSTOMER]:undefined
 };
 
 // Define prop type for useNavigation and useRoute
