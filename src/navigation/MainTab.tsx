@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
 import {Customer, ForgotPassword, Home, Visits} from '../screens';
+import BottomTabDisplay from './BottomTabDisplay';
 
 const Tab = createBottomTabNavigator();
 
@@ -10,7 +11,10 @@ const MainTab = () => {
   const {t: getLabel} = useTranslation();
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+    screenOptions={{headerShown:false}}
+    tabBar={props => <BottomTabDisplay {...props}/>}
+    >
       <Tab.Screen
         name={ScreenConstant.HOME_SCREEN}
         component={Home}
