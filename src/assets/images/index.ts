@@ -123,5 +123,5 @@ export {
   IconAddress,
   IconPhone,
   IconType,
-  IconFilter,IconCamera
+  IconFilter,IconCamera,MapIcon
 };
