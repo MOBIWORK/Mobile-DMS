@@ -8,6 +8,7 @@ import AppInput from './AppInput';
 import AppHeader from './AppHeader';
 import AuthenHeader from './AuthenHeader';
 import AvatarAccessory from './AvatarAccessory';
+import AppAvatar from './AppAvatar';
 
 export {
   AppBottomSheet,
@@ -20,4 +21,5 @@ export {
   AppHeader,
   AuthenHeader,
   AvatarAccessory,
+  AppAvatar
 };

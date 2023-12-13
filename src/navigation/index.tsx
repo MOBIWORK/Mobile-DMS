@@ -11,7 +11,7 @@ import {AppDarkTheme, AppLightTheme} from '../layouts';
 // import MainTab from "./MainTab";
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
-import {SelectOrganization, SignIn} from '../screens';
+import {Home, SelectOrganization, SignIn} from '../screens';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
@@ -46,11 +46,12 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       theme={theme === 'light' ? AppLightTheme : AppDarkTheme}>
       <Stack.Navigator
         // @ts-ignore
-        initialRouteName={
-          loginFirst && organiztion?.company_name
-            ? ScreenConstant.SIGN_IN
-            : ScreenConstant.SELECT_ORGANIZATION
-        }
+        // initialRouteName={
+        //   loginFirst && organiztion?.company_name
+        //     ? ScreenConstant.SIGN_IN
+        //     : ScreenConstant.SELECT_ORGANIZATION
+        // }
+        initialRouteName={ScreenConstant.HOME_SCREEN}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -59,6 +60,10 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
+        />
+        <Stack.Screen
+          name={ScreenConstant.HOME_SCREEN}
+          component={Home}
         />
         {/*<Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />*/}
       </Stack.Navigator>
@@ -78,6 +83,7 @@ export type RootStackParamList = {
   [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
+  [ScreenConstant.HOME_SCREEN]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute
