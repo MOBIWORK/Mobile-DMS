@@ -19,6 +19,7 @@ declare module '@react-navigation/native' {
       text_primary: string;
       text_secondary: string;
       text_disable: string;
+      main :string
     };
   };
   export type ColorSchema = ExtendedTheme

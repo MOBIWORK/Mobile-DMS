@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 
 import {AppConstant, ScreenConstant} from '../const';
 import {IResOrganization} from '../models/types';
-import {
+import {Home, 
   AddingNewCustomer,
   ForgotPassword,
   ImageView,
@@ -56,11 +56,13 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        initialRouteName={
-          loginFirst && organiztion?.company_name
-            ? ScreenConstant.SIGN_IN
-            : ScreenConstant.CUSTOMER
-        }
+        // @ts-ignore
+        // initialRouteName={
+        //   loginFirst && organiztion?.company_name
+        //     ? ScreenConstant.SIGN_IN
+        //     : ScreenConstant.SELECT_ORGANIZATION
+        // }
+        initialRouteName={ScreenConstant.HOME_SCREEN}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -75,30 +77,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
-          name={ScreenConstant.FORGOT_PASSWORD}
-          component={ForgotPassword}
+          name={ScreenConstant.HOME_SCREEN}
+          component={Home}
         />
-        <Stack.Screen
-          name={ScreenConstant.SUCCESS_CHANGE}
-          component={SuccessChanged}
-        />
-        <Stack.Screen
-          name={ScreenConstant.LIST_PRODUCT}
-          component={ListProduct}
-        />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_PRODUCT}
-          component={SearchProduct}
-        />
-        <Stack.Screen
-          name={ScreenConstant.PRODUCT_DETAIL}
-          component={ProductDetail}
-        />
-        <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
-        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
-        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
+        {/*<Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />*/}
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -116,6 +99,7 @@ export type RootStackParamList = {
   [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
+  [ScreenConstant.HOME_SCREEN]: undefined;
   [ScreenConstant.SUCCESS_CHANGE]: undefined;
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;

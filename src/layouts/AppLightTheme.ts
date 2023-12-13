@@ -20,6 +20,7 @@ const AppLightTheme: ExtendedTheme = {
     text_primary: Colors.gray_800,
     text_secondary: Colors.gray_600,
     text_disable: Colors.gray_500,
+    main : Colors.main
   },
 };
 
