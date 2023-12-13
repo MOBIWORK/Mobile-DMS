@@ -20,6 +20,7 @@
     "axios": "^1.6.2",
     "deprecated-react-native-prop-types": "^5.0.0",
     "debounce": "^2.0.0",
+    "deprecated-react-native-prop-types": "^5.0.0",
     "expo": "^49.0.0",
     "expo-local-authentication": "~13.4.1",
     "expo-location": "~16.1.0",

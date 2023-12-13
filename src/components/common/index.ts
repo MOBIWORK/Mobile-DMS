@@ -25,6 +25,6 @@ export {
   AvatarAccessory,
   AppAvatar,
   AppContainer,
-  AppFAB
+  AppFAB,
   FilterView,
 };

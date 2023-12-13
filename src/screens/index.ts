@@ -17,10 +17,15 @@ import Home from './Home/Home';
 import LookingMore from './LookingMore/LookingMore';
 import AddingNewCustomer from './Customer/AddingNewCustomer';
 import ListVisit from './Visit/ListVisit';
+import Home from './Home';
 
 export {
-  SelectOrganization,
-  SignIn,
+  
+    SelectOrganization,
+ 
+    SignIn,
+    Home
+,
   SuccessChanged,
   ForgotPassword,
   ListProduct,
