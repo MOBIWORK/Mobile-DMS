@@ -15,6 +15,7 @@ import {
   ForgotPassword,
   ImageView,
   ListProduct,
+  ListVisit,
   ProductDetail,
   SearchProduct,
   SelectOrganization,
@@ -58,7 +59,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         initialRouteName={
           loginFirst && organiztion?.company_name
             ? ScreenConstant.SIGN_IN
-            : ScreenConstant.PRODUCT_DETAIL
+            : ScreenConstant.LIST_VISIT
         }
         screenOptions={{
           headerShown: false,
@@ -91,6 +92,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={ProductDetail}
         />
         <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
+        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -113,6 +115,7 @@ export type RootStackParamList = {
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: undefined;
   [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.LIST_VISIT]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute
