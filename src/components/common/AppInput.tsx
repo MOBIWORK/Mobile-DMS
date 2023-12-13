@@ -12,7 +12,9 @@ const AppInput: FC<AppInputProps> = ({
   error,
   inputProp,
   disable,
+  editable,
   hiddenRightIcon,
+  onPress,
 }) => {
   const {colors} = useTheme();
   const [isFocus, setFocus] = useState<boolean>(false);
@@ -20,6 +22,7 @@ const AppInput: FC<AppInputProps> = ({
 
   return (
     <TextInput
+      onPressIn={onPress}
       contentStyle={{
         color: colors.text_primary,
         fontSize: 16,
@@ -65,6 +68,7 @@ const AppInput: FC<AppInputProps> = ({
           />
         ) : null
       }
+      editable={editable}
       disabled={disable}
       secureTextEntry={isPassword && !showPassword}
       clearTextOnFocus={isPassword}
@@ -74,6 +78,7 @@ const AppInput: FC<AppInputProps> = ({
 interface AppInputProps {
   label: string;
   value: string;
+  onPress?: () => void;
   onChangeValue?: (text: string) => void;
   rightIcon?: ReactNode;
   hiddenRightIcon?: boolean;
@@ -82,5 +87,6 @@ interface AppInputProps {
   error?: boolean;
   inputProp?: any;
   disable?: boolean;
+  editable?: boolean;
 }
 export default AppInput;

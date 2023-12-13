@@ -27,6 +27,7 @@ export const isLogOut = 'LogOut';
 export const currentShift = 'CurrentShift';
 export const UserInfo = 'UserInfo';
 export const Organization = 'organization';
+export const ListSearchProductNearly = 'listSearchProductNearly';
 
 export const Api_key = 'Api_key';
 export const Api_secret = 'Api_secret';
@@ -48,4 +49,10 @@ export const BiometricType = {
   FaceID: 'FaceID',
   TouchID: 'TouchID',
   null: 'null',
+};
+
+export const ProductFilterType = {
+  nhom_sp: 'nhom_sp',
+  thuong_hieu: 'thuong_hieu',
+  nghanh_hang: 'nghanh_hang',
 };

@@ -10,6 +10,7 @@ export const {Types, Creators} = createActions({
   failure: ['error', 'status'],
   setShowErrorModalStatus: ['data'],
   setOrganizationBaseURL: ['data'],
+  setSearchProductValue: ['data'],
 });
 
 /* ------------- Initial State ------------- */
@@ -22,12 +23,14 @@ export interface IAppRedux {
   };
   isProcessing: boolean;
   showModal: boolean;
+  searchProductValue: string;
 }
 
 export const INITIAL_STATE: IAppRedux = {
   error: undefined,
   isProcessing: false,
   showModal: true,
+  searchProductValue: '',
 };
 
 /* ------------- Selector ------------- */
@@ -36,6 +39,8 @@ export const Selector = {
   getErrorInfo: (state: IAppReduxState) => state.appRedux.error,
   getProcessingStatus: (state: IAppReduxState) => state.appRedux.isProcessing,
   getShowModal: (state: IAppReduxState) => state.appRedux.showModal,
+  getSearchProductValue: (state: IAppReduxState) =>
+    state.appRedux.searchProductValue,
 };
 
 /* ------------- Reducers ------------- */
@@ -58,6 +63,14 @@ const setShowErrorModalStatus = (
   showModal: action.data,
 });
 
+const setSearchProductValue = (
+  state = INITIAL_STATE,
+  action: KeyAbleProps,
+) => ({
+  ...state,
+  searchProductValue: action.data,
+});
+
 const reset = () => INITIAL_STATE;
 
 /* ------------- Hookup Reducers To Types ------------- */
@@ -67,6 +80,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.FAILURE]: setError,
   [Types.RESET_APP]: reset,
   [Types.SET_SHOW_ERROR_MODAL_STATUS]: setShowErrorModalStatus,
+  [Types.SET_SEARCH_PRODUCT_VALUE]: setSearchProductValue,
 });
 
 export default Creators;
