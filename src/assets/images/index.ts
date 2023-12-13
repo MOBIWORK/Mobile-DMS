@@ -21,14 +21,18 @@ const MapPinIcon = require('./map-pin.png');
 const PhoneIcon = require('./phone.png');
 const SendIcon = require('./send.png');
 const IconHome = require('./iconHome.png');
-const IconHomeActive =require('./iconHomeActive.png');
+const IconHomeActive = require('./iconHomeActive.png');
 const IconVisit = require('./iconVisit.png');
 const IconVisitActive = require('./iconVisitActive.png');
 const IconCustomer = require('./iconCustomer.png');
 const IconCustomerActive = require('./iconCustomerActive.png');
 const IconLookingMore = require('./iconMore.png');
 const IconLookingMoreActive = require('./iconMoreActive.png');
-const IconSearch = require('./iconSearch.png')
+const IconSearch = require('./iconSearch.png');
+const IconAddress = require('./iconAddress.png');
+const IconPhone = require('./iconPhone.png');
+const IconType = require('./iconType.png');
+const IconFilter = require('./iconFilter.png')
 
 export {
   VNFLag,
@@ -47,11 +51,17 @@ export {
   BarCodeIcon,
   ImgFile,
   HomeFillIcon,
-  Usercheckin,
-  MapIcon,
-  UserGroupIcon,
-  MapPinIcon,
-  PhoneIcon,
-  SendIcon,
+  IconHome,
+  IconHomeActive,
+  IconVisit,
+  IconVisitActive,
+  IconCustomer,
+  IconCustomerActive,
+  IconLookingMore,
+  IconLookingMoreActive,
+  IconSearch,
+  IconAddress,
+  IconPhone,
+  IconType,
+  IconFilter
 };
-
