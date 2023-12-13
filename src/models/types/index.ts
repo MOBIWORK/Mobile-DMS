@@ -48,3 +48,32 @@ export type ILoginResponse = {
     user_id: string;
   };
 };
+
+export type IProductList = {
+  name: string;
+  type: string;
+  code: string;
+};
+
+export type IProductOverview = {
+  name: string;
+  code: string;
+  unit: string;
+  price: number;
+  trademark: string | null;
+  commodity_industry: string | null;
+  note: string | null;
+  image: string[];
+  file?: {
+    file_name: string;
+    size: number;
+    url: string;
+  }[];
+};
+
+export type IProductUnit = {};
+
+export type IProductInventory = {
+  label: string;
+  count: number;
+};

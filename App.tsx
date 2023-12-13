@@ -1,31 +1,18 @@
 import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
 import './src/language';
-import type {PropsWithChildren} from 'react';
 import {
+  BackHandler,
   KeyboardAvoidingView,
+  LogBox,
   Platform,
-  SafeAreaView,
-  ScrollView,
   StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
 } from 'react-native';
 
 import BackgroundGeolocation, {
   Subscription,
 } from 'react-native-background-geolocation';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import {useTheme} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 import store from './src/redux-store';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -34,6 +21,14 @@ import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
 
 function App(): JSX.Element {
+  useEffect(() => {
+    LogBox.ignoreAllLogs();
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true,
+    );
+    return () => backHandler.remove();
+  }, []);
   // useEffect(() => {
   //   // /// 1.  Subscribe to events.
   //   // const onLocation: Subscription = BackgroundGeolocation.onLocation(
