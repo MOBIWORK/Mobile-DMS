@@ -136,3 +136,12 @@ export interface PlusCode {
   compound_code: string;
   global_code: string;
 }
+export type VisitListItem = {
+  label: string;
+  status: boolean;
+  address: string | null;
+  phone_number: string | null;
+  lat: number;
+  long: number;
+  distance: number;
+};

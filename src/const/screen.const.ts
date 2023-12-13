@@ -8,6 +8,7 @@ export const SUCCESS_CHANGE = 'SUCCESS_CHANGE';
 export const LIST_PRODUCT = 'LIST_PRODUCT';
 export const PRODUCT_DETAIL = 'PRODUCT_DETAIL';
 export const IMAGE_VIEW = 'IMAGE_VIEW';
+export const LIST_VISIT = 'LIST_VISIT';
 export const HOME_SCREEN = 'HOME_SCREEN';
 export const PROFILE = 'PROFILE';
 export const ACCOUNT_SETTING = 'ACCOUNT_SETTING';

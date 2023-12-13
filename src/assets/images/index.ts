@@ -14,6 +14,8 @@ const ImgAppWatch = require('./imgAppleWatch.png');
 const BarCodeIcon = require('./barcode.png');
 const ImgFile = require('./imgFile.png');
 const HomeFillIcon = require('./home-fill.png');
+const MapIcon = require('./mapIcon.png');
+
 const IconHome = require('./iconHome.png');
 const IconHomeActive = require('./iconHomeActive.png');
 const IconVisit = require('./iconVisit.png');
@@ -57,5 +59,5 @@ export {
   IconAddress,
   IconPhone,
   IconType,
-  IconFilter,IconCamera
+  IconFilter,IconCamera,MapIcon
 };
