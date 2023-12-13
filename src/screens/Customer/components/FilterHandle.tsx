@@ -1,7 +1,8 @@
-import {StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
+import {ImageStyle, StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import React from 'react';
 import {Colors} from '../../../assets';
 import { TouchableOpacity } from 'react-native';
+import AppImage from '../../../components/common/AppImage';
 
 type Props = {
     type:string
@@ -20,6 +21,7 @@ const FilterHandle = (props: Props) => {
         ) : (
             <TouchableOpacity style={styles.containText}>
             {/* <Text style={styles.titleText}>Khoảng cách: </Text> */}
+            <AppImage  source='IconFilter'  style={styles.iconStyle}/>
             <Text style={styles.contentText}>Bộ lọc khác</Text>
           </TouchableOpacity>
         )}
@@ -42,7 +44,9 @@ const styles = StyleSheet.create({
     borderWidth:1,
     padding:6,
     borderRadius:16,
-    borderColor:Colors.gray_300
+    borderColor:Colors.gray_300,
+    paddingHorizontal:8,
+    paddingVertical:6
   } as ViewStyle,
   titleText: {
     color: Colors.gray_600,
@@ -56,4 +60,9 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     fontWeight: '500',
   } as TextStyle,
+  iconStyle:{
+    width:16,
+    height:16,
+    marginRight:4
+  } as ImageStyle
 });

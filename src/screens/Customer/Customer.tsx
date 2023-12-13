@@ -13,6 +13,9 @@ import {Colors} from '../../assets';
 import AppImage from '../../components/common/AppImage';
 import {ImageStyle} from 'react-native';
 import FilterHandle from './components/FilterHandle';
+import {fakeData} from './components/data';
+import CardView from './components/CardView';
+import ListCard from './components/ListCard';
 
 type Props = {};
 
@@ -30,11 +33,14 @@ const Customer = (props: Props) => {
         </TouchableOpacity>
       </View>
       <View style={styles.containFilterView}>
-        <FilterHandle type={'1'}/>
-        <FilterHandle type={'2'}/>
+        <FilterHandle type={'1'} />
+        <FilterHandle type={'2'} />
       </View>
 
-      <Text>Customer</Text>
+      <Text style={styles.containCustomer}>
+        <Text style={styles.numberCustomer}>300</Text> Khách hàng
+      </Text>
+      <ListCard data={fakeData} />
     </MainLayout>
   );
 };
@@ -47,6 +53,23 @@ const styles = StyleSheet.create({
     color: Colors.gray_800,
     lineHeight: 25,
     fontWeight: '500',
+    textAlign: 'left',
+    // alignSelf:'flex-end'
+  } as TextStyle,
+  containCustomer: {
+    fontSize: 14,
+    color: Colors.gray_800,
+    lineHeight: 21,
+    fontWeight: '500',
+    textAlign: 'left',
+    marginBottom: 16,
+    // alignSelf:'flex-end'
+  } as TextStyle,
+  numberCustomer: {
+    fontSize: 14,
+    color: Colors.darker,
+    lineHeight: 21,
+    fontWeight: '700',
     textAlign: 'left',
     // alignSelf:'flex-end'
   } as TextStyle,
@@ -67,11 +90,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 48,
-    marginBottom:16
+    marginBottom: 16,
   } as ViewStyle,
   containFilterView: {
     flexDirection: 'row',
     height: 48,
-    marginBottom:16
+    marginBottom: 16,
   } as ViewStyle,
 });
