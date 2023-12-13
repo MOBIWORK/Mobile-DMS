@@ -20,7 +20,10 @@ import {
   SelectOrganization,
   SignIn,
   SuccessChanged,
+  
 } from '../screens';
+import { MAIN_TAB } from '../const/screen.const';
+import MainTab from './MainTab';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
@@ -65,6 +68,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
+          <Stack.Screen
+          name={ScreenConstant.MAIN_TAB}
+          component={MainTab}
+          
+          />
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
@@ -113,7 +121,8 @@ export type RootStackParamList = {
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: undefined;
   [ScreenConstant.IMAGE_VIEW]: {data: any};
-  [ScreenConstant.CUSTOMER]:undefined
+  [ScreenConstant.CUSTOMER]:undefined;
+  [ScreenConstant.MAIN_TAB]:undefined
 };
 
 // Define prop type for useNavigation and useRoute

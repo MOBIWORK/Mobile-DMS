@@ -64,7 +64,7 @@ interface AppHeaderProps {
   backButtonStyle?: TextStyle;
   onBack?: () => void;
   hiddenBackButton?: boolean;
-  rightButton?: JSX.Element;
+  rightButton?: JSX.Element | JSX.Element[] | React.JSX.Element | React.JSX.Element[];
   backButtonIcon?: JSX.Element;
 }
 

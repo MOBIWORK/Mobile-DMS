@@ -38,4 +38,8 @@ export default {
   conversionRate: 'Tỉ lệ chuyển đổi',
   searchInventory: 'Tìm kiếm nhà kho...',
   inventoryNumber: 'Số lượng tồn kho',
+  home:"Trang chủ",
+  visit:"Viếng thăm",
+  customer:"Khách hàng",
+  lookingMore:'Xem thêm'
 };

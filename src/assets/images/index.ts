@@ -14,6 +14,15 @@ const ImgAppWatch = require('./imgAppleWatch.png');
 const BarCodeIcon = require('./barcode.png');
 const ImgFile = require('./imgFile.png');
 const HomeFillIcon = require('./home-fill.png');
+const IconHome = require('./iconHome.png');
+const IconHomeActive =require('./iconHomeActive.png');
+const IconVisit = require('./iconVisit.png');
+const IconVisitActive = require('./iconVisitActive.png');
+const IconCustomer = require('./iconCustomer.png');
+const IconCustomerActive = require('./iconCustomerActive.png');
+const IconLookingMore = require('./iconMore.png');
+const IconLookingMoreActive = require('./iconMoreActive.png');
+const IconSearch = require('./iconSearch.png')
 
 export {
   VNFLag,
@@ -32,4 +41,13 @@ export {
   BarCodeIcon,
   ImgFile,
   HomeFillIcon,
+  IconHome,
+  IconHomeActive,
+  IconVisit,
+  IconVisitActive,
+  IconCustomer,
+  IconCustomerActive,
+  IconLookingMore,
+  IconLookingMoreActive,
+  IconSearch
 } ;
