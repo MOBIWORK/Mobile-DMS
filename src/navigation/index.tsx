@@ -116,6 +116,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={SearchVisit}
         />
         <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
+        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -146,6 +147,7 @@ export type RootStackParamList = {
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
+  [ScreenConstant.LIST_VISIT]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

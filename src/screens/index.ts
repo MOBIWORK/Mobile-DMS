@@ -16,6 +16,8 @@ import Visits from './Visit/Visits';
 import Home from './Home/Home';
 import LookingMore from './LookingMore/LookingMore';
 import AddingNewCustomer from './Customer/AddingNewCustomer';
+import ListVisit from './Visit/ListVisit';
+
 export {
   SelectOrganization,
   SignIn,
@@ -29,5 +31,6 @@ export {
   Visits,
   Home,
   LookingMore,
-  AddingNewCustomer
+  AddingNewCustomer,
+  ListVisit,
 };
