@@ -1,5 +1,6 @@
 import SelectOrganization from './Authen/SelectOrganization';
 import SignIn from './Authen/SignIn';
+import Home from './Home';
 import ForgotPassword from './Authen/ForgotPassword';
 import SuccessChanged from './Authen/SuccessChanged';
 import ListProduct from './Product/ProductList/ListProduct';
@@ -11,6 +12,7 @@ import ListVisit from './Visit/ListVisit';
 export {
   SelectOrganization,
   SignIn,
+  Home,
   SuccessChanged,
   ForgotPassword,
   ListProduct,

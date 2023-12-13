@@ -8,8 +8,7 @@ import AppInput from './AppInput';
 import AppHeader from './AppHeader';
 import AuthenHeader from './AuthenHeader';
 import AvatarAccessory from './AvatarAccessory';
-import FilterView from './FilterView';
-import AppContainer from '../AppContainer';
+import AppAvatar from './AppAvatar';
 
 export {
   AppBottomSheet,
@@ -22,6 +21,5 @@ export {
   AppHeader,
   AuthenHeader,
   AvatarAccessory,
-  FilterView,
-  AppContainer,
+  AppAvatar
 };

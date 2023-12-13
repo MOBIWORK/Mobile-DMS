@@ -13,6 +13,7 @@ import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
 import {
   ForgotPassword,
+  Home,
   ImageView,
   ListProduct,
   ListVisit,
@@ -59,7 +60,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         initialRouteName={
           loginFirst && organiztion?.company_name
             ? ScreenConstant.SIGN_IN
-            : ScreenConstant.LIST_VISIT
+            : ScreenConstant.PRODUCT_DETAIL
         }
         screenOptions={{
           headerShown: false,
@@ -69,6 +70,10 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
+        />
+        <Stack.Screen
+          name={ScreenConstant.HOME_SCREEN}
+          component={Home}
         />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
@@ -110,6 +115,7 @@ export type RootStackParamList = {
   [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
+  [ScreenConstant.HOME_SCREEN]: undefined;
   [ScreenConstant.SUCCESS_CHANGE]: undefined;
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;

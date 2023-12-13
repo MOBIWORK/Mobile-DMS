@@ -1,6 +1,7 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import 'react-native-gesture-handler';
 import './src/language';
+import type {PropsWithChildren} from 'react';
 import {
   BackHandler,
   KeyboardAvoidingView,
@@ -13,9 +14,17 @@ import BackgroundGeolocation, {
   Subscription,
 } from 'react-native-background-geolocation';
 
+import {
+  Colors,
+  DebugInstructions,
+  Header,
+  LearnMoreLinks,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
+import {useTheme} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 import store from './src/redux-store';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppNavigationContainer from './src/navigation';
 import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
@@ -111,8 +120,8 @@ function App(): JSX.Element {
       <KeyboardAvoidingView
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{flex: 1}}>
-        <GestureHandlerRootView style={{flex: 1}}>
+        style={{ flex: 1 }}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <AppNavigationContainer>
             <StatusBar barStyle={'default'} />
             <HandlingError />

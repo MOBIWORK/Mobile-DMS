@@ -7,6 +7,7 @@ const CheckIcon = require('./check.png');
 const FaceIDIcon = require('./FaceID.png');
 const TouchIDIcon = require('./TouchID.png');
 const InitLogo = require('./Logo.png');
+const Usercheckin = require('./userCheckIn.png');
 const IcCheckIcon = require('./ic-check.png');
 const SearchIcon = require('./search.png');
 const FilterIcon = require('./filter.png');
@@ -33,5 +34,6 @@ export {
   BarCodeIcon,
   ImgFile,
   HomeFillIcon,
+  Usercheckin,
   MapIcon,
 };

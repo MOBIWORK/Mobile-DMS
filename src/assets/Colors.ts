@@ -10,4 +10,5 @@ export default {
     gray_800:'#212B36',
     gray_900:'#161C24',
     darker:'#000000',
+    main :"rgba(0, 167, 111, 1)"
 }

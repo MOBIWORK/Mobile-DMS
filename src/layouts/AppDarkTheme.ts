@@ -20,6 +20,8 @@ const AppDarkTheme: ExtendedTheme = {
     text_primary: Colors.white,
     text_secondary: Colors.gray_500,
     text_disable: Colors.gray_600,
+    main : Colors.main
+
   },
 };
 
