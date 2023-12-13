@@ -48,6 +48,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       enableOverDrag={false}
       index={-1}
       style={{
+        // backgroundColor: 'transparent',
         shadowColor: '#000',
         shadowOffset: {
           width: 0,

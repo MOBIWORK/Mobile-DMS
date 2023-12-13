@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   label: {
     color: Colors.white,
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: '700',
     lineHeight: 24,
   },
   bgDisable: {
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#C4161C',
     width: 148,
     height: 48,
-    borderRadius: 12,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },

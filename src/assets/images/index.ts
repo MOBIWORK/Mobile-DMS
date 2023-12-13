@@ -8,6 +8,13 @@ const FaceIDIcon = require('./FaceID.png');
 const TouchIDIcon = require('./TouchID.png');
 const InitLogo = require('./Logo.png');
 const Usercheckin = require('./userCheckIn.png');
+const IcCheckIcon = require('./ic-check.png');
+const SearchIcon = require('./search.png');
+const FilterIcon = require('./filter.png');
+const ImgAppWatch = require('./imgAppleWatch.png');
+const BarCodeIcon = require('./barcode.png');
+const ImgFile = require('./imgFile.png');
+const HomeFillIcon = require('./home-fill.png');
 
 export {
   VNFLag,
@@ -19,5 +26,12 @@ export {
   TouchIDIcon,
   FaceIDIcon,
   InitLogo,
+  IcCheckIcon,
+  SearchIcon,
+  FilterIcon,
+  ImgAppWatch,
+  BarCodeIcon,
+  ImgFile,
+  HomeFillIcon,
   Usercheckin
 };

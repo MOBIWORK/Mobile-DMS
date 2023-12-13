@@ -16,62 +16,6 @@ export const padTo2Digits = (num: number) => {
   return num.toString().padStart(2, '0');
 };
 
-export const getColorStatus = (status: string, colors: any) => {
-  let statusColor;
-  let statusText;
-  let bgStatusColor;
-  switch (status) {
-    case 'Rejected':
-      statusColor = colors.error;
-      statusText = 'Từ chối';
-      bgStatusColor = 'rgba(255, 86, 48, 0.08)';
-      break;
-    case 'Approved':
-      statusColor = colors.success;
-      statusText = 'Đã duyệt';
-      bgStatusColor = 'rgba(34, 197, 94, 0.08)';
-      break;
-    case 'Draft':
-    case 'Open':
-      statusColor = colors.warning;
-      statusText = 'Chờ duyệt';
-      bgStatusColor = 'rgba(255, 171, 0, 0.08)';
-      break;
-    case 'Paid':
-      statusColor = colors.success;
-      statusText = 'Đã thanh toán';
-      bgStatusColor = 'rgba(34, 197, 94, 0.08)';
-      break;
-    case 'Unpaid':
-      statusColor = colors.text_secondary;
-      statusText = 'Chưa thanh toán';
-      bgStatusColor = 'rgba(145, 158, 171, 0.08)';
-      break;
-    case 'Claimed':
-      statusColor = colors.secondary;
-      statusText = 'Đã đề xuất chi phí';
-      bgStatusColor = 'rgba(142, 51, 255, 0.08)';
-      break;
-    case 'Returned':
-      statusColor = colors.success;
-      statusText = 'Đã hoàn ứng';
-      bgStatusColor = 'rgba(34, 197, 94, 0.08)';
-      break;
-    case 'Partly Claimed and Returned':
-      statusColor = colors.warning;
-      statusText = 'Đã hoàn ứng 1 phần';
-      bgStatusColor = 'rgba(255, 171, 0, 0.08)';
-      break;
-    case 'Cancelled':
-      statusColor = colors.error;
-      statusText = 'Huỷ';
-      bgStatusColor = 'rgba(255, 86, 48, 0.08)';
-      break;
-    default:
-      break;
-  }
-  return {statusColor, statusText, bgStatusColor};
-};
 //format dateTime to hh:pp dd//mm//yyyy
 export const convertDateToString = (dateTime: number) => {
   const date = new Date(dateTime);
@@ -250,8 +194,8 @@ export const handleSearch = (
     setValue(text);
 
     const newData = masterData.filter(item => {
-      const itemData = item.name
-        ? removeVietnamesePunctuation(item.name).trim().toUpperCase()
+      const itemData = item.label
+        ? removeVietnamesePunctuation(item.label).trim().toUpperCase()
         : ''.toUpperCase();
       const textData = removeVietnamesePunctuation(text).trim().toUpperCase();
       return itemData.indexOf(textData) > -1;
