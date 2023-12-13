@@ -12,7 +12,6 @@ import {
   
   AddingNewCustomer,
   ForgotPassword,
-  Home,
   ImageView,
   ListProduct,
   OrderDetail,
@@ -25,6 +24,7 @@ import {
   SignIn,
   SuccessChanged,
   Index,
+  
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import MainTab from './MainTab';
@@ -177,7 +177,8 @@ export type RootStackParamList = {
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.VISIT_DETAIL]: undefined;
-  [ScreenConstant.CUSTOMER]:undefined
+  [ScreenConstant.CUSTOMER]:undefined;
+  [ScreenConstant.MAIN_TAB]:undefined
 };
 
 // Define prop type for useNavigation and useRoute
