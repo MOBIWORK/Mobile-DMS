@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import {AppConstant, ScreenConstant} from '../const';
 import {IResOrganization} from '../models/types';
 import {
+  
   AddingNewCustomer,
   ForgotPassword,
   ImageView,
@@ -63,11 +64,13 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       theme={MyAppTheme[theme]}>
         {/* <StatusBar     barStyle={'light-content'}    backgroundColor={MyAppTheme[theme].colors.white}       /> */}
       <Stack.Navigator
-        initialRouteName={
-          loginFirst && organiztion?.company_name
-            ? ScreenConstant.SIGN_IN
-            : ScreenConstant.CUSTOMER
-        }
+        // @ts-ignore
+        // initialRouteName={
+        //   loginFirst && organiztion?.company_name
+        //     ? ScreenConstant.SIGN_IN
+        //     : ScreenConstant.SELECT_ORGANIZATION
+        // }
+        initialRouteName={ScreenConstant.HOME_SCREEN}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -85,8 +88,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={HomeScreen} />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
-          name={ScreenConstant.FORGOT_PASSWORD}
-          component={ForgotPassword}
+          name={ScreenConstant.HOME_SCREEN}
+          component={Home}
         />
         <Stack.Screen
           name={ScreenConstant.SUCCESS_CHANGE}

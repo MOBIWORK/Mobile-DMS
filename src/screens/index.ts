@@ -18,10 +18,13 @@ import SearchVisit from './Visit/SearchVisit';
 
 import Index from './Visit/VisitDetail';
 
-
 export {
-  SelectOrganization,
-  SignIn,
+  
+    SelectOrganization,
+ 
+    SignIn,
+    Home
+,
   SuccessChanged,
   ForgotPassword,
   ListProduct,
