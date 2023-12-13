@@ -13,6 +13,7 @@ import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
 import {
   ForgotPassword,
+  Home,
   ImageView,
   ListProduct,
   ProductDetail,
@@ -55,11 +56,13 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={theme === 'light' ? AppLightTheme : AppDarkTheme}>
       <Stack.Navigator
-        initialRouteName={
-          loginFirst && organiztion?.company_name
-            ? ScreenConstant.SIGN_IN
-            : ScreenConstant.PRODUCT_DETAIL
-        }
+        // @ts-ignore
+        // initialRouteName={
+        //   loginFirst && organiztion?.company_name
+        //     ? ScreenConstant.SIGN_IN
+        //     : ScreenConstant.SELECT_ORGANIZATION
+        // }
+        initialRouteName={ScreenConstant.HOME_SCREEN}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -69,6 +72,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
+        <Stack.Screen
+          name={ScreenConstant.HOME_SCREEN}
+          component={Home}
+        />
+        {/*<Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />*/}
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
@@ -108,6 +116,7 @@ export type RootStackParamList = {
   [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
+  [ScreenConstant.HOME_SCREEN]: undefined;
   [ScreenConstant.SUCCESS_CHANGE]: undefined;
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
