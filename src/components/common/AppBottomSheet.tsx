@@ -14,7 +14,6 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   onClose,
   children,
   backgroundColor,
-  ...otherProps
 }) => {
   const snapPoints = useMemo(() => ['20%'], []);
   const {colors} = useTheme();
@@ -25,6 +24,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         {...props}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
+        
       />
     ),
     [],
@@ -34,6 +34,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       snapPoints={snapPointsCustom ?? snapPoints}
       onClose={onClose}
       ref={bottomSheetRef}
+      onChange={onChange}
       handleIndicatorStyle={{
         backgroundColor: backgroundColor ?? colors.bg_default,
       }}
@@ -91,8 +92,9 @@ interface AppBottomSheetProps {
   useBottomSheetView?: boolean;
   onClose?: () => void;
   footer?: boolean;
-  children?: ReactElement;
+  children?: ReactElement | ReactElement[] ;
   backgroundColor?: any;
+  onChange?:(index:number) => void
 }
 
 export default AppBottomSheet;

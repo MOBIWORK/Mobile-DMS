@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     lineHeight: 24,
-  },
+  } as TextStyle,
   bgDisable: {
     backgroundColor: '#C4CDD5',
     borderWidth: 0,
@@ -56,5 +56,5 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-  },
+  } as ViewStyle,
 });

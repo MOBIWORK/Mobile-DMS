@@ -12,6 +12,7 @@ import {AppDarkTheme, AppLightTheme} from '../layouts';
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
 import {
+  AddingNewCustomer,
   ForgotPassword,
   Home,
   ImageView,
@@ -25,7 +26,10 @@ import {
   SelectOrganization,
   SignIn,
   SuccessChanged,
+  
 } from '../screens';
+import { MAIN_TAB } from '../const/screen.const';
+import MainTab from './MainTab';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
@@ -70,6 +74,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
+          <Stack.Screen
+          name={ScreenConstant.MAIN_TAB}
+          component={MainTab}
+          
+          />
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
@@ -137,6 +146,9 @@ export type RootStackParamList = {
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
+  [ScreenConstant.CUSTOMER]:undefined;
+  [ScreenConstant.MAIN_TAB]:undefined
+  [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
 };
 
 // Define prop type for useNavigation and useRoute
