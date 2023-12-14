@@ -9,7 +9,6 @@ import { AppConstant } from '../../const';
 import ItemuWidget from '../../components/Widget/ItemWidget';
 import ProgressCircle from 'react-native-progress-circle'
 import BarChartStatistical from './BarChart';
-import { PieChart } from 'react-native-gifted-charts';
 import ItemNotification from '../../components/Notification/ItemNotification';
 
 const HomeScreen = () => {
@@ -198,6 +197,7 @@ const HomeScreen = () => {
 
 
     return (
+        
         <View style={{ flex: 1, backgroundColor: colors.bg_neutral }}>
             <View style={[styles.shadow, { backgroundColor: colors.bg_default, flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", padding: 16 }]}>
                 <View style={{ flexDirection: "row" }}>
@@ -315,7 +315,6 @@ const HomeScreen = () => {
                         </View>
                     </View>
 
-
                     <View style={{ marginTop: 20 }}>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
                             <Text style={[styles.tilteSection, { color: colors.text_disable }]}>Thông báo nội bộ</Text>
@@ -342,7 +341,6 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-
     tilteSection: {
         fontSize: 14,
         lineHeight: 21,
