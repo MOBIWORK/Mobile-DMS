@@ -15,6 +15,11 @@ const ImgAppWatch = require('./imgAppleWatch.png');
 const BarCodeIcon = require('./barcode.png');
 const ImgFile = require('./imgFile.png');
 const HomeFillIcon = require('./home-fill.png');
+const MapIcon = require('./mapIcon.png');
+const UserGroupIcon = require('./user-group.png');
+const MapPinIcon = require('./map-pin.png');
+const PhoneIcon = require('./phone.png');
+const SendIcon = require('./send.png');
 
 export {
   VNFLag,
@@ -33,5 +38,10 @@ export {
   BarCodeIcon,
   ImgFile,
   HomeFillIcon,
-  Usercheckin
+  Usercheckin,
+  MapIcon,
+  UserGroupIcon,
+  MapPinIcon,
+  PhoneIcon,
+  SendIcon,
 };

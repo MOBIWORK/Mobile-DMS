@@ -18,8 +18,10 @@ import {
   ListProduct,
   OrderDetail,
   OrderList,
+  ListVisit,
   ProductDetail,
   SearchProduct,
+  SearchVisit,
   SelectOrganization,
   SignIn,
   SuccessChanged,
@@ -58,13 +60,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={theme === 'light' ? AppLightTheme : AppDarkTheme}>
       <Stack.Navigator
-        // @ts-ignore
-        // initialRouteName={
-        //   loginFirst && organiztion?.company_name
-        //     ? ScreenConstant.SIGN_IN
-        //     : ScreenConstant.SELECT_ORGANIZATION
-        // }
-        initialRouteName={ScreenConstant.ORDER_SCREEN}
+        initialRouteName={
+          loginFirst && organiztion?.company_name
+            ? ScreenConstant.SIGN_IN
+            : ScreenConstant.LIST_VISIT
+        }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -74,11 +74,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen
-          name={ScreenConstant.HOME_SCREEN}
-          component={Home}
-        />
-        {/*<Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />*/}
+        <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
@@ -109,6 +105,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.ORDER_DETAIL_SCREEN}
           component={OrderDetail}
         />
+        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_VISIT}
+          component={SearchVisit}
+        />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -134,6 +135,8 @@ export type RootStackParamList = {
   [ScreenConstant.IMAGE_VIEW]: {data: any};
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
+  [ScreenConstant.LIST_VISIT]: undefined;
+  [ScreenConstant.SEARCH_VISIT]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

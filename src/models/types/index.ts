@@ -77,3 +77,13 @@ export type IProductInventory = {
   label: string;
   count: number;
 };
+
+export type VisitListItemType = {
+  label: string;
+  status: boolean;
+  address: string | null;
+  phone_number: string | null;
+  lat: number;
+  long: number;
+  distance: number;
+};

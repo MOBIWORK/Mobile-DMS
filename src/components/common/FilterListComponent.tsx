@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as events from 'events';
 
 const FilterListComponent: FC<FilterListComponentProps> = ({
   title,
@@ -25,13 +24,13 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   handleItem,
   onClose,
   onSubmitEditing,
-  isSearch = true
 }) => {
   const {colors} = useTheme();
   return (
     <MainLayout style={{backgroundColor: colors.bg_default, paddingTop: 16}}>
       <AppHeader
         label={title}
+        labelStyle={{fontSize: 18}}
         onBack={onClose}
         backButtonIcon={
           <AppIcons
@@ -42,7 +41,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
           />
         }
       />
-      {isSearch  && (
+      {searchValue && onChangeSearch && (
         <Searchbar
           style={{
             backgroundColor: colors.bg_neutral,
@@ -58,7 +57,6 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
           onSubmitEditing={onSubmitEditing}
         />
       )}
-
       <BottomSheetScrollView
         style={{flex: 1, marginTop: 16}}
         showsVerticalScrollIndicator={false}>
@@ -100,14 +98,13 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   );
 };
 interface FilterListComponentProps {
-  title: string;
+  title: string | undefined;
   searchPlaceholder?: string;
-  data: IFilterType[];
+  data: IFilterType[] | [];
   handleItem: (item: IFilterType) => void;
   searchValue?: string;
   onChangeSearch?: (text: string) => void;
   onClose: () => void;
-  isSearch? :boolean;
   onSubmitEditing?: (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => void;
@@ -116,5 +113,6 @@ export default FilterListComponent;
 
 export type IFilterType = {
   label: string;
+  value?: string | number;
   isSelected: boolean;
 };
