@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import {AppConstant, ScreenConstant} from '../const';
 import {IResOrganization} from '../models/types';
 import {
-  
   AddingNewCustomer,
   ForgotPassword,
   ImageView,
@@ -141,6 +140,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
+        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
         <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
       </Stack.Navigator>
       {children}
@@ -179,6 +179,7 @@ export type RootStackParamList = {
   [ScreenConstant.VISIT_DETAIL]: undefined;
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
+  [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
 };
 
 // Define prop type for useNavigation and useRoute

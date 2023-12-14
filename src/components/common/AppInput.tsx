@@ -2,6 +2,7 @@ import React, {FC, ReactNode, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 import {Text, TextInput} from 'react-native-paper';
 import {TextStyle, ViewStyle} from 'react-native';
+import { Colors } from '../../assets';
 const AppInput: FC<AppInputProps> = ({
   styles,
   label,
@@ -15,6 +16,9 @@ const AppInput: FC<AppInputProps> = ({
   editable,
   hiddenRightIcon,
   onPress,
+  isRequire=false,
+  labelStyle,
+  contentStyle
   isRequire=false,
   labelStyle,
   contentStyle
@@ -99,7 +103,6 @@ interface AppInputProps {
   isRequire?:boolean
   labelStyle?:TextStyle;
   contentStyle?:TextStyle;
-  
 }
 
 export default AppInput;

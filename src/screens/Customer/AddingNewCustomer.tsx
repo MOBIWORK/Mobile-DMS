@@ -4,25 +4,30 @@ import {
   View,
   ViewStyle,
   TextStyle,
+  ImageStyle,
   TouchableOpacity,
 } from 'react-native';
 import React, {useMemo, useRef, useState} from 'react';
-import {DatePickerModal} from 'react-native-paper-dates';
-import {ColorSchema, useNavigation, useTheme} from '@react-navigation/native';
-import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
-import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
-import moment from 'moment';
-import {IValueType} from './Customer';
-
 import {MainLayout} from '../../layouts';
-import {AppBottomSheet, AppHeader, AppIcons} from '../../components/common';
+import {DatePickerModal} from 'react-native-paper-dates';
+import {
+  AppBottomSheet,
+  AppHeader,
+  AppIcons,
+  AppInput,
+} from '../../components/common';
+import {AppConstant} from '../../const';
+import {Colors} from '../../assets';
+import {ColorSchema, useNavigation, useTheme} from '@react-navigation/native';
+import AppImage from '../../components/common/AppImage';
+import {NavigationProp} from '../../navigation';
+import {IValueType} from './Customer';
+import {TextInput} from 'react-native-paper';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import FormAdding from './components/FormAdding';
 import ListFilter from './components/ListFilter';
-import {Colors} from '../../assets';
-import {AppConstant} from '../../const';
-import {NavigationProp} from '../../navigation';
 import {IDataCustomer} from '../../models/types';
-import FormAddress from './components/FormAddress';
+import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -59,16 +64,7 @@ const AddingNewCustomer = () => {
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const snapPoint = useMemo(() => ['40%'], []);
-  const snapPointAdding = useMemo(
-    () =>
-      typeFilter === AppConstant.CustomerFilterType.dia_chi
-        ? ['100%']
-        : ['40%'],
-    [typeFilter],
-  );
-
   const filterRef = useRef<BottomSheetMethods>(null);
-  const addingAddress = useRef<BottomSheetMethods>(null);
 
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);
@@ -97,15 +93,27 @@ const AddingNewCustomer = () => {
         }
       />
       <View style={styles.containContentView}>
-        <FormAdding
-          filterRef={filterRef}
-          setTypeFilter={setTypeFilter}
-          valueFilter={valueFilter}
-          valueDate={moment(date).format('DD/MM/YYYY')}
-          setOpen={setOpenDate}
-          setData={setListData}
-          addingBottomRef={addingAddress}
-        />
+        <Text style={styles.titleText}>Thông tin chung </Text>
+        <TouchableOpacity style={styles.containContainImage}>
+          <View style={styles.containImageCamera}>
+            <AppImage source="IconCamera" style={styles.iconImage} />
+          </View>
+        </TouchableOpacity>
+        <View style={{flex: 1}}>
+          <FormAdding
+            filterRef={filterRef}
+            setTypeFilter={setTypeFilter}
+            valueFilter={valueFilter}
+            valueDate={date}
+            setOpen={setOpenDate}
+            onChange={value =>
+              setListData(prev => ({
+                ...prev,
+                nameCompany: value,
+              }))
+            }
+          />
+        </View>
       </View>
       <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
         <ListFilter
@@ -119,22 +127,10 @@ const AddingNewCustomer = () => {
         locale="vi"
         mode="single"
         visible={openDate}
-        label="Chọn sinh nhật"
         onDismiss={onDismissSingle}
         date={date}
         onConfirm={onConfirmSingle}
       />
-      <AppBottomSheet
-        bottomSheetRef={addingAddress}
-        snapPointsCustom={snapPointAdding}>
-        <FormAddress onPressClose={() => addingAddress.current?.close()} />
-      </AppBottomSheet>
-
-      {typeFilter === AppConstant.CustomerFilterType.dia_chi ? null : (
-        <TouchableOpacity style={styles.buttonAddingNew}>
-          <Text style={styles.textButtonStyle}>Thêm mới</Text>
-        </TouchableOpacity>
-      )}
     </MainLayout>
   );
 };
@@ -148,20 +144,28 @@ const rootStyles = (theme: ColorSchema) =>
       flex: 1,
       // backgroundColor: 'red',
     } as ViewStyle,
-
-    buttonAddingNew: {
-      backgroundColor: theme.colors.primary,
-      borderRadius: 20,
-      alignItems: 'center',
-      marginBottom: 40,
-      height: 40,
-      // marginBottom:40,
-      justifyContent: 'center',
-    } as ViewStyle,
-    textButtonStyle: {
-      color: Colors.white,
+    titleText: {
       fontSize: 14,
-      fontWeight: '700',
-      lineHeight: 24,
+      fontWeight: '500',
+      lineHeight: 21,
+      color: Colors.gray_600,
     } as TextStyle,
+    containImageCamera: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: Colors.gray_200,
+      width: 98,
+      height: 98,
+      borderRadius: 8,
+    } as ViewStyle,
+    containContainImage: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 20,
+      marginBottom: 20,
+    } as ViewStyle,
+    iconImage: {
+      width: 24,
+      height: 24,
+    } as ImageStyle,
   });
