@@ -14,7 +14,8 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   onClose,
   children,
   backgroundColor,
-  onChange
+  onChange,
+  ...otherProps
 }) => {
   const snapPoints = useMemo(() => ['20%'], []);
   const {colors} = useTheme();
@@ -61,7 +62,8 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         shadowRadius: 16.0,
 
         elevation: 24,
-      }}>
+      }}
+      {...otherProps}>
       {useBottomSheetView ? (
         <BottomSheetView
           style={{

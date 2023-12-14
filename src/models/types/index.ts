@@ -136,7 +136,7 @@ export interface PlusCode {
   compound_code: string;
   global_code: string;
 }
-export type VisitListItem = {
+export type VisitListItemType = {
   label: string;
   status: boolean;
   address: string | null;

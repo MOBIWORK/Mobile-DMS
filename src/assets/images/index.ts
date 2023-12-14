@@ -31,6 +31,10 @@ const IconType = require('./iconType.png');
 const IconFilter = require('./iconFilter.png')
 const IconCamera = require('./camera.png')
 const Usercheckin = require('./userCheckIn.png');
+const UserGroupIcon = require('./user-group.png');
+const MapPinIcon = require('./map-pin.png');
+const PhoneIcon = require('./phone.png');
+const SendIcon = require('./send.png');
 
 export {
   VNFLag,
@@ -62,5 +66,9 @@ export {
   IconPhone,
   IconType,
   IconFilter,IconCamera,MapIcon,
-  Usercheckin
+  Usercheckin,
+  UserGroupIcon,
+  MapPinIcon,
+  PhoneIcon,
+  SendIcon,
 };

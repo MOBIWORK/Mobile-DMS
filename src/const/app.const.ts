@@ -28,6 +28,7 @@ export const currentShift = 'CurrentShift';
 export const UserInfo = 'UserInfo';
 export const Organization = 'organization';
 export const ListSearchProductNearly = 'listSearchProductNearly';
+export const ListSearchVisitNearly = 'ListSearchVisitNearly';
 
 export const Api_key = 'Api_key';
 export const Api_secret = 'Api_secret';
@@ -57,8 +58,21 @@ export const ProductFilterType = {
   nghanh_hang: 'nghanh_hang',
 };
 
+
 export enum CustomerFilterType  {
     nhom_khach_hang = 'nhom_khach_hang',
     loai_khach_hang ='loai_khach_hang',
     ngay_sinh_nhat ='ngay_sinh_nhat',
 }
+
+export const VisitFilterType = {
+  channel: 'channel',
+  state: 'state',
+  distance: 'distance',
+  name: 'name',
+  birthday: 'birthday',
+  customerGroup: 'customerGroup',
+  customerType: 'customerType',
+};
+
+

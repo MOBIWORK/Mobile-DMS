@@ -19,7 +19,10 @@ import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {IProductList} from '../../../models/types';
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetScrollView,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
@@ -29,9 +32,11 @@ import {CommonUtils} from '../../../utils';
 import {NavigationProp} from '../../../navigation';
 import {useSelector} from 'react-redux';
 import {AppSelector} from '../../../redux-store';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 const ListProduct = () => {
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
+  const {bottom} = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
 
   const searchProductValue = useSelector(AppSelector.getSearchProductValue);
@@ -39,6 +44,15 @@ const ListProduct = () => {
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['100%'], []);
+
+  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
   const [filterType, setFilterType] = useState<string>(
     AppConstant.ProductFilterType.nhom_sp,
@@ -271,7 +285,7 @@ const ListProduct = () => {
   return (
     <MainLayout style={{backgroundColor: colors.bg_neutral}}>
       <AppHeader
-        label={'Sản phẩm'}
+        label={getLabel('product')}
         labelStyle={{textAlign: 'left', marginLeft: 8}}
         rightButton={
           <TouchableOpacity
@@ -327,61 +341,70 @@ const ListProduct = () => {
         snapPointsCustom={snapPoints}>
         <ProductFilter />
       </AppBottomSheet>
-      <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoints}>
-        <FilterListComponent
-          title={
-            filterType === AppConstant.ProductFilterType.nhom_sp
-              ? 'Nhóm sản phẩm'
-              : filterType === AppConstant.ProductFilterType.nghanh_hang
-              ? 'Nghành hàng'
-              : 'Thương hiệu'
-          }
-          searchPlaceholder={
-            filterType === AppConstant.ProductFilterType.nhom_sp
-              ? 'Tìm kiếm nhóm sản phẩm'
-              : filterType === AppConstant.ProductFilterType.nghanh_hang
-              ? 'Tìm kiếm nghành hàng'
-              : 'Tìm kiếm thương hiệu'
-          }
-          data={
-            filterType === AppConstant.ProductFilterType.nhom_sp
-              ? productGroupData
-              : filterType === AppConstant.ProductFilterType.nghanh_hang
-              ? commodityTypeData
-              : trademarkData
-          }
-          handleItem={handleItem}
-          searchValue={
-            filterType === AppConstant.ProductFilterType.nhom_sp
-              ? searchProductGroup
-              : filterType === AppConstant.ProductFilterType.nghanh_hang
-              ? searchCommodity
-              : searchTrademark
-          }
-          onChangeSearch={(text: string) =>
-            filterType === AppConstant.ProductFilterType.nhom_sp
-              ? CommonUtils.handleSearch(
-                  text,
-                  setSearchProductGroup,
-                  productGroupMasterData,
-                  setProductGroupData,
-                )
-              : filterType === AppConstant.ProductFilterType.nghanh_hang
-              ? CommonUtils.handleSearch(
-                  text,
-                  setSearchCommodity,
-                  commodityTypeMasterData,
-                  setCommodityTypeData,
-                )
-              : CommonUtils.handleSearch(
-                  text,
-                  setSearchTrademark,
-                  trademarkMasterData,
-                  setTrademarkData,
-                )
-          }
-          onClose={() => filterRef.current && filterRef.current.close()}
-        />
+      <AppBottomSheet
+        bottomSheetRef={filterRef}
+        snapPointsCustom={animatedSnapPoints}
+        // @ts-ignore
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: bottom + 16}}
+          onLayout={handleContentLayout}>
+          <FilterListComponent
+            title={
+              filterType === AppConstant.ProductFilterType.nhom_sp
+                ? 'Nhóm sản phẩm'
+                : filterType === AppConstant.ProductFilterType.nghanh_hang
+                ? 'Nghành hàng'
+                : 'Thương hiệu'
+            }
+            searchPlaceholder={
+              filterType === AppConstant.ProductFilterType.nhom_sp
+                ? 'Tìm kiếm nhóm sản phẩm'
+                : filterType === AppConstant.ProductFilterType.nghanh_hang
+                ? 'Tìm kiếm nghành hàng'
+                : 'Tìm kiếm thương hiệu'
+            }
+            data={
+              filterType === AppConstant.ProductFilterType.nhom_sp
+                ? productGroupData
+                : filterType === AppConstant.ProductFilterType.nghanh_hang
+                ? commodityTypeData
+                : trademarkData
+            }
+            handleItem={handleItem}
+            searchValue={
+              filterType === AppConstant.ProductFilterType.nhom_sp
+                ? searchProductGroup
+                : filterType === AppConstant.ProductFilterType.nghanh_hang
+                ? searchCommodity
+                : searchTrademark
+            }
+            onChangeSearch={(text: string) =>
+              filterType === AppConstant.ProductFilterType.nhom_sp
+                ? CommonUtils.handleSearch(
+                    text,
+                    setSearchProductGroup,
+                    productGroupMasterData,
+                    setProductGroupData,
+                  )
+                : filterType === AppConstant.ProductFilterType.nghanh_hang
+                ? CommonUtils.handleSearch(
+                    text,
+                    setSearchCommodity,
+                    commodityTypeMasterData,
+                    setCommodityTypeData,
+                  )
+                : CommonUtils.handleSearch(
+                    text,
+                    setSearchTrademark,
+                    trademarkMasterData,
+                    setTrademarkData,
+                  )
+            }
+            onClose={() => filterRef.current && filterRef.current.close()}
+          />
+        </BottomSheetScrollView>
       </AppBottomSheet>
     </MainLayout>
   );
