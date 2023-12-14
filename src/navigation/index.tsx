@@ -12,6 +12,7 @@ import {AppDarkTheme, AppLightTheme} from '../layouts';
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
 import {
+  AddingNewCustomer,
   ForgotPassword,
   Home,
   ImageView,
@@ -118,6 +119,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
+        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -147,6 +149,7 @@ export type RootStackParamList = {
   [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
+  [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
 };
 
 // Define prop type for useNavigation and useRoute

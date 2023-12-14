@@ -72,3 +72,32 @@ export const listFilter = [
     title:'Xa nhất'
   }
 ]
+
+export const listFilterType:any = [
+  {
+    id:0,
+    title:'Tất cả'
+  },
+  {
+    id:1,
+    title:'Cá nhân'
+  },
+  {
+    id:2,
+    title:'Công ty'
+  }
+]
+export const listBirthDayType:any = [
+  {
+    id:0,
+    title:'Tất cả'
+  },
+  {
+    id:1,
+    title:'Tuần này'
+  },
+  {
+    id:2,
+    title:'Tháng này'
+  }
+]

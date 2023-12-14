@@ -1,7 +1,8 @@
 import React, {FC, ReactNode, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 import {Text, TextInput} from 'react-native-paper';
-import {ViewStyle} from 'react-native';
+import {TextStyle, ViewStyle} from 'react-native';
+import { Colors } from '../../assets';
 const AppInput: FC<AppInputProps> = ({
   styles,
   label,
@@ -15,6 +16,9 @@ const AppInput: FC<AppInputProps> = ({
   editable,
   hiddenRightIcon,
   onPress,
+  isRequire=false,
+  labelStyle,
+  contentStyle
 }) => {
   const {colors} = useTheme();
   const [isFocus, setFocus] = useState<boolean>(false);
@@ -26,6 +30,7 @@ const AppInput: FC<AppInputProps> = ({
       contentStyle={{
         color: colors.text_primary,
         fontSize: 16,
+        ...contentStyle
       }}
       style={{
         backgroundColor: colors.bg_default,
@@ -41,14 +46,16 @@ const AppInput: FC<AppInputProps> = ({
             color: isFocus || value ? undefined : colors.text_disable,
             fontWeight: isFocus || value ? '600' : '400',
             fontSize: 16,
+            ...labelStyle
           }}>
-          {label}
+          {label} {isRequire ? <Text style={{color:'red'}}>*</Text> :null}
         </Text>
       }
       value={value}
       onChangeText={onChangeValue}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
+      
       {...inputProp}
       error={error}
       right={
@@ -88,5 +95,8 @@ interface AppInputProps {
   inputProp?: any;
   disable?: boolean;
   editable?: boolean;
+  isRequire?:boolean
+  labelStyle?:TextStyle;
+  contentStyle?:TextStyle;
 }
 export default AppInput;
