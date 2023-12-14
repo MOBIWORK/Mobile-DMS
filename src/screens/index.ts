@@ -18,6 +18,8 @@ import LookingMore from './LookingMore/LookingMore';
 import AddingNewCustomer from './Customer/AddingNewCustomer';
 import SearchVisit from './Visit/SearchVisit';
 import ListVisit from './Visit/ListVisit';
+import OrderList from './Order/';
+import OrderDetail from './Order/Detail';
 
 export {
   SelectOrganization,
@@ -36,4 +38,6 @@ export {
   Customer,
   Visits,
 
+    OrderList,
+    OrderDetail
 };
