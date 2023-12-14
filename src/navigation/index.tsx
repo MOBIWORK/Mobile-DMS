@@ -17,6 +17,8 @@ import {
   OrderDetail,
   OrderList,
   ListVisit,
+  OrderDetail,
+  OrderList,
   ProductDetail,
   SearchProduct,
   SearchVisit,
@@ -70,7 +72,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         //     ? ScreenConstant.SIGN_IN
         //     : ScreenConstant.SELECT_ORGANIZATION
         // }
-        initialRouteName={ScreenConstant.HOME_SCREEN}
+        initialRouteName={ScreenConstant.ORDER_SCREEN}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -208,6 +210,8 @@ export type RootStackParamList = {
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
+  [ScreenConstant.ORDER_SCREEN]: undefined;
+  [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute
