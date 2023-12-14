@@ -16,6 +16,8 @@ import {
   Home,
   ImageView,
   ListProduct,
+  OrderDetail,
+  OrderList,
   ListVisit,
   ProductDetail,
   SearchProduct,
@@ -95,6 +97,14 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={ProductDetail}
         />
         <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
+        <Stack.Screen
+          name={ScreenConstant.ORDER_SCREEN}
+          component={OrderList}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ORDER_DETAIL_SCREEN}
+          component={OrderDetail}
+        />
         <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
         <Stack.Screen
           name={ScreenConstant.SEARCH_VISIT}
@@ -123,6 +133,8 @@ export type RootStackParamList = {
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: undefined;
   [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.ORDER_SCREEN]: undefined;
+  [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
 };

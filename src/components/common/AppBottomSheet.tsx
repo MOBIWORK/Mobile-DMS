@@ -39,8 +39,8 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       }}
       handleStyle={{
         backgroundColor: backgroundColor ?? colors.bg_default,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8,
       }}
       backdropComponent={hiddenBackdrop ? null : renderBackdrop}
       enablePanDownToClose={enablePanDownToClose ?? true}
