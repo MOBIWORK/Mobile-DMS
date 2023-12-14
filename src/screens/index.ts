@@ -16,45 +16,24 @@ import Visits from './Visit/Visits';
 import Home from './Home/Home';
 import LookingMore from './LookingMore/LookingMore';
 import AddingNewCustomer from './Customer/AddingNewCustomer';
+import SearchVisit from './Visit/SearchVisit';
 import ListVisit from './Visit/ListVisit';
-import Home from './Home';
 
 export {
-  
-    SelectOrganization,
- 
-    SignIn,
-    Home
-,
+  SelectOrganization,
+  SignIn,
+  Home,
   SuccessChanged,
   ForgotPassword,
   ListProduct,
   SearchProduct,
   ProductDetail,
   ImageView,
-  Customer,
-  Visits,
-  Home,
+  ListVisit,
+  SearchVisit,
   LookingMore,
   AddingNewCustomer,
-  ListVisit,
-};
-import Home from './Home';
-import ForgotPassword from './Authen/ForgotPassword';
-import SuccessChanged from './Authen/SuccessChanged';
-import ListProduct from './Product/ProductList/ListProduct';
-import SearchProduct from './Product/ProductList/SearchProduct';
-import ProductDetail from './Product/ProductDetail/ProductDetail';
-import ImageView from './Product/ProductDetail/ImageView';
+  Customer,
+  Visits,
 
-export {
-    SelectOrganization,
-    SignIn,
-    Home,
-    SuccessChanged,
-    ForgotPassword,
-    ListProduct,
-    SearchProduct,
-    ProductDetail,
-    ImageView,
 };

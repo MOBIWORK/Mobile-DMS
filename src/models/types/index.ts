@@ -78,15 +78,7 @@ export type IProductInventory = {
   count: number;
 };
 
-export type VisitListItemType = {
-  label: string;
-  status: boolean;
-  address: string | null;
-  phone_number: string | null;
-  lat: number;
-  long: number;
-  distance: number;
-};
+
 export type IDataCustomer = {
   nameCompany:string,
   type:string,
@@ -145,7 +137,7 @@ export interface PlusCode {
   compound_code: string;
   global_code: string;
 }
-export type VisitListItem = {
+export type VisitListItemType = {
   label: string;
   status: boolean;
   address: string | null;
