@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as events from 'events';
 
 const FilterListComponent: FC<FilterListComponentProps> = ({
   title,
@@ -32,6 +31,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
     <MainLayout style={{backgroundColor: colors.bg_default, paddingTop: 16}}>
       <AppHeader
         label={title}
+        labelStyle={{fontSize: 18}}
         onBack={onClose}
         backButtonIcon={
           <AppIcons
