@@ -27,7 +27,7 @@ const IconAddress = require('./iconAddress.png');
 const IconPhone = require('./iconPhone.png');
 const IconType = require('./iconType.png');
 const IconFilter = require('./iconFilter.png')
-
+const IconCamera = require('./camera.png')
 export {
   VNFLag,
   ENFlag,
@@ -57,5 +57,5 @@ export {
   IconAddress,
   IconPhone,
   IconType,
-  IconFilter
+  IconFilter,IconCamera
 };

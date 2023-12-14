@@ -77,3 +77,26 @@ export type IProductInventory = {
   label: string;
   count: number;
 };
+
+export type IDataCustomer = {
+  nameCompany:string,
+  type:string,
+  group:string,
+  area?:string,
+  dob:string,
+  gland?:string,
+  debtLimit?:number | any,
+  description:string,
+  websiteURL:string,
+  address:{
+    address:string,
+    phoneNumber:string
+  },
+  contact:{
+    name:string,
+    address:string,
+    phoneNumber:string
+  }
+
+
+}

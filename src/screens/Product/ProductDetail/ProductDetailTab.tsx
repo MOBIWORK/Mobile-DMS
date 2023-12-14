@@ -51,7 +51,7 @@ const HomeTabs: FC<HomeTabsProps> = ({selectedTab, onChangeTab, style}) => {
   });
 
   return (
-    <View style={[styles.wrapper, style]}>
+    <View style={[styles.wrapper as any, style]}>
       {HOME_TABS.map(({label, value}, index) => {
         const isActive = selectedTab === value;
 

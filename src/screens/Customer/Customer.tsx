@@ -9,15 +9,18 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import React, {useCallback, useRef, useMemo} from 'react';
-import {TextInput} from 'react-native-paper';
-import {ColorSchema, useTheme} from '@react-navigation/native';
+import {FAB, TextInput} from 'react-native-paper';
+import {ColorSchema, useNavigation, useTheme} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
-import {AppConstant} from '../../const';
+import {AppConstant, ScreenConstant} from '../../const';
 import {Colors} from '../../assets';
 import MainLayout from '../../layouts/MainLayout';
 import AppImage from '../../components/common/AppImage';
 import FilterHandle from './components/FilterHandle';
-import {fakeData, listFilter} from './components/data';
+import {
+  fakeData,
+  listFilter,
+} from './components/data';
 import ListCard from './components/ListCard';
 import {
   AppBottomSheet,
@@ -25,8 +28,10 @@ import {
   AppIcons,
   AppInput,
 } from '../../components/common';
+import ListFilter from './components/ListFilter';
+import { NavigationProp } from '../../navigation';
 
-type IValueType = {
+export type IValueType = {
   customerType: string;
   customerGroupType: string;
   customerBirthday: string;
@@ -35,7 +40,7 @@ type IValueType = {
 const Customer = () => {
   const {t: getLabel} = useTranslation();
   const theme = useTheme();
-  const styles = rootStyles(theme)
+  const styles = rootStyles(theme);
   const [value, setValue] = React.useState({
     first: 'Gần nhất',
     second: '',
@@ -49,16 +54,19 @@ const Customer = () => {
     customerGroupType: 'Tất cả',
     customerBirthday: 'Tất cả',
   });
+  const [typeFilter, setTypeFilter] = React.useState<string>(
+    AppConstant.CustomerFilterType.loai_khach_hang,
+  );
+  const navigation = useNavigation<NavigationProp>()
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
-
   const snapPoints = useMemo(() => ['100%'], []);
 
   const onPressType1 = useCallback(() => {
     setShow(prev => ({...prev, firstModal: !show.firstModal}));
     bottomRef.current?.snapToIndex(0);
-  }, [show]);
+  }, [show.firstModal]);
   const onPressType2 = useCallback(() => {
     setShow(prev => ({...prev, secondModal: !show.secondModal}));
     bottomRef2.current?.snapToIndex(0);
@@ -85,6 +93,10 @@ const Customer = () => {
             value={valueFilter.customerGroupType}
             editable={false}
             styles={{marginBottom: 24}}
+            onPress={() => {
+              setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
+              filterRef.current?.snapToIndex(0);
+            }}
             rightIcon={
               <TextInput.Icon
                 icon={'chevron-down'}
@@ -98,6 +110,10 @@ const Customer = () => {
             value={valueFilter.customerType}
             editable={false}
             styles={{marginBottom: 24}}
+            onPress={() => {
+              setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
+              filterRef.current?.snapToIndex(0);
+            }}
             rightIcon={
               <TextInput.Icon
                 icon={'chevron-down'}
@@ -110,6 +126,10 @@ const Customer = () => {
             label={'Ngày sinh nhật'}
             value={valueFilter.customerBirthday}
             editable={false}
+            onPress={() => {
+              filterRef.current?.snapToIndex(0);
+              setTypeFilter(AppConstant.CustomerFilterType.ngay_sinh_nhat);
+            }}
             rightIcon={
               <TextInput.Icon
                 icon={'chevron-down'}
@@ -161,6 +181,9 @@ const Customer = () => {
       <AppBottomSheet
         bottomSheetRef={bottomRef}
         useBottomSheetView={show.firstModal}
+        onChange={index =>
+          index === -1 && setShow(prev => ({...prev, firstModal: false}))
+        }
         enablePanDownToClose={true}>
         <View>
           <View style={styles.tittleHeader}>
@@ -172,12 +195,17 @@ const Customer = () => {
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() =>
+                  // console.log(item,'item')
                   setValue(prev => ({
                     ...prev,
-                    first: item.title,
+                    first:item.title,
                   }))
                 }>
-                <Text style={styles.itemText(item.title, value.first)}>
+                <Text
+                  style={styles.itemText(
+                    item.title,
+                    value.first,
+                  )}>
                   {item.title}
                 </Text>
                 {item.title === value.first && (
@@ -197,138 +225,183 @@ const Customer = () => {
         bottomSheetRef={bottomRef2}
         useBottomSheetView={show.secondModal}
         snapPointsCustom={snapPoints}
+        onChange={index =>
+          index === -1 && setShow(prev => ({...prev, secondModal: false}))
+        }
         enablePanDownToClose={true}>
         {renderBottomView()}
       </AppBottomSheet>
+      <AppBottomSheet
+        bottomSheetRef={filterRef}
+        enablePanDownToClose={true}
+        snapPointsCustom={['30%']}>
+        <ListFilter
+          type={typeFilter}
+          filterRef={filterRef}
+          setValueFilter={setValueFilter}
+          valueFilter={valueFilter}
+        />
+      </AppBottomSheet>
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        color="white"
+        mode="flat"
+        visible={show.firstModal || show.secondModal ? false : true}
+        onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
+      />
     </>
   );
 };
 
 export default React.memo(Customer);
 
-const rootStyles =(theme:ColorSchema) => StyleSheet.create({
-  labelStyle: {
-    fontSize: 24,
-    color: Colors.gray_800,
-    lineHeight: 25,
-    fontWeight: '500',
-    textAlign: 'left',
-    // alignSelf:'flex-end'
-  } as TextStyle,
-  containCustomer: {
-    fontSize: 14,
-    color: Colors.gray_800,
-    lineHeight: 21,
-    fontWeight: '500',
-    textAlign: 'left',
-    marginBottom: 16,
-    // alignSelf:'flex-end'
-  } as TextStyle,
-  numberCustomer: {
-    fontSize: 14,
-    color: Colors.darker,
-    lineHeight: 21,
-    fontWeight: '700',
-    textAlign: 'left',
-    // alignSelf:'flex-end'
-  } as TextStyle,
-  iconSearch: {
-    width: 28,
-    height: 28,
-    marginRight: 16,
-  } as ImageStyle,
-  searchButtonStyle: {
-    alignItems: 'flex-end',
-    backgroundColor: 'red',
-    width: 200,
-    flex: 1,
-  } as ViewStyle,
-  labelContentStyle: {alignSelf: 'flex-end'} as ViewStyle,
-  rootHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 48,
-    marginBottom: 16,
-  } as ViewStyle,
-  containFilterView: {
-    flexDirection: 'row',
-    height: 48,
-    marginBottom: 16,
-  } as ViewStyle,
-  tittleHeader: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  } as ViewStyle,
-  titleText: {
-    fontSize: 18,
-    color: Colors.darker,
-    lineHeight: 27,
-    fontWeight: '500',
-    marginBottom: 4,
-    // textAlign: 'left',
-    // alignSelf:'flex-end'
-  } as TextStyle,
-  containItemBottomView: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 5,
-  } as ViewStyle,
-  itemText: (text: string, value: string) =>
-    ({
-      fontSize: 16,
-      fontWeight: text === value ? '600' : '400',
+const rootStyles = (theme: ColorSchema) =>
+  StyleSheet.create({
+    labelStyle: {
+      fontSize: 24,
+      color: Colors.gray_800,
+      lineHeight: 25,
+      fontWeight: '500',
+      textAlign: 'left',
+      // alignSelf:'flex-end'
+    } as TextStyle,
+    containCustomer: {
+      fontSize: 14,
+      color: Colors.gray_800,
       lineHeight: 21,
+      fontWeight: '500',
+      textAlign: 'left',
       marginBottom: 16,
-    } as TextStyle),
-  containListFilter: {
-    marginTop: 24,
-    flex: 1,
-  } as ViewStyle,
-  containButtonBottom: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-  } as ViewStyle,
-  containContentButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginBottom:20,
-  
-  } as ViewStyle,
-  buttonApply:{ 
-        backgroundColor:theme.colors.primary,
-        borderRadius:24,
-        alignItems:'center',
-        paddingHorizontal:12,
-        paddingVertical:12,
-        flex:1,
-        marginHorizontal:6
-
-  } as ViewStyle,
-  buttonRestart:{ 
-    backgroundColor:Colors.gray_100,
-    borderRadius:24,
-    alignItems:'center',
-    paddingHorizontal:12,
-    paddingVertical:12,
-    marginHorizontal:6,
-    // width:'100%',
-    flex:1
-} as ViewStyle,
-  restartText:{
-      fontSize:14,
-      fontWeight:'700',
-      lineHeight:24,
-      color:Colors.gray_600
-  } as TextStyle,
-  applyText:{
-    fontSize:14,
-    fontWeight:'700',
-    lineHeight:24,
-    color:Colors.white
-  } as TextStyle
-});
+      // alignSelf:'flex-end'
+    } as TextStyle,
+    numberCustomer: {
+      fontSize: 14,
+      color: Colors.darker,
+      lineHeight: 21,
+      fontWeight: '700',
+      textAlign: 'left',
+      // alignSelf:'flex-end'
+    } as TextStyle,
+    iconSearch: {
+      width: 28,
+      height: 28,
+      marginRight: 16,
+    } as ImageStyle,
+    searchButtonStyle: {
+      alignItems: 'flex-end',
+      width: 200,
+      flex: 1,
+    } as ViewStyle,
+    labelContentStyle: {alignSelf: 'flex-end'} as ViewStyle,
+    rootHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      height: 48,
+      marginBottom: 16,
+    } as ViewStyle,
+    containFilterView: {
+      flexDirection: 'row',
+      height: 48,
+      marginBottom: 16,
+    } as ViewStyle,
+    tittleHeader: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    } as ViewStyle,
+    titleText: {
+      fontSize: 18,
+      color: Colors.darker,
+      lineHeight: 27,
+      fontWeight: '500',
+      marginBottom: 4,
+      // textAlign: 'left',
+      // alignSelf:'flex-end'
+    } as TextStyle,
+    containItemBottomView: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginHorizontal: 16,
+      marginBottom: 5,
+    } as ViewStyle,
+    itemText: (text: string, value: string) =>
+      ({
+        fontSize: 16,
+        fontWeight: text === value ? '600' : '400',
+        lineHeight: 21,
+        marginBottom: 16,
+      } as TextStyle),
+    containListFilter: {
+      marginTop: 24,
+      flex: 1,
+    } as ViewStyle,
+    containButtonBottom: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
+    } as ViewStyle,
+    containContentButton: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      marginBottom: 20,
+    } as ViewStyle,
+    buttonApply: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 24,
+      alignItems: 'center',
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      flex: 1,
+      marginHorizontal: 6,
+    } as ViewStyle,
+    buttonRestart: {
+      backgroundColor: Colors.gray_100,
+      borderRadius: 24,
+      alignItems: 'center',
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      marginHorizontal: 6,
+      // width:'100%',
+      flex: 1,
+    } as ViewStyle,
+    restartText: {
+      fontSize: 14,
+      fontWeight: '700',
+      lineHeight: 24,
+      color: Colors.gray_600,
+    } as TextStyle,
+    applyText: {
+      fontSize: 14,
+      fontWeight: '700',
+      lineHeight: 24,
+      color: Colors.white,
+    } as TextStyle,
+    headerBottomSheet: {
+      marginHorizontal: 16,
+      marginBottom: 16,
+      flexDirection: 'row',
+      // justifyContent:'space-around',
+      alignItems: 'center',
+    } as ViewStyle,
+    titleHeaderText: {
+      // alignSelf:'center',
+      fontSize: 18,
+      fontWeight: '500',
+      lineHeight: 24,
+      flex: 1,
+      marginLeft: 8,
+      // backgroundColor:'blue',
+      textAlign: 'center',
+    } as TextStyle,
+    fab: {
+      position: 'absolute',
+      margin: 16,
+      right: 0,
+      bottom: 0,
+      borderRadius: 30,
+      backgroundColor: theme.colors.primary,
+    } as ViewStyle,
+  });
