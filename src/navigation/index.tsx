@@ -114,6 +114,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.ORDER_DETAIL_SCREEN}
           component={OrderDetail}
         />
+        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
