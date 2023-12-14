@@ -10,7 +10,6 @@ import React from 'react';
 import {ICustomer} from './data';
 import {Colors} from '../../../assets';
 import {Platform} from 'react-native';
-import {MainLayout} from '../../../layouts';
 import AppImage from '../../../components/common/AppImage';
 import {TextStyle} from 'react-native';
 import { ColorSchema, useTheme } from '@react-navigation/native';

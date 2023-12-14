@@ -56,3 +56,9 @@ export const ProductFilterType = {
   thuong_hieu: 'thuong_hieu',
   nghanh_hang: 'nghanh_hang',
 };
+
+export enum CustomerFilterType  {
+    nhom_khach_hang = 'nhom_khach_hang',
+    loai_khach_hang ='loai_khach_hang',
+    ngay_sinh_nhat ='ngay_sinh_nhat',
+}

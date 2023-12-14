@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View,Platform, ViewStyle, TextStyle, TouchableOpacity, ImageStyle } from 'react-native'
 import React, { createRef} from 'react'
+import { useTranslation } from 'react-i18next'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { ColorSchema,NavigationContainerRef,useTheme } from '@react-navigation/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../assets'
 import { RootStackParamList } from '.'
 import { ScreenConstant } from '../const'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import AppImage from '../components/common/AppImage'
-import { useTranslation } from 'react-i18next'
 
 
 

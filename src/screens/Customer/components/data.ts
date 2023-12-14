@@ -61,3 +61,14 @@ export type ICustomer = {
   type: string;
   name:string
 };
+
+export const listFilter = [
+  {
+    id:1,
+    title:'Gần nhất'
+  },
+  {
+    id:2,
+    title:'Xa nhất'
+  }
+]
