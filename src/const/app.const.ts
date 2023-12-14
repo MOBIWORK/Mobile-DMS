@@ -67,3 +67,8 @@ export const VisitFilterType = {
   customerGroup: 'customerGroup',
   customerType: 'customerType',
 };
+export enum CustomerFilterType  {
+    nhom_khach_hang = 'nhom_khach_hang',
+    loai_khach_hang ='loai_khach_hang',
+    ngay_sinh_nhat ='ngay_sinh_nhat',
+}

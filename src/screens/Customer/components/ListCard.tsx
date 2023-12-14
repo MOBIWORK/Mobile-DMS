@@ -22,6 +22,6 @@ const ListCard = (props: Props) => {
   )
 }
 
-export default ListCard
+export default React.memo(ListCard)
 
 const styles = StyleSheet.create({})
