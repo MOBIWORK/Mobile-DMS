@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:Colors.gray_200,
+    backgroundColor: Colors.white,
     borderWidth: 1,
     padding: 6,
     borderRadius: 16,
