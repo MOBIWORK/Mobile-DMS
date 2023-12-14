@@ -46,3 +46,5 @@ export const VISIT = 'VISIT';
 export const CUSTOMER = 'CUSTOMER';
 export const LOOKING_MORE = 'LOOKING_MORE';
 export const ADDING_NEW_CUSTOMER = 'ADDING_NEW_CUSTOMER'
+export const ORDER_SCREEN = "ORDER_SCREEN";
+export const ORDER_DETAIL_SCREEN = "ORDER_DETAIL_SCREEN";
