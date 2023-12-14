@@ -8,6 +8,7 @@ import SearchProduct from './Product/ProductList/SearchProduct';
 import ProductDetail from './Product/ProductDetail/ProductDetail';
 import ImageView from './Product/ProductDetail/ImageView';
 import ListVisit from './Visit/ListVisit';
+import SearchVisit from './Visit/SearchVisit';
 
 export {
   SelectOrganization,
@@ -20,4 +21,5 @@ export {
   ProductDetail,
   ImageView,
   ListVisit,
+  SearchVisit,
 };

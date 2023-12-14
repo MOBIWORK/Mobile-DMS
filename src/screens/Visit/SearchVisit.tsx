@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {MainLayout} from '../../../layouts';
+import {MainLayout} from '../../layouts';
 import {
   Image,
   NativeSyntheticEvent,
@@ -8,23 +8,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ImageAssets} from '../../../assets';
+import {ImageAssets} from '../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {Searchbar} from 'react-native-paper';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp} from '../../navigation';
 import {useMMKVString} from 'react-native-mmkv';
-import {AppConstant} from '../../../const';
-import {AppIcons} from '../../../components/common';
+import {AppConstant} from '../../const';
+import {AppIcons} from '../../components/common';
 import {useDispatch} from 'react-redux';
-import {AppActions} from '../../../redux-store';
+import {AppActions} from '../../redux-store';
 
-const SearchProduct = ({}) => {
+const SearchVisit = () => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
 
-  const [listProductNearly, setListProductNearly] = useMMKVString(
-    AppConstant.ListSearchProductNearly,
+  const [listVisitNearly, setListVisitNearly] = useMMKVString(
+    AppConstant.ListSearchVisitNearly,
   );
 
   const [searchValue, setSearch] = useState<string>('');
@@ -36,8 +36,8 @@ const SearchProduct = ({}) => {
           Tìm kiếm gần đây
         </Text>
         <View style={{marginTop: 16}}>
-          {listProductNearly &&
-            JSON.parse(listProductNearly).map((item: any, index: number) => {
+          {listVisitNearly &&
+            JSON.parse(listVisitNearly).map((item: any, index: number) => {
               return (
                 <View
                   key={index}
@@ -49,7 +49,7 @@ const SearchProduct = ({}) => {
                   }}>
                   <Text
                     onPress={() => {
-                      dispatch(AppActions.setSearchProductValue(item.label));
+                      dispatch(AppActions.setSearchVisitValue(item.label));
                       navigation.goBack();
                     }}
                     style={{
@@ -77,25 +77,25 @@ const SearchProduct = ({}) => {
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => {
     //TODO:save to redux
-    dispatch(AppActions.setSearchProductValue(String(e.nativeEvent.text)));
-    const newListNearly = listProductNearly && JSON.parse(listProductNearly);
+    dispatch(AppActions.setSearchVisitValue(String(e.nativeEvent.text)));
+    const newListNearly = listVisitNearly && JSON.parse(listVisitNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
-    setListProductNearly(JSON.stringify(newListNearly));
+    setListVisitNearly(JSON.stringify(newListNearly));
     navigation.goBack();
   };
 
   const handleItem = (item: any) => {
     const newData =
-      listProductNearly &&
-      JSON.parse(listProductNearly).filter(
+      listVisitNearly &&
+      JSON.parse(listVisitNearly).filter(
         (res: any) => res.label !== item.label,
       );
-    setListProductNearly(JSON.stringify(newData));
+    setListVisitNearly(JSON.stringify(newData));
   };
 
   useEffect(() => {
-    if (!listProductNearly) {
-      setListProductNearly(JSON.stringify([]));
+    if (!listVisitNearly) {
+      setListVisitNearly(JSON.stringify([]));
     }
   }, []);
 
@@ -123,7 +123,7 @@ const SearchProduct = ({}) => {
             width: '90%',
             marginLeft: 12,
           }}
-          placeholder={'Tìm kiếm sản phẩm'}
+          placeholder={'Tìm kiếm viếng thăm...'}
           placeholderTextColor={colors.text_disable}
           icon={ImageAssets.SearchIcon}
           value={searchValue}
@@ -137,4 +137,4 @@ const SearchProduct = ({}) => {
   );
 };
 
-export default SearchProduct;
+export default SearchVisit;

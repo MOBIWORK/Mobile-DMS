@@ -78,7 +78,7 @@ export type IProductInventory = {
   count: number;
 };
 
-export type VisitListItem = {
+export type VisitListItemType = {
   label: string;
   status: boolean;
   address: string | null;

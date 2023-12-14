@@ -25,6 +25,7 @@ export default {
   unit: 'Đơn vị tính',
   inventory: 'Tồn kho',
   details: 'Thông tin chi tiết',
+  product: 'Sản phẩm',
   productName: 'Tên sản phẩm',
   productCode: 'Mã sản phẩm',
   unitDefault: 'Đơn vị tính mặc định',

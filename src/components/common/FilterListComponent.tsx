@@ -41,20 +41,22 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
           />
         }
       />
-      <Searchbar
-        style={{
-          backgroundColor: colors.bg_neutral,
-          borderRadius: 10,
-          marginTop: 16,
-        }}
-        placeholder={searchPlaceholder}
-        placeholderTextColor={colors.text_disable}
-        icon={ImageAssets.SearchIcon}
-        value={searchValue}
-        onChangeText={onChangeSearch}
-        inputStyle={{color: colors.text_primary}}
-        onSubmitEditing={onSubmitEditing}
-      />
+      {searchValue && onChangeSearch && (
+        <Searchbar
+          style={{
+            backgroundColor: colors.bg_neutral,
+            borderRadius: 10,
+            marginTop: 16,
+          }}
+          placeholder={searchPlaceholder}
+          placeholderTextColor={colors.text_disable}
+          icon={ImageAssets.SearchIcon}
+          value={searchValue}
+          onChangeText={onChangeSearch}
+          inputStyle={{color: colors.text_primary}}
+          onSubmitEditing={onSubmitEditing}
+        />
+      )}
       <BottomSheetScrollView
         style={{flex: 1, marginTop: 16}}
         showsVerticalScrollIndicator={false}>
@@ -96,12 +98,12 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   );
 };
 interface FilterListComponentProps {
-  title: string;
-  searchPlaceholder: string;
-  data: IFilterType[];
+  title: string | undefined;
+  searchPlaceholder?: string;
+  data: IFilterType[] | [];
   handleItem: (item: IFilterType) => void;
-  searchValue: string;
-  onChangeSearch: (text: string) => void;
+  searchValue?: string;
+  onChangeSearch?: (text: string) => void;
   onClose: () => void;
   onSubmitEditing?: (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
@@ -111,5 +113,6 @@ export default FilterListComponent;
 
 export type IFilterType = {
   label: string;
+  value?: string | number;
   isSelected: boolean;
 };

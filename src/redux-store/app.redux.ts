@@ -11,6 +11,7 @@ export const {Types, Creators} = createActions({
   setShowErrorModalStatus: ['data'],
   setOrganizationBaseURL: ['data'],
   setSearchProductValue: ['data'],
+  setSearchVisitValue: ['data'],
 });
 
 /* ------------- Initial State ------------- */
@@ -24,6 +25,7 @@ export interface IAppRedux {
   isProcessing: boolean;
   showModal: boolean;
   searchProductValue: string;
+  searchVisitValue: string;
 }
 
 export const INITIAL_STATE: IAppRedux = {
@@ -31,6 +33,7 @@ export const INITIAL_STATE: IAppRedux = {
   isProcessing: false,
   showModal: true,
   searchProductValue: '',
+  searchVisitValue: '',
 };
 
 /* ------------- Selector ------------- */
@@ -41,6 +44,8 @@ export const Selector = {
   getShowModal: (state: IAppReduxState) => state.appRedux.showModal,
   getSearchProductValue: (state: IAppReduxState) =>
     state.appRedux.searchProductValue,
+  getSearchVisitValue: (state: IAppReduxState) =>
+    state.appRedux.searchVisitValue,
 };
 
 /* ------------- Reducers ------------- */
@@ -71,6 +76,11 @@ const setSearchProductValue = (
   searchProductValue: action.data,
 });
 
+const setSearchVisitValue = (state = INITIAL_STATE, action: KeyAbleProps) => ({
+  ...state,
+  searchVisitValue: action.data,
+});
+
 const reset = () => INITIAL_STATE;
 
 /* ------------- Hookup Reducers To Types ------------- */
@@ -81,6 +91,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.RESET_APP]: reset,
   [Types.SET_SHOW_ERROR_MODAL_STATUS]: setShowErrorModalStatus,
   [Types.SET_SEARCH_PRODUCT_VALUE]: setSearchProductValue,
+  [Types.SET_SEARCH_VISIT_VALUE]: setSearchVisitValue,
 });
 
 export default Creators;
