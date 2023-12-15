@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import React, {useCallback, useRef, useMemo} from 'react';
-import {FAB, TextInput} from 'react-native-paper';
+import { TextInput} from 'react-native-paper';
 import {ColorSchema, useNavigation, useTheme} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+
 import {AppConstant, ScreenConstant} from '../../const';
 import {Colors} from '../../assets';
 import MainLayout from '../../layouts/MainLayout';
@@ -27,9 +28,11 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
+  AppFAB
 } from '../../components/common';
 import ListFilter from './components/ListFilter';
 import { NavigationProp } from '../../navigation';
+
 
 export type IValueType = {
   customerType: string;
@@ -74,7 +77,7 @@ const Customer = () => {
 
   const renderBottomView = () => {
     return (
-      <MainLayout>
+      <MainLayout   >
         <AppHeader
           label={'Khách hàng'}
           onBack={() => bottomRef2.current && bottomRef2.current.close()}
@@ -89,7 +92,7 @@ const Customer = () => {
         />
         <View style={styles.containListFilter}>
           <AppInput
-            label={'Nhóm khách hàng'}
+            label={getLabel('groupCustomer')}
             value={valueFilter.customerGroupType}
             editable={false}
             styles={{marginBottom: 24}}
@@ -106,7 +109,7 @@ const Customer = () => {
             }
           />
           <AppInput
-            label={'Loại khách hàng'}
+            label={getLabel('customerType')}
             value={valueFilter.customerType}
             editable={false}
             styles={{marginBottom: 24}}
@@ -123,7 +126,7 @@ const Customer = () => {
             }
           />
           <AppInput
-            label={'Ngày sinh nhật'}
+            label={getLabel('customerBirthDay')}
             value={valueFilter.customerBirthday}
             editable={false}
             onPress={() => {
@@ -155,9 +158,9 @@ const Customer = () => {
 
   return (
     <>
-      <MainLayout>
+      <MainLayout style={styles.backgroundRoot}>
         <View style={styles.rootHeader}>
-          <Text style={styles.labelStyle}>Khách hàng</Text>
+          <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity
             onPress={() => console.log('on press search')}
             style={styles.iconSearch}>
@@ -174,7 +177,7 @@ const Customer = () => {
         </View>
 
         <Text style={styles.containCustomer}>
-          <Text style={styles.numberCustomer}>300</Text> Khách hàng
+          <Text style={styles.numberCustomer}>300</Text>{getLabel('customer')}
         </Text>
         <ListCard data={fakeData} />
       </MainLayout>
@@ -187,7 +190,7 @@ const Customer = () => {
         enablePanDownToClose={true}>
         <View>
           <View style={styles.tittleHeader}>
-            <Text style={styles.titleText}>Khoảng cách</Text>
+            <Text style={styles.titleText}>{getLabel('distance')}</Text>
           </View>
           {listFilter.map((item, index) => {
             return (
@@ -242,10 +245,11 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-      <FAB
+      <AppFAB
         icon="plus"
         style={styles.fab}
         color="white"
+        customIconSize={32}
         mode="flat"
         visible={show.firstModal || show.secondModal ? false : true}
         onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
@@ -403,5 +407,10 @@ const rootStyles = (theme: ColorSchema) =>
       bottom: 0,
       borderRadius: 30,
       backgroundColor: theme.colors.primary,
+      borderWidth:2,
+      borderColor:Colors.white
     } as ViewStyle,
+    backgroundRoot:{
+    backgroundColor:Colors.gray_200
+    } as ViewStyle
   });

@@ -11,7 +11,7 @@ import AvatarAccessory from './AvatarAccessory';
 import AppAvatar from './AppAvatar';
 import AppContainer from '../AppContainer';
 import FilterView from './FilterView';
-
+import AppFAB from './AppFAB';
 export {
   AppBottomSheet,
   AppDialog,
@@ -25,5 +25,6 @@ export {
   AvatarAccessory,
   AppAvatar,
   AppContainer,
+  AppFAB
   FilterView,
 };

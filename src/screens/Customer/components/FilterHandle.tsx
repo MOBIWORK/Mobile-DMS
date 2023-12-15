@@ -35,7 +35,7 @@ const FilterHandle = (props: Props) => {
           onPress={() => props?.onPress()}>
           {/* <Text style={styles.titleText}>Khoảng cách: </Text> */}
           <AppImage source="IconFilter" style={styles.iconStyle} />
-          <Text style={styles.contentText}>Bộ lọc khác</Text>
+          <Text style={styles.contentSecondText}>Bộ lọc khác</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -47,12 +47,13 @@ export default FilterHandle;
 const styles = StyleSheet.create({
   root: {
     marginRight: 8,
+   
   } as ViewStyle,
   containText: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor:Colors.gray_200,
     borderWidth: 1,
     padding: 6,
     borderRadius: 16,
@@ -71,6 +72,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     fontWeight: '500',
+  } as TextStyle,
+  contentSecondText: {
+    color: '#000',
+    fontSize: 14,
+    lineHeight: 21,
+    fontWeight: '400',
   } as TextStyle,
   iconStyle: {
     width: 16,

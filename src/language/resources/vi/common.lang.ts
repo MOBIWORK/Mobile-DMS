@@ -42,5 +42,18 @@ export default {
   home:"Trang chủ",
   visit:"Viếng thăm",
   customer:"Khách hàng",
-  lookingMore:'Xem thêm'
+  lookingMore:'Xem thêm',
+  groupCustomer:'Nhóm khách hàng',
+  customerType:'Loại khách hàng',
+  customerBirthDay:'Ngày sinh nhật',
+  debtLimit:'Hạn mức công nợ',
+  gland:'Tuyến',
+  distance:'Khoảng cách',
+  description:'Mô tả',
+  websiteUrl:'Địa chỉ web',
+  area:'Khu vực',
+  address:'Địa chỉ',
+  contactName:'Người liên hệ',
+  location:'Vị trí',
+  dob:'Sinh nhật'
 };
