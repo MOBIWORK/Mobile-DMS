@@ -52,7 +52,7 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
             justifyContent: 'space-evenly',
           }}>
           <View
-            style={[styles.imgContainer, {backgroundColor: colors.bg_default}]}>
+            style={[styles.imgContainer as any, {backgroundColor: colors.bg_default}]}>
             <Image
               source={ImageAssets.ImgAppWatch}
               style={styles.img}
@@ -60,7 +60,7 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
             />
           </View>
           <View
-            style={[styles.imgContainer, {backgroundColor: colors.bg_default}]}>
+            style={[styles.imgContainer as any, {backgroundColor: colors.bg_default}]}>
             <Image
               source={ImageAssets.ImgAppWatch}
               style={styles.img}
@@ -68,7 +68,7 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
             />
           </View>
           <View
-            style={[styles.imgContainer, {backgroundColor: colors.bg_default}]}>
+            style={[styles.imgContainer as any, {backgroundColor: colors.bg_default}]}>
             <Image
               source={ImageAssets.ImgAppWatch}
               style={styles.img}
