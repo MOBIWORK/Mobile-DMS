@@ -59,13 +59,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        // @ts-ignore
-        // initialRouteName={
-        //   loginFirst && organiztion?.company_name
-        //     ? ScreenConstant.SIGN_IN
-        //     : ScreenConstant.SELECT_ORGANIZATION
-        // }
-        initialRouteName={ScreenConstant.ORDER_SCREEN}
+        initialRouteName={
+          loginFirst && organiztion?.company_name
+            ? ScreenConstant.SIGN_IN
+            : ScreenConstant.CUSTOMER
+        }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -139,6 +137,10 @@ export type RootStackParamList = {
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: undefined;
   [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.ORDER_SCREEN]: undefined;
+  [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
+  [ScreenConstant.LIST_VISIT]: undefined;
+  [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
