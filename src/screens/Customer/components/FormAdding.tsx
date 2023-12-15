@@ -7,19 +7,30 @@ import {
   ViewStyle,
   TouchableOpacity,
   ImageStyle,
+  Platform,
 } from 'react-native';
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import debounce from 'debounce';
-import {ColorSchema, useTheme} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
+import MapView, {
+  Marker,
+  PROVIDER_DEFAULT,
+  PROVIDER_GOOGLE,
+} from 'react-native-maps';
+import Geolocation, {
+  GeolocationResponse,
+} from '@react-native-community/geolocation';
 import {IValueType} from '../Customer';
 import {AppConstant} from '../../../const';
 import {Colors} from '../../../assets';
-import {AppInput} from '../../../components/common';
+import {AppFAB, AppIcons, AppInput} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
-import {IDataCustomer} from '../../../models/types';
-import { useTranslation } from 'react-i18next';
+import {IDataCustomer, RootObjectGeoDecoding} from '../../../models/types';
+import {AppTheme, useTheme} from '../../../layouts/theme';
+import axios from 'axios';
+import {apiDecodeMap} from '../../../api/apiMap';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -35,8 +46,70 @@ const FormAdding = (props: Props) => {
     props;
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const {t:translate} = useTranslation()
-  //   const filterRef = useRef<BottomSheetMethods>(null);
+  const {t: translate} = useTranslation();
+  const ref = useRef<MapView>(null);
+  const [location, setLocation] = useState<GeolocationResponse>();
+  const [dataLocation, setDataLocation] = useState<string>('');
+
+  const onPressButtonGetLocation = () => {
+    Geolocation.getCurrentPosition(log => {
+      setLocation(log);
+      ref.current?.animateToRegion(
+        {
+          latitude: log?.coords.latitude!,
+          longitude: log?.coords.longitude!,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.04,
+        },
+        1000,
+      );
+    });
+    console.log('aaa')
+  };
+
+  const fetchData = async () => {
+    try {
+      const geoData: RootObjectGeoDecoding = await apiDecodeMap(
+        location?.coords.latitude,
+        location?.coords.longitude,
+      );
+  
+      if (geoData.status === 'OK') {
+        setDataLocation(geoData.plus_code.compound_code);
+      }
+    } catch (error) {
+      console.error('Error fetching geolocation data:', error);
+    }
+  };
+  
+  const animateMapToCurrentLocation = () => {
+    Geolocation.getCurrentPosition(
+      (info) => {
+        setLocation(info)
+        ref.current?.animateToRegion(
+          {
+            latitude: info?.coords.latitude!,
+            longitude: info?.coords.longitude!,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.04,
+          },
+          1000,
+        );
+      },
+      (error) => {
+        console.error('Error getting current position:', error);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+    );
+  };
+  
+  useEffect(() => {
+    fetchData();
+    animateMapToCurrentLocation();
+  }, []); 
+  
+
+  
   return (
     <ScrollView
       style={styles.root}
@@ -162,9 +235,11 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         hiddenRightIcon={true}
-        onChangeValue={text => debounce(() =>{
-          setData(prev => ({...prev, debtLimit: text}));
-        },1500)}
+        onChangeValue={text =>
+          debounce(() => {
+            setData(prev => ({...prev, debtLimit: text}));
+          }, 1500)
+        }
       />
       <AppInput
         label={translate('description')}
@@ -174,9 +249,11 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         hiddenRightIcon={true}
-        onChangeValue={text =>debounce(() => {
-          setData(prev => ({...prev, description: text}));
-        },1500)}
+        onChangeValue={text =>
+          debounce(() => {
+            setData(prev => ({...prev, description: text}));
+          }, 1500)
+        }
       />
       <AppInput
         label={translate('websiteUrl')}
@@ -186,17 +263,108 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         hiddenRightIcon={true}
-        onChangeValue={text => debounce(() => {
-            setData(prev => ({...prev, websiteURL: text}))
-        },1500)}
+        onChangeValue={text =>
+          debounce(() => {
+            setData(prev => ({...prev, websiteURL: text}));
+          }, 1500)
+        }
       />
+      <View>
+        <Text style={styles.titleText}>Địa chỉ</Text>
+        <View style={styles.contentView}>
+          <TouchableOpacity style={styles.directionViewButton}>
+            <View style={styles.containIcon}>
+              <AppIcons
+                iconType={AppConstant.ICON_TYPE.Feather}
+                name={'plus'}
+                size={20}
+                color={theme.colors.action}
+              />
+            </View>
+            <Text style={styles.textButton}>Thêm địa chỉ</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View>
+        <Text style={styles.titleText}>Người liên hệ</Text>
+        <View style={styles.contentView}>
+          <TouchableOpacity style={styles.directionViewButton}>
+            <View style={styles.containIcon}>
+              <AppIcons
+                iconType={AppConstant.ICON_TYPE.Feather}
+                name={'plus'}
+                size={20}
+                color={theme.colors.action}
+              />
+            </View>
+            <Text style={styles.textButton}>Thêm người liên hệ</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View>
+        <Text style={styles.titleText}>Vị trí</Text>
+        <View style={styles.contentView}>
+          <MapView
+            ref={ref}
+            initialRegion={{
+              latitude: 21.056871,
+              longitude: 105.777695,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.04,
+            }}
+            style={styles.mapView}
+            provider={Platform.OS === 'ios' ? PROVIDER_GOOGLE : PROVIDER_GOOGLE}
+            showsUserLocation>
+            <View style={styles.locationView}>
+              <View style={{paddingVertical:8}}>
+              <AppIcons
+                iconType={AppConstant.ICON_TYPE.IonIcon}
+                name="location"
+                color={theme.colors.text_disable}
+                
+                size={24}
+              />
+              </View>
+              
+              <Text numberOfLines={1} style={styles.locationText}>
+                {dataLocation === '' ? 'Loading' : dataLocation}
+              </Text>
+            </View>
+
+            <Marker
+              draggable
+              coordinate={{
+                latitude: location?.coords.latitude!,
+                longitude: location?.coords.longitude!,
+              }}
+            />
+            <View style={styles.location2View}>
+            <AppIcons
+                iconType={AppConstant.ICON_TYPE.IonIcon}
+                name="map-outline"
+                color={theme.colors.white}
+                size={20}
+              />
+              <Text style={styles.currentLocationText}>Vị trí hiện tại</Text>
+            </View>
+          </MapView>
+          <AppFAB
+            icon="google-maps"
+            visible={true}
+            style={styles.fab}
+            mode={'flat'}
+            onPress={onPressButtonGetLocation}
+            customIconSize={24}
+          />
+        </View>
+      </View>
     </ScrollView>
   );
 };
 
 export default FormAdding;
 
-const rootStyles = (theme: ColorSchema) =>
+const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     contentStyle: {
       color: Colors.gray_500,
@@ -204,16 +372,14 @@ const rootStyles = (theme: ColorSchema) =>
       fontSize: 16,
     } as TextStyle,
     root: {
-      // flex:1,
       backgroundColor: theme.colors.bg_default,
       marginVertical: 10,
-      // backgroundColor:'red'
     } as ViewStyle,
     titleText: {
       fontSize: 14,
       fontWeight: '500',
       lineHeight: 21,
-      color: Colors.gray_600,
+      color: theme.colors.text_secondary,
     } as TextStyle,
     containImageCamera: {
       justifyContent: 'center',
@@ -233,4 +399,96 @@ const rootStyles = (theme: ColorSchema) =>
       width: 24,
       height: 24,
     } as ImageStyle,
+    contentView: {
+      marginVertical: 16,
+    } as ViewStyle,
+    directionViewButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.bg_neutral,
+      height: 48,
+      borderRadius: 16,
+    } as ViewStyle,
+    textButton: {
+      marginLeft: 8,
+      color: theme.colors.action,
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '500',
+    } as TextStyle,
+    containIcon: {
+      width: 24,
+      height: 24,
+      borderWidth: 1,
+      borderColor: theme.colors.action,
+      borderRadius: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+    } as ViewStyle,
+    mapView: {
+      width: '100%',
+      height: 381,
+    } as ViewStyle,
+    fab: {
+      position: 'absolute',
+      margin: 16,
+      right: 0,
+      bottom: 0,
+      borderRadius: 30,
+      backgroundColor: theme.colors.bg_default,
+      borderWidth: 2,
+      borderColor: Colors.white,
+    } as ViewStyle,
+    locationView: {
+      backgroundColor: theme.colors.white,
+      height: 48,
+      position: 'absolute',
+      top: 10,
+      width: '90%',
+      right: 0,
+      left: 15,
+      bottom: 0,
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      borderColor: theme.colors.border,
+      borderWidth: 1,
+      flexDirection: 'row',
+      // paddingVertical:16,
+      
+    } as ViewStyle,
+    location2View: {
+      backgroundColor: theme.colors.action,
+      height: 31,
+      position: 'absolute',
+      top: 70,
+      width: 129,
+      right: 20,
+      // left:0,
+      // bottom:0,
+      borderRadius: 8,
+      justifyContent: 'center',
+      flexDirection:'row',
+      alignItems: 'center',
+      // alignSelf:'center'
+    } as ViewStyle,
+    locationText: {
+      fontSize: 16,
+      fontWeight: '400',
+      color: theme.colors.text_primary,
+      lineHeight: 24,
+      marginLeft: 8,
+      maxWidth:'80%',
+      textAlign:'center',
+      paddingVertical:8
+    } as TextStyle,
+    currentLocationText:{
+      fontSize:14,
+      fontWeight:'400',
+      color:theme.colors.white,
+      marginLeft:8,
+      lineHeight:21
+    } as TextStyle
   });
