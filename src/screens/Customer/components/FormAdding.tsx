@@ -99,7 +99,7 @@ const FormAdding = (props: Props) => {
         }
       />
       <AppInput
-        label={'Khu Vực'}
+        label={translate('area')}
         value={valueFilter.customerGroupType}
         editable={false}
         isRequire={true}

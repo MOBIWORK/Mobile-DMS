@@ -1,3 +1,4 @@
+import { ThemeType } from '../layouts/theme';
 import {KeyAbleProps} from '../models/types';
 import {IAppReduxState} from './index';
 import {createReducer, createActions} from 'reduxsauce';
@@ -26,6 +27,7 @@ export interface IAppRedux {
   showModal: boolean;
   searchProductValue: string;
   searchVisitValue: string;
+  theme:ThemeType
 }
 
 export const INITIAL_STATE: IAppRedux = {
@@ -34,6 +36,7 @@ export const INITIAL_STATE: IAppRedux = {
   showModal: true,
   searchProductValue: '',
   searchVisitValue: '',
+  theme:'default'
 };
 
 /* ------------- Selector ------------- */
@@ -46,6 +49,7 @@ export const Selector = {
     state.appRedux.searchProductValue,
   getSearchVisitValue: (state: IAppReduxState) =>
     state.appRedux.searchVisitValue,
+  getTheme:(state: IAppReduxState) => state.appRedux.theme,
 };
 
 /* ------------- Reducers ------------- */
