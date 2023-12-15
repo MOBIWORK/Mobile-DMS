@@ -65,7 +65,7 @@ const rootStyles =(theme:ColorSchema) => StyleSheet.create({
     justifyContent:'space-around',
     ...Platform.select({
       android: {
-        elevation: 10,
+        elevation: 2,
         borderTopWidth: 2,
         shadowColor: Colors.darker,
       },
@@ -73,11 +73,11 @@ const rootStyles =(theme:ColorSchema) => StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: {
           width: 0,
-          height: 0,
+          height: 1,
         },
-        elevation: 8,
-        shadowOpacity: 0.225,
-        shadowRadius: 5.56,
+        shadowOpacity: 0,
+        shadowRadius: 1.41,
+        elevation: 0,
       },
     }),
   } as ViewStyle,
@@ -94,7 +94,8 @@ const rootStyles =(theme:ColorSchema) => StyleSheet.create({
   contentText: {
     fontSize: 14,
     lineHeight: 21,
-    fontWeight: '500',
+    fontWeight: '400',
+    color:Colors.darker
   } as TextStyle,
   containContentView:{
     marginHorizontal:16,

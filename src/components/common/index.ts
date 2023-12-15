@@ -10,7 +10,7 @@ import AuthenHeader from './AuthenHeader';
 import AvatarAccessory from './AvatarAccessory';
 import FilterView from './FilterView';
 import AppContainer from '../AppContainer';
-
+import AppFAB from './AppFAB';
 export {
   AppBottomSheet,
   AppDialog,
@@ -24,4 +24,5 @@ export {
   AvatarAccessory,
   FilterView,
   AppContainer,
+  AppFAB
 };

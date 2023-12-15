@@ -42,5 +42,18 @@ export default {
   home:"Home",
   visit:"Visit",
   lookingMore:"More",
-  customer:"Customer"
+  customer:"Customer",
+  groupCustomer:'Group of Customer',
+  customerType:'Type of Customer',
+  customerBirthDay:'BirthDay',
+  debtLimit:'Debt Limit',
+  gland:'Gland',
+  distance:'Distance',
+  description:'Description',
+  websiteUrl:'Website URL',
+  area:'Area',
+  address:'Address',
+  contactName:'Contact',
+  location:'Location',
+  
 };
