@@ -18,8 +18,6 @@ import {
   OrderDetail,
   OrderList,
   ListVisit,
-  OrderDetail,
-  OrderList,
   ProductDetail,
   SearchProduct,
   SearchVisit,
