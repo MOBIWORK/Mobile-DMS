@@ -38,10 +38,4 @@ export {
   BarCodeIcon,
   ImgFile,
   HomeFillIcon,
-  Usercheckin,
-  MapIcon,
-  UserGroupIcon,
-  MapPinIcon,
-  PhoneIcon,
-  SendIcon,
-};
+} ;
