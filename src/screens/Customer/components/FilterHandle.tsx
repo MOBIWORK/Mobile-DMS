@@ -54,7 +54,7 @@ const rootStyles =(theme:AppTheme) =>StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:theme.colors.bg_neutral ,
+    backgroundColor:Colors.gray_200,
     borderWidth: 1,
     padding: 6,
     borderRadius: 16,
