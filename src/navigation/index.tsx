@@ -61,13 +61,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        // @ts-ignore
-        // initialRouteName={
-        //   loginFirst && organiztion?.company_name
-        //     ? ScreenConstant.SIGN_IN
-        //     : ScreenConstant.SELECT_ORGANIZATION
-        // }
-        initialRouteName={ScreenConstant.ORDER_SCREEN}
+        initialRouteName={
+          loginFirst && organiztion?.company_name
+            ? ScreenConstant.SIGN_IN
+            : ScreenConstant.CUSTOMER
+        }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
