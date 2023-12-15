@@ -16,7 +16,6 @@ import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
 import MapView, {
   Marker,
-  PROVIDER_DEFAULT,
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
 import Geolocation, {
@@ -29,7 +28,6 @@ import {AppFAB, AppIcons, AppInput} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
 import {IDataCustomer, RootObjectGeoDecoding} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import axios from 'axios';
 import {apiDecodeMap} from '../../../api/apiMap';
 
 type Props = {
