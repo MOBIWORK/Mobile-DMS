@@ -4,6 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
 import {Customer, ForgotPassword, Home, Visits} from '../screens';
 import BottomTabDisplay from './BottomTabDisplay';
+import HomeScreen from '../screens/Home';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,7 +18,7 @@ const MainTab = () => {
     >
       <Tab.Screen
         name={ScreenConstant.HOME_SCREEN}
-        component={Home}
+        component={HomeScreen}
       />
        <Tab.Screen
         name={ScreenConstant.VISIT}

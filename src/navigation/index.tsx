@@ -31,6 +31,7 @@ import MainTab from './MainTab';
 import { MyAppTheme } from '../layouts/theme';
 
 import {  IAppReduxState } from '../redux-store';
+import HomeScreen from '../screens/Home';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
@@ -80,7 +81,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
+        <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={HomeScreen} />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
