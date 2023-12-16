@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, TextStyle } from 'react-native'
 import { AppAvatar, AppIcons } from '../../components/common'
 import { useTheme } from '@react-navigation/native'
 import { IconButton } from 'react-native-paper';
@@ -10,6 +10,7 @@ import ItemuWidget from '../../components/Widget/ItemWidget';
 import ProgressCircle from 'react-native-progress-circle'
 import BarChartStatistical from './BarChart';
 import ItemNotification from '../../components/Notification/ItemNotification';
+import { MainLayout } from '../../layouts';
 
 const HomeScreen = () => {
     const { colors } = useTheme();
@@ -198,7 +199,7 @@ const HomeScreen = () => {
 
     return (
         
-        <View style={{ flex: 1, backgroundColor: colors.bg_neutral }}>
+        <MainLayout style={{ flex: 1, backgroundColor: colors.bg_neutral }}>
             <View style={[styles.shadow, { backgroundColor: colors.bg_default, flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", padding: 16 }]}>
                 <View style={{ flexDirection: "row" }}>
                     <AppAvatar name='Long' size={48} />
@@ -334,7 +335,7 @@ const HomeScreen = () => {
                 </View>
             </ScrollView>
 
-        </View>
+        </MainLayout>
     )
 }
 
@@ -345,7 +346,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "500"
-    },
+    } as TextStyle, 
     shadow: {
         shadowColor: "#919EAB",
         shadowOffset: {
