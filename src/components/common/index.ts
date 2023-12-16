@@ -9,9 +9,13 @@ import AppHeader from './AppHeader';
 import AuthenHeader from './AuthenHeader';
 import AvatarAccessory from './AvatarAccessory';
 import AppAvatar from './AppAvatar';
-import AppContainer from '../AppContainer';
-import FilterView from './FilterView';
+import {AppText} from './AppText'
 import AppFAB from './AppFAB';
+import AppContainer from '../AppContainer';
+
+
+
+
 export {
   AppBottomSheet,
   AppDialog,
@@ -26,5 +30,5 @@ export {
   AppAvatar,
   AppContainer,
   AppFAB,
-  FilterView,
+  AppText
 };
