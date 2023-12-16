@@ -13,6 +13,7 @@ import AppContainer from '../AppContainer';
 import AppFAB from './AppFAB';
 import AppAvatar from './AppAvatar';
 import {AppText} from './AppText'
+import { SvgIcon } from './AppSvgIcon';
 
 export {
   AppBottomSheet,
@@ -29,5 +30,6 @@ export {
   AppContainer,
   AppFAB,
   AppAvatar,
-  AppText
+  AppText,
+  SvgIcon
 };

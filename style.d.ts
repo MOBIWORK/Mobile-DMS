@@ -13,3 +13,4 @@ declare module 'react-native' {
     ): T & S;
   }
 }
+
