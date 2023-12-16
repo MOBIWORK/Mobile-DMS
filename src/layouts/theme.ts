@@ -1,5 +1,6 @@
 import {Theme, useTheme as useThemeRN} from '@react-navigation/native';
 import {ColorDefault,ColorDark} from './ColorTheme'
+
 type ColorDefault = typeof ColorDefault;
 type ColorDark = typeof ColorDark;
 
