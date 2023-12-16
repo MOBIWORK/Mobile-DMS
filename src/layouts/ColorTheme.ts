@@ -25,7 +25,8 @@ export const ColorDefault = {
   white:'white',
   blue700:'#1976D2',
   green01:'#22C55E14',
-  yellow_100:'#FFAB0014'
+  yellow_100:'#FFAB0014',
+  main :"rgba(0, 167, 111, 1)"
 };
 export const ColorDark = {
   primary: '#881111',
@@ -52,7 +53,8 @@ export const ColorDark = {
   white:'white',
   blue700:'#1976D2',
   green01:'#22C55E14',
-  yellow_100:'#FFAB0014'
+  yellow_100:'#FFAB0014',
+  main :"rgba(0, 167, 111, 1)"
   
   
 };

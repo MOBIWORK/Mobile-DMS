@@ -15,11 +15,7 @@ import moment from 'moment';
 import {IValueType} from './Customer';
 
 import {MainLayout} from '../../layouts';
-import {
-  AppBottomSheet,
-  AppHeader,
-  AppIcons,
-} from '../../components/common';
+import {AppBottomSheet, AppHeader, AppIcons} from '../../components/common';
 import FormAdding from './components/FormAdding';
 import ListFilter from './components/ListFilter';
 import {Colors} from '../../assets';
@@ -62,7 +58,16 @@ const AddingNewCustomer = () => {
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const snapPoint = useMemo(() => ['40%'], []);
+  const snapPointAdding = useMemo(
+    () =>
+      typeFilter === AppConstant.CustomerFilterType.dia_chi
+        ? ['100%']
+        : ['40%'],
+    [],
+  );
+
   const filterRef = useRef<BottomSheetMethods>(null);
+  const addingAddress = useRef<BottomSheetMethods>(null);
 
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);
@@ -72,13 +77,9 @@ const AddingNewCustomer = () => {
     params => {
       setOpenDate(false);
       setDate(params.date);
-      
     },
     [setOpenDate, setDate],
   );
-
-  
-
 
   return (
     <MainLayout>
@@ -102,6 +103,7 @@ const AddingNewCustomer = () => {
           valueDate={moment(date).format('DD/MM/YYYY')}
           setOpen={setOpenDate}
           setData={setListData}
+          addingBottomRef={addingAddress}
         />
       </View>
       <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
@@ -121,6 +123,10 @@ const AddingNewCustomer = () => {
         date={date}
         onConfirm={onConfirmSingle}
       />
+      <AppBottomSheet
+        bottomSheetRef={addingAddress}
+        snapPointsCustom={snapPointAdding}></AppBottomSheet>
+
       <TouchableOpacity style={styles.buttonAddingNew}>
         <Text style={styles.textButtonStyle}>Thêm mới</Text>
       </TouchableOpacity>
@@ -142,16 +148,15 @@ const rootStyles = (theme: ColorSchema) =>
       backgroundColor: theme.colors.primary,
       borderRadius: 20,
       alignItems: 'center',
-      marginBottom:40,
+      marginBottom: 40,
       height: 40,
       // marginBottom:40,
       justifyContent: 'center',
     } as ViewStyle,
-    textButtonStyle:{
-      color:Colors.white,
-      fontSize:14,
-      fontWeight:'700',
-      lineHeight:24
-
-    } as TextStyle
+    textButtonStyle: {
+      color: Colors.white,
+      fontSize: 14,
+      fontWeight: '700',
+      lineHeight: 24,
+    } as TextStyle,
   });

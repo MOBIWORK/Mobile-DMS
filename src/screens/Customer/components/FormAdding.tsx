@@ -14,10 +14,7 @@ import debounce from 'debounce';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
-import MapView, {
-  Marker,
-  PROVIDER_GOOGLE,
-} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
@@ -37,11 +34,19 @@ type Props = {
   setData: React.Dispatch<React.SetStateAction<IDataCustomer>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   valueDate: Date | any;
+  addingBottomRef: React.RefObject<BottomSheetMethods>;
 };
 
 const FormAdding = (props: Props) => {
-  const {filterRef, setTypeFilter, valueFilter, setData, setOpen, valueDate} =
-    props;
+  const {
+    filterRef,
+    setTypeFilter,
+    valueFilter,
+    setData,
+    setOpen,
+    valueDate,
+    addingBottomRef,
+  } = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: translate} = useTranslation();
@@ -62,7 +67,7 @@ const FormAdding = (props: Props) => {
         1000,
       );
     });
-    console.log('aaa')
+    console.log('aaa');
   };
 
   const fetchData = async () => {
@@ -71,7 +76,7 @@ const FormAdding = (props: Props) => {
         location?.coords.latitude,
         location?.coords.longitude,
       );
-  
+
       if (geoData.status === 'OK') {
         setDataLocation(geoData.plus_code.compound_code);
       }
@@ -79,11 +84,11 @@ const FormAdding = (props: Props) => {
       console.error('Error fetching geolocation data:', error);
     }
   };
-  
+
   const animateMapToCurrentLocation = () => {
     Geolocation.getCurrentPosition(
-      (info) => {
-        setLocation(info)
+      info => {
+        setLocation(info);
         ref.current?.animateToRegion(
           {
             latitude: info?.coords.latitude!,
@@ -94,20 +99,18 @@ const FormAdding = (props: Props) => {
           1000,
         );
       },
-      (error) => {
+      error => {
         console.error('Error getting current position:', error);
       },
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
   };
-  
+
   useEffect(() => {
     fetchData();
     animateMapToCurrentLocation();
-  }, []); 
-  
+  }, []);
 
-  
   return (
     <ScrollView
       style={styles.root}
@@ -270,7 +273,12 @@ const FormAdding = (props: Props) => {
       <View>
         <Text style={styles.titleText}>Địa chỉ</Text>
         <View style={styles.contentView}>
-          <TouchableOpacity style={styles.directionViewButton}>
+          <TouchableOpacity
+            style={styles.directionViewButton}
+            onPress={() => {
+              addingBottomRef.current?.snapToIndex(0);
+              setTypeFilter(AppConstant.CustomerFilterType.dia_chi);
+            }}>
             <View style={styles.containIcon}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.Feather}
@@ -286,7 +294,12 @@ const FormAdding = (props: Props) => {
       <View>
         <Text style={styles.titleText}>Người liên hệ</Text>
         <View style={styles.contentView}>
-          <TouchableOpacity style={styles.directionViewButton}>
+          <TouchableOpacity
+            style={styles.directionViewButton}
+            onPress={() => {
+              addingBottomRef.current?.snapToIndex(0);
+              setTypeFilter(AppConstant.CustomerFilterType.nguoi_lien_he);
+            }}>
             <View style={styles.containIcon}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.Feather}
@@ -314,16 +327,15 @@ const FormAdding = (props: Props) => {
             provider={Platform.OS === 'ios' ? PROVIDER_GOOGLE : PROVIDER_GOOGLE}
             showsUserLocation>
             <View style={styles.locationView}>
-              <View style={{paddingVertical:8}}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name="location"
-                color={theme.colors.text_disable}
-                
-                size={24}
-              />
+              <View style={{paddingVertical: 8}}>
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.IonIcon}
+                  name="location"
+                  color={theme.colors.text_disable}
+                  size={24}
+                />
               </View>
-              
+
               <Text numberOfLines={1} style={styles.locationText}>
                 {dataLocation === '' ? 'Loading' : dataLocation}
               </Text>
@@ -337,7 +349,7 @@ const FormAdding = (props: Props) => {
               }}
             />
             <View style={styles.location2View}>
-            <AppIcons
+              <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name="map-outline"
                 color={theme.colors.white}
@@ -455,7 +467,6 @@ const rootStyles = (theme: AppTheme) =>
       borderWidth: 1,
       flexDirection: 'row',
       // paddingVertical:16,
-      
     } as ViewStyle,
     location2View: {
       backgroundColor: theme.colors.action,
@@ -468,7 +479,7 @@ const rootStyles = (theme: AppTheme) =>
       // bottom:0,
       borderRadius: 8,
       justifyContent: 'center',
-      flexDirection:'row',
+      flexDirection: 'row',
       alignItems: 'center',
       // alignSelf:'center'
     } as ViewStyle,
@@ -478,15 +489,15 @@ const rootStyles = (theme: AppTheme) =>
       color: theme.colors.text_primary,
       lineHeight: 24,
       marginLeft: 8,
-      maxWidth:'80%',
-      textAlign:'center',
-      paddingVertical:8
+      maxWidth: '80%',
+      textAlign: 'center',
+      paddingVertical: 8,
     } as TextStyle,
-    currentLocationText:{
-      fontSize:14,
-      fontWeight:'400',
-      color:theme.colors.white,
-      marginLeft:8,
-      lineHeight:21
-    } as TextStyle
+    currentLocationText: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: theme.colors.white,
+      marginLeft: 8,
+      lineHeight: 21,
+    } as TextStyle,
   });
