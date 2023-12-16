@@ -23,7 +23,9 @@ export const ColorDefault = {
   notification:'#C4161C',
   black:'black',
   white:'white',
-  blue700:'#1976D2'
+  blue700:'#1976D2',
+  green01:'#22C55E14',
+  yellow_100:'#FFAB0014'
 };
 export const ColorDark = {
   primary: '#881111',
@@ -48,6 +50,9 @@ export const ColorDark = {
   notification:'#C4161C',
   black:'black',
   white:'white',
-  blue700:'#1976D2'
+  blue700:'#1976D2',
+  green01:'#22C55E14',
+  yellow_100:'#FFAB0014'
+  
   
 };

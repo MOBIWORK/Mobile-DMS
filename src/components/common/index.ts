@@ -12,7 +12,7 @@ import FilterView from './FilterView';
 import AppContainer from '../AppContainer';
 import AppFAB from './AppFAB';
 import AppAvatar from './AppAvatar';
-
+import {AppText} from './AppText'
 
 export {
   AppBottomSheet,
@@ -28,5 +28,6 @@ export {
   FilterView,
   AppContainer,
   AppFAB,
-  AppAvatar
+  AppAvatar,
+  AppText
 };
