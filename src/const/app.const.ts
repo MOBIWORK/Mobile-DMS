@@ -63,6 +63,8 @@ export enum CustomerFilterType  {
     nhom_khach_hang = 'nhom_khach_hang',
     loai_khach_hang ='loai_khach_hang',
     ngay_sinh_nhat ='ngay_sinh_nhat',
+    dia_chi = 'dia_chi',
+    nguoi_lien_he = 'nguoi_lien_he'
 }
 
 export const VisitFilterType = {
