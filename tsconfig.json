@@ -44,7 +44,8 @@
   ],
   "include": [
     "src",
-    "style.d.ts"
+    "style.d.ts",
+    "declarations.d.ts"
   ],
   "files": [
     "placeholder.ts"
