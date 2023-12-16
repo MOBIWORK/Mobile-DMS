@@ -17,8 +17,6 @@ import {
   OrderDetail,
   OrderList,
   ListVisit,
-  OrderDetail,
-  OrderList,
   ProductDetail,
   SearchProduct,
   SearchVisit,
@@ -34,7 +32,6 @@ import { MyAppTheme } from '../layouts/theme';
 
 import {  IAppReduxState } from '../redux-store';
 import HomeScreen from '../screens/Home';
-import { StatusBar } from 'react-native';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({

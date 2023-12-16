@@ -5,8 +5,10 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
@@ -22,7 +24,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
       borderRadius: 16,
       backgroundColor: colors.bg_default,
       rowGap: 8,
-    },
+    } as ViewStyle,
     user: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -30,24 +32,24 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
       borderBottomWidth: 1,
       borderColor: colors.divider,
       paddingBottom: 16,
-    },
+    } as ViewStyle,
     userLeft: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
-    },
+    } as ViewStyle, 
     userTextLeft: {
       color: colors.text_primary,
       fontWeight: '500',
       fontSize: 16,
       marginLeft: 8,
-    },
+    } as TextStyle,
     content: {
       marginRight: 8,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
-    },
+    } as ViewStyle,
   });
 
   const statusItem = (status: boolean) => {
@@ -136,7 +138,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
               resizeMode={'cover'}
               tintColor={colors.action}
             />
-            <Text style={{color: colors.action}}>{item.distance}km</Text>
+            <Text style={{color: colors.action,textDecorationLine:'underline'}}>{item.distance}km</Text>
           </TouchableOpacity>
         </View>
         {handleClose && (
