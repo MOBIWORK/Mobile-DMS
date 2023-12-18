@@ -191,11 +191,7 @@ const OrderList = () => {
             borderColor: colors.border,
           }}>
           <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}>
+            style={[styles.itemRow as any]}>
             <AppIcons
               iconType={ICON_TYPE.IonIcon}
               name="barcode-outline"
@@ -213,11 +209,7 @@ const OrderList = () => {
             </Text>
           </View>
           <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}>
+            style={[styles.itemRow as any]}>
             <AppIcons
               iconType={ICON_TYPE.Feather}
               name="map-pin"
@@ -235,11 +227,7 @@ const OrderList = () => {
             </Text>
           </View>
           <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}>
+            style={[styles.itemRow as any]}>
             <AppIcons
               iconType={ICON_TYPE.Feather}
               name="clock"
@@ -257,11 +245,7 @@ const OrderList = () => {
             </Text>
           </View>
           <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}>
+            style={[styles.itemRow as any]}>
             <AppIcons
               iconType={ICON_TYPE.Feather}
               name="truck"
@@ -497,4 +481,9 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     fontWeight: '400',
   },
+  itemRow :{
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  }
 });

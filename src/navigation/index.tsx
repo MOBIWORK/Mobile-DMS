@@ -26,6 +26,8 @@ import {
   SelectOrganization,
   SignIn,
   SuccessChanged,
+  Inventory,
+  InventoryAddProduct,
   
 } from '../screens';
 import { MAIN_TAB } from '../const/screen.const';
@@ -64,11 +66,12 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={theme === 'light' ? AppLightTheme : AppDarkTheme}>
       <Stack.Navigator
-        initialRouteName={
-          loginFirst && organiztion?.company_name
-            ? ScreenConstant.SIGN_IN
-            : ScreenConstant.LIST_VISIT
-        }
+        // initialRouteName={
+        //   loginFirst && organiztion?.company_name
+        //     ? ScreenConstant.SIGN_IN
+        //     : ScreenConstant.LIST_VISIT
+        // }
+        initialRouteName={ScreenConstant.CHECKIN_INVENTORY}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -115,10 +118,12 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={OrderDetail}
         />
         <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_VISIT}
-          component={SearchVisit}
-        />
+
+        <Stack.Screen name={ScreenConstant.SEARCH_VISIT} component={SearchVisit}/>
+
+        <Stack.Screen name={ScreenConstant.CHECKIN_INVENTORY} component={Inventory}/>
+        <Stack.Screen name={ScreenConstant.INVENTORY_ADD_PRODUCT} component={InventoryAddProduct}/>
+
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -149,6 +154,8 @@ export type RootStackParamList = {
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
+  [ScreenConstant.CHECKIN_INVENTORY]:undefined
+  [ScreenConstant.INVENTORY_ADD_PRODUCT]:undefined
 };
 
 // Define prop type for useNavigation and useRoute

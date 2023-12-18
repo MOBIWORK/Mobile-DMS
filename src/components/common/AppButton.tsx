@@ -41,7 +41,7 @@ export default memo(AppButton);
 const styles = StyleSheet.create({
   label: {
     color: Colors.white,
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '700',
     lineHeight: 24,
   } as TextStyle,

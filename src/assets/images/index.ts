@@ -15,6 +15,11 @@ const ImgAppWatch = require('./imgAppleWatch.png');
 const BarCodeIcon = require('./barcode.png');
 const ImgFile = require('./imgFile.png');
 const HomeFillIcon = require('./home-fill.png');
+const MapIcon = require('./mapIcon.png');
+const UserGroupIcon = require('./user-group.png');
+const MapPinIcon = require('./map-pin.png');
+const PhoneIcon = require('./phone.png');
+const SendIcon = require('./send.png');
 const IconHome = require('./iconHome.png');
 const IconHomeActive = require('./iconHomeActive.png');
 const IconVisit = require('./iconVisit.png');
@@ -28,11 +33,9 @@ const IconAddress = require('./iconAddress.png');
 const IconPhone = require('./iconPhone.png');
 const IconType = require('./iconType.png');
 const IconFilter = require('./iconFilter.png')
-const IconCamera = require('./camera.png')const MapIcon = require('./mapIcon.png');
-const UserGroupIcon = require('./user-group.png');
-const MapPinIcon = require('./map-pin.png');
-const PhoneIcon = require('./phone.png');
-const SendIcon = require('./send.png');
+const IconCamera = require('./camera.png')
+const IconBill= require('./ic-solar_bill.png')
+
 
 export {
   VNFLag,
@@ -57,4 +60,19 @@ export {
   MapPinIcon,
   PhoneIcon,
   SendIcon,
+  IconHome,
+  IconHomeActive,
+  IconVisit,
+  IconVisitActive,
+  IconCustomer,
+  IconCustomerActive,
+  IconLookingMore,
+  IconLookingMoreActive,
+  IconSearch,
+  IconAddress,
+  IconPhone,
+  IconType,
+  IconFilter,
+  IconCamera,
+  IconBill
 };

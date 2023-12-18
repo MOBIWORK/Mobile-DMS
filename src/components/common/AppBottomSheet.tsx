@@ -14,6 +14,9 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   onClose,
   children,
   backgroundColor,
+  onChange,
+  ...otherProps
+
 }) => {
   const snapPoints = useMemo(() => ['20%'], []);
   const {colors} = useTheme();
