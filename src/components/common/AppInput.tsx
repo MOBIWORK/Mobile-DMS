@@ -2,7 +2,6 @@ import React, {FC, ReactNode, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 import {Text, TextInput} from 'react-native-paper';
 import {TextStyle, ViewStyle} from 'react-native';
-import { Colors } from '../../assets';
 const AppInput: FC<AppInputProps> = ({
   styles,
   label,
@@ -25,6 +24,7 @@ const AppInput: FC<AppInputProps> = ({
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
+    <>
     <TextInput
       onPressIn={onPress}
       contentStyle={{
@@ -80,9 +80,10 @@ const AppInput: FC<AppInputProps> = ({
       secureTextEntry={isPassword && !showPassword}
       clearTextOnFocus={isPassword}
     />
+    </>
   );
 };
-interface AppInputProps {
+interface AppInputPropsBase {
   label: string;
   value: string;
   onPress?: () => void;
@@ -98,5 +99,16 @@ interface AppInputProps {
   isRequire?:boolean
   labelStyle?:TextStyle;
   contentStyle?:TextStyle;
+  
 }
+type AppInputPropsEditable = {
+  editable?: true;
+} & AppInputPropsBase;
+
+type AppInputPropsNonEditable = {
+  editable?: false;
+  listData?: any; // Adjust the type accordingly
+  show?: boolean; // Adjust the type accordingly
+} & AppInputPropsBase;
+type AppInputProps = AppInputPropsEditable | AppInputPropsNonEditable;
 export default AppInput;

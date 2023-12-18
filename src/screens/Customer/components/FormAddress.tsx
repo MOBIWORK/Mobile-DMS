@@ -66,6 +66,9 @@ const FormAddress = (props: Props) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <AppInput
           label=""
+          onPress={() =>{}}
+          listData={[]}
+          show={false}
           value={addressValue.city}
           editable={false}
           styles={styles.marginInputView}
@@ -81,6 +84,9 @@ const FormAddress = (props: Props) => {
           label=""
           value={addressValue.district}
           editable={false}
+          onPress={() =>{}}
+          listData={[]}
+          show={false}
           styles={styles.marginInputView}
           rightIcon={
             <AppIcons
@@ -94,6 +100,9 @@ const FormAddress = (props: Props) => {
           label=""
           value={addressValue.ward}
           editable={false}
+          onPress={() =>{}}
+          listData={[]}
+          show={false}
           styles={styles.marginInputView}
           rightIcon={
             <AppIcons
