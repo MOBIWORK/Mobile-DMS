@@ -1,0 +1,301 @@
+import React, {FC} from 'react';
+import {ItemNoteVisitDetail, VisitListItemType} from '../../../models/types';
+import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {useTheme} from '@react-navigation/native';
+import {ImageAssets} from '../../../assets';
+import {AppButton} from '../../../components/common';
+import {CommonUtils} from '../../../utils';
+
+const Detail: FC<VisitItemProps> = ({item}) => {
+  const {colors} = useTheme();
+
+  const styles = StyleSheet.create({
+    viewContainer: {
+      marginVertical: 8,
+      padding: 16,
+      borderRadius: 16,
+      backgroundColor: colors.bg_default,
+      rowGap: 8,
+    },
+    user: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderColor: colors.divider,
+      paddingBottom: 16,
+    },
+    userLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    },
+    userTextLeft: {
+      color: colors.text_primary,
+      fontWeight: '500',
+      fontSize: 16,
+      marginLeft: 8,
+    },
+    content: {
+      marginRight: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    },
+    infoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    },
+    infoText: {
+      marginLeft: 8,
+      color: colors.text_primary,
+      fontSize: 16,
+      fontWeight: '500',
+    },
+  });
+
+  const statusItem = (status: boolean) => {
+    return (
+      <View
+        style={{
+          padding: 8,
+          borderRadius: 10,
+          backgroundColor: status
+            ? 'rgba(34, 197, 94, 0.08)'
+            : 'rgba(255, 171, 0, 0.08)',
+        }}>
+        <Text style={{color: status ? colors.success : colors.warning}}>
+          {status ? 'Đã viếng thăm' : 'Chưa viếng thăm'}
+        </Text>
+      </View>
+    );
+  };
+
+  const infoItem = (isLastOrder: boolean, label: string) => {
+    return (
+      <>
+        <View style={styles.infoContainer}>
+          <Image
+            source={
+              isLastOrder ? ImageAssets.BoxIcon : ImageAssets.MapPinUserIcon
+            }
+            style={{width: 24, height: 24}}
+            resizeMode={'contain'}
+            tintColor={isLastOrder ? colors.action : colors.main}
+          />
+          <Text style={styles.infoText}>
+            {isLastOrder ? 'Đơn hàng lần cuối' : 'Viếng thăm lần cuối'}
+          </Text>
+        </View>
+        <Text
+          style={{color: colors.text_secondary, fontSize: 16, marginLeft: 32}}>
+          {label}
+        </Text>
+      </>
+    );
+  };
+
+  const _renderCustomer = () => {
+    return (
+      <View style={[styles.viewContainer, {marginTop: 16}]}>
+        <View style={styles.user}>
+          <View style={styles.userLeft}>
+            <Image
+              source={ImageAssets.UserGroupIcon}
+              style={{width: 24, height: 24}}
+              resizeMode={'cover'}
+              tintColor={item.status ? colors.success : colors.warning}
+            />
+            <Text style={styles.userTextLeft}>{item.label}</Text>
+          </View>
+          {statusItem(item.status)}
+        </View>
+        <View style={styles.content}>
+          <Image
+            source={ImageAssets.UserCircle}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+            tintColor={colors.text_primary}
+          />
+          <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
+            {item.useName}
+          </Text>
+        </View>
+        <View style={styles.content}>
+          <Image
+            source={ImageAssets.MapPinIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+            tintColor={colors.text_primary}
+          />
+          <Text
+            style={{color: colors.text_primary, marginHorizontal: 8}}
+            numberOfLines={1}
+            ellipsizeMode={'tail'}>
+            {item.address}
+          </Text>
+        </View>
+        <View style={styles.content}>
+          <Image
+            source={ImageAssets.PhoneIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+            tintColor={colors.text_primary}
+          />
+          <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
+            {item.phone_number}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  const _renderInfo = () => {
+    return (
+      <View style={styles.viewContainer}>
+        {infoItem(true, 'Phương Huyền - 17/11/2023, 11:00')}
+        {infoItem(false, 'Phương Huyền - 17/11/2023, 11:00')}
+      </View>
+    );
+  };
+
+  const _renderNoteItem = (item: ItemNoteVisitDetail, index: number) => {
+    return (
+      <View
+        style={{
+          paddingVertical: 16,
+          borderBottomWidth: index !== NoteData.length - 1 ? 1 : 0,
+          borderColor: colors.border,
+        }}>
+        <Text
+          style={{color: colors.text_primary, fontSize: 16, fontWeight: '500'}}>
+          {item.noteType}
+        </Text>
+        <View style={[styles.infoContainer, {marginVertical: 4}]}>
+          <Image
+            source={ImageAssets.NoticeIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+          />
+          <Text style={{color: colors.text_secondary, marginLeft: 4}}>
+            {item.description}
+          </Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Image
+            source={ImageAssets.ClockIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+          />
+          <Text style={{color: colors.text_secondary, marginLeft: 4}}>
+            {item.time}, {item.date}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  const statisticalItem = (isRevenue: boolean, count: number) => {
+    return (
+      <View
+        style={{
+          width: '48%',
+          padding: 16,
+          backgroundColor: colors.bg_default,
+          borderRadius: 16,
+        }}>
+        <Image
+          source={isRevenue ? ImageAssets.Statistical : ImageAssets.OrderIcon}
+          style={{width: 40, height: 40}}
+          resizeMode={'contain'}
+        />
+        <Text style={{color: colors.text_secondary, marginVertical: 8}}>
+          {isRevenue ? 'Doanh thu trong tháng' : 'Số đơn trong tháng'}
+        </Text>
+        <Text
+          style={{color: colors.text_primary, fontSize: 16, fontWeight: '500'}}>
+          {CommonUtils.convertNumber(count)}
+        </Text>
+      </View>
+    );
+  };
+
+  const _renderStatistical = () => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        {statisticalItem(false, 15)}
+        {statisticalItem(true, 10000000)}
+      </View>
+    );
+  };
+
+  return (
+    <>
+      {item.status && _renderStatistical()}
+      {_renderCustomer()}
+      {_renderInfo()}
+      {!item.status ? (
+        <AppButton
+          style={{
+            backgroundColor: colors.action,
+            width: '30%',
+            marginTop: 16,
+            alignSelf: 'center',
+          }}
+          label={'Checkin'}
+          onPress={() => console.log('checkin')}
+        />
+      ) : (
+        <View style={{marginTop: 16}}>
+          <Text style={{color: colors.text_secondary, fontSize: 16}}>
+            Ghi chú
+          </Text>
+          <View style={[styles.viewContainer, {paddingVertical: 0}]}>
+            <FlatList
+              data={NoteData}
+              renderItem={({item, index}) => _renderNoteItem(item, index)}
+            />
+          </View>
+        </View>
+      )}
+    </>
+  );
+};
+interface VisitItemProps {
+  item: VisitListItemType;
+}
+
+export default Detail;
+
+const NoteData: ItemNoteVisitDetail[] = [
+  {
+    noteType: 'Loại ghi chú',
+    description: 'Mô tả ghi chú',
+    time: '10:20:00',
+    date: '21/11/2023',
+  },
+  {
+    noteType: 'Loại ghi chú',
+    description: 'Mô tả ghi chú',
+    time: '10:20:00',
+    date: '21/11/2023',
+  },
+  {
+    noteType: 'Loại ghi chú',
+    description: 'Mô tả ghi chú',
+    time: '10:20:00',
+    date: '21/11/2023',
+  },
+  {
+    noteType: 'Loại ghi chú',
+    description: 'Mô tả ghi chú',
+    time: '10:20:00',
+    date: '21/11/2023',
+  },
+];

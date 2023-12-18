@@ -11,6 +11,22 @@ import {AppDarkTheme, AppLightTheme} from '../layouts';
 // import MainTab from "./MainTab";
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
+import {
+  ForgotPassword,
+  Home,
+  ImageView,
+  ListProduct,
+  OrderDetail,
+  OrderList,
+  ListVisit,
+  ProductDetail,
+  SearchProduct,
+  SearchVisit,
+  SelectOrganization,
+  SignIn,
+  SuccessChanged,
+  Index,
+} from '../screens';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
@@ -25,8 +41,9 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
   useEffect(() => {
-    // @ts-ignore
-    setTheme(colorScheme);
+    if (colorScheme) {
+      setTheme(colorScheme);
+    }
   }, [colorScheme]);
 
   // useEffect(() => {
@@ -44,18 +61,58 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={theme === 'light' ? AppLightTheme : AppDarkTheme}>
       <Stack.Navigator
-        // @ts-ignore
         initialRouteName={
           loginFirst && organiztion?.company_name
             ? ScreenConstant.SIGN_IN
-            : ScreenConstant.SELECT_ORGANIZATION
+            : ScreenConstant.LIST_VISIT
         }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
-        }}
-      />
+        }}>
+        <Stack.Screen
+          name={ScreenConstant.SELECT_ORGANIZATION}
+          component={SelectOrganization}
+        />
+        <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
+        <Stack.Screen
+          name={ScreenConstant.FORGOT_PASSWORD}
+          component={ForgotPassword}
+        />
+        <Stack.Screen
+          name={ScreenConstant.SUCCESS_CHANGE}
+          component={SuccessChanged}
+        />
+        <Stack.Screen
+          name={ScreenConstant.LIST_PRODUCT}
+          component={ListProduct}
+        />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_PRODUCT}
+          component={SearchProduct}
+        />
+        <Stack.Screen
+          name={ScreenConstant.PRODUCT_DETAIL}
+          component={ProductDetail}
+        />
+        <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
+        <Stack.Screen
+          name={ScreenConstant.ORDER_SCREEN}
+          component={OrderList}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ORDER_DETAIL_SCREEN}
+          component={OrderDetail}
+        />
+        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_VISIT}
+          component={SearchVisit}
+        />
+        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
+      </Stack.Navigator>
       {children}
     </NavigationContainer>
   );
@@ -67,7 +124,23 @@ interface AppNavigationContainerProps {
 
 export default AppNavigationContainer;
 
-export type RootStackParamList = {};
+export type RootStackParamList = {
+  [ScreenConstant.SIGN_IN]: {organizationName?: string};
+  [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
+  [ScreenConstant.SCANNER]: undefined;
+  [ScreenConstant.FORGOT_PASSWORD]: undefined;
+  [ScreenConstant.HOME_SCREEN]: undefined;
+  [ScreenConstant.SUCCESS_CHANGE]: undefined;
+  [ScreenConstant.LIST_PRODUCT]: undefined;
+  [ScreenConstant.SEARCH_PRODUCT]: undefined;
+  [ScreenConstant.PRODUCT_DETAIL]: undefined;
+  [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.ORDER_SCREEN]: undefined;
+  [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
+  [ScreenConstant.LIST_VISIT]: undefined;
+  [ScreenConstant.SEARCH_VISIT]: undefined;
+  [ScreenConstant.VISIT_DETAIL]: undefined;
+};
 
 // Define prop type for useNavigation and useRoute
 export type NavigationProp =

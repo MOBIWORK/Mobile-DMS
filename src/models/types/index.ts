@@ -26,3 +26,72 @@ export type IResOrganization = {
   mobile_no?: string;
   status?: string;
 };
+
+export type ILoginResponse = {
+  key_details: {
+    api_key: string;
+    api_secret: string;
+  };
+  user: {
+    date_of_birth: string;
+    department: string;
+    designation: string | null;
+    employee: string;
+    employee_name: string;
+    gender: string;
+    image: string | null;
+    salutation: string | null;
+    shift: {
+      shift_status: string;
+      shift_type_now: boolean;
+    };
+    user_id: string;
+  };
+};
+
+export type IProductList = {
+  name: string;
+  type: string;
+  code: string;
+};
+
+export type IProductOverview = {
+  name: string;
+  code: string;
+  unit: string;
+  price: number;
+  trademark: string | null;
+  commodity_industry: string | null;
+  note: string | null;
+  image: string[];
+  file?: {
+    file_name: string;
+    size: number;
+    url: string;
+  }[];
+};
+
+export type IProductUnit = {};
+
+export type IProductInventory = {
+  label: string;
+  count: number;
+};
+
+export type VisitListItemType = {
+  label: string;
+  useName: string;
+  status: boolean;
+  address: string | null;
+  phone_number: string | null;
+  lat: number;
+  long: number;
+  distance: number;
+};
+
+export type ItemNoteVisitDetail = {
+  noteType: string;
+  description: string;
+  time: string;
+  date: string;
+};

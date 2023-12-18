@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">DMS</string>
+  <string name="app_name">DMS</string>
+  <string name="mapbox_access_token">pk.eyJ1IjoibWFwYm94bmdvY3NvbjEiLCJhIjoiY2xneWlsbDVuMDl0dTNocWM5aWM2ODF6dyJ9.tQx_q1DbVfxsaSVQutF1JQ</string>
 </resources>
