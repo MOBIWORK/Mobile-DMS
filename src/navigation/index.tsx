@@ -24,7 +24,7 @@ import {
   SelectOrganization,
   SignIn,
   SuccessChanged,
-  
+  Index,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import MainTab from './MainTab';
@@ -141,8 +141,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
-        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
-        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
+        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -177,6 +176,7 @@ export type RootStackParamList = {
   [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
+  [ScreenConstant.VISIT_DETAIL]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

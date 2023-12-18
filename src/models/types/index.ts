@@ -117,6 +117,7 @@ export interface PlusCode {
 }
 export type VisitListItemType = {
   label: string;
+  useName: string;
   status: boolean;
   address: string | null;
   phone_number: string | null;
@@ -182,3 +183,10 @@ export interface PlusCode {
   compound_code: string;
   global_code: string;
 }
+
+export type ItemNoteVisitDetail = {
+  noteType: string;
+  description: string;
+  time: string;
+  date: string;
+};

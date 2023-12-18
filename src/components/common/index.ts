@@ -17,6 +17,8 @@ import { SvgIcon } from './AppSvgIcon';
 
 
 
+import AppAccordion from './AppAccordion';
+import AppSegmentedButtons from './AppSegmentedButtons';
 
 export {
   AppBottomSheet,
@@ -34,5 +36,7 @@ export {
   AppFAB,
   AppText,
   FilterView,
-  SvgIcon
+  SvgIcon,
+  AppAccordion,
+  AppSegmentedButtons,
 };
