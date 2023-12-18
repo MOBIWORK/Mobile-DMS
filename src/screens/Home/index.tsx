@@ -352,17 +352,12 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.bg_neutral}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}} edges={['top']}>
+      {/* <View  style={{overflow:'hidden'}} /> */}
       <View
         style={[
           styles.shadow,
-          {
-            backgroundColor: colors.bg_default,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            padding: 16,
-          },
+         styles.header
         ]}>
         <View style={{flexDirection: 'row'}}>
           <AppAvatar name="Long" size={48} />
@@ -399,8 +394,8 @@ const HomeScreen = () => {
           />
         </View>
       </View>
-      <ScrollView>
-        <MainLayout>
+      <ScrollView >
+        <MainLayout style={{backgroundColor:colors.bg_neutral,flex:1}}>
           <View
             style={[
               styles.shadow,
@@ -643,6 +638,7 @@ const rootStyles = (theme:AppTheme) =>StyleSheet.create({
   } as TextStyle,
   shadow: {
     shadowColor: '#919EAB',
+    
     shadowOffset: {
       width: 0,
       height: 12,
@@ -650,10 +646,23 @@ const rootStyles = (theme:AppTheme) =>StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 24,
     elevation: 12,
-  },
+  } as ViewStyle,
  widgetView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
-  } as ViewStyle
+  } as ViewStyle,
+  header: {
+    backgroundColor: theme.colors.bg_default,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    padding: 16,
+  
+    borderBottomWidth:1,
+    borderBottomColor:theme.colors.bg_disable,
+    overflow:'hidden'
+    // marginBottom:10
+    // overflow:'hidden'
+  } as ViewStyle,
 });

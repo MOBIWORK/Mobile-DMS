@@ -30,6 +30,7 @@ import { MyAppTheme } from '../layouts/theme';
 
 import {  IAppReduxState } from '../redux-store';
 import HomeScreen from '../screens/Home';
+import { StatusBar } from 'react-native';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
@@ -59,6 +60,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
     <NavigationContainer
       // @ts-ignore
       theme={MyAppTheme[theme]}>
+        {/* <StatusBar     barStyle={'light-content'}    backgroundColor={MyAppTheme[theme].colors.white}       /> */}
       <Stack.Navigator
         initialRouteName={
           loginFirst && organiztion?.company_name
