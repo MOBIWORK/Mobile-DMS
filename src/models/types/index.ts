@@ -80,10 +80,18 @@ export type IProductInventory = {
 
 export type VisitListItemType = {
   label: string;
+  useName: string;
   status: boolean;
   address: string | null;
   phone_number: string | null;
   lat: number;
   long: number;
   distance: number;
+};
+
+export type ItemNoteVisitDetail = {
+  noteType: string;
+  description: string;
+  time: string;
+  date: string;
 };

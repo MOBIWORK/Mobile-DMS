@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {VisitListItemType} from '../../models/types';
+import {VisitListItemType} from '../../../models/types';
 import {
   Image,
   Pressable,
@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ImageAssets} from '../../assets';
-import {AppButton} from '../../components/common';
+import {ImageAssets} from '../../../assets';
+import {AppButton} from '../../../components/common';
 import {useTheme} from '@react-navigation/native';
 
-const VisitItem: FC<VisitItemProps> = ({item}) => {
+const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   const {colors} = useTheme();
 
   const styles = StyleSheet.create({
@@ -43,6 +43,7 @@ const VisitItem: FC<VisitItemProps> = ({item}) => {
       marginLeft: 8,
     },
     content: {
+      marginRight: 8,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
@@ -138,12 +139,24 @@ const VisitItem: FC<VisitItemProps> = ({item}) => {
             <Text style={{color: colors.action}}>{item.distance}km</Text>
           </TouchableOpacity>
         </View>
+        {handleClose && (
+          <TouchableOpacity
+            onPress={handleClose}
+            style={{position: 'absolute', top: -12, right: -12}}>
+            <Image
+              source={ImageAssets.CloseFameIcon}
+              style={{width: 32, height: 32}}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </Pressable>
   );
 };
 interface VisitItemProps {
   item: VisitListItemType;
+  handleClose?: () => void;
 }
 
 export default VisitItem;

@@ -25,6 +25,7 @@ import {
   SelectOrganization,
   SignIn,
   SuccessChanged,
+  Index,
 } from '../screens';
 // import PushNotification from 'react-native-push-notification';
 
@@ -110,6 +111,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
+        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -137,6 +139,7 @@ export type RootStackParamList = {
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
+  [ScreenConstant.VISIT_DETAIL]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

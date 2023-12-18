@@ -9,21 +9,23 @@ import ProductDetail from './Product/ProductDetail/ProductDetail';
 import ImageView from './Product/ProductDetail/ImageView';
 import OrderList from './Order/';
 import OrderDetail from './Order/Detail';
-import ListVisit from './Visit/ListVisit';
-import SearchVisit from './Visit/SearchVisit';
+import ListVisit from './Visit/VisitList/ListVisit';
+import SearchVisit from './Visit/VisitList/SearchVisit';
+import Index from './Visit/VisitDetail';
 
 export {
-    SelectOrganization,
-    SignIn,
-    Home,
-    SuccessChanged,
-    ForgotPassword,
-    ListProduct,
-    SearchProduct,
-    ProductDetail,
-    ImageView,
-    OrderList,
-    OrderDetail,
-    ListVisit,
-    SearchVisit,
+  SelectOrganization,
+  SignIn,
+  Home,
+  SuccessChanged,
+  ForgotPassword,
+  ListProduct,
+  SearchProduct,
+  ProductDetail,
+  ImageView,
+  OrderList,
+  OrderDetail,
+  ListVisit,
+  SearchVisit,
+  Index,
 };

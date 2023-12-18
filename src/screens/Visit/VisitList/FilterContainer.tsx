@@ -6,13 +6,13 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
-} from '../../components/common';
-import {AppConstant, DataConstant} from '../../const';
+} from '../../../components/common';
+import {AppConstant, DataConstant} from '../../../const';
 import {TextInput} from 'react-native-paper';
 import {useTheme} from '@react-navigation/native';
 import FilterListComponent, {
   IFilterType,
-} from '../../components/common/FilterListComponent';
+} from '../../../components/common/FilterListComponent';
 import {useTranslation} from 'react-i18next';
 import {
   BottomSheetScrollView,

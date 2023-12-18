@@ -11,6 +11,8 @@ import AvatarAccessory from './AvatarAccessory';
 import AppAvatar from './AppAvatar';
 import AppContainer from '../AppContainer';
 import FilterView from './FilterView';
+import AppAccordion from './AppAccordion';
+import AppSegmentedButtons from './AppSegmentedButtons';
 
 export {
   AppBottomSheet,
@@ -26,4 +28,6 @@ export {
   AppAvatar,
   AppContainer,
   FilterView,
+  AppAccordion,
+  AppSegmentedButtons,
 };
