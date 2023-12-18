@@ -9,16 +9,14 @@ import AppHeader from './AppHeader';
 import AuthenHeader from './AuthenHeader';
 import AvatarAccessory from './AvatarAccessory';
 import AppAvatar from './AppAvatar';
-import {AppText} from './AppText'
-import AppFAB from './AppFAB';
 import AppContainer from '../AppContainer';
 import FilterView from './FilterView';
-import { SvgIcon } from './AppSvgIcon';
-
-
-
 import AppAccordion from './AppAccordion';
 import AppSegmentedButtons from './AppSegmentedButtons';
+import {AppText} from './AppText'
+import AppFAB from './AppFAB';
+import { SvgIcon } from './AppSvgIcon';
+
 
 
 export {
