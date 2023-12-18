@@ -43,7 +43,7 @@ const CardView = (props: ICustomer) => {
               paddingHorizontal: 9,
               paddingVertical: 8,
             }}>
-            Đặt hàng ngay
+            Đặt hàng
           </Text>
         </TouchableOpacity>
       </View>

@@ -177,7 +177,7 @@ const Customer = () => {
         </View>
 
         <Text style={styles.containCustomer}>
-          <Text style={styles.numberCustomer}>300</Text>{getLabel('customer')}
+          <Text style={styles.numberCustomer}>300{' '}</Text>{getLabel('customer')}
         </Text>
         <ListCard data={fakeData} />
       </MainLayout>

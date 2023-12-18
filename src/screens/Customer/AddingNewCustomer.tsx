@@ -22,6 +22,7 @@ import {Colors} from '../../assets';
 import {AppConstant} from '../../const';
 import {NavigationProp} from '../../navigation';
 import {IDataCustomer} from '../../models/types';
+import FormAddress from './components/FormAddress';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -63,7 +64,7 @@ const AddingNewCustomer = () => {
       typeFilter === AppConstant.CustomerFilterType.dia_chi
         ? ['100%']
         : ['40%'],
-    [],
+    [typeFilter],
   );
 
   const filterRef = useRef<BottomSheetMethods>(null);
@@ -125,11 +126,15 @@ const AddingNewCustomer = () => {
       />
       <AppBottomSheet
         bottomSheetRef={addingAddress}
-        snapPointsCustom={snapPointAdding}></AppBottomSheet>
+        snapPointsCustom={snapPointAdding}>
+        <FormAddress onPressClose={() => addingAddress.current?.close()} />
+      </AppBottomSheet>
 
-      <TouchableOpacity style={styles.buttonAddingNew}>
-        <Text style={styles.textButtonStyle}>Thêm mới</Text>
-      </TouchableOpacity>
+      {typeFilter === AppConstant.CustomerFilterType.dia_chi ? null : (
+        <TouchableOpacity style={styles.buttonAddingNew}>
+          <Text style={styles.textButtonStyle}>Thêm mới</Text>
+        </TouchableOpacity>
+      )}
     </MainLayout>
   );
 };

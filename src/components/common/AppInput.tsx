@@ -51,7 +51,7 @@ const AppInput: FC<AppInputProps> = ({
           {label} {isRequire ? <Text style={{color:'red'}}>*</Text> :null}
         </Text>
       }
-      value={value}
+      defaultValue={value}
       onChangeText={onChangeValue}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
@@ -83,7 +83,7 @@ const AppInput: FC<AppInputProps> = ({
     </>
   );
 };
-interface AppInputPropsBase {
+interface AppInputProps {
   label: string;
   value: string;
   onPress?: () => void;
@@ -101,14 +101,5 @@ interface AppInputPropsBase {
   contentStyle?:TextStyle;
   
 }
-type AppInputPropsEditable = {
-  editable?: true;
-} & AppInputPropsBase;
 
-type AppInputPropsNonEditable = {
-  editable?: false;
-  listData?: any; // Adjust the type accordingly
-  show?: boolean; // Adjust the type accordingly
-} & AppInputPropsBase;
-type AppInputProps = AppInputPropsEditable | AppInputPropsNonEditable;
 export default AppInput;

@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import 'react-native-gesture-handler';
+import { registerTranslation } from 'react-native-paper-dates'
+
 import './src/language';
 import type {PropsWithChildren} from 'react';
 import {
@@ -38,6 +40,24 @@ function App(): JSX.Element {
     );
     return () => backHandler.remove();
   }, []);
+registerTranslation('vi', {
+  save: 'Lưu',
+  selectSingle: 'Chọn ngày',
+  selectMultiple: 'Chọn nhiều ngày',
+  selectRange: 'Chọn khoảng thời gian',
+  notAccordingToDateFormat: (inputFormat) =>
+    `Ngày tháng được chọn phải có dạng ${inputFormat}`,
+  mustBeHigherThan: (date) => `Phải sau thời điểm ${date}`,
+  mustBeLowerThan: (date) => `Phải trước thời điểm ${date}`,
+  mustBeBetween: (startDate, endDate) =>
+    `Phải nằm giữa khoảng ${startDate} - ${endDate}`,
+  dateIsDisabled: 'Ngày tháng được chọn không phù hợp',
+  previous: 'Trước',
+  next: 'Sau',
+  typeInDate: 'Điền ngày tháng',
+  pickDateFromCalendar: 'Chọn ngày tháng ',
+  close: 'Đóng',
+})
   // useEffect(() => {
   //   // /// 1.  Subscribe to events.
   //   // const onLocation: Subscription = BackgroundGeolocation.onLocation(

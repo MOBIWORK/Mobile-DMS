@@ -10,13 +10,13 @@ import ProgressCircle from 'react-native-progress-circle';
 import BarChartStatistical from './BarChart';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import {MainLayout} from '../../layouts';
-import { ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppTheme,useTheme } from '../../layouts/theme';
+import {ViewStyle} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {AppTheme, useTheme} from '../../layouts/theme';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
-  const styles = rootStyles(useTheme())
+  const styles = rootStyles(useTheme());
 
   const [notifiCations, setNotifications] = useState([
     {
@@ -44,8 +44,7 @@ const HomeScreen = () => {
   const renderUiWidget = () => {
     return (
       <View>
-        <View
-          style={styles.widgetView}>
+        <View style={styles.widgetView}>
           <Text style={[styles.tilteSection, {color: colors.text_disable}]}>
             Tiện ích
           </Text>
@@ -354,24 +353,18 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}} edges={['top']}>
       {/* <View  style={{overflow:'hidden'}} /> */}
-      <View
-        style={[
-          styles.shadow,
-         styles.header
-        ]}>
+      <View style={[styles.shadow, styles.header]}>
         <View style={{flexDirection: 'row'}}>
           <AppAvatar name="Long" size={48} />
           <View style={{marginTop: -3, marginLeft: 8}}>
-            <Text
-              style={{
-                fontSize: 20,
-                lineHeight: 30,
-                fontWeight: '500',
-                color: colors.text_primary,
-              }}>
-              Xin chào ,
-            </Text>
-         
+            <AppText
+              fontSize={20}
+              lineHeight={30}
+              fontWeight={'500'}
+              colorTheme="text_primary">
+              Xin chào
+            </AppText>
+
             <Text
               style={{
                 fontSize: 20,
@@ -394,8 +387,8 @@ const HomeScreen = () => {
           />
         </View>
       </View>
-      <ScrollView >
-        <MainLayout style={{backgroundColor:colors.bg_neutral,flex:1}}>
+      <ScrollView>
+        <MainLayout style={{backgroundColor: colors.bg_neutral, flex: 1}}>
           <View
             style={[
               styles.shadow,
@@ -630,39 +623,40 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const rootStyles = (theme:AppTheme) =>StyleSheet.create({
-  tilteSection: {
-    fontSize: 14,
-    lineHeight: 21,
-    fontWeight: '500',
-  } as TextStyle,
-  shadow: {
-    shadowColor: '#919EAB',
-    
-    shadowOffset: {
-      width: 0,
-      height: 12,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 24,
-    elevation: 12,
-  } as ViewStyle,
- widgetView: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  } as ViewStyle,
-  header: {
-    backgroundColor: theme.colors.bg_default,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    padding: 16,
-  
-    borderBottomWidth:1,
-    borderBottomColor:theme.colors.bg_disable,
-    overflow:'hidden'
-    // marginBottom:10
-    // overflow:'hidden'
-  } as ViewStyle,
-});
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    tilteSection: {
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '500',
+    } as TextStyle,
+    shadow: {
+      shadowColor: '#919EAB',
+
+      shadowOffset: {
+        width: 0,
+        height: 12,
+      },
+      shadowOpacity: 0.3,
+      shadowRadius: 24,
+      elevation: 12,
+    } as ViewStyle,
+    widgetView: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 8,
+    } as ViewStyle,
+    header: {
+      backgroundColor: theme.colors.bg_default,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      padding: 16,
+
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.bg_disable,
+      overflow: 'hidden',
+      // marginBottom:10
+      // overflow:'hidden'
+    } as ViewStyle,
+  });
