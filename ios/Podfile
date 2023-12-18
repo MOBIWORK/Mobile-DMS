@@ -28,6 +28,7 @@ if linkage != nil
 end
 
 target 'DMS' do
+ 
   use_expo_modules!
   post_integrate do |installer|
     begin
@@ -36,6 +37,8 @@ target 'DMS' do
       Pod::UI.warn e
     end
   end
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'react-native-google-maps', :path => rn_maps_path
   config = use_native_modules!
 
   # Flags change depending on the env values.

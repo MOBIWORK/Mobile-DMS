@@ -1,16 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from 'react';
 
-type Props = {}
+import ListVisit from './ListVisit';
 
-const Visits = (props: Props) => {
-  return (
-    <View>
-      <Text>Visits</Text>
-    </View>
-  )
-}
 
-export default Visits
+const Visits = () => {
+  return <ListVisit />;
+};
 
-const styles = StyleSheet.create({})
+export default Visits;
+

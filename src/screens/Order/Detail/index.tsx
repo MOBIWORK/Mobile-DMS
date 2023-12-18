@@ -40,7 +40,7 @@ const OrderDetail = () => {
                 {...props}
                 renderLabel={({ focused, route }) => {
                     return (
-                        <Text style={[styles.textTabBar, { color: focused ? colors.primary : colors.text_disable }]}>
+                        <Text style={[styles.textTabBar as any, { color: focused ? colors.primary : colors.text_disable }]}>
                             {route.title}
                         </Text>
                     );

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import { Text, View ,TextStyle} from 'react-native'
 import { BarChart } from 'react-native-gifted-charts';
 import { useTheme } from '@react-navigation/native'
 import { AppConstant } from '../../const';
@@ -58,16 +58,16 @@ const styles = StyleSheet.create({
         lineHeight :18 ,
         fontWeight :"400",
         marginBottom :5
-    },
+    } as TextStyle,
     description :{
         fontSize :20 ,
         lineHeight :30 ,
         fontWeight :"500",
         marginBottom :5
-    },
+    } as TextStyle,
     desSub : {
         fontSize :14 ,
         lineHeight :21 ,
         fontWeight :"400",
-    }
+    } as TextStyle
 })

@@ -14,14 +14,6 @@ import BackgroundGeolocation, {
   Subscription,
 } from 'react-native-background-geolocation';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import {useTheme} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 import store from './src/redux-store';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -123,7 +115,7 @@ function App(): JSX.Element {
         style={{ flex: 1 }}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <AppNavigationContainer>
-            <StatusBar barStyle={'default'} />
+            <StatusBar   backgroundColor={'#fff'}    />
             <HandlingError />
           </AppNavigationContainer>
         </GestureHandlerRootView>

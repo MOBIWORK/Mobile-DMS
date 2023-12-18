@@ -24,6 +24,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   handleItem,
   onClose,
   onSubmitEditing,
+  isSearch = true
 }) => {
   const {colors} = useTheme();
   return (
@@ -42,21 +43,24 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
         }
       />
       {searchValue && onChangeSearch && (
+        {isSearch  && (
         <Searchbar
-          style={{
-            backgroundColor: colors.bg_neutral,
-            borderRadius: 10,
-            marginTop: 16,
-          }}
-          placeholder={searchPlaceholder}
-          placeholderTextColor={colors.text_disable}
-          icon={ImageAssets.SearchIcon}
-          value={searchValue}
-          onChangeText={onChangeSearch}
-          inputStyle={{color: colors.text_primary}}
-          onSubmitEditing={onSubmitEditing}
-        />
+            style={{
+              backgroundColor: colors.bg_neutral,
+              borderRadius: 10,
+              marginTop: 16,
+            }}
+            placeholder={searchPlaceholder}
+            placeholderTextColor={colors.text_disable}
+            icon={ImageAssets.SearchIcon}
+            value={searchValue}
+            onChangeText={onChangeSearch}
+            inputStyle={{color: colors.text_primary}}
+            onSubmitEditing={onSubmitEditing}
+          />
       )}
+      )}
+
       <BottomSheetScrollView
         style={{flex: 1, marginTop: 16}}
         showsVerticalScrollIndicator={false}>
@@ -101,10 +105,16 @@ interface FilterListComponentProps {
   title: string | undefined;
   searchPlaceholder?: string;
   data: IFilterType[] | [];
+  title: string;
+  searchPlaceholder?: string;
+  data: IFilterType[];
   handleItem: (item: IFilterType) => void;
   searchValue?: string;
   onChangeSearch?: (text: string) => void;
+  searchValue?: string;
+  onChangeSearch?: (text: string) => void;
   onClose: () => void;
+  isSearch? :boolean;
   onSubmitEditing?: (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => void;

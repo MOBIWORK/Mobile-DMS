@@ -2,64 +2,28 @@ import React, {FC} from 'react';
 import {VisitListItemType} from '../../models/types';
 import {
   Image,
+  ImageStyle,
   Pressable,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../assets';
 import {AppButton} from '../../components/common';
-import {useTheme} from '@react-navigation/native';
+
+import {AppTheme, useTheme} from '../../layouts/theme';
 
 const VisitItem: FC<VisitItemProps> = ({item}) => {
-  const {colors} = useTheme();
-
-  const styles = StyleSheet.create({
-    viewContainer: {
-      marginVertical: 8,
-      padding: 16,
-      borderRadius: 16,
-      backgroundColor: colors.bg_default,
-      rowGap: 8,
-    },
-    user: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      borderBottomWidth: 1,
-      borderColor: colors.divider,
-      paddingBottom: 16,
-    },
-    userLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-    userTextLeft: {
-      color: colors.text_primary,
-      fontWeight: '500',
-      fontSize: 16,
-      marginLeft: 8,
-    },
-    content: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-  });
+  const theme = useTheme();
+  const styles = rootStyles(theme);
 
   const statusItem = (status: boolean) => {
     return (
-      <View
-        style={{
-          padding: 8,
-          borderRadius: 10,
-          backgroundColor: status
-            ? 'rgba(34, 197, 94, 0.08)'
-            : 'rgba(255, 171, 0, 0.08)',
-        }}>
-        <Text style={{color: status ? colors.success : colors.warning}}>
+      <View style={styles.statusItem(status)}>
+        <Text style={styles.textVisit(status)}>
           {status ? 'Đã viếng thăm' : 'Chưa viếng thăm'}
         </Text>
       </View>
@@ -73,9 +37,11 @@ const VisitItem: FC<VisitItemProps> = ({item}) => {
           <View style={styles.userLeft}>
             <Image
               source={ImageAssets.UserGroupIcon}
-              style={{width: 24, height: 24}}
+              style={styles.iconStyle(24)}
               resizeMode={'cover'}
-              tintColor={item.status ? colors.success : colors.warning}
+              tintColor={
+                item.status ? theme.colors.success : theme.colors.warning
+              }
             />
             <Text style={styles.userTextLeft}>{item.label}</Text>
           </View>
@@ -84,12 +50,12 @@ const VisitItem: FC<VisitItemProps> = ({item}) => {
         <View style={styles.content}>
           <Image
             source={ImageAssets.MapPinIcon}
-            style={{width: 16, height: 16}}
+            style={styles.iconStyle(16)}
             resizeMode={'cover'}
-            tintColor={colors.text_primary}
+            tintColor={theme.colors.text_primary}
           />
           <Text
-            style={{color: colors.text_primary, marginHorizontal: 8}}
+            style={{color: theme.colors.text_primary, marginHorizontal: 8}}
             numberOfLines={1}
             ellipsizeMode={'tail'}>
             {item.address}
@@ -98,44 +64,31 @@ const VisitItem: FC<VisitItemProps> = ({item}) => {
         <View style={styles.content}>
           <Image
             source={ImageAssets.PhoneIcon}
-            style={{width: 16, height: 16}}
+            style={styles.iconStyle(16)}
             resizeMode={'cover'}
-            tintColor={colors.text_primary}
+            tintColor={theme.colors.text_primary}
           />
-          <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
+          <Text style={{color: theme.colors.text_primary, marginHorizontal: 8}}>
             {item.phone_number}
           </Text>
         </View>
-        <View
-          style={[
-            styles.content,
-            {marginTop: 8, justifyContent: 'space-between'},
-          ]}>
+        <View style={styles.content}>
           <AppButton
             onPress={() => console.log('handle Checkin')}
-            style={{
-              backgroundColor: item.status
-                ? colors.bg_neutral
-                : colors.bg_default,
-              borderColor: !item.status ? colors.action : undefined,
-              borderWidth: !item.status ? 1 : 0,
-            }}
+            style={styles.handleCheckin(item.status)}
             label={'Checkin'}
-            styleLabel={{
-              color: !item.status ? colors.action : colors.text_disable,
-              fontWeight: '400',
-            }}
+            styleLabel={styles.itemLabel(item.status)}
           />
           <TouchableOpacity
             onPress={() => console.log('handle Map')}
             style={styles.content}>
             <Image
               source={ImageAssets.SendIcon}
-              style={{width: 16, height: 16}}
+              style={styles.iconStyle(16)}
               resizeMode={'cover'}
-              tintColor={colors.action}
+              tintColor={theme.colors.action}
             />
-            <Text style={{color: colors.action}}>{item.distance}km</Text>
+            <Text style={styles.textDistance}>{item.distance}km</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -147,3 +100,67 @@ interface VisitItemProps {
 }
 
 export default VisitItem;
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    viewContainer: {
+      marginVertical: 8,
+      padding: 16,
+      borderRadius: 16,
+      backgroundColor: theme.colors.bg_default,
+      rowGap: 8,
+    } as ViewStyle,
+    user: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderColor: theme.colors.divider,
+      paddingBottom: 16,
+    } as ViewStyle,
+    userLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    } as ViewStyle,
+    userTextLeft: {
+      color: theme.colors.text_primary,
+      fontWeight: '500',
+      fontSize: 16,
+      marginLeft: 8,
+    } as TextStyle,
+    content: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 8,
+    } as ViewStyle,
+    textDistance: {
+      color: theme.colors.action,
+      textDecorationLine: 'underline',
+    } as TextStyle,
+    handleCheckin: (status: any) => ({
+      backgroundColor: status
+        ? theme.colors.bg_neutral
+        : theme.colors.bg_default,
+      borderColor: status ? theme.colors.action : undefined,
+      borderWidth: status ? 1 : 0,
+    }),
+    statusItem: (status: boolean) =>
+      ({
+        padding: 8,
+        borderRadius: 10,
+        backgroundColor: status
+          ? theme.colors.green01
+          : theme.colors.yellow_100,
+      } as ViewStyle),
+    itemLabel: (status: boolean) =>
+      ({
+        color: !status ? theme.colors.action : theme.colors.text_disable,
+        fontWeight: '400',
+      } as TextStyle),
+    iconStyle: (size: number) => ({width: size, height: size} as ImageStyle),
+    textVisit: (status: boolean) =>
+      ({
+        color: status ? theme.colors.success : theme.colors.warning,
+      } as TextStyle),
+  });

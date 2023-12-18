@@ -1,17 +1,14 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC} from 'react';
 import type {RouteProp} from '@react-navigation/native';
 import {NavigationContainer} from '@react-navigation/native';
+import {useMMKVBoolean, useMMKVObject} from 'react-native-mmkv';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useColorScheme} from 'react-native';
+import { useSelector } from 'react-redux';
 
 import {AppConstant, ScreenConstant} from '../const';
-
-import {AppDarkTheme, AppLightTheme} from '../layouts';
-// import MainTab from "./MainTab";
-import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
-import {
+import {Home, 
   AddingNewCustomer,
   ForgotPassword,
   Home,
@@ -30,26 +27,27 @@ import {
   InventoryAddProduct,
   
 } from '../screens';
-import { MAIN_TAB } from '../const/screen.const';
+// import { MAIN_TAB } from '../const/screen.const';
 import MainTab from './MainTab';
+import { MyAppTheme } from '../layouts/theme';
+
+import {  IAppReduxState } from '../redux-store';
+import HomeScreen from '../screens/Home';
+import { StatusBar } from 'react-native';
 // import PushNotification from 'react-native-push-notification';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const colorScheme = useColorScheme();
+  const {theme} = useSelector((state:IAppReduxState) => state.appRedux)
   const [organiztion] = useMMKVObject<IResOrganization>(
     AppConstant.Organization,
   );
-  const [theme, setTheme] = useMMKVString(AppConstant.Theme);
+  // const [theme, setTheme] = useMMKVString(AppConstant.Theme);
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
-  useEffect(() => {
-    if (colorScheme) {
-      setTheme(colorScheme);
-    }
-  }, [colorScheme]);
+ 
 
   // useEffect(() => {
   //   PushNotification.configure({
@@ -64,7 +62,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   return (
     <NavigationContainer
       // @ts-ignore
-      theme={theme === 'light' ? AppLightTheme : AppDarkTheme}>
+      theme={MyAppTheme[theme]}>
+        {/* <StatusBar     barStyle={'light-content'}    backgroundColor={MyAppTheme[theme].colors.white}       /> */}
       <Stack.Navigator
         // initialRouteName={
         //   loginFirst && organiztion?.company_name
@@ -109,21 +108,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={ProductDetail}
         />
         <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
-        <Stack.Screen
-          name={ScreenConstant.ORDER_SCREEN}
-          component={OrderList}
-        />
-        <Stack.Screen
-          name={ScreenConstant.ORDER_DETAIL_SCREEN}
-          component={OrderDetail}
-        />
-        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
-
-        <Stack.Screen name={ScreenConstant.SEARCH_VISIT} component={SearchVisit}/>
-
-        <Stack.Screen name={ScreenConstant.CHECKIN_INVENTORY} component={Inventory}/>
-        <Stack.Screen name={ScreenConstant.INVENTORY_ADD_PRODUCT} component={InventoryAddProduct}/>
-
+        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -154,8 +139,6 @@ export type RootStackParamList = {
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
-  [ScreenConstant.CHECKIN_INVENTORY]:undefined
-  [ScreenConstant.INVENTORY_ADD_PRODUCT]:undefined
 };
 
 // Define prop type for useNavigation and useRoute

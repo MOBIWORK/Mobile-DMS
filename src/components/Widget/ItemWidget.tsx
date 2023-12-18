@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NavigationProp } from "../../navigation";
 import { useTranslation } from "react-i18next";
@@ -16,11 +16,11 @@ const ItemuWidget = ({
 
     if (isTouchable) {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate(navigate)}>
+            <TouchableOpacity onPress={() => navigation.navigate(navigate as any)}>
                 <View style={{ alignItems: "center", paddingVertical: 8 }}>
                     <View
                         style={[
-                            styles.iconContail,
+                            styles.iconContail as ViewStyle,
                             {
                                 marginBottom: 8,
                                 padding: 8,
@@ -30,7 +30,7 @@ const ItemuWidget = ({
                             },
                         ]}
                     >
-                        <Image source={source} style={styles.icon} />
+                        <Image source={source as any} style={styles.icon} />
                     </View>
                     <Text
                         style={{
@@ -52,7 +52,7 @@ const ItemuWidget = ({
                 <View style={{ alignItems: "center", paddingVertical: 8 }}>
                     <View
                         style={[
-                            styles.iconContail,
+                            styles.iconContail as ViewStyle,
                             {
                                 marginBottom: 8,
                                 padding: 8,
@@ -62,7 +62,7 @@ const ItemuWidget = ({
                             },
                         ]}
                     >
-                        <Image source={source} style={styles.icon} />
+                        <Image source={source as any} style={styles.icon} />
                     </View>
                     <Text
                         style={{

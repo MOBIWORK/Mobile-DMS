@@ -10,7 +10,10 @@ import AuthenHeader from './AuthenHeader';
 import AvatarAccessory from './AvatarAccessory';
 import AppAvatar from './AppAvatar';
 import AppContainer from '../AppContainer';
-import FilterView from './FilterView';
+import AppFAB from './AppFAB';
+import AppAvatar from './AppAvatar';
+import {AppText} from './AppText'
+import { SvgIcon } from './AppSvgIcon';
 
 export {
   AppBottomSheet,
@@ -25,5 +28,8 @@ export {
   AvatarAccessory,
   AppAvatar,
   AppContainer,
-  FilterView,
+  AppFAB,
+  AppAvatar,
+  AppText,
+  SvgIcon
 };

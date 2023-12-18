@@ -37,6 +37,13 @@ const IconCamera = require('./camera.png')
 const IconBill= require('./ic-solar_bill.png')
 
 
+const Usercheckin = require('./userCheckIn.png');
+const UserGroupIcon = require('./user-group.png');
+const MapPinIcon = require('./map-pin.png');
+const PhoneIcon = require('./phone.png');
+const SendIcon = require('./send.png');
+
+
 export {
   VNFLag,
   ENFlag,
@@ -72,7 +79,5 @@ export {
   IconAddress,
   IconPhone,
   IconType,
-  IconFilter,
-  IconCamera,
-  IconBill
+  IconFilter,IconCamera
 };
