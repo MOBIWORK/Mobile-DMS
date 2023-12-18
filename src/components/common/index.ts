@@ -12,6 +12,8 @@ import AppAvatar from './AppAvatar';
 import {AppText} from './AppText'
 import AppFAB from './AppFAB';
 import AppContainer from '../AppContainer';
+import FilterView from './FilterView';
+import { SvgIcon } from './AppSvgIcon';
 
 
 
@@ -30,5 +32,7 @@ export {
   AppAvatar,
   AppContainer,
   AppFAB,
-  AppText
+  AppText,
+  FilterView,
+  SvgIcon
 };
