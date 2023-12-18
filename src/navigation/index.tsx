@@ -88,8 +88,30 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={HomeScreen} />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
-          name={ScreenConstant.HOME_SCREEN}
-          component={Home}
+          name={ScreenConstant.FORGOT_PASSWORD}
+          component={ForgotPassword}
+        />
+        <Stack.Screen
+          name={ScreenConstant.SUCCESS_CHANGE}
+          component={SuccessChanged}
+        />
+        <Stack.Screen
+          name={ScreenConstant.LIST_PRODUCT}
+          component={ListProduct}
+        />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_PRODUCT}
+          component={SearchProduct}
+        />
+        <Stack.Screen
+          name={ScreenConstant.PRODUCT_DETAIL}
+          component={ProductDetail}
+        />
+        <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
+        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_VISIT}
+          component={SearchVisit}
         />
         <Stack.Screen
           name={ScreenConstant.SUCCESS_CHANGE}
@@ -185,6 +207,7 @@ export type RootStackParamList = {
   [ScreenConstant.MAIN_TAB]:undefined
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
   [ScreenConstant.LIST_VISIT]: undefined;
+  [ScreenConstant.SEARCH_VISIT]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

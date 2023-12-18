@@ -78,43 +78,6 @@ export type IProductInventory = {
   count: number;
 };
 
-
-export interface RootObjectGeoDecoding {
-  plus_code: PlusCode;
-  results: ResultDecode[];
-  status: string;
-}
-export interface ResultDecode {
-  address_components: AddressComponent[];
-  formatted_address: string;
-  geometry: Geometry;
-  place_id: string;
-  plus_code?: PlusCode;
-  types: string[];
-}
-export interface Geometry {
-  location: Location;
-  location_type: string;
-  viewport: Viewport;
-  bounds?: Viewport;
-}
-export interface Viewport {
-  northeast: Location;
-  southwest: Location;
-}
-export interface Location {
-  lat: number;
-  lng: number;
-}
-export interface AddressComponent {
-  long_name: string;
-  short_name: string;
-  types: string[];
-}
-export interface PlusCode {
-  compound_code: string;
-  global_code: string;
-}
 export type VisitListItemType = {
   label: string;
   useName: string;
@@ -125,46 +88,6 @@ export type VisitListItemType = {
   long: number;
   distance: number;
 };
-
-
-
-
-export interface RootObjectGeoDecoding {
-  plus_code: PlusCode;
-  results: ResultDecode[];
-  status: string;
-}
-export interface ResultDecode {
-  address_components: AddressComponent[];
-  formatted_address: string;
-  geometry: Geometry;
-  place_id: string;
-  plus_code?: PlusCode;
-  types: string[];
-}
-export interface Geometry {
-  location: Location;
-  location_type: string;
-  viewport: Viewport;
-  bounds?: Viewport;
-}
-export interface Viewport {
-  northeast: Location;
-  southwest: Location;
-}
-export interface Location {
-  lat: number;
-  lng: number;
-}
-export interface AddressComponent {
-  long_name: string;
-  short_name: string;
-  types: string[];
-}
-export interface PlusCode {
-  compound_code: string;
-  global_code: string;
-}
 
 export type ItemNoteVisitDetail = {
   noteType: string;
@@ -191,6 +114,49 @@ export type IDataCustomer = {
     address:string,
     phoneNumber:string
   }
-
-
 }
+export interface RootObjectGeoDecoding {
+  plus_code: PlusCode;
+  results: ResultDecode[];
+  status: string;
+}
+export interface ResultDecode {
+  address_components: AddressComponent[];
+  formatted_address: string;
+  geometry: Geometry;
+  place_id: string;
+  plus_code?: PlusCode;
+  types: string[];
+}
+export interface Geometry {
+  location: Location;
+  location_type: string;
+  viewport: Viewport;
+  bounds?: Viewport;
+}
+export interface Viewport {
+  northeast: Location;
+  southwest: Location;
+}
+export interface Location {
+  lat: number;
+  lng: number;
+}
+export interface AddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+export interface PlusCode {
+  compound_code: string;
+  global_code: string;
+}
+export type VisitListItem = {
+  label: string;
+  status: boolean;
+  address: string | null;
+  phone_number: string | null;
+  lat: number;
+  long: number;
+  distance: number;
+};

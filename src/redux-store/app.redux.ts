@@ -51,6 +51,7 @@ export const Selector = {
   getSearchVisitValue: (state: IAppReduxState) =>
     state.appRedux.searchVisitValue,
   getTheme:(state: IAppReduxState) => state.appRedux.theme,
+
 };
 
 /* ------------- Reducers ------------- */

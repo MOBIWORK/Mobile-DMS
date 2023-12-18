@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios  --simulator 'iPhone 15 Pro (17.0)'",
+    "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "expo start --dev-client",
-    "test": "jest",
-    "reset-cache":"npx react-native start --reset-cache"
+    "test": "jest"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "4.4.7",
@@ -23,7 +22,6 @@
     "axios": "^1.6.2",
     "deprecated-react-native-prop-types": "^5.0.0",
     "debounce": "^2.0.0",
-    "deprecated-react-native-prop-types": "^5.0.0",
     "expo": "^49.0.0",
     "expo-local-authentication": "~13.4.1",
     "expo-location": "~16.1.0",
@@ -44,7 +42,6 @@
     "react-native-mmkv": "^2.11.0",
     "react-native-pager-view": "^6.2.3",
     "react-native-paper": "^5.11.3",
-    "react-native-paper-dates": "^0.20.5",
     "react-native-progress-circle": "^2.1.0",
     "react-native-paper-dates": "^0.20.5",
     "react-native-reanimated": "~3.3.0",

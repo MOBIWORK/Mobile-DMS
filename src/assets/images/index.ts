@@ -34,8 +34,6 @@ const IconPhone = require('./iconPhone.png');
 const IconType = require('./iconType.png');
 const IconFilter = require('./iconFilter.png')
 const IconCamera = require('./camera.png')
-
-
 const MapPinFillIcon = require('./mapPin-fill.png');
 const TooltipIcon = require('./Tooltip.png');
 const CloseFameIcon = require('./closeFrame.png');
@@ -49,21 +47,6 @@ const OrderIcon = require('./orderCount.png');
 const Statistical = require('./staticstical.png');
 const ChevronRightIcon = require('./chevron-right.png');
 const ChevronUpIcon = require('./chevron-up.png');
-const IconHome = require('./iconHome.png');
-const IconHomeActive = require('./iconHomeActive.png');
-const IconVisit = require('./iconVisit.png');
-const IconVisitActive = require('./iconVisitActive.png');
-const IconCustomer = require('./iconCustomer.png');
-const IconCustomerActive = require('./iconCustomerActive.png');
-const IconLookingMore = require('./iconMore.png');
-const IconLookingMoreActive = require('./iconMoreActive.png');
-const IconSearch = require('./iconSearch.png');
-const IconAddress = require('./iconAddress.png');
-const IconPhone = require('./iconPhone.png');
-const IconType = require('./iconType.png');
-const IconFilter = require('./iconFilter.png')
-const IconCamera = require('./camera.png')
-const Usercheckin = require('./userCheckIn.png');
 
 export {
   VNFLag,
@@ -82,19 +65,7 @@ export {
   BarCodeIcon,
   ImgFile,
   HomeFillIcon,
-  IconHome,
-  IconHomeActive,
-  IconVisit,
-  IconVisitActive,
-  IconCustomer,
-  IconCustomerActive,
-  IconLookingMore,
-  IconLookingMoreActive,
-  IconSearch,
-  IconAddress,
-  IconPhone,
-  IconType,
-  IconFilter,IconCamera,MapIcon,
+  MapIcon,
   Usercheckin,
   UserGroupIcon,
   MapPinIcon,
@@ -125,6 +96,5 @@ export {
   IconAddress,
   IconPhone,
   IconType,
-  IconFilter,IconCamera,MapIcon,
-  Usercheckin
+  IconFilter,IconCamera
 };
