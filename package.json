@@ -7,7 +7,8 @@
     "ios": "react-native run-ios  --simulator 'iPhone 15 Pro (17.0)'",
     "lint": "eslint .",
     "start": "expo start --dev-client",
-    "test": "jest"
+    "test": "jest",
+    "reset-cache":"npx react-native start --reset-cache"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "4.4.7",
@@ -69,6 +70,7 @@
     "metro-react-native-babel-preset": "0.76.8",
     "prettier": "^2.4.1",
     "react-native-dotenv": "^3.4.9",
+    "react-native-svg-transformer": "^1.2.0",
     "react-test-renderer": "18.2.0",
     "typescript": "4.8.4"
   },

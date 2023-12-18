@@ -9,7 +9,7 @@ import {
   ImageStyle,
   Platform,
 } from 'react-native';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect,useCallback} from 'react';
 import debounce from 'debounce';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
@@ -21,7 +21,7 @@ import Geolocation, {
 import {IValueType} from '../Customer';
 import {AppConstant} from '../../../const';
 import {Colors} from '../../../assets';
-import {AppFAB, AppIcons, AppInput} from '../../../components/common';
+import {AppFAB, AppIcons, AppInput, AppText} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
 import {IDataCustomer, RootObjectGeoDecoding} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
@@ -70,7 +70,7 @@ const FormAdding = (props: Props) => {
     console.log('aaa');
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback( async () => {
     try {
       const geoData: RootObjectGeoDecoding = await apiDecodeMap(
         location?.coords.latitude,
@@ -83,7 +83,7 @@ const FormAdding = (props: Props) => {
     } catch (error) {
       console.error('Error fetching geolocation data:', error);
     }
-  };
+  },[location]);
 
   const animateMapToCurrentLocation = () => {
     Geolocation.getCurrentPosition(
@@ -102,13 +102,12 @@ const FormAdding = (props: Props) => {
       error => {
         console.error('Error getting current position:', error);
       },
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
   };
 
   useEffect(() => {
-    fetchData();
     animateMapToCurrentLocation();
+    fetchData();
   }, []);
 
   return (
@@ -239,7 +238,7 @@ const FormAdding = (props: Props) => {
         onChangeValue={text =>
           debounce(() => {
             setData(prev => ({...prev, debtLimit: text}));
-          }, 1500)
+          }, 150)
         }
       />
       <AppInput
@@ -253,7 +252,7 @@ const FormAdding = (props: Props) => {
         onChangeValue={text =>
           debounce(() => {
             setData(prev => ({...prev, description: text}));
-          }, 1500)
+          }, 150)
         }
       />
       <AppInput
@@ -267,7 +266,7 @@ const FormAdding = (props: Props) => {
         onChangeValue={text =>
           debounce(() => {
             setData(prev => ({...prev, websiteURL: text}));
-          }, 1500)
+          }, 150)
         }
       />
       <View>
@@ -327,14 +326,12 @@ const FormAdding = (props: Props) => {
             provider={Platform.OS === 'ios' ? PROVIDER_GOOGLE : PROVIDER_GOOGLE}
             showsUserLocation>
             <View style={styles.locationView}>
-              <View style={{paddingVertical: 8}}>
-                <AppIcons
-                  iconType={AppConstant.ICON_TYPE.IonIcon}
-                  name="location"
-                  color={theme.colors.text_disable}
-                  size={24}
-                />
-              </View>
+              <AppIcons
+                iconType={AppConstant.ICON_TYPE.IonIcon}
+                name="location"
+                color={theme.colors.text_disable}
+                size={24}
+              />
 
               <Text numberOfLines={1} style={styles.locationText}>
                 {dataLocation === '' ? 'Loading' : dataLocation}
@@ -355,7 +352,9 @@ const FormAdding = (props: Props) => {
                 color={theme.colors.white}
                 size={20}
               />
-              <Text style={styles.currentLocationText}>Vị trí hiện tại</Text>
+              <AppText style={styles.currentLocationText} colorTheme={'white'}>
+                Vị trí hiện tại
+              </AppText>
             </View>
           </MapView>
           <AppFAB
@@ -462,7 +461,7 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
-      alignSelf: 'center',
+      // alignSelf: 'center',
       borderColor: theme.colors.border,
       borderWidth: 1,
       flexDirection: 'row',

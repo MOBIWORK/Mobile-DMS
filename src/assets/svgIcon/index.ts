@@ -1,8 +1,8 @@
-import iconMap from './iconMap.svg'
-
-
+import iconMap from './iconMap.svg';
+import ArrowDown from './arrowDown.svg';
 
 export const SvgComponent = {
-    iconMap
-}
-export type SvgIconTypes = keyof typeof SvgComponent
+  iconMap,
+  ArrowDown,
+};
+export type SvgIconTypes = keyof typeof SvgComponent;
