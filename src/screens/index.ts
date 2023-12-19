@@ -12,6 +12,7 @@ import OrderDetail from './Order/Detail';
 import ListVisit from './Visit/VisitList/ListVisit';
 import SearchVisit from './Visit/VisitList/SearchVisit';
 import Index from './Visit/VisitDetail';
+import Customer from './Customer/Customer';
 
 export {
   SelectOrganization,
@@ -28,4 +29,6 @@ export {
   ListVisit,
   SearchVisit,
   Index,
+  Customer,
+  
 };

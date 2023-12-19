@@ -1,19 +1,35 @@
 import React from 'react';
-import {useTranslation} from 'react-i18next';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
-import {ForgotPassword} from '../screens';
+import {Customer, ForgotPassword, ListProduct, OrderList, ProductDetail, Index as Visit} from '../screens';
+import BottomTabDisplay from './BottomTabDisplay';
+import HomeScreen from '../screens/Home';
 
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
-  const {t: getLable} = useTranslation();
+  
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+    screenOptions={{headerShown:false}}
+    tabBar={props => <BottomTabDisplay {...props}/>}
+    >
       <Tab.Screen
-        name={ScreenConstant.FORGOT_PASSWORD}
-        component={ForgotPassword}
+        name={ScreenConstant.HOME_SCREEN}
+        component={HomeScreen}
+      />
+       <Tab.Screen
+        name={ScreenConstant.VISIT}
+        component={Visit}
+      />
+       <Tab.Screen
+        name={ScreenConstant.CUSTOMER}
+        component={Customer}
+      />
+       <Tab.Screen
+        name={ScreenConstant.LOOKING_MORE}
+        component={OrderList}
       />
     </Tab.Navigator>
   );

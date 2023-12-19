@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useMemo, useRef, useState} from 'react';
 import {DatePickerModal} from 'react-native-paper-dates';
-import {ColorSchema, useNavigation, useTheme} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import moment from 'moment';
@@ -22,6 +22,7 @@ import {Colors} from '../../assets';
 import {AppConstant} from '../../const';
 import {NavigationProp} from '../../navigation';
 import {IDataCustomer} from '../../models/types';
+import { AppTheme, useTheme } from '../../layouts/theme';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -136,7 +137,7 @@ const AddingNewCustomer = () => {
 
 export default React.memo(AddingNewCustomer);
 
-const rootStyles = (theme: ColorSchema) =>
+const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     containContentView: {
       marginTop: 24,
