@@ -38,7 +38,7 @@ const ItemuWidget = ({
                                 borderWidth: 1,
                             },
                         ]}>
-                        <SvgIcon source={source}  size={32} colorTheme="action"/>
+                        <SvgIcon source={source}  size={32}/>
                     </View>
                     <Text
                         style={{
@@ -68,7 +68,7 @@ const ItemuWidget = ({
                                 borderWidth: 1,
                             },
                         ]}>
-                        <SvgIcon source={source}  size={20} colorTheme="action"/>
+                        <SvgIcon source={source}  size={20}/>
                     </View>
                     <Text
                         style={{

@@ -1,3 +1,5 @@
+import { SvgIconTypes } from "../../assets/svgIcon";
+
 export interface KeyAbleProps {
   [key: string]: any;
 }
@@ -145,4 +147,10 @@ export interface AddressComponent {
 export interface PlusCode {
   compound_code: string;
   global_code: string;
+}
+export interface IWidget {
+  id: number
+  name : string,
+  icon :SvgIconTypes,
+  navigate :string
 }

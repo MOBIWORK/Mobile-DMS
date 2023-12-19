@@ -2,10 +2,11 @@ import { ScreenConstant } from '.';
 import { Colors } from '../assets';
 import { SvgComponent } from '../assets/svgIcon';
 import {IFilterType} from '../components/common/FilterListComponent';
+import { IWidget } from '../models/types';
 
 
 
-export const DataWidget = [
+export const DataWidget :IWidget[]= [
   {
     id : 1,
     name :"Hồ sơ",
@@ -16,7 +17,7 @@ export const DataWidget = [
     id : 2,
     name :"Sản phảm",
     icon : "iconContainer",
-    navigate :""
+    navigate :ScreenConstant.LIST_PRODUCT
   },
   {
     id : 3,

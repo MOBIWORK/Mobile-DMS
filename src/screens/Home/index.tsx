@@ -13,6 +13,10 @@ import { MainLayout } from '../../layouts';
 import { ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppTheme, useTheme } from '../../layouts/theme';
+import { useMMKVString } from 'react-native-mmkv';
+import { DataConstant } from '../../const';
+import { IWidget } from '../../models/types';
+
 
 const HomeScreen = () => {
   const { colors } = useTheme();
@@ -40,6 +44,16 @@ const HomeScreen = () => {
       time: '17:00 - 20/09/2023',
     },
   ]);
+
+  const [widgets ,setWidgets] = useMMKVString(AppConstant.Widget);
+  
+  const getWidget = ()=>{
+    if(!widgets){
+      const arrWg = DataConstant.DataWidget.slice(0, 8);
+      setWidgets(JSON.stringify(arrWg))
+    }
+  }
+  getWidget();
 
   const renderUiWidget = () => {
     return (
@@ -71,35 +85,21 @@ const HomeScreen = () => {
                 flexWrap: 'wrap',
                 paddingTop: 8,
               }}>
-              {/*  */}
-{/*               
-              <View
-                style={{
-                  marginBottom: 16,
-                  marginLeft: 16,
-                  width: (AppConstant.WIDTH - 80) / 4,
-                }}>
-                <ItemWidget
-                  name={'Thông báo nội bộ'}
-                  source={ImageAssets.InitLogo}
-                  navigate={''}
-                />
-              </View>
-
-              <View
-                style={{
-                  marginBottom: 16,
-                  marginLeft: 16,
-                  width: (AppConstant.WIDTH - 80) / 4,
-                }}>
-                <ItemWidget
-                  name={'Hồ sơ'}
-                  source={ImageAssets.ErrorApiIcon}
-                  navigate={''}
-                />
-              </View> */}
-
-              {/*  */}
+              
+              {widgets && JSON.parse(widgets).map((item: IWidget,i:any)=>(
+                <View key={i}
+                  style={{
+                    marginBottom: 16,
+                    marginLeft: 16,
+                    width: (AppConstant.WIDTH - 80) / 4,
+                  }}>
+                  <ItemWidget
+                    name={item.name}
+                    source={item.icon}
+                    navigate={item.navigate}
+                  />
+                </View>
+              ))}
             </View>
           </View>
         </View>
