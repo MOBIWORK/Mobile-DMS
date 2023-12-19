@@ -1,15 +1,16 @@
 import React from 'react';
-import {useTranslation} from 'react-i18next';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
-import {Customer, ForgotPassword, Home, Index} from '../screens';
+import {Customer, Customer, ForgotPassword, Home, Index, ListProduct, OrderList, ProductDetail, Index as Visit} from '../screens';
+import BottomTabDisplay from './BottomTabDisplay';
+import HomeScreen from '../screens/Home';
 import BottomTabDisplay from './BottomTabDisplay';
 import HomeScreen from '../screens/Home';
 
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
-  const {t: getLabel} = useTranslation();
+  
 
   return (
     <Tab.Navigator
@@ -22,15 +23,15 @@ const MainTab = () => {
       />
        <Tab.Screen
         name={ScreenConstant.VISIT}
-        component={Index}
+        component={Visit}
       />
        <Tab.Screen
         name={ScreenConstant.CUSTOMER}
         component={Customer}
       />
        <Tab.Screen
-        name={ScreenConstant.FORGOT_PASSWORD}
-        component={ForgotPassword}
+        name={ScreenConstant.LOOKING_MORE}
+        component={OrderList}
       />
     </Tab.Navigator>
   );

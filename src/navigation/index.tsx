@@ -117,6 +117,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.REPORT_ORDER_DETAIL}
           component={ReportOrderDetail}
         />
+        <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -153,6 +154,10 @@ export type RootStackParamList = {
   };
   [ScreenConstant.VISIT_DETAIL]: undefined;
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
+  [ScreenConstant.CUSTOMER]:undefined;
+  [ScreenConstant.MAIN_TAB]:undefined
+  [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
+
 };
 
 // Define prop type for useNavigation and useRoute
