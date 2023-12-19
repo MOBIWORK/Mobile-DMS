@@ -10,7 +10,6 @@ import {
 import {useTranslation} from 'react-i18next';
 import React, {useCallback, useRef, useMemo} from 'react';
 import { TextInput} from 'react-native-paper';
-import {ColorSchema, useNavigation, useTheme} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import {AppConstant, ScreenConstant} from '../../const';
@@ -32,6 +31,8 @@ import {
 } from '../../components/common';
 import ListFilter from './components/ListFilter';
 import { NavigationProp } from '../../navigation';
+import { AppTheme, useTheme } from '../../layouts/theme';
+import { useNavigation } from '@react-navigation/native';
 
 
 export type IValueType = {
@@ -260,7 +261,7 @@ const Customer = () => {
 
 export default React.memo(Customer);
 
-const rootStyles = (theme: ColorSchema) =>
+const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     labelStyle: {
       fontSize: 24,
