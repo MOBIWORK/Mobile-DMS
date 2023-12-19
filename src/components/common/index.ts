@@ -22,6 +22,8 @@ import AppCustomHeader from './AppCustomHeader';
 import AppFAB from './AppFAB';
 import { AppText } from './AppText';
 import { SvgIcon } from './AppSvgIcon';
+import { showSnack } from './AppSnack';
+
 
 export {
   AppBottomSheet,
@@ -44,4 +46,5 @@ export {
   AppSegmentedButtons,
   showSnack,
   AppCustomHeader,
+  showSnack
 };

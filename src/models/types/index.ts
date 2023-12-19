@@ -225,3 +225,47 @@ export type IDataCustomer = {
 
 
 }
+
+
+export interface RootEkMapResponse {
+  results: ResultEkMapResponse[]
+  status: string
+}
+
+export interface ResultEkMapResponse {
+  address_components: AddressEkMapComponent[]
+  formatted_address: string
+  geometry: GeometryEkResponse
+}
+
+export interface AddressEkMapComponent {
+  long_name: string
+  short_name: string
+  types: string[]
+}
+
+export interface GeometryEkResponse {
+  location: LocationEkResponse
+  location_type: string
+  viewport: Viewport
+}
+
+export interface LocationEkResponse {
+  lat: number
+  lng: number
+}
+
+export interface Viewport {
+  northeast: Northeast
+  southwest: Southwest
+}
+
+export interface Northeast {
+  lat: number
+  lng: number
+}
+
+export interface Southwest {
+  lat: number
+  lng: number
+}

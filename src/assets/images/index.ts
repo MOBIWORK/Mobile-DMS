@@ -100,4 +100,5 @@ export {
   ChevronRightIcon,
   ChevronUpIcon,
   CalenderIcon,
+  IconCamera
 };
