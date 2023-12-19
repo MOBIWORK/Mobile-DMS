@@ -14,7 +14,7 @@ import debounce from 'debounce';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+// import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
@@ -50,24 +50,24 @@ const FormAdding = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: translate} = useTranslation();
-  const ref = useRef<MapView>(null);
+  // const ref = useRef<MapView>(null);
   const [location, setLocation] = useState<GeolocationResponse>();
   const [dataLocation, setDataLocation] = useState<string>('');
 
   const onPressButtonGetLocation = () => {
-    Geolocation.getCurrentPosition(log => {
-      setLocation(log);
-      ref.current?.animateToRegion(
-        {
-          latitude: log?.coords.latitude!,
-          longitude: log?.coords.longitude!,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.04,
-        },
-        1000,
-      );
-    });
-    console.log('aaa');
+    // Geolocation.getCurrentPosition(log => {
+    //   setLocation(log);
+    //   ref.current?.animateToRegion(
+    //     {
+    //       latitude: log?.coords.latitude!,
+    //       longitude: log?.coords.longitude!,
+    //       latitudeDelta: 0.05,
+    //       longitudeDelta: 0.04,
+    //     },
+    //     1000,
+    //   );
+    // });
+    // console.log('aaa');
   };
 
   const fetchData = useCallback( async () => {
@@ -89,15 +89,15 @@ const FormAdding = (props: Props) => {
     Geolocation.getCurrentPosition(
       info => {
         setLocation(info);
-        ref.current?.animateToRegion(
-          {
-            latitude: info?.coords.latitude!,
-            longitude: info?.coords.longitude!,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.04,
-          },
-          1000,
-        );
+        // ref.current?.animateToRegion(
+        //   {
+        //     latitude: info?.coords.latitude!,
+        //     longitude: info?.coords.longitude!,
+        //     latitudeDelta: 0.05,
+        //     longitudeDelta: 0.04,
+        //   },
+        //   1000,
+        // );
       },
       error => {
         console.error('Error getting current position:', error);
@@ -314,7 +314,7 @@ const FormAdding = (props: Props) => {
       <View>
         <Text style={styles.titleText}>Vị trí</Text>
         <View style={styles.contentView}>
-          <MapView
+          {/* <MapView
             ref={ref}
             initialRegion={{
               latitude: 21.056871,
@@ -356,7 +356,7 @@ const FormAdding = (props: Props) => {
                 Vị trí hiện tại
               </AppText>
             </View>
-          </MapView>
+          </MapView> */}
           <AppFAB
             icon="google-maps"
             visible={true}
