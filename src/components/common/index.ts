@@ -16,7 +16,7 @@ import AppSegmentedButtons from './AppSegmentedButtons';
 import {AppText} from './AppText'
 import AppFAB from './AppFAB';
 import { SvgIcon } from './AppSvgIcon';
-
+import { showSnack } from './AppSnack';
 
 
 export {
@@ -38,4 +38,5 @@ export {
   SvgIcon,
   AppAccordion,
   AppSegmentedButtons,
+  showSnack
 };

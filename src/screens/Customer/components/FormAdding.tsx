@@ -7,25 +7,29 @@ import {
   ViewStyle,
   TouchableOpacity,
   ImageStyle,
-  Platform,
 } from 'react-native';
-import React, {useRef, useState, useEffect,useCallback} from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from 'react';
 import debounce from 'debounce';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
-// import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import Geolocation, {
-  GeolocationResponse,
-} from '@react-native-community/geolocation';
+
 import {IValueType} from '../Customer';
 import {AppConstant} from '../../../const';
 import {Colors} from '../../../assets';
-import {AppFAB, AppIcons, AppInput, AppText} from '../../../components/common';
+import {AppFAB, AppIcons, AppInput, AppText, showSnack} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
-import {IDataCustomer, RootObjectGeoDecoding} from '../../../models/types';
+import {IDataCustomer} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {apiDecodeMap} from '../../../api/apiMap';
+import Mapbox, {Location} from '@rnmapbox/maps';
+import BackgroundGeolocation from 'react-native-background-geolocation';
+import { getDetailLocation } from '../../../services/appService';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -50,64 +54,47 @@ const FormAdding = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: translate} = useTranslation();
-  // const ref = useRef<MapView>(null);
-  const [location, setLocation] = useState<GeolocationResponse>();
+  const ref = useRef<Mapbox.MapView>(null);
+  const [location, setLocation] = useState<Location | any>({
+    coords: {
+      latitude: 0,
+      longitude: 0,
+    },
+    timestamp: 0,
+  });
   const [dataLocation, setDataLocation] = useState<string>('');
 
-  const onPressButtonGetLocation = () => {
-    // Geolocation.getCurrentPosition(log => {
-    //   setLocation(log);
-    //   ref.current?.animateToRegion(
-    //     {
-    //       latitude: log?.coords.latitude!,
-    //       longitude: log?.coords.longitude!,
-    //       latitudeDelta: 0.05,
-    //       longitudeDelta: 0.04,
-    //     },
-    //     1000,
-    //   );
-    // });
-    // console.log('aaa');
-  };
 
-  const fetchData = useCallback( async () => {
-    try {
-      const geoData: RootObjectGeoDecoding = await apiDecodeMap(
-        location?.coords.latitude,
-        location?.coords.longitude,
-      );
-
-      if (geoData.status === 'OK') {
-        setDataLocation(geoData.plus_code.compound_code);
-      }
-    } catch (error) {
-      console.error('Error fetching geolocation data:', error);
+const fetchData = async (lat:any,lon:any) =>{
+  const data = await getDetailLocation(lat,lon)
+    if(data.status === 'OK'){
+          console.log(data)
+    }else{
+      showSnack({
+        msg:'Đã có lỗi xảy ra, vui lòng thử lại sau',
+        type:'error',
+        interval:1000
+      })
     }
-  },[location]);
+  return console.log(data,'data')
+}
 
-  const animateMapToCurrentLocation = () => {
-    Geolocation.getCurrentPosition(
-      info => {
-        setLocation(info);
-        // ref.current?.animateToRegion(
-        //   {
-        //     latitude: info?.coords.latitude!,
-        //     longitude: info?.coords.longitude!,
-        //     latitudeDelta: 0.05,
-        //     longitudeDelta: 0.04,
-        //   },
-        //   1000,
-        // );
-      },
-      error => {
-        console.error('Error getting current position:', error);
-      },
-    );
+  const onPressButtonGetLocation = () => {
+    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+      .then(res => setLocation(res))
+      .catch(err => console.log(err));
   };
 
-  useEffect(() => {
-    animateMapToCurrentLocation();
-    fetchData();
+  useLayoutEffect(() => {
+    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+      .then(res => {
+        setLocation(res)
+        fetchData(res?.coords?.latitude,res?.coords?.longitude)
+      })
+      .catch(err => console.log(err));
+    
+
+
   }, []);
 
   return (
@@ -314,49 +301,25 @@ const FormAdding = (props: Props) => {
       <View>
         <Text style={styles.titleText}>Vị trí</Text>
         <View style={styles.contentView}>
-          {/* <MapView
+          <Mapbox.MapView
+            pitchEnabled={false}
+            styleURL={Mapbox.StyleURL.Street}
+            attributionEnabled={false}
+            scaleBarEnabled={false}
             ref={ref}
-            initialRegion={{
-              latitude: 21.056871,
-              longitude: 105.777695,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.04,
-            }}
-            style={styles.mapView}
-            provider={Platform.OS === 'ios' ? PROVIDER_GOOGLE : PROVIDER_GOOGLE}
-            showsUserLocation>
-            <View style={styles.locationView}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name="location"
-                color={theme.colors.text_disable}
-                size={24}
+            logoEnabled={false}
+            style={{flex: 1}}>
+              <Mapbox.Camera
+                // ref={mapboxCameraRef}
+                centerCoordinate={[
+                  location?.coords.longitude ?? 0,
+                  location?.coords.latitude ?? 0,
+                ]}
+                animationMode={'flyTo'}
+                animationDuration={500}
+                zoomLevel={12}
               />
-
-              <Text numberOfLines={1} style={styles.locationText}>
-                {dataLocation === '' ? 'Loading' : dataLocation}
-              </Text>
-            </View>
-
-            <Marker
-              draggable
-              coordinate={{
-                latitude: location?.coords.latitude!,
-                longitude: location?.coords.longitude!,
-              }}
-            />
-            <View style={styles.location2View}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name="map-outline"
-                color={theme.colors.white}
-                size={20}
-              />
-              <AppText style={styles.currentLocationText} colorTheme={'white'}>
-                Vị trí hiện tại
-              </AppText>
-            </View>
-          </MapView> */}
+            </Mapbox.MapView>
           <AppFAB
             icon="google-maps"
             visible={true}

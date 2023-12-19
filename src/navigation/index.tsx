@@ -3,11 +3,9 @@ import type {RouteProp} from '@react-navigation/native';
 import {NavigationContainer} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useColorScheme} from 'react-native';
 
 import {AppConstant, ScreenConstant} from '../const';
 
-import {AppDarkTheme, AppLightTheme} from '../layouts';
 // import MainTab from "./MainTab";
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {IResOrganization} from '../models/types';
@@ -28,23 +26,20 @@ import {
   Index,
 } from '../screens';
 // import PushNotification from 'react-native-push-notification';
-
+import {MyAppTheme} from '../layouts/theme';
+import {IAppReduxState} from '../redux-store';
+import {useSelector} from 'react-redux';
+import MainTab from './MainTab';
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const colorScheme = useColorScheme();
+  const {theme} = useSelector((state: IAppReduxState) => state.appRedux);
   const [organiztion] = useMMKVObject<IResOrganization>(
     AppConstant.Organization,
   );
-  const [theme, setTheme] = useMMKVString(AppConstant.Theme);
-  const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
-  useEffect(() => {
-    if (colorScheme) {
-      setTheme(colorScheme);
-    }
-  }, [colorScheme]);
+  const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
   // useEffect(() => {
   //   PushNotification.configure({
@@ -59,18 +54,14 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   return (
     <NavigationContainer
       // @ts-ignore
-      theme={theme === 'light' ? AppLightTheme : AppDarkTheme}>
+      theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        initialRouteName={
-          loginFirst && organiztion?.company_name
-            ? ScreenConstant.SIGN_IN
-            : ScreenConstant.LIST_VISIT
-        }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
@@ -141,10 +132,9 @@ export type RootStackParamList = {
   [ScreenConstant.VISIT]: undefined;
 
   [ScreenConstant.SEARCH_VISIT]: undefined;
-  [ScreenConstant.CUSTOMER]:undefined;
-  [ScreenConstant.MAIN_TAB]:undefined
-  [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
-
+  [ScreenConstant.CUSTOMER]: undefined;
+  [ScreenConstant.MAIN_TAB]: undefined;
+  [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

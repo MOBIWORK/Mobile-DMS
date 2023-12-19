@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {useTranslation} from 'react-i18next';
@@ -153,7 +154,7 @@ const ListVisit = () => {
             />
           </View>
         ) : (
-          <View style={styles.map}>
+          <View style={styles.map as ViewStyle}>
             <Mapbox.MapView
               pitchEnabled={false}
               attributionEnabled={false}

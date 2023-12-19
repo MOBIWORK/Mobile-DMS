@@ -1,6 +1,8 @@
+import {ThemeType } from '../layouts/theme';
 import {KeyAbleProps} from '../models/types';
 import {IAppReduxState} from './index';
 import {createReducer, createActions} from 'reduxsauce';
+
 
 /* ------------- Types and Action Creators ------------- */
 export const {Types, Creators} = createActions({
@@ -12,6 +14,7 @@ export const {Types, Creators} = createActions({
   setOrganizationBaseURL: ['data'],
   setSearchProductValue: ['data'],
   setSearchVisitValue: ['data'],
+  setTheme: ['dark' || 'default'],
 });
 
 /* ------------- Initial State ------------- */
@@ -26,6 +29,7 @@ export interface IAppRedux {
   showModal: boolean;
   searchProductValue: string;
   searchVisitValue: string;
+  theme: ThemeType;
 }
 
 export const INITIAL_STATE: IAppRedux = {
@@ -34,6 +38,7 @@ export const INITIAL_STATE: IAppRedux = {
   showModal: true,
   searchProductValue: '',
   searchVisitValue: '',
+  theme: 'default',
 };
 
 /* ------------- Selector ------------- */
@@ -46,6 +51,7 @@ export const Selector = {
     state.appRedux.searchProductValue,
   getSearchVisitValue: (state: IAppReduxState) =>
     state.appRedux.searchVisitValue,
+  getTheme: (state: IAppReduxState) => state.appRedux.theme,
 };
 
 /* ------------- Reducers ------------- */
@@ -66,6 +72,11 @@ const setShowErrorModalStatus = (
   ...state,
   error: undefined,
   showModal: action.data,
+});
+
+const setAppTheme = (state = INITIAL_STATE, action:ThemeType) => ({
+  ...state,
+  theme: action,
 });
 
 const setSearchProductValue = (
@@ -92,6 +103,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_SHOW_ERROR_MODAL_STATUS]: setShowErrorModalStatus,
   [Types.SET_SEARCH_PRODUCT_VALUE]: setSearchProductValue,
   [Types.SET_SEARCH_VISIT_VALUE]: setSearchVisitValue,
+  [Types.SET_APP_THEME]: setAppTheme,
 });
 
 export default Creators;

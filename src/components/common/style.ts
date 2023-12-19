@@ -1,7 +1,7 @@
-
 import {StyleSheet} from 'react-native';
-import { FontDefault } from '../../layouts/AppTypoGraphy';
-import { sizeScale } from '../../utils/commom.utils';
+import {FontDefault} from '../../layouts/AppTypoGraphy';
+import {sizeScale} from '../../utils/commom.utils';
+import {BG_SUCCESS} from '../../const/app.const';
 export const textPresets = StyleSheet.create({
   linkTitle: {
     fontFamily: FontDefault.primary,
@@ -84,3 +84,36 @@ export const textPresets = StyleSheet.create({
 });
 
 export type TextPresetNames = keyof typeof textPresets;
+
+export const snackStyle = StyleSheet.create({
+  container: {
+    minHeight: 100,
+    paddingHorizontal: 15,
+  },
+  itemBar: {
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    borderRadius: 5,
+    backgroundColor: '#ffffff',
+    position: 'absolute',
+    width: '100%',
+    alignSelf: 'center',
+    marginHorizontal: 50,
+    alignItems: 'center',
+    flexDirection: 'row',
+    borderLeftWidth: 40,
+    borderLeftColor: BG_SUCCESS,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+
+    elevation: 1,
+  },
+  text: {
+    flex: 1,
+  },
+});

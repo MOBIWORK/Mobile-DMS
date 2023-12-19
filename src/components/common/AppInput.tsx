@@ -19,9 +19,6 @@ const AppInput: FC<AppInputProps> = ({
   isRequire=false,
   labelStyle,
   contentStyle
-  isRequire=false,
-  labelStyle,
-  contentStyle
 }) => {
   const {colors} = useTheme();
   const [isFocus, setFocus] = useState<boolean>(false);

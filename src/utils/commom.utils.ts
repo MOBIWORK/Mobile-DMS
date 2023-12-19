@@ -1,5 +1,5 @@
 import {MMKV} from 'react-native-mmkv';
-import {InteractionManager, Keyboard, Linking, Platform} from 'react-native';
+import {Dimensions, InteractionManager, Keyboard, Linking, Platform, StyleSheet} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import store, {AppActions} from '../redux-store';
 import * as LocalAuthentication from 'expo-local-authentication';
@@ -403,3 +403,34 @@ export const formatCash = (str: string) => {
       return (index % 3 ? next : next + ',') + prev;
     });
 };
+
+const guidelineBaseWidth = 350;
+const scale = (size: number) => (shortDimension / guidelineBaseWidth) * size;
+const {width, height} = Dimensions.get('window');
+const [shortDimension] = width < height ? [width, height] : [height, width];
+export const sizeScale = (size: number, factor = 0.5) =>
+  size + (scale(size) - size) * factor;
+
+  export const enhance = <T>(arrStyle: Array<T>) => {
+    return StyleSheet.flatten<T>(arrStyle);
+  };
+  
+  export const propsToStyle = <T = any>(arrStyle: Array<T>) => {
+    return arrStyle
+      .filter(
+        (x:any) => x !== undefined && !Object.values(x).some(v => v === undefined),
+      )
+      .reduce((prev: any, curr: any) => {
+        // eslint-disable-next-line prefer-destructuring
+        const firstKey = Object.keys(curr)[0];
+        const firstValue = curr[firstKey];
+  
+        if (
+          !['opacity', 'zIndex', 'flex'].includes(firstKey as never) &&
+          typeof firstValue === 'number'
+        ) {
+          curr[firstKey as string] = sizeScale(firstValue);
+        }
+        return {...prev, ...curr};
+      }, {});
+  };

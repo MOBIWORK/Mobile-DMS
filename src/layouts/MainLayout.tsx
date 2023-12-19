@@ -8,7 +8,8 @@ import {
   StyleSheet,
 } from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useTheme, ColorSchema} from '@react-navigation/native';
+import { AppTheme, useTheme } from './theme';
+
 
 const MainLayout: FC<Props> = ({
   children,
@@ -53,7 +54,7 @@ const MainLayout: FC<Props> = ({
   );
 };
 const styles = StyleSheet.create({
-  thirdCaseView: (colors: ColorSchema, insets: EdgeInsets) => ({
+  thirdCaseView: (colors: AppTheme, insets: EdgeInsets) => ({
     flex: 1,
     paddingTop: insets.top,
     paddingHorizontal: 16,
