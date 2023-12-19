@@ -211,7 +211,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1}} edges={['top']}>
       <View
         style={[
           styles.shadow,
