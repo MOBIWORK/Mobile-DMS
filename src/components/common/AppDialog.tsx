@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import {ImageAssets} from '../../assets';
 import Backdrop from './Backdrop';
-import {useTheme} from '@react-navigation/native';
+
+import {AppTheme, useTheme} from '../../layouts/theme';
 
 const AppDialog: FC<DialogProps> = ({
   open,
@@ -33,18 +34,18 @@ const AppDialog: FC<DialogProps> = ({
   showButton,
   customModal,
 }) => {
-  const {colors} = useTheme();
+  const theme = useTheme();
+  const styles = rootStyles(theme);
   return (
     <>
-      <View style={[styles.centeredView, modalWrapType]}>
+      <View style={[styles.centeredView as any, modalWrapType]}>
         <Modal
           animationType="slide"
           transparent={true}
           visible={open}
           onRequestClose={onRequestClose}>
-          <View style={[styles.centeredView, modalType]}>
-            <View
-              style={[styles.modalView, {backgroundColor: colors.bg_paper}]}>
+          <View style={[styles.centeredView as any, modalType]}>
+            <View style={styles.modalView as any}>
               {customModal ? (
                 <>{customModal}</>
               ) : (
@@ -60,21 +61,9 @@ const AppDialog: FC<DialogProps> = ({
                   />
 
                   {title && (
-                    <Text
-                      style={[
-                        styles.modalText,
-                        titleType,
-                        {color: colors.text_primary},
-                      ]}>
-                      {title}
-                    </Text>
+                    <Text style={[styles.modalText, titleType]}>{title}</Text>
                   )}
-                  <Text
-                    style={[
-                      styles.messageText,
-                      messageType,
-                      {color: colors.text_secondary},
-                    ]}>
+                  <Text style={[styles.messageText, messageType, ,]}>
                     {message}
                   </Text>
                   <View style={styles.buttonContainer}>
@@ -86,16 +75,13 @@ const AppDialog: FC<DialogProps> = ({
                               styles.button,
                               buttonType,
                               // @ts-ignore
-                              {
-                                backgroundColor: colors.bg_neutral,
-                                paddingHorizontal: 16,
-                              },
+                              {},
                             ]}
                             onPress={onClose}>
                             <Text
                               style={[
                                 styles.textStyle,
-                                {color: colors.text_secondary},
+                                {color: theme.colors.text_secondary},
                               ]}>
                               {closeLabel}
                             </Text>
@@ -107,7 +93,7 @@ const AppDialog: FC<DialogProps> = ({
                             buttonType,
                             // @ts-ignore
                             {
-                              backgroundColor: colors.primary,
+                              backgroundColor: theme.colors.primary,
                               paddingHorizontal: 16,
                             },
                           ]}
@@ -150,59 +136,65 @@ interface DialogProps {
 
 export default AppDialog;
 
-const styles = StyleSheet.create({
-  centeredView: {
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    position: 'absolute',
-  },
-  modalView: {
-    margin: 20,
-    width: '100%',
-    borderRadius: 10,
-    padding: 16,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '100%',
-  },
-  button: {
-    borderRadius: 16,
-    marginTop: 24,
-    maxWidth: '40%',
-    height: 36,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1976D2',
-  },
-  textStyle: {
-    color: '#FFFFFF',
-    fontWeight: '500',
-    textAlign: 'center',
-    fontSize: 18,
-  },
-  modalText: {
-    marginVertical: 12,
-    fontSize: 16,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  messageText: {
-    fontSize: 14,
-    marginTop: 16,
-    fontWeight: '400',
-    textAlign: 'center',
-  },
-});
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    centeredView: {
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      position: 'absolute',
+    } as ViewStyle,
+    modalView: {
+      margin: 20,
+      width: '100%',
+      borderRadius: 10,
+      padding: 16,
+      alignItems: 'center',
+      backgroundColor: theme.colors.bg_paper,
+      shadowColor: theme.colors.black,
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+    } as ViewStyle,
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      width: '100%',
+    } as ViewStyle,
+    button: {
+      borderRadius: 16,
+      marginTop: 24,
+      maxWidth: '40%',
+      height: 36,
+      justifyContent: 'center',
+      alignItems: 'center',
+      // backgroundColor: theme.colors.blue700,
+      backgroundColor: theme.colors.bg_neutral,
+      paddingHorizontal: 16,
+    } as ViewStyle,
+    textStyle: {
+      color: theme.colors.white,
+      fontWeight: '500',
+      textAlign: 'center',
+      fontSize: 18,
+    } as TextStyle,
+    modalText: {
+      marginVertical: 12,
+      fontSize: 16,
+      fontWeight: '500',
+      textAlign: 'center',
+      color: theme.colors.text_primary,
+    } as ViewStyle,
+    messageText: {
+      fontSize: 14,
+      marginTop: 16,
+      fontWeight: '400',
+      textAlign: 'center',
+      color: theme.colors.text_secondary,
+    } as TextStyle,
+  });
