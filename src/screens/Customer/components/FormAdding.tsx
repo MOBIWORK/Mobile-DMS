@@ -11,8 +11,6 @@ import {
 import React, {
   useRef,
   useState,
-  useEffect,
-  useCallback,
   useLayoutEffect,
 } from 'react';
 import debounce from 'debounce';
@@ -339,7 +337,7 @@ export default FormAdding;
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     contentStyle: {
-      color: Colors.gray_500,
+      color: theme.colors.text_secondary,
       fontWeight: '400',
       fontSize: 16,
     } as TextStyle,
@@ -356,7 +354,7 @@ const rootStyles = (theme: AppTheme) =>
     containImageCamera: {
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: Colors.gray_200,
+      backgroundColor: theme.colors.divider,
       width: 98,
       height: 98,
       borderRadius: 8,
