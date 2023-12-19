@@ -5,7 +5,10 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
-    "types": ["react-native", "jest"],
+    "types": [
+      "react-native",
+      "jest"
+    ],
     "lib": [
       "es2019",
       "es2020.bigint",
@@ -39,7 +42,12 @@
     "metro.config.js",
     "jest.config.js"
   ],
-  "include": ["src", "style.d.ts"],
-
-  "files": ["placeholder.ts"]
+  "include": [
+    "src",
+    "style.d.ts"
+  ],
+  "files": [
+    "placeholder.ts"
+  ],
+  "extends": "expo/tsconfig.base"
 }

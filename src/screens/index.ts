@@ -13,10 +13,10 @@ import LookingMore from './LookingMore/LookingMore';
 import AddingNewCustomer from './Customer/AddingNewCustomer';
 import OrderList from './Order/';
 import OrderDetail from './Order/Detail';
-import ListVisit from './Visit/ListVisit';
-import SearchVisit from './Visit/SearchVisit';
 
 import Index from './Visit/VisitDetail';
+import ListVisit from './Visit/VisitList/ListVisit';
+import SearchVisit from './Visit/VisitList/SearchVisit';
 
 export {
   SelectOrganization,
