@@ -13,7 +13,6 @@ export const {Types, Creators} = createActions({
   setOrganizationBaseURL: ['data'],
   setSearchProductValue: ['data'],
   setSearchVisitValue: ['data'],
-  setSearchVisitValue: ['data'],
 });
 
 /* ------------- Initial State ------------- */
@@ -79,11 +78,6 @@ const setSearchProductValue = (
 ) => ({
   ...state,
   searchProductValue: action.data,
-});
-
-const setSearchVisitValue = (state = INITIAL_STATE, action: KeyAbleProps) => ({
-  ...state,
-  searchVisitValue: action.data,
 });
 
 const setSearchVisitValue = (state = INITIAL_STATE, action: KeyAbleProps) => ({

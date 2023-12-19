@@ -1,6 +1,7 @@
 import SelectOrganization from './Authen/SelectOrganization';
 import SignIn from './Authen/SignIn';
 import Home from './Home';
+import WidgetScreen from './Widget';
 import ForgotPassword from './Authen/ForgotPassword';
 import SuccessChanged from './Authen/SuccessChanged';
 import ListProduct from './Product/ProductList/ListProduct';
@@ -15,11 +16,6 @@ import Customer from './Customer/Customer';
 import Visits from './Visit/Visits';
 import LookingMore from './LookingMore/LookingMore';
 import AddingNewCustomer from './Customer/AddingNewCustomer';
-import SearchVisit from './Visit/SearchVisit';
-import ListVisit from './Visit/ListVisit';
-import OrderList from './Order/';
-import OrderDetail from './Order/Detail';
-
 import Inventory from './Checkin/Inventory';
 import InventoryAddProduct from './Checkin/Inventory/AddingProduct';
 
@@ -42,5 +38,6 @@ export {
     AddingNewCustomer,
     LookingMore,
     Inventory,
-    InventoryAddProduct
+    InventoryAddProduct,
+    WidgetScreen
 }

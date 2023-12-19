@@ -11,7 +11,6 @@ import {IResOrganization} from '../models/types';
 import {Home, 
   AddingNewCustomer,
   ForgotPassword,
-  Home,
   ImageView,
   ListProduct,
   OrderDetail,
@@ -32,7 +31,6 @@ import MainTab from './MainTab';
 import { MyAppTheme } from '../layouts/theme';
 
 import {  IAppReduxState } from '../redux-store';
-import HomeScreen from '../screens/Home';
 import { StatusBar } from 'react-native';
 // import PushNotification from 'react-native-push-notification';
 
@@ -47,7 +45,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   // const [theme, setTheme] = useMMKVString(AppConstant.Theme);
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
- 
 
   // useEffect(() => {
   //   PushNotification.configure({
@@ -70,7 +67,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         //     ? ScreenConstant.SIGN_IN
         //     : ScreenConstant.LIST_VISIT
         // }
-        initialRouteName={ScreenConstant.CHECKIN_INVENTORY}
+        initialRouteName={ScreenConstant.MAIN_TAB}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -108,6 +105,22 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={ProductDetail}
         />
         <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
+        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_VISIT}
+          component={SearchVisit}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ORDER_SCREEN}
+          component={OrderList}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ORDER_DETAIL_SCREEN}
+          component={OrderDetail}
+        />
+        <Stack.Screen name={ScreenConstant.CHECKIN_INVENTORY} component={Inventory}/>
+        <Stack.Screen name={ScreenConstant.INVENTORY_ADD_PRODUCT} component={InventoryAddProduct}/>
+
         <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
       </Stack.Navigator>
       {children}
@@ -139,6 +152,12 @@ export type RootStackParamList = {
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
+  [ScreenConstant.CHECKIN_INVENTORY]:undefined
+  [ScreenConstant.INVENTORY_ADD_PRODUCT]:undefined
+  [ScreenConstant.LIST_VISIT]: undefined;
+  [ScreenConstant.SEARCH_VISIT]: undefined;
+  [ScreenConstant.ORDER_SCREEN]: undefined;
+  [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

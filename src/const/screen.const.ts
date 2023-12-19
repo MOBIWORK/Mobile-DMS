@@ -10,6 +10,7 @@ export const PRODUCT_DETAIL = 'PRODUCT_DETAIL';
 export const IMAGE_VIEW = 'IMAGE_VIEW';
 export const LIST_VISIT = 'LIST_VISIT';
 export const HOME_SCREEN = 'HOME_SCREEN';
+export const WIDGET_SCREEN = 'WIDGET_SCREEN'
 export const SEARCH_VISIT = 'SEARCH_VISIT';
 export const PROFILE = 'PROFILE';
 export const ACCOUNT_SETTING = 'ACCOUNT_SETTING';

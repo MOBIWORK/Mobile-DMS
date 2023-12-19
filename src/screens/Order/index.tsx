@@ -1,5 +1,5 @@
-import React, {useMemo, useRef, useState} from 'react';
-import {MainLayout} from '../../layouts';
+import React, { useMemo, useRef, useState } from 'react';
+import { MainLayout } from '../../layouts';
 import {
   AppBottomSheet,
   AppButton,
@@ -7,25 +7,29 @@ import {
   AppIcons,
   AppInput,
 } from '../../components/common';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Image, Text, View} from 'react-native';
-import {ImageAssets} from '../../assets';
-import {useNavigation, useTheme} from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Image, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { ImageAssets } from '../../assets';
+import { useNavigation } from '@react-navigation/native';
 import FilterView from '../../components/common/FilterView';
 import ButtonFilter from '../../components/common/ButtonFilter';
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import AppContainer from '../../components/AppContainer';
-import {ICON_TYPE} from '../../const/app.const';
-import {Button, TextInput} from 'react-native-paper';
+import { ICON_TYPE } from '../../const/app.const';
+import { Button, TextInput } from 'react-native-paper';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import {AppConstant, ScreenConstant} from '../../const';
+import { AppConstant, ScreenConstant } from '../../const';
 import FilterListComponent, {
   IFilterType,
 } from '../../components/common/FilterListComponent';
-import {NavigationProp} from '../../navigation';
+import { NavigationProp } from '../../navigation';
+import { AppTheme, useTheme } from '../../layouts/theme';
+import { ImageStyle } from 'react-native';
 
 const OrderList = () => {
-  const {colors} = useTheme();
+
+  const { colors } = useTheme();
+  const styles = createStyles(useTheme())
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetRefStatus = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['90%'], []);
@@ -116,9 +120,9 @@ const OrderList = () => {
       case 'Trạng thái': {
         const newData = dataStatus.map(itemRes => {
           if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
+            return { ...itemRes, isSelected: true };
           } else {
-            return {...itemRes, isSelected: false};
+            return { ...itemRes, isSelected: false };
           }
         });
         setStatus(item.label);
@@ -128,9 +132,9 @@ const OrderList = () => {
       case 'Thời gian': {
         const newData = dataTimeOrder.map(itemRes => {
           if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
+            return { ...itemRes, isSelected: true };
           } else {
-            return {...itemRes, isSelected: false};
+            return { ...itemRes, isSelected: false };
           }
         });
         setTimeOrder(item.label);
@@ -140,9 +144,9 @@ const OrderList = () => {
       case 'Loại phiếu': {
         const newData = dataTypeOrder.map(itemRes => {
           if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
+            return { ...itemRes, isSelected: true };
           } else {
-            return {...itemRes, isSelected: false};
+            return { ...itemRes, isSelected: false };
           }
         });
         setTypeOrder(item.label);
@@ -168,34 +172,23 @@ const OrderList = () => {
   const renderUiItem = () => {
     return (
       <View
-        style={[styles.containerItem, {backgroundColor: colors.bg_default}]}>
-        <View style={[styles.flexSpace as any, {paddingBottom: 8}]}>
-          <Text style={[styles.nameCustomer as any , {color: colors.text_primary}]}>
+        style={[styles.containerItem]}>
+        <View style={[styles.flexSpace as any, { paddingBottom: 8 }]}>
+          <Text style={[styles.nameCustomer]}>
             Tên khách hàng - Mã KH
           </Text>
           <View
             style={[
               styles.statusView,
-              {backgroundColor: 'rgba(255, 171, 0, 0.08)'},
+              { backgroundColor: 'rgba(255, 171, 0, 0.08)' },
             ]}>
-            <Text style={[styles.textStatus as any, {color: colors.warning}]}>
+            <Text style={[styles.textStatus as any, { color: colors.warning }]}>
               Chờ duyệt
             </Text>
           </View>
         </View>
-        <View
-          style={{
-            paddingVertical: 8,
-            borderTopWidth: 1,
-            borderBottomWidth: 1,
-            borderColor: colors.border,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}>
+        <View style={styles.inforOr}>
+          <View style={styles.inforDes}>
             <AppIcons
               iconType={ICON_TYPE.IonIcon}
               name="barcode-outline"
@@ -207,17 +200,12 @@ const OrderList = () => {
               ellipsizeMode="tail"
               style={[
                 styles.itemDesc as any,
-                {marginLeft: 6, color: colors.text_primary},
+                { marginLeft: 6, color: colors.text_primary },
               ]}>
               DH-12345
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}>
+          <View style={styles.inforDes}>
             <AppIcons
               iconType={ICON_TYPE.Feather}
               name="map-pin"
@@ -229,17 +217,12 @@ const OrderList = () => {
               ellipsizeMode="tail"
               style={[
                 styles.itemDesc as any,
-                {marginLeft: 6, color: colors.text_primary},
+                { marginLeft: 6, color: colors.text_primary },
               ]}>
               101 Tôn Dật Tiên, Tân Phú, Quận 7, Thành phố Hồ Chí Minh
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}>
+          <View style={styles.inforDes}>
             <AppIcons
               iconType={ICON_TYPE.Feather}
               name="clock"
@@ -249,19 +232,11 @@ const OrderList = () => {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={[
-                styles.itemDesc as any,
-                {marginLeft: 6, color: colors.text_primary},
-              ]}>
+              style={[styles.itemDesc as any, { marginLeft: 6 }]}>
               08:00, 20/11/2023
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}>
+          <View style={styles.inforDes}>
             <AppIcons
               iconType={ICON_TYPE.Feather}
               name="truck"
@@ -271,15 +246,12 @@ const OrderList = () => {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={[
-                styles.itemDesc as any,
-                {marginLeft: 6, color: colors.text_primary},
-              ]}>
+              style={[styles.itemDesc as any, { marginLeft: 6 }]}>
               20/11/2023
             </Text>
           </View>
         </View>
-        <View style={[styles.flexSpace as any, {marginTop: 8}]}>
+        <View style={[styles.flexSpace as any, { marginTop: 8 }]}>
           <Button
             icon="printer-outline"
             mode="outlined"
@@ -290,18 +262,11 @@ const OrderList = () => {
             onPress={() => console.log('Pressed')}>
             In đơn
           </Button>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text
-              style={{
-                fontSize: 12,
-                lineHeight: 18,
-                fontWeight: '500',
-                marginRight: 10,
-                color: colors.text_primary,
-              }}>
+          <View style={styles.flex}>
+            <Text style={styles.itemTotal}>
               Tổng tiền :
             </Text>
-            <Text style={[styles.nameCustomer as any, {color: colors.text_primary}]}>
+            <Text style={[styles.nameCustomer]}>
               7.000.000
             </Text>
           </View>
@@ -312,7 +277,7 @@ const OrderList = () => {
 
   const bottomSheetFilter = () => {
     return (
-      <View style={{padding: 16, paddingTop: 0, height: '100%'}}>
+      <View style={{ padding: 16, paddingTop: 0, height: '100%' }}>
         <AppHeader
           label={'Bộ lọc'}
           onBack={() =>
@@ -327,7 +292,7 @@ const OrderList = () => {
             />
           }
         />
-        <View style={{marginTop: 32, rowGap: 24}}>
+        <View style={{ marginTop: 32, rowGap: 24 }}>
           <AppInput
             label={'Thời gian đặt hàng'}
             value={timeOrder}
@@ -337,7 +302,7 @@ const OrderList = () => {
               <TextInput.Icon
                 onPress={() => onOpenBottomSheet('timeOder')}
                 icon={'chevron-down'}
-                style={{width: 24, height: 24}}
+                style={styles.iconInput}
                 color={colors.text_secondary}
               />
             }
@@ -351,33 +316,23 @@ const OrderList = () => {
               <TextInput.Icon
                 onPress={() => onOpenBottomSheet('typeOrder')}
                 icon={'chevron-down'}
-                style={{width: 24, height: 24}}
+                style={styles.iconInput}
                 color={colors.text_secondary}
               />
             }
           />
         </View>
-        <View
-          style={{
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-            paddingTop: 10,
-            position: 'absolute',
-            bottom: 0,
-            height: AppConstant.HEIGHT * 0.1,
-            width: '100%',
-            alignSelf: 'center',
-          }}>
+        <View style={styles.footerBtSheet}>
           <AppButton
-            style={{width: '45%', backgroundColor: colors.bg_neutral}}
+            style={{ width: '45%', backgroundColor: colors.bg_neutral }}
             label={'Bỏ qua'}
-            styleLabel={{color: colors.text_secondary}}
+            styleLabel={{ color: colors.text_secondary }}
             onPress={() =>
               bottomSheetRef.current && bottomSheetRef.current.close()
             }
           />
           <AppButton
-            style={{width: '45%'}}
+            style={{ width: '45%' }}
             label={'Áp dụng'}
             onPress={() => onSubmitFilter()}
           />
@@ -388,43 +343,36 @@ const OrderList = () => {
 
   return (
     <>
-      <MainLayout style={{backgroundColor: colors.bg_neutral}}>
+      <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
         <AppHeader
           label={'Đơn hàng'}
-          labelStyle={{textAlign: 'left', marginLeft: 8}}
+          labelStyle={{ textAlign: 'left', marginLeft: 8 }}
+          onBack={() => navigation.goBack()}
           rightButton={
             <TouchableOpacity>
               <Image
                 source={ImageAssets.SearchIcon}
-                style={{
-                  width: 30,
-                  height: 30,
-                  tintColor: colors.text_secondary,
-                }}
+                style={styles.iconBack}
                 resizeMode={'cover'}
               />
             </TouchableOpacity>
           }
         />
-        <View style={{flexDirection: 'row', marginTop: 16, paddingVertical: 8}}>
+        <View style={styles.containerFilter}>
           <ButtonFilter
             label="Trạng thái"
             value={status}
             onPress={() => onOpenBottomSheet('status')}
           />
           <FilterView
-            style={{marginLeft: 8}}
+            style={{ marginLeft: 8 }}
             onPress={() =>
               bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
             }
           />
         </View>
-        <Text
-          style={[ 
-            styles.countOrder as any,
-            {color: colors.text_primary, marginTop: 16, marginBottom: 12},
-          ]}>
-          300 <Text style={{color: colors.text_secondary}}>Đơn hàng</Text>
+        <Text style={[styles.countOrder]}>
+          300 <Text style={{ color: colors.text_secondary }}>Đơn hàng</Text>
         </Text>
         <AppContainer>
           <TouchableOpacity
@@ -461,32 +409,62 @@ const OrderList = () => {
 
 export default OrderList;
 
-const styles = StyleSheet.create({
+const createStyles = (theme: AppTheme) => StyleSheet.create({
+  flex: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  } as ViewStyle,
+  iconBack: {
+    width: 30,
+    height: 30,
+    tintColor: theme.colors.text_secondary,
+  } as ImageStyle,
+  containerFilter: {
+    flexDirection: 'row',
+    marginTop: 16,
+    paddingVertical: 8
+  } as ViewStyle,
   flexSpace: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
+  } as ViewStyle,
+  inforOr: {
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: theme.colors.border,
+  } as ViewStyle,
+  inforDes: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  } as ViewStyle,
   countOrder: {
     fontSize: 14,
     lineHeight: 21,
     fontWeight: '400',
-  },
+    color: theme.colors.text_primary,
+    marginTop: 16,
+    marginBottom: 12
+  } as TextStyle,
   containerItem: {
+    backgroundColor: theme.colors.bg_default,
     padding: 16,
     borderRadius: 16,
     marginBottom: 16,
-  },
+  } as ViewStyle,
   textStatus: {
     fontSize: 14,
     lineHeight: 21,
     fontWeight: '500',
   },
   nameCustomer: {
+    color: theme.colors.text_primary,
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '500',
-  },
+  } as TextStyle,
   statusView: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -496,5 +474,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     fontWeight: '400',
-  },
+    color: theme.colors.text_primary
+  } as TextStyle,
+  itemTotal: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontWeight: '500',
+    marginRight: 10,
+    color: theme.colors.text_primary,
+  } as ViewStyle,
+  footerBtSheet: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    paddingTop: 10,
+    position: 'absolute',
+    bottom: 0,
+    height: AppConstant.HEIGHT * 0.1,
+    width: '100%',
+    alignSelf: 'center',
+  } as ViewStyle,
+  iconInput :{
+    width: 24,
+    height: 24 
+  }as ImageStyle
 });

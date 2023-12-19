@@ -1,8 +1,17 @@
-import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import { NavigationProp } from "../../navigation";
-import { useTranslation } from "react-i18next";
+import React from 'react';
+import {
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    ViewStyle,
+} from 'react-native';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import { NavigationProp } from '../../navigation';
+import { useTranslation } from 'react-i18next';
+import { SvgIcon } from '../common';
+import { SvgIconTypes } from '../../assets/svgIcon';
 
 const ItemuWidget = ({
     source,
@@ -16,8 +25,8 @@ const ItemuWidget = ({
 
     if (isTouchable) {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate(navigate as any)}>
-                <View style={{ alignItems: "center", paddingVertical: 8 }}>
+            <TouchableOpacity onPress={() => navigation.navigate(navigate)}>
+                <View style={{ alignItems: 'center', paddingVertical: 8 }}>
                     <View
                         style={[
                             styles.iconContail as ViewStyle,
@@ -26,21 +35,19 @@ const ItemuWidget = ({
                                 padding: 8,
                                 borderRadius: 8,
                                 borderColor: colors.border,
-                                borderWidth: 1
+                                borderWidth: 1,
                             },
-                        ]}
-                    >
-                        <Image source={source as any} style={styles.icon} />
+                        ]}>
+                        <SvgIcon source={source}  size={32} colorTheme="action"/>
                     </View>
                     <Text
                         style={{
                             color: colors.text_secondary,
                             fontSize: 12,
-                            fontWeight: "400",
-                            textAlign: "center",
+                            fontWeight: '400',
+                            textAlign: 'center',
                             paddingHorizontal: 8,
-                        }}
-                    >
+                        }}>
                         {getLabel(name)}
                     </Text>
                 </View>
@@ -49,7 +56,7 @@ const ItemuWidget = ({
     } else {
         return (
             <View>
-                <View style={{ alignItems: "center", paddingVertical: 8 }}>
+                <View style={{ alignItems: 'center', paddingVertical: 8 }}>
                     <View
                         style={[
                             styles.iconContail as ViewStyle,
@@ -58,21 +65,19 @@ const ItemuWidget = ({
                                 padding: 8,
                                 borderRadius: 8,
                                 borderColor: colors.border,
-                                borderWidth: 1
+                                borderWidth: 1,
                             },
-                        ]}
-                    >
-                        <Image source={source as any} style={styles.icon} />
+                        ]}>
+                        <SvgIcon source={source}  size={20} colorTheme="action"/>
                     </View>
                     <Text
                         style={{
                             color: colors.text_secondary,
                             fontSize: 12,
-                            fontWeight: "400",
-                            textAlign: "center",
+                            fontWeight: '400',
+                            textAlign: 'center',
                             paddingHorizontal: 8,
-                        }}
-                    >
+                        }}>
                         {getLabel(name)}
                     </Text>
                 </View>
@@ -81,12 +86,11 @@ const ItemuWidget = ({
     }
 };
 
-
 interface PropTypes {
-    source :string,
-    name :string,
-    navigate:string,
-    isTouchable?:boolean
+    source: SvgIconTypes;
+    name: string;
+    navigate: any;
+    isTouchable?: boolean;
 }
 
 export default ItemuWidget;
@@ -97,7 +101,7 @@ const styles = StyleSheet.create({
         width: 32,
     },
     iconContail: {
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

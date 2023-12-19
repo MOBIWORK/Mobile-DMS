@@ -1,4 +1,60 @@
+import { ScreenConstant } from '.';
+import { Colors } from '../assets';
+import { SvgComponent } from '../assets/svgIcon';
 import {IFilterType} from '../components/common/FilterListComponent';
+
+
+
+export const DataWidget = [
+  {
+    id : 1,
+    name :"Hồ sơ",
+    icon : "iconUser",
+    navigate :""
+  },
+  {
+    id : 2,
+    name :"Sản phảm",
+    icon : "iconContainer",
+    navigate :""
+  },
+  {
+    id : 3,
+    name :"Khuyến mại",
+    icon : "iconTicket",
+    navigate :""
+  },
+  {
+    id : 4,
+    name :"Thông báo nội bộ",
+    icon : "iconBell",
+    navigate :""
+  },
+  {
+    id : 5,
+    name :"Nhắc nhở",
+    icon : "iconClock",
+    navigate :""
+  },
+  {
+    id : 6,
+    name :"Quản lý hình ảnh",
+    icon : "iconImage",
+    navigate :""
+  },
+  {
+    id : 7,
+    name :"Đơn hàng",
+    icon : "iconCart",
+    navigate :ScreenConstant.ORDER_SCREEN
+  },
+  {
+    id : 8,
+    name :"Báo cáo",
+    icon : "iconBar",
+    navigate :""
+  }
+]
 
 export const FilterDistanceData = (getLabel: any) => {
   return [
