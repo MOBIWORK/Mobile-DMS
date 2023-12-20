@@ -3,6 +3,7 @@ import SignIn from './Authen/SignIn';
 import Home from './Home';
 import WidgetScreen from './Widget';
 import WidgetFavouriteScreen from './Widget/WidgetFVScreen';
+import NotificationScreen from './Notification';
 import ForgotPassword from './Authen/ForgotPassword';
 import SuccessChanged from './Authen/SuccessChanged';
 import ListProduct from './Product/ProductList/ListProduct';
@@ -41,5 +42,6 @@ export {
     Inventory,
     InventoryAddProduct,
     WidgetScreen,
-    WidgetFavouriteScreen
+    WidgetFavouriteScreen,
+    NotificationScreen
 }

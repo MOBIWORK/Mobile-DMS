@@ -356,7 +356,7 @@ const HomeScreen = () => {
               <Text style={[styles.tilteSection]}>
                 Thông báo nội bộ
               </Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=> navigation.navigate(ScreenConstant.NOTIFYCATION)}>
                 <Text style={[styles.tilteSection, { color: colors.action }]}>
                   Tất cả
                 </Text>
