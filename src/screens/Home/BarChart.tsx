@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, TextStyle, ViewStyle } from 'react-native'
 import { BarChart } from 'react-native-gifted-charts';
 import { AppConstant } from '../../const';
 import { StyleSheet } from 'react-native';
@@ -52,22 +52,30 @@ interface PropTypes {
 
 export default BarChartStatistical;
 
-const styles = StyleSheet.create({
-    title :{
-        fontSize :12 ,
-        lineHeight :18 ,
-        fontWeight :"400",
-        marginBottom :5
-    },
-    description :{
-        fontSize :20 ,
-        lineHeight :30 ,
-        fontWeight :"500",
-        marginBottom :5
-    },
-    desSub : {
-        fontSize :14 ,
-        lineHeight :21 ,
-        fontWeight :"400",
-    }
+const rootStyles = (theme: AppTheme) => StyleSheet.create({
+    title: {
+        fontSize: 12,
+        lineHeight: 18,
+        fontWeight: "400",
+        marginBottom: 5,
+        color :theme.colors.text_secondary
+    } as TextStyle,
+    description: {
+        marginTop :5,
+        fontSize: 20,
+        lineHeight: 30,
+        fontWeight: "500",
+        color :theme.colors.text_primary
+    } as TextStyle,
+    desSub: {
+        fontSize: 14,
+        lineHeight: 21,
+        fontWeight: "400",
+    } as TextStyle,
+    containerBar: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 16
+    } as ViewStyle
 })

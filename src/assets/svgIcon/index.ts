@@ -1,12 +1,5 @@
 import iconMap from './iconMap.svg';
 import ArrowDown from './arrowDown.svg';
-
-export const SvgComponent = {
-  iconMap,
-  ArrowDown,
-};
-export type SvgIconTypes = keyof typeof SvgComponent;
-import iconMap from './iconMap.svg'
 import iconClock from './iconClock.svg'
 import iconUser from './iconUser.svg'
 import iconImage from './iconImage.svg'
@@ -20,6 +13,7 @@ import iconContainer from './iconContainer.svg'
 
 export const SvgComponent = {
     iconMap,
+    ArrowDown,
     iconClock,
     iconBar,
     iconBell,
@@ -29,4 +23,4 @@ export const SvgComponent = {
     iconImage,
     iconContainer
 }
-export type SvgIconTypes = keyof ty
+export type SvgIconTypes = keyof typeof SvgComponent;

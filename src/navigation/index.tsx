@@ -1,12 +1,9 @@
-import React, {FC} from 'react';
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import type {RouteProp} from '@react-navigation/native';
 import {NavigationContainer} from '@react-navigation/native';
 import {useMMKVBoolean, useMMKVObject} from 'react-native-mmkv';
-import {useMMKVBoolean, useMMKVObject} from 'react-native-mmkv';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { useSelector } from 'react-redux';
 import { useSelector } from 'react-redux';
 
 import {AppConstant, ScreenConstant} from '../const';
@@ -35,11 +32,7 @@ import {Home,
 import MainTab from './MainTab';
 import { MyAppTheme } from '../layouts/theme';
 
-import {  IAppReduxState } from '../redux-store';
-import { StatusBar } from 'react-native';
 // import { MAIN_TAB } from '../const/screen.const';
-import MainTab from './MainTab';
-import { MyAppTheme } from '../layouts/theme';
 
 import {  IAppReduxState } from '../redux-store';
 import HomeScreen from '../screens/Home';
@@ -56,12 +49,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   );
   // // const [theme, setTheme] = useMMKVString(AppConstant.Theme);
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
-
-  useEffect(() => {
-    if (colorScheme) {
-      setTheme(colorScheme);
-    }
-  }, [colorScheme]);
 
   // useEffect(() => {
   //   PushNotification.configure({
@@ -90,108 +77,27 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
-          <Stack.Screen
-          name={ScreenConstant.MAIN_TAB}
-          component={MainTab}
-          
-          />
-        <Stack.Screen
-          name={ScreenConstant.SELECT_ORGANIZATION}
-          component={SelectOrganization}
-        />
+
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+        <Stack.Screen name={ScreenConstant.SELECT_ORGANIZATION} component={SelectOrganization}/>
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen name={ScreenConstant.WIDGET_FVR_SCREEN} component={WidgetFavouriteScreen} />
         <Stack.Screen name={ScreenConstant.NOTIFYCATION} component={NotificationScreen} />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
-        <Stack.Screen
-          name={ScreenConstant.FORGOT_PASSWORD}
-          component={ForgotPassword}
-        />
-        <Stack.Screen
-          name={ScreenConstant.SUCCESS_CHANGE}
-          component={SuccessChanged}
-        />
-        <Stack.Screen
-          name={ScreenConstant.LIST_PRODUCT}
-          component={ListProduct}
-        />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_PRODUCT}
-          component={SearchProduct}
-        />
-        <Stack.Screen
-          name={ScreenConstant.PRODUCT_DETAIL}
-          component={ProductDetail}
-        />
+        <Stack.Screen name={ScreenConstant.FORGOT_PASSWORD} component={ForgotPassword}/>
+        <Stack.Screen name={ScreenConstant.SUCCESS_CHANGE} component={SuccessChanged}/>
         <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
+        <Stack.Screen name={ScreenConstant.SEARCH_VISIT} component={SearchVisit}/>
+        <Stack.Screen name={ScreenConstant.LIST_PRODUCT} component={ListProduct}/>
+        <Stack.Screen name={ScreenConstant.SEARCH_PRODUCT} component={SearchProduct}/>
+        <Stack.Screen name={ScreenConstant.PRODUCT_DETAIL} component={ProductDetail}/>
         <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_VISIT}
-          component={SearchVisit}
-        />
-        <Stack.Screen
-          name={ScreenConstant.SUCCESS_CHANGE}
-          component={SuccessChanged}
-        />
-        <Stack.Screen
-          name={ScreenConstant.LIST_PRODUCT}
-          component={ListProduct}
-        />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_PRODUCT}
-          component={SearchProduct}
-        />
-        <Stack.Screen
-          name={ScreenConstant.PRODUCT_DETAIL}
-          component={ProductDetail}
-        />
-        <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
-        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_VISIT}
-          component={SearchVisit}
-        />
-        <Stack.Screen
-          name={ScreenConstant.SUCCESS_CHANGE}
-          component={SuccessChanged}
-        />
-        <Stack.Screen
-          name={ScreenConstant.LIST_PRODUCT}
-          component={ListProduct}
-        />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_PRODUCT}
-          component={SearchProduct}
-        />
-        <Stack.Screen
-          name={ScreenConstant.PRODUCT_DETAIL}
-          component={ProductDetail}
-        />
-        <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
-        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_VISIT}
-          component={SearchVisit}
-        />
-        <Stack.Screen
-          name={ScreenConstant.ORDER_SCREEN}
-          component={OrderList}
-        />
-        <Stack.Screen
-          name={ScreenConstant.ORDER_DETAIL_SCREEN}
-          component={OrderDetail}
-        />
+        <Stack.Screen name={ScreenConstant.ORDER_SCREEN} component={OrderList} />
+        <Stack.Screen name={ScreenConstant.ORDER_DETAIL_SCREEN} component={OrderDetail} />
         <Stack.Screen name={ScreenConstant.CHECKIN_INVENTORY} component={Inventory}/>
         <Stack.Screen name={ScreenConstant.INVENTORY_ADD_PRODUCT} component={InventoryAddProduct}/>
-
         <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
-        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
-        <Stack.Screen
-          name={ScreenConstant.SEARCH_VISIT}
-          component={SearchVisit}
-        />
-        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
-        <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
+        
       </Stack.Navigator>
       {children}
     </NavigationContainer>

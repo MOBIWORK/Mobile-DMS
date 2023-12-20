@@ -14,7 +14,7 @@ import debounce from 'debounce';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+// import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';

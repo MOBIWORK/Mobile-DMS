@@ -12,8 +12,6 @@ import AppAvatar from './AppAvatar';
 import {AppText} from './AppText'
 import AppFAB from './AppFAB';
 import AppContainer from '../AppContainer';
-import AppFAB from './AppFAB';
-import {AppText} from './AppText'
 import { SvgIcon } from './AppSvgIcon';
 
 export {
