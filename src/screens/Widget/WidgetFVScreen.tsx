@@ -233,7 +233,7 @@ const createSheetStyle = (theme :AppTheme) => StyleSheet.create({
     }as ViewStyle,
     positionBt :{
         position: "absolute",
-        right: 14,
-        top: 0
+        right: 8,
+        top: -2
     }as ViewStyle
 });
