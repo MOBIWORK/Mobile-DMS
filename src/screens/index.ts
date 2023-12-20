@@ -2,6 +2,7 @@ import SelectOrganization from './Authen/SelectOrganization';
 import SignIn from './Authen/SignIn';
 import Home from './Home';
 import WidgetScreen from './Widget';
+import WidgetFavouriteScreen from './Widget/WidgetFVScreen';
 import ForgotPassword from './Authen/ForgotPassword';
 import SuccessChanged from './Authen/SuccessChanged';
 import ListProduct from './Product/ProductList/ListProduct';
@@ -39,5 +40,6 @@ export {
     LookingMore,
     Inventory,
     InventoryAddProduct,
-    WidgetScreen
+    WidgetScreen,
+    WidgetFavouriteScreen
 }

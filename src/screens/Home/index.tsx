@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, TextStyle } from 'react-native';
-import { AppAvatar, AppIcons, AppText } from '../../components/common';
+import { AppAvatar, AppContainer, AppIcons, AppText } from '../../components/common';
 import { IconButton } from 'react-native-paper';
 import { ImageAssets } from '../../assets';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { AppConstant } from '../../const';
+import { AppConstant, ScreenConstant } from '../../const';
 import ItemWidget from '../../components/Widget/ItemWidget';
 import ProgressCircle from 'react-native-progress-circle';
 import BarChartStatistical from './BarChart';
@@ -16,12 +16,18 @@ import { AppTheme, useTheme } from '../../layouts/theme';
 import { useMMKVString } from 'react-native-mmkv';
 import { DataConstant } from '../../const';
 import { IWidget } from '../../models/types';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../../navigation';
+import NotificationScreen from './Notification';
+import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 
 
 const HomeScreen = () => {
   const { colors } = useTheme();
-  const styles = rootStyles(useTheme())
-
+  const styles = rootStyles(useTheme());
+  const bottomSheetNotification = useRef<BottomSheet>(null);
+  const snapPoint = useMemo(() => ['100%'],[])
+  const navigation = useNavigation<NavigationProp>();
   const [notifiCations, setNotifications] = useState([
     {
       id: 1,
@@ -63,7 +69,7 @@ const HomeScreen = () => {
           <Text style={[styles.tilteSection]}>
             Tiện ích
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=> navigation.navigate(ScreenConstant.WIDGET_FVR_SCREEN)}>
             <Text style={[styles.tilteSection, { color: colors.action }]}>
               Tuỳ chỉnh
             </Text>
@@ -169,7 +175,7 @@ const HomeScreen = () => {
             </View>
           </View>
 
-          <View style={[styles.itemWorkSheet, { width: (AppConstant.WIDTH - 48) / 2, marginRight: 16 }]}>
+          <View style={[styles.itemWorkSheet, { width: (AppConstant.WIDTH - 48) / 2, marginRight: 16 ,marginBottom :0 }]}>
             <Text style={[styles.worksheetLb]} >
               Viếng thăm
             </Text>
@@ -187,7 +193,7 @@ const HomeScreen = () => {
             </View>
           </View>
 
-          <View style={[styles.itemWorkSheet, { width: (AppConstant.WIDTH - 48) / 2 }]}>
+          <View style={[styles.itemWorkSheet, { width: (AppConstant.WIDTH - 48) / 2 ,marginBottom :0}]}>
             <Text style={[styles.worksheetLb]} >
               Khách hàng mới
             </Text>
@@ -231,12 +237,13 @@ const HomeScreen = () => {
             size={20}
             mode="contained"
             containerColor={colors.border}
-            onPress={() => console.log('Pressed')}
+            onPress={() => bottomSheetNotification.current && bottomSheetNotification.current.snapToIndex(0)}
           />
         </View>
       </View>
-      <ScrollView>
-        <MainLayout style={styles.mainLayout}>
+      <AppContainer>
+        <View style={styles.mainLayout}>
+
           <View
             style={[
               styles.shadow,
@@ -373,8 +380,9 @@ const HomeScreen = () => {
             </View>
           </View>
 
-        </MainLayout>
-      </ScrollView>
+        </View>
+      </AppContainer>
+      <NotificationScreen bottomSheetRef={bottomSheetNotification} snapPointsCustom={snapPoint}/>
     </SafeAreaView>
   );
 };
@@ -385,7 +393,8 @@ const rootStyles = (theme: AppTheme) => StyleSheet.create({
   mainLayout :{
     backgroundColor: theme.colors.bg_neutral,
     flex: 1,
-    rowGap: 20
+    rowGap: 20,
+    paddingHorizontal :16
   } as ViewStyle,
   flexSpace: {
     flexDirection: 'row',

@@ -152,5 +152,6 @@ export interface IWidget {
   id: number
   name : string,
   icon :SvgIconTypes,
-  navigate :string
+  navigate :string,
+  isUse? :boolean
 }

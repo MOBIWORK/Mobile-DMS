@@ -24,6 +24,7 @@ import {Home,
   SuccessChanged,
   Inventory,
   InventoryAddProduct,
+  WidgetFavouriteScreen,
   
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
@@ -83,6 +84,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={SelectOrganization}
         />
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
+        <Stack.Screen name={ScreenConstant.WIDGET_FVR_SCREEN} component={WidgetFavouriteScreen} />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
@@ -140,6 +142,7 @@ export type RootStackParamList = {
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
   [ScreenConstant.HOME_SCREEN]: undefined;
+  [ScreenConstant.WIDGET_FVR_SCREEN]: undefined;
   [ScreenConstant.SUCCESS_CHANGE]: undefined;
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
