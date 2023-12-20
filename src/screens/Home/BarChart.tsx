@@ -22,7 +22,7 @@ const BarChartStatistical = ({ color }: PropTypes) => {
             <View>
                 <Text style={[styles.title]} >Tổng doanh số tháng đến thời điểm hiện tại</Text>
                 <Text style={[styles.description]} >105.035.984 đ
-                    <Text style={[styles.desSub, { color: color }]}>(Đạt 50.2%)</Text>
+                    <Text style={[styles.desSub, { color: color }]}>{`  `}(Đạt 50.2%)</Text>
                 </Text>
             </View>
             <View style={[styles.containerBar]}>
@@ -61,10 +61,10 @@ const rootStyles = (theme: AppTheme) => StyleSheet.create({
         color :theme.colors.text_secondary
     } as TextStyle,
     description: {
+        marginTop :5,
         fontSize: 20,
         lineHeight: 30,
         fontWeight: "500",
-        marginBottom: 5,
         color :theme.colors.text_primary
     } as TextStyle,
     desSub: {
