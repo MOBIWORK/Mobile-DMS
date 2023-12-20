@@ -215,7 +215,8 @@ export type IDataCustomer = {
   websiteURL:string,
   address:{
     address:string,
-    phoneNumber:string
+    isSetAddressGet:boolean,
+    isSetAddressTake:boolean
   },
   contact:{
     name:string,

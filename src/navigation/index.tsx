@@ -26,8 +26,8 @@ import {
   Index,
   AddingNewCustomer,
   DetailCustomer,
-
   ReportOrderDetail,
+
 } from '../screens';
 // import PushNotification from 'react-native-push-notification';
 import {MyAppTheme} from '../layouts/theme';
@@ -118,6 +118,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={ReportOrderDetail}
         />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
+        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER} component={AddingNewCustomer} />
+
       </Stack.Navigator>
       {children}
     </NavigationContainer>
