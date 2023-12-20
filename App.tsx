@@ -17,6 +17,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppNavigationContainer from './src/navigation';
 import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
+import { SnackBar } from './src/components/common/AppSnack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 function App(): JSX.Element {
   useEffect(() => {
@@ -106,6 +108,7 @@ function App(): JSX.Element {
 
   return (
     <Provider store={store}>
+      <SafeAreaProvider>
       <KeyboardAvoidingView
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -114,10 +117,12 @@ function App(): JSX.Element {
           <AppNavigationContainer>
             <StatusBar barStyle={'default'} />
             <HandlingError />
+            <SnackBar/>
           </AppNavigationContainer>
         </GestureHandlerRootView>
         <HandlingLoading />
       </KeyboardAvoidingView>
+      </SafeAreaProvider>
     </Provider>
   );
 }

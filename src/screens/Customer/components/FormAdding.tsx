@@ -7,12 +7,14 @@ import {
   ViewStyle,
   TouchableOpacity,
   ImageStyle,
+  Image,
 } from 'react-native';
 import React, {useRef, useState, useLayoutEffect} from 'react';
-import debounce from 'debounce';
+import {useDispatch, useSelector} from 'react-redux';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
+import Mapbox, {Location} from '@rnmapbox/maps';
 import {AppConstant} from '../../../const';
 import {Colors} from '../../../assets';
 import {
@@ -26,15 +28,11 @@ import {
 import AppImage from '../../../components/common/AppImage';
 import {IDataCustomer, RootEkMapResponse} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import Mapbox, {Location} from '@rnmapbox/maps';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
 import {formatMoney} from '../../../config/function';
-import {API_EK_KEY, BASE_URL_MAP} from '@env';
-import {useDispatch, useSelector} from 'react-redux';
 import {AppActions, AppSelector} from '../../../redux-store';
 import CardAddress from './CardAddress';
-import {Image} from 'react-native';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -82,6 +80,7 @@ const FormAdding = (props: Props) => {
 
     if (data.status === 'OK') {
       setDataLocation(data.results[0].formatted_address);
+    
     } else {
       showSnack({
         msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
@@ -92,14 +91,19 @@ const FormAdding = (props: Props) => {
     // return console.log(data, 'data');
   };
 
-  console.log(mainAddress, 'main');
+  
   const onPressButtonGetLocation = () => {
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
         setLocation(res);
+        showSnack({
+          msg: 'Thành công',
+          type: 'success',
+          interval: 1000,
+        });
         ref?.current?.flyTo(
           [res?.coords.longitude, res?.coords?.latitude],
-          10000,
+          1000,
         );
       })
       .catch(err => console.log(err));
@@ -551,6 +555,6 @@ const rootStyles = (theme: AppTheme) =>
     imageStyle: {
       width: '100%',
       height: '100%',
-      borderRadius:16
+      borderRadius: 16,
     } as ImageStyle,
   });
