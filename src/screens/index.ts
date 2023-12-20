@@ -13,6 +13,7 @@ import ListVisit from './Visit/VisitList/ListVisit';
 import SearchVisit from './Visit/VisitList/SearchVisit';
 import Index from './Visit/VisitDetail';
 import Customer from './Customer/Customer';
+import AddingNewCustomer from '../screens/Customer/AddingNewCustomer';
 
 export {
   SelectOrganization,
@@ -30,5 +31,5 @@ export {
   SearchVisit,
   Index,
   Customer,
-  
+  AddingNewCustomer
 };

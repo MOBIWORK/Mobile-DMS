@@ -12,26 +12,32 @@ import {AppConstant} from '../../../const';
 
 import {listBirthDayType, listFilterType} from './data';
 import {IValueType} from '../Customer';
-import { AppTheme, useTheme } from '../../../layouts/theme';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import {AppTheme, useTheme} from '../../../layouts/theme';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import {IDataCustomer} from '../../../models/types';
 
 type Props = {
   type: string;
   filterRef: React.RefObject<BottomSheetMethods>;
   setValueFilter: (value: React.SetStateAction<IValueType>) => void;
   valueFilter: IValueType;
-  setShow?:React.Dispatch<React.SetStateAction<boolean>>
+  setData: React.Dispatch<React.SetStateAction<IDataCustomer>>;
+  data:IDataCustomer
+  setShow:React.Dispatch<React.SetStateAction<boolean>>
 };
 
-const ListFilter = (props: Props) => {
-  const {type, filterRef, setValueFilter, valueFilter,setShow} = props;
+const ListFilterAdding = (props: Props) => {
+  const {type, filterRef, setValueFilter, valueFilter, setData,data,setShow} = props;
   const styles = rootStyles(useTheme());
   return (
     <View>
       {type === AppConstant.CustomerFilterType.ngay_sinh_nhat ? (
         <View>
           <View style={styles.headerBottomSheet}>
-            <TouchableOpacity onPress={() => filterRef.current?.close()}>
+            <TouchableOpacity onPress={() => {
+              filterRef.current?.close()
+              setShow && setShow(false)
+            }}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name={'close'}
@@ -47,16 +53,14 @@ const ListFilter = (props: Props) => {
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
-                onPress={() =>{
-
-                
+                onPress={() => {
                   setValueFilter(prev => ({
                     ...prev,
                     customerBirthday: item.title,
-                  }))
-                  filterRef?.current?.close()
-                }
-                }>
+                  }));
+                  filterRef?.current?.close();
+                setShow(false)
+                }}>
                 <Text
                   style={styles.itemText(
                     item.title,
@@ -79,7 +83,10 @@ const ListFilter = (props: Props) => {
       ) : type === AppConstant.CustomerFilterType.loai_khach_hang ? (
         <View>
           <View style={styles.headerBottomSheet}>
-            <TouchableOpacity onPress={() => filterRef.current?.close()}>
+            <TouchableOpacity onPress={() => {
+              filterRef.current?.close()
+              setShow && setShow(false)
+            }}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name={'close'}
@@ -95,19 +102,24 @@ const ListFilter = (props: Props) => {
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
-                onPress={() =>
-                {  setValueFilter(prev => ({
+                onPress={() => {
+                  setValueFilter(prev => ({
                     ...prev,
                     customerGroupType: item.title,
-                  }))
-                filterRef?.current?.close()
-                }
-                }>
+                  }));
+                  setData(prev => ({
+                    ...prev,
+                    type: item.title,
+                  }));
+                  console.log('v')
+                  filterRef?.current?.close();
+                setShow(false)
+                }}>
                 <Text
-                  style={styles.itemText(item.title, valueFilter.customerType)}>
+                  style={styles.itemText(item.title, data.type)}>
                   {item.title}
                 </Text>
-                {item.title === valueFilter.customerType && (
+                {item.title === data.type && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
@@ -119,10 +131,13 @@ const ListFilter = (props: Props) => {
             );
           })}
         </View>
-      ) : (
+      ) :  type === AppConstant.CustomerFilterType.nhom_khach_hang ? (
         <View>
           <View style={styles.headerBottomSheet}>
-            <TouchableOpacity onPress={() => filterRef.current?.close()}>
+            <TouchableOpacity onPress={() => {
+              filterRef.current?.close()
+              setShow && setShow(false)
+            }}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name={'close'}
@@ -138,22 +153,20 @@ const ListFilter = (props: Props) => {
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
-                onPress={() =>
-                 { 
-                  console.log(item,'item')
+                onPress={() => {
+                  setData(prev => ({...prev, group: item.title}));
                   setValueFilter(prev => ({
                     ...prev,
                     customerGroupType: item.title,
-                  }))
-                filterRef?.current?.close()
-                }
-                  
-                }>
+                  }));
+                  filterRef?.current?.close();
+                setShow(false)
+                }}>
                 <Text
-                  style={styles.itemText(item.title, valueFilter.customerType)}>
+                  style={styles.itemText(item.title, data.group)}>
                   {item.title}
                 </Text>
-                {item.title === valueFilter.customerType && (
+                {item.title === data.group && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
@@ -165,12 +178,63 @@ const ListFilter = (props: Props) => {
             );
           })}
         </View>
-      )}
+      ) :type === AppConstant.CustomerFilterType.khu_vuc ?(
+        <View>
+        <View style={styles.headerBottomSheet}>
+          <TouchableOpacity onPress={() => {
+              filterRef.current?.close()
+              setShow && setShow(false)
+            }}>
+            <AppIcons
+              iconType={AppConstant.ICON_TYPE.IonIcon}
+              name={'close'}
+              size={24}
+              color={useTheme().colors.text_primary}
+            />
+          </TouchableOpacity>
+
+          <Text style={styles.titleHeaderText}>Khu vực</Text>
+        </View>
+        {listFilterType.map((item: any, index: number) => {
+          return (
+            <TouchableOpacity
+              style={styles.containItemBottomView}
+              key={item.id.toString()}
+              onPress={() => {
+                setData(prev => ({...prev, area: item.title}));
+                setValueFilter(prev => ({
+                  ...prev,
+                  customerGroupType: item.title,
+                }));
+                filterRef?.current?.close();
+                setShow(false)
+               
+              }}>
+              <Text
+                style={styles.itemText(item.title,data.area!)}>
+                {item.title}
+              </Text>
+              {item.title === data?.area && (
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.Feather}
+                  name="check"
+                  size={24}
+                  color={useTheme().colors.primary}
+                />
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+      ): null
+      
+      
+      }
     </View>
   );
 };
 
-export default React.memo(ListFilter);
+export default React.memo(ListFilterAdding);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

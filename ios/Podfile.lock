@@ -541,6 +541,8 @@ PODS:
   - RNBackgroundGeolocation (4.14.5):
     - CocoaLumberjack (~> 3.7.2)
     - React-Core
+  - RNCMaskedView (0.1.11):
+    - React
   - RNGestureHandler (2.14.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -675,6 +677,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
+  - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -819,6 +822,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-fetch"
   RNBackgroundGeolocation:
     :path: "../node_modules/react-native-background-geolocation"
+  RNCMaskedView:
+    :path: "../node_modules/@react-native-community/masked-view"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   rnmapbox-maps:
@@ -907,6 +912,7 @@ SPEC CHECKSUMS:
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
   RNBackgroundFetch: 501c34ad6e880818ba17e7840b23f20a2d112923
   RNBackgroundGeolocation: bf3b45667c4d3c999501f5f8cb16dc35fc01e759
+  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
   rnmapbox-maps: 74d652f4e6711c95aa064c6829dfcf4eeb3536a6
   RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457

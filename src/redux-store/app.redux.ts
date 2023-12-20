@@ -4,6 +4,7 @@ import {IAppReduxState} from './index';
 import {createReducer, createActions} from 'reduxsauce';
 
 
+
 /* ------------- Types and Action Creators ------------- */
 export const {Types, Creators} = createActions({
   setProcessingStatus: ['data'],
@@ -14,7 +15,11 @@ export const {Types, Creators} = createActions({
   setOrganizationBaseURL: ['data'],
   setSearchProductValue: ['data'],
   setSearchVisitValue: ['data'],
-  setTheme: ['dark' || 'default'],
+  setAppTheme:['default'],
+  setMainAddress:['data'],
+  setMainContactAddress:['data'],
+  setNewCustomer:['data']
+  
 });
 
 /* ------------- Initial State ------------- */
@@ -30,6 +35,9 @@ export interface IAppRedux {
   searchProductValue: string;
   searchVisitValue: string;
   theme: ThemeType;
+  mainAddress:any,
+  mainContactAddress:any,
+  newCustomer:any
 }
 
 export const INITIAL_STATE: IAppRedux = {
@@ -39,6 +47,9 @@ export const INITIAL_STATE: IAppRedux = {
   searchProductValue: '',
   searchVisitValue: '',
   theme: 'default',
+  mainAddress:{},
+  mainContactAddress:{},
+  newCustomer:{}
 };
 
 /* ------------- Selector ------------- */
@@ -52,6 +63,9 @@ export const Selector = {
   getSearchVisitValue: (state: IAppReduxState) =>
     state.appRedux.searchVisitValue,
   getTheme: (state: IAppReduxState) => state.appRedux.theme,
+  getMainAddress:(state:IAppReduxState) => state.appRedux.mainAddress,
+  getMainContactAddress:(state:IAppReduxState) => state.appRedux.mainContactAddress,
+  getNewCustomer:(state:IAppReduxState) => state.appRedux.newCustomer
 };
 
 /* ------------- Reducers ------------- */
@@ -60,10 +74,25 @@ const setError = (state = INITIAL_STATE, action: KeyAbleProps) => ({
   error: action.data,
 });
 
+
+const setMainContactAddress = (state = INITIAL_STATE, action: KeyAbleProps) => ({
+  ...state,
+  mainContactAddress:action.data
+});
+
+const setNewCustomer = (state =INITIAL_STATE,action:KeyAbleProps) =>({
+  ...state,
+  newCustomer:action.data
+})
+
 const setProcessingStatus = (state = INITIAL_STATE, action: KeyAbleProps) => ({
   ...state,
   isProcessing: action.data,
 });
+const setMainAddress = (state:IAppRedux = INITIAL_STATE,action:KeyAbleProps) =>({
+  ...state,
+  mainAddress:action.data
+})
 
 const setShowErrorModalStatus = (
   state = INITIAL_STATE,
@@ -104,6 +133,9 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_SEARCH_PRODUCT_VALUE]: setSearchProductValue,
   [Types.SET_SEARCH_VISIT_VALUE]: setSearchVisitValue,
   [Types.SET_APP_THEME]: setAppTheme,
+  [Types.SET_MAIN_ADDRESS]:setMainAddress,
+  [Types.SET_MAIN_CONTACT_ADDRESS]:setMainContactAddress,
+  [Types.SET_NEW_CUSTOMER]:setNewCustomer
 });
 
 export default Creators;

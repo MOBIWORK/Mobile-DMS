@@ -4,7 +4,7 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 
-export const openImagePickerCamera = (callBack: () => void) => {
+export const openImagePickerCamera = (callBack: (image: string | undefined) => void) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     includeBase64: true,
@@ -13,23 +13,22 @@ export const openImagePickerCamera = (callBack: () => void) => {
     presentationStyle: 'fullScreen',
   };
 
-  launchCamera(options, response => {
+  launchCamera(options, (response) => {
     if (response.didCancel) {
       console.log('User cancelled camera picker');
-    } else {
-      // @ts-ignore
-      if (response.error) {
-        // @ts-ignore
-        console.log('camera picker error: ', response.error);
-      } else {
-        // @ts-ignore
-        callBack(response.uri || response.assets?.[0]?.base64);
-      }
+    } else if (response.errorMessage) {
+      console.log('Camera picker error: ', response.errorMessage);
+    } else if (response?.assets?.[0].uri || (response.assets && response.assets.length > 0)) {
+      const selectedImage = response?.assets?.[0].uri|| response.assets[0].base64;
+      callBack(selectedImage);
     }
-  }).finally();
+  });
 };
 
-export const openImagePicker = (callBack: () => void, isUri?: boolean) => {
+export const openImagePicker = (
+  callBack: (image: string | undefined) => void,
+  isUri?: boolean,
+) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     includeBase64: true,
@@ -41,17 +40,13 @@ export const openImagePicker = (callBack: () => void, isUri?: boolean) => {
   launchImageLibrary(options, response => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
-    } else {
-      // @ts-ignore
-      if (response.error) {
-        // @ts-ignore
-        console.log('Image picker error: ', response.error);
-      } else {
-        callBack(
-          // @ts-ignore
-          isUri ? response.assets?.[0]?.base64 : response.assets?.[0]?.uri,
-        );
-      }
+    } else if (response.errorMessage) {
+      console.log('Image picker error: ', response.errorMessage);
+    } else if (response.assets && response.assets.length > 0) {
+      const selectedImage = isUri
+        ? response.assets[0].base64
+        : response.assets[0].uri;
+      callBack(selectedImage);
     }
-  }).finally();
+  });
 };

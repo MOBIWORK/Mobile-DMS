@@ -24,12 +24,15 @@ import {
   SignIn,
   SuccessChanged,
   Index,
+  AddingNewCustomer
+
 } from '../screens';
 // import PushNotification from 'react-native-push-notification';
 import {MyAppTheme} from '../layouts/theme';
 import {IAppReduxState} from '../redux-store';
 import {useSelector} from 'react-redux';
 import MainTab from './MainTab';
+
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
@@ -39,7 +42,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
     AppConstant.Organization,
   );
 
-  const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
+  // const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
   // useEffect(() => {
   //   PushNotification.configure({
@@ -103,6 +106,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={SearchVisit}
         />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
+        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER} component={AddingNewCustomer} />
+
       </Stack.Navigator>
       {children}
     </NavigationContainer>

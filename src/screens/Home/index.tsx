@@ -388,7 +388,7 @@ const HomeScreen = () => {
         </View>
       </View>
       <ScrollView>
-        <MainLayout style={{backgroundColor: colors.bg_neutral, flex: 1}}>
+        <MainLayout style={{backgroundColor: colors.bg_neutral, flex: 1,marginTop:0}}>
           <View
             style={[
               styles.shadow,

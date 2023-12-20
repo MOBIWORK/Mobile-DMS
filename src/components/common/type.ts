@@ -46,6 +46,7 @@ export interface ImageProps {
    * @default contain
    */
   resizeMode?: ResizeMode;
+  size?:number
 }
 
 export interface TextProps extends TextProperties {

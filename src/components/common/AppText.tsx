@@ -96,6 +96,7 @@ const TextComponent = (props: TextProps) => {
     <ReactNativeText
       allowFontScaling={false}
       {...rest}
+      numberOfLines={numberOfLines}
       style={[styleComponent]}>
       {content}
     </ReactNativeText>
