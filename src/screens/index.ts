@@ -14,6 +14,7 @@ import SearchVisit from './Visit/VisitList/SearchVisit';
 import Index from './Visit/VisitDetail';
 import Customer from './Customer/Customer';
 import AddingNewCustomer from '../screens/Customer/AddingNewCustomer';
+import DetailCustomer from './DetailCustomer/DetailCustomer';
 
 export {
   SelectOrganization,
@@ -31,5 +32,6 @@ export {
   SearchVisit,
   Index,
   Customer,
-  AddingNewCustomer
+  AddingNewCustomer,
+  DetailCustomer
 };

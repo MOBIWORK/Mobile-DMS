@@ -24,7 +24,8 @@ import {
   SignIn,
   SuccessChanged,
   Index,
-  AddingNewCustomer
+  AddingNewCustomer,
+  DetailCustomer
 
 } from '../screens';
 // import PushNotification from 'react-native-push-notification';
@@ -32,6 +33,7 @@ import {MyAppTheme} from '../layouts/theme';
 import {IAppReduxState} from '../redux-store';
 import {useSelector} from 'react-redux';
 import MainTab from './MainTab';
+import { ICustomer } from '../screens/Customer/components/data';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -107,6 +109,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
         <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER} component={AddingNewCustomer} />
+        <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer} />
 
       </Stack.Navigator>
       {children}
@@ -140,6 +143,10 @@ export type RootStackParamList = {
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.MAIN_TAB]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
+  [ScreenConstant.DETAIL_CUSTOMER]: {
+    data:ICustomer
+  };
+
 };
 
 // Define prop type for useNavigation and useRoute

@@ -224,9 +224,13 @@ const AddingNewCustomer = () => {
           </View>
           <View>
             <TouchableOpacity style={styles.containButton} onPress={handleCameraPicker}>
+              <View style={styles.containIconView}>
+
               <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                Chụp ảnh
+                {'  '}Chụp ảnh
               </AppText>
+              </View>
+          
               <SvgIcon source="arrowRight" size={20} />
             </TouchableOpacity>
 
@@ -278,4 +282,8 @@ const rootStyles = (theme: AppTheme) =>
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.divider,
     } as ViewStyle,
+    containIconView:{
+      flexDirection:'row',
+      alignItems:'center'
+    } as ViewStyle
   });

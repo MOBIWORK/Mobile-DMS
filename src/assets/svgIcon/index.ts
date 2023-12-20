@@ -5,7 +5,9 @@ import MapPin from './mapPin.svg';
 import Phone from './phone.svg';
 import Location from './Location.svg';
 import MapLocation from './mapLocation.svg';
-import arrowRight from './arrowRight.svg'
+import arrowRight from './arrowRight.svg';
+import IconCamera from './camera.svg';
+import IconImage from './image.svg'
 export const SvgComponent = {
   iconMap,
   ArrowDown,
@@ -14,6 +16,8 @@ export const SvgComponent = {
   Phone,
   Location,
   MapLocation,
-  arrowRight
+  arrowRight,
+  IconCamera,
+  IconImage
 };
 export type SvgIconTypes = keyof typeof SvgComponent;
