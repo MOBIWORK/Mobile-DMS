@@ -18,6 +18,7 @@ import DetailCustomer from './DetailCustomer/DetailCustomer';
 import ReportOrderDetail from './Visit/VisitDetail/Report/Order/ReportOrderDetail';
 import Customer from './Customer/Customer';
 import AddingNewCustomer from '../screens/Customer/AddingNewCustomer';
+import DetailCustomer from './DetailCustomer/DetailCustomer';
 
 export {
   SelectOrganization,
@@ -39,5 +40,6 @@ export {
   DetailCustomer,
   ReportOrderDetail,
   Customer,
-  AddingNewCustomer
+  AddingNewCustomer,
+  DetailCustomer
 };

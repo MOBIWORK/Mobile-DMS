@@ -119,6 +119,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
         <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER} component={AddingNewCustomer} />
+        <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer} />
 
       </Stack.Navigator>
       {children}
@@ -159,6 +160,9 @@ export type RootStackParamList = {
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
+  [ScreenConstant.DETAIL_CUSTOMER]: {
+    data:ICustomer
+  };
 
 };
 
