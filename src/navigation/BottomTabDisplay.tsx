@@ -43,7 +43,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
           }
         }
       } else {
-        navigation.navigate(ScreenConstant.WIDGET_SCREEN);
+        navigation.navigate(ScreenConstant.LOOKING_MORE);
       }
     },
     [navigation, state],
@@ -140,7 +140,7 @@ const bottomStyles = (theme: AppTheme) =>
     } as ViewStyle,
     txtItem: (index: number, curIndex: number) =>
       ({
-        color: index === curIndex ? theme.colors.primary : theme.colors.border,
+        color: index === curIndex ? theme.colors.primary : theme.colors.text_secondary,
         textAlign: 'center',
         fontSize: 10,
       } as TextStyle),

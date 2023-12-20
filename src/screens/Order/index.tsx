@@ -172,9 +172,9 @@ const OrderList = () => {
   const renderUiItem = () => {
     return (
       <View
-        style={[styles.containerItem]}>
-        <View style={[styles.flexSpace as any, { paddingBottom: 8 }]}>
-          <Text style={[styles.nameCustomer]}>
+        style={[styles.containerItem, {backgroundColor: colors.bg_default}]}>
+        <View style={[styles.flexSpace, {paddingBottom: 8}]}>
+          <Text style={[styles.nameCustomer, {color: colors.text_primary}]}>
             Tên khách hàng - Mã KH
           </Text>
           <View
@@ -182,7 +182,7 @@ const OrderList = () => {
               styles.statusView,
               { backgroundColor: 'rgba(255, 171, 0, 0.08)' },
             ]}>
-            <Text style={[styles.textStatus as any, { color: colors.warning }]}>
+            <Text style={[styles.textStatus, {color: colors.warning}]}>
               Chờ duyệt
             </Text>
           </View>
@@ -199,8 +199,8 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                styles.itemDesc as any,
-                { marginLeft: 6, color: colors.text_primary },
+                styles.itemDesc,
+                {marginLeft: 6, color: colors.text_primary},
               ]}>
               DH-12345
             </Text>
@@ -216,8 +216,8 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                styles.itemDesc as any,
-                { marginLeft: 6, color: colors.text_primary },
+                styles.itemDesc,
+                {marginLeft: 6, color: colors.text_primary},
               ]}>
               101 Tôn Dật Tiên, Tân Phú, Quận 7, Thành phố Hồ Chí Minh
             </Text>
@@ -232,7 +232,10 @@ const OrderList = () => {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={[styles.itemDesc as any, { marginLeft: 6 }]}>
+              style={[
+                styles.itemDesc,
+                {marginLeft: 6, color: colors.text_primary},
+              ]}>
               08:00, 20/11/2023
             </Text>
           </View>
@@ -246,12 +249,15 @@ const OrderList = () => {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={[styles.itemDesc as any, { marginLeft: 6 }]}>
+              style={[
+                styles.itemDesc,
+                {marginLeft: 6, color: colors.text_primary},
+              ]}>
               20/11/2023
             </Text>
           </View>
         </View>
-        <View style={[styles.flexSpace as any, { marginTop: 8 }]}>
+        <View style={[styles.flexSpace, {marginTop: 8}]}>
           <Button
             icon="printer-outline"
             mode="outlined"
@@ -266,7 +272,7 @@ const OrderList = () => {
             <Text style={styles.itemTotal}>
               Tổng tiền :
             </Text>
-            <Text style={[styles.nameCustomer]}>
+            <Text style={[styles.nameCustomer, {color: colors.text_primary}]}>
               7.000.000
             </Text>
           </View>
@@ -371,8 +377,12 @@ const OrderList = () => {
             }
           />
         </View>
-        <Text style={[styles.countOrder]}>
-          300 <Text style={{ color: colors.text_secondary }}>Đơn hàng</Text>
+        <Text
+          style={[
+            styles.countOrder,
+            {color: colors.text_primary, marginTop: 16, marginBottom: 12},
+          ]}>
+          300 <Text style={{color: colors.text_secondary}}>Đơn hàng</Text>
         </Text>
         <AppContainer>
           <TouchableOpacity

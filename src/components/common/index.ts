@@ -9,6 +9,8 @@ import AppHeader from './AppHeader';
 import AuthenHeader from './AuthenHeader';
 import AvatarAccessory from './AvatarAccessory';
 import AppAvatar from './AppAvatar';
+import {AppText} from './AppText'
+import AppFAB from './AppFAB';
 import AppContainer from '../AppContainer';
 import AppFAB from './AppFAB';
 import {AppText} from './AppText'

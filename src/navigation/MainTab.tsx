@@ -1,7 +1,9 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
-import {Customer, ForgotPassword, Visits, WidgetScreen} from '../screens';
+import {Customer, Customer, ForgotPassword, Visits, WidgetScreen, ListProduct, OrderList, ProductDetail, Visits} from '../screens';
+import BottomTabDisplay from './BottomTabDisplay';
+import HomeScreen from '../screens/Home';
 import BottomTabDisplay from './BottomTabDisplay';
 import HomeScreen from '../screens/Home';
 

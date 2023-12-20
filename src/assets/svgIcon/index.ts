@@ -1,3 +1,11 @@
+import iconMap from './iconMap.svg';
+import ArrowDown from './arrowDown.svg';
+
+export const SvgComponent = {
+  iconMap,
+  ArrowDown,
+};
+export type SvgIconTypes = keyof typeof SvgComponent;
 import iconMap from './iconMap.svg'
 import iconClock from './iconClock.svg'
 import iconUser from './iconUser.svg'
@@ -21,4 +29,4 @@ export const SvgComponent = {
     iconImage,
     iconContainer
 }
-export type SvgIconTypes = keyof typeof SvgComponent
+export type SvgIconTypes = keyof ty

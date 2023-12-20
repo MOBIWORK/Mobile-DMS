@@ -28,6 +28,8 @@ export interface IAppRedux {
   searchProductValue: string;
   theme:ThemeType
   searchVisitValue: string;
+  theme:ThemeType
+  
 }
 
 export const INITIAL_STATE: IAppRedux = {
@@ -37,6 +39,7 @@ export const INITIAL_STATE: IAppRedux = {
   searchProductValue: '',
   theme:'default',
   searchVisitValue: '',
+  theme:'default'
 };
 
 /* ------------- Selector ------------- */
@@ -50,6 +53,8 @@ export const Selector = {
   getTheme:(state: IAppReduxState) => state.appRedux.theme,
   getSearchVisitValue: (state: IAppReduxState) =>
     state.appRedux.searchVisitValue,
+  getTheme:(state: IAppReduxState) => state.appRedux.theme,
+
 };
 
 /* ------------- Reducers ------------- */

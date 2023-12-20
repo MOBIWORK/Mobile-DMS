@@ -10,6 +10,7 @@ import React from 'react';
 import {Colors} from '../../../assets';
 import {TouchableOpacity} from 'react-native';
 import AppImage from '../../../components/common/AppImage';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 
 type Props = {
   type: string;
@@ -19,7 +20,7 @@ type Props = {
 
 const FilterHandle = (props: Props) => {
   // const [value, setValue] = React.useState('Gần nhất');
-
+  const styles = rootStyles(useTheme())
   return (
     <View style={styles.root}>
       {props.type === '1' ? (
@@ -44,7 +45,7 @@ const FilterHandle = (props: Props) => {
 
 export default FilterHandle;
 
-const styles = StyleSheet.create({
+const rootStyles =(theme:AppTheme) =>StyleSheet.create({
   root: {
     marginRight: 8,
    
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor:theme.colors.bg_neutral ,
     borderWidth: 1,
     padding: 6,
     borderRadius: 16,

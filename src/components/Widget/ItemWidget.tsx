@@ -1,31 +1,36 @@
-import React from 'react';
-import {
-    StyleSheet,
-    Text,
-    TextStyle,
-    TouchableOpacity,
-    View,
-    ViewStyle,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../../navigation';
-import { useTranslation } from 'react-i18next';
-import { SvgIcon } from '../common';
-import { SvgIconTypes } from '../../assets/svgIcon';
-import { AppTheme, useTheme } from '../../layouts/theme';
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useNavigation, useTheme } from "@react-navigation/native";
+import { NavigationProp } from "../../navigation";
+import { useTranslation } from "react-i18next";
 
-const ItemuWidget = ({source,name,navigate,isTouchable = true}: PropTypes) => {
-
-    const styles = createSheetStyle(useTheme())
+const ItemuWidget = ({
+    source,
+    name,
+    navigate,
+    isTouchable = true,
+}: PropTypes) => {
+    const { colors } = useTheme();
     const navigation = useNavigation<NavigationProp>();
     const { t: getLabel } = useTranslation();
 
     if (isTouchable) {
         return (
             <TouchableOpacity onPress={() => navigation.navigate(navigate)}>
-                <View style={styles.container}>
-                    <View style={[styles.iconContail]}>
-                        <SvgIcon source={source}  size={32}/>
+                <View style={{ alignItems: "center", paddingVertical: 8 }}>
+                    <View
+                        style={[
+                            styles.iconContail,
+                            {
+                                marginBottom: 8,
+                                padding: 8,
+                                borderRadius: 8,
+                                borderColor: colors.border,
+                                borderWidth: 1
+                            },
+                        ]}
+                    >
+                        <Image source={source} style={styles.icon} />
                     </View>
                     <Text style={styles.name}>{getLabel(name)}</Text>
                 </View>
@@ -34,9 +39,20 @@ const ItemuWidget = ({source,name,navigate,isTouchable = true}: PropTypes) => {
     } else {
         return (
             <View>
-                <View style={styles.container}>
-                    <View style={[styles.iconContail]}>
-                        <SvgIcon source={source}  size={32}/>
+                <View style={{ alignItems: "center", paddingVertical: 8 }}>
+                    <View
+                        style={[
+                            styles.iconContail,
+                            {
+                                marginBottom: 8,
+                                padding: 8,
+                                borderRadius: 8,
+                                borderColor: colors.border,
+                                borderWidth: 1
+                            },
+                        ]}
+                    >
+                        <Image source={source} style={styles.icon} />
                     </View>
                     <Text style={styles.name}>{getLabel(name)}</Text>
                 </View>
