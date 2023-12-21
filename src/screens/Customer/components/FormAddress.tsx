@@ -67,6 +67,7 @@ const FormAddress = (props: Props) => {
 
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
+    console.log(data,'data')
     if (data.status === 'OK') {
       setAddressValue(prev => ({
         ...prev,
@@ -81,10 +82,17 @@ const FormAddress = (props: Props) => {
     }
   };
 
-  const onGetCurrentLocation = () => {
+  const onPressButtonGetLocation = () => {
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
         fetchData(res?.coords?.latitude, res?.coords?.longitude);
+        
+        showSnack({
+          msg: 'Thành công',
+          type: 'success',
+          interval: 1000,
+        });
+        
       })
       .catch(err => console.log(err));
   };
@@ -123,7 +131,7 @@ const FormAddress = (props: Props) => {
           <View style={styles.buttonView}>
             <TouchableOpacity
               style={styles.buttonStyle}
-              onPress={onGetCurrentLocation}>
+              onPress={onPressButtonGetLocation}>
               <SvgIcon source="iconMap" size={20} colorTheme="action" />
               <AppText
                 style={styles.marginText}

@@ -95,29 +95,7 @@ export type ItemNoteVisitDetail = {
   time: string;
   date: string;
 };
-export type IDataCustomer = {
-  nameCompany:string,
-  type:string,
-  group:string,
-  area?:string,
-  dob:string,
-  gland?:string,
-  debtLimit?:number | any,
-  description:string,
-  websiteURL:string,
-  address:{
-    address:string,
-    isSetAddressGet:boolean,
-    isSetAddressTake:boolean
-  },
-  contact:{
-    name:string,
-    address:string,
-    phoneNumber:string
-  }
 
-
-}
 
 
 export interface RootEkMapResponse {

@@ -41,10 +41,11 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         backgroundColor: backgroundColor ?? colors.bg_default,
       }}
       handleStyle={{
-        display: 'none',
+        // display: 'none',
         backgroundColor: backgroundColor ?? colors.bg_default,
         borderTopLeftRadius: 8,
         borderTopRightRadius: 8,
+        // backgroundColor:'red'
       }}
       backdropComponent={hiddenBackdrop ? null : renderBackdrop}
       enablePanDownToClose={enablePanDownToClose ?? true}
@@ -61,7 +62,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         },
         shadowOpacity: 0.58,
         shadowRadius: 16.0,
-
+        // backgroundColor:'red',
         elevation: 24,
       }}
       {...otherProps}>

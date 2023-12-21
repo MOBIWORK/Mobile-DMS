@@ -225,7 +225,7 @@ const AddingNewCustomer = () => {
           <View>
             <TouchableOpacity style={styles.containButton} onPress={handleCameraPicker}>
               <View style={styles.containIconView}>
-
+                <SvgIcon  source='IconCamera'  size={24}   />
               <AppText fontSize={16} fontWeight="500" colorTheme="black">
                 {'  '}Chụp ảnh
               </AppText>
@@ -235,9 +235,12 @@ const AddingNewCustomer = () => {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.containButton} onPress={handleImagePicker}>
+              <View style={styles.containIconView}>
+              <SvgIcon source='IconImage' size={24}    />
               <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                Chọn từ thư viện
+                {'  '}Chọn từ thư viện
               </AppText>
+              </View>
               <SvgIcon source="arrowRight" size={20} />
             </TouchableOpacity>
           </View>

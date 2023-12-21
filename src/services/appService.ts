@@ -42,6 +42,6 @@ export const updateProfile = (data: IProfile) =>
 export const getDetailLocation = (lat?: number, lon?: number) =>
   client
     .get(
-      BASE_URL_MAP + `point.lon=${lon}&point.lat=${lat}&api_key=${API_EK_KEY}`,
+      BASE_URL_MAP + `?point.lon=${lon}&point.lat=${lat}&api_key=${API_EK_KEY}`,
     )
     .then(res => res.data);
