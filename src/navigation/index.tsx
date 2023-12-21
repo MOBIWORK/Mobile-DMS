@@ -26,6 +26,8 @@ import {Home,
   InventoryAddProduct,
   WidgetFavouriteScreen,
   NotificationScreen,
+  CheckinOrder,
+  CheckinOrderCreated,
   
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
@@ -97,6 +99,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.CHECKIN_INVENTORY} component={Inventory}/>
         <Stack.Screen name={ScreenConstant.INVENTORY_ADD_PRODUCT} component={InventoryAddProduct}/>
         <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
+        <Stack.Screen name={ScreenConstant.CKECKIN_ORDER}  component={CheckinOrder} />
+        <Stack.Screen name={ScreenConstant.CKECKIN_ORDER_CREATE}  component={CheckinOrderCreated} />
         
       </Stack.Navigator>
       {children}
@@ -132,10 +136,8 @@ export type RootStackParamList = {
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
   [ScreenConstant.CHECKIN_INVENTORY]:undefined
   [ScreenConstant.INVENTORY_ADD_PRODUCT]:undefined
-  [ScreenConstant.LIST_VISIT]: undefined;
-  [ScreenConstant.SEARCH_VISIT]: undefined;
-  [ScreenConstant.ORDER_SCREEN]: undefined;
-  [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
+  [ScreenConstant.CKECKIN_ORDER]:undefined
+  [ScreenConstant.CKECKIN_ORDER_CREATE]:undefined
 };
 
 // Define prop type for useNavigation and useRoute

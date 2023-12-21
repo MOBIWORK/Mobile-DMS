@@ -20,6 +20,8 @@ import LookingMore from './LookingMore/LookingMore';
 import AddingNewCustomer from './Customer/AddingNewCustomer';
 import Inventory from './Checkin/Inventory';
 import InventoryAddProduct from './Checkin/Inventory/AddingProduct';
+import CheckinOrder from './Checkin/Order';
+import CheckinOrderCreated from './Checkin/Order/CreateOrder';
 
 export {
     SelectOrganization,
@@ -43,5 +45,7 @@ export {
     InventoryAddProduct,
     WidgetScreen,
     WidgetFavouriteScreen,
-    NotificationScreen
+    NotificationScreen,
+    CheckinOrder,
+    CheckinOrderCreated
 }

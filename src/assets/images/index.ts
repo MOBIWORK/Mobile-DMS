@@ -35,9 +35,12 @@ const IconType = require('./iconType.png');
 const IconFilter = require('./iconFilter.png')
 const IconCamera = require('./camera.png')
 const IconBill= require('./ic-solar_bill.png')
+const IconOrder= require('./icfile.png')
 
 
 export {
+  IconBill,
+  IconOrder,
   VNFLag,
   ENFlag,
   SuccessApiIcon,
@@ -72,17 +75,4 @@ export {
   MapPinIcon,
   PhoneIcon,
   SendIcon,
-  IconHome,
-  IconHomeActive,
-  IconVisit,
-  IconVisitActive,
-  IconCustomer,
-  IconCustomerActive,
-  IconLookingMore,
-  IconLookingMoreActive,
-  IconSearch,
-  IconAddress,
-  IconPhone,
-  IconType,
-  IconFilter,IconCamera
 };
