@@ -1,8 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNavigation, useTheme} from '@react-navigation/native';
-import {StyleSheet, Text, useWindowDimensions, View} from 'react-native';
-import {NavigationProp} from '../../../navigation';
+import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
+import {
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+  ViewStyle,
+} from 'react-native';
+import {NavigationProp, RouterProp} from '../../../navigation';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {MainLayout} from '../../../layouts';
 import {
@@ -24,13 +30,14 @@ const Index = () => {
   const {bottom} = useSafeAreaInsets();
   const layout = useWindowDimensions();
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RouterProp<'VISIT_DETAIL'>>();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const DetailScreen = () => (
     <AppContainer style={{marginBottom: bottom}}>
       <View style={{flex: 1, padding: 16}}>
-        <Detail item={ItemFake} />
+        <Detail item={route.params ? route.params.data : ItemFake} />
       </View>
     </AppContainer>
   );
@@ -113,12 +120,12 @@ const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: '#ffffff',
     borderBottomWidth: 1,
-  },
+  } as ViewStyle,
   textTabBar: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '500',
-  },
+  } as ViewStyle,
   indicatorStyle: {
     padding: 1.5,
     marginBottom: -2,

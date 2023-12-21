@@ -6,12 +6,14 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {AppConstant, ScreenConstant} from '../const';
 
-// import MainTab from "./MainTab";
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
-import {IResOrganization, ReportOrderItemType} from '../models/types';
+import {
+  IResOrganization,
+  ReportOrderItemType,
+  VisitListItemType,
+} from '../models/types';
 import {
   ForgotPassword,
-  Home,
   ImageView,
   ListProduct,
   OrderDetail,
@@ -27,14 +29,13 @@ import {
   AddingNewCustomer,
   DetailCustomer,
   ReportOrderDetail,
-
 } from '../screens';
 // import PushNotification from 'react-native-push-notification';
 import {MyAppTheme} from '../layouts/theme';
 import {IAppReduxState} from '../redux-store';
 import {useSelector} from 'react-redux';
 import MainTab from './MainTab';
-import { ICustomer } from '../screens/Customer/components/data';
+import {ICustomer} from '../screens/Customer/components/data';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -72,7 +73,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
@@ -109,16 +109,20 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={SearchVisit}
         />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
-        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER} component={AddingNewCustomer} />
-        <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer} />
+        <Stack.Screen
+          name={ScreenConstant.ADDING_NEW_CUSTOMER}
+          component={AddingNewCustomer}
+        />
+        <Stack.Screen
+          name={ScreenConstant.DETAIL_CUSTOMER}
+          component={DetailCustomer}
+        />
 
         <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
         <Stack.Screen
           name={ScreenConstant.REPORT_ORDER_DETAIL}
           component={ReportOrderDetail}
         />
-       
-
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -151,17 +155,16 @@ export type RootStackParamList = {
   [ScreenConstant.MAIN_TAB]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.DETAIL_CUSTOMER]: {
-    data:ICustomer
+    data: ICustomer;
   };
-  [ScreenConstant.VISIT_DETAIL]: undefined;
+  [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
-  [ScreenConstant.CUSTOMER]:undefined;
-  [ScreenConstant.MAIN_TAB]:undefined
-  [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
+  [ScreenConstant.CUSTOMER]: undefined;
+  [ScreenConstant.MAIN_TAB]: undefined;
+  [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.DETAIL_CUSTOMER]: {
-    data:ICustomer
+    data: ICustomer;
   };
-
 };
 
 // Define prop type for useNavigation and useRoute

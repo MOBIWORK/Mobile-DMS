@@ -201,7 +201,7 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-    },
+    } as ViewStyle,
     rowItemContainer: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -227,5 +227,5 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       borderRadius: 16,
       width: '40%',
       alignItems: 'center',
-    },
+    } as ViewStyle,
   });

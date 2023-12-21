@@ -1,6 +1,6 @@
 import SelectOrganization from './Authen/SelectOrganization';
 import SignIn from './Authen/SignIn';
-import Home from './Home';
+import HomeScreen from './Home';
 import ForgotPassword from './Authen/ForgotPassword';
 import SuccessChanged from './Authen/SuccessChanged';
 import ListProduct from './Product/ProductList/ListProduct';
@@ -17,11 +17,10 @@ import AddingNewCustomer from '../screens/Customer/AddingNewCustomer';
 import DetailCustomer from './DetailCustomer/DetailCustomer';
 import ReportOrderDetail from './Visit/VisitDetail/Report/Order/ReportOrderDetail';
 
-
 export {
   SelectOrganization,
   SignIn,
-  Home,
+  HomeScreen,
   SuccessChanged,
   ForgotPassword,
   ListProduct,
@@ -37,5 +36,4 @@ export {
   AddingNewCustomer,
   DetailCustomer,
   ReportOrderDetail,
-
 };

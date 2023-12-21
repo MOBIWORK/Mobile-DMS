@@ -7,48 +7,18 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
-import {useTheme} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
+import {NavigationProp} from '../../../navigation';
+import {ScreenConstant} from '../../../const';
 
 const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   const {colors} = useTheme();
-
-  const styles = StyleSheet.create({
-    viewContainer: {
-      marginVertical: 8,
-      padding: 16,
-      borderRadius: 16,
-      backgroundColor: colors.bg_default,
-      rowGap: 8,
-    },
-    user: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      borderBottomWidth: 1,
-      borderColor: colors.divider,
-      paddingBottom: 16,
-    },
-    userLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-    userTextLeft: {
-      color: colors.text_primary,
-      fontWeight: '500',
-      fontSize: 16,
-      marginLeft: 8,
-    },
-    content: {
-      marginRight: 8,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-  });
+  const styles = createStyleSheet(useTheme());
+  const navigation = useNavigation<NavigationProp>();
 
   const statusItem = (status: boolean) => {
     return (
@@ -68,7 +38,10 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   };
 
   return (
-    <Pressable>
+    <Pressable
+      onPress={() =>
+        navigation.navigate(ScreenConstant.VISIT_DETAIL, {data: item})
+      }>
       <View style={styles.viewContainer}>
         <View style={styles.user}>
           <View style={styles.userLeft}>
@@ -160,3 +133,39 @@ interface VisitItemProps {
 }
 
 export default VisitItem;
+
+const createStyleSheet = (theme: ExtendedTheme) =>
+  StyleSheet.create({
+    viewContainer: {
+      marginVertical: 8,
+      padding: 16,
+      borderRadius: 16,
+      backgroundColor: theme.colors.bg_default,
+      rowGap: 8,
+    } as ViewStyle,
+    user: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderColor: theme.colors.divider,
+      paddingBottom: 16,
+    } as ViewStyle,
+    userLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    } as ViewStyle,
+    userTextLeft: {
+      color: theme.colors.text_primary,
+      fontWeight: '500',
+      fontSize: 16,
+      marginLeft: 8,
+    } as ViewStyle,
+    content: {
+      marginRight: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    } as ViewStyle,
+  });
