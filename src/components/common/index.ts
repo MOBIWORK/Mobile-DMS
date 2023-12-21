@@ -13,6 +13,7 @@ import AppContainer from '../AppContainer';
 import FilterView from './FilterView';
 import AppAccordion from './AppAccordion';
 import AppSegmentedButtons from './AppSegmentedButtons';
+import AppCustomHeader from './AppCustomHeader';
 
 export {
   AppBottomSheet,
@@ -30,4 +31,5 @@ export {
   FilterView,
   AppAccordion,
   AppSegmentedButtons,
+  AppCustomHeader,
 };

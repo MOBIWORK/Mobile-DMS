@@ -1,5 +1,6 @@
 import {Dimensions} from 'react-native';
 import {ScreenConstant} from './index';
+import {IFilterType} from '../components/common/FilterListComponent';
 
 export const WIDTH = Dimensions.get('window').width;
 export const HEIGHT = Dimensions.get('window').height;
@@ -67,3 +68,26 @@ export const VisitFilterType = {
   customerGroup: 'customerGroup',
   customerType: 'customerType',
 };
+
+export const SelectedDateFilterData: IFilterType[] = [
+  {
+    label: 'today',
+    value: 1,
+    isSelected: true,
+  },
+  {
+    label: 'thisWeek',
+    value: 2,
+    isSelected: false,
+  },
+  {
+    label: 'thisMouth',
+    value: 2,
+    isSelected: false,
+  },
+  {
+    label: 'custom',
+    value: 2,
+    isSelected: false,
+  },
+];

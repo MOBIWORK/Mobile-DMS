@@ -11,6 +11,7 @@ export const LIST_VISIT = 'LIST_VISIT';
 export const HOME_SCREEN = 'HOME_SCREEN';
 export const SEARCH_VISIT = 'SEARCH_VISIT';
 export const VISIT_DETAIL = 'VISIT_DETAIL';
+export const REPORT_ORDER_DETAIL = 'REPORT_ORDER_DETAIL';
 export const PROFILE = 'PROFILE';
 export const ACCOUNT_SETTING = 'ACCOUNT_SETTING';
 export const NOTIFY_SETTING = 'NOTIFY_SETTING';

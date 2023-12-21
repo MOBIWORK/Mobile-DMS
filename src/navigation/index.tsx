@@ -10,7 +10,7 @@ import {AppConstant, ScreenConstant} from '../const';
 import {AppDarkTheme, AppLightTheme} from '../layouts';
 // import MainTab from "./MainTab";
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
-import {IResOrganization} from '../models/types';
+import {IResOrganization, ReportOrderItemType} from '../models/types';
 import {
   ForgotPassword,
   Home,
@@ -26,6 +26,7 @@ import {
   SignIn,
   SuccessChanged,
   Index,
+  ReportOrderDetail,
 } from '../screens';
 // import PushNotification from 'react-native-push-notification';
 
@@ -64,7 +65,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         initialRouteName={
           loginFirst && organiztion?.company_name
             ? ScreenConstant.SIGN_IN
-            : ScreenConstant.LIST_VISIT
+            : ScreenConstant.VISIT_DETAIL
         }
         screenOptions={{
           headerShown: false,
@@ -112,6 +113,10 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={SearchVisit}
         />
         <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
+        <Stack.Screen
+          name={ScreenConstant.REPORT_ORDER_DETAIL}
+          component={ReportOrderDetail}
+        />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -140,6 +145,7 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.VISIT_DETAIL]: undefined;
+  [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
 };
 
 // Define prop type for useNavigation and useRoute

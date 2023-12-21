@@ -33,6 +33,7 @@ const OrderIcon = require('./orderCount.png');
 const Statistical = require('./staticstical.png');
 const ChevronRightIcon = require('./chevron-right.png');
 const ChevronUpIcon = require('./chevron-up.png');
+const CalenderIcon = require('./calendar.png');
 
 export {
   VNFLag,
@@ -70,4 +71,5 @@ export {
   Statistical,
   ChevronRightIcon,
   ChevronUpIcon,
+  CalenderIcon,
 };

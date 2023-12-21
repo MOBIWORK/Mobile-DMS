@@ -29,7 +29,8 @@ const AppSegmentedButtons: FC<AppSegmentedButtonProps> = ({data, onChange}) => {
               backgroundColor: item.isSelected
                 ? 'rgba(196, 22, 28, 0.08)'
                 : undefined,
-              padding: 12,
+              paddingVertical: 10,
+              paddingHorizontal: 16,
               borderRadius: 20,
             }}>
             <Text

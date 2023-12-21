@@ -12,6 +12,7 @@ import OrderDetail from './Order/Detail';
 import ListVisit from './Visit/VisitList/ListVisit';
 import SearchVisit from './Visit/VisitList/SearchVisit';
 import Index from './Visit/VisitDetail';
+import ReportOrderDetail from './Visit/VisitDetail/Report/Order/ReportOrderDetail';
 
 export {
   SelectOrganization,
@@ -28,4 +29,5 @@ export {
   ListVisit,
   SearchVisit,
   Index,
+  ReportOrderDetail,
 };
