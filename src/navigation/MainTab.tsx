@@ -2,7 +2,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
-import {Customer, ForgotPassword, HomeScreen, ListVisit} from '../screens';
+import {Customer, ForgotPassword, HomeScreen, Index, ListVisit} from '../screens';
 import BottomTabDisplay from './BottomTabDisplay';
 
 
