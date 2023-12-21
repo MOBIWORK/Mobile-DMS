@@ -24,7 +24,7 @@ import {
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
-import {AppConstant} from '../../const';
+import {AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation';
 import {IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
@@ -32,7 +32,7 @@ import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppActions, IAppReduxState} from '../../redux-store';
-import { openImagePicker, openImagePickerCamera } from '../../utils/camera.utils';
+import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -46,40 +46,40 @@ const AddingNewCustomer = () => {
   const {mainContactAddress, mainAddress} = useSelector(
     (state: IAppReduxState) => state.appRedux,
   );
-  const [imageSource,setImageSource] = useState<string|undefined>('')
+  const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
   const [listData, setListData] = useState<IDataCustomer>({
     nameCompany: '',
     type: valueFilter.customerType,
     group: valueFilter.customerGroupType,
-    dob: valueFilter.customerBirthday,
+    dob: date,
     area: '',
     gland: '',
     debtLimit: 0,
     description: '',
     websiteURL: '',
     address: {
-      address:
-        Object.keys(mainAddress).length > 0 ? mainAddress.detailAddress : '',
+      address: mainAddress?.length >= 0 ? mainAddress[0].detailAddress : '',
       isSetAddressGet:
-        Object.keys(mainAddress).length > 0 ? mainAddress.addressGet : false,
+        mainAddress?.length >= 0 ? mainAddress[0].addressGet : false,
       isSetAddressTake:
-        Object.keys(mainAddress).length > 0 ? mainAddress.addressOrder : false,
+        mainAddress?.length >= 0 ? mainAddress[0].addressOrder : false,
     },
     contact: {
       name:
-        Object.keys(mainContactAddress).length > 0
-          ? mainContactAddress.nameContact
+        mainContactAddress?.length >= 0
+          ? mainContactAddress[0].nameContact
           : '',
       address:
-        Object.keys(mainContactAddress).length > 0
-          ? mainContactAddress.addressContact
+        mainContactAddress?.length >= 0
+          ? mainContactAddress[0].addressContact
           : '',
       phoneNumber:
-        Object.keys(mainContactAddress).length > 0
-          ? mainContactAddress.phoneNumber
+        mainContactAddress?.length >= 0
+          ? mainContactAddress[0].phoneNumber
           : '',
     },
+    imageSource: imageSource ? imageSource : '',
   });
   const [openDate, setOpenDate] = React.useState<boolean>(false);
   const [typeFilter, setTypeFilter] = React.useState<string>(
@@ -103,30 +103,32 @@ const AddingNewCustomer = () => {
   const addingAddress = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
-  // console.log(listData,'aa')
+  const onPressAdding = (listData: IDataCustomer) => {
+    dispatch(AppActions.setNewCustomer(listData));
+    navigation.navigate(ScreenConstant.MAIN_TAB, {
+      screen: ScreenConstant.CUSTOMER,
+    });
+  };
 
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);
   }, [setOpenDate]);
 
-
   const handleImagePicker = () => {
-    openImagePicker((selectedImage) => {
+    openImagePicker(selectedImage => {
       // Handle the selected image, e.g., set it to state
       console.log('Selected Image:', selectedImage);
-      setImageSource(selectedImage)
-      cameraBottomRef.current?.close()
-
+      setImageSource(selectedImage);
+      cameraBottomRef.current?.close();
     });
   };
 
   const handleCameraPicker = () => {
-    openImagePickerCamera((selectedImage) => {
+    openImagePickerCamera(selectedImage => {
       // Handle the selected image, e.g., set it to state
-      setImageSource(selectedImage)
+      setImageSource(selectedImage);
       console.log('Selected Image from Camera:', selectedImage);
-      cameraBottomRef.current?.close()
-
+      cameraBottomRef.current?.close();
     });
   };
   const onConfirmSingle = React.useCallback<SingleChange>(
@@ -199,7 +201,7 @@ const AddingNewCustomer = () => {
       {!show && (
         <TouchableOpacity
           style={styles.buttonAddingNew}
-          onPress={() => dispatch(AppActions.setNewCustomer(listData))}>
+          onPress={() => onPressAdding(listData)}>
           <Text style={styles.textButtonStyle}>Thêm mới</Text>
         </TouchableOpacity>
       )}
@@ -223,23 +225,27 @@ const AddingNewCustomer = () => {
             />
           </View>
           <View>
-            <TouchableOpacity style={styles.containButton} onPress={handleCameraPicker}>
+            <TouchableOpacity
+              style={styles.containButton}
+              onPress={handleCameraPicker}>
               <View style={styles.containIconView}>
-                <SvgIcon  source='IconCamera'  size={24}   />
-              <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                {'  '}Chụp ảnh
-              </AppText>
+                <SvgIcon source="IconCamera" size={24} />
+                <AppText fontSize={16} fontWeight="500" colorTheme="black">
+                  {'  '}Chụp ảnh
+                </AppText>
               </View>
-          
+
               <SvgIcon source="arrowRight" size={20} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.containButton} onPress={handleImagePicker}>
+            <TouchableOpacity
+              style={styles.containButton}
+              onPress={handleImagePicker}>
               <View style={styles.containIconView}>
-              <SvgIcon source='IconImage' size={24}    />
-              <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                {'  '}Chọn từ thư viện
-              </AppText>
+                <SvgIcon source="IconImage" size={24} />
+                <AppText fontSize={16} fontWeight="500" colorTheme="black">
+                  {'  '}Chọn từ thư viện
+                </AppText>
               </View>
               <SvgIcon source="arrowRight" size={20} />
             </TouchableOpacity>
@@ -285,8 +291,8 @@ const rootStyles = (theme: AppTheme) =>
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.divider,
     } as ViewStyle,
-    containIconView:{
-      flexDirection:'row',
-      alignItems:'center'
-    } as ViewStyle
+    containIconView: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    } as ViewStyle,
   });

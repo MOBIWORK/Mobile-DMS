@@ -8,8 +8,8 @@ import {
   ImageStyle,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, {useCallback, useRef, useMemo} from 'react';
-import { TextInput} from 'react-native-paper';
+import React, {useCallback, useRef, useMemo, useLayoutEffect} from 'react';
+import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import {AppConstant, ScreenConstant} from '../../const';
@@ -17,23 +17,21 @@ import {Colors} from '../../assets';
 import MainLayout from '../../layouts/MainLayout';
 import AppImage from '../../components/common/AppImage';
 import FilterHandle from './components/FilterHandle';
-import {
-  fakeData,
-  listFilter,
-} from './components/data';
+import {fakeData, listFilter} from './components/data';
 import ListCard from './components/ListCard';
 import {
   AppBottomSheet,
   AppHeader,
   AppIcons,
   AppInput,
-  AppFAB
+  AppFAB,
 } from '../../components/common';
 import ListFilter from './components/ListFilter';
-import { NavigationProp } from '../../navigation';
-import { AppTheme, useTheme } from '../../layouts/theme';
-import { useNavigation } from '@react-navigation/native';
-
+import {NavigationProp} from '../../navigation';
+import {AppTheme, useTheme} from '../../layouts/theme';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppActions, AppSelector} from '../../redux-store';
 
 export type IValueType = {
   customerType: string;
@@ -45,6 +43,7 @@ const Customer = () => {
   const {t: getLabel} = useTranslation();
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState({
     first: 'Gần nhất',
     second: '',
@@ -61,24 +60,31 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
-  const navigation = useNavigation<NavigationProp>()
+  const showModal = useSelector(AppSelector.getShowModal);
+  const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
   const snapPoints = useMemo(() => ['100%'], []);
 
-  const onPressType1 = useCallback(() => {
+  const onPressType1 = () => {
     setShow(prev => ({...prev, firstModal: !show.firstModal}));
     bottomRef.current?.snapToIndex(0);
-  }, [show.firstModal]);
-  const onPressType2 = useCallback(() => {
+    console.log(show.firstModal);
+    dispatch(AppActions.setShowModal(!showModal));
+  };
+  const onPressType2 = () => {
     setShow(prev => ({...prev, secondModal: !show.secondModal}));
     bottomRef2.current?.snapToIndex(0);
-  }, [show]);
+    dispatch(AppActions.setShowModal(!showModal));
+  };
+  const customer = useSelector(AppSelector.getNewCustomer);
+
+  console.log(customer, 'customer');
 
   const renderBottomView = () => {
     return (
-      <MainLayout   >
+      <MainLayout>
         <AppHeader
           label={'Khách hàng'}
           onBack={() => bottomRef2.current && bottomRef2.current.close()}
@@ -178,15 +184,18 @@ const Customer = () => {
         </View>
 
         <Text style={styles.containCustomer}>
-          <Text style={styles.numberCustomer}>300{' '}</Text>{getLabel('customer')}
+          <Text style={styles.numberCustomer}>300 </Text>
+          {getLabel('customer')}
         </Text>
-        <ListCard data={fakeData} />
+        <ListCard data={customer} />
       </MainLayout>
       <AppBottomSheet
         bottomSheetRef={bottomRef}
         useBottomSheetView={show.firstModal}
         onChange={index =>
-          index === -1 && setShow(prev => ({...prev, firstModal: false}))
+          index === -1 &&
+          (setShow(prev => ({...prev, firstModal: false})),
+          dispatch(AppActions.setShowModal(true)))
         }
         enablePanDownToClose={true}>
         <View>
@@ -202,14 +211,10 @@ const Customer = () => {
                   // console.log(item,'item')
                   setValue(prev => ({
                     ...prev,
-                    first:item.title,
+                    first: item.title,
                   }))
                 }>
-                <Text
-                  style={styles.itemText(
-                    item.title,
-                    value.first,
-                  )}>
+                <Text style={styles.itemText(item.title, value.first)}>
                   {item.title}
                 </Text>
                 {item.title === value.first && (
@@ -230,7 +235,9 @@ const Customer = () => {
         useBottomSheetView={show.secondModal}
         snapPointsCustom={snapPoints}
         onChange={index =>
-          index === -1 && setShow(prev => ({...prev, secondModal: false}))
+          index === -1 &&
+          (setShow(prev => ({...prev, secondModal: false})),
+          dispatch(AppActions.setShowModal(true)))
         }
         enablePanDownToClose={true}>
         {renderBottomView()}
@@ -408,10 +415,10 @@ const rootStyles = (theme: AppTheme) =>
       bottom: 0,
       borderRadius: 30,
       backgroundColor: theme.colors.primary,
-      borderWidth:2,
-      borderColor:Colors.white
+      borderWidth: 2,
+      borderColor: Colors.white,
     } as ViewStyle,
-    backgroundRoot:{
-    backgroundColor:Colors.gray_200
-    } as ViewStyle
+    backgroundRoot: {
+      backgroundColor: Colors.gray_200,
+    } as ViewStyle,
   });

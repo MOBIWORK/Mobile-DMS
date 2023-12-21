@@ -3,12 +3,12 @@ import type {RouteProp} from '@react-navigation/native';
 import {NavigationContainer} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
+import { NavigatorScreenParams } from '@react-navigation/native';
 import {AppConstant, ScreenConstant} from '../const';
 
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {
-  IResOrganization,
+  IDataCustomer, IResOrganization,
   ReportOrderItemType,
   VisitListItemType,
 } from '../models/types';
@@ -34,8 +34,8 @@ import {
 import {MyAppTheme} from '../layouts/theme';
 import {IAppReduxState} from '../redux-store';
 import {useSelector} from 'react-redux';
-import MainTab from './MainTab';
-import {ICustomer} from '../screens/Customer/components/data';
+import MainTab, { TabParamList } from './MainTab';
+import { ICustomer } from '../screens/Customer/components/data';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -152,19 +152,16 @@ export type RootStackParamList = {
   [ScreenConstant.VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.CUSTOMER]: undefined;
-  [ScreenConstant.MAIN_TAB]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.DETAIL_CUSTOMER]: {
-    data: ICustomer;
+    data:IDataCustomer
   };
   [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
-  [ScreenConstant.CUSTOMER]: undefined;
-  [ScreenConstant.MAIN_TAB]: undefined;
-  [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {
-    data: ICustomer;
-  };
+  [ScreenConstant.CUSTOMER]:undefined;
+  [ScreenConstant.MAIN_TAB]:NavigatorScreenParams<TabParamList>
+
+
 };
 
 // Define prop type for useNavigation and useRoute

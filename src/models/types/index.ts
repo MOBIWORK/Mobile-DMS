@@ -186,7 +186,7 @@ export type IDataCustomer = {
   type:string,
   group:string,
   area?:string,
-  dob:string,
+  dob:string |any,
   gland?:string,
   debtLimit?:number | any,
   description:string,
@@ -200,7 +200,8 @@ export type IDataCustomer = {
     name:string,
     address:string,
     phoneNumber:string
-  }
+  },
+  imageSource:string
 
 
 }
@@ -247,4 +248,31 @@ export interface Northeast {
 export interface Southwest {
   lat: number
   lng: number
+}
+
+interface Address {
+  address: string;
+  isSetAddressGet: boolean;
+  isSetAddressTake: boolean;
+}
+
+interface Contact {
+  address: string;
+  name: string;
+  phoneNumber: string;
+}
+
+export interface IDataItem {
+  address: Address;
+  area: string;
+  contact: Contact;
+  debtLimit: number | string; // Assuming it can be a number or a string
+  description: string;
+  dob: string;
+  gland: string;
+  group: string;
+  nameCompany: string;
+  type: string;
+  websiteURL: string;
+  imageSource:any
 }

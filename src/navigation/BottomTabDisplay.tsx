@@ -19,6 +19,8 @@ import {RootStackParamList} from '.';
 import {ScreenConstant} from '../const';
 import AppImage from '../components/common/AppImage';
 import { AppTheme,useTheme } from '../layouts/theme';
+import { useSelector } from 'react-redux';
+import { AppSelector } from '../redux-store';
 
 const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {state, navigation} = props;
@@ -26,6 +28,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {t: getLabel} = useTranslation();
   const styles = bottomStyles(theme);
   const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
+  const showModal = useSelector(AppSelector.getShowModal)
   const pressNavigator = React.useCallback(
     (curTab: any) => {
       const previousRouteName = navigationRef?.current?.getCurrentRoute()?.name;
@@ -49,8 +52,11 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
     [navigation, state],
   );
 
+
   return (
-    <SafeAreaView edges={['right', 'left', 'bottom']} style={styles.container}>
+    <SafeAreaView edges={['right', 'left', 'bottom']} style={showModal ? styles.container :{}}>
+      {showModal && 
+      <>
       <TouchableOpacity style={styles.item} onPress={() => pressNavigator(0)}>
         <View pointerEvents="none">
           {state.index === 0 ? (
@@ -95,6 +101,8 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
           {getLabel('lookingMore')}
         </Text>
       </TouchableOpacity>
+      </>
+}
     </SafeAreaView>
   );
 };

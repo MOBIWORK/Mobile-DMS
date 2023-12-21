@@ -5,6 +5,15 @@ import {ScreenConstant} from '../const';
 import {Customer, ForgotPassword, HomeScreen, ListVisit} from '../screens';
 import BottomTabDisplay from './BottomTabDisplay';
 
+
+export type TabParamList = {
+  [ScreenConstant.HOME_SCREEN]:undefined,
+  [ScreenConstant.VISIT]:undefined;
+  [ScreenConstant.CUSTOMER]:undefined;
+  [ScreenConstant.LOOKING_MORE]:undefined
+}
+
+
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
@@ -18,7 +27,19 @@ const MainTab = () => {
       <Tab.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
       <Tab.Screen name={ScreenConstant.CUSTOMER} component={Customer} />
       <Tab.Screen
-        name={ScreenConstant.FORGOT_PASSWORD}
+        name={ScreenConstant.HOME_SCREEN}
+        component={HomeScreen}
+      />
+       <Tab.Screen
+        name={ScreenConstant.VISIT}
+        component={Index}
+      />
+       <Tab.Screen
+        name={ScreenConstant.CUSTOMER}
+        component={Customer}
+      />
+       <Tab.Screen
+        name={ScreenConstant.LOOKING_MORE}
         component={ForgotPassword}
       />
     </Tab.Navigator>

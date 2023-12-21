@@ -43,7 +43,7 @@ const FilterHandle = (props: Props) => {
   );
 };
 
-export default FilterHandle;
+export default React.memo(FilterHandle);
 
 const rootStyles =(theme:AppTheme) =>StyleSheet.create({
   root: {
