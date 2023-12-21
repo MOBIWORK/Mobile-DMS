@@ -1,15 +1,22 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {StyleSheet, Text, useWindowDimensions, View} from 'react-native';
 import {NavigationProp} from '../../../navigation';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {MainLayout} from '../../../layouts';
-import {AppContainer, AppHeader} from '../../../components/common';
+import {
+  AppBottomSheet,
+  AppContainer,
+  AppHeader,
+} from '../../../components/common';
 import {VisitListItemType} from '../../../models/types';
 import Detail from './Detail';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Report from './Report';
+import Report from './Report/Report';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {AppConstant} from '../../../const';
+import FilterListComponent from '../../../components/common/FilterListComponent';
 
 const Index = () => {
   const {t: getLabel} = useTranslation();
@@ -17,6 +24,8 @@ const Index = () => {
   const {bottom} = useSafeAreaInsets();
   const layout = useWindowDimensions();
   const navigation = useNavigation<NavigationProp>();
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const DetailScreen = () => (
     <AppContainer style={{marginBottom: bottom}}>
@@ -28,7 +37,11 @@ const Index = () => {
 
   const ReportScreen = () => (
     <View style={{flex: 1, padding: 16}}>
-      <Report />
+      <Report
+        onOpenReportFilter={() =>
+          bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
+        }
+      />
     </View>
   );
 
@@ -82,6 +95,16 @@ const Index = () => {
         initialLayout={{width: layout.width}}
         renderTabBar={renderTabBar}
       />
+      <AppBottomSheet bottomSheetRef={bottomSheetRef}>
+        <FilterListComponent
+          title={'Thời gian'}
+          data={AppConstant.SelectedDateFilterData}
+          handleItem={item => console.log(item)}
+          onClose={() =>
+            bottomSheetRef.current && bottomSheetRef.current.close()
+          }
+        />
+      </AppBottomSheet>
     </MainLayout>
   );
 };

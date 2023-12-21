@@ -5,6 +5,7 @@ import {useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
 import {CommonUtils} from '../../../utils';
+import StatisticalItem from './StatisticalItem';
 
 const Detail: FC<VisitItemProps> = ({item}) => {
   const {colors} = useTheme();
@@ -196,48 +197,9 @@ const Detail: FC<VisitItemProps> = ({item}) => {
     );
   };
 
-  const statisticalItem = (isRevenue: boolean, count: number) => {
-    return (
-      <View
-        style={{
-          width: '48%',
-          padding: 16,
-          backgroundColor: colors.bg_default,
-          borderRadius: 16,
-        }}>
-        <Image
-          source={isRevenue ? ImageAssets.Statistical : ImageAssets.OrderIcon}
-          style={{width: 40, height: 40}}
-          resizeMode={'contain'}
-        />
-        <Text style={{color: colors.text_secondary, marginVertical: 8}}>
-          {isRevenue ? 'Doanh thu trong tháng' : 'Số đơn trong tháng'}
-        </Text>
-        <Text
-          style={{color: colors.text_primary, fontSize: 16, fontWeight: '500'}}>
-          {CommonUtils.convertNumber(count)}
-        </Text>
-      </View>
-    );
-  };
-
-  const _renderStatistical = () => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-        {statisticalItem(false, 15)}
-        {statisticalItem(true, 10000000)}
-      </View>
-    );
-  };
-
   return (
     <>
-      {item.status && _renderStatistical()}
+      {item.status && <StatisticalItem orderCount={15} payment={10000000} />}
       {_renderCustomer()}
       {_renderInfo()}
       {!item.status ? (

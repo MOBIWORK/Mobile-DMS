@@ -18,6 +18,7 @@ import AppFAB from './AppFAB';
 import { SvgIcon } from './AppSvgIcon';
 import { showSnack } from './AppSnack';
 
+import AppCustomHeader from './AppCustomHeader';
 
 export {
   AppBottomSheet,
@@ -38,5 +39,6 @@ export {
   SvgIcon,
   AppAccordion,
   AppSegmentedButtons,
-  showSnack
+  showSnack,
+  AppCustomHeader,
 };

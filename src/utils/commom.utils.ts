@@ -172,7 +172,7 @@ export const openMaps = async (latitude: number, longitude: number) => {
 
 //format 1000 to 1,000
 export const convertNumber = (value: number) => {
-  return new Intl.NumberFormat().format(value);
+  return new Intl.NumberFormat().format(value).replaceAll(',', '.');
 };
 
 export const removeVietnamesePunctuation = (str: string) => {

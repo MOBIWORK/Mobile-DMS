@@ -162,3 +162,44 @@ export interface Southwest {
   lat: number
   lng: number
 }
+
+export type ReportOrderItemType = {
+  id: string | number;
+  label: string;
+  date: string;
+  time: string;
+  price: number;
+};
+
+export type ReportProductOrderType = {
+  id: string | number;
+  label: string;
+  count: number;
+  unit: string;
+  price: number;
+  discount_percent: number | null;
+  discount_VND: number | null;
+  total: number;
+};
+
+export type ReportProductInventoryType = {
+  productName: string;
+  count: number;
+  unit: string;
+};
+
+export type ReportInventoryType = {
+  dateTime: number | string;
+  listProduct: ReportProductInventoryType[];
+};
+
+export type ReportDebtListType = {
+  dateTime: string | number;
+  description: string;
+  numberDebt: number;
+};
+
+export type ReportDebtType = {
+  total: number;
+  listDebt: ReportDebtListType[];
+};

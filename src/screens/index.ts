@@ -15,6 +15,7 @@ import Index from './Visit/VisitDetail';
 import Customer from './Customer/Customer';
 import AddingNewCustomer from '../screens/Customer/AddingNewCustomer';
 import DetailCustomer from './DetailCustomer/DetailCustomer';
+import ReportOrderDetail from './Visit/VisitDetail/Report/Order/ReportOrderDetail';
 
 export {
   SelectOrganization,
@@ -33,5 +34,6 @@ export {
   Index,
   Customer,
   AddingNewCustomer,
-  DetailCustomer
+  DetailCustomer,
+  ReportOrderDetail,
 };

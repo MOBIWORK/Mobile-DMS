@@ -8,7 +8,7 @@ import {AppConstant, ScreenConstant} from '../const';
 
 // import MainTab from "./MainTab";
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
-import {IResOrganization} from '../models/types';
+import {IResOrganization, ReportOrderItemType} from '../models/types';
 import {
   ForgotPassword,
   Home,
@@ -25,8 +25,9 @@ import {
   SuccessChanged,
   Index,
   AddingNewCustomer,
-  DetailCustomer
+  DetailCustomer,
 
+  ReportOrderDetail,
 } from '../screens';
 // import PushNotification from 'react-native-push-notification';
 import {MyAppTheme} from '../layouts/theme';
@@ -111,6 +112,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER} component={AddingNewCustomer} />
         <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer} />
 
+        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
+        <Stack.Screen
+          name={ScreenConstant.REPORT_ORDER_DETAIL}
+          component={ReportOrderDetail}
+        />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -138,7 +144,6 @@ export type RootStackParamList = {
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.VISIT]: undefined;
-
   [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.MAIN_TAB]: undefined;
@@ -146,7 +151,8 @@ export type RootStackParamList = {
   [ScreenConstant.DETAIL_CUSTOMER]: {
     data:ICustomer
   };
-
+  [ScreenConstant.VISIT_DETAIL]: undefined;
+  [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
 };
 
 // Define prop type for useNavigation and useRoute
