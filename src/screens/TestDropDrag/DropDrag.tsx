@@ -185,7 +185,7 @@ const DropDrag = (props: Props) => {
   const scrollViewRef = useAnimatedRef<any>();
   const [arr, setArr] = useState(newArrayWid);
   const [widgetFv, setWidgetFv] = useMMKVString(AppConstant.Widget);
-  const [widgets, setWidgets] = useState<IWidget[]>(DataConstant.DataWidget);
+  const [widgets, setWidgets] = useState<IWidget[]>(DataConstant.DataWidget.slice(0,4));
   const [favourites, setFavourites] = useState<IWidget[]>([]);
   useAnimatedReaction(
     () => scrollY.value,
@@ -194,7 +194,7 @@ const DropDrag = (props: Props) => {
   const handleScroll = useAnimatedScrollHandler(
     event => (scrollY.value = event.contentOffset.y),
   );
-
+console.log(listToObject(widgets))
   //   const setValueArr = (item: any) => {
   //     const newArr = arrWidget.current.map(item2 =>
   //       item2.id === item.id ? {...item2, isUse: true} : item2,
@@ -205,6 +205,7 @@ const DropDrag = (props: Props) => {
   const getUtlFavourites = () => {
     if (widgetFv) {
       const arrN = JSON.parse(widgetFv);
+   
       setFavourites(arrN);
       const mergedArray = widgets.map(item1 => {
         const matchingItem = arrN.find((item2: any) => item2.id === item1.id);
@@ -214,38 +215,37 @@ const DropDrag = (props: Props) => {
           return item1;
         }
       });
-      setWidgets(mergedArray);
+      setWidgets(mergedArray.slice(0,4));
     }
   };
-
+// console.log(favourites,'favorites')
   const setValueArr = (type: string, item: IWidget) => {
-    switch (type) {
-      case 'add':
-        console.log('run here')
-        if (favourites.length < 4) {
-          setFavourites([...favourites, item]);
-          const newArr = widgets.map(item2 =>
-            item2.id === item.id ? {...item2, isUse: true} : item2,
-          );
-          setWidgets(newArr);
-        }
-        break;
-      case 'remove':
-        if (favourites.length > 1) {
-          setFavourites(favourites.filter(data => item.id !== data.id));
-          const newArr = widgets.map(item2 =>
-            item2.id === item.id ? {...item2, isUse: false} : item2,
-          );
-          setWidgets(newArr);
-        }
-        break;
-      default:
-        break;
+    console.log(type, 'type');
+    if (type === 'add') {
+      // console.log(item,'item');
+      if (favourites.length < 10) {
+        setFavourites([...favourites, item]);
+        const newArr = widgets.map(item2 =>
+          item2.id === item.id ? {...item2, isUse: true} : item2,
+        );
+        console.log(newArr,'newArr');
+        setWidgets(newArr);
+      }
+    } else if (type === 'remove') {
+      if (favourites.length > 1) {
+        setFavourites(favourites.filter(data => item.id !== data.id));
+        const newArr = widgets.map(item2 =>
+          item2.id === item.id ? {...item2, isUse: false} : item2,
+        );
+        setWidgets(newArr);
+      }
     }
   };
 
   useLayoutEffect(() => {
     getUtlFavourites();
+  
+
   }, []);
   return (
     <SafeAreaView style={styles.layout}>
@@ -260,11 +260,18 @@ const DropDrag = (props: Props) => {
                   width: (AppConstant.WIDTH - 80) / 4,
                   marginLeft: 16,
                 }}>
-                <ItemWidget
+                {/* <ItemWidget
                   id={item.id}
                   name={item.name}
                   icon={item.icon}
                   navigate={item.navigate}
+                /> */}
+                <Draggable
+                   key={item.id}
+                   value={item}
+                   title={item.id?.toString()}
+                   setValue={setValueArr}
+                   type=""
                 />
               </View>
             ))}
@@ -276,10 +283,10 @@ const DropDrag = (props: Props) => {
             return (
               <Draggable
                 key={item.id}
-                value={arr}
+                value={item}
                 title={item.id.toString()}
                 setValue={setValueArr}
-                type='add'
+                type="add"
               />
             );
           })}

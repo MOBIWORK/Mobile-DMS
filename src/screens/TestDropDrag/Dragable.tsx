@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, ViewStyle,Text} from 'react-native';
+import {StyleSheet, View, ViewStyle,Text, Platform} from 'react-native';
 import Animated, {
   runOnJS,
   useAnimatedGestureHandler,
@@ -12,7 +12,7 @@ import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
-
+import * as Haptics from 'expo-haptics'
 interface DragAbleItem{
   title:string,
   setValue:(type:string,item:any) => void,
@@ -42,29 +42,49 @@ const Draggable = ({value,title,setValue,type}:DragAbleItem) => {
     ContextInterface
   >({
     onStart: (_, ctx: any) => {
+      runOnJS(setShowDraggable)(true)
+      if (Platform.OS === 'ios') {
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
+      }
       ctx.translateX = translateX.value;
       ctx.translateY = translateY.value;
     },
     onActive: (event: any, ctx: any) => {
       translateX.value = ctx.translateX + event.translationX;
       translateY.value = ctx.translateY + event.translationY;
+      // console.log(ctx.translateY + event.translationY)
+      
     },
     onEnd: (_, ctx) => {
       console.log(translateY.value);
       // console.log(ctx,'ctx')
-      if(translateY.value < -300 && translateY.value > -500){
-        runOnJS(setValue)(value,'add')
+      if(translateY.value < -300 && translateY.value > -650){
+        // console.log('run on add')
+        runOnJS(setValue)('add',value)
+        translateX.value = withSpring(ctx.translateX + _.translationX)
+        translateY.value = withSpring(ctx.translateY + _.translationY)
+        opacity.value = withTiming(0,{duration:1000})
       }else{
-        runOnJS(setValue)(value,'remove')
+        // console.log('run on remove')
+        runOnJS(setValue)('remove',value)
+        opacity.value = withTiming(1,{duration:1000})
+        translateX.value = withSpring(ctx.translateX + _.translationX)
+        translateY.value = withSpring(ctx.translateY + _.translationY)
+        // opacity.value = withTiming(0,{duration:1000})
+
+
 
       }
-      translateX.value = withSpring(0);
-      translateY.value = withSpring(0);
+     
       // console.log(value)
       // runOnJS(setValue)(value,type)
       
       // }
     },
+    onFinish(){
+      runOnJS(setShowDraggable)(false)
+    }
+    ,
   });
 
   const handleDrop = () => {
@@ -81,7 +101,7 @@ const Draggable = ({value,title,setValue,type}:DragAbleItem) => {
       opacity: opacity.value,
       // display: showDraggable.value ? "flex" : "none",
     };
-  });
+  },[showDraggable]);
 
   return (
     <View style={styles.container}>
