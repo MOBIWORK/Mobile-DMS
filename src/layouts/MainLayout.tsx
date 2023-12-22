@@ -7,8 +7,8 @@ import {
   ViewStyle,
   StyleSheet,
 } from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useTheme} from '@react-navigation/native';
+import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
+import { AppTheme, useTheme } from './theme';
 
 const MainLayout: FC<Props> = ({
   children,

@@ -53,7 +53,6 @@ const AppInput: FC<AppInputProps> = ({
           {label} {isRequire ? <Text style={{color:'red'}}>*</Text> :null}
         </Text>
       }
-      defaultValue={value}
       onChangeText={onChangeValue}
       value={value}
       onFocus={() => setFocus(true)}

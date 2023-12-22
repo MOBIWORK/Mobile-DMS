@@ -15,8 +15,6 @@ import AppContainer from '../AppContainer';
 import FilterView from './FilterView';
 import AppAccordion from './AppAccordion';
 import AppSegmentedButtons from './AppSegmentedButtons';
-import {AppText} from './AppText'
-import AppFAB from './AppFAB';
 import { SvgIcon } from './AppSvgIcon';
 import { showSnack } from './AppSnack';
 

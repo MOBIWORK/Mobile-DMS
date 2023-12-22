@@ -1,7 +1,6 @@
 import React, {FC, useEffect} from 'react';
 import type {RouteProp} from '@react-navigation/native';
 import {NavigationContainer} from '@react-navigation/native';
-import {useMMKVBoolean, useMMKVObject} from 'react-native-mmkv';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { NavigatorScreenParams } from '@react-navigation/native';
@@ -32,14 +31,13 @@ import {
   NotificationScreen,
   CheckinOrder,
   CheckinOrderCreated,
-  
   Index,
   AddingNewCustomer,
   DetailCustomer,
   ReportOrderDetail,
+  Home,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
-import MainTab from './MainTab';
 import { MyAppTheme } from '../layouts/theme';
 
 // import { MAIN_TAB } from '../const/screen.const';
@@ -48,8 +46,6 @@ import {  IAppReduxState } from '../redux-store';
 import HomeScreen from '../screens/Home';
 import { StatusBar } from 'react-native';
 // import PushNotification from 'react-native-push-notification';
-import {MyAppTheme} from '../layouts/theme';
-import {IAppReduxState} from '../redux-store';
 import {useSelector} from 'react-redux';
 import MainTab, { TabParamList } from './MainTab';
 import { ICustomer } from '../screens/Customer/components/data';
@@ -80,11 +76,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        initialRouteName={
-          loginFirst && organiztion?.company_name
-            ? ScreenConstant.SIGN_IN
-            : ScreenConstant.LIST_VISIT
-        }
+        initialRouteName={ScreenConstant.MAIN_TAB}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -158,7 +150,6 @@ export type RootStackParamList = {
   [ScreenConstant.VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.CUSTOMER]:undefined;
-  [ScreenConstant.MAIN_TAB]:undefined
   [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
   [ScreenConstant.CHECKIN_INVENTORY]:undefined
   [ScreenConstant.INVENTORY_ADD_PRODUCT]:undefined
@@ -166,9 +157,7 @@ export type RootStackParamList = {
   [ScreenConstant.CKECKIN_ORDER_CREATE]:undefined
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {
-    data:IDataCustomer
-  };
+  [ScreenConstant.DETAIL_CUSTOMER]: {data:IDataCustomer};
   [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
   [ScreenConstant.CUSTOMER]:undefined;

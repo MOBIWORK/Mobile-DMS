@@ -8,23 +8,6 @@ import iconBell from './iconBell.svg'
 import iconBar from './iconBar.svg'
 import iconTicket from './iconTicket.svg'
 import iconContainer from './iconContainer.svg'
-
-
-
-export const SvgComponent = {
-    iconMap,
-    ArrowDown,
-    iconClock,
-    iconBar,
-    iconBell,
-    iconCart,
-    iconTicket,
-    iconUser,
-    iconImage,
-    iconContainer
-}
-export type SvgIconTypes = keyof typimport iconMap from './iconMap.svg';
-import ArrowDown from './arrowDown.svg';
 import Trash from './trash.svg';
 import MapPin from './mapPin.svg';
 import Phone from './phone.svg';
@@ -35,6 +18,7 @@ import IconCamera from './camera.svg';
 import IconImage from './image.svg';
 import arrowLeft from './arrowLeft.svg';
 import IconKebab from './kebab.svg'
+
 export const SvgComponent = {
   iconMap,
   ArrowDown,
@@ -47,6 +31,14 @@ export const SvgComponent = {
   IconCamera,
   IconImage,
   arrowLeft,
-  IconKebab
+  IconKebab,
+  iconClock,
+  iconBar,
+  iconBell,
+  iconCart,
+  iconTicket,
+  iconUser,
+  iconImage,
+  iconContainer
 };
 export type SvgIconTypes = keyof typeof SvgComponent;
