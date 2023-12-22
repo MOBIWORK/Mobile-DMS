@@ -80,11 +80,11 @@ const Customer = () => {
   };
   const customer = useSelector(AppSelector.getNewCustomer);
 
-  console.log(customer, 'customer');
+  // console.log(customer, 'customer');
 
   const renderBottomView = () => {
     return (
-      <MainLayout>
+      <MainLayout >
         <AppHeader
           label={'Khách hàng'}
           onBack={() => bottomRef2.current && bottomRef2.current.close()}
@@ -187,10 +187,12 @@ const Customer = () => {
           <Text style={styles.numberCustomer}>300 </Text>
           {getLabel('customer')}
         </Text>
+        {/* <View></View> */}
         <ListCard data={customer} />
       </MainLayout>
       <AppBottomSheet
         bottomSheetRef={bottomRef}
+        
         useBottomSheetView={show.firstModal}
         onChange={index =>
           index === -1 &&
@@ -198,7 +200,7 @@ const Customer = () => {
           dispatch(AppActions.setShowModal(true)))
         }
         enablePanDownToClose={true}>
-        <View>
+        <View >
           <View style={styles.tittleHeader}>
             <Text style={styles.titleText}>{getLabel('distance')}</Text>
           </View>

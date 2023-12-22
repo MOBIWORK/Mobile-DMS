@@ -2,8 +2,9 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
-import {Customer, ForgotPassword, HomeScreen, Index, ListVisit} from '../screens';
+import {Customer, ForgotPassword, HomeScreen,  ListVisit} from '../screens';
 import BottomTabDisplay from './BottomTabDisplay';
+import Home from '../screens/Home';
 
 
 export type TabParamList = {
@@ -17,22 +18,15 @@ export type TabParamList = {
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
-  const {t: getLabel} = useTranslation();
-
   return (
     <Tab.Navigator
-      screenOptions={{headerShown: false}}
+      screenOptions={{headerShown: false,}}
+      // sceneContainerStyle={{backgroundColor:'red'}}
       tabBar={props => <BottomTabDisplay {...props} />}>
       <Tab.Screen name={ScreenConstant.HOME_SCREEN} component={HomeScreen} />
-      <Tab.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
-      <Tab.Screen name={ScreenConstant.CUSTOMER} component={Customer} />
-      <Tab.Screen
-        name={ScreenConstant.HOME_SCREEN}
-        component={HomeScreen}
-      />
        <Tab.Screen
         name={ScreenConstant.VISIT}
-        component={Index}
+        component={ListVisit}
       />
        <Tab.Screen
         name={ScreenConstant.CUSTOMER}

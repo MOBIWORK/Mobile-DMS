@@ -54,7 +54,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
 
 
   return (
-    <SafeAreaView edges={['right', 'left', 'bottom']} style={showModal ? styles.container :{}}>
+    <SafeAreaView edges={['right', 'left', 'bottom']} style={showModal ? styles.container : {}}>
       {showModal && 
       <>
       <TouchableOpacity style={styles.item} onPress={() => pressNavigator(0)}>
@@ -113,14 +113,14 @@ const bottomStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       backgroundColor: theme.colors.white,
+      // backgroundColor:'red',
       flexDirection: 'row',
       alignItems: 'flex-end',
       justifyContent: 'space-around',
       paddingHorizontal: 10,
       borderTopLeftRadius: 26,
       borderTopRightRadius: 26,
-
-      paddingVertical: 20,
+      paddingVertical: 10,
       width: '100%',
       ...Platform.select({
         android: {

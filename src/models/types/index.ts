@@ -201,7 +201,7 @@ export type IDataCustomer = {
     address:string,
     phoneNumber:string
   },
-  imageSource:string
+  imageSource?:string
 
 
 }

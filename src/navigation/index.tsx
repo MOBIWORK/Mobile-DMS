@@ -25,7 +25,7 @@ import {
   SelectOrganization,
   SignIn,
   SuccessChanged,
-  Index,
+  VisitDetail,
   AddingNewCustomer,
   DetailCustomer,
   ReportOrderDetail,
@@ -67,6 +67,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
+          
         }}>
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen
@@ -108,7 +109,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
-        <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
+        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={VisitDetail} />
         <Stack.Screen
           name={ScreenConstant.ADDING_NEW_CUSTOMER}
           component={AddingNewCustomer}
@@ -118,7 +119,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={DetailCustomer}
         />
 
-        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
+       
         <Stack.Screen
           name={ScreenConstant.REPORT_ORDER_DETAIL}
           component={ReportOrderDetail}

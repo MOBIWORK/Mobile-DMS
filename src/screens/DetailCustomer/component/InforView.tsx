@@ -11,6 +11,9 @@ import {IDataCustomer} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {AppText} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
+import { useSelector } from 'react-redux';
+import { AppSelector } from '../../../redux-store';
+import { formatMoney } from '../../../config/function';
 
 type Props = {
   data: IDataCustomer;
@@ -19,7 +22,8 @@ type Props = {
 const InforView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  console.log(props.data);
+ const customer = useSelector(AppSelector.getNewCustomer)
+ console.log(customer,'customer')
   return (
     <View style={styles.root}>
       <View style={styles.containImage}>
@@ -150,7 +154,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.debtLimit != '' ? props.data.debtLimit : ` ---`}
+            {props.data.debtLimit != '' ? `${formatMoney(props.data.debtLimit)} VNĐ` : ` ---`}
           </AppText>
           <View style={styles.divider} />
         </View>

@@ -115,7 +115,7 @@ function App(): JSX.Element {
         style={{ flex: 1 }}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <AppNavigationContainer>
-            <StatusBar barStyle={'default'} />
+            <StatusBar backgroundColor={'#000'} />
             <HandlingError />
             <SnackBar/>
           </AppNavigationContainer>

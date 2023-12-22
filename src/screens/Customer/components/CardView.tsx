@@ -63,7 +63,6 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     card: {
       backgroundColor: Colors.white,
-      height: 123,
       marginBottom: 16,
       marginHorizontal: 2,
       borderRadius: 16,
@@ -72,8 +71,7 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'space-around',
       ...Platform.select({
         android: {
-          elevation: 2,
-          borderTopWidth: 2,
+          elevation: 1,
           shadowColor: Colors.darker,
         },
         ios: {
@@ -92,7 +90,6 @@ const rootStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       // justifyContent: 'center',
       alignItems: 'center',
-      paddingVertical:4
     } as ViewStyle,
     iconStyle: {
       width: 16,
@@ -128,7 +125,7 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
       borderColor: theme.colors.action,
       // width:100,
-      height: 37,
+      padding:2,
       backgroundColor: Colors.white,
       alignItems: 'center',
       justifyContent: 'center',

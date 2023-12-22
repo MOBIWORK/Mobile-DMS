@@ -6,7 +6,7 @@ import {
   TextStyle,
   TouchableOpacity,
 } from 'react-native';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {useNavigation} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -52,31 +52,31 @@ const AddingNewCustomer = () => {
     nameCompany: '',
     type: valueFilter.customerType,
     group: valueFilter.customerGroupType,
-    dob: date,
+    dob: moment(date).format('DD/MM/YYYY'),
     area: '',
     gland: '',
     debtLimit: 0,
     description: '',
     websiteURL: '',
     address: {
-      address: mainAddress?.length >= 0 ? mainAddress[0].detailAddress : '',
+      address: mainAddress?.length > 0 ? mainAddress[0]?.detailAddress : '',
       isSetAddressGet:
-        mainAddress?.length >= 0 ? mainAddress[0].addressGet : false,
+        mainAddress?.length > 0 ? mainAddress[0]?.addressGet : false,
       isSetAddressTake:
-        mainAddress?.length >= 0 ? mainAddress[0].addressOrder : false,
+        mainAddress?.length > 0 ? mainAddress[0]?.addressOrder : false,
     },
     contact: {
       name:
-        mainContactAddress?.length >= 0
-          ? mainContactAddress[0].nameContact
+        mainContactAddress?.length > 0
+          ? mainContactAddress[0]?.nameContact
           : '',
       address:
-        mainContactAddress?.length >= 0
-          ? mainContactAddress[0].addressContact
+        mainContactAddress?.length > 0
+          ? mainContactAddress[0]?.addressContact
           : '',
       phoneNumber:
-        mainContactAddress?.length >= 0
-          ? mainContactAddress[0].phoneNumber
+        mainContactAddress?.length > 0
+          ? mainContactAddress[0]?.phoneNumber
           : '',
     },
     imageSource: imageSource ? imageSource : '',
@@ -103,12 +103,19 @@ const AddingNewCustomer = () => {
   const addingAddress = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
-  const onPressAdding = (listData: IDataCustomer) => {
-    dispatch(AppActions.setNewCustomer(listData));
-    navigation.navigate(ScreenConstant.MAIN_TAB, {
-      screen: ScreenConstant.CUSTOMER,
-    });
-  };
+  const onPressAdding = useCallback((listData: IDataCustomer) => {
+    if(listData.address.address === undefined) {
+      return
+    }else{
+      dispatch(AppActions.setNewCustomer(listData));
+      navigation.navigate(ScreenConstant.MAIN_TAB, {
+        screen: ScreenConstant.CUSTOMER,
+      });
+    };
+ 
+      console.log(mainAddress[0],'aa')
+    console.log(listData,'listData')
+  },[mainAddress,mainContactAddress,listData]);
 
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);
@@ -119,6 +126,10 @@ const AddingNewCustomer = () => {
       // Handle the selected image, e.g., set it to state
       console.log('Selected Image:', selectedImage);
       setImageSource(selectedImage);
+      setListData(prev =>({
+        ...prev,
+        imageSource:selectedImage!
+      }))
       cameraBottomRef.current?.close();
     });
   };
@@ -128,6 +139,10 @@ const AddingNewCustomer = () => {
       // Handle the selected image, e.g., set it to state
       setImageSource(selectedImage);
       console.log('Selected Image from Camera:', selectedImage);
+      setListData(prev =>({
+        ...prev,
+        imageSource:selectedImage!
+      }))
       cameraBottomRef.current?.close();
     });
   };
@@ -189,6 +204,7 @@ const AddingNewCustomer = () => {
       />
       <AppBottomSheet
         bottomSheetRef={addingAddress}
+        
         snapPointsCustom={snapPointAdding}>
         <FormAddress
           onPressClose={() => {
@@ -196,6 +212,7 @@ const AddingNewCustomer = () => {
             setShow(false);
           }}
           typeFilter={typeFilter}
+          setListData={setListData}
         />
       </AppBottomSheet>
       {!show && (

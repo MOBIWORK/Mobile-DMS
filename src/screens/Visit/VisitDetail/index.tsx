@@ -24,14 +24,12 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import {AppConstant} from '../../../const';
 import FilterListComponent from '../../../components/common/FilterListComponent';
 
-const Index = () => {
-  const {t: getLabel} = useTranslation();
+const VisitDetail = () => {
   const {colors} = useTheme();
   const {bottom} = useSafeAreaInsets();
   const layout = useWindowDimensions();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'VISIT_DETAIL'>>();
-
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const DetailScreen = () => (
@@ -115,7 +113,7 @@ const Index = () => {
     </MainLayout>
   );
 };
-export default Index;
+export default React.memo(VisitDetail);
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: '#ffffff',

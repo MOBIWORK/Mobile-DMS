@@ -65,6 +65,7 @@ const rootStyles = (theme: AppTheme) =>
       paddingVertical: 12,
       marginVertical: 8,
       marginBottom: 20,
+      borderColor:'transparent',
       ...Platform.select({
         ios: {
           shadowOffset: {

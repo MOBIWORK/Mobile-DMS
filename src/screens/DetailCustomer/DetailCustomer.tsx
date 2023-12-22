@@ -9,7 +9,6 @@ import {
 import React, {useMemo, useRef, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../navigation';
-import {MainLayout} from '../../layouts';
 import {AppBottomSheet, AppHeader, SvgIcon} from '../../components/common';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
@@ -128,6 +127,7 @@ const DetailCustomer = () => {
               setShow(false);
             }}
             typeFilter={typeFilter}
+            // setListData={}
           />
         </AppBottomSheet>
     </SafeAreaView>

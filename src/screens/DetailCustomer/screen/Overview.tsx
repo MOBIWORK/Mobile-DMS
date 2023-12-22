@@ -18,6 +18,7 @@ const Overview = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const mainAddress = useSelector(AppSelector.getMainAddress);
+  // console.log(c)
   return (
     <MainLayout style={styles.containLayout}>
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>

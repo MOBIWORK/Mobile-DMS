@@ -1,7 +1,7 @@
 import React, {FC, ReactNode, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 import {Text, TextInput, TextInputProps} from 'react-native-paper';
-import {TextStyle, ViewStyle} from 'react-native';
+import {Pressable, TextStyle, ViewStyle} from 'react-native';
 import { Colors } from '../../assets';
 const AppInput: FC<AppInputProps> = ({
   styles,
@@ -25,7 +25,7 @@ const AppInput: FC<AppInputProps> = ({
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
-    <>
+    <Pressable onPress={onPress}>
     <TextInput
       onPressIn={onPress}
       contentStyle={{
@@ -82,7 +82,7 @@ const AppInput: FC<AppInputProps> = ({
       secureTextEntry={isPassword && !showPassword}
       clearTextOnFocus={isPassword}
     />
-    </>
+    </Pressable>
   );
 };
 interface AppInputProps {

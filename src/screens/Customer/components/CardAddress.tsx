@@ -154,7 +154,7 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.white,
       shadowColor: theme.colors.text_disable,
       borderRadius: 16,
-      borderWidth: 0.1,
+      // borderWidth: 0.1,
       paddingVertical: 12,
       // paddingHorizontal: 16,
       marginHorizontal: 2,

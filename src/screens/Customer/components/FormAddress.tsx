@@ -1,4 +1,5 @@
 import {
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -26,13 +27,14 @@ import {MainLayout} from '../../../layouts';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
-import {RootEkMapResponse} from '../../../models/types';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, AppSelector} from '../../../redux-store';
+import {IDataCustomer, RootEkMapResponse} from '../../../models/types';
+import {useDispatch} from 'react-redux';
+import {AppActions} from '../../../redux-store';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
+  setListData?: React.Dispatch<React.SetStateAction<IDataCustomer>>;
 };
 
 const FormAddress = (props: Props) => {
@@ -53,7 +55,7 @@ const FormAddress = (props: Props) => {
     nameContact: 'Người liên hệ',
     phoneNumber: 'Số điện thoại',
     addressContact: 'Địa chỉ',
-    isMainAddress:addressValue.addressGet ? true :false
+    isMainAddress: addressValue.addressGet ? true : false,
   });
   const listCheckBox = useRef([
     {
@@ -68,7 +70,7 @@ const FormAddress = (props: Props) => {
 
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
-    console.log(data,'data')
+    console.log(data, 'data');
     if (data.status === 'OK') {
       setAddressValue(prev => ({
         ...prev,
@@ -87,13 +89,12 @@ const FormAddress = (props: Props) => {
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
         fetchData(res?.coords?.latitude, res?.coords?.longitude);
-        
+
         showSnack({
           msg: 'Thành công',
           type: 'success',
           interval: 1000,
         });
-        
       })
       .catch(err => console.log(err));
   };
@@ -283,6 +284,16 @@ const FormAddress = (props: Props) => {
                 onPress={() => {
                   dispatch(AppActions.setMainAddress(addressValue));
                   onPressClose();
+                  props.setListData
+                    ? props.setListData(prev => ({
+                        ...prev,
+                        address: {
+                          address: addressValue.detailAddress,
+                          isSetAddressGet: addressValue.addressGet,
+                          isSetAddressTake: addressValue.addressOrder,
+                        },
+                      }))
+                    : null;
                 }}>
                 <Text style={styles.applyText}>Lưu</Text>
               </TouchableOpacity>
@@ -371,6 +382,16 @@ const FormAddress = (props: Props) => {
                     onPress={() => {
                       dispatch(AppActions.setMainContactAddress(contactValue));
                       onPressClose();
+                      props.setListData
+                        ? props.setListData(prev => ({
+                            ...prev,
+                            contact: {
+                              name: contactValue.nameContact,
+                              address: contactValue.addressContact,
+                              phoneNumber: contactValue.phoneNumber,
+                            },
+                          }))
+                        : null;
                     }}>
                     <Text style={styles.applyText}>Lưu</Text>
                   </TouchableOpacity>
@@ -413,7 +434,7 @@ const rootStyles = (theme: AppTheme) =>
       // backgroundColor: 'red'
     } as ViewStyle,
     buttonView: {
-      // marginBottom: 20,
+      marginBottom: Platform.OS === 'ios' ? 0 : 20,
     } as ViewStyle,
     headerContentView: (label: string) =>
       ({
