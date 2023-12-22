@@ -43,6 +43,8 @@ const CreateOrder = () => {
     const [productsKm, setPrpductsKm] = useState<any[]>([{}]);
     const [toggleTab, setToggleTab] = useState<number>(1);
     const [totalPrice, setTotalPrice] = useState<number>(4100000);
+    const [number,setNumber] = useState(1)
+
 
     const renderUiNoData = () => {
         return (
@@ -199,8 +201,6 @@ const CreateOrder = () => {
 
     const onChangeWarehouse = (item : IFilterType) =>{
         setWarehouse(item);
-        console.log(item);
-        
         const newWhs = DataWarehouse.map(item1=> item1.value == item.value ? {...item,isSelected : true} : {...item1,isSelected :false});
         setDataWarehouse(newWhs);
     }
