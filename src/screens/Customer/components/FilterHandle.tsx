@@ -43,7 +43,7 @@ const FilterHandle = (props: Props) => {
   );
 };
 
-export default FilterHandle;
+export default React.memo(FilterHandle);
 
 const rootStyles =(theme:AppTheme) =>StyleSheet.create({
   root: {
@@ -54,7 +54,7 @@ const rootStyles =(theme:AppTheme) =>StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:theme.colors.bg_neutral ,
+    backgroundColor:Colors.gray_200,
     borderWidth: 1,
     padding: 6,
     borderRadius: 16,

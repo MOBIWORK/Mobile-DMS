@@ -55,5 +55,8 @@ export default {
   address:'Địa chỉ',
   contactName:'Người liên hệ',
   location:'Vị trí',
-  dob:'Sinh nhật'
+  dob:'Sinh nhật',
+  error:{
+    haveError:'Đã có lỗi xảy ra, hãy thử lại sau'
+  }
 };

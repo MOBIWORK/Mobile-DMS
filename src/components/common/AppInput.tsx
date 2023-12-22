@@ -1,7 +1,8 @@
 import React, {FC, ReactNode, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
-import {Text, TextInput} from 'react-native-paper';
+import {Text, TextInput, TextInputProps} from 'react-native-paper';
 import {TextStyle, ViewStyle} from 'react-native';
+import { Colors } from '../../assets';
 const AppInput: FC<AppInputProps> = ({
   styles,
   label,
@@ -52,8 +53,9 @@ const AppInput: FC<AppInputProps> = ({
           {label} {isRequire ? <Text style={{color:'red'}}>*</Text> :null}
         </Text>
       }
-      value={value}
+      defaultValue={value}
       onChangeText={onChangeValue}
+      value={value}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
       
@@ -94,7 +96,7 @@ interface AppInputPropsBase {
   isPassword?: boolean;
   styles?: ViewStyle;
   error?: boolean;
-  inputProp?: any;
+  inputProp?: TextInputProps;
   disable?: boolean;
   editable?: boolean;
   isRequire?:boolean

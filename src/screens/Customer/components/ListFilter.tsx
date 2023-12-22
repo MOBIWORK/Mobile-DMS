@@ -9,19 +9,22 @@ import {
 import React from 'react';
 import {AppIcons} from '../../../components/common';
 import {AppConstant} from '../../../const';
-import {ColorSchema, useTheme} from '@react-navigation/native';
+
 import {listBirthDayType, listFilterType} from './data';
 import {IValueType} from '../Customer';
+import { AppTheme, useTheme } from '../../../layouts/theme';
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 type Props = {
   type: string;
-  filterRef: any;
+  filterRef: React.RefObject<BottomSheetMethods>;
   setValueFilter: (value: React.SetStateAction<IValueType>) => void;
   valueFilter: IValueType;
+  setShow?:React.Dispatch<React.SetStateAction<boolean>>
 };
 
 const ListFilter = (props: Props) => {
-  const {type, filterRef, setValueFilter, valueFilter} = props;
+  const {type, filterRef, setValueFilter, valueFilter,setShow} = props;
   const styles = rootStyles(useTheme());
   return (
     <View>
@@ -44,11 +47,15 @@ const ListFilter = (props: Props) => {
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
-                onPress={() =>
+                onPress={() =>{
+
+                
                   setValueFilter(prev => ({
                     ...prev,
                     customerBirthday: item.title,
                   }))
+                  filterRef?.current?.close()
+                }
                 }>
                 <Text
                   style={styles.itemText(
@@ -89,10 +96,12 @@ const ListFilter = (props: Props) => {
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() =>
-                  setValueFilter(prev => ({
+                {  setValueFilter(prev => ({
                     ...prev,
-                    customerType: item.title,
+                    customerGroupType: item.title,
                   }))
+                filterRef?.current?.close()
+                }
                 }>
                 <Text
                   style={styles.itemText(item.title, valueFilter.customerType)}>
@@ -130,10 +139,15 @@ const ListFilter = (props: Props) => {
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() =>
+                 { 
+                  console.log(item,'item')
                   setValueFilter(prev => ({
                     ...prev,
-                    customerType: item.title,
+                    customerGroupType: item.title,
                   }))
+                filterRef?.current?.close()
+                }
+                  
                 }>
                 <Text
                   style={styles.itemText(item.title, valueFilter.customerType)}>
@@ -158,7 +172,7 @@ const ListFilter = (props: Props) => {
 
 export default React.memo(ListFilter);
 
-const rootStyles = (theme: ColorSchema) =>
+const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     titleHeaderText: {
       // alignSelf:'center',

@@ -119,6 +119,7 @@ export interface PlusCode {
 }
 export type VisitListItemType = {
   label: string;
+  useName: string;
   status: boolean;
   address: string | null;
   phone_number: string | null;
@@ -191,4 +192,191 @@ export interface IWidget {
   icon :SvgIconTypes,
   navigate :string,
   isUse? :boolean
+}
+export type ItemNoteVisitDetail = {
+  noteType: string;
+  description: string;
+  time: string;
+  date: string;
+};
+
+
+
+export interface RootEkMapResponse {
+  results: ResultEkMapResponse[]
+  status: string
+}
+
+export interface ResultEkMapResponse {
+  address_components: AddressEkMapComponent[]
+  formatted_address: string
+  geometry: GeometryEkResponse
+}
+
+export interface AddressEkMapComponent {
+  long_name: string
+  short_name: string
+  types: string[]
+}
+
+export interface GeometryEkResponse {
+  location: LocationEkResponse
+  location_type: string
+  viewport: Viewport
+}
+
+export interface LocationEkResponse {
+  lat: number
+  lng: number
+}
+
+export interface Viewport {
+  northeast: Northeast
+  southwest: Southwest
+}
+
+export interface Northeast {
+  lat: number
+  lng: number
+}
+
+export interface Southwest {
+  lat: number
+  lng: number
+}
+
+export type ReportOrderItemType = {
+  id: string | number;
+  label: string;
+  date: string;
+  time: string;
+  price: number;
+};
+
+export type ReportProductOrderType = {
+  id: string | number;
+  label: string;
+  count: number;
+  unit: string;
+  price: number;
+  discount_percent: number | null;
+  discount_VND: number | null;
+  total: number;
+};
+
+export type ReportProductInventoryType = {
+  productName: string;
+  count: number;
+  unit: string;
+};
+
+export type ReportInventoryType = {
+  dateTime: number | string;
+  listProduct: ReportProductInventoryType[];
+};
+
+export type ReportDebtListType = {
+  dateTime: string | number;
+  description: string;
+  numberDebt: number;
+};
+
+export type ReportDebtType = {
+  total: number;
+  listDebt: ReportDebtListType[];
+};
+export type IDataCustomer = {
+  nameCompany:string,
+  type:string,
+  group:string,
+  area?:string,
+  dob:string |any,
+  gland?:string,
+  debtLimit?:number | any,
+  description:string,
+  websiteURL:string,
+  address:{
+    address:string,
+    isSetAddressGet:boolean,
+    isSetAddressTake:boolean
+  },
+  contact:{
+    name:string,
+    address:string,
+    phoneNumber:string
+  },
+  imageSource:string
+
+
+}
+
+
+export interface RootEkMapResponse {
+  results: ResultEkMapResponse[]
+  status: string
+}
+
+export interface ResultEkMapResponse {
+  address_components: AddressEkMapComponent[]
+  formatted_address: string
+  geometry: GeometryEkResponse
+}
+
+export interface AddressEkMapComponent {
+  long_name: string
+  short_name: string
+  types: string[]
+}
+
+export interface GeometryEkResponse {
+  location: LocationEkResponse
+  location_type: string
+  viewport: Viewport
+}
+
+export interface LocationEkResponse {
+  lat: number
+  lng: number
+}
+
+export interface Viewport {
+  northeast: Northeast
+  southwest: Southwest
+}
+
+export interface Northeast {
+  lat: number
+  lng: number
+}
+
+export interface Southwest {
+  lat: number
+  lng: number
+}
+
+interface Address {
+  address: string;
+  isSetAddressGet: boolean;
+  isSetAddressTake: boolean;
+}
+
+interface Contact {
+  address: string;
+  name: string;
+  phoneNumber: string;
+}
+
+export interface IDataItem {
+  address: Address;
+  area: string;
+  contact: Contact;
+  debtLimit: number | string; // Assuming it can be a number or a string
+  description: string;
+  dob: string;
+  gland: string;
+  group: string;
+  nameCompany: string;
+  type: string;
+  websiteURL: string;
+  imageSource:any
 }

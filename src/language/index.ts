@@ -27,3 +27,7 @@ export const getLabel = (key: string, otp = {}) =>
 
 export const getLabelWithNS = (ns: string, key: string, otp = {}) =>
   i18next.getFixedT(i18next.language, ns)(key, otp);
+
+export function translate(key: string, option?: any) {
+  return key ? i18next.t(key, option) : '';
+}

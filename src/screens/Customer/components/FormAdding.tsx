@@ -7,34 +7,45 @@ import {
   ViewStyle,
   TouchableOpacity,
   ImageStyle,
-  Platform,
+  Image,
 } from 'react-native';
-import React, {useRef, useState, useEffect,useCallback} from 'react';
-import debounce from 'debounce';
+import React, {useRef, useState, useLayoutEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
-// import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import Geolocation, {
-  GeolocationResponse,
-} from '@react-native-community/geolocation';
-import {IValueType} from '../Customer';
+import Mapbox, {Location} from '@rnmapbox/maps';
 import {AppConstant} from '../../../const';
 import {Colors} from '../../../assets';
-import {AppFAB, AppIcons, AppInput, AppText} from '../../../components/common';
+import {
+  AppFAB,
+  AppIcons,
+  AppInput,
+  AppText,
+  SvgIcon,
+  showSnack,
+} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
-import {IDataCustomer, RootObjectGeoDecoding} from '../../../models/types';
+import {IDataCustomer, RootEkMapResponse} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {apiDecodeMap} from '../../../api/apiMap';
+import BackgroundGeolocation from 'react-native-background-geolocation';
+import {getDetailLocation} from '../../../services/appService';
+import {formatMoney} from '../../../config/function';
+import {AppActions, AppSelector} from '../../../redux-store';
+import CardAddress from './CardAddress';
+
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
   setTypeFilter: React.Dispatch<React.SetStateAction<string>>;
-  valueFilter: IValueType;
+  valueFilter: IDataCustomer;
   setData: React.Dispatch<React.SetStateAction<IDataCustomer>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   valueDate: Date | any;
   addingBottomRef: React.RefObject<BottomSheetMethods>;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  cameraBottomRef: React.RefObject<BottomSheetMethods>;
+  imageSource: any;
 };
 
 const FormAdding = (props: Props) => {
@@ -46,68 +57,66 @@ const FormAdding = (props: Props) => {
     setOpen,
     valueDate,
     addingBottomRef,
+    setShow,
+    imageSource,
   } = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: translate} = useTranslation();
-  const ref = useRef<MapView>(null);
-  const [location, setLocation] = useState<GeolocationResponse>();
+  const ref = useRef<Mapbox.Camera>(null);
+  const [location, setLocation] = useState<Location | any>({
+    coords: {
+      latitude: 0,
+      longitude: 0,
+    },
+    timestamp: 0,
+  });
   const [dataLocation, setDataLocation] = useState<string>('');
+  const mainAddress = useSelector(AppSelector.getMainAddress);
+  const mainContactAddress = useSelector(AppSelector.getMainContactAddress);
 
-  const onPressButtonGetLocation = () => {
-    Geolocation.getCurrentPosition(log => {
-      setLocation(log);
-      ref.current?.animateToRegion(
-        {
-          latitude: log?.coords.latitude!,
-          longitude: log?.coords.longitude!,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.04,
-        },
-        1000,
-      );
-    });
-    console.log('aaa');
+  const dispatch = useDispatch();
+  const fetchData = async (lat: any, lon: any) => {
+    const data: RootEkMapResponse = await getDetailLocation(lat, lon);
+
+    if (data.status === 'OK') {
+      setDataLocation(data.results[0].formatted_address);
+    
+    } else {
+      showSnack({
+        msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+        type: 'error',
+        interval: 1000,
+      });
+    }
+    // return console.log(data, 'data');
   };
 
-  const fetchData = useCallback( async () => {
-    try {
-      const geoData: RootObjectGeoDecoding = await apiDecodeMap(
-        location?.coords.latitude,
-        location?.coords.longitude,
-      );
-
-      if (geoData.status === 'OK') {
-        setDataLocation(geoData.plus_code.compound_code);
-      }
-    } catch (error) {
-      console.error('Error fetching geolocation data:', error);
-    }
-  },[location]);
-
-  const animateMapToCurrentLocation = () => {
-    Geolocation.getCurrentPosition(
-      info => {
-        setLocation(info);
-        ref.current?.animateToRegion(
-          {
-            latitude: info?.coords.latitude!,
-            longitude: info?.coords.longitude!,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.04,
-          },
+  
+  const onPressButtonGetLocation = () => {
+    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+      .then(res => {
+        setLocation(res);
+        showSnack({
+          msg: 'Thành công',
+          type: 'success',
+          interval: 1000,
+        });
+        ref?.current?.flyTo(
+          [res?.coords.longitude, res?.coords?.latitude],
           1000,
         );
-      },
-      error => {
-        console.error('Error getting current position:', error);
-      },
-    );
+      })
+      .catch(err => console.log(err));
   };
 
-  useEffect(() => {
-    animateMapToCurrentLocation();
-    fetchData();
+  useLayoutEffect(() => {
+    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+      .then(res => {
+        setLocation(res);
+        fetchData(res?.coords?.latitude, res?.coords?.longitude);
+      })
+      .catch(err => console.log(err));
   }, []);
 
   return (
@@ -116,14 +125,24 @@ const FormAdding = (props: Props) => {
       showsVerticalScrollIndicator={false}
       decelerationRate={'fast'}>
       <Text style={styles.titleText}>Thông tin chung </Text>
-      <TouchableOpacity style={styles.containContainImage}>
+      <TouchableOpacity
+        style={styles.containContainImage}
+        onPress={() => props.cameraBottomRef.current?.snapToIndex(0)}>
         <View style={styles.containImageCamera}>
-          <AppImage source="IconCamera" style={styles.iconImage} />
+          {imageSource !== undefined && imageSource ? (
+            <Image
+              source={{uri: imageSource}}
+              resizeMode="cover"
+              style={styles.imageStyle}
+            />
+          ) : (
+            <AppImage source="IconCamera" style={styles.iconImage} />
+          )}
         </View>
       </TouchableOpacity>
       <AppInput
         label="Tên khách hàng"
-        value={'Tên khách'}
+        value={valueFilter.nameCompany}
         editable={true}
         hiddenRightIcon={true}
         isRequire={true}
@@ -131,18 +150,20 @@ const FormAdding = (props: Props) => {
         styles={{marginBottom: 20}}
         onChangeValue={text => {
           setData(prev => ({...prev, nameCompany: text}));
+          console.log('text');
         }}
       />
       <AppInput
         label={translate('customerType')}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        value={valueFilter.customerType}
+        value={valueFilter.type}
         editable={false}
         styles={{marginBottom: 20}}
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
           filterRef.current?.snapToIndex(0);
+          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -154,7 +175,7 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('groupCustomer')}
-        value={valueFilter.customerGroupType}
+        value={valueFilter.group}
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
@@ -162,6 +183,7 @@ const FormAdding = (props: Props) => {
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
           filterRef.current?.snapToIndex(0);
+          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -173,14 +195,15 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('area')}
-        value={valueFilter.customerGroupType}
+        value={valueFilter.area!}
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
-          setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
+          setTypeFilter(AppConstant.CustomerFilterType.khu_vuc);
           filterRef.current?.snapToIndex(0);
+          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -218,6 +241,7 @@ const FormAdding = (props: Props) => {
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
           filterRef.current?.snapToIndex(0);
+          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -229,134 +253,157 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('debtLimit')}
-        value={''}
+        value={
+          valueFilter.debtLimit
+            ? formatMoney(valueFilter.debtLimit)
+            : valueFilter.debtLimit
+        }
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         hiddenRightIcon={true}
-        onChangeValue={text =>
-          debounce(() => {
-            setData(prev => ({...prev, debtLimit: text}));
-          }, 150)
-        }
+        onChangeValue={text => {
+          setData(prev => ({...prev, debtLimit: text}));
+          console.log(formatMoney(text));
+        }}
       />
       <AppInput
         label={translate('description')}
-        value={''}
+        value={valueFilter.description}
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
+        inputProp={{
+          multiline: true,
+        }}
         hiddenRightIcon={true}
-        onChangeValue={text =>
-          debounce(() => {
-            setData(prev => ({...prev, description: text}));
-          }, 150)
-        }
+        onChangeValue={text => setData(prev => ({...prev, description: text}))}
       />
       <AppInput
         label={translate('websiteUrl')}
-        value={''}
+        value={valueFilter.websiteURL}
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         hiddenRightIcon={true}
-        onChangeValue={text =>
-          debounce(() => {
-            setData(prev => ({...prev, websiteURL: text}));
-          }, 150)
-        }
+        onChangeValue={text => setData(prev => ({...prev, websiteURL: text}))}
       />
       <View>
-        <Text style={styles.titleText}>Địa chỉ</Text>
-        <View style={styles.contentView}>
-          <TouchableOpacity
-            style={styles.directionViewButton}
-            onPress={() => {
-              addingBottomRef.current?.snapToIndex(0);
-              setTypeFilter(AppConstant.CustomerFilterType.dia_chi);
-            }}>
-            <View style={styles.containIcon}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.Feather}
-                name={'plus'}
-                size={20}
-                color={theme.colors.action}
-              />
-            </View>
-            <Text style={styles.textButton}>Thêm địa chỉ</Text>
-          </TouchableOpacity>
+        <View style={styles.contentLabelAddingStyle}>
+          <Text style={styles.titleText}>Địa chỉ</Text>
+          {Object.keys(mainAddress).length > 0 && (
+            <SvgIcon
+              size={20}
+              source="Trash"
+              onPress={() => dispatch(AppActions.removeAddress([]))}
+            />
+          )}
         </View>
+        {Object.keys(mainAddress).length > 0 ? (
+          <CardAddress type="address"   mainAddress={mainAddress[0]}     />
+        ) : (
+          <View style={styles.contentView}>
+            <TouchableOpacity
+              style={styles.directionViewButton}
+              onPress={() => {
+                addingBottomRef.current?.snapToIndex(0);
+                setTypeFilter(AppConstant.CustomerFilterType.dia_chi);
+                setShow(true);
+              }}>
+              <View style={styles.containIcon}>
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.Feather}
+                  name={'plus'}
+                  size={20}
+                  color={theme.colors.action}
+                />
+              </View>
+              <Text style={styles.textButton}>Thêm địa chỉ</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       <View>
-        <Text style={styles.titleText}>Người liên hệ</Text>
-        <View style={styles.contentView}>
-          <TouchableOpacity
-            style={styles.directionViewButton}
-            onPress={() => {
-              addingBottomRef.current?.snapToIndex(0);
-              setTypeFilter(AppConstant.CustomerFilterType.nguoi_lien_he);
-            }}>
-            <View style={styles.containIcon}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.Feather}
-                name={'plus'}
-                size={20}
-                color={theme.colors.action}
-              />
-            </View>
-            <Text style={styles.textButton}>Thêm người liên hệ</Text>
-          </TouchableOpacity>
+        <View style={styles.contentLabelAddingStyle}>
+          <Text style={styles.titleText}>Người liên hệ</Text>
+          {Object.keys(mainContactAddress).length > 0 && (
+            <SvgIcon
+              size={20}
+              source="Trash"
+              onPress={() => dispatch(AppActions.removeContactAddress([]))}
+            />
+          )}
         </View>
+        {Object.keys(mainContactAddress).length > 0 ? (
+          <CardAddress type="contact"   mainContactAddress={mainContactAddress[0]} />
+        ) : (
+          <View style={styles.contentView}>
+            <TouchableOpacity
+              style={styles.directionViewButton}
+              onPress={() => {
+                addingBottomRef.current?.snapToIndex(0);
+                setTypeFilter(AppConstant.CustomerFilterType.nguoi_lien_he);
+                setShow(true);
+              }}>
+              <View style={styles.containIcon}>
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.Feather}
+                  name={'plus'}
+                  size={20}
+                  color={theme.colors.action}
+                />
+              </View>
+              <Text style={styles.textButton}>Thêm người liên hệ</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
+
       <View>
         <Text style={styles.titleText}>Vị trí</Text>
         <View style={styles.contentView}>
-          <MapView
-            ref={ref}
-            initialRegion={{
-              latitude: 21.056871,
-              longitude: 105.777695,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.04,
-            }}
-            style={styles.mapView}
-            provider={Platform.OS === 'ios' ? PROVIDER_GOOGLE : PROVIDER_GOOGLE}
-            showsUserLocation>
+          <Mapbox.MapView
+            pitchEnabled={false}
+            styleURL={Mapbox.StyleURL.Street}
+            attributionEnabled={false}
+            scaleBarEnabled={false}
+            logoEnabled={false}
+            style={styles.mapView}>
+            <Mapbox.Camera
+              // ref={mapboxCameraRef}
+              ref={ref}
+              centerCoordinate={[
+                location?.coords.longitude ?? 0,
+                location?.coords.latitude ?? 0,
+              ]}
+              animationMode={'flyTo'}
+              animationDuration={500}
+              zoomLevel={12}
+            />
             <View style={styles.locationView}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name="location"
-                color={theme.colors.text_disable}
-                size={24}
-              />
-
-              <Text numberOfLines={1} style={styles.locationText}>
-                {dataLocation === '' ? 'Loading' : dataLocation}
+              <SvgIcon source={'MapLocation'} size={24} />
+              <Text numberOfLines={1}>
+                {'  '}
+                {dataLocation}
               </Text>
             </View>
-
-            <Marker
-              draggable
-              coordinate={{
-                latitude: location?.coords.latitude!,
-                longitude: location?.coords.longitude!,
-              }}
-            />
             <View style={styles.location2View}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name="map-outline"
-                color={theme.colors.white}
-                size={20}
-              />
-              <AppText style={styles.currentLocationText} colorTheme={'white'}>
-                Vị trí hiện tại
+              <SvgIcon source={'iconMap'} size={24} colorTheme="white" />
+              <AppText numberOfLines={1} colorTheme="white" fontSize={14}>
+                {'  '}Vị trí hiện tại
               </AppText>
             </View>
-          </MapView>
+            <Mapbox.MarkerView
+              coordinate={[
+                location?.coords.longitude ?? 0,
+                location?.coords.latitude ?? 0,
+              ]}>
+              <SvgIcon source="Location" size={32} colorTheme="action" />
+            </Mapbox.MarkerView>
+          </Mapbox.MapView>
           <AppFAB
             icon="google-maps"
             visible={true}
@@ -371,12 +418,12 @@ const FormAdding = (props: Props) => {
   );
 };
 
-export default FormAdding;
+export default React.memo(FormAdding);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     contentStyle: {
-      color: Colors.gray_500,
+      color: theme.colors.text_secondary,
       fontWeight: '400',
       fontSize: 16,
     } as TextStyle,
@@ -393,7 +440,7 @@ const rootStyles = (theme: AppTheme) =>
     containImageCamera: {
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: Colors.gray_200,
+      backgroundColor: theme.colors.divider,
       width: 98,
       height: 98,
       borderRadius: 8,
@@ -456,7 +503,7 @@ const rootStyles = (theme: AppTheme) =>
       top: 10,
       width: '90%',
       right: 0,
-      left: 15,
+      left: 17,
       bottom: 0,
       borderRadius: 8,
       justifyContent: 'center',
@@ -465,6 +512,7 @@ const rootStyles = (theme: AppTheme) =>
       borderColor: theme.colors.border,
       borderWidth: 1,
       flexDirection: 'row',
+      paddingHorizontal: 32,
       // paddingVertical:16,
     } as ViewStyle,
     location2View: {
@@ -499,4 +547,15 @@ const rootStyles = (theme: AppTheme) =>
       marginLeft: 8,
       lineHeight: 21,
     } as TextStyle,
+    contentLabelAddingStyle: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      // marginHorizontal:4
+    } as ViewStyle,
+    imageStyle: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 16,
+    } as ImageStyle,
   });

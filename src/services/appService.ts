@@ -1,6 +1,8 @@
+import axios from 'axios';
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
-import {BASE_URL} from '@env';
+import {BASE_URL, BASE_URL_MAP, API_EK_KEY} from '@env';
+import { client } from '../config/client';
 
 export type ILogin = {
   usr: string;
@@ -36,3 +38,10 @@ export const verifyOrganization = (data: object) =>
 
 export const updateProfile = (data: IProfile) =>
   createApi().put(ApiConstant.PUT_USER_PROFILE, data);
+
+export const getDetailLocation = (lat?: number, lon?: number) =>
+  client
+    .get(
+      BASE_URL_MAP + `?point.lon=${lon}&point.lat=${lat}&api_key=${API_EK_KEY}`,
+    )
+    .then(res => res.data);

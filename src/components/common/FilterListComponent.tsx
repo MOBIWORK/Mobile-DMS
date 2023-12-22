@@ -42,7 +42,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
           />
         }
       />
-      {searchValue && onChangeSearch && isSearch &&(
+      {isSearch  && (
         <Searchbar
           style={{
             backgroundColor: colors.bg_neutral,

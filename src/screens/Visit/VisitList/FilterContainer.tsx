@@ -6,13 +6,13 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
-} from '../../components/common';
-import {AppConstant, DataConstant} from '../../const';
+} from '../../../components/common';
+import {AppConstant, DataConstant} from '../../../const';
 import {TextInput} from 'react-native-paper';
 import {useTheme} from '@react-navigation/native';
 import FilterListComponent, {
   IFilterType,
-} from '../../components/common/FilterListComponent';
+} from '../../../components/common/FilterListComponent';
 import {useTranslation} from 'react-i18next';
 import {
   BottomSheetScrollView,
@@ -26,7 +26,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
 }) => {
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-  const {bottom} = useSafeAreaInsets();
+  const {bottom, top} = useSafeAreaInsets();
   const snapPoints = useMemo(() => ['100%'], []);
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
@@ -199,7 +199,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
         snapPointsCustom={snapPoints}>
-        <View style={{padding: 16, height: '100%'}}>
+        <View style={{marginTop: top, paddingHorizontal: 16, height: '100%'}}>
           <AppHeader
             label={'Bộ lọc'}
             onBack={() =>
@@ -255,10 +255,8 @@ const FilterContainer: FC<FilterContainerProps> = ({
             style={{
               justifyContent: 'space-between',
               flexDirection: 'row',
-              paddingTop: 10,
               position: 'absolute',
-              bottom: 0,
-              height: AppConstant.HEIGHT * 0.1,
+              bottom: bottom + top,
               width: '100%',
               alignSelf: 'center',
             }}>

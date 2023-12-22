@@ -4,12 +4,16 @@ import {NavigationContainer} from '@react-navigation/native';
 import {useMMKVBoolean, useMMKVObject} from 'react-native-mmkv';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { useSelector } from 'react-redux';
-
+import { NavigatorScreenParams } from '@react-navigation/native';
 import {AppConstant, ScreenConstant} from '../const';
-import {IResOrganization} from '../models/types';
-import {Home, 
-  AddingNewCustomer,
+
+import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
+import {
+  IDataCustomer, IResOrganization,
+  ReportOrderItemType,
+  VisitListItemType,
+} from '../models/types';
+import {
   ForgotPassword,
   ImageView,
   ListProduct,
@@ -29,6 +33,10 @@ import {Home,
   CheckinOrder,
   CheckinOrderCreated,
   
+  Index,
+  AddingNewCustomer,
+  DetailCustomer,
+  ReportOrderDetail,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import MainTab from './MainTab';
@@ -40,17 +48,22 @@ import {  IAppReduxState } from '../redux-store';
 import HomeScreen from '../screens/Home';
 import { StatusBar } from 'react-native';
 // import PushNotification from 'react-native-push-notification';
+import {MyAppTheme} from '../layouts/theme';
+import {IAppReduxState} from '../redux-store';
+import {useSelector} from 'react-redux';
+import MainTab, { TabParamList } from './MainTab';
+import { ICustomer } from '../screens/Customer/components/data';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const {theme} = useSelector((state:IAppReduxState) => state.appRedux)
+  const {theme} = useSelector((state: IAppReduxState) => state.appRedux);
   const [organiztion] = useMMKVObject<IResOrganization>(
     AppConstant.Organization,
   );
-  // // const [theme, setTheme] = useMMKVString(AppConstant.Theme);
-  const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
+
+  // const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
   // useEffect(() => {
   //   PushNotification.configure({
@@ -66,20 +79,17 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
     <NavigationContainer
       // @ts-ignore
       theme={MyAppTheme[theme]}>
-        {/* <StatusBar     barStyle={'light-content'}    backgroundColor={MyAppTheme[theme].colors.white}       /> */}
       <Stack.Navigator
-        // initialRouteName={
-        //   loginFirst && organiztion?.company_name
-        //     ? ScreenConstant.SIGN_IN
-        //     : ScreenConstant.CUSTOMER
-        // }
-        initialRouteName={ScreenConstant.MAIN_TAB}
+        initialRouteName={
+          loginFirst && organiztion?.company_name
+            ? ScreenConstant.SIGN_IN
+            : ScreenConstant.LIST_VISIT
+        }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
-
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen name={ScreenConstant.SELECT_ORGANIZATION} component={SelectOrganization}/>
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
@@ -102,6 +112,21 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.CKECKIN_ORDER}  component={CheckinOrder} />
         <Stack.Screen name={ScreenConstant.CKECKIN_ORDER_CREATE}  component={CheckinOrderCreated} />
         
+        <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
+        <Stack.Screen
+          name={ScreenConstant.ADDING_NEW_CUSTOMER}
+          component={AddingNewCustomer}
+        />
+        <Stack.Screen
+          name={ScreenConstant.DETAIL_CUSTOMER}
+          component={DetailCustomer}
+        />
+
+        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
+        <Stack.Screen
+          name={ScreenConstant.REPORT_ORDER_DETAIL}
+          component={ReportOrderDetail}
+        />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -130,6 +155,7 @@ export type RootStackParamList = {
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
+  [ScreenConstant.VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.CUSTOMER]:undefined;
   [ScreenConstant.MAIN_TAB]:undefined
@@ -138,6 +164,17 @@ export type RootStackParamList = {
   [ScreenConstant.INVENTORY_ADD_PRODUCT]:undefined
   [ScreenConstant.CKECKIN_ORDER]:undefined
   [ScreenConstant.CKECKIN_ORDER_CREATE]:undefined
+  [ScreenConstant.CUSTOMER]: undefined;
+  [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
+  [ScreenConstant.DETAIL_CUSTOMER]: {
+    data:IDataCustomer
+  };
+  [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
+  [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
+  [ScreenConstant.CUSTOMER]:undefined;
+  [ScreenConstant.MAIN_TAB]:NavigatorScreenParams<TabParamList>
+
+
 };
 
 // Define prop type for useNavigation and useRoute

@@ -4,11 +4,11 @@ import React from 'react'
 import { ImageProps } from './type'
 
 const AppImage = (props: ImageProps) => {
-    const {containerStyle,style:styleOverride,resizeMode,source} = props
+    const {containerStyle,style:styleOverride,resizeMode,source,size} = props
   return (
     <View style={containerStyle}>
       <Image
-        style={[styles.img, styleOverride]}
+        style={[styles.img(size), styleOverride]}
         resizeMode={resizeMode}
         source={ImageAssets[source ?? 'default']}
       />
@@ -19,8 +19,8 @@ const AppImage = (props: ImageProps) => {
 export default AppImage
 
 const styles = StyleSheet.create({
-    img:{
-        width:'100%',
-        height:'100%'
-    } as ImageStyle
+    img:(size?:number) =>({
+        width: size ? size*2 :'100%',
+        height: size ? size*2 :'100%'
+    }) as ImageStyle
 })

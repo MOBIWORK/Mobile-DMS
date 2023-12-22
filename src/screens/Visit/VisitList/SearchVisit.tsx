@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {MainLayout} from '../../layouts';
+import {MainLayout} from '../../../layouts';
 import {
   Image,
   NativeSyntheticEvent,
@@ -8,15 +8,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ImageAssets} from '../../assets';
+import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {Searchbar} from 'react-native-paper';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../../navigation';
 import {useMMKVString} from 'react-native-mmkv';
-import {AppConstant} from '../../const';
-import {AppIcons} from '../../components/common';
+import {AppConstant} from '../../../const';
+import {AppIcons} from '../../../components/common';
 import {useDispatch} from 'react-redux';
-import {AppActions} from '../../redux-store';
+import {AppActions} from '../../../redux-store';
 
 const SearchVisit = () => {
   const {colors} = useTheme();

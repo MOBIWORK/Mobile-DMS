@@ -12,9 +12,10 @@ import {
   StatusBar,
 } from 'react-native';
 
-import BackgroundGeolocation, {
-  Subscription,
-} from 'react-native-background-geolocation';
+import 'react-native-gesture-handler';
+import './src/language';
+
+
 
 import {Provider} from 'react-redux';
 import store from './src/redux-store';
@@ -22,6 +23,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppNavigationContainer from './src/navigation';
 import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
+import { SnackBar } from './src/components/common/AppSnack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 function App(): JSX.Element {
   useEffect(() => {
@@ -129,6 +132,7 @@ registerTranslation('vi', {
 
   return (
     <Provider store={store}>
+      <SafeAreaProvider>
       <KeyboardAvoidingView
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -137,10 +141,12 @@ registerTranslation('vi', {
           <AppNavigationContainer>
             <StatusBar   backgroundColor={'#fff'}    />
             <HandlingError />
+            <SnackBar/>
           </AppNavigationContainer>
         </GestureHandlerRootView>
         <HandlingLoading />
       </KeyboardAvoidingView>
+      </SafeAreaProvider>
     </Provider>
   );
 }

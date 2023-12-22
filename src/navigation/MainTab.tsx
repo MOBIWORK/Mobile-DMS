@@ -1,13 +1,23 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
-import {Home,Customer, Visits, WidgetScreen,} from '../screens';
+import {Customer, Home, Visits, WidgetScreen, Index, ListVisit} from '../screens';
 import BottomTabDisplay from './BottomTabDisplay';
+import BottomTabDisplay from './BottomTabDisplay';
+
+
+export type TabParamList = {
+  [ScreenConstant.HOME_SCREEN]:undefined,
+  [ScreenConstant.VISIT]:undefined;
+  [ScreenConstant.CUSTOMER]:undefined;
+  [ScreenConstant.LOOKING_MORE]:undefined
+}
+
 
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
-  
+  const {t: getLable} = useTranslation();
 
   return (
     <Tab.Navigator

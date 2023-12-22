@@ -1,5 +1,6 @@
 import SelectOrganization from './Authen/SelectOrganization';
 import SignIn from './Authen/SignIn';
+import HomeScreen from './Home';
 import Home from './Home';
 import WidgetScreen from './Widget';
 import WidgetFavouriteScreen from './Widget/WidgetFVScreen';
@@ -35,11 +36,12 @@ export {
     ImageView,
     OrderList,
     OrderDetail,
-    Visits,
     ListVisit,
     SearchVisit,
     Customer,
     AddingNewCustomer,
+    DetailCustomer,
+    ReportOrderDetail,
     LookingMore,
     Inventory,
     InventoryAddProduct,
@@ -48,4 +50,4 @@ export {
     NotificationScreen,
     CheckinOrder,
     CheckinOrderCreated
-}
+};
