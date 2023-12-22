@@ -11,16 +11,14 @@ import {
 import React, {createRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
-import {
-  NavigationContainerRef,
-} from '@react-navigation/native';
+import {NavigationContainerRef} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {RootStackParamList} from '.';
 import {ScreenConstant} from '../const';
 import AppImage from '../components/common/AppImage';
-import { AppTheme,useTheme } from '../layouts/theme';
-import { useSelector } from 'react-redux';
-import { AppSelector } from '../redux-store';
+import {AppTheme, useTheme} from '../layouts/theme';
+import {useSelector} from 'react-redux';
+import {AppSelector} from '../redux-store';
 
 const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {state, navigation} = props;
@@ -28,7 +26,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {t: getLabel} = useTranslation();
   const styles = bottomStyles(theme);
   const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
-  const showModal = useSelector(AppSelector.getShowModal)
+  const showModal = useSelector(AppSelector.getShowModal);
   const pressNavigator = React.useCallback(
     (curTab: any) => {
       const previousRouteName = navigationRef?.current?.getCurrentRoute()?.name;
@@ -52,57 +50,76 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
     [navigation, state],
   );
 
-
   return (
-    <SafeAreaView edges={['right', 'left', 'bottom']} style={showModal ? styles.container :{}}>
-      {showModal && 
-      <>
-      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(0)}>
-        <View pointerEvents="none">
-          {state.index === 0 ? (
-            <AppImage source="IconHomeActive" style={styles.iconStyle} />
-          ) : (
-            <AppImage source="IconHome" style={styles.iconStyle} />
-          )}
-        </View>
-        <Text style={styles.txtItem(state.index, 0)}>{getLabel('home')}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(1)}>
-        <View pointerEvents="none">
-          {state.index === 1 ? (
-            <AppImage source="IconVisitActive" style={styles.iconStyle} />
-          ) : (
-            <AppImage source="IconVisit" style={styles.iconStyle} />
-          )}
-        </View>
-        <Text style={styles.txtItem(state.index, 1)}>{getLabel('visit')}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(2)}>
-        <View pointerEvents="none">
-          {state.index === 2 ? (
-            <AppImage source="IconCustomerActive" style={styles.iconStyle} />
-          ) : (
-            <AppImage source="IconCustomer" style={styles.iconStyle} />
-          )}
-        </View>
-        <Text style={styles.txtItem(state.index, 2)}>
-          {getLabel('customer')}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(3)}>
-        <View pointerEvents="none">
-          {state.index === 3 ? (
-            <AppImage source="IconLookingMoreActive" style={styles.iconStyle} />
-          ) : (
-            <AppImage source="IconLookingMore" style={styles.iconStyle} />
-          )}
-        </View>
-        <Text style={styles.txtItem(state.index, 3)}>
-          {getLabel('lookingMore')}
-        </Text>
-      </TouchableOpacity>
-      </>
-}
+    <SafeAreaView
+      edges={['right', 'left', 'bottom']}
+      style={showModal ? styles.container : {}}>
+      {showModal && (
+        <>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => pressNavigator(0)}>
+            <View pointerEvents="none">
+              {state.index === 0 ? (
+                <AppImage source="IconHomeActive" style={styles.iconStyle} />
+              ) : (
+                <AppImage source="IconHome" style={styles.iconStyle} />
+              )}
+            </View>
+            <Text style={styles.txtItem(state.index, 0)}>
+              {getLabel('home')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => pressNavigator(1)}>
+            <View pointerEvents="none">
+              {state.index === 1 ? (
+                <AppImage source="IconVisitActive" style={styles.iconStyle} />
+              ) : (
+                <AppImage source="IconVisit" style={styles.iconStyle} />
+              )}
+            </View>
+            <Text style={styles.txtItem(state.index, 1)}>
+              {getLabel('visit')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => pressNavigator(2)}>
+            <View pointerEvents="none">
+              {state.index === 2 ? (
+                <AppImage
+                  source="IconCustomerActive"
+                  style={styles.iconStyle}
+                />
+              ) : (
+                <AppImage source="IconCustomer" style={styles.iconStyle} />
+              )}
+            </View>
+            <Text style={styles.txtItem(state.index, 2)}>
+              {getLabel('customer')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => pressNavigator(3)}>
+            <View pointerEvents="none">
+              {state.index === 3 ? (
+                <AppImage
+                  source="IconLookingMoreActive"
+                  style={styles.iconStyle}
+                />
+              ) : (
+                <AppImage source="IconLookingMore" style={styles.iconStyle} />
+              )}
+            </View>
+            <Text style={styles.txtItem(state.index, 3)}>
+              {getLabel('lookingMore')}
+            </Text>
+          </TouchableOpacity>
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -125,8 +142,8 @@ const bottomStyles = (theme: AppTheme) =>
       ...Platform.select({
         android: {
           elevation: 12,
-          borderTopColor: theme.colors.bg_neutral,
-          borderTopWidth: 2,
+          // borderTopColor: theme.colors.bg_neutral,
+          // borderTopWidth: 2,
           shadowColor: theme.colors.action,
         },
         ios: {
@@ -135,9 +152,9 @@ const bottomStyles = (theme: AppTheme) =>
             width: 0,
             height: 1,
           },
-          elevation: 10,
+          elevation: 1,
           shadowOpacity: 0.225,
-          shadowRadius: 5.56,
+          shadowRadius: 4.56,
         },
       }),
     } as ViewStyle,
@@ -148,7 +165,10 @@ const bottomStyles = (theme: AppTheme) =>
     } as ViewStyle,
     txtItem: (index: number, curIndex: number) =>
       ({
-        color: index === curIndex ? theme.colors.primary : theme.colors.text_secondary,
+        color:
+          index === curIndex
+            ? theme.colors.primary
+            : theme.colors.text_secondary,
         textAlign: 'center',
         fontSize: 10,
       } as TextStyle),

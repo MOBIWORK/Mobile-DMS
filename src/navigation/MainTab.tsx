@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
 import {Customer, Home, Visits, WidgetScreen, Index, ListVisit} from '../screens';
 import BottomTabDisplay from './BottomTabDisplay';
-import { useTranslation } from 'react-i18next';
+
 
 
 export type TabParamList = {
@@ -17,7 +17,7 @@ export type TabParamList = {
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
-  const {t: getLable} = useTranslation();
+
 
   return (
     <Tab.Navigator

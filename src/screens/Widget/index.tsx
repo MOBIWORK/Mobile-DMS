@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef } from 'react'
 import { MainLayout } from '../../layouts'
 import { StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native'
 import { AppTheme, useTheme } from '../../layouts/theme'
@@ -8,7 +8,7 @@ import ItemWidget from '../../components/Widget/ItemWidget'
 const WidgetScreen = () => {
     const theme = useTheme();
     const styles = createStyleSheet(theme);
-    const [arrWidget, _] = useState<any[]>(DataConstant.DataWidget)
+    const arrWidget = useRef<any[]>(DataConstant.DataWidget)
 
     return (
         <MainLayout style={styles.layout}>
@@ -16,7 +16,7 @@ const WidgetScreen = () => {
             <View style={styles.containerWidget}>
                 <View style={styles.containerItem}>
                     {arrWidget &&
-                        arrWidget.map((item) => (
+                        arrWidget.current.map((item) => (
                             <View
                                 key={item.id}
                                 style={{

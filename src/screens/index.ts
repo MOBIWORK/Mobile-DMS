@@ -25,6 +25,7 @@ import Inventory from './Checkin/Inventory';
 import InventoryAddProduct from './Checkin/Inventory/AddingProduct';
 import CheckinOrder from './Checkin/Order';
 import CheckinOrderCreated from './Checkin/Order/CreateOrder';
+import DropDrag from './TestDropDrag/DropDrag';
 
 export {
     SelectOrganization,
@@ -53,5 +54,6 @@ export {
     WidgetFavouriteScreen,
     NotificationScreen,
     CheckinOrder,
-    CheckinOrderCreated
+    CheckinOrderCreated,
+    DropDrag
 }

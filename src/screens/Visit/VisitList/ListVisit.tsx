@@ -46,7 +46,7 @@ const ListVisit = () => {
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
-  const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
+const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
     return (
       <TouchableOpacity
         style={{alignItems: 'center', justifyContent: 'center'}}
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const VisitListData: VisitListItemType[] = [
+export const VisitListData: VisitListItemType[] = [
   {
     label: 'Nintendo',
     useName: 'Chu Quýnh Anh',

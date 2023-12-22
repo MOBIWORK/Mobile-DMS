@@ -128,28 +128,7 @@ export type VisitListItemType = {
   distance: number;
 };
 
-export type IDataCustomer = {
-  nameCompany:string,
-  type:string,
-  group:string,
-  area?:string,
-  dob:string,
-  gland?:string,
-  debtLimit?:number | any,
-  description:string,
-  websiteURL:string,
-  address:{
-    address:string,
-    phoneNumber:string
-  },
-  contact:{
-    name:string,
-    address:string,
-    phoneNumber:string
-  }
 
-
-}
 export interface RootObjectGeoDecoding {
   plus_code: PlusCode;
   results: ResultDecode[];
@@ -190,7 +169,7 @@ export interface IWidget {
   id: number
   name : string,
   icon :SvgIconTypes,
-  navigate :string,
+  navigate :string | any,
   isUse? :boolean
 }
 export type ItemNoteVisitDetail = {

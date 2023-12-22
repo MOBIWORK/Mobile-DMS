@@ -1,6 +1,6 @@
 import React, {FC} from 'react';
 import {ItemNoteVisitDetail, VisitListItemType} from '../../../models/types';
-import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {FlatList, Image, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
@@ -17,7 +17,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
       borderRadius: 16,
       backgroundColor: colors.bg_default,
       rowGap: 8,
-    },
+    } as ViewStyle,
     user: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -25,35 +25,35 @@ const Detail: FC<VisitItemProps> = ({item}) => {
       borderBottomWidth: 1,
       borderColor: colors.divider,
       paddingBottom: 16,
-    },
+    } as ViewStyle,
     userLeft: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
-    },
+    } as ViewStyle,
     userTextLeft: {
       color: colors.text_primary,
       fontWeight: '500',
       fontSize: 16,
       marginLeft: 8,
-    },
+    } as TextStyle,
     content: {
       marginRight: 8,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
-    },
+    } as ViewStyle,
     infoContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
-    },
+    } as ViewStyle,
     infoText: {
       marginLeft: 8,
       color: colors.text_primary,
       fontSize: 16,
       fontWeight: '500',
-    },
+    } as TextStyle,
   });
 
   const statusItem = (status: boolean) => {
