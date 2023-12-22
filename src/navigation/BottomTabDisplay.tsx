@@ -46,7 +46,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
           }
         }
       } else {
-        navigation.navigate(ScreenConstant.LOOKING_MORE);
+        navigation.navigate(ScreenConstant.WIDGET_SCREEN);
       }
     },
     [navigation, state],

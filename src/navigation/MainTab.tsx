@@ -10,7 +10,7 @@ export type TabParamList = {
   [ScreenConstant.HOME_SCREEN]:undefined,
   [ScreenConstant.VISIT]:undefined;
   [ScreenConstant.CUSTOMER]:undefined;
-  [ScreenConstant.LOOKING_MORE]:undefined
+  [ScreenConstant.WIDGET_SCREEN]:undefined
 }
 
 

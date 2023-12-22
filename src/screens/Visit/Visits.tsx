@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ListVisit from './ListVisit';
+import ListVisit from './VisitList/ListVisit';
 
 
 const Visits = () => {

@@ -103,22 +103,9 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
         <Stack.Screen name={ScreenConstant.CKECKIN_ORDER}  component={CheckinOrder} />
         <Stack.Screen name={ScreenConstant.CKECKIN_ORDER_CREATE}  component={CheckinOrderCreated} />
-        
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
-        <Stack.Screen
-          name={ScreenConstant.ADDING_NEW_CUSTOMER}
-          component={AddingNewCustomer}
-        />
-        <Stack.Screen
-          name={ScreenConstant.DETAIL_CUSTOMER}
-          component={DetailCustomer}
-        />
-
-        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
-        <Stack.Screen
-          name={ScreenConstant.REPORT_ORDER_DETAIL}
-          component={ReportOrderDetail}
-        />
+        <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer}/>
+        <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/>
       </Stack.Navigator>
       {children}
     </NavigationContainer>
