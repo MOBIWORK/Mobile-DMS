@@ -56,5 +56,10 @@ export default {
   address:'Address',
   contactName:'Contact',
   location:'Location',
+  infor:'Account Information',
+  language:'Language',
+  accountSetting:'AccountSetting',
+  theme:'Theme',
+  syncData:'Sync Data'
   
 };

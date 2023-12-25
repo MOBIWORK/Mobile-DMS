@@ -15,7 +15,7 @@ export const {Types, Creators} = createActions({
   setOrganizationBaseURL: ['data'],
   setSearchProductValue: ['data'],
   setSearchVisitValue: ['data'],
-  setAppTheme:['default'],
+  setAppTheme:['data'],
   setMainAddress:['data'],
   setMainContactAddress:['data'],
   setNewCustomer:['data'],
@@ -24,6 +24,7 @@ export const {Types, Creators} = createActions({
   removeAddress:['data']
   
 });
+export type AppActionType = keyof typeof Types
 
 /* ------------- Initial State ------------- */
 export interface IAppRedux {
@@ -128,9 +129,9 @@ const setShowErrorModalStatus = (
   showModal: action.data,
 });
 
-const setAppTheme = (state = INITIAL_STATE, action:ThemeType) => ({
+const setAppTheme = (state = INITIAL_STATE, action:KeyAbleProps) => ({
   ...state,
-  theme: action,
+  theme: action.data,
 });
 
 const setSearchProductValue = (

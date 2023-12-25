@@ -18,8 +18,19 @@ import IconCamera from './camera.svg';
 import IconImage from './image.svg';
 import arrowLeft from './arrowLeft.svg';
 import IconKebab from './kebab.svg'
-
+import AccountIcon from './accountIcon.svg';
+import IconUser from './user.svg';
+import Sync from './sync.svg';
+import IconDarkMode from './darkMode.svg';
+import Language from './language.svg';
+import EnFlag from './enFlag.svg'
+import VnFlag from './vnFlag.svg'
+import Setting from './setting.svg'
 export const SvgComponent = {
+  IconUser,
+  Sync,
+  IconDarkMode,
+  Language,
   iconMap,
   ArrowDown,
   Trash,
@@ -39,6 +50,10 @@ export const SvgComponent = {
   iconTicket,
   iconUser,
   iconImage,
-  iconContainer
+  iconContainer,
+  AccountIcon,
+  VnFlag,
+  EnFlag,
+  Setting
 };
 export type SvgIconTypes = keyof typeof SvgComponent;

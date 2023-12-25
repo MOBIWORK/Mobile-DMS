@@ -26,6 +26,7 @@ import InventoryAddProduct from './Checkin/Inventory/AddingProduct';
 import CheckinOrder from './Checkin/Order';
 import CheckinOrderCreated from './Checkin/Order/CreateOrder';
 import DropDrag from './TestDropDrag/DropDrag';
+import Profile from './Profile/Profile';
 
 export {
     SelectOrganization,
@@ -55,5 +56,6 @@ export {
     NotificationScreen,
     CheckinOrder,
     CheckinOrderCreated,
-    DropDrag
+    DropDrag,
+    Profile
 }

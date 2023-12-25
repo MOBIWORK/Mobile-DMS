@@ -3,12 +3,13 @@ import type {RouteProp} from '@react-navigation/native';
 import {NavigationContainer} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { NavigatorScreenParams } from '@react-navigation/native';
+import {NavigatorScreenParams} from '@react-navigation/native';
 import {AppConstant, ScreenConstant} from '../const';
 
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {
-  IDataCustomer, IResOrganization,
+  IDataCustomer,
+  IResOrganization,
   ReportOrderItemType,
   VisitListItemType,
 } from '../models/types';
@@ -37,19 +38,20 @@ import {
   ReportOrderDetail,
   Home,
   DropDrag,
+  Profile,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
-import { MyAppTheme } from '../layouts/theme';
+import {MyAppTheme} from '../layouts/theme';
 
 // import { MAIN_TAB } from '../const/screen.const';
 
-import {  IAppReduxState } from '../redux-store';
+import {IAppReduxState} from '../redux-store';
 import HomeScreen from '../screens/Home';
-import { StatusBar } from 'react-native';
+import {StatusBar} from 'react-native';
 // import PushNotification from 'react-native-push-notification';
 import {useSelector} from 'react-redux';
-import MainTab, { TabParamList } from './MainTab';
-import { ICustomer } from '../screens/Customer/components/data';
+import MainTab, {TabParamList} from './MainTab';
+import {ICustomer} from '../screens/Customer/components/data';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -83,7 +85,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
-          <Stack.Screen  name={ScreenConstant.DROP_DRAG} component={DropDrag}  />
+        {/* <Stack.Screen  name={ScreenConstant.DROP_DRAG} component={DropDrag}  /> */}
+        <Stack.Screen name={ScreenConstant.PROFILE} component={Profile} />
         {/* <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen name={ScreenConstant.SELECT_ORGANIZATION} component={SelectOrganization}/>
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
@@ -138,22 +141,21 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
-  [ScreenConstant.CUSTOMER]:undefined;
-  [ScreenConstant.ADDING_NEW_CUSTOMER]:undefined
-  [ScreenConstant.CHECKIN_INVENTORY]:undefined
-  [ScreenConstant.INVENTORY_ADD_PRODUCT]:undefined
-  [ScreenConstant.CKECKIN_ORDER]:undefined
-  [ScreenConstant.CKECKIN_ORDER_CREATE]:undefined
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {data:IDataCustomer};
+  [ScreenConstant.CHECKIN_INVENTORY]: undefined;
+  [ScreenConstant.INVENTORY_ADD_PRODUCT]: undefined;
+  [ScreenConstant.CKECKIN_ORDER]: undefined;
+  [ScreenConstant.CKECKIN_ORDER_CREATE]: undefined;
+  [ScreenConstant.CUSTOMER]: undefined;
+  [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
+  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
   [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
-  [ScreenConstant.CUSTOMER]:undefined;
-  [ScreenConstant.MAIN_TAB]:NavigatorScreenParams<TabParamList>;
-  [ScreenConstant.DROP_DRAG]:undefined
-
-
+  [ScreenConstant.CUSTOMER]: undefined;
+  [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList>;
+  [ScreenConstant.DROP_DRAG]: undefined;
+  [ScreenConstant.PROFILE]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

@@ -58,5 +58,10 @@ export default {
   dob:'Sinh nhật',
   error:{
     haveError:'Đã có lỗi xảy ra, hãy thử lại sau'
-  }
+  },
+  infor:'Thông tin tài khoản',
+  language:'Ngôn ngữ',
+  accountSetting:'Cài đặt tài khoản',
+  theme:'Giao diện',
+  syncData:'Đồng bộ dữ liệu'
 };

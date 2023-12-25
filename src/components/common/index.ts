@@ -19,6 +19,7 @@ import { SvgIcon } from './AppSvgIcon';
 import { showSnack } from './AppSnack';
 
 import AppCustomHeader from './AppCustomHeader';
+import AppSwitch from './AppSwitch';
 
 
 
@@ -44,4 +45,5 @@ export {
   AppSegmentedButtons,
   showSnack,
   AppCustomHeader,
+  AppSwitch
 };
