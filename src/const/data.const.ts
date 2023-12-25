@@ -9,7 +9,7 @@ export const DataWidget: IWidget[] = [
     id: 1,
     name: 'Hồ sơ',
     icon: 'iconUser',
-    navigate: '',
+    navigate:ScreenConstant.PROFILE,
   },
   {
     id: 2,

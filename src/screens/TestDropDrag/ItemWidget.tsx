@@ -20,7 +20,7 @@ const ItemWidget = ({
   icon,
   name,
   // navigate,
-}: PropTypes) => {
+}: PropTypes ) => {
   const styles = createSheetStyle(useTheme());
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
@@ -50,6 +50,7 @@ const createSheetStyle = (theme: AppTheme) =>
     container: {
       alignItems: 'center',
       paddingVertical: 8,
+      
     } as ViewStyle,
     icon: {
       height: 32,

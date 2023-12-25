@@ -7,7 +7,7 @@ export type PressAbleContent = {
     id:string | number,
     name:string,
     icon:SvgIconTypes,
-    leftSide:true,
+    rightSide:true,
     
     // onPress:() => void
 }
@@ -15,7 +15,7 @@ export type UnPressAbleContent = {
     id:string | number,
     name:string,
     icon:SvgIconTypes,
-    leftSide:false,
+    rightSide:false,
     onPress:() => void
 }
 
@@ -27,36 +27,36 @@ export const ContentProfile:ProfileContent[] = [
         id:'infor',
         name:'infor',
         icon:'IconUser',
-        leftSide:false,
-        onPress:() => {}
+       rightSide:false,
+        onPress:() => {console.log('a')}
     },
     {
         id:'language',
         name:'language',
         icon:'Language',
-        leftSide:true,
+       rightSide:true,
         
     },
     {
         id:'setting',
         name:'accountSetting',
         icon:'Setting',
-        leftSide:false,
-        onPress:() => {}
+       rightSide:false,
+        onPress:() => {console.log('v')}
     },
     {
         id:'theme',
         name:'theme',
         icon:'IconDarkMode',
-        leftSide:true,
+       rightSide:true,
         
     },
     {
         id:'sync',
         name:'syncData',
         icon:'IconUser',
-        leftSide:false,
-        onPress:() => {}
+       rightSide:false,
+        onPress:() => {console.log('c')}
     },
 
 ]

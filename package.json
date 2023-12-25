@@ -10,7 +10,7 @@
     "test": "jest",
     "yarn pod": "cd ios && pod install && cd..",
     "reset:cache": "npx react-native start --reset-cache",
-    "apk:android33-":"react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
+    "apk:android33-": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "4.4.7",
@@ -50,6 +50,7 @@
     "react-native-paper-dates": "^0.20.5",
     "react-native-progress-circle": "^2.1.0",
     "react-native-reanimated": "~3.3.0",
+    "react-native-redash": "^18.1.2",
     "react-native-safe-area-context": "^4.7.4",
     "react-native-screens": "^3.27.0",
     "react-native-svg": "^14.1.0",

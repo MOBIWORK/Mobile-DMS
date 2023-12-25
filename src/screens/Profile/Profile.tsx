@@ -45,7 +45,6 @@ const Profile = (props: Props) => {
           />
         }
       />
-      {/* <AppSwitch onSwitch={onSwitch} /> */}
       <View style={styles.containView}>
         <AppAvatar
           size={48}
@@ -53,7 +52,7 @@ const Profile = (props: Props) => {
           url="https://picture.vn/wp-content/uploads/2015/12/da-lat.png"
         />
         <View style={styles.containLabel}>
-          <AppText fontSize={16} fontWeight="500">
+          <AppText fontSize={16} fontWeight="500" colorTheme='text_primary'>
             Thân Văn Hiếu
           </AppText>
           <View style={styles.containSecondView}>
@@ -70,7 +69,7 @@ const Profile = (props: Props) => {
         </View>
       </View>
       <View style={styles.containContentView}>
-        <ContentList data={ContentProfile} />
+        <ContentList data={ContentProfile} onSwitch={onSwitch} />
       </View>
     </MainLayout>
   );

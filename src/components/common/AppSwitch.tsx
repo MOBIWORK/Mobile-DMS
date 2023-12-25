@@ -19,7 +19,7 @@ type Props = {
 
 const AppSwitch = (props: Props) => {
   const {onSwitch} = props;
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
   const switchTranslate = useSharedValue(0);
   // state for activate Switch
   const [active, setActive] = useState(false);
@@ -37,7 +37,7 @@ const AppSwitch = (props: Props) => {
     } else {
       switchTranslate.value = 4;
     }
-  }, [active, switchTranslate]);
+  }, [active, switchTranslate,onSwitch]);
   const customSpringStyles = useAnimatedStyle(() => {
     return {
       transform: [
@@ -53,7 +53,7 @@ const AppSwitch = (props: Props) => {
         },
       ],
     };
-  });
+  },[onSwitch]);
   const backgroundColorStyle = useAnimatedStyle(() => {
     return {
       backgroundColor:interpolateColor(

@@ -1,137 +1,144 @@
-import React from 'react';
-import {StyleSheet, View, ViewStyle,Text, Platform} from 'react-native';
+import React, { ReactElement } from "react";
+import { StyleSheet } from "react-native";
 import Animated, {
-  runOnJS,
-  useAnimatedGestureHandler,
   useAnimatedStyle,
-  useSharedValue,
+  useAnimatedGestureHandler,
   withSpring,
-  withTiming,
-} from 'react-native-reanimated';
+  useSharedValue,
+  useDerivedValue,
+} from "react-native-reanimated";
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
-} from 'react-native-gesture-handler';
-import * as Haptics from 'expo-haptics'
-interface DragAbleItem{
-  title:string,
-  setValue:(type:string,item:any) => void,
-  value:any,
-  type:string
+} from "react-native-gesture-handler";
+import { between, useVector } from "react-native-redash";
+
+import {
+  calculateLayout,
+  lastOrder,
+  Offset,
+  remove,
+  reorder,
+  WORD_HEIGHT,
+  SENTENCE_HEIGHT,
+  MARGIN_LEFT,
+  MARGIN_TOP,
+} from "./component/config";
+import Placeholder from "./component/Placeholder";
+
+interface SortableWordProps {
+  offsets: Offset[];
+  children: ReactElement<{ id: number }>;
+  index: number;
+  containerWidth: number;
 }
 
-
-const Draggable = ({value,title,setValue,type}:DragAbleItem) => {
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const opacity = useSharedValue(1);
-  const showDraggable = useSharedValue(true);
-  const [draggable, setShowDraggable] = React.useState(false);
-  const isDropArea = (ctx: any) => {
-    'worklet';
-    return ctx.startY < 200;
-  };
-
-  type ContextInterface = {
-    translateX: number;
-    translateY: number;
-  };
-
+const SortableWord = ({
+  offsets,
+  index,
+  children,
+  containerWidth,
+}: SortableWordProps) => {
+  const offset = offsets[index]!;
+  const isGestureActive = useSharedValue(false);
+  const isAnimating = useSharedValue(false);
+  const translation = useVector();
+  const isInBank = useDerivedValue(() => offset.order.value === -1);
   const onGestureEvent = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
-    ContextInterface
+    { x: number; y: number }
   >({
-    onStart: (_, ctx: any) => {
-      runOnJS(setShowDraggable)(true)
-      if (Platform.OS === 'ios') {
-        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
+    onStart: (_, ctx) => {
+      if (isInBank.value) {
+        translation.x.value = offset.originalX.value - MARGIN_LEFT;
+        translation.y.value = offset.originalY.value + MARGIN_TOP;
+      } else {
+        translation.x.value = offset.x.value;
+        translation.y.value = offset.y.value;
       }
-      ctx.translateX = translateX.value;
-      ctx.translateY = translateY.value;
+      ctx.x = translation.x.value;
+      ctx.y = translation.y.value;
+      isGestureActive.value = true;
     },
-    onActive: (event: any, ctx: any) => {
-      translateX.value = ctx.translateX + event.translationX;
-      translateY.value = ctx.translateY + event.translationY;
-      // console.log(ctx.translateY + event.translationY)
-      
-    },
-    onEnd: (_, ctx) => {
-      console.log(translateY.value);
-      // console.log(ctx,'ctx')
-      if(translateY.value < -300 && translateY.value > -650){
-        // console.log('run on add')
-        runOnJS(setValue)('add',value)
-        translateX.value = withSpring(ctx.translateX + _.translationX)
-        translateY.value = withSpring(ctx.translateY + _.translationY)
-        opacity.value = withTiming(0,{duration:1000})
-      }else{
-        // console.log('run on remove')
-        runOnJS(setValue)('remove',value)
-        opacity.value = withTiming(1,{duration:1000})
-        translateX.value = withSpring(ctx.translateX + _.translationX)
-        translateY.value = withSpring(ctx.translateY + _.translationY)
-        // opacity.value = withTiming(0,{duration:1000})
-
-
-
+    onActive: ({ translationX, translationY }, ctx) => {
+      translation.x.value = ctx.x + translationX;
+      translation.y.value = ctx.y + translationY;
+      if (isInBank.value && translation.y.value < SENTENCE_HEIGHT) {
+        offset.order.value = lastOrder(offsets);
+        calculateLayout(offsets, containerWidth);
+      } else if (!isInBank.value && translation.y.value > SENTENCE_HEIGHT) {
+        offset.order.value = -1;
+        remove(offsets, index);
+        calculateLayout(offsets, containerWidth);
       }
-     
-      // console.log(value)
-      // runOnJS(setValue)(value,type)
-      
-      // }
+      for (let i = 0; i < offsets.length; i++) {
+        const o = offsets[i]!;
+        if (i === index && o.order.value !== -1) {
+          continue;
+        }
+        if (
+          between(translation.x.value, o.x.value, o.x.value + o.width.value) &&
+          between(translation.y.value, o.y.value, o.y.value + WORD_HEIGHT)
+        ) {
+          reorder(offsets, offset.order.value, o.order.value);
+          calculateLayout(offsets, containerWidth);
+          break;
+        }
+      }
     },
-    onFinish(){
-      runOnJS(setShowDraggable)(false)
-    }
-    ,
+    onEnd: ({ velocityX, velocityY }) => {
+      isAnimating.value = true;
+      translation.x.value = withSpring(
+        offset.x.value,
+        { velocity: velocityX },
+        () => (isAnimating.value = false)
+      );
+      translation.y.value = withSpring(offset.y.value, { velocity: velocityY });
+      isGestureActive.value = false;
+    },
   });
-
-  const handleDrop = () => {
-    // Non-animated JavaScript code to handle drop
-    console.log('Item dropped!');
-  };
-
-  const animatedStyle = useAnimatedStyle(() => {
+  const translateX = useDerivedValue(() => {
+    if (isGestureActive.value) {
+      return translation.x.value;
+    }
+    return withSpring(
+      isInBank.value ? offset.originalX.value - MARGIN_LEFT : offset.x.value
+    );
+  });
+  const translateY = useDerivedValue(() => {
+    if (isGestureActive.value) {
+      return translation.y.value;
+    }
+    return withSpring(
+      isInBank.value ? offset.originalY.value + MARGIN_TOP : offset.y.value
+    );
+  });
+  const style = useAnimatedStyle(() => {
     return {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      zIndex: isGestureActive.value || isAnimating.value ? 100 : 0,
+      width: offset.width.value,
+      height: WORD_HEIGHT,
       transform: [
-        {translateX: translateX.value},
-        {translateY: translateY.value},
+        { translateX: translateX.value },
+        { translateY: translateY.value },
       ],
-      opacity: opacity.value,
-      // display: showDraggable.value ? "flex" : "none",
     };
-  },[showDraggable]);
-
+  });
   return (
-    <View style={styles.container}>
-      <PanGestureHandler onGestureEvent={onGestureEvent}>
-        <Animated.View style={[styles.circle, animatedStyle]} >
-          <Text>{title}</Text>
-        </Animated.View>
-      </PanGestureHandler>
-    </View>
+    <>
+      <Placeholder offset={offset} />
+      <Animated.View style={style}>
+        <PanGestureHandler onGestureEvent={onGestureEvent}>
+          <Animated.View style={StyleSheet.absoluteFill}>
+            {children}
+          </Animated.View>
+        </PanGestureHandler>
+      </Animated.View>
+    </>
   );
 };
 
-const CIRCLE_RADIUS = 30;
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    margin: 10,
-  } as ViewStyle,
-  circle: {
-    backgroundColor: 'skyblue',
-    width: CIRCLE_RADIUS * 2,
-    height: CIRCLE_RADIUS * 2,
-    borderRadius: CIRCLE_RADIUS,
-    margin: 10,
-    justifyContent:'center',
-    alignItems:'center'
-  } as ViewStyle,
-});
-
-export default Draggable;
+export default SortableWord;

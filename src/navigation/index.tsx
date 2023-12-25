@@ -85,9 +85,9 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
-        {/* <Stack.Screen  name={ScreenConstant.DROP_DRAG} component={DropDrag}  /> */}
+        <Stack.Screen  name={ScreenConstant.DROP_DRAG} component={DropDrag}  />
         {/* <Stack.Screen name={ScreenConstant.PROFILE} component={Profile} /> */}
-        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+        {/* <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen name={ScreenConstant.SELECT_ORGANIZATION} component={SelectOrganization}/>
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen name={ScreenConstant.WIDGET_FVR_SCREEN} component={WidgetFavouriteScreen} />
@@ -111,6 +111,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
         <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer}/>
         <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/>
+        <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  /> */}
       </Stack.Navigator>
       {children}
     </NavigationContainer>
