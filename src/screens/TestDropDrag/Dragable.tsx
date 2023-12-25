@@ -63,11 +63,8 @@ const SortableWord = ({
     onActive: ({ translationX, translationY }, ctx) => {
       translation.x.value = ctx.x + translationX;
       translation.y.value = ctx.y + translationY;
-      console.log((ctx.x + translationX),)
-    
       if (isInBank.value && translation.y.value < SENTENCE_HEIGHT) {
         offset.order.value = lastOrder(offsets);
-        // console.log( calculateLayout(offsets, containerWidth),'aaaa')
         calculateLayout(offsets, containerWidth);
       } else if (!isInBank.value && translation.y.value > SENTENCE_HEIGHT) {
         offset.order.value = -1;
@@ -90,7 +87,6 @@ const SortableWord = ({
       }
     },
     onEnd: ({ velocityX, velocityY }) => {
-      // console.log(velocityX,velocityY,'a')
       isAnimating.value = true;
       translation.x.value = withSpring(
         offset.x.value,
