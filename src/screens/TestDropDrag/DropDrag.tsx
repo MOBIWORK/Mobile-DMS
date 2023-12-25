@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View ,ViewStyle} from 'react-native'
 import React, { ReactElement, useLayoutEffect, useState } from 'react'
 import { MainLayout } from '../../layouts'
 import Animated from 'react-native-reanimated';
@@ -76,6 +76,21 @@ const DropDrag = (props: Props) => {
 
   return (
     <MainLayout>
+      <View style={{backgroundColor:'red',flex:1}}>
+        <IconList>
+        {favourites &&
+        favourites.map((item, index) => {
+          return (
+         <View style={styles.row} key={item.id}>
+              <ItemWidget {...item}  />
+         </View>
+       
+          );
+        })}
+        </IconList>
+     
+      </View>
+       
       <IconList>
         {widgets.map((word) => (
           <ItemWidget key={word.id} {...word} />
@@ -87,4 +102,12 @@ const DropDrag = (props: Props) => {
 
 export default DropDrag
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  row: {
+    // flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    opacity: 0,
+  } as ViewStyle,
+})

@@ -59,24 +59,24 @@ const AddingNewCustomer = () => {
     description: '',
     websiteURL: '',
     address: {
-      address: mainAddress?.length >= 0 ? mainAddress[0].detailAddress : '',
+      address: mainAddress?.length >= 0 ? mainAddress[0]?.detailAddress : '',
       isSetAddressGet:
-        mainAddress?.length >= 0 ? mainAddress[0].addressGet : false,
+        mainAddress?.length >= 0 ? mainAddress[0]?.addressGet : false,
       isSetAddressTake:
-        mainAddress?.length >= 0 ? mainAddress[0].addressOrder : false,
+        mainAddress?.length >= 0 ? mainAddress[0]?.addressOrder : false,
     },
     contact: {
       name:
         mainContactAddress?.length >= 0
-          ? mainContactAddress[0].nameContact
+          ? mainContactAddress[0]?.nameContact
           : '',
       address:
         mainContactAddress?.length >= 0
-          ? mainContactAddress[0].addressContact
+          ? mainContactAddress[0]?.addressContact
           : '',
       phoneNumber:
         mainContactAddress?.length >= 0
-          ? mainContactAddress[0].phoneNumber
+          ? mainContactAddress[0]?.phoneNumber
           : '',
     },
     imageSource: imageSource ? imageSource : '',

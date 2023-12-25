@@ -184,7 +184,7 @@ const Customer = () => {
         </View>
 
         <Text style={styles.containCustomer}>
-          <Text style={styles.numberCustomer}>300 </Text>
+          <Text style={styles.numberCustomer}>{customer?.length} </Text>
           {getLabel('customer')}
         </Text>
         <ListCard data={customer} />

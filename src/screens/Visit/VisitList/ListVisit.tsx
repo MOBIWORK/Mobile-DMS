@@ -26,6 +26,7 @@ import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import SkeletonLoading from '../SkeletonLoading';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -40,13 +41,13 @@ const ListVisit = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const searchVisitValue = useSelector(AppSelector.getSearchVisitValue);
-
+  const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
-const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
+  const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
     return (
       <TouchableOpacity
         style={{alignItems: 'center', justifyContent: 'center'}}
@@ -209,16 +210,20 @@ const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
   };
 
   useLayoutEffect(() => {
+    setLoading(true);
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
+
+    setLoading(false);
   }, []);
 
   return (
     <MainLayout
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
-      {_renderContent()}
+      {loading ? <SkeletonLoading loading={loading} /> : _renderContent()}
+
       <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
     </MainLayout>
   );
