@@ -1,5 +1,5 @@
 {
-  "name": "DMS",
+  "name": "dms",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -9,7 +9,8 @@
     "start": "expo start --dev-client",
     "test": "jest",
     "yarn pod": "cd ios && pod install && cd..",
-    "reset:cache":"npx react-native start --reset-cache"
+    "reset:cache": "npx react-native start --reset-cache",
+    "apk:android33-":"react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "4.4.7",
@@ -27,6 +28,8 @@
     "debounce": "^2.0.0",
     "deprecated-react-native-prop-types": "^5.0.0",
     "expo": "^49.0.0",
+    "expo-blur": "^12.6.0",
+    "expo-haptics": "^12.6.0",
     "expo-local-authentication": "~13.4.1",
     "expo-location": "~16.1.0",
     "expo-status-bar": "~1.6.0",
@@ -79,5 +82,10 @@
   },
   "engines": {
     "node": ">=16"
-  }
+  },
+  "description": "This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "keywords": []
 }

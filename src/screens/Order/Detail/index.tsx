@@ -40,7 +40,7 @@ const OrderDetail = () => {
                 {...props}
                 renderLabel={({ focused, route }) => {
                     return (
-                        <Text style={[styles.textTabBar, { color: focused ? colors.primary : colors.text_disable }]}>
+                        <Text style={[styles.textTabBar as any, { color: focused ? colors.primary : colors.text_disable }]}>
                             {route.title}
                         </Text>
                     );
@@ -80,7 +80,7 @@ const OrderDetail = () => {
 
 
     return (
-        <>
+        <MainLayout style={{paddingHorizontal :0}}>
             <AppHeader label='Chi tiết đơn'
                 onBack={() => navigation.goBack()}
                 style={{ paddingHorizontal: 16, marginBottom: 20 }}
@@ -122,7 +122,7 @@ const OrderDetail = () => {
 
                 </View>
             </AppBottomSheet>
-        </>
+        </MainLayout>
 
     )
 }

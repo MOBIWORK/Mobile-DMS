@@ -16,28 +16,29 @@ import {useTheme, AppTheme} from '../../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
+import { IDataItem } from '../../../models/types';
 
-const CardView = (props: ICustomer) => {
+const CardView = (props: IDataItem) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   return (
     <TouchableOpacity style={styles.card}>
       <View style={styles.containContentView}>
-        <Text style={styles.textName}>{props.name}</Text>
+        <Text style={styles.textName}>{props.nameCompany}</Text>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconAddress'} style={styles.iconStyle} />
           <Text numberOfLines={1} style={styles.contentText}>
-            {props.address}
+            {props?.address?.address}
           </Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconPhone'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props.phone}</Text>
+          <Text style={styles.contentText}>{props?.contact?.phoneNumber}</Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconType'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props.type}</Text>
+          <Text style={styles.contentText}>{props?.type}</Text>
         </View>
       </View>
       <View style={styles.containButton}>
@@ -47,11 +48,7 @@ const CardView = (props: ICustomer) => {
             navigation.navigate(ScreenConstant.DETAIL_CUSTOMER, {data: props})
           }>
           <Text
-            style={{
-              color: theme.colors.action,
-              paddingHorizontal: 9,
-              paddingVertical: 8,
-            }}>
+            style={styles.textOrder}>
             Đặt hàng
           </Text>
         </TouchableOpacity>
@@ -60,7 +57,7 @@ const CardView = (props: ICustomer) => {
   );
 };
 
-export default CardView;
+export default React.memo(CardView);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -95,6 +92,7 @@ const rootStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       // justifyContent: 'center',
       alignItems: 'center',
+      paddingVertical:4
     } as ViewStyle,
     iconStyle: {
       width: 16,
@@ -136,4 +134,9 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'center',
       borderWidth: 1,
     } as ViewStyle,
+    textOrder:{
+      color: theme.colors.action,
+      paddingHorizontal: 9,
+      paddingVertical: 8,
+    }
   });

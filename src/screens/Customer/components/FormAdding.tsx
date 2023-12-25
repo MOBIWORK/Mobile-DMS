@@ -298,12 +298,12 @@ const FormAdding = (props: Props) => {
             <SvgIcon
               size={20}
               source="Trash"
-              onPress={() => dispatch(AppActions.setMainAddress({}))}
+              onPress={() => dispatch(AppActions.removeAddress([]))}
             />
           )}
         </View>
         {Object.keys(mainAddress).length > 0 ? (
-          <CardAddress type="address" />
+          <CardAddress type="address"   mainAddress={mainAddress[0]}     />
         ) : (
           <View style={styles.contentView}>
             <TouchableOpacity
@@ -333,12 +333,12 @@ const FormAdding = (props: Props) => {
             <SvgIcon
               size={20}
               source="Trash"
-              onPress={() => dispatch(AppActions.setMainContactAddress({}))}
+              onPress={() => dispatch(AppActions.removeContactAddress([]))}
             />
           )}
         </View>
         {Object.keys(mainContactAddress).length > 0 ? (
-          <CardAddress type="contact" />
+          <CardAddress type="contact"   mainContactAddress={mainContactAddress[0]} />
         ) : (
           <View style={styles.contentView}>
             <TouchableOpacity
@@ -418,7 +418,7 @@ const FormAdding = (props: Props) => {
   );
 };
 
-export default FormAdding;
+export default React.memo(FormAdding);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

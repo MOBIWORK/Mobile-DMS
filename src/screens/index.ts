@@ -1,6 +1,9 @@
 import SelectOrganization from './Authen/SelectOrganization';
 import SignIn from './Authen/SignIn';
-import HomeScreen from './Home';
+import Home from './Home';
+import WidgetScreen from './Widget';
+import WidgetFavouriteScreen from './Widget/WidgetFVScreen';
+import NotificationScreen from './Notification';
 import ForgotPassword from './Authen/ForgotPassword';
 import SuccessChanged from './Authen/SuccessChanged';
 import ListProduct from './Product/ProductList/ListProduct';
@@ -16,24 +19,43 @@ import Customer from './Customer/Customer';
 import AddingNewCustomer from '../screens/Customer/AddingNewCustomer';
 import DetailCustomer from './DetailCustomer/DetailCustomer';
 import ReportOrderDetail from './Visit/VisitDetail/Report/Order/ReportOrderDetail';
+import Visits from './Visit/Visits';
+import LookingMore from './LookingMore/LookingMore';
+import Inventory from './Checkin/Inventory';
+import InventoryAddProduct from './Checkin/Inventory/AddingProduct';
+import CheckinOrder from './Checkin/Order';
+import CheckinOrderCreated from './Checkin/Order/CreateOrder';
+import DropDrag from './TestDropDrag/DropDrag';
+import Profile from './Profile/Profile';
 
 export {
-  SelectOrganization,
-  SignIn,
-  HomeScreen,
-  SuccessChanged,
-  ForgotPassword,
-  ListProduct,
-  SearchProduct,
-  ProductDetail,
-  ImageView,
-  OrderList,
-  OrderDetail,
-  ListVisit,
-  SearchVisit,
-  Index,
-  Customer,
-  AddingNewCustomer,
-  DetailCustomer,
-  ReportOrderDetail,
-};
+    SelectOrganization,
+    SignIn,
+    Home,
+    SuccessChanged,
+    ForgotPassword,
+    ListProduct,
+    SearchProduct,
+    ProductDetail,
+    ImageView,
+    OrderList,
+    OrderDetail,
+    Visits,
+    ListVisit,
+    SearchVisit,
+    Customer,
+    AddingNewCustomer,
+    DetailCustomer,
+    ReportOrderDetail,
+    Index,
+    LookingMore,
+    Inventory,
+    InventoryAddProduct,
+    WidgetScreen,
+    WidgetFavouriteScreen,
+    NotificationScreen,
+    CheckinOrder,
+    CheckinOrderCreated,
+    DropDrag,
+    Profile
+}

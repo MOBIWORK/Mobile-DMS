@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     height: 32,
   },
   label: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '500',
     flex: 1,
     textAlign: 'center',

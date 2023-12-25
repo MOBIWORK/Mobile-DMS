@@ -10,7 +10,6 @@ import {
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 import { AppTheme, useTheme } from './theme';
 
-
 const MainLayout: FC<Props> = ({
   children,
   style,

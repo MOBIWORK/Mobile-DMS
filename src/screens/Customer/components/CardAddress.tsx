@@ -1,18 +1,22 @@
-import {StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {StyleSheet, View, ViewStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {Platform} from 'react-native';
-import {useSelector} from 'react-redux';
-import {AppSelector} from '../../../redux-store';
 import {AppText, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
-import {MainLayout} from '../../../layouts';
 
-type Props = {
-  type: 'address' | 'contact';
+type Props = CardAddressType | CardContactType;
+
+type CardAddressType = {
+  type: 'address';
+  mainAddress: MainAddress;
+};
+type CardContactType = {
+  type: 'contact';
+  mainContactAddress: MainContactAddress;
 };
 
-type MainAddress = {
+export type MainAddress = {
   addressGet: boolean;
   addressOrder: boolean;
   city: string;
@@ -20,24 +24,22 @@ type MainAddress = {
   district: string;
   ward: string;
 };
-type MainContactAddress = {
+export type MainContactAddress = {
   nameContact: string;
   addressContact: string;
   phoneNumber: string;
+  isMainAddress: boolean;
 };
 const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const mainAddress: MainAddress = useSelector(AppSelector.getMainAddress);
-  const mainContactAddress: MainContactAddress = useSelector(
-    AppSelector.getMainContactAddress,
-  );
-
+  // const {mainAddress,mainContactAddress} = props
+  console.log(props, 'props');
   return (
     <View style={styles.card}>
       {props.type === 'address' ? (
         <>
-          <MainLayout style={{paddingTop:0}}>
+          <View style={{paddingHorizontal: 16}}>
             <View style={styles.containAddressLabel}>
               <View style={styles.containIcon}>
                 <SvgIcon source="MapPin" size={16} />
@@ -55,16 +57,17 @@ const CardAddress = (props: Props) => {
                   numberOfLines={2}
                   fontSize={16}
                   fontWeight="300"
+                  style={{maxWidth: '90%'}}
                   // textAlign='justify'
                   colorTheme="black"
                   lineHeight={21}>
-                  {mainAddress.detailAddress}
+                  {props.mainAddress.detailAddress}
                 </AppText>
               </View>
             </View>
-          </MainLayout>
+          </View>
           <View style={styles.containAddress}>
-            {mainAddress.addressGet && (
+            {props.mainAddress.addressGet && (
               <View style={styles.addressGetAndOrder}>
                 <AppText
                   fontSize={14}
@@ -75,7 +78,7 @@ const CardAddress = (props: Props) => {
                 </AppText>
               </View>
             )}
-            {mainAddress.addressOrder && (
+            {props.mainAddress.addressOrder && (
               <View style={styles.addressGetAndOrder}>
                 <AppText
                   fontSize={14}
@@ -89,19 +92,17 @@ const CardAddress = (props: Props) => {
           </View>
         </>
       ) : (
-        <MainLayout style={{paddingTop: 0}}>
-          <View >
-          <AppText
+        <View style={{paddingHorizontal: 16}}>
+          <View style={styles.containAddressLabel}>
+            <AppText
               fontSize={16}
               fontWeight="400"
               colorTheme="black"
               lineHeight={21}>
-              {mainContactAddress.nameContact}
+              {props.mainContactAddress.nameContact}
             </AppText>
           </View>
-            
-          
-          <View style={styles.containAddressLabel}>
+          <View style={[styles.containAddressLabel,{paddingHorizontal:4}]}>
             <View style={styles.containIcon}>
               <SvgIcon source="MapPin" size={16} />
             </View>
@@ -111,10 +112,10 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="black"
               lineHeight={21}>
-              {mainContactAddress.addressContact}
+              {props.mainContactAddress.addressContact}
             </AppText>
           </View>
-          <View style={styles.containAddressLabel}>
+          <View style={[styles.containAddressLabel,{paddingHorizontal:4}]}>
             <View style={styles.containIcon}>
               <SvgIcon source="Phone" size={16} />
             </View>
@@ -125,10 +126,21 @@ const CardAddress = (props: Props) => {
               // textAlign='justify'
               colorTheme="black"
               lineHeight={21}>
-              {formatPhoneNumber(mainContactAddress.phoneNumber)}
+              {formatPhoneNumber(props.mainContactAddress.phoneNumber)}
             </AppText>
           </View>
-        </MainLayout>
+          <View style={styles.containMain}>
+            <View style={styles.addressGetAndOrder}>
+              <AppText
+                fontSize={14}
+                lineHeight={21}
+                fontWeight="400"
+                colorTheme="primary">
+                Liên hệ chính
+              </AppText>
+            </View>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -146,17 +158,17 @@ const rootStyles = (theme: AppTheme) =>
       paddingVertical: 12,
       // paddingHorizontal: 16,
       marginHorizontal: 2,
-      marginVertical: 8,
+      marginVertical: 10,
       marginBottom: 20,
       ...Platform.select({
         ios: {
           shadowOffset: {
             width: 0,
-            height: 3,
+            height: 1,
           },
-          shadowOpacity: 0.5,
-          shadowRadius: 6.23,
-          elevation: 7,
+          shadowOpacity: 0.25,
+          shadowRadius: 1.23,
+          elevation: 1,
         },
         android: {
           elevation: 12,
@@ -173,7 +185,7 @@ const rootStyles = (theme: AppTheme) =>
     containAddressLabel: {
       flexDirection: 'row',
       alignContent: 'center',
-      marginBottom:4
+      marginBottom: 4,
       // paddingHorizontal: 6,
     } as ViewStyle,
     marginContainText: {
@@ -197,4 +209,11 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
       paddingVertical: 3,
     } as ViewStyle,
+    containMain:{
+      marginLeft: 8,
+      alignContent: 'center',
+      flexDirection: 'row',
+      marginTop:4
+
+    } as ViewStyle
   });

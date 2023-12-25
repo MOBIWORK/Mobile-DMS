@@ -400,7 +400,7 @@ export const formatCash = (str: string) => {
     .split('')
     .reverse()
     .reduce((prev, next, index) => {
-      return (index % 3 ? next : next + ',') + prev;
+      return (index % 3 ? next : next + '.') + prev;
     });
 };
 

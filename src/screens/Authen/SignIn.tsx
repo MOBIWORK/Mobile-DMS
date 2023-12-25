@@ -86,8 +86,8 @@ const SignIn = () => {
       setPasswordStore(password);
 
       await CommonUtils.dismissKeyboard(() => {
-        // navigation.navigate(ScreenConstant.MAIN_TAB);
-        console.log('go Maintab');
+        navigation.navigate(ScreenConstant.MAIN_TAB);
+        // console.log('go Maintab');
       });
     }
 
@@ -167,7 +167,7 @@ const SignIn = () => {
             isPassword
           />
         </View>
-        <View style={styles.checkBox}>
+        <View style={styles.checkBox as any } >
           <Text
             style={{color: colors.primary}}
             onPress={() => navigation.navigate(ScreenConstant.FORGOT_PASSWORD)}>

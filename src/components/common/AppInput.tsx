@@ -39,6 +39,7 @@ const AppInput: FC<AppInputProps> = ({
       }}
       outlineStyle={{
         borderColor: !isFocus ? colors.text_disable : 'rgba(99, 79, 145, 1)',
+        borderRadius :8
       }}
       mode={'outlined'}
       label={
@@ -52,7 +53,6 @@ const AppInput: FC<AppInputProps> = ({
           {label} {isRequire ? <Text style={{color:'red'}}>*</Text> :null}
         </Text>
       }
-      defaultValue={value}
       onChangeText={onChangeValue}
       value={value}
       onFocus={() => setFocus(true)}
@@ -85,7 +85,7 @@ const AppInput: FC<AppInputProps> = ({
     </>
   );
 };
-interface AppInputProps {
+interface AppInputPropsBase {
   label: string;
   value: string;
   onPress?: () => void;
@@ -100,7 +100,17 @@ interface AppInputProps {
   editable?: boolean;
   isRequire?:boolean
   labelStyle?:TextStyle;
-  contentStyle?:TextStyle | TextStyle[];
+  contentStyle?:TextStyle;
+  
 }
+type AppInputPropsEditable = {
+  editable?: true;
+} & AppInputPropsBase;
 
+type AppInputPropsNonEditable = {
+  editable?: false;
+  listData?: any; // Adjust the type accordingly
+  show?: boolean; // Adjust the type accordingly
+} & AppInputPropsBase;
+type AppInputProps = AppInputPropsEditable | AppInputPropsNonEditable;
 export default AppInput;

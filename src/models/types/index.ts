@@ -1,3 +1,5 @@
+import { SvgIconTypes } from "../../assets/svgIcon";
+
 export interface KeyAbleProps {
   [key: string]: any;
 }
@@ -78,6 +80,43 @@ export type IProductInventory = {
   count: number;
 };
 
+
+export interface RootObjectGeoDecoding {
+  plus_code: PlusCode;
+  results: ResultDecode[];
+  status: string;
+}
+export interface ResultDecode {
+  address_components: AddressComponent[];
+  formatted_address: string;
+  geometry: Geometry;
+  place_id: string;
+  plus_code?: PlusCode;
+  types: string[];
+}
+export interface Geometry {
+  location: Location;
+  location_type: string;
+  viewport: Viewport;
+  bounds?: Viewport;
+}
+export interface Viewport {
+  northeast: Location;
+  southwest: Location;
+}
+export interface Location {
+  lat: number;
+  lng: number;
+}
+export interface AddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+export interface PlusCode {
+  compound_code: string;
+  global_code: string;
+}
 export type VisitListItemType = {
   label: string;
   useName: string;
@@ -89,6 +128,50 @@ export type VisitListItemType = {
   distance: number;
 };
 
+
+export interface RootObjectGeoDecoding {
+  plus_code: PlusCode;
+  results: ResultDecode[];
+  status: string;
+}
+export interface ResultDecode {
+  address_components: AddressComponent[];
+  formatted_address: string;
+  geometry: Geometry;
+  place_id: string;
+  plus_code?: PlusCode;
+  types: string[];
+}
+export interface Geometry {
+  location: Location;
+  location_type: string;
+  viewport: Viewport;
+  bounds?: Viewport;
+}
+export interface Viewport {
+  northeast: Location;
+  southwest: Location;
+}
+export interface Location {
+  lat: number;
+  lng: number;
+}
+export interface AddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+export interface PlusCode {
+  compound_code: string;
+  global_code: string;
+}
+export interface IWidget {
+  id: number
+  name : string,
+  icon :SvgIconTypes,
+  navigate :string | any,
+  isUse? :boolean
+}
 export type ItemNoteVisitDetail = {
   noteType: string;
   description: string;
@@ -186,7 +269,7 @@ export type IDataCustomer = {
   type:string,
   group:string,
   area?:string,
-  dob:string,
+  dob:string |any,
   gland?:string,
   debtLimit?:number | any,
   description:string,
@@ -200,7 +283,8 @@ export type IDataCustomer = {
     name:string,
     address:string,
     phoneNumber:string
-  }
+  },
+  imageSource:string
 
 
 }
@@ -247,4 +331,31 @@ export interface Northeast {
 export interface Southwest {
   lat: number
   lng: number
+}
+
+interface Address {
+  address: string;
+  isSetAddressGet: boolean;
+  isSetAddressTake: boolean;
+}
+
+interface Contact {
+  address: string;
+  name: string;
+  phoneNumber: string;
+}
+
+export interface IDataItem {
+  address: Address;
+  area: string;
+  contact: Contact;
+  debtLimit: number | string; // Assuming it can be a number or a string
+  description: string;
+  dob: string;
+  gland: string;
+  group: string;
+  nameCompany: string;
+  type: string;
+  websiteURL: string;
+  imageSource:any
 }

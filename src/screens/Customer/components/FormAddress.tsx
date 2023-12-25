@@ -53,6 +53,7 @@ const FormAddress = (props: Props) => {
     nameContact: 'Người liên hệ',
     phoneNumber: 'Số điện thoại',
     addressContact: 'Địa chỉ',
+    isMainAddress:addressValue.addressGet ? true :false
   });
   const listCheckBox = useRef([
     {
@@ -383,7 +384,7 @@ const FormAddress = (props: Props) => {
   );
 };
 
-export default FormAddress;
+export default React.memo(FormAddress);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

@@ -15,12 +15,16 @@ export const {Types, Creators} = createActions({
   setOrganizationBaseURL: ['data'],
   setSearchProductValue: ['data'],
   setSearchVisitValue: ['data'],
-  setAppTheme:['default'],
+  setAppTheme:['data'],
   setMainAddress:['data'],
   setMainContactAddress:['data'],
-  setNewCustomer:['data']
+  setNewCustomer:['data'],
+  setShowModal:['data'],
+  removeContactAddress:['data'],
+  removeAddress:['data']
   
 });
+export type AppActionType = keyof typeof Types
 
 /* ------------- Initial State ------------- */
 export interface IAppRedux {
@@ -47,9 +51,9 @@ export const INITIAL_STATE: IAppRedux = {
   searchProductValue: '',
   searchVisitValue: '',
   theme: 'default',
-  mainAddress:{},
-  mainContactAddress:{},
-  newCustomer:{}
+  mainAddress:[],
+  mainContactAddress:[],
+  newCustomer:[]
 };
 
 /* ------------- Selector ------------- */
@@ -65,7 +69,8 @@ export const Selector = {
   getTheme: (state: IAppReduxState) => state.appRedux.theme,
   getMainAddress:(state:IAppReduxState) => state.appRedux.mainAddress,
   getMainContactAddress:(state:IAppReduxState) => state.appRedux.mainContactAddress,
-  getNewCustomer:(state:IAppReduxState) => state.appRedux.newCustomer
+  getNewCustomer:(state:IAppReduxState) => state.appRedux.newCustomer,
+  
 };
 
 /* ------------- Reducers ------------- */
@@ -74,15 +79,36 @@ const setError = (state = INITIAL_STATE, action: KeyAbleProps) => ({
   error: action.data,
 });
 
-
+const setShowModal = (state = INITIAL_STATE, action: KeyAbleProps) =>({
+  ...state,
+  showModal:action.data
+})
 const setMainContactAddress = (state = INITIAL_STATE, action: KeyAbleProps) => ({
   ...state,
-  mainContactAddress:action.data
+  mainContactAddress:[...state.mainContactAddress ,action.data]
 });
+const removeContactAddress = (state = INITIAL_STATE, action: KeyAbleProps) => {
+  // Assuming action.data is the item to be removed from mainAddress
+  const updatedMainContactAddress = state.mainContactAddress?.filter((item:any) => item !== action.data);
+  return {
+    ...state,
+    mainContactAddress: updatedMainContactAddress,
+  };
+};
+
+const removeAddress = (state = INITIAL_STATE, action: KeyAbleProps) => {
+  // Assuming action.data is the item to be removed from mainAddress
+  const updatedMainAddress = state.mainAddress?.filter((item:any) => item !== action.data);
+  return {
+    ...state,
+    mainAddress: updatedMainAddress,
+  };
+};
+
 
 const setNewCustomer = (state =INITIAL_STATE,action:KeyAbleProps) =>({
   ...state,
-  newCustomer:action.data
+  newCustomer:[...state.newCustomer,action.data]
 })
 
 const setProcessingStatus = (state = INITIAL_STATE, action: KeyAbleProps) => ({
@@ -91,7 +117,7 @@ const setProcessingStatus = (state = INITIAL_STATE, action: KeyAbleProps) => ({
 });
 const setMainAddress = (state:IAppRedux = INITIAL_STATE,action:KeyAbleProps) =>({
   ...state,
-  mainAddress:action.data
+  mainAddress:[...state.mainAddress,action.data]
 })
 
 const setShowErrorModalStatus = (
@@ -103,9 +129,9 @@ const setShowErrorModalStatus = (
   showModal: action.data,
 });
 
-const setAppTheme = (state = INITIAL_STATE, action:ThemeType) => ({
+const setAppTheme = (state = INITIAL_STATE, action:KeyAbleProps) => ({
   ...state,
-  theme: action,
+  theme: action.data,
 });
 
 const setSearchProductValue = (
@@ -121,6 +147,7 @@ const setSearchVisitValue = (state = INITIAL_STATE, action: KeyAbleProps) => ({
   searchVisitValue: action.data,
 });
 
+
 const reset = () => INITIAL_STATE;
 
 /* ------------- Hookup Reducers To Types ------------- */
@@ -132,10 +159,15 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_SHOW_ERROR_MODAL_STATUS]: setShowErrorModalStatus,
   [Types.SET_SEARCH_PRODUCT_VALUE]: setSearchProductValue,
   [Types.SET_SEARCH_VISIT_VALUE]: setSearchVisitValue,
+  [Types.SET_SEARCH_VISIT_VALUE]: setSearchVisitValue,
   [Types.SET_APP_THEME]: setAppTheme,
   [Types.SET_MAIN_ADDRESS]:setMainAddress,
   [Types.SET_MAIN_CONTACT_ADDRESS]:setMainContactAddress,
-  [Types.SET_NEW_CUSTOMER]:setNewCustomer
+  [Types.SET_NEW_CUSTOMER]:setNewCustomer,
+  [Types.SET_SHOW_MODAL]:setShowModal,
+  [Types.REMOVE_CONTACT_ADDRESS]:removeContactAddress,
+  [Types.REMOVE_ADDRESS]:removeAddress
+
 });
 
 export default Creators;
