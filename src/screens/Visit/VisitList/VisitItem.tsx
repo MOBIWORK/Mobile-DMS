@@ -109,7 +109,10 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
               resizeMode={'cover'}
               tintColor={colors.action}
             />
-            <Text style={{color: colors.action}}>{item.distance}km</Text>
+            <Text
+              style={{color: colors.action, textDecorationLine: 'underline'}}>
+              {item.distance}km
+            </Text>
           </TouchableOpacity>
         </View>
         {handleClose && (
