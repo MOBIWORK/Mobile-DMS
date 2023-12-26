@@ -1,11 +1,6 @@
 import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {View, Text, StyleSheet, Image, TextStyle} from 'react-native';
-import {
-  AppAvatar,
-  AppContainer,
-  AppIcons,
-  AppText,
-} from '../../components/common';
+import {View, Text, Image} from 'react-native';
+import {AppAvatar, AppContainer, AppIcons} from '../../components/common';
 import {IconButton} from 'react-native-paper';
 import {ImageAssets} from '../../assets';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -13,9 +8,9 @@ import {AppConstant, ScreenConstant} from '../../const';
 import ProgressCircle from 'react-native-progress-circle';
 import BarChartStatistical from './BarChart';
 import ItemNotification from '../../components/Notification/ItemNotification';
-import {ViewStyle} from 'react-native';
+
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {AppTheme, useTheme} from '../../layouts/theme';
+import {useTheme} from '../../layouts/theme';
 import {useMMKVString} from 'react-native-mmkv';
 import {DataConstant} from '../../const';
 import {IWidget, VisitListItemType} from '../../models/types';
@@ -31,6 +26,10 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 import MarkerItem from '../../components/common/MarkerItem';
 import VisitItem from '../Visit/VisitList/VisitItem';
+import {rootStyles} from './styles';
+import ItemLoading from './components/ItemLoading';
+import CardLoading from './components/CardLoading';
+import ItemNotiLoading from './components/ItemNotiLoading';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -41,6 +40,7 @@ const HomeScreen = () => {
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
 
   const [notifiCations, setNotifications] = useState([
@@ -91,38 +91,23 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
         <View>
-          <View
-            style={[
-              styles.shadow,
-              {
-                backgroundColor: colors.bg_default,
-                borderRadius: 16,
-              },
-            ]}>
-            <View
-              style={{
-                marginLeft: -16,
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                paddingTop: 8,
-              }}>
-              {widgets &&
-                JSON.parse(widgets).map((item: IWidget, i: any) => (
-                  <View
-                    key={i}
-                    style={{
-                      marginBottom: 16,
-                      marginLeft: 16,
-                      width: (AppConstant.WIDTH - 80) / 4,
-                    }}>
-                    <ItemWidget
-                      name={item.name}
-                      source={item.icon}
-                      navigate={item.navigate}
-                    />
-                  </View>
-                ))}
-            </View>
+          <View style={[styles.shadow, styles.editView]}>
+            {loading ? (
+              <ItemLoading loading={loading} />
+            ) : (
+              <View style={styles.containWidgetView}>
+                {widgets &&
+                  JSON.parse(widgets).map((item: IWidget, i: any) => (
+                    <View key={i} style={styles.containItemWidget}>
+                      <ItemWidget
+                        name={item.name}
+                        source={item.icon}
+                        navigate={item.navigate}
+                      />
+                    </View>
+                  ))}
+              </View>
+            )}
           </View>
         </View>
       </View>
@@ -135,7 +120,7 @@ const HomeScreen = () => {
         <View style={[styles.flexSpace]}>
           <Text style={[styles.tilteSection]}>Thống kê</Text>
         </View>
-        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+        <View style={styles.containProgressView}>
           <View
             style={[
               styles.itemWorkSheet,
@@ -245,9 +230,11 @@ const HomeScreen = () => {
   };
 
   useLayoutEffect(() => {
+    setLoading(true);
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
+    setLoading(false);
   }, []);
 
   return (
@@ -314,7 +301,13 @@ const HomeScreen = () => {
               <Text style={[styles.tilteSection]}>Doanh số</Text>
             </View>
             <View>
-              <BarChartStatistical color={colors.action} />
+              {loading ? (
+                <CardLoading />
+              ) : (
+                <BarChartStatistical color={colors.action} />
+              )}
+
+              {/* <BarChartStatistical color={colors.action} /> */}
             </View>
           </View>
 
@@ -323,7 +316,11 @@ const HomeScreen = () => {
               <Text style={[styles.tilteSection]}>Doanh thu</Text>
             </View>
             <View>
-              <BarChartStatistical color={colors.main} />
+              {loading ? (
+                <CardLoading />
+              ) : (
+                <BarChartStatistical color={colors.main} />
+              )}
             </View>
           </View>
 
@@ -331,23 +328,30 @@ const HomeScreen = () => {
             <View style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>Viếng thăm</Text>
             </View>
-            <View style={[styles.containerCheckin]}>
-              <ProgressCircle
-                percent={18}
-                radius={80}
-                borderWidth={30}
-                color={colors.action}
-                shadowColor={colors.bg_disable}
-                bgColor={colors.bg_default}>
-                <View>
-                  <Text style={[styles.textProcess]}>3/50</Text>
-                  <Text style={[styles.textProcessDesc]}> {`(Đạt 6 %)`} </Text>
-                </View>
-              </ProgressCircle>
-              <Text style={[styles.checkinDesc]}>
-                Số lượt viếng thăm khách hàng/tháng
-              </Text>
-            </View>
+            {loading ? (
+              <CardLoading />
+            ) : (
+              <View style={[styles.containerCheckin]}>
+                <ProgressCircle
+                  percent={18}
+                  radius={80}
+                  borderWidth={30}
+                  color={colors.action}
+                  shadowColor={colors.bg_disable}
+                  bgColor={colors.bg_default}>
+                  <View>
+                    <Text style={[styles.textProcess]}>3/50</Text>
+                    <Text style={[styles.textProcessDesc]}>
+                      {' '}
+                      {`(Đạt 6 %)`}{' '}
+                    </Text>
+                  </View>
+                </ProgressCircle>
+                <Text style={[styles.checkinDesc]}>
+                  Số lượt viếng thăm khách hàng/tháng
+                </Text>
+              </View>
+            )}
           </View>
 
           <View>
@@ -355,8 +359,7 @@ const HomeScreen = () => {
               <Text style={[styles.tilteSection]}>Bản đồ viếng thăm</Text>
             </View>
 
-            <View
-              style={styles.map}>
+            <View style={styles.map}>
               <Mapbox.MapView
                 pitchEnabled={false}
                 attributionEnabled={false}
@@ -426,15 +429,19 @@ const HomeScreen = () => {
             <View style={styles.containerNtf}>
               {notifiCations?.map((item, i) => (
                 <View key={i}>
-                  <ItemNotification
-                    isSend={true}
-                    title={item.name}
-                    time={item.time}
-                    description={item.description}
-                    avatar={
-                      'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
-                    }
-                  />
+                  {loading ? (
+                    <ItemNotiLoading />
+                  ) : (
+                    <ItemNotification
+                      isSend={true}
+                      title={item.name}
+                      time={item.time}
+                      description={item.description}
+                      avatar={
+                        'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
+                      }
+                    />
+                  )}
                 </View>
               ))}
             </View>
@@ -450,152 +457,3 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
-
-const rootStyles = (theme: AppTheme) =>
-  StyleSheet.create({
-    mainLayout: {
-      backgroundColor: theme.colors.bg_neutral,
-      flex: 1,
-      rowGap: 20,
-      paddingHorizontal: 16,
-    } as ViewStyle,
-    flexSpace: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    } as ViewStyle,
-    flex: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    } as ViewStyle,
-    tilteSection: {
-      fontSize: 14,
-      lineHeight: 21,
-      fontWeight: '500',
-      color: theme.colors.text_disable,
-      marginBottom: 8,
-    } as TextStyle,
-    shadow: {
-      shadowColor: '#919EAB',
-
-      shadowOffset: {
-        width: 0,
-        height: 12,
-      },
-      shadowOpacity: 0.3,
-      shadowRadius: 24,
-      elevation: 12,
-    } as ViewStyle,
-    widgetView: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    } as ViewStyle,
-    header: {
-      backgroundColor: theme.colors.bg_default,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      padding: 16,
-
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.bg_disable,
-      overflow: 'hidden',
-      // marginBottom:10
-      // overflow:'hidden'
-    } as ViewStyle,
-    containerIfU: {
-      marginTop: -3,
-      marginLeft: 8,
-    } as ViewStyle,
-    userName: {
-      fontSize: 20,
-      lineHeight: 30,
-      fontWeight: '500',
-      color: theme.colors.text_primary,
-    } as TextStyle,
-    containerTimekeep: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      padding: 16,
-      borderRadius: 16,
-      backgroundColor: theme.colors.bg_default,
-      marginTop: 20,
-    } as ViewStyle,
-    containerCheckin: {
-      marginBottom: 8,
-      flex: 1,
-      alignItems: 'center',
-      padding: 16,
-      borderRadius: 16,
-      backgroundColor: theme.colors.bg_default,
-    } as ViewStyle,
-    checkinDesc: {
-      fontSize: 14,
-      lineHeight: 21,
-      fontWeight: '500',
-      marginTop: 12,
-      color: theme.colors.text_secondary,
-    } as TextStyle,
-    btnTimekeep: {
-      width: 48,
-      height: 48,
-      backgroundColor: theme.colors.success,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 12,
-    } as ViewStyle,
-    iconBtnTk: {
-      width: 32,
-      height: 32,
-      tintColor: theme.colors.bg_default,
-    },
-    containerNtf: {
-      marginBottom: 8,
-      paddingVertical: 16,
-      backgroundColor: theme.colors.bg_default,
-      borderRadius: 16,
-      minHeight: 360,
-    } as ViewStyle,
-    textProcess: {
-      fontSize: 24,
-      lineHeight: 28,
-      fontWeight: '700',
-      color: theme.colors.text_primary,
-    } as TextStyle,
-    textProcessDesc: {
-      fontSize: 12,
-      lineHeight: 21,
-      fontWeight: '400',
-      color: theme.colors.main,
-    } as TextStyle,
-    itemWorkSheet: {
-      backgroundColor: theme.colors.bg_default,
-      paddingHorizontal: 10,
-      paddingVertical: 12,
-      borderRadius: 16,
-      marginBottom: 16,
-    } as ViewStyle,
-    worksheetLb: {
-      fontSize: 12,
-      fontWeight: '500',
-      lineHeight: 18,
-      color: theme.colors.text_primary,
-    } as TextStyle,
-    worksheetBar: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: 8,
-      paddingVertical: 4,
-    } as ViewStyle,
-    worksheetDt: {
-      fontSize: 18,
-      lineHeight: 27,
-      fontWeight: '500',
-      marginLeft: 8,
-    } as TextStyle,
-    map:{
-        width:361,
-        height:361,
-        // ...StyleSheet.absoluteFill
-    } as ViewStyle
-  });

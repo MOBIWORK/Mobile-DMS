@@ -95,22 +95,12 @@ const SkeletonLoading = (props: Props) => {
           <Animated.View
             style={[
               styles.containContent,
+              styles.addToContainContent,
               {
                 opacity: loadingAnimation,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop:5
               },
             ]}>
-            <View
-              style={{
-                width: 91,
-                height: 37,
-                backgroundColor: theme.colors.bg_default,
-                borderRadius: 16,
-                
-              }}
-            />
+            <View style={styles.lastView} />
             <Animated.View
               style={[styles.skeletonView, {opacity: loadingAnimation}]}
             />
@@ -200,5 +190,16 @@ export const styleLoading = (theme: AppTheme) =>
       // alignItems: 'center',
       flexDirection: 'row',
       marginHorizontal: 16,
+    } as ViewStyle,
+    addToContainContent: {
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 5,
+    } as ViewStyle,
+    lastView: {
+      width: 91,
+      height: 37,
+      backgroundColor: theme.colors.bg_default,
+      borderRadius: 16,
     } as ViewStyle,
   });
