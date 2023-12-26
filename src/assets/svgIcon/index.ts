@@ -90,6 +90,7 @@ export const SvgComponent = {
   VnFlag,
   EnFlag,
   Setting,
+  UserGroup,
   UserGroup
 };
 export type SvgIconTypes = keyof typeof SvgComponent;

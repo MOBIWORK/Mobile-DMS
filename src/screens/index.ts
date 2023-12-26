@@ -60,6 +60,6 @@ export {
     CheckinOrderCreated,
     DropDrag,
     Profile,
-    CheckIn,
-    SearchCustomer
+    SearchCustomer,
+    CheckIn
 }
