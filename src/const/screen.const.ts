@@ -62,4 +62,5 @@ export const CKECKIN_ORDER = 'CKECKIN_ORDER';
 export const CKECKIN_ORDER_CREATE = 'CKECKIN_ORDER_CREATE';
 export const DROP_DRAG = 'DROP_DRAG';
 export const CHECKIN =  'CHECKIN'
+export const SEARCH_CUSTOMER = 'SEARCH_CUSTOMER';
 

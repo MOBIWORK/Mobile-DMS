@@ -30,6 +30,7 @@ export const UserInfo = 'UserInfo';
 export const Organization = 'organization';
 export const ListSearchProductNearly = 'listSearchProductNearly';
 export const ListSearchVisitNearly = 'ListSearchVisitNearly';
+export const ListSearchCustomerNearly = 'ListSearchCustomerNearly';
 export const Widget = 'Widget';
 
 export const Api_key = 'Api_key';

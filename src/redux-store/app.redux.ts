@@ -15,6 +15,8 @@ export const {Types, Creators} = createActions({
   setOrganizationBaseURL: ['data'],
   setSearchProductValue: ['data'],
   setSearchVisitValue: ['data'],
+  setSearchCustomerValue: ['data'],
+
   setAppTheme:['data'],
   setMainAddress:['data'],
   setMainContactAddress:['data'],
@@ -38,6 +40,8 @@ export interface IAppRedux {
   showModal: boolean;
   searchProductValue: string;
   searchVisitValue: string;
+  searchCustomerValue: string;
+
   theme: ThemeType;
   mainAddress:any,
   mainContactAddress:any,
@@ -53,7 +57,8 @@ export const INITIAL_STATE: IAppRedux = {
   theme: 'default',
   mainAddress:[],
   mainContactAddress:[],
-  newCustomer:[]
+  newCustomer:[],
+  searchCustomerValue:''
 };
 
 /* ------------- Selector ------------- */
@@ -65,6 +70,8 @@ export const Selector = {
   getSearchProductValue: (state: IAppReduxState) =>
     state.appRedux.searchProductValue,
   getSearchVisitValue: (state: IAppReduxState) =>
+    state.appRedux.searchVisitValue,
+    getSearchCustomerValue: (state: IAppReduxState) =>
     state.appRedux.searchVisitValue,
   getTheme: (state: IAppReduxState) => state.appRedux.theme,
   getMainAddress:(state:IAppReduxState) => state.appRedux.mainAddress,
@@ -141,6 +148,13 @@ const setSearchProductValue = (
   ...state,
   searchProductValue: action.data,
 });
+const setSearchCustomerValue = (
+  state = INITIAL_STATE,
+  action: KeyAbleProps,
+) => ({
+  ...state,
+  searchCustomerValue: action.data,
+});
 
 const setSearchVisitValue = (state = INITIAL_STATE, action: KeyAbleProps) => ({
   ...state,
@@ -166,7 +180,8 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SET_NEW_CUSTOMER]:setNewCustomer,
   [Types.SET_SHOW_MODAL]:setShowModal,
   [Types.REMOVE_CONTACT_ADDRESS]:removeContactAddress,
-  [Types.REMOVE_ADDRESS]:removeAddress
+  [Types.REMOVE_ADDRESS]:removeAddress,
+  [Types.SET_SEARCH_CUSTOMER_VALUE]:setSearchCustomerValue
 
 });
 

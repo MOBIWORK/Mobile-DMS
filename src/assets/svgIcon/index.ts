@@ -35,7 +35,9 @@ import GreenEdit from './greenEdit.svg';
 import IconOrder from './iconOrder.svg';
 import RedLocation from './redLocation.svg';
 import CameraPurple from './cameraPurple.svg'
+import Close from './close.svg'
 export const SvgComponent = {
+  Close,
   CameraPurple,
   RedLocation,
   IconOrder,

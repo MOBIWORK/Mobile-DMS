@@ -169,7 +169,7 @@ const Customer = () => {
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity
-            onPress={() => console.log('on press search')}
+            onPress={() => navigation.navigate(ScreenConstant.SEARCH_CUSTOMER)}
             style={styles.iconSearch}>
             <AppImage source="IconSearch" style={styles.iconSearch} />
           </TouchableOpacity>

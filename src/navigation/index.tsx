@@ -40,6 +40,7 @@ import {
   DropDrag,
   Profile,
   CheckIn,
+  SearchCustomer
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -47,12 +48,11 @@ import {MyAppTheme} from '../layouts/theme';
 // import { MAIN_TAB } from '../const/screen.const';
 
 import {IAppReduxState} from '../redux-store';
-import HomeScreen from '../screens/Home';
-import {StatusBar} from 'react-native';
+
 // import PushNotification from 'react-native-push-notification';
 import {useSelector} from 'react-redux';
 import MainTab, {TabParamList} from './MainTab';
-import {ICustomer} from '../screens/Customer/components/data';
+
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -114,6 +114,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/>
         <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  />
         <Stack.Screen   name={ScreenConstant.CHECKIN} component={CheckIn} />
+        <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -162,6 +163,7 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN]:{
     item:any
   }
+  [ScreenConstant.SEARCH_CUSTOMER]:undefined
 };
 
 // Define prop type for useNavigation and useRoute
