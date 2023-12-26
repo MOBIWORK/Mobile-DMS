@@ -48,6 +48,7 @@ import {
   AddNote,
   CheckInLocation,
   CheckIn,
+  SearchCustomer
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -143,6 +144,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         />
         <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  />
         <Stack.Screen   name={ScreenConstant.CHECKIN} component={CheckIn} />
+        <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -200,6 +202,7 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN]:{
     item:any
   }
+  [ScreenConstant.SEARCH_CUSTOMER]:undefined
 };
 
 // Define prop type for useNavigation and useRoute
