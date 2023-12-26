@@ -28,6 +28,15 @@ export const ColorDefault = {
   yellow_100: '#FFAB0014',
   main: 'rgba(0, 167, 111, 1)',
   backgroundSwitch: '#919EAB7A',
+  orangeBackground:'rgba(255, 171, 0, 0.08)',
+  purpleBackground:'#8E33FF14',
+  blueBackground:'#1877F214',
+  greenBackground:'#22C55E14',
+  redBackground:'#FF563014',
+  undoBackground:'#00B8D914'
+
+
+
 };
 export const ColorDark = {
   primary: '#881111',
@@ -57,4 +66,10 @@ export const ColorDark = {
   yellow_100: '#FFAB0014',
   main: 'rgba(0, 167, 111, 1)',
   backgroundSwitch: '#919EAB7A',
+  orangeBackground:'rgba(255, 171, 0, 0.08)',
+  purpleBackground:'#8E33FF14',
+  blueBackground:'#1877F214',
+  greenBackground:'#22C55E14',
+  redBackground:'#FF563014',
+  undoBackground:'#00B8D914'
 };

@@ -20,6 +20,7 @@ import { showSnack } from './AppSnack';
 
 import AppCustomHeader from './AppCustomHeader';
 import AppSwitch from './AppSwitch';
+import { Block } from './Block/index';
 
 
 
@@ -45,5 +46,6 @@ export {
   AppSegmentedButtons,
   showSnack,
   AppCustomHeader,
-  AppSwitch
+  AppSwitch,
+  Block
 };

@@ -27,6 +27,7 @@ import CheckinOrder from './Checkin/Order';
 import CheckinOrderCreated from './Checkin/Order/CreateOrder';
 import DropDrag from './TestDropDrag/DropDrag';
 import Profile from './Profile/Profile';
+import CheckIn from './Visit/CheckinVisit/CheckIn';
 
 export {
     SelectOrganization,
@@ -57,5 +58,6 @@ export {
     CheckinOrder,
     CheckinOrderCreated,
     DropDrag,
-    Profile
+    Profile,
+    CheckIn
 }

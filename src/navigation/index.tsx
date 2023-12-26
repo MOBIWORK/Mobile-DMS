@@ -39,6 +39,7 @@ import {
   Home,
   DropDrag,
   Profile,
+  CheckIn,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -112,6 +113,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer}/>
         <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/>
         <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  />
+        <Stack.Screen   name={ScreenConstant.CHECKIN} component={CheckIn} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -157,6 +159,9 @@ export type RootStackParamList = {
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList>;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
+  [ScreenConstant.CHECKIN]:{
+    item:any
+  }
 };
 
 // Define prop type for useNavigation and useRoute

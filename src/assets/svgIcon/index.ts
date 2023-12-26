@@ -25,8 +25,25 @@ import IconDarkMode from './darkMode.svg';
 import Language from './language.svg';
 import EnFlag from './enFlag.svg'
 import VnFlag from './vnFlag.svg'
-import Setting from './setting.svg'
+import Setting from './setting.svg';
+import UserGroup from './user-group.svg';
+import OrangeBox from './box.svg';
+import CheckCircle from './check-circle.svg';
+import Alert from './alert.svg';
+import BlueUndo from './blueUndo.svg';
+import GreenEdit from './greenEdit.svg';
+import IconOrder from './iconOrder.svg';
+import RedLocation from './redLocation.svg';
+import CameraPurple from './cameraPurple.svg'
 export const SvgComponent = {
+  CameraPurple,
+  RedLocation,
+  IconOrder,
+  GreenEdit,
+  BlueUndo,
+  Alert,
+  CheckCircle,
+  OrangeBox,
   IconUser,
   Sync,
   IconDarkMode,
@@ -54,6 +71,7 @@ export const SvgComponent = {
   AccountIcon,
   VnFlag,
   EnFlag,
-  Setting
+  Setting,
+  UserGroup
 };
 export type SvgIconTypes = keyof typeof SvgComponent;
