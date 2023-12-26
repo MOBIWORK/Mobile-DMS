@@ -47,4 +47,5 @@ export {
   AppSwitch,
   Block,
   AppCheckBox,
+  Block
 };

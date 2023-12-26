@@ -23,15 +23,6 @@ import IconUser from './user.svg';
 import Sync from './sync.svg';
 import IconDarkMode from './darkMode.svg';
 import Language from './language.svg';
-import UserGroup from './user-group.svg';
-import OrangeBox from './box.svg';
-import CheckCircle from './check-circle.svg';
-import Alert from './alert.svg';
-import BlueUndo from './blueUndo.svg';
-import GreenEdit from './greenEdit.svg';
-import IconOrder from './iconOrder.svg';
-import RedLocation from './redLocation.svg';
-import CameraPurple from './cameraPurple.svg'
 import Close from './close.svg'
 import IconHomeActive from './iconHomeActive.svg';
 import IconCustomerActive from './iconCustomerActive.svg';
@@ -48,7 +39,15 @@ import EmptyImg from './emptyImg.svg';
 import TrashIcon from './trashIcon.svg';
 import EmptyNote from './emptyNote.svg';
 import IconClose from './iconClose.svg';
-
+import UserGroup from './user-group.svg';
+import OrangeBox from './box.svg';
+import CheckCircle from './check-circle.svg';
+import Alert from './alert.svg';
+import BlueUndo from './blueUndo.svg';
+import GreenEdit from './greenEdit.svg';
+import IconOrder from './iconOrder.svg';
+import RedLocation from './redLocation.svg';
+import CameraPurple from './cameraPurple.svg'
 export const SvgComponent = {
   IconCustomer,
   IconCustomerActive,
