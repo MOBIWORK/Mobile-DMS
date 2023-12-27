@@ -138,7 +138,6 @@ const bottomStyles = (theme: AppTheme) =>
       paddingHorizontal: 10,
       borderTopLeftRadius: 26,
       borderTopRightRadius: 26,
-
       paddingVertical: 20,
       width: '100%',
       ...Platform.select({
