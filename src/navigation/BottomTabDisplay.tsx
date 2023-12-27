@@ -19,6 +19,7 @@ import AppImage from '../components/common/AppImage';
 import {AppTheme, useTheme} from '../layouts/theme';
 import {useSelector} from 'react-redux';
 import {AppSelector} from '../redux-store';
+import { SvgIcon } from '../components/common';
 
 const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {state, navigation} = props;
@@ -60,11 +61,10 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             style={styles.item}
             onPress={() => pressNavigator(0)}>
             <View pointerEvents="none">
-              {state.index === 0 ? (
-                <AppImage source="IconHomeActive" style={styles.iconStyle} />
-              ) : (
-                <AppImage source="IconHome" style={styles.iconStyle} />
-              )}
+                <SvgIcon source='IconHome' 
+                  size={30} 
+                  color={state.index === 0 ? theme.colors.primary : theme.colors.text_secondary} 
+                />
             </View>
             <Text style={styles.txtItem(state.index, 0)}>
               {getLabel('home')}
@@ -74,11 +74,10 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             style={styles.item}
             onPress={() => pressNavigator(1)}>
             <View pointerEvents="none">
-              {state.index === 1 ? (
-                <AppImage source="IconVisitActive" style={styles.iconStyle} />
-              ) : (
-                <AppImage source="IconVisit" style={styles.iconStyle} />
-              )}
+              <SvgIcon source='IconVisit' 
+                  size={30} 
+                  color={state.index === 1 ? theme.colors.primary : theme.colors.text_secondary} 
+                />
             </View>
             <Text style={styles.txtItem(state.index, 1)}>
               {getLabel('visit')}
@@ -88,14 +87,10 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             style={styles.item}
             onPress={() => pressNavigator(2)}>
             <View pointerEvents="none">
-              {state.index === 2 ? (
-                <AppImage
-                  source="IconCustomerActive"
-                  style={styles.iconStyle}
+            <SvgIcon source='IconUserGroup' 
+                  size={30} 
+                  color={state.index === 2 ? theme.colors.primary : theme.colors.text_secondary} 
                 />
-              ) : (
-                <AppImage source="IconCustomer" style={styles.iconStyle} />
-              )}
             </View>
             <Text style={styles.txtItem(state.index, 2)}>
               {getLabel('customer')}
@@ -105,14 +100,10 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             style={styles.item}
             onPress={() => pressNavigator(3)}>
             <View pointerEvents="none">
-              {state.index === 3 ? (
-                <AppImage
-                  source="IconLookingMoreActive"
-                  style={styles.iconStyle}
+              <SvgIcon source='IconViewMore' 
+                  size={30} 
+                  color={state.index === 3 ? theme.colors.primary : theme.colors.text_secondary} 
                 />
-              ) : (
-                <AppImage source="IconLookingMore" style={styles.iconStyle} />
-              )}
             </View>
             <Text style={styles.txtItem(state.index, 3)}>
               {getLabel('lookingMore')}
@@ -136,7 +127,6 @@ const bottomStyles = (theme: AppTheme) =>
       paddingHorizontal: 10,
       borderTopLeftRadius: 26,
       borderTopRightRadius: 26,
-
       paddingVertical: 20,
       width: '100%',
       ...Platform.select({

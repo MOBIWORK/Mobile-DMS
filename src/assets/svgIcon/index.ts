@@ -26,6 +26,13 @@ import Language from './language.svg';
 import EnFlag from './enFlag.svg'
 import VnFlag from './vnFlag.svg'
 import Setting from './setting.svg'
+import IconHome from './btt-home.svg'
+import IconVisit from './btt-visit.svg'
+import IconViewMore from './btt-more.svg'
+import IconUserGroup from './btt-user.svg'
+
+
+
 export const SvgComponent = {
   IconUser,
   Sync,
@@ -54,6 +61,10 @@ export const SvgComponent = {
   AccountIcon,
   VnFlag,
   EnFlag,
-  Setting
+  Setting,
+  IconHome,
+  IconVisit,
+  IconViewMore,
+  IconUserGroup
 };
 export type SvgIconTypes = keyof typeof SvgComponent;
