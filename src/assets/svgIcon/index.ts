@@ -48,6 +48,7 @@ import GreenEdit from './greenEdit.svg';
 import IconOrder from './iconOrder.svg';
 import RedLocation from './redLocation.svg';
 import CameraPurple from './cameraPurple.svg'
+
 export const SvgComponent = {
   IconCustomer,
   IconCustomerActive,
