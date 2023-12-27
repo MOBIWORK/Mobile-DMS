@@ -8,7 +8,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, {useCallback, useRef, useMemo, useLayoutEffect} from 'react';
+import React, { useRef, useMemo} from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -17,7 +17,7 @@ import {Colors} from '../../assets';
 import MainLayout from '../../layouts/MainLayout';
 import AppImage from '../../components/common/AppImage';
 import FilterHandle from './components/FilterHandle';
-import {fakeData, listFilter} from './components/data';
+import { listFilter} from './components/data';
 import ListCard from './components/ListCard';
 import {
   AppBottomSheet,
