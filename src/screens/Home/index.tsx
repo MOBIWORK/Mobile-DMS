@@ -366,7 +366,7 @@ const HomeScreen = () => {
                 scaleBarEnabled={false}
                 styleURL={Mapbox.StyleURL.Street}
                 logoEnabled={false}
-                style={{flex: 1}}>
+                style={{width:'99%',height:360}}>
                 <Mapbox.Camera
                   // ref={mapboxCameraRef}
                   centerCoordinate={[

@@ -36,7 +36,23 @@ import IconOrder from './iconOrder.svg';
 import RedLocation from './redLocation.svg';
 import CameraPurple from './cameraPurple.svg'
 import Close from './close.svg'
+import IconHomeActive from './iconHomeActive.svg';
+import IconCustomerActive from './iconCustomerActive.svg';
+import IconVisitActive from './iconVisitActive.svg';
+import IconLookingMoreActive from './iconMoreActive.svg';
+import IconLookingMore from './iconMore.svg';
+import IconHome from './iconHome.svg';
+import IconCustomer from './iconCustomer.svg';
+import IconVisit from './iconVisit.svg';
 export const SvgComponent = {
+  IconCustomer,
+  IconCustomerActive,
+  IconHome,
+  IconHomeActive,
+  IconVisit,
+  IconVisitActive,
+  IconLookingMore,
+  IconLookingMoreActive,
   Close,
   CameraPurple,
   RedLocation,

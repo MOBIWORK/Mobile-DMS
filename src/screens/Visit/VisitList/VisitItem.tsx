@@ -19,7 +19,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const navigation = useNavigation<NavigationProp>();
-
+  const theme = useTheme()
   const statusItem = (status: boolean) => {
     return (
       <View
@@ -87,13 +87,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
           ]}>
           <AppButton
             onPress={() =>  navigation.navigate(ScreenConstant.CHECKIN,{item})}
-            style={{
-              backgroundColor: item.status
-                ? colors.bg_neutral
-                : colors.bg_default,
-              borderColor: !item.status ? colors.action : undefined,
-              borderWidth: !item.status ? 1 : 0,
-            }}
+            style={createStyleSheet(theme).button(item.status)}
             label={'Checkin'}
             styleLabel={{
               color: !item.status ? colors.action : colors.text_disable,
@@ -168,4 +162,13 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
     } as ViewStyle,
+    button:(itemStatus:boolean) =>({
+      backgroundColor: itemStatus
+      ? theme.colors.bg_neutral
+      : theme.colors.bg_default,
+    borderColor: !itemStatus ? theme.colors.action : undefined,
+    borderWidth: !itemStatus ? 1 : 0,
+    alignItems:'center',
+    justifyContent:'center'
+    }) as ViewStyle
   });

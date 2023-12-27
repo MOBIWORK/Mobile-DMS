@@ -144,8 +144,14 @@ export const rootStyles = (theme: AppTheme) =>
       marginLeft: 8,
     } as TextStyle,
     map: {
-      width: 361,
+      width: '100%',
       height: 361,
+      borderRadius:20,
+      backgroundColor:theme.colors.bg_default
+      // borderWidth:1
+      // backgroundColor:'red'
+      // marginHorizontal:16
+
       // ...StyleSheet.absoluteFill
     } as ViewStyle,
     editView: {

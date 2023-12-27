@@ -15,10 +15,12 @@ import {NavigationContainerRef} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {RootStackParamList} from '.';
 import {ScreenConstant} from '../const';
-import AppImage from '../components/common/AppImage';
+
 import {AppTheme, useTheme} from '../layouts/theme';
 import {useSelector} from 'react-redux';
 import {AppSelector} from '../redux-store';
+import { SvgIcon } from '../components/common';
+
 
 const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {state, navigation} = props;
@@ -61,9 +63,9 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             onPress={() => pressNavigator(0)}>
             <View pointerEvents="none">
               {state.index === 0 ? (
-                <AppImage source="IconHomeActive" style={styles.iconStyle} />
+                <SvgIcon source="IconHomeActive" size={29} />
               ) : (
-                <AppImage source="IconHome" style={styles.iconStyle} />
+                <SvgIcon source="IconHome" size={29} />
               )}
             </View>
             <Text style={styles.txtItem(state.index, 0)}>
@@ -75,9 +77,9 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             onPress={() => pressNavigator(1)}>
             <View pointerEvents="none">
               {state.index === 1 ? (
-                <AppImage source="IconVisitActive" style={styles.iconStyle} />
+                <SvgIcon source="IconVisitActive" size={29} />
               ) : (
-                <AppImage source="IconVisit" style={styles.iconStyle} />
+                <SvgIcon source="IconVisit" size={29} />
               )}
             </View>
             <Text style={styles.txtItem(state.index, 1)}>
@@ -89,12 +91,12 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             onPress={() => pressNavigator(2)}>
             <View pointerEvents="none">
               {state.index === 2 ? (
-                <AppImage
+                <SvgIcon
                   source="IconCustomerActive"
-                  style={styles.iconStyle}
+                  size={29}
                 />
               ) : (
-                <AppImage source="IconCustomer" style={styles.iconStyle} />
+                <SvgIcon source="IconCustomer" size={29} />
               )}
             </View>
             <Text style={styles.txtItem(state.index, 2)}>
@@ -106,12 +108,12 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             onPress={() => pressNavigator(3)}>
             <View pointerEvents="none">
               {state.index === 3 ? (
-                <AppImage
+                <SvgIcon
                   source="IconLookingMoreActive"
-                  style={styles.iconStyle}
+                  size={29}
                 />
               ) : (
-                <AppImage source="IconLookingMore" style={styles.iconStyle} />
+                <SvgIcon source="IconLookingMore" size={29} />
               )}
             </View>
             <Text style={styles.txtItem(state.index, 3)}>
