@@ -2,8 +2,6 @@ import {
   Animated,
   FlatList,
   StyleSheet,
-  Text,
-  View,
   ViewStyle,
 } from 'react-native';
 import React, {useCallback, useEffect, useRef} from 'react';
