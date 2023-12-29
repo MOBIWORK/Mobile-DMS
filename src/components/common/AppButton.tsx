@@ -7,7 +7,7 @@ import {
   Text,
 } from 'react-native';
 
-import {Colors} from '../../assets';
+import {useTheme} from '@react-navigation/native';
 
 const AppButton: FC<AppButtonProps> = ({
   disabled,
@@ -17,12 +17,22 @@ const AppButton: FC<AppButtonProps> = ({
   children,
   onPress,
 }) => {
+  const {colors} = useTheme();
   return (
     <TouchableOpacity
-      style={[styles.buttonContainer, style, disabled && [styles.bgDisable]]}
+      style={[
+        styles.buttonContainer,
+        disabled && [styles.bgDisable],
+        {backgroundColor: colors.primary},
+        style,
+      ]}
       disabled={disabled}
       onPress={onPress}>
-      {children ?? <Text style={[styles.label, styleLabel]}>{label}</Text>}
+      {children ?? (
+        <Text style={[styles.label, {color: colors.bg_default}, styleLabel]}>
+          {label}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };
@@ -40,7 +50,6 @@ export default memo(AppButton);
 
 const styles = StyleSheet.create({
   label: {
-    color: Colors.white,
     fontSize: 14,
     fontWeight: '700',
     lineHeight: 24,
@@ -50,9 +59,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   buttonContainer: {
-    backgroundColor: '#C4161C',
-    width: 148,
-    height :36,
     paddingHorizontal: 24,
     paddingVertical: 8,
     borderRadius: 20,

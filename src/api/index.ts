@@ -4,7 +4,7 @@ import {ApiConstant, AppConstant} from '../const';
 import store, {AppActions} from '../redux-store';
 import {IApiResponse} from '../models/types';
 import axios, {CreateAxiosDefaults} from 'axios';
-import {BASE_URL,GEOCODING_URL,API_KEY} from '@env';
+import {BASE_URL} from '@env';
 import {CommonUtils} from '../utils';
 
 const DEFAULT_CONFIG: CreateAxiosDefaults = {

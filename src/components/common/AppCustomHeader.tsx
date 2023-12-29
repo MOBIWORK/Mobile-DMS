@@ -8,11 +8,12 @@ const AppCustomHeader: FC<AppCustomHeaderProps> = ({
   onBack,
   icon,
   styles,
+  rightButton,
 }) => {
   const {colors} = useTheme();
   return (
     <View style={{...styles}}>
-      <AppHeader onBack={onBack} />
+      <AppHeader onBack={onBack} rightButton={rightButton} />
       <View style={{margin: 8}}>
         <Text
           style={{
@@ -57,6 +58,7 @@ interface AppCustomHeaderProps {
   title: string;
   description?: string;
   icon?: any;
+  rightButton?: any;
   styles?: ViewStyle;
 }
 export default AppCustomHeader;

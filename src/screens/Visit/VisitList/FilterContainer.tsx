@@ -1,5 +1,5 @@
 import React, {FC, useLayoutEffect, useMemo, useState} from 'react';
-import {View} from 'react-native';
+import {Pressable, View} from 'react-native';
 import {
   AppBottomSheet,
   AppButton,
@@ -199,22 +199,28 @@ const FilterContainer: FC<FilterContainerProps> = ({
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
         snapPointsCustom={snapPoints}>
-        <View style={{marginTop: top, paddingHorizontal: 16, height: '100%'}}>
-          <AppHeader
-            label={'Bộ lọc'}
-            onBack={() =>
-              bottomSheetRef.current && bottomSheetRef.current.close()
-            }
-            backButtonIcon={
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name={'close'}
-                size={24}
-                color={colors.text_primary}
-              />
-            }
-          />
-          <View style={{marginTop: 32, rowGap: 24}}>
+        <AppHeader
+          style={{marginTop: 32, marginHorizontal: 16}}
+          label={'Bộ lọc'}
+          onBack={() =>
+            bottomSheetRef.current && bottomSheetRef.current.close()
+          }
+          backButtonIcon={
+            <AppIcons
+              iconType={AppConstant.ICON_TYPE.IonIcon}
+              name={'close'}
+              size={24}
+              color={colors.text_primary}
+            />
+          }
+        />
+        <BottomSheetScrollView
+          showsVerticalScrollIndicator={false}
+          style={{
+            paddingHorizontal: 16,
+            height: '100%',
+          }}>
+          <Pressable style={{marginTop: 32, rowGap: 24}}>
             <Item
               label={'Tuyến'}
               value={channelLabel}
@@ -250,28 +256,28 @@ const FilterContainer: FC<FilterContainerProps> = ({
               value={customerTypeLabel}
               type={AppConstant.VisitFilterType.customerType}
             />
-          </View>
-          <View
-            style={{
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-              position: 'absolute',
-              bottom: bottom + top,
-              width: '100%',
-              alignSelf: 'center',
-            }}>
-            <AppButton
-              style={{width: '45%', backgroundColor: colors.bg_neutral}}
-              label={'Bỏ qua'}
-              styleLabel={{color: colors.text_secondary}}
-              onPress={() => console.log('bỏ qua')}
-            />
-            <AppButton
-              style={{width: '45%'}}
-              label={'Áp dụng'}
-              onPress={() => console.log('áp dụng')}
-            />
-          </View>
+          </Pressable>
+        </BottomSheetScrollView>
+        <View
+          style={{
+            padding: 16,
+            marginBottom: 16,
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            width: '100%',
+            alignSelf: 'center',
+          }}>
+          <AppButton
+            style={{width: '45%', backgroundColor: colors.bg_neutral}}
+            label={'Đặt lại'}
+            styleLabel={{color: colors.text_secondary}}
+            onPress={() => console.log('bỏ qua')}
+          />
+          <AppButton
+            style={{width: '45%'}}
+            label={'Áp dụng'}
+            onPress={() => console.log('áp dụng')}
+          />
         </View>
       </AppBottomSheet>
       <AppBottomSheet

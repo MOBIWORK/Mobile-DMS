@@ -1,13 +1,13 @@
 import iconMap from './iconMap.svg';
 import ArrowDown from './arrowDown.svg';
-import iconClock from './iconClock.svg'
-import iconUser from './iconUser.svg'
-import iconImage from './iconImage.svg'
-import iconCart from './iconCart.svg'
-import iconBell from './iconBell.svg'
-import iconBar from './iconBar.svg'
-import iconTicket from './iconTicket.svg'
-import iconContainer from './iconContainer.svg'
+import iconClock from './iconClock.svg';
+import iconUser from './iconUser.svg';
+import iconImage from './iconImage.svg';
+import iconCart from './iconCart.svg';
+import iconBell from './iconBell.svg';
+import iconBar from './iconBar.svg';
+import iconTicket from './iconTicket.svg';
+import iconContainer from './iconContainer.svg';
 import Trash from './trash.svg';
 import MapPin from './mapPin.svg';
 import Phone from './phone.svg';
@@ -17,15 +17,20 @@ import arrowRight from './arrowRight.svg';
 import IconCamera from './camera.svg';
 import IconImage from './image.svg';
 import arrowLeft from './arrowLeft.svg';
-import IconKebab from './kebab.svg'
+import IconKebab from './kebab.svg';
 import AccountIcon from './accountIcon.svg';
 import IconUser from './user.svg';
 import Sync from './sync.svg';
 import IconDarkMode from './darkMode.svg';
 import Language from './language.svg';
-import EnFlag from './enFlag.svg'
-import VnFlag from './vnFlag.svg'
-import Setting from './setting.svg'
+import EnFlag from './enFlag.svg';
+import VnFlag from './vnFlag.svg';
+import Setting from './setting.svg';
+import EmptyImg from './emptyImg.svg';
+import TrashIcon from './trashIcon.svg';
+import EmptyNote from './emptyNote.svg';
+import IconClose from './iconClose.svg';
+
 export const SvgComponent = {
   IconUser,
   Sync,
@@ -54,6 +59,10 @@ export const SvgComponent = {
   AccountIcon,
   VnFlag,
   EnFlag,
-  Setting
+  Setting,
+  EmptyImg,
+  TrashIcon,
+  EmptyNote,
+  IconClose,
 };
 export type SvgIconTypes = keyof typeof SvgComponent;

@@ -1,6 +1,15 @@
 import React, {FC} from 'react';
 import {ItemNoteVisitDetail, VisitListItemType} from '../../../models/types';
-import {FlatList, Image, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
@@ -239,24 +248,32 @@ const NoteData: ItemNoteVisitDetail[] = [
   {
     noteType: 'Loại ghi chú',
     description: 'Mô tả ghi chú',
+    content:
+      'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
     time: '10:20:00',
     date: '21/11/2023',
   },
   {
     noteType: 'Loại ghi chú',
     description: 'Mô tả ghi chú',
+    content:
+      'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
     time: '10:20:00',
     date: '21/11/2023',
   },
   {
     noteType: 'Loại ghi chú',
     description: 'Mô tả ghi chú',
+    content:
+      'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
     time: '10:20:00',
     date: '21/11/2023',
   },
   {
     noteType: 'Loại ghi chú',
     description: 'Mô tả ghi chú',
+    content:
+      'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
     time: '10:20:00',
     date: '21/11/2023',
   },

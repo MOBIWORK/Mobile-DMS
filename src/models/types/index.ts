@@ -1,4 +1,4 @@
-import { SvgIconTypes } from "../../assets/svgIcon";
+import {SvgIconTypes} from '../../assets/svgIcon';
 
 export interface KeyAbleProps {
   [key: string]: any;
@@ -80,7 +80,6 @@ export type IProductInventory = {
   count: number;
 };
 
-
 export interface RootObjectGeoDecoding {
   plus_code: PlusCode;
   results: ResultDecode[];
@@ -128,7 +127,6 @@ export type VisitListItemType = {
   distance: number;
 };
 
-
 export interface RootObjectGeoDecoding {
   plus_code: PlusCode;
   results: ResultDecode[];
@@ -166,62 +164,61 @@ export interface PlusCode {
   global_code: string;
 }
 export interface IWidget {
-  id: number
-  name : string,
-  icon :SvgIconTypes,
-  navigate :string | any,
-  isUse? :boolean
+  id: number;
+  name: string;
+  icon: SvgIconTypes;
+  navigate: string | any;
+  isUse?: boolean;
 }
 export type ItemNoteVisitDetail = {
   noteType: string;
   description: string;
+  content: string;
   time: string;
   date: string;
 };
 
-
-
 export interface RootEkMapResponse {
-  results: ResultEkMapResponse[]
-  status: string
+  results: ResultEkMapResponse[];
+  status: string;
 }
 
 export interface ResultEkMapResponse {
-  address_components: AddressEkMapComponent[]
-  formatted_address: string
-  geometry: GeometryEkResponse
+  address_components: AddressEkMapComponent[];
+  formatted_address: string;
+  geometry: GeometryEkResponse;
 }
 
 export interface AddressEkMapComponent {
-  long_name: string
-  short_name: string
-  types: string[]
+  long_name: string;
+  short_name: string;
+  types: string[];
 }
 
 export interface GeometryEkResponse {
-  location: LocationEkResponse
-  location_type: string
-  viewport: Viewport
+  location: LocationEkResponse;
+  location_type: string;
+  viewport: Viewport;
 }
 
 export interface LocationEkResponse {
-  lat: number
-  lng: number
+  lat: number;
+  lng: number;
 }
 
 export interface Viewport {
-  northeast: Northeast
-  southwest: Southwest
+  northeast: Northeast;
+  southwest: Southwest;
 }
 
 export interface Northeast {
-  lat: number
-  lng: number
+  lat: number;
+  lng: number;
 }
 
 export interface Southwest {
-  lat: number
-  lng: number
+  lat: number;
+  lng: number;
 }
 
 export type ReportOrderItemType = {
@@ -265,72 +262,69 @@ export type ReportDebtType = {
   listDebt: ReportDebtListType[];
 };
 export type IDataCustomer = {
-  nameCompany:string,
-  type:string,
-  group:string,
-  area?:string,
-  dob:string |any,
-  gland?:string,
-  debtLimit?:number | any,
-  description:string,
-  websiteURL:string,
-  address:{
-    address:string,
-    isSetAddressGet:boolean,
-    isSetAddressTake:boolean
-  },
-  contact:{
-    name:string,
-    address:string,
-    phoneNumber:string
-  },
-  imageSource:string
-
-
-}
-
+  nameCompany: string;
+  type: string;
+  group: string;
+  area?: string;
+  dob: string | any;
+  gland?: string;
+  debtLimit?: number | any;
+  description: string;
+  websiteURL: string;
+  address: {
+    address: string;
+    isSetAddressGet: boolean;
+    isSetAddressTake: boolean;
+  };
+  contact: {
+    name: string;
+    address: string;
+    phoneNumber: string;
+  };
+  imageSource: string;
+};
 
 export interface RootEkMapResponse {
-  results: ResultEkMapResponse[]
-  status: string
+  results: ResultEkMapResponse[];
+  status: string;
 }
 
 export interface ResultEkMapResponse {
-  address_components: AddressEkMapComponent[]
-  formatted_address: string
-  geometry: GeometryEkResponse
+  address_components: AddressEkMapComponent[];
+  formatted_address: string;
+  geometry: GeometryEkResponse;
 }
 
 export interface AddressEkMapComponent {
-  long_name: string
-  short_name: string
-  types: string[]
+  long_name: string;
+  short_name: string;
+  types: string[];
 }
 
 export interface GeometryEkResponse {
-  location: LocationEkResponse
-  location_type: string
-  viewport: Viewport
+  location: LocationEkResponse;
+  location_type: string;
+  viewport: Viewport;
 }
 
 export interface LocationEkResponse {
-  lat: number
-  lng: number
+  lat: number;
+  lng: number;
 }
 
 export interface Viewport {
-  northeast: Northeast
-  southwest: Southwest
+  northeast: Northeast;
+  southwest: Southwest;
 }
 
 export interface Northeast {
-  lat: number
-  lng: number
+  lat: number;
+  lng: number;
 }
 
 export interface Southwest {
-  lat: number
-  lng: number
+  lat: number;
+  lng: number;
 }
 
 interface Address {
@@ -357,5 +351,18 @@ export interface IDataItem {
   nameCompany: string;
   type: string;
   websiteURL: string;
-  imageSource:any
+  imageSource: any;
 }
+
+export type IAlbumImage = {
+  id: number | string;
+  label: string;
+  image: string[];
+};
+
+export type IStaff = {
+  id: string | number;
+  name: string;
+  position: string;
+  isSelected: boolean;
+};

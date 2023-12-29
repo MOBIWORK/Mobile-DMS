@@ -35,7 +35,7 @@ const Statistical = require('./staticstical.png');
 const ChevronRightIcon = require('./chevron-right.png');
 const ChevronUpIcon = require('./chevron-up.png');
 const CalenderIcon = require('./calendar.png');
-const IconCamera  =require('./camera.png')
+const IconCamera = require('./camera.png');
 const IconHome = require('./iconHome.png');
 const IconHomeActive = require('./iconHomeActive.png');
 const IconVisit = require('./iconVisit.png');
@@ -48,10 +48,10 @@ const IconSearch = require('./iconSearch.png');
 const IconAddress = require('./iconAddress.png');
 const IconPhone = require('./iconPhone.png');
 const IconType = require('./iconType.png');
-const IconFilter = require('./iconFilter.png')
-const IconBill= require('./ic-solar_bill.png')
-const IconOrder= require('./icfile.png')
-
+const IconFilter = require('./iconFilter.png');
+const IconBill = require('./ic-solar_bill.png');
+const IconOrder = require('./icfile.png');
+const IconKebab = require('./kebab.png');
 
 export {
   IconBill,
@@ -84,7 +84,9 @@ export {
   IconAddress,
   IconPhone,
   IconType,
-  IconFilter,IconCamera,MapIcon,
+  IconFilter,
+  IconCamera,
+  MapIcon,
   Usercheckin,
   UserGroupIcon,
   MapPinIcon,
@@ -104,4 +106,5 @@ export {
   ChevronRightIcon,
   ChevronUpIcon,
   CalenderIcon,
+  IconKebab,
 };
