@@ -22,6 +22,7 @@ import {showSnack} from './AppSnack';
 import AppCustomHeader from './AppCustomHeader';
 import AppSwitch from './AppSwitch';
 import { Block } from './Block/index';
+import BottomSheet from './CustomBottomSheet/index';
 
 export {
   AppBottomSheet,
@@ -47,5 +48,5 @@ export {
   AppSwitch,
   Block,
   AppCheckBox,
-  Block
+  BottomSheet
 };

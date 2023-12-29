@@ -9,8 +9,7 @@ import Animated, {
   useDerivedValue,
 } from 'react-native-reanimated';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-import {AppText as Text} from './AppText';
-import {useTranslation} from 'react-i18next';
+
 import {useTheme,AppTheme} from '../../layouts/theme'
 type Props = {
   onSwitch: () => void;

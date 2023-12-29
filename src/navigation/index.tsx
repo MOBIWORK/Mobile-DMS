@@ -40,8 +40,6 @@ import {
   Home,
   DropDrag,
   Profile,
-  CheckIn,
-  SearchCustomer,
   TakePicture,
   CheckinNote,
   NoteDetail,
@@ -85,19 +83,15 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
 
   return (
     <NavigationContainer
-      // @ts-ignore
       theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        initialRouteName={ScreenConstant.CHECKIN_LOCATION}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
-        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
-        {/* <Stack.Screen  name={ScreenConstant.DROP_DRAG} component={DropDrag}  /> */}
-        {/* <Stack.Screen name={ScreenConstant.PROFILE} component={Profile} /> */}
-        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+          <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag}  />
+        {/* <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen name={ScreenConstant.SELECT_ORGANIZATION} component={SelectOrganization}/>
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen name={ScreenConstant.WIDGET_FVR_SCREEN} component={WidgetFavouriteScreen} />
@@ -121,10 +115,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
         <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer}/>
         <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/>
-        <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  />
         <Stack.Screen   name={ScreenConstant.CHECKIN} component={CheckIn} />
-        <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  />
-        <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/> 
         <Stack.Screen
           name={ScreenConstant.TAKE_PICTURE_VISIT}
           component={TakePicture}
@@ -143,8 +134,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={CheckInLocation}
         />
         <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  />
-        <Stack.Screen   name={ScreenConstant.CHECKIN} component={CheckIn} />
-        <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  />
+        <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  /> */}
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -186,22 +176,17 @@ export type RootStackParamList = {
   [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
   [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
-  [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList>;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
   [ScreenConstant.CHECKIN]:{
     item:any
   }
-  [ScreenConstant.SEARCH_CUSTOMER]:undefined
   [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
   [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
-  [ScreenConstant.CHECKIN]:{
-    item:any
-  }
   [ScreenConstant.SEARCH_CUSTOMER]:undefined
 };
 
