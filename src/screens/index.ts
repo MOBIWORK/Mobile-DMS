@@ -27,39 +27,50 @@ import CheckinOrder from './Checkin/Order';
 import CheckinOrderCreated from './Checkin/Order/CreateOrder';
 import DropDrag from './TestDropDrag/DropDrag';
 import Profile from './Profile/Profile';
+import TakePicture from './Checkin/TakePicture';
+import CheckinNote from './Checkin/Note';
+import NoteDetail from './Checkin/Note/NoteDetail';
+import AddNote from './Checkin/Note/AddNote';
+import CheckInLocation from './Checkin/CheckInLocation';
 import CheckIn from './Visit/CheckinVisit/CheckIn';
 import SearchCustomer from './Customer/SearchCustomer';
 
 export {
-    SelectOrganization,
-    SignIn,
-    Home,
-    SuccessChanged,
-    ForgotPassword,
-    ListProduct,
-    SearchProduct,
-    ProductDetail,
-    ImageView,
-    OrderList,
-    OrderDetail,
-    Visits,
-    ListVisit,
-    SearchVisit,
-    Customer,
-    AddingNewCustomer,
-    DetailCustomer,
-    ReportOrderDetail,
-    Index,
-    LookingMore,
-    Inventory,
-    InventoryAddProduct,
-    WidgetScreen,
-    WidgetFavouriteScreen,
-    NotificationScreen,
-    CheckinOrder,
-    CheckinOrderCreated,
-    DropDrag,
-    Profile,
-    SearchCustomer,
-    CheckIn
-}
+  SelectOrganization,
+  SignIn,
+  Home,
+  SuccessChanged,
+  ForgotPassword,
+  ListProduct,
+  SearchProduct,
+  ProductDetail,
+  ImageView,
+  OrderList,
+  OrderDetail,
+  Visits,
+  ListVisit,
+  SearchVisit,
+  Customer,
+  AddingNewCustomer,
+  DetailCustomer,
+  ReportOrderDetail,
+  Index,
+  LookingMore,
+  Inventory,
+  InventoryAddProduct,
+  WidgetScreen,
+  WidgetFavouriteScreen,
+  NotificationScreen,
+  CheckinOrder,
+  CheckinOrderCreated,
+  DropDrag,
+  Profile,
+  TakePicture,
+  CheckinNote,
+  NoteDetail,
+  AddNote,
+  CheckInLocation,
+  CheckIn,
+  SearchCustomer
+
+};

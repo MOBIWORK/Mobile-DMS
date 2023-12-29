@@ -10,6 +10,7 @@ import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {
   IDataCustomer,
   IResOrganization,
+  ItemNoteVisitDetail,
   ReportOrderItemType,
   VisitListItemType,
 } from '../models/types';
@@ -40,7 +41,12 @@ import {
   DropDrag,
   Profile,
   CheckIn,
-  SearchCustomer
+  SearchCustomer,
+  TakePicture,
+  CheckinNote,
+  NoteDetail,
+  AddNote,
+  CheckInLocation,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -80,12 +86,13 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        initialRouteName={ScreenConstant.MAIN_TAB}
+        initialRouteName={ScreenConstant.CHECKIN_LOCATION}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         {/* <Stack.Screen  name={ScreenConstant.DROP_DRAG} component={DropDrag}  /> */}
         {/* <Stack.Screen name={ScreenConstant.PROFILE} component={Profile} /> */}
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
@@ -115,6 +122,24 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  />
         <Stack.Screen   name={ScreenConstant.CHECKIN} component={CheckIn} />
         <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  />
+        <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/> 
+        <Stack.Screen
+          name={ScreenConstant.TAKE_PICTURE_VISIT}
+          component={TakePicture}
+        />
+        <Stack.Screen
+          name={ScreenConstant.CHECKIN_NOTE_VISIT}
+          component={CheckinNote}
+        />
+        <Stack.Screen
+          name={ScreenConstant.NOTE_DETAIL}
+          component={NoteDetail}
+        />
+        <Stack.Screen name={ScreenConstant.ADD_NOTE} component={AddNote} />
+        <Stack.Screen
+          name={ScreenConstant.CHECKIN_LOCATION}
+          component={CheckInLocation}
+        />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -164,6 +189,11 @@ export type RootStackParamList = {
     item:any
   }
   [ScreenConstant.SEARCH_CUSTOMER]:undefined
+  [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
+  [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
+  [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
+  [ScreenConstant.ADD_NOTE]: undefined;
+  [ScreenConstant.CHECKIN_LOCATION]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute
