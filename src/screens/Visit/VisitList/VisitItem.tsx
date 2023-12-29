@@ -86,7 +86,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
             {marginTop: 8, justifyContent: 'space-between'},
           ]}>
           <AppButton
-            onPress={() => console.log('handle Checkin')}
+            onPress={() => navigation.navigate(ScreenConstant.VISIT_CHECKIN)}
             style={{
               backgroundColor: item.status
                 ? colors.bg_neutral

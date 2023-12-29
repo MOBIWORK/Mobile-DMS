@@ -80,7 +80,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        initialRouteName={ScreenConstant.VISIT_CHECKIN}
+        initialRouteName={ScreenConstant.MAIN_TAB}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
