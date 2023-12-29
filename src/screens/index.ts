@@ -20,6 +20,7 @@ import AddingNewCustomer from '../screens/Customer/AddingNewCustomer';
 import DetailCustomer from './DetailCustomer/DetailCustomer';
 import ReportOrderDetail from './Visit/VisitDetail/Report/Order/ReportOrderDetail';
 import Visits from './Visit/Visits';
+import VisitCheckin from './Visit/Checkin';
 import LookingMore from './LookingMore/LookingMore';
 import Inventory from './Checkin/Inventory';
 import InventoryAddProduct from './Checkin/Inventory/AddingProduct';
@@ -41,6 +42,7 @@ export {
     OrderList,
     OrderDetail,
     Visits,
+    VisitCheckin,
     ListVisit,
     SearchVisit,
     Customer,

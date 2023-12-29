@@ -151,6 +151,7 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 10,
       padding: 16,
       alignItems: 'center',
+      justifyContent:"center",
       backgroundColor: theme.colors.bg_paper,
       shadowColor: theme.colors.black,
       shadowOffset: {
@@ -163,8 +164,9 @@ const rootStyles = (theme: AppTheme) =>
     } as ViewStyle,
     buttonContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-evenly',
+      justifyContent: 'center',
       width: '100%',
+      columnGap :20
     } as ViewStyle,
     button: {
       borderRadius: 16,

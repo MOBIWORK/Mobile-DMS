@@ -39,6 +39,7 @@ import {
   Home,
   DropDrag,
   Profile,
+  VisitCheckin,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -79,7 +80,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       // @ts-ignore
       theme={MyAppTheme[theme]}>
       <Stack.Navigator
-        initialRouteName={ScreenConstant.MAIN_TAB}
+        initialRouteName={ScreenConstant.VISIT_CHECKIN}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -101,6 +102,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.SEARCH_PRODUCT} component={SearchProduct}/>
         <Stack.Screen name={ScreenConstant.PRODUCT_DETAIL} component={ProductDetail}/>
         <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
+        <Stack.Screen name={ScreenConstant.VISIT_CHECKIN} component={VisitCheckin} />
         <Stack.Screen name={ScreenConstant.ORDER_SCREEN} component={OrderList} />
         <Stack.Screen name={ScreenConstant.ORDER_DETAIL_SCREEN} component={OrderDetail} />
         <Stack.Screen name={ScreenConstant.CHECKIN_INVENTORY} component={Inventory}/>
@@ -141,6 +143,7 @@ export type RootStackParamList = {
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.VISIT]: undefined;
+  [ScreenConstant.VISIT_CHECKIN]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
