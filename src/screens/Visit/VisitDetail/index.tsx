@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {
@@ -20,7 +20,9 @@ import {VisitListItemType} from '../../../models/types';
 import Detail from './Detail';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Report from './Report/Report';
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
 import {AppConstant} from '../../../const';
 import FilterListComponent from '../../../components/common/FilterListComponent';
 
@@ -31,7 +33,8 @@ const Index = () => {
   const layout = useWindowDimensions();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'VISIT_DETAIL'>>();
-
+  const snapPoints = useMemo(() => ['40%'], []);
+ 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const DetailScreen = () => (
@@ -102,7 +105,11 @@ const Index = () => {
         initialLayout={{width: layout.width}}
         renderTabBar={renderTabBar}
       />
-      <AppBottomSheet bottomSheetRef={bottomSheetRef}>
+      <AppBottomSheet
+        bottomSheetRef={bottomSheetRef}
+        snapPointsCustom={snapPoints}
+        // contentHeight={animatedContentHeight}
+       >
         <FilterListComponent
           title={'Thời gian'}
           data={AppConstant.SelectedDateFilterData}

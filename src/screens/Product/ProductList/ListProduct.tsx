@@ -287,6 +287,7 @@ const ListProduct = () => {
       <AppHeader
         label={getLabel('product')}
         labelStyle={{textAlign: 'left', marginLeft: 8}}
+        onBack={() => navigation.goBack()}
         rightButton={
           <TouchableOpacity
             onPress={() => navigation.navigate(ScreenConstant.SEARCH_PRODUCT)}>

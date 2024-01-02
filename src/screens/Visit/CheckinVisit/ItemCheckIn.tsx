@@ -2,15 +2,18 @@ import {StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {IItemCheckIn} from './ultil';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../../../navigation';
 
 type Props = {
   item: IItemCheckIn;
 };
 
 const ItemCheckIn = ({item}: Props) => {
+  const navigation = useNavigation<NavigationProp>()
   return (
     <Block>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() =>  navigation.navigate(item.screenName)}>
         <Block
           direction="row"
           justifyContent="space-between"

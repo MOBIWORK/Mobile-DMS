@@ -12,4 +12,5 @@ export type BottomSheetProps = {
    * style:ViewStyle
    * **/
   style?:ViewStyle
+  onClose?:() => void
 };

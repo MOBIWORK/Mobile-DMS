@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
-import { registerTranslation } from 'react-native-paper-dates'
+import {registerTranslation} from 'react-native-paper-dates';
 
 import './src/language';
-import type {PropsWithChildren} from 'react';
+
 import {
   BackHandler,
   KeyboardAvoidingView,
@@ -15,16 +15,16 @@ import {
 import 'react-native-gesture-handler';
 import './src/language';
 
-
-
 import {Provider} from 'react-redux';
 import store from './src/redux-store';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import AppNavigationContainer from './src/navigation';
 import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
-import { SnackBar } from './src/components/common/AppSnack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {SnackBar} from './src/components/common/AppSnack';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {PortalProvider} from './src/components/common';
+import {PortalHost} from './src/components/common/Portal/components/portal-host';
 
 function App(): JSX.Element {
   useEffect(() => {
@@ -35,24 +35,24 @@ function App(): JSX.Element {
     );
     return () => backHandler.remove();
   }, []);
-registerTranslation('vi', {
-  save: 'Lưu',
-  selectSingle: 'Chọn ngày',
-  selectMultiple: 'Chọn nhiều ngày',
-  selectRange: 'Chọn khoảng thời gian',
-  notAccordingToDateFormat: (inputFormat) =>
-    `Ngày tháng được chọn phải có dạng ${inputFormat}`,
-  mustBeHigherThan: (date) => `Phải sau thời điểm ${date}`,
-  mustBeLowerThan: (date) => `Phải trước thời điểm ${date}`,
-  mustBeBetween: (startDate, endDate) =>
-    `Phải nằm giữa khoảng ${startDate} - ${endDate}`,
-  dateIsDisabled: 'Ngày tháng được chọn không phù hợp',
-  previous: 'Trước',
-  next: 'Sau',
-  typeInDate: 'Điền ngày tháng',
-  pickDateFromCalendar: 'Chọn ngày tháng ',
-  close: 'Đóng',
-})
+  registerTranslation('vi', {
+    save: 'Lưu',
+    selectSingle: 'Chọn ngày',
+    selectMultiple: 'Chọn nhiều ngày',
+    selectRange: 'Chọn khoảng thời gian',
+    notAccordingToDateFormat: inputFormat =>
+      `Ngày tháng được chọn phải có dạng ${inputFormat}`,
+    mustBeHigherThan: date => `Phải sau thời điểm ${date}`,
+    mustBeLowerThan: date => `Phải trước thời điểm ${date}`,
+    mustBeBetween: (startDate, endDate) =>
+      `Phải nằm giữa khoảng ${startDate} - ${endDate}`,
+    dateIsDisabled: 'Ngày tháng được chọn không phù hợp',
+    previous: 'Trước',
+    next: 'Sau',
+    typeInDate: 'Điền ngày tháng',
+    pickDateFromCalendar: 'Chọn ngày tháng ',
+    close: 'Đóng',
+  });
   // useEffect(() => {
   //   // /// 1.  Subscribe to events.
   //   // const onLocation: Subscription = BackgroundGeolocation.onLocation(
@@ -133,19 +133,22 @@ registerTranslation('vi', {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-      <KeyboardAvoidingView
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <AppNavigationContainer>
-            <StatusBar   backgroundColor={'#fff'}    />
-            <HandlingError />
-            <SnackBar/>
-          </AppNavigationContainer>
-        </GestureHandlerRootView>
-        <HandlingLoading />
-      </KeyboardAvoidingView>
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{flex: 1}}>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <PortalProvider>
+              <AppNavigationContainer>
+                <PortalHost name={'AppModal'} />
+                <StatusBar backgroundColor={'#fff'} />
+                <HandlingError />
+                <SnackBar />
+              </AppNavigationContainer>
+            </PortalProvider>
+          </GestureHandlerRootView>
+          <HandlingLoading />
+        </KeyboardAvoidingView>
       </SafeAreaProvider>
     </Provider>
   );

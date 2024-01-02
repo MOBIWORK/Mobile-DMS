@@ -90,7 +90,7 @@ const SelectedStaff: FC<SelectedStaffProps> = ({
                 }}>
                 {item.position}
               </Text>
-            </View>
+            </View>  
           </View>
           <AppCheckBox
             status={item.isSelected}

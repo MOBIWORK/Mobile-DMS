@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useCallback, useEffect} from 'react';
 import Animated, {
   AnimationCallback,
   Easing,
@@ -48,4 +48,74 @@ export const useSharedTransition = (
       ),
     ),
   );
+};
+
+
+export const sharedClamp = (
+  value: number,
+  lowerValue: number,
+  upperValue: number,
+) => {
+  'worklet';
+  return Math.min(Math.max(lowerValue, value), upperValue);
+};
+
+
+/**
+ * Provides dynamic content height calculating functionalities, by
+ * replacing the placeholder `CONTENT_HEIGHT` with calculated layout.
+ * @example
+ * [0, 'CONTENT_HEIGHT', '100%']
+ * @param initialSnapPoints your snap point with content height placeholder.
+ * @returns {
+ *  - animatedSnapPoints: an animated snap points to be set on `BottomSheet` or `BottomSheetModal`.
+ *  - animatedHandleHeight: an animated handle height callback node to be set on `BottomSheet` or `BottomSheetModal`.
+ *  - animatedContentHeight: an animated content height callback node to be set on `BottomSheet` or `BottomSheetModal`.
+ *  - handleContentLayout: a `onLayout` callback method to be set on `BottomSheetView` component.
+ * }
+ */
+export const useBottomSheetDynamicSnapPoints = (
+  initialSnapPoints: Array<string | number>
+) => {
+  // variables
+  const animatedContentHeight = useSharedValue(0);
+  const animatedHandleHeight = useSharedValue(-999);
+  const animatedSnapPoints = useDerivedValue(() => {
+    if (
+      animatedHandleHeight.value === -999 ||
+      animatedContentHeight.value === 0
+    ) {
+      return initialSnapPoints.map(() => -999);
+    }
+    const contentWithHandleHeight =
+      animatedContentHeight.value + animatedHandleHeight.value;
+
+    return initialSnapPoints.map(snapPoint =>
+      snapPoint === 'CONTENT_HEIGHT' ? contentWithHandleHeight : snapPoint
+    );
+  }, []);
+
+  type HandleContentLayoutProps = {
+    nativeEvent: {
+      layout: { height: number };
+    };
+  };
+  // callbacks
+  const handleContentLayout = useCallback(
+    ({
+      nativeEvent: {
+        layout: { height },
+      },
+    }: HandleContentLayoutProps) => {
+      animatedContentHeight.value = height;
+    },
+    [animatedContentHeight]
+  );
+
+  return {
+    animatedSnapPoints,
+    animatedHandleHeight,
+    animatedContentHeight,
+    handleContentLayout,
+  };
 };

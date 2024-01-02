@@ -70,7 +70,8 @@ export {
   AddNote,
   CheckInLocation,
   CheckIn,
-  SearchCustomer
+  SearchCustomer,
+  
 };
 
 

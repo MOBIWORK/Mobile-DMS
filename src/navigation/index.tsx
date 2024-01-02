@@ -90,8 +90,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
-          <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag}  />
-        {/* <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+          {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag}  /> */}
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen name={ScreenConstant.SELECT_ORGANIZATION} component={SelectOrganization}/>
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen name={ScreenConstant.WIDGET_FVR_SCREEN} component={WidgetFavouriteScreen} />
@@ -113,6 +113,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.CKECKIN_ORDER}  component={CheckinOrder} />
         <Stack.Screen name={ScreenConstant.CKECKIN_ORDER_CREATE}  component={CheckinOrderCreated} />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
+        <Stack.Screen   name={ScreenConstant.VISIT_DETAIL}   component={Index}   />
         <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer}/>
         <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/>
         <Stack.Screen   name={ScreenConstant.CHECKIN} component={CheckIn} />
@@ -134,7 +135,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={CheckInLocation}
         />
         <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  />
-        <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  /> */}
+        <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -187,7 +188,8 @@ export type RootStackParamList = {
   [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
-  [ScreenConstant.SEARCH_CUSTOMER]:undefined
+  [ScreenConstant.SEARCH_CUSTOMER]:undefined;
+  [ScreenConstant.CHECKIN_ORDER]:undefined
 };
 
 // Define prop type for useNavigation and useRoute

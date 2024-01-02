@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {ExtendedTheme, useTheme} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
   FlatList,
@@ -30,7 +30,7 @@ const TakePicture = () => {
   const styles = createStyleSheet(theme);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-
+  const navigation = useNavigation()
   const [albumBottomSheet, setAlbumBottomSheet] =
     useState<IFilterType[]>(ListAlbumFake);
   const [albumImageData, setAlbumImageData] =
@@ -112,7 +112,7 @@ const TakePicture = () => {
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
-      <AppHeader style={styles.header} label={'Chụp ảnh'} />
+      <AppHeader style={styles.header} label={'Chụp ảnh'}  onBack={() => navigation.goBack()} />
       <View style={styles.body}>
         <View style={[styles.row, {width: '100%'}]}>
           <Text style={{color: theme.colors.text_secondary}}>Hình ảnh</Text>

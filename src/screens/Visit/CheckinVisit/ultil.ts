@@ -8,7 +8,7 @@ export interface IItemCheckIn {
   name: string;
   isRequire: boolean;
   isDone: boolean;
-  screenName:keyof typeof ScreenConstant,
+  screenName:any,
   backgroundColor:keyof Colors
 }
 export const item: IItemCheckIn[] = [
@@ -17,7 +17,7 @@ export const item: IItemCheckIn[] = [
     isDone: true,
     isRequire: true,
     name: 'Kiểm tồn',
-    screenName:'WORK_SHEET',
+    screenName:'CHECKIN_INVENTORY',
     backgroundColor:'orangeBackground'
   },
   {
@@ -25,7 +25,7 @@ export const item: IItemCheckIn[] = [
     isDone: true,
     isRequire: false,
     name: 'Chụp ảnh',
-    screenName:'WORK_SHEET',
+    screenName:'TAKE_PICTURE_VISIT',
     backgroundColor:'purpleBackground'
 
   },
@@ -34,7 +34,7 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: true,
     name: 'Đặt hàng',
-    screenName:'ORDER_SCREEN',
+    screenName:'CHECKIN_ORDER',
     backgroundColor:'blueBackground'
 
   },
@@ -43,7 +43,7 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Ghi chú',
-    screenName:'CKECKIN_ORDER',
+    screenName:'ADD_NOTE',
     backgroundColor:'greenBackground'
   },
   {
@@ -51,7 +51,7 @@ export const item: IItemCheckIn[] = [
     isDone: true,
     isRequire: false,
     name: 'Vị trí',
-    screenName:'LIST_VISIT',
+    screenName:'CHECKIN_LOCATION',
     backgroundColor:'redBackground'
   },
   {

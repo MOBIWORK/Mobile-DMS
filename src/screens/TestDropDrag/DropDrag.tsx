@@ -130,18 +130,18 @@ const DropDrag = (props: Props) => {
     if (isActive) {
       ref?.current?.scrollTo(0);
     } else {
-      ref?.current?.scrollTo(-SCREEN_HEIGHT * 1);
+      ref?.current?.scrollTo(-SCREEN_HEIGHT * 0.4);
     }
   }, []);
 
   return (
     <>
       <MainLayout style={{backgroundColor: 'black'}}>
-        <Block width={40} height={40} borderRadius={40} colorTheme="blue700">
-          <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={onPress}>
+          <Block width={40} height={40} borderRadius={40} colorTheme="blue700">
             <Text>aaaaaa</Text>
-          </TouchableOpacity>
-        </Block>
+          </Block>
+        </TouchableOpacity>
         <Text>DropDrag</Text>
       </MainLayout>
       <BottomSheet ref={ref}>

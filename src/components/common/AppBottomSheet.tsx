@@ -5,6 +5,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {View} from 'react-native';
+import { SharedValue } from 'react-native-reanimated';
 const AppBottomSheet: FC<AppBottomSheetProps> = ({
   bottomSheetRef,
   snapPointsCustom,
@@ -13,7 +14,9 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   enablePanDownToClose,
   onClose,
   children,
+  contentHeight,
   backgroundColor,
+  handleHeight,
   onChange,
   ...otherProps
 
@@ -37,6 +40,9 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       snapPoints={snapPointsCustom ?? snapPoints}
       onClose={onClose}
       ref={bottomSheetRef}
+      contentHeight={contentHeight}
+      handleHeight={handleHeight}
+      
       onChange={onChange}
       handleIndicatorStyle={{
         backgroundColor: backgroundColor ?? colors.bg_default,
@@ -52,6 +58,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       enablePanDownToClose={enablePanDownToClose ?? true}
       enableHandlePanningGesture={false}
       enableContentPanningGesture={true}
+      
       enableOverDrag={false}
       index={-1}
       style={{
@@ -99,7 +106,9 @@ interface AppBottomSheetProps {
   footer?: boolean;
   children?: ReactElement | ReactElement[] ;
   backgroundColor?: any;
-  onChange?:(index:number) => void
+  onChange?:(index:number) => void,
+  contentHeight?:number | SharedValue<number>,
+  handleHeight?:number | SharedValue<number>
 }
 
 export default AppBottomSheet;

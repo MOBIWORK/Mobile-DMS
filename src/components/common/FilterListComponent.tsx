@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
-import { AppHeader, AppIcons } from './index';
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { MainLayout } from '../../layouts';
-import { AppConstant } from '../../const';
-import { useTheme } from '@react-navigation/native';
-import { Searchbar } from 'react-native-paper';
-import { ImageAssets } from '../../assets';
+import React, {FC} from 'react';
+import {AppHeader, AppIcons} from './index';
+import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import {MainLayout} from '../../layouts';
+import {AppConstant, ScreenConstant} from '../../const';
+import {useTheme} from '@react-navigation/native';
+import {Searchbar} from 'react-native-paper';
+import {ImageAssets} from '../../assets';
 import {
   Image,
   NativeSyntheticEvent,
@@ -24,14 +24,19 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   handleItem,
   onClose,
   onSubmitEditing,
-  isSearch = true
+  screenName,
+  isSearch = true,
 }) => {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   return (
-    <MainLayout style={{ backgroundColor: colors.bg_default, paddingTop: 16 }}>
+    <MainLayout
+      style={{
+        backgroundColor: colors.bg_default,
+        paddingTop: screenName === ScreenConstant.VISIT_DETAIL ? 0 : 16,
+      }}>
       <AppHeader
         label={title}
-        labelStyle={{ fontSize: 18 }}
+        labelStyle={{fontSize: 18}}
         onBack={onClose}
         backButtonIcon={
           <AppIcons
@@ -42,7 +47,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
           />
         }
       />
-      {isSearch  && (
+      {isSearch && (
         <Searchbar
           style={{
             backgroundColor: colors.bg_neutral,
@@ -52,15 +57,15 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
           placeholder={searchPlaceholder}
           placeholderTextColor={colors.text_disable}
           icon={ImageAssets.SearchIcon}
-          value={searchValue || ""}
+          value={searchValue || ''}
           onChangeText={onChangeSearch}
-          inputStyle={{ color: colors.text_primary }}
+          inputStyle={{color: colors.text_primary}}
           onSubmitEditing={onSubmitEditing}
         />
       )}
 
       <BottomSheetScrollView
-        style={{ flex: 1, marginTop: 16 }}
+        style={{flex: 1, marginTop: 16}}
         showsVerticalScrollIndicator={false}>
         <View
           style={{
@@ -79,7 +84,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
                 }}
                 onPress={() => handleItem(item)}
                 key={index}>
-                <Text style={{ color: colors.text_primary }}>{item.label}</Text>
+                <Text style={{color: colors.text_primary}}>{item.label}</Text>
                 <Image
                   source={ImageAssets.CheckIcon}
                   style={{
@@ -108,6 +113,7 @@ interface FilterListComponentProps {
   onChangeSearch?: (text: string) => void;
   onClose: () => void;
   isSearch?: boolean;
+  screenName?: string;
   onSubmitEditing?: (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => void;

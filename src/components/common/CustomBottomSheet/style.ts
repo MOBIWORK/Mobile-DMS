@@ -11,5 +11,11 @@ export const rootStyles = (theme:AppTheme) =>StyleSheet.create({
         top:SCREEN_HEIGHT ,
         borderRadius:25,
         
-    } as ViewStyle
+    } as ViewStyle,
+    backdrop:{
+        // ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'red',
+
+        
+      } as ViewStyle
 })
