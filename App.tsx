@@ -23,8 +23,7 @@ import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
 import {SnackBar} from './src/components/common/AppSnack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {PortalProvider} from './src/components/common';
-import {PortalHost} from './src/components/common/Portal/components/portal-host';
+
 
 function App(): JSX.Element {
   useEffect(() => {
@@ -138,14 +137,13 @@ function App(): JSX.Element {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
-            <PortalProvider>
+            {/* <PortalProvider> */}
               <AppNavigationContainer>
-                <PortalHost name={'AppModal'} />
                 <StatusBar backgroundColor={'#fff'} />
                 <HandlingError />
                 <SnackBar />
               </AppNavigationContainer>
-            </PortalProvider>
+            {/* </PortalProvider> */}
           </GestureHandlerRootView>
           <HandlingLoading />
         </KeyboardAvoidingView>

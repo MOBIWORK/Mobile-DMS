@@ -111,7 +111,7 @@
 // })
 
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useCallback, useMemo, useRef} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {MainLayout} from '../../layouts';
 import {Block, BottomSheet} from '../../components/common';
 import {BottomSheetRefProps} from '../../components/common/CustomBottomSheet/index';
@@ -121,39 +121,34 @@ type Props = {};
 
 const DropDrag = (props: Props) => {
   const snapPoint = useMemo(() => ['20%'], []);
-
+  const [show, setShow] = useState(false);
   const ref = useRef<BottomSheetRefProps>(null);
 
   const onPress = useCallback(() => {
-    const isActive = ref?.current?.isActive();
-    console.log(isActive, 'isActive');
-    if (isActive) {
-      ref?.current?.scrollTo(0);
-    } else {
-      ref?.current?.scrollTo(-SCREEN_HEIGHT * 0.4);
-    }
+    // const isActive = ref?.current?.isActive();
+    // console.log(isActive, 'isActive');
+    // if (isActive) {
+    //   ref?.current?.scrollTo(0);
+    // } else {
+    //   ref?.current?.scrollTo(-SCREEN_HEIGHT * 0.4);
+    // }
+ 
   }, []);
 
   return (
     <>
-      <MainLayout style={{backgroundColor: 'black'}}>
-        <TouchableOpacity onPress={onPress}>
+      <MainLayout style={{backgroundColor: 'white'}}>
+        <TouchableOpacity onPress={() => setShow(true)}>
           <Block width={40} height={40} borderRadius={40} colorTheme="blue700">
             <Text>aaaaaa</Text>
           </Block>
         </TouchableOpacity>
         <Text>DropDrag</Text>
-      </MainLayout>
-      <BottomSheet ref={ref}>
-        {/* <MainLayout style={{backgroundColor:'blue',borderRadius:16}}> */}
 
-        <Block>
-          <TouchableOpacity onPress={onPress}>
-            <Text>Run</Text>
-          </TouchableOpacity>
-        </Block>
-        {/* </MainLayout> */}
-      </BottomSheet>
+       
+      </MainLayout>
+      
+     
     </>
   );
 };

@@ -23,9 +23,7 @@ import AppCustomHeader from './AppCustomHeader';
 import AppSwitch from './AppSwitch';
 import { Block } from './Block/index';
 import BottomSheet from './CustomBottomSheet/index';
-import { PortalProvider } from './Portal/components/portal-provider/index';
-import { Portal } from './Portal/components/portal/index';
-import { Modal } from './Modal/index';
+
 
 export {
   AppBottomSheet,
@@ -52,7 +50,5 @@ export {
   Block,
   AppCheckBox,
   BottomSheet,
-  PortalProvider,
-  Portal,
-  Modal
+  
 };
