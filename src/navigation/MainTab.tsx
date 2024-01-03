@@ -22,7 +22,8 @@ const MainTab = () => {
   return (
     <Tab.Navigator
     screenOptions={{headerShown:false}}
-    tabBar={props => <BottomTabDisplay {...props}/>}
+    tabBar={props => <BottomTabDisplay {...props}/>  }
+    
     >
       <Tab.Screen
         name={ScreenConstant.HOME_SCREEN}

@@ -20,7 +20,6 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@rnmapbox/maps": "^10.1.1",
-    "@volkenomakers/react-native-accordion": "^1.0.0",
     "apisauce": "^3.0.1",
     "axios": "^1.6.2",
     "debounce": "^2.0.0",
