@@ -420,6 +420,6 @@ const rootStyles = (theme: AppTheme) =>
       borderColor: Colors.white,
     } as ViewStyle,
     backgroundRoot: {
-      backgroundColor: theme.colors.bg_neutral,
+      backgroundColor: theme.colors.bg_default,
     } as ViewStyle,
   });
