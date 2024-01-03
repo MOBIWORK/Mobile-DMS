@@ -117,6 +117,15 @@ const AppSwitch = (props: Props) => {
       ),
     };
   });
+  const backgroundNoneColorStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: interpolateColor(
+        progress.value,
+        [0, 22],
+        ['#FF5630', '#22C55E'],
+      ),
+    };
+  });
 
 
   return (

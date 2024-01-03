@@ -59,7 +59,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   return (
     <SafeAreaView
       edges={['right', 'left', 'bottom']}
-      style={showModal === false ? styles.container : {}}>
+      style={!showModal ? styles.container : {}}>
       {!showModal && (
         <>
           <TouchableOpacity
