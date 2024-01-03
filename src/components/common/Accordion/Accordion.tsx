@@ -73,7 +73,7 @@ const Accordion = (props: Props) => {
       </Animated.View>
     </Block>
   ) : (
-    <Block>
+    <Block style={[styles.container, props.containerStyle]}>
       <Pressable
         onPress={() => {
           if (heightValue.value === 0) {
@@ -95,8 +95,8 @@ const Accordion = (props: Props) => {
         </Text>
         <Chevron show={show} />
       </Pressable>
-      <Animated.View style={[heightAnimationStyle, styles.container]}>
-        <Animated.View style={styles.contentContainer} ref={listRef}>
+      <Animated.View style={[heightAnimationStyle]}>
+        <Animated.View style={[styles.contentContainer]} ref={listRef}>
           {props.children}
         </Animated.View>
       </Animated.View>
@@ -129,6 +129,7 @@ const rootStyle = (theme: AppTheme) =>
       position: 'absolute',
       width: '100%',
       top: 0,
+      // paddingHorizontal
     } as ViewStyle,
     content: {
       padding: 20,

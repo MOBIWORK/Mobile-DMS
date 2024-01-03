@@ -13,7 +13,7 @@ import {
 import {ReportProductOrderType} from '../../../../../models/types';
 import {ImageAssets} from '../../../../../assets';
 import {CommonUtils} from '../../../../../utils';
-import {AppAccordion} from '../../../../../components/common';
+import {Accordion, Block} from '../../../../../components/common';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 
 const ProductOrderItem: FC<ProductOrderItemProps> = ({
@@ -164,16 +164,16 @@ const ProductOrderItem: FC<ProductOrderItemProps> = ({
     );
   };
   return (
-    <AppAccordion titleInsideType title={'Sản phẩm'}>
-      <View style={{rowGap: 10}}>
-        {renderHeader()}
+    <Accordion type='nested' title={'Sản phẩm'}  containerStyle={{marginBottom:0}}>
+      <Block colorTheme='white' style={{rowGap: 10}}   paddingVertical={10} borderRadius={16}>
+        {/* {renderHeader()} */}
         <FlatList
           contentContainerStyle={{rowGap: 30}}
           data={isPromotional ? promotionalData : productData}
           renderItem={({item}) => renderProductItem(item)}
         />
-      </View>
-    </AppAccordion>
+      </Block>
+    </Accordion>
   );
 };
 interface ProductOrderItemProps {
@@ -213,7 +213,9 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       borderRadius: 16,
       borderWidth: 1,
       borderColor: theme.colors.border,
-    },
+      marginHorizontal:16,
+      // marginBottom:10
+    } as ViewStyle,
     productRowItem: {
       rowGap: 10,
       marginVertical: 8,

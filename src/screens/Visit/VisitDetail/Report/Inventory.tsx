@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {StyleSheet, Text, View} from 'react-native';
-import {AppAccordion, AppContainer} from '../../../../components/common';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Accordion, AppContainer,Block} from '../../../../components/common';
 import {
   ReportInventoryType,
   ReportProductInventoryType,
@@ -13,39 +13,44 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const {bottom} = useSafeAreaInsets();
+  console.log(inventoryData,'a')
   const ProductItem = (productItem: ReportProductInventoryType) => {
     return (
-      <View style={styles.productItemContainer}>
+      <Block paddingHorizontal={16} style={styles.productItemContainer}>
+        <Block height={1}  colorTheme='border' marginTop={8} marginBottom={6}  />
+
         <View style={styles.productItem as ViewStyle}>
           <Text style={styles.productLeftLabel as ViewStyle}>{productItem.productName}</Text>
           <Text style={styles.productRightLabel}>x{productItem.count}</Text>
         </View>
 
         <Text style={styles.productRightLabel}>
-          DVT: {'  '}
+          ĐVT: {'  '}
           <Text style={{color: theme.colors.text_primary}}>
             {productItem.unit}
           </Text>
         </Text>
-      </View>
+      </Block>
     );
   };
 
   const InventoryItem = (inventoryItem: ReportInventoryType) => {
+
     return (
-      <AppAccordion
-        titleInsideType={false}
+      <Accordion
+        type='regular'
+        containerStyle={{backgroundColor:theme.colors.bg_default}}
         title={`Ngày ${inventoryItem.dateTime.toString()}`}>
         <>
           {inventoryItem.listProduct.map((item, index) => {
-            return <View key={index}>{ProductItem(item)}</View>;
+            return <Block key={index} marginBottom={8} color={'white'}>{ProductItem(item)}</Block>;
           })}
         </>
-      </AppAccordion>
+      </Accordion>
     );
   };
   return (
-    <AppContainer style={{marginBottom: bottom, marginTop: 16}}>
+    <AppContainer style={{marginBottom: bottom, marginTop: 16}}  >
       {inventoryData.map((item, index) => {
         return <View key={index}>{InventoryItem(item)}</View>;
       })}
@@ -59,10 +64,10 @@ export default Inventory;
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
     productItemContainer: {
-      paddingVertical: 16,
+      // paddingVertical: 16,
       rowGap: 10,
-      borderTopWidth: 1,
-      borderColor: theme.colors.border,
+      // borderTopWidth: 1,
+      // borderColor: theme.colors.border,
     },
     productItem: {
       flexDirection: 'row',
@@ -76,7 +81,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       lineHeight: 24,
     },
     productRightLabel: {
-      color: theme.colors.text_primary,
+      color: theme.colors.text_secondary,
       fontSize: 16,
     },
   });

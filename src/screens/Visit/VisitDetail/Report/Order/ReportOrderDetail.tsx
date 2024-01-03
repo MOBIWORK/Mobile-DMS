@@ -1,9 +1,11 @@
 import React, {FC} from 'react';
 import {MainLayout} from '../../../../../layouts';
 import {
-  AppAccordion,
+
   AppContainer,
   AppCustomHeader,
+  Accordion,
+  Block
 } from '../../../../../components/common';
 import {
   ExtendedTheme,
@@ -50,7 +52,7 @@ const ReportOrderDetail = () => {
     label,
   }) => {
     return (
-      <View style={[styles.row as ViewStyle, style]}>
+      <Block style={[styles.row as ViewStyle, style]}  paddingVertical={6} >
         {title ? (
           <Text
             style={{color: colors.text_secondary, fontSize: 16, ...titleStyle}}>
@@ -74,7 +76,7 @@ const ReportOrderDetail = () => {
           ellipsizeMode={'tail'}>
           {label}
         </Text>
-      </View>
+      </Block>
     );
   };
 
@@ -113,7 +115,7 @@ const ReportOrderDetail = () => {
   const _renderOrderInfo = () => {
     const OrderInfoItem = () => {
       return (
-        <View>
+        <Block  colorTheme='bg_default' padding={4}  borderRadius={16} paddingHorizontal={16} >
           <RowItem
             style={{paddingBottom: 8}}
             title={'Ngày giao'}
@@ -128,43 +130,43 @@ const ReportOrderDetail = () => {
             title={'Kho xuất'}
             label={'Kho HN'}
           />
-        </View>
+        </Block>
       );
     };
     return (
-      <AppAccordion titleInsideType={true} title={'Thông tin đơn'}>
+      <Accordion type='nested' title={'Thông tin đơn'}>
         <OrderInfoItem />
-      </AppAccordion>
+      </Accordion>
     );
   };
 
   const _renderVAT = () => {
     return (
-      <AppAccordion titleInsideType title={'VAT'}>
-        <View style={{rowGap: 16}}>
+      <Accordion type='nested' title={'VAT'}>
+        <Block colorTheme='white'  style={{rowGap: 6}}  padding={4} borderRadius={16} >
           <RowItem title={'Biểu mẫu VAT'} label={'Biểu mẫu A'} />
           <RowItem title={'VAT(%)'} label={'5'} />
           <RowItem
             title={'VAT(VND)'}
             label={CommonUtils.convertNumber(100000).toString()}
           />
-        </View>
-      </AppAccordion>
+        </Block>
+      </Accordion>
     );
   };
 
   const _renderDiscount = () => {
     return (
-      <AppAccordion titleInsideType title={'Chiết khấu'}>
-        <View style={{rowGap: 16}}>
+      <Accordion type='nested' title={'Chiết khấu'}>
+        <Block style={{rowGap: 6}} colorTheme='white' borderRadius={16} padding={4}>
           <RowItem title={'Loại chiết khấu'} label={'Tổng tiền có VAT'} />
           <RowItem title={'Chiết khấu(%)'} label={'5'} />
           <RowItem
             title={'Chiết khấu(VND)'}
             label={CommonUtils.convertNumber(100000).toString()}
           />
-        </View>
-      </AppAccordion>
+        </Block>
+      </Accordion>
     );
   };
 
@@ -175,7 +177,7 @@ const ReportOrderDetail = () => {
       isTotal,
     }) => {
       return (
-        <View
+        <Block
           style={[styles.rowItemContainer as ViewStyle, {justifyContent: 'space-between'}]}>
           <Text style={{color: colors.text_secondary, fontSize: 16}}>
             {label}
@@ -188,31 +190,31 @@ const ReportOrderDetail = () => {
             }}>
             {CommonUtils.convertNumber(price)}
           </Text>
-        </View>
+        </Block>
       );
     };
     return (
-      <AppAccordion titleInsideType={true} title={'Chi tiết thanh toán'}>
-        <View style={{rowGap: 20}}>
+      <Accordion type='nested' title={'Chi tiết thanh toán'}>
+        <Block  colorTheme='white' style={{rowGap:10}} borderRadius={16} padding={16} >
           <PayItem label={'Thành tiền'} price={5000000} />
           <PayItem label={'Chiết khấu'} price={1000000} />
           <PayItem label={'VAT'} price={100000} />
           <PayItem label={'Tổng tiền'} price={4100000} isTotal />
-        </View>
-      </AppAccordion>
+        </Block>
+      </Accordion>
     );
   };
 
   return (
     <MainLayout style={{paddingHorizontal: 0}}>
       <AppCustomHeader
-        styles={{flex: 1.5, paddingHorizontal: 16}}
+        styles={{flex: 1.5, paddingHorizontal: 16,marginBottom:12}}
         onBack={() => navigation.goBack()}
         title={item.label}
         icon={ImageAssets.CalenderIcon}
         description={`${item.time}, ${item.date}`}
       />
-      <View style={{flex: 9, backgroundColor: colors.bg_neutral}}>
+      <Block  flex={9} style={{ backgroundColor: colors.bg_neutral}}>
         <AppContainer style={{marginBottom: bottom}}>
           <View
             style={{
@@ -232,7 +234,7 @@ const ReportOrderDetail = () => {
             {_renderPayment()}
           </View>
         </AppContainer>
-      </View>
+      </Block>
     </MainLayout>
   );
 };
@@ -259,6 +261,7 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       paddingBottom: 16,
       borderBottomWidth: 1,
       borderColor: theme.colors.divider,
+      marginLeft:8
     },
     label: {
       color: theme.colors.text_primary,

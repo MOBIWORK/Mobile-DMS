@@ -13,7 +13,7 @@ import {AppText} from './AppText';
 import AppFAB from './AppFAB';
 import AppContainer from '../AppContainer';
 import FilterView from './FilterView';
-import AppAccordion from './AppAccordion';
+// import AppAccordion from './AppAccordion';
 import AppSegmentedButtons from './AppSegmentedButtons';
 import AppCheckBox from './AppCheckBox';
 import {SvgIcon} from './AppSvgIcon';
@@ -43,7 +43,7 @@ export {
   AppText,
   FilterView,
   SvgIcon,
-  AppAccordion,
+  // AppAccordion,
   AppSegmentedButtons,
   showSnack,
   AppCustomHeader,
