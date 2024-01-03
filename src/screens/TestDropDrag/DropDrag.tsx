@@ -146,8 +146,8 @@ const DropDrag = (props: Props) => {
             <Text>aaaaaa</Text>
           </Block>
         </TouchableOpacity>
-        <Accordion   title='â'  type='nested' >
-            <Block  colorTheme='white'  justifyContent='center'  padding={10}>
+        <Accordion   title='â'  type='regular' >
+            <Block  colorTheme='bg_neutral'  justifyContent='center'  padding={10}>
               <Block>
                 <Text>sss</Text>
               </Block>

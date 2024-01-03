@@ -23,7 +23,7 @@ const Chevron = ({show}: Props) => {
 
   return (
     <Animated.View style={arrowStyle}>
-      <SvgIcon source='ArrowDown'   size={16}  />
+      <SvgIcon source='ArrowDown'   size={24}  />
     </Animated.View>
   );
 };
