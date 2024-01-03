@@ -59,7 +59,7 @@ const AppSwitch = (props: Props) => {
       }
     } else {
       switchTranslate.value = 4;
-      textValue.value = 30;
+      textValue.value = 28;
 
       // setText(false);
     }
@@ -103,7 +103,7 @@ const AppSwitch = (props: Props) => {
       backgroundColor: interpolateColor(
         progress.value,
         [0, 22],
-        ['#919EAB7A', '#22C55E'],
+        ['#FF5630', '#22C55E'],
       ),
     };
   });
@@ -139,7 +139,7 @@ const rootStyles = (theme:AppTheme) =>StyleSheet.create({
       height: 28,
       borderRadius: 30,
       justifyContent: 'center',
-      backgroundColor: '#F2F5F7',
+      // backgroundColor: '#F2F5F7',
     } as ViewStyle),
   circle: (text: string | undefined) =>
     ({
@@ -165,6 +165,6 @@ const rootStyles = (theme:AppTheme) =>StyleSheet.create({
     zIndex: 1000,
     fontSize:12,
     fontWeight:'400',
-    color: isText ? theme.colors.white : theme.colors.text_disable
+    color: theme.colors.white
   }) as TextStyle,
 });

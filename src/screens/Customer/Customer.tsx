@@ -273,7 +273,7 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     labelStyle: {
       fontSize: 24,
-      color: Colors.gray_800,
+      color: theme.colors.text_primary,
       lineHeight: 25,
       fontWeight: '500',
       textAlign: 'left',
@@ -281,7 +281,7 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     containCustomer: {
       fontSize: 14,
-      color: Colors.gray_800,
+      color: theme.colors.text_primary,
       lineHeight: 21,
       fontWeight: '500',
       textAlign: 'left',
@@ -325,7 +325,7 @@ const rootStyles = (theme: AppTheme) =>
     } as ViewStyle,
     titleText: {
       fontSize: 18,
-      color: Colors.darker,
+      color: theme.colors.text,
       lineHeight: 27,
       fontWeight: '500',
       marginBottom: 4,
@@ -384,7 +384,7 @@ const rootStyles = (theme: AppTheme) =>
       fontSize: 14,
       fontWeight: '700',
       lineHeight: 24,
-      color: Colors.gray_600,
+      color: theme.colors.text_disable,
     } as TextStyle,
     applyText: {
       fontSize: 14,
@@ -420,6 +420,6 @@ const rootStyles = (theme: AppTheme) =>
       borderColor: Colors.white,
     } as ViewStyle,
     backgroundRoot: {
-      backgroundColor: Colors.gray_200,
+      backgroundColor: theme.colors.bg_default,
     } as ViewStyle,
   });
