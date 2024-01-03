@@ -42,7 +42,6 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       ref={bottomSheetRef}
       contentHeight={contentHeight}
       handleHeight={handleHeight}
-      
       onChange={onChange}
       handleIndicatorStyle={{
         backgroundColor: backgroundColor ?? colors.bg_default,
@@ -58,7 +57,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       enablePanDownToClose={enablePanDownToClose ?? true}
       enableHandlePanningGesture={false}
       enableContentPanningGesture={true}
-      
+
       enableOverDrag={false}
       index={-1}
       style={{

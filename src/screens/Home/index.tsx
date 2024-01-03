@@ -1,4 +1,10 @@
-import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {View, Text, Image} from 'react-native';
 import {AppAvatar, AppContainer, AppIcons} from '../../components/common';
 import {IconButton} from 'react-native-paper';
@@ -67,6 +73,7 @@ const HomeScreen = () => {
   ]);
 
   const [widgets, setWidgets] = useMMKVString(AppConstant.Widget);
+  const mapboxCameraRef = useRef<Mapbox.Camera>(null);
 
   const getWidget = () => {
     if (!widgets) {
@@ -232,7 +239,13 @@ const HomeScreen = () => {
   useLayoutEffect(() => {
     setLoading(true);
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-      .then(location => setLocation(location))
+      .then(location => {
+        setLocation(location);
+        mapboxCameraRef.current?.flyTo(
+          [location.coords.longitude, location.coords.latitude],
+          1000,
+        );
+      })
       .catch(e => console.log('err', e));
     setLoading(false);
   }, []);
@@ -366,9 +379,9 @@ const HomeScreen = () => {
                 scaleBarEnabled={false}
                 styleURL={Mapbox.StyleURL.Street}
                 logoEnabled={false}
-                style={{width:'99%',height:360}}>
+                style={{width: '99%', height: 360}}>
                 <Mapbox.Camera
-                  // ref={mapboxCameraRef}
+                  ref={mapboxCameraRef}
                   centerCoordinate={[
                     location?.coords.longitude ?? 0,
                     location?.coords.latitude ?? 0,

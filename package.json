@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "ios": "react-native run-ios  --simulator 'iPhone 15 Pro (17.0)'",
     "lint": "eslint .",
     "start": "expo start --dev-client",
     "test": "jest",

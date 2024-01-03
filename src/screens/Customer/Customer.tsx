@@ -25,6 +25,7 @@ import {
   AppIcons,
   AppInput,
   AppFAB,
+  Block,
 } from '../../components/common';
 import ListFilter from './components/ListFilter';
 import {NavigationProp} from '../../navigation';
@@ -80,7 +81,7 @@ const Customer = () => {
   };
   const customer = useSelector(AppSelector.getNewCustomer);
 
-  console.log(customer, 'customer');
+
 
   const renderBottomView = () => {
     return (
@@ -164,7 +165,7 @@ const Customer = () => {
   };
 
   return (
-    <>
+    <Block block>
       <MainLayout style={styles.backgroundRoot}>
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
@@ -262,7 +263,7 @@ const Customer = () => {
         visible={show.firstModal || show.secondModal ? false : true}
         onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
       />
-    </>
+    </Block>
   );
 };
 

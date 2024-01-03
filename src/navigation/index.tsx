@@ -58,7 +58,6 @@ import {IAppReduxState} from '../redux-store';
 // import PushNotification from 'react-native-push-notification';
 import {useSelector} from 'react-redux';
 import MainTab, {TabParamList} from './MainTab';
-import {PortalHost} from '../components/common/Portal/components/portal-host';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -83,8 +82,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
 
   return (
     <NavigationContainer theme={MyAppTheme[theme]}>
-      
-
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -93,31 +90,85 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         }}>
         <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} />
         {/* <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
-        <Stack.Screen name={ScreenConstant.SELECT_ORGANIZATION} component={SelectOrganization}/>
+        <Stack.Screen
+          name={ScreenConstant.SELECT_ORGANIZATION}
+          component={SelectOrganization}
+        />
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
-        <Stack.Screen name={ScreenConstant.WIDGET_FVR_SCREEN} component={WidgetFavouriteScreen} />
-        <Stack.Screen name={ScreenConstant.NOTIFYCATION} component={NotificationScreen} />
+        <Stack.Screen
+          name={ScreenConstant.WIDGET_FVR_SCREEN}
+          component={WidgetFavouriteScreen}
+        />
+        <Stack.Screen
+          name={ScreenConstant.NOTIFYCATION}
+          component={NotificationScreen}
+        />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
-        <Stack.Screen name={ScreenConstant.FORGOT_PASSWORD} component={ForgotPassword}/>
-        <Stack.Screen name={ScreenConstant.SUCCESS_CHANGE} component={SuccessChanged}/>
+        <Stack.Screen
+          name={ScreenConstant.FORGOT_PASSWORD}
+          component={ForgotPassword}
+        />
+        <Stack.Screen
+          name={ScreenConstant.SUCCESS_CHANGE}
+          component={SuccessChanged}
+        />
         <Stack.Screen name={ScreenConstant.IMAGE_VIEW} component={ImageView} />
-        <Stack.Screen name={ScreenConstant.SEARCH_VISIT} component={SearchVisit}/>
-        <Stack.Screen name={ScreenConstant.LIST_PRODUCT} component={ListProduct}/>
-        <Stack.Screen name={ScreenConstant.SEARCH_PRODUCT} component={SearchProduct}/>
-        <Stack.Screen name={ScreenConstant.PRODUCT_DETAIL} component={ProductDetail}/>
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_VISIT}
+          component={SearchVisit}
+        />
+        <Stack.Screen
+          name={ScreenConstant.LIST_PRODUCT}
+          component={ListProduct}
+        />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_PRODUCT}
+          component={SearchProduct}
+        />
+        <Stack.Screen
+          name={ScreenConstant.PRODUCT_DETAIL}
+          component={ProductDetail}
+        />
         <Stack.Screen name={ScreenConstant.LIST_VISIT} component={ListVisit} />
-        <Stack.Screen name={ScreenConstant.ORDER_SCREEN} component={OrderList} />
-        <Stack.Screen name={ScreenConstant.ORDER_DETAIL_SCREEN} component={OrderDetail} />
-        <Stack.Screen name={ScreenConstant.CHECKIN_INVENTORY} component={Inventory}/>
-        <Stack.Screen name={ScreenConstant.INVENTORY_ADD_PRODUCT} component={InventoryAddProduct}/>
-        <Stack.Screen name={ScreenConstant.ADDING_NEW_CUSTOMER}  component={AddingNewCustomer} />
-        <Stack.Screen name={ScreenConstant.CKECKIN_ORDER}  component={CheckinOrder} />
-        <Stack.Screen name={ScreenConstant.CKECKIN_ORDER_CREATE}  component={CheckinOrderCreated} />
+        <Stack.Screen
+          name={ScreenConstant.ORDER_SCREEN}
+          component={OrderList}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ORDER_DETAIL_SCREEN}
+          component={OrderDetail}
+        />
+        <Stack.Screen
+          name={ScreenConstant.CHECKIN_INVENTORY}
+          component={Inventory}
+        />
+        <Stack.Screen
+          name={ScreenConstant.INVENTORY_ADD_PRODUCT}
+          component={InventoryAddProduct}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ADDING_NEW_CUSTOMER}
+          component={AddingNewCustomer}
+        />
+        <Stack.Screen
+          name={ScreenConstant.CKECKIN_ORDER}
+          component={CheckinOrder}
+        />
+        <Stack.Screen
+          name={ScreenConstant.CKECKIN_ORDER_CREATE}
+          component={CheckinOrderCreated}
+        />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
-        <Stack.Screen   name={ScreenConstant.VISIT_DETAIL}   component={Index}   />
-        <Stack.Screen name={ScreenConstant.DETAIL_CUSTOMER} component={DetailCustomer}/>
-        <Stack.Screen name={ScreenConstant.REPORT_ORDER_DETAIL} component={ReportOrderDetail}/>
-        <Stack.Screen   name={ScreenConstant.CHECKIN} component={CheckIn} />
+        <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
+        <Stack.Screen
+          name={ScreenConstant.DETAIL_CUSTOMER}
+          component={DetailCustomer}
+        />
+        <Stack.Screen
+          name={ScreenConstant.REPORT_ORDER_DETAIL}
+          component={ReportOrderDetail}
+        />
+        <Stack.Screen name={ScreenConstant.CHECKIN} component={CheckIn} />
         <Stack.Screen
           name={ScreenConstant.TAKE_PICTURE_VISIT}
           component={TakePicture}
@@ -135,8 +186,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.CHECKIN_LOCATION}
           component={CheckInLocation}
         />
-        <Stack.Screen  name={ScreenConstant.PROFILE} component={Profile}  />
-        <Stack.Screen  name={ScreenConstant.SEARCH_CUSTOMER} component={SearchCustomer}  /> */}
+        <Stack.Screen name={ScreenConstant.PROFILE} component={Profile} />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_CUSTOMER}
+          component={SearchCustomer}
+        /> */}
       </Stack.Navigator>
       {children}
     </NavigationContainer>

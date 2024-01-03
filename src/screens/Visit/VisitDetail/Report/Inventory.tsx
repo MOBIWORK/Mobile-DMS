@@ -7,6 +7,7 @@ import {
   ReportProductInventoryType,
 } from '../../../../models/types';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { ViewStyle } from 'react-native';
 
 const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   const theme = useTheme();
@@ -15,8 +16,8 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   const ProductItem = (productItem: ReportProductInventoryType) => {
     return (
       <View style={styles.productItemContainer}>
-        <View style={styles.productItem}>
-          <Text style={styles.productLeftLabel}>{productItem.productName}</Text>
+        <View style={styles.productItem as ViewStyle}>
+          <Text style={styles.productLeftLabel as ViewStyle}>{productItem.productName}</Text>
           <Text style={styles.productRightLabel}>x{productItem.count}</Text>
         </View>
 

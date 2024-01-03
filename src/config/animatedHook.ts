@@ -119,3 +119,19 @@ export const useBottomSheetDynamicSnapPoints = (
     handleContentLayout,
   };
 };
+
+export const useRadian = (value: Animated.SharedValue<number>) =>
+  useDerivedValue(() => {
+    'worklet';
+    return `${value.value}deg`;
+  });
+
+  export const useMix = (
+    progress: Animated.SharedValue<number>,
+    x: number,
+    y: number,
+  ) => {
+    'worklet';
+    return useDerivedValue(() => x + progress.value * (y - x));
+  };
+  

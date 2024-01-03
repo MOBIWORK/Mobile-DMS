@@ -19,7 +19,7 @@ const AppSegmentedButtons: FC<AppSegmentedButtonProps> = ({data, onChange}) => {
   });
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container as any}>
       {data.map((item, index) => {
         return (
           <Pressable

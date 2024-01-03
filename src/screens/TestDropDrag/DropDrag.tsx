@@ -113,9 +113,9 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {MainLayout} from '../../layouts';
-import {Block, BottomSheet} from '../../components/common';
+import {Accordion, Block, BottomSheet} from '../../components/common';
 import {BottomSheetRefProps} from '../../components/common/CustomBottomSheet/index';
-import {SCREEN_HEIGHT} from '@gorhom/bottom-sheet';
+
 
 type Props = {};
 
@@ -132,8 +132,11 @@ const DropDrag = (props: Props) => {
     // } else {
     //   ref?.current?.scrollTo(-SCREEN_HEIGHT * 0.4);
     // }
- 
   }, []);
+
+  const setShowAcc = () => {
+    setShow(!show);
+  };
 
   return (
     <>
@@ -143,12 +146,16 @@ const DropDrag = (props: Props) => {
             <Text>aaaaaa</Text>
           </Block>
         </TouchableOpacity>
+        <Accordion   title='â'  type='nested' >
+            <Block  colorTheme='white'  justifyContent='center'  padding={10}>
+              <Block>
+                <Text>sss</Text>
+              </Block>
+              <Text>aaaaaa</Text>
+            </Block>
+        </Accordion>
         <Text>DropDrag</Text>
-
-       
       </MainLayout>
-      
-     
     </>
   );
 };

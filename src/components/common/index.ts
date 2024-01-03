@@ -23,6 +23,7 @@ import AppCustomHeader from './AppCustomHeader';
 import AppSwitch from './AppSwitch';
 import { Block } from './Block/index';
 import BottomSheet from './CustomBottomSheet/index';
+import Accordion from './Accordion/Accordion';
 
 
 export {
@@ -50,5 +51,6 @@ export {
   Block,
   AppCheckBox,
   BottomSheet,
+  Accordion
   
 };

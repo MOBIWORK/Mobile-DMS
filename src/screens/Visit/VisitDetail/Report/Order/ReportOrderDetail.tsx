@@ -50,7 +50,7 @@ const ReportOrderDetail = () => {
     label,
   }) => {
     return (
-      <View style={[styles.row, style]}>
+      <View style={[styles.row as ViewStyle, style]}>
         {title ? (
           <Text
             style={{color: colors.text_secondary, fontSize: 16, ...titleStyle}}>
@@ -86,7 +86,7 @@ const ReportOrderDetail = () => {
         </Text>
         <View style={styles.customerContainer}>
           <View style={styles.customerTitle}>
-            <Text style={styles.label}>Vinamilk - KH1234</Text>
+            <Text style={styles.label as ViewStyle}>Vinamilk - KH1234</Text>
           </View>
           <View style={{marginTop: 16, rowGap: 10}}>
             <RowItem
@@ -176,7 +176,7 @@ const ReportOrderDetail = () => {
     }) => {
       return (
         <View
-          style={[styles.rowItemContainer, {justifyContent: 'space-between'}]}>
+          style={[styles.rowItemContainer as ViewStyle, {justifyContent: 'space-between'}]}>
           <Text style={{color: colors.text_secondary, fontSize: 16}}>
             {label}
           </Text>
