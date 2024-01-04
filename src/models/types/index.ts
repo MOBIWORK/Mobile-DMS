@@ -360,6 +360,7 @@ export interface IDataItem {
   type: string;
   websiteURL: string;
   imageSource: any;
+
 }
 
 export type IAlbumImage = {
