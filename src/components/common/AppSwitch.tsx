@@ -60,7 +60,7 @@ const AppSwitch = (props: Props) => {
       }
     } else {
       switchTranslate.value = 4;
-      textValue.value = 28;
+      textValue.value = 26;
 
       // setText(false);
     }

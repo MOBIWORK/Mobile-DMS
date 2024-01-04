@@ -16,6 +16,7 @@ import {Divider, Modal} from 'react-native-paper';
 import {item} from './ultil';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
+import { ScreenConstant } from '../../../const';
 type Props = {};
 
 const CheckIn = (props: Props) => {
