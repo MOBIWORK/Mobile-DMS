@@ -16,6 +16,7 @@ import {Divider, Modal} from 'react-native-paper';
 import {item} from './ultil';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
+import { ScreenConstant } from '../../../const';
 type Props = {};
 
 const CheckIn = (props: Props) => {
@@ -26,6 +27,9 @@ const CheckIn = (props: Props) => {
   const [title, setTitle] = useState('Đóng cửa');
   const params: VisitListItemType =
     useRoute<RouterProp<'CHECKIN'>>().params.item;
+
+ 
+
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -54,6 +58,7 @@ const CheckIn = (props: Props) => {
             </Text>
           </Block>
           <Switch
+          type='text'
             onSwitch={() => {
               title === 'Mở cửa' ? setTitle('Đóng cửa') : setTitle('Mở cửa');
             }}
@@ -72,7 +77,7 @@ const CheckIn = (props: Props) => {
               {params.useName}
             </Text>
           </Block>
-          <Divider horizontalInset />
+         <Block  colorTheme='border'   height={1}  />
           <Block paddingTop={8}>
             <Block
               direction="row"

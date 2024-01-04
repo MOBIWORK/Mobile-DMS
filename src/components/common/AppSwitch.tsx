@@ -14,6 +14,7 @@ import {useTheme,AppTheme} from '../../layouts/theme'
 type Props = {
   onSwitch: () => void;
   title?: string;
+  type:'text' | 'none'
 };
 
 const AppSwitch = (props: Props) => {
@@ -44,11 +45,11 @@ const AppSwitch = (props: Props) => {
 
     if (active) {
       if (isText === true) {
-        // console.log('run case')
+        console.log('run case')
         switchTranslate.value = 68;
-        textValue.value = 10;
+        textValue.value = 8;
       } else if (props.title === undefined) {
-        // console.log('run case 2')
+        console.log('run case 2')
         
         switchTranslate.value = 22;
         // textValue.value = 60;
@@ -59,7 +60,7 @@ const AppSwitch = (props: Props) => {
       }
     } else {
       switchTranslate.value = 4;
-      textValue.value = 28;
+      textValue.value = 26;
 
       // setText(false);
     }
@@ -107,6 +108,16 @@ const AppSwitch = (props: Props) => {
       ),
     };
   });
+  const backgroundNoneColorStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: interpolateColor(
+        progress.value,
+        [0, 22],
+        ['#919EAB7A', '#22C55E'],
+      ),
+    };
+  });
+
 
   return (
     <TouchableWithoutFeedback
@@ -115,7 +126,8 @@ const AppSwitch = (props: Props) => {
         onSwitch();
         // setText(!text);
       }}>
-      <Animated.View
+      {props.type === 'text' ? (
+        <Animated.View
         style={[styles.container(props.title), backgroundColorStyle]}>
         <Animated.View
           style={[styles.circle(props.title), customSpringStyles]}
@@ -126,6 +138,19 @@ const AppSwitch = (props: Props) => {
           {props.title}
         </Animated.Text>
       </Animated.View>
+      ):(
+        <Animated.View
+        style={[styles.container(props.title), backgroundNoneColorStyle]}>
+        <Animated.View
+          style={[styles.circle(props.title), customSpringStyles]}
+        />
+        <Animated.Text
+          style={[styles.positionText(active),textSpringStyles] }
+          >
+          {props.title}
+        </Animated.Text>
+      </Animated.View>
+      )}
     </TouchableWithoutFeedback>
   );
 };
@@ -158,7 +183,7 @@ const rootStyles = (theme:AppTheme) =>StyleSheet.create({
     } as ViewStyle),
   positionText:(isText:boolean) =>({
     position: 'absolute',
-    left: 5,
+    left: 2,
     top: 6,
     bottom: 0,
     right: 0,

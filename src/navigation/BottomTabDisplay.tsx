@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ImageStyle,
 } from 'react-native';
-import React, {createRef} from 'react';
+import React, {createRef, useLayoutEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {NavigationContainerRef} from '@react-navigation/native';
@@ -17,8 +17,8 @@ import {RootStackParamList} from '.';
 import {ScreenConstant} from '../const';
 
 import {AppTheme, useTheme} from '../layouts/theme';
-import {useSelector} from 'react-redux';
-import {AppSelector} from '../redux-store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppActions, AppSelector} from '../redux-store';
 import { SvgIcon } from '../components/common';
 
 
@@ -29,6 +29,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   const styles = bottomStyles(theme);
   const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
   const showModal = useSelector(AppSelector.getShowModal);
+  const dispatch = useDispatch()
   const pressNavigator = React.useCallback(
     (curTab: any) => {
       const previousRouteName = navigationRef?.current?.getCurrentRoute()?.name;
@@ -52,11 +53,16 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
     [navigation, state],
   );
 
+    // useLayoutEffect(() =>{
+    //   dispatch(AppActions.setShowModal(true));
+
+    // },[])
+
   return (
     <SafeAreaView
       edges={['right', 'left', 'bottom']}
-      style={!showModal ? styles.container : {}}>
-      {!showModal && (
+      style={showModal === false ? styles.container : {}}>
+      {showModal === false && (
         <>
           <TouchableOpacity
             style={styles.item}

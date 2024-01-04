@@ -37,6 +37,7 @@ const ProductDetail = () => {
       <AppHeader
         style={{paddingHorizontal: 16}}
         label={getLabel('productDetail')}
+        onBack={() => navigation.goBack()}
       />
       <ProductDetailTab
         style={{

@@ -145,11 +145,13 @@ export const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     map: {
       width: '100%',
-      height: 361,
+      height: 360,
       borderRadius:20,
-      backgroundColor:theme.colors.bg_default
+      // backgroundColor:theme.colors.bg_default,
       // borderWidth:1
-      // backgroundColor:'red'
+      // backgroundColor:'red',
+      alignContent:'center',
+      alignItems:'center'
       // marginHorizontal:16
 
       // ...StyleSheet.absoluteFill

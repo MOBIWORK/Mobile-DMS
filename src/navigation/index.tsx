@@ -9,6 +9,7 @@ import {AppConstant, ScreenConstant} from '../const';
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {
   IDataCustomer,
+  IProductList,
   IResOrganization,
   ItemNoteVisitDetail,
   ReportOrderItemType,
@@ -219,7 +220,9 @@ export type RootStackParamList = {
   [ScreenConstant.SUCCESS_CHANGE]: undefined;
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
-  [ScreenConstant.PRODUCT_DETAIL]: undefined;
+  [ScreenConstant.PRODUCT_DETAIL]: {
+    item:IProductList
+  };
   [ScreenConstant.IMAGE_VIEW]: {data: any};
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
