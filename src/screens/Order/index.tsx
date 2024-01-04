@@ -364,11 +364,16 @@ const OrderList = () => {
             value={status}
             onPress={() => onOpenBottomSheet('status')}
           />
-          <FilterView
+          {/* <FilterView
             style={{ marginLeft: 8 }}
             onPress={() =>
               bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
             }
+          /> */}
+           <ButtonFilter
+            label="Thời gian"
+            value={timeOrder}
+            onPress={() => onOpenBottomSheet('timeOrder')}
           />
         </View>
         <Text style={[styles.countOrder]}>

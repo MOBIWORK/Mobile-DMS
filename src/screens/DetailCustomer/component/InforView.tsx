@@ -58,6 +58,23 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
+            Mã khách hàng
+          </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            KH-12345
+          </AppText>
+          <View style={styles.divider} />
+        </View>
+        <View>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_secondary"
+            lineHeight={24}>
             Loại khách hàng
           </AppText>
           <AppText

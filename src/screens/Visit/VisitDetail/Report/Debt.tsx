@@ -13,18 +13,18 @@ const Debt: FC<DebtProps> = ({debtData}) => {
     return (
       <Pressable
         style={[
-          styles.itemContainer,
+          styles.itemContainer as any,
           {borderBottomWidth: index !== debtData.listDebt.length - 1 ? 1 : 0},
         ]}>
         <View style={{maxWidth: '70%', rowGap: 10}}>
-          <View style={styles.rowItem}>
+          <View style={styles.rowItem as any}>
             <Image
               source={ImageAssets.CalenderIcon}
               style={{width: 20, height: 20}}
               resizeMode={'cover'}
               tintColor={theme.colors.text_primary}
             />
-            <Text style={[styles.titleText, {marginLeft: 8}]}>
+            <Text style={[styles.titleText as any, {marginLeft: 8}]}>
               {item.dateTime}
             </Text>
           </View>
@@ -32,7 +32,7 @@ const Debt: FC<DebtProps> = ({debtData}) => {
             {item.description}
           </Text>
         </View>
-        <Text style={styles.titleText}>
+        <Text style={styles.titleText as any}>
           {CommonUtils.convertNumber(item.numberDebt)}
         </Text>
       </Pressable>
@@ -41,13 +41,13 @@ const Debt: FC<DebtProps> = ({debtData}) => {
 
   return (
     <View style={{marginTop: 32}}>
-      <View style={styles.headerContainer}>
+      <View style={styles.headerContainer as any}>
         <Text style={{color: theme.colors.text_primary}}>Tổng tiền nợ</Text>
-        <Text style={styles.titleText}>
+        <Text style={styles.titleText as any}>
           {CommonUtils.convertNumber(7000000).toString()}
         </Text>
       </View>
-      <View style={styles.listContainer}>
+      <View style={styles.listContainer as any}>
         <FlatList
           showsVerticalScrollIndicator={false}
           data={debtData.listDebt}
