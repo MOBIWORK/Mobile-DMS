@@ -67,7 +67,7 @@ const ContentItemView = (props: Props) => {
           </TouchableOpacity>
         ) : item.rightSide && item.name === 'theme' ? (
           <View>
-            <AppSwitch onSwitch={onSwitch} />
+            <AppSwitch  type='none' onSwitch={onSwitch} />
           </View>
         ) : null}
       </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {FlatList, Image, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../../../assets';
 import {ReportOrderItemType} from '../../../../../models/types';
@@ -12,12 +12,12 @@ const Order: FC<OrderProps> = ({orderData, handleItem}) => {
       <Pressable
         onPress={() => handleItem(item)}
         style={[
-          styles.itemContainer,
+          styles.itemContainer as ViewStyle,
           {borderBottomWidth: index === orderData.length - 1 ? 0 : 1},
         ]}>
         <View style={{rowGap: 5}}>
-          <Text style={styles.text}>DH-22344</Text>
-          <View style={styles.itemTitle}>
+          <Text style={styles.text as TextStyle}>DH-22344</Text>
+          <View style={styles.itemTitle as any} >
             <Image
               source={ImageAssets.CalenderIcon}
               style={{width: 16, height: 16}}
@@ -28,7 +28,7 @@ const Order: FC<OrderProps> = ({orderData, handleItem}) => {
             </Text>
           </View>
         </View>
-        <Text style={styles.text}>6.000.000</Text>
+        <Text style={styles.text as TextStyle}>6.000.000</Text>
       </Pressable>
     );
   };
@@ -36,7 +36,7 @@ const Order: FC<OrderProps> = ({orderData, handleItem}) => {
   return (
     <View style={{marginTop: 32}}>
       <StatisticalItem orderCount={15} payment={10000000} />
-      <View style={styles.listProduct}>
+      <View style={styles.listProduct as ViewStyle}>
         <Text style={{color: colors.text_secondary}}>Danh sách đơn</Text>
         <FlatList
           style={{marginTop: 16}}

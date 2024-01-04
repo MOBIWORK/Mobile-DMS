@@ -1,8 +1,9 @@
 import React, {FC} from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import {useTheme} from '@react-navigation/native';
-import {AppIcons} from '../../../../components/common';
+import {AppIcons, SvgIcon} from '../../../../components/common';
 import {AppConstant} from '../../../../const';
+import moment from 'moment';
 
 const SelectedDateFilter: FC<SelectedDateFilterProps> = ({
   onOpenReportFilter,
@@ -20,14 +21,14 @@ const SelectedDateFilter: FC<SelectedDateFilterProps> = ({
           marginBottom: 16,
         }}>
         <Text style={{color: colors.text_primary, marginRight: 8}}>
-          Hôm nay
+          Hôm nay, {moment(new Date()).format('DD/MM/YYYY')}
         </Text>
-        <AppIcons
-          iconType={AppConstant.ICON_TYPE.MaterialCommunity}
-          name={'chevron-down'}
+          <SvgIcon
+          source='ChevronDown'
           size={16}
           color={colors.text_secondary}
-        />
+          
+          />
       </TouchableOpacity>
     </>
   );
