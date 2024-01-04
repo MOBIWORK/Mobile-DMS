@@ -18,7 +18,7 @@ import {NavigationProp} from '../../navigation';
 // import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useDispatch} from 'react-redux';
-import {AppActions, AppSelector} from '../../redux-store';
+// import {AppActions, AppSelector} from '../../redux-store';
 import { useSelector } from '../../config/function';
 
 const arrNotification: any[] = [
