@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   View,
   ViewStyle,
   TouchableOpacity,
@@ -16,16 +15,40 @@ import {useTheme, AppTheme} from '../../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
-import { IDataItem } from '../../../models/types';
+import {IDataItem} from '../../../models/types';
+import {Block, AppText as Text} from '../../../components/common';
 
 const CardView = (props: IDataItem) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
+  // console.log(props);
+
   return (
     <TouchableOpacity style={styles.card}>
       <View style={styles.containContentView}>
-        <Text style={styles.textName}>{props.nameCompany}</Text>
+        <Block
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center">
+          <Block block>
+            <Text style={styles.textName}>{props.nameCompany}</Text>
+            <Text style={styles.textName}>KH-1234</Text>
+          </Block>
+
+          <View style={styles.containButton}>
+            <TouchableOpacity
+              style={styles.containButtonBuy}
+              onPress={() =>
+                navigation.navigate(ScreenConstant.DETAIL_CUSTOMER, {
+                  data: props,
+                })
+              }>
+              <Text style={styles.textOrder}>Đặt hàng</Text>
+            </TouchableOpacity>
+          </View>
+        </Block>
+          <Block height={1} colorTheme='border' marginTop={4} marginBottom={4}  />
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconAddress'} style={styles.iconStyle} />
           <Text numberOfLines={1} style={styles.contentText}>
@@ -41,18 +64,6 @@ const CardView = (props: IDataItem) => {
           <Text style={styles.contentText}>{props?.type}</Text>
         </View>
       </View>
-      <View style={styles.containButton}>
-        <TouchableOpacity
-          style={styles.containButtonBuy}
-          onPress={() =>
-            navigation.navigate(ScreenConstant.DETAIL_CUSTOMER, {data: props})
-          }>
-          <Text
-            style={styles.textOrder}>
-            Đặt hàng
-          </Text>
-        </TouchableOpacity>
-      </View>
     </TouchableOpacity>
   );
 };
@@ -62,14 +73,15 @@ export default React.memo(CardView);
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     card: {
-      backgroundColor: Colors.white,
-      height: 123,
+      backgroundColor: theme.colors.bg_default,
+      paddingVertical:8,
       marginBottom: 16,
       marginHorizontal: 2,
       borderRadius: 16,
       marginTop: 4,
-      flexDirection: 'row',
-      justifyContent: 'space-around',
+      // flexDirection: 'row',
+      // justifyContent: 'space-around',
+      // alignItems: 'center',
       ...Platform.select({
         android: {
           elevation: 2,
@@ -92,7 +104,8 @@ const rootStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       // justifyContent: 'center',
       alignItems: 'center',
-      paddingVertical:4
+      paddingVertical: 4,
+      paddingRight:16
     } as ViewStyle,
     iconStyle: {
       width: 16,
@@ -120,7 +133,7 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     containButton: {
       justifyContent: 'center',
-      // backgroundColor:'black',
+      // backgroundColor: 'red',
       alignItems: 'center',
       flex: 1,
     } as ViewStyle,
@@ -134,9 +147,9 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'center',
       borderWidth: 1,
     } as ViewStyle,
-    textOrder:{
+    textOrder: {
       color: theme.colors.action,
       paddingHorizontal: 9,
       paddingVertical: 8,
-    }
+    },
   });

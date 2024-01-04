@@ -52,6 +52,7 @@ const AddingNewCustomer = () => {
     nameCompany: '',
     type: valueFilter.customerType,
     group: valueFilter.customerGroupType,
+    guestCode:'',
     dob: date,
     area: '',
     gland: '',

@@ -111,12 +111,13 @@ const CheckIn = (props: Props) => {
           })}
         </Block>
       </Block>
-      <TouchableOpacity>
+      <TouchableOpacity style={styles.containContainerButton}>
         <Block
           // borderColor="primary"
           marginLeft={16}
           borderColor={theme.colors.primary}
           marginRight={16}
+          colorTheme='bg_default'
           // style={{borderColor:theme.colors.primary} as ViewStyle}
           alignItems="center"
           height={40}
@@ -194,4 +195,8 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius:20
       
     }) as ViewStyle,
+    containContainerButton:{
+      marginBottom:20,
+      backgroundColor:theme.colors.bg_neutral
+    } as ViewStyle
   });

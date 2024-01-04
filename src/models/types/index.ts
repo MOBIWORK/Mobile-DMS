@@ -263,6 +263,7 @@ export type ReportDebtType = {
 };
 export type IDataCustomer = {
   nameCompany: string;
+  guestCode?:string;
   type: string;
   group: string;
   area?: string;
@@ -342,6 +343,7 @@ interface Contact {
 export interface IDataItem {
   address: Address;
   area: string;
+  customerCode?:string;
   contact: Contact;
   debtLimit: number | string; // Assuming it can be a number or a string
   description: string;
@@ -352,6 +354,7 @@ export interface IDataItem {
   type: string;
   websiteURL: string;
   imageSource: any;
+
 }
 
 export type IAlbumImage = {

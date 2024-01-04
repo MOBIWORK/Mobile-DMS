@@ -71,13 +71,13 @@ const Customer = () => {
   const onPressType1 = () => {
     setShow(prev => ({...prev, firstModal: !show.firstModal}));
     bottomRef.current?.snapToIndex(0);
-    console.log(show.firstModal);
-    dispatch(AppActions.setShowModal(!showModal));
+    // console.log(show.firstModal);
+    dispatch(AppActions.setShowModal(true));
   };
   const onPressType2 = () => {
     setShow(prev => ({...prev, secondModal: !show.secondModal}));
     bottomRef2.current?.snapToIndex(0);
-    dispatch(AppActions.setShowModal(!showModal));
+    dispatch(AppActions.setShowModal(true));
   };
   const customer = useSelector(AppSelector.getNewCustomer);
 
@@ -196,7 +196,7 @@ const Customer = () => {
         onChange={index =>
           index === -1 &&
           (setShow(prev => ({...prev, firstModal: false})),
-          dispatch(AppActions.setShowModal(true)))
+          dispatch(AppActions.setShowModal(false)))
         }
         enablePanDownToClose={true}>
         <View>
@@ -238,7 +238,7 @@ const Customer = () => {
         onChange={index =>
           index === -1 &&
           (setShow(prev => ({...prev, secondModal: false})),
-          dispatch(AppActions.setShowModal(true)))
+          dispatch(AppActions.setShowModal(false)))
         }
         enablePanDownToClose={true}>
         {renderBottomView()}
@@ -420,6 +420,6 @@ const rootStyles = (theme: AppTheme) =>
       borderColor: Colors.white,
     } as ViewStyle,
     backgroundRoot: {
-      backgroundColor: theme.colors.bg_default,
+      backgroundColor: theme.colors.bg_neutral,
     } as ViewStyle,
   });

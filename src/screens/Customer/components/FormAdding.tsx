@@ -153,6 +153,19 @@ const FormAdding = (props: Props) => {
           console.log('text');
         }}
       />
+        <AppInput
+        label="Mã khách hàng"
+        value={valueFilter?.guestCode!}
+        editable={true}
+        hiddenRightIcon={true}
+        isRequire={true}
+        contentStyle={styles.contentStyle}
+        styles={{marginBottom: 20}}
+        onChangeValue={text => {
+          setData(prev => ({...prev, guestCode: text}));
+          console.log('text');
+        }}
+      />
       <AppInput
         label={translate('customerType')}
         isRequire={true}
