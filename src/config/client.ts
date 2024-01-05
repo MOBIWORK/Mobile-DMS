@@ -28,7 +28,7 @@ const onRequest = (
 
   (config!.baseURL = DEFAULT_CONFIG.baseURL),
     (config!.timeout = DEFAULT_CONFIG.timeout);
-  config!.headers = DEFAULT_CONFIG.headers as any;
+  config!.headers = header as any
   return config;
 };
 const onRequestError = (error: AxiosError): Promise<AxiosError> => {
@@ -37,7 +37,7 @@ const onRequestError = (error: AxiosError): Promise<AxiosError> => {
 };
 
 const onResponse = (response: AxiosResponse): AxiosResponse => {
-  // console.info(`[response]: `, response);
+  console.info(`[response]: `, response);
   return response;
 };
 

@@ -35,6 +35,8 @@ export const verifyOrganization = (data: object) =>
   createApi(true).get(ApiConstant.POST_USER_ORGANIZATION, data, {
     baseURL: BASE_URL,
   });
+  export const verifyOrganizations = (data: object) => client.get(ApiConstant.POST_USER_ORGANIZATION,data)
+
 
 export const updateProfile = (data: IProfile) =>
   createApi().put(ApiConstant.PUT_USER_PROFILE, data);
@@ -45,3 +47,4 @@ export const getDetailLocation = (lat?: number, lon?: number) =>
       BASE_URL_MAP + `?point.lon=${lon}&point.lat=${lat}&api_key=${API_EK_KEY}`,
     )
     .then(res => res.data);
+

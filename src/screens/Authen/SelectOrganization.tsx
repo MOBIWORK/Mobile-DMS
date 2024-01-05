@@ -74,9 +74,11 @@ const SelectOrganization = () => {
 
   const getOrganization = async () => {
     await CommonUtils.CheckNetworkState();
+    console.log('run first')
     const response: KeyAbleProps = await AppService.verifyOrganization({
       organization: organizationName,
     });
+    console.log(response,'run second')
     if (response.status === ApiConstant.STT_OK) {
       const {result} = response.data;
       setOrganization(result);
