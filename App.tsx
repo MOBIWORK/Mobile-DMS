@@ -23,7 +23,14 @@ import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
 import {SnackBar} from './src/components/common/AppSnack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import codePush from "react-native-code-push";
 
+
+
+let codePushOptions = {
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  installMode: codePush.InstallMode.IMMEDIATE
+};
 
 function App(): JSX.Element {
   useEffect(() => {
@@ -34,6 +41,8 @@ function App(): JSX.Element {
     );
     return () => backHandler.remove();
   }, []);
+
+
   registerTranslation('vi', {
     save: 'Lưu',
     selectSingle: 'Chọn ngày',
@@ -152,4 +161,4 @@ function App(): JSX.Element {
   );
 }
 
-export default App;
+export default codePush(codePushOptions)(App);

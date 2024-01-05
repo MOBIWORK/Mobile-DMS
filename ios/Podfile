@@ -53,7 +53,7 @@ target 'DMS' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
+  pod 'CodePush', :path => '../node_modules/react-native-code-push'
   target 'DMSTests' do
     inherit! :complete
     # Pods for testing

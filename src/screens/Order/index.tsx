@@ -11,7 +11,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Image, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { ImageAssets } from '../../assets';
 import { useNavigation } from '@react-navigation/native';
-import FilterView from '../../components/common/FilterView';
 import ButtonFilter from '../../components/common/ButtonFilter';
 import { StyleSheet } from 'react-native';
 import AppContainer from '../../components/AppContainer';
@@ -35,6 +34,7 @@ const OrderList = () => {
   const snapPoints = useMemo(() => ['90%'], []);
   const navigation = useNavigation<NavigationProp>();
 
+  
   const [dataStatus, setDataStatus] = useState<IFilterType[]>([
     {
       label: 'Tất cả',
