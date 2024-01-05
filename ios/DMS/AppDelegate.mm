@@ -4,7 +4,10 @@
 #import <AppCenterReactNativeAnalytics.h>
 #import <AppCenterReactNativeCrashes.h>
 #import <CodePush/CodePush.h>
+<<<<<<< HEAD
 #import <MMKV/MMKV.h>
+=======
+>>>>>>> ad41f6d (config: codePush)
 
 #import <React/RCTBundleURLProvider.h>
 
@@ -29,8 +32,11 @@
    [AppCenterReactNative register];
    [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
    [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
+<<<<<<< HEAD
     [MMKV initializeMMKV:nil];
 
+=======
+>>>>>>> ad41f6d (config: codePush)
 // #endif
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
