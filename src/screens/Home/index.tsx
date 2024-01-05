@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, Linking, Platform} from 'react-native';
 import {AppAvatar, AppContainer, AppIcons} from '../../components/common';
 import {IconButton} from 'react-native-paper';
 import {ImageAssets} from '../../assets';
@@ -17,9 +17,9 @@ import ItemNotification from '../../components/Notification/ItemNotification';
 
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTheme} from '../../layouts/theme';
-import {useMMKVString} from 'react-native-mmkv';
+import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {DataConstant} from '../../const';
-import {IWidget, VisitListItemType} from '../../models/types';
+import {IResOrganization, IWidget, VisitListItemType} from '../../models/types';
 import ItemWidget from '../../components/Widget/ItemWidget';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation';
@@ -74,6 +74,13 @@ const HomeScreen = () => {
 
   const [widgets, setWidgets] = useMMKVString(AppConstant.Widget);
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
+
+  const [organiztion] = useMMKVObject<IResOrganization>(
+    AppConstant.Organization,
+  );
+
+  const [userNameStore] = useMMKVString(AppConstant.userNameStore);
+  const [passwordStore] = useMMKVString(AppConstant.passwordStore);
 
   const getWidget = () => {
     if (!widgets) {
@@ -141,7 +148,8 @@ const HomeScreen = () => {
                 borderWidth={5}
                 color={colors.action}
                 shadowColor={colors.bg_disable}
-                bgColor={colors.bg_default}></ProgressCircle>
+                bgColor={colors.bg_default}
+              />
               <Text style={[styles.worksheetDt, {color: colors.action}]}>
                 15 %
               </Text>
@@ -161,7 +169,8 @@ const HomeScreen = () => {
                 borderWidth={5}
                 color={colors.success}
                 shadowColor={colors.bg_disable}
-                bgColor={colors.bg_default}></ProgressCircle>
+                bgColor={colors.bg_default}
+              />
               <Text style={[styles.worksheetDt, {color: colors.success}]}>
                 15 %
               </Text>
@@ -181,7 +190,8 @@ const HomeScreen = () => {
                 borderWidth={5}
                 color={colors.info}
                 shadowColor={colors.bg_disable}
-                bgColor={colors.bg_default}></ProgressCircle>
+                bgColor={colors.bg_default}
+              />
               <Text style={[styles.worksheetDt, {color: colors.info}]}>
                 65 %
               </Text>
@@ -205,7 +215,8 @@ const HomeScreen = () => {
                 borderWidth={5}
                 color={colors.primary}
                 shadowColor={colors.bg_disable}
-                bgColor={colors.bg_default}></ProgressCircle>
+                bgColor={colors.bg_default}
+              />
               <Text style={[styles.worksheetDt, {color: colors.primary}]}>
                 15 %
               </Text>
@@ -225,7 +236,8 @@ const HomeScreen = () => {
                 borderWidth={5}
                 color={colors.secondary}
                 shadowColor={colors.bg_disable}
-                bgColor={colors.bg_default}></ProgressCircle>
+                bgColor={colors.bg_default}
+              />
               <Text style={[styles.worksheetDt, {color: colors.secondary}]}>
                 15 %
               </Text>
@@ -234,6 +246,29 @@ const HomeScreen = () => {
         </View>
       </View>
     );
+  };
+
+  const openToDeeplink = () => {
+    const link = `mbwess://sign_in/${userNameStore?.toLocaleLowerCase()}/${passwordStore}/${organiztion?.company_name?.toLocaleLowerCase()}`;
+    Linking.canOpenURL(link)
+      .then(supported => {
+        supported && Linking.openURL(link);
+      })
+      .catch(() => openAppStore());
+  };
+
+  const openAppStore = () => {
+    let link = '';
+    if (Platform.OS === 'ios') {
+      link = 'itms-apps://apps.apple.com/id/app/MBW ESS/id6473134079?l=id';
+    } else {
+      link = 'https://play.google.com/store/apps/details?id=mbw.next.ess';
+    }
+    Linking.canOpenURL(link)
+      .then(supported => {
+        supported && Linking.openURL(link);
+      })
+      .catch(err => console.log('err', err));
   };
 
   useLayoutEffect(() => {
@@ -296,13 +331,15 @@ const HomeScreen = () => {
                 </Text>
               </View>
             </View>
-            <View style={styles.btnTimekeep}>
+            <TouchableOpacity
+              style={styles.btnTimekeep}
+              onPress={() => openToDeeplink()}>
               <Image
                 source={ImageAssets.Usercheckin}
                 resizeMode={'cover'}
                 style={styles.iconBtnTk}
               />
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View>{renderUiWidget()}</View>
@@ -356,7 +393,7 @@ const HomeScreen = () => {
                     <Text style={[styles.textProcess]}>3/50</Text>
                     <Text style={[styles.textProcessDesc]}>
                       {' '}
-                      {`(Đạt 6 %)`}{' '}
+                      {'(Đạt 6 %)'}{' '}
                     </Text>
                   </View>
                 </ProgressCircle>

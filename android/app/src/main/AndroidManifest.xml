@@ -28,6 +28,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="mbw.next.dms"/>
+        <data android:scheme="mbwdms"/>
       </intent-filter>
     </activity>
   </application>

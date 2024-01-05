@@ -1,6 +1,14 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {MainLayout} from '../../layouts';
-import {Image, Linking, Platform, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  Linking,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {
   AppButton,
   AppDialog,
@@ -167,7 +175,7 @@ const SignIn = () => {
             isPassword
           />
         </View>
-        <View style={styles.checkBox as any } >
+        <View style={styles.checkBox as ViewStyle}>
           <Text
             style={{color: colors.primary}}
             onPress={() => navigation.navigate(ScreenConstant.FORGOT_PASSWORD)}>

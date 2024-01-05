@@ -58,6 +58,7 @@ import {IAppReduxState} from '../redux-store';
 // import PushNotification from 'react-native-push-notification';
 import {useSelector} from 'react-redux';
 import MainTab, {TabParamList} from './MainTab';
+import linking from '../utils/linking.utils';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -81,14 +82,14 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   // }, []);
 
   return (
-    <NavigationContainer theme={MyAppTheme[theme]}>
+    <NavigationContainer theme={MyAppTheme[theme]} linking={linking}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
-            {/* <Stack.Screen
+        {/* <Stack.Screen
           name={ScreenConstant.CHECKIN_INVENTORY}
           component={Inventory}
         /> */}
@@ -236,7 +237,7 @@ export type RootStackParamList = {
   [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
   [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
-  [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList>;
+  [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
   [ScreenConstant.CHECKIN]: {
