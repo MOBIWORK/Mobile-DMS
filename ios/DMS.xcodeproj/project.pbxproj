@@ -39,6 +39,7 @@
 		8E93C6E34DF0BA573FC2EE8F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B173BD5BC2B065BDEA7DCE /* ExpoModulesProvider.swift */; };
 		9279090B9EB145D89A21A297 /* SF-Pro-Display-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9858CB14A1AA4E57BB89A006 /* SF-Pro-Display-Black.ttf */; };
 		946C2A8A868D7E4476C02B01 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33C535FB06B25050AEF29D0 /* ExpoModulesProvider.swift */; };
+		C9E9CEF22B479B1000157D58 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = C9E9CEF12B479B0F00157D58 /* AppCenter-Config.plist */; };
 		C9F95DDA2B2D3D9900626856 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = C9F95DD92B2D3D9900626856 /* fonts */; };
 		CA027E128CDD4E488E254166 /* SF-Pro-Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BF58B281E448485F9587267C /* SF-Pro-Display-Medium.ttf */; };
 		CA3923D6D2964F77A7D1C1C1 /* SF-Pro-Display-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3A70BCBF46C69323C71F /* SF-Pro-Display-Thin.ttf */; };
@@ -96,6 +97,7 @@
 		9858CB14A1AA4E57BB89A006 /* SF-Pro-Display-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Black.ttf"; path = "../assets/fonts/SF-Pro-Display-Black.ttf"; sourceTree = "<group>"; };
 		AFB8556F35864F1BAF368C21 /* SF-Pro-Display-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Regular.ttf"; path = "../assets/fonts/SF-Pro-Display-Regular.ttf"; sourceTree = "<group>"; };
 		BF58B281E448485F9587267C /* SF-Pro-Display-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Medium.ttf"; path = "../assets/fonts/SF-Pro-Display-Medium.ttf"; sourceTree = "<group>"; };
+		C9E9CEF12B479B0F00157D58 /* AppCenter-Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AppCenter-Config.plist"; sourceTree = "<group>"; };
 		C9F95DD92B2D3D9900626856 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		CE7B73780E5A4E6B9EC659F8 /* SF-Pro-Display-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Light.ttf"; path = "../assets/fonts/SF-Pro-Display-Light.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -205,6 +207,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				C9E9CEF12B479B0F00157D58 /* AppCenter-Config.plist */,
 				C9F95DD92B2D3D9900626856 /* fonts */,
 				13B07FAE1A68108700A75B9A /* DMS */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -383,6 +386,7 @@
 				8A1099C72B1847C900E1435A /* Zocial.ttf in Resources */,
 				8A1099C22B1847C900E1435A /* Foundation.ttf in Resources */,
 				C9F95DDA2B2D3D9900626856 /* fonts in Resources */,
+				C9E9CEF22B479B1000157D58 /* AppCenter-Config.plist in Resources */,
 				8A1099CB2B1847C900E1435A /* FontAwesome6_Brands.ttf in Resources */,
 				8A1099BC2B1847C900E1435A /* Feather.ttf in Resources */,
 				8A1099CA2B1847C900E1435A /* SimpleLineIcons.ttf in Resources */,
