@@ -115,9 +115,12 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
-        }}
-        >
-        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+        }}>
+        {/* <Stack.Screen
+          name={ScreenConstant.CHECKIN_INVENTORY}
+          component={Inventory}
+        /> */}
+        {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} /> */}
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
