@@ -111,17 +111,20 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
-        }}
-        >
-        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+        }}>
+        {/* <Stack.Screen
+          name={ScreenConstant.CHECKIN_INVENTORY}
+          component={Inventory}
+        /> */}
+        {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} /> */}
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> 
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
 
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
-
+       
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen
           name={ScreenConstant.WIDGET_FVR_SCREEN}
@@ -131,11 +134,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NOTIFYCATION}
           component={NotificationScreen}
         />
-        {/* <Stack.Screen
-          name={ScreenConstant.UPDATE_SCREEN}
-          component={UpdateScreen}
-
-        /> */}
+        
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
           component={ForgotPassword}

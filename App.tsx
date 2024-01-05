@@ -40,6 +40,11 @@ if (!isIos) {
   }
 }
 function App(): JSX.Element {
+
+  const [updateMessage, setUpdateMessage] = React.useState('');
+  const [updateStatus, setUpdateStatus] = React.useState(-1);
+
+
   useEffect(() => {
     LogBox.ignoreAllLogs();
 
@@ -144,6 +149,65 @@ function App(): JSX.Element {
   //     // onHttp.remove();
   //   };
   // }, []);
+  const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
+    console.log('syncStatus', syncStatus);
+    switch (syncStatus) {
+      case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
+        setUpdateMessage('Đang kiểm tra bản cập nhật...');
+        break;
+      }
+      case codePush.SyncStatus.DOWNLOADING_PACKAGE: {
+        setUpdateMessage('Đang tải xuống bản cập nhật...');
+        break;
+      }
+      case codePush.SyncStatus.INSTALLING_UPDATE: {
+        setUpdateMessage('Đang cài đặt bản cập nhật...');
+        break;
+      }
+      case codePush.SyncStatus.UPDATE_INSTALLED: {
+        codePush.notifyAppReady();
+        setUpdateMessage('Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!');
+        break;
+      }
+      case codePush.SyncStatus.UNKNOWN_ERROR: {
+        setUpdateMessage('Cập nhật thất bại!');
+      
+        setTimeout(() => {
+          codePush.restartApp();
+        }, 800);
+        break;
+      }
+      case codePush.SyncStatus.UP_TO_DATE: {
+        // codePush.notifyAppReady();
+        // setTimeout(() => {
+          codePush.restartApp();
+        // }, 800);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+    setUpdateStatus(syncStatus);
+  }, []);
+
+
+  useEffect(() =>{
+    codePush.sync({
+      updateDialog:{
+        appendReleaseDescription:true,
+        
+      }, 
+      
+      installMode: codePush.InstallMode.ON_NEXT_RESTART,
+      mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+      
+     
+  },
+  onSyncStatusChanged
+  );
+  },[onSyncStatusChanged])
+
 
   // Alert.alert(updateMessage)
 
