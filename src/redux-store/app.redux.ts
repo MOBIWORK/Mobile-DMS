@@ -54,7 +54,7 @@ export const INITIAL_STATE: IAppRedux = {
   showModal: false,
   searchProductValue: '',
   searchVisitValue: '',
-  theme: 'default',
+  theme: 'dark',
   mainAddress:[],
   mainContactAddress:[],
   newCustomer:[],

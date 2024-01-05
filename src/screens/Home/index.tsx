@@ -256,7 +256,11 @@ const HomeScreen = () => {
     const link = `mbwess://sign_in/${userNameStore?.toLocaleLowerCase()}/${passwordStore}/${organiztion?.company_name?.toLocaleLowerCase()}`;
     Linking.canOpenURL(link)
       .then(supported => {
-        supported && Linking.openURL(link);
+        if (supported) {
+          Linking.openURL(link);
+        } else {
+          return openAppStore();
+        }
       })
       .catch(() => openAppStore());
   };
@@ -264,6 +268,7 @@ const HomeScreen = () => {
   const openAppStore = () => {
     let link = '';
     if (Platform.OS === 'ios') {
+      console.log('run this shit');
       link = 'itms-apps://apps.apple.com/id/app/MBW ESS/id6473134079?l=id';
     } else {
       link = 'https://play.google.com/store/apps/details?id=mbw.next.ess';
@@ -338,7 +343,7 @@ const HomeScreen = () => {
             </View>
             <TouchableOpacity
               style={styles.btnTimekeep}
-              onPress={() => openToDeeplink()}>
+              onPress={openToDeeplink}>
               <Image
                 source={ImageAssets.Usercheckin}
                 resizeMode={'cover'}
