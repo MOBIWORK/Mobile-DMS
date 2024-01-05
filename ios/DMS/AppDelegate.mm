@@ -1,4 +1,9 @@
+
 #import "AppDelegate.h"
+#import <AppCenterReactNative.h>
+#import <AppCenterReactNativeAnalytics.h>
+#import <AppCenterReactNativeCrashes.h>
+#import <CodePush/CodePush.h>
 
 #import <React/RCTBundleURLProvider.h>
 
@@ -18,6 +23,12 @@
   
    // [REQUIRED] Register BackgroundFetch
    [[TSBackgroundFetch sharedInstance] didFinishLaunching];
+  //  #ifdef FB_SONARKIT_ENABLED
+  // InitializeFlipper(application);
+   [AppCenterReactNative register];
+   [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
+   [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
+// #endif
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
@@ -27,7 +38,7 @@
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@".expo/.virtual-metro-entry"];
 #else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  return [CodePush bundleURL];
 #endif
 }
 

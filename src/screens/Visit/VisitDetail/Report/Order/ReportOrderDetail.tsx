@@ -29,6 +29,7 @@ import {CommonUtils} from '../../../../../utils';
 import {ReportProductOrderType} from '../../../../../models/types';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ProductOrderItem from './ProductOrderItem';
+import { ScreenConstant } from '../../../../../const';
 
 const ReportOrderDetail = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -38,6 +39,8 @@ const ReportOrderDetail = () => {
   const styles = createSheetStyles(useTheme());
   const {t: getLabel} = useTranslation();
   const item = route.params.item;
+
+
 
   // const [productData, setProductData] = useState<ReportProductOrderType[]>([]);
   // const [promotionalData, setPromotionalData] = useState<ReportProductOrderType[]>([]);
@@ -52,7 +55,7 @@ const ReportOrderDetail = () => {
     label,
   }) => {
     return (
-      <Block style={[styles.row as ViewStyle, style]}  paddingVertical={6} >
+      <Block style={[styles.row as ViewStyle, style]}   >
         {title ? (
           <Text
             style={{color: colors.text_secondary, fontSize: 16, ...titleStyle}}>
@@ -143,7 +146,7 @@ const ReportOrderDetail = () => {
   const _renderVAT = () => {
     return (
       <Accordion type='nested' title={'VAT'}>
-        <Block colorTheme='white'  style={{rowGap: 6}}  padding={4} borderRadius={16} >
+        <Block colorTheme='white'  style={{rowGap: 8}}  padding={4} borderRadius={16} >
           <RowItem title={'Biểu mẫu VAT'} label={'Biểu mẫu A'} />
           <RowItem title={'VAT(%)'} label={'5'} />
           <RowItem
@@ -272,7 +275,9 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-    },
+      paddingHorizontal:16,
+      paddingVertical:4
+    } as  ViewStyle,
     rowItemContainer: {
       flexDirection: 'row',
       alignItems: 'center',

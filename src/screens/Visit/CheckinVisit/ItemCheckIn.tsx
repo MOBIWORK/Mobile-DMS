@@ -4,6 +4,7 @@ import {IItemCheckIn} from './ultil';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../../../navigation';
+import { useTheme } from '../../../layouts/theme';
 
 type Props = {
   item: IItemCheckIn;
@@ -11,6 +12,7 @@ type Props = {
 
 const ItemCheckIn = ({item}: Props) => {
   const navigation = useNavigation<NavigationProp>()
+  const {colors}  = useTheme()
   return (
     <Block>
       <TouchableOpacity onPress={() =>  navigation.navigate(item.screenName)}>
@@ -28,7 +30,7 @@ const ItemCheckIn = ({item}: Props) => {
               paddingHorizontal={8}
               colorTheme={item.backgroundColor}
               borderRadius={8}>
-              <SvgIcon source={item.icon} size={20} colorTheme="border" />
+              <SvgIcon source={item.icon} size={20} color={colors.border} />
             </Block>
             <Block direction="row" alignItems="center">
               <Text> {item.name}</Text>

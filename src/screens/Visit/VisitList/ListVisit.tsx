@@ -25,7 +25,7 @@ import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 
 //config Mapbox
@@ -219,13 +219,13 @@ const ListVisit = () => {
   }, []);
 
   return (
-    <MainLayout
+    <SafeAreaView
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
       {loading ? <SkeletonLoading loading={loading} /> : _renderContent()}
 
       <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
-    </MainLayout>
+    </SafeAreaView>
   );
 };
 

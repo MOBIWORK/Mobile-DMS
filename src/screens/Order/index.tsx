@@ -11,7 +11,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Image, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { ImageAssets } from '../../assets';
 import { useNavigation } from '@react-navigation/native';
-import FilterView from '../../components/common/FilterView';
 import ButtonFilter from '../../components/common/ButtonFilter';
 import { StyleSheet } from 'react-native';
 import AppContainer from '../../components/AppContainer';
@@ -35,6 +34,7 @@ const OrderList = () => {
   const snapPoints = useMemo(() => ['90%'], []);
   const navigation = useNavigation<NavigationProp>();
 
+  
   const [dataStatus, setDataStatus] = useState<IFilterType[]>([
     {
       label: 'Tất cả',
@@ -364,11 +364,16 @@ const OrderList = () => {
             value={status}
             onPress={() => onOpenBottomSheet('status')}
           />
-          <FilterView
+          {/* <FilterView
             style={{ marginLeft: 8 }}
             onPress={() =>
               bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
             }
+          /> */}
+           <ButtonFilter
+            label="Thời gian"
+            value={timeOrder}
+            onPress={() => onOpenBottomSheet('timeOrder')}
           />
         </View>
         <Text style={[styles.countOrder]}>

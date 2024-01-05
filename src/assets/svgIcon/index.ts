@@ -48,7 +48,7 @@ import GreenEdit from './greenEdit.svg';
 import IconOrder from './iconOrder.svg';
 import RedLocation from './redLocation.svg';
 import CameraPurple from './cameraPurple.svg'
-
+import ChevronDown from './chevron-down.svg'
 export const SvgComponent = {
   IconCustomer,
   IconCustomerActive,
@@ -100,5 +100,6 @@ export const SvgComponent = {
   TrashIcon,
   EmptyNote,
   IconClose,
+  ChevronDown
 };
 export type SvgIconTypes = keyof typeof SvgComponent;

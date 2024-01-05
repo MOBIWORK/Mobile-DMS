@@ -27,6 +27,7 @@ const UtilitiesLoveScreen = () => {
     const changeUtilltiesFavourites = (type: string, item: IWidget) => {
         switch (type) {
             case "add":
+                console.log('run add')
                 if (favourites.length < 4) {
                     setFavourites([...favourites, item]);
                     const newArr = widgets.map(item2 =>item2.id === item.id ? {...item2,isUse :true} : item2)

@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {Accordion, AppContainer,Block} from '../../../../components/common';
+import {ScrollView, StyleSheet,  View} from 'react-native';
+import {Accordion, AppContainer,Block, AppText as Text} from '../../../../components/common';
 import {
   ReportInventoryType,
   ReportProductInventoryType,
@@ -13,7 +13,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const {bottom} = useSafeAreaInsets();
-  console.log(inventoryData,'a')
+  // console.log(inventoryData,'a')
   const ProductItem = (productItem: ReportProductInventoryType) => {
     return (
       <Block paddingHorizontal={16} style={styles.productItemContainer}>
@@ -42,8 +42,14 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
         containerStyle={{backgroundColor:theme.colors.bg_default}}
         title={`Ngày ${inventoryItem.dateTime.toString()}`}>
         <>
+        <Block direction='row' justifyContent='space-between'   paddingHorizontal={16} paddingVertical={8} >
+              <Text fontSize={16} fontWeight='500'   >Sản phẩm</Text>
+              <Text fontSize={16} fontWeight='500'   >Số lượng</Text>
+        </Block>
           {inventoryItem.listProduct.map((item, index) => {
-            return <Block key={index} marginBottom={8} color={'white'}>{ProductItem(item)}</Block>;
+            return <Block key={index} marginBottom={8} block color={'white'}>
+              {ProductItem(item)}
+              </Block>;
           })}
         </>
       </Accordion>

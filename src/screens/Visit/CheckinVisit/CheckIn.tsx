@@ -1,5 +1,5 @@
 import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Block,
   AppText as Text,
@@ -12,17 +12,24 @@ import {NavigationProp, RouterProp} from '../../../navigation';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {VisitListItemType} from '../../../models/types';
-import {Divider} from 'react-native-paper';
+import {Divider, Modal} from 'react-native-paper';
 import {item} from './ultil';
 import ItemCheckIn from './ItemCheckIn';
+import AppImage from '../../../components/common/AppImage';
+import { ScreenConstant } from '../../../const';
 type Props = {};
 
 const CheckIn = (props: Props) => {
   const {goBack} = useNavigation<NavigationProp>();
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const [show, setShow] = useState(false);
+  const [title, setTitle] = useState('Đóng cửa');
   const params: VisitListItemType =
     useRoute<RouterProp<'CHECKIN'>>().params.item;
+
+ 
+
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -39,14 +46,24 @@ const CheckIn = (props: Props) => {
             marginLeft={16}
             marginRight={16}>
             <Block>
-              <SvgIcon source="arrowLeft" size={24} onPress={() => goBack()} />
+              <SvgIcon
+                source="arrowLeft"
+                size={24}
+                onPress={() => setShow(true)}
+              />
             </Block>
             <Text fontSize={14} colorTheme="text" fontWeight="400">
               {' '}
               Viếng thăm {moment(new Date()).format('HH:mm')}
             </Text>
           </Block>
-          <Switch onSwitch={() => {}} title="Mở cửa" />
+          <Switch
+          type='text'
+            onSwitch={() => {
+              title === 'Mở cửa' ? setTitle('Đóng cửa') : setTitle('Mở cửa');
+            }}
+            title={title}
+          />
         </Block>
         <Block colorTheme="white">
           <Block
@@ -60,7 +77,7 @@ const CheckIn = (props: Props) => {
               {params.useName}
             </Text>
           </Block>
-          <Divider horizontalInset />
+         <Block  colorTheme='border'   height={1}  />
           <Block paddingTop={8}>
             <Block
               direction="row"
@@ -94,21 +111,60 @@ const CheckIn = (props: Props) => {
           })}
         </Block>
       </Block>
-      <TouchableOpacity>
+      <TouchableOpacity style={styles.containContainerButton}>
         <Block
           // borderColor="primary"
           marginLeft={16}
           borderColor={theme.colors.primary}
           marginRight={16}
+          colorTheme='bg_default'
           // style={{borderColor:theme.colors.primary} as ViewStyle}
           alignItems="center"
           height={40}
           justifyContent="center"
           borderWidth={1}
           borderRadius={20}>
-          <Text colorTheme="primary"  fontSize={16} lineHeight={21}  fontWeight='500'  >Check out</Text>
+          <Text
+            colorTheme="primary"
+            fontSize={16}
+            lineHeight={21}
+            fontWeight="500">
+            Check out
+          </Text>
         </Block>
       </TouchableOpacity>
+      <Modal
+        visible={show}
+        onDismiss={() => setShow(false)}
+        contentContainerStyle={styles.containerStyle}>
+        <Block
+          colorTheme="white"
+          justifyContent="center"
+          alignItems="center"
+          borderRadius={16}>
+          <AppImage source="ErrorApiIcon" size={40} />
+          <Block marginTop={8} justifyContent="center" alignItems="center">
+            <Text fontSize={16} fontWeight="500" colorTheme="text">
+              Bạn muốn thoát viếng thăm ?
+            </Text>
+          </Block>
+          <Block marginTop={8} direction="row" alignItems="center">
+            <TouchableOpacity
+            onPress={() => setShow(false)}
+              style={styles.containButton('cancel')}>
+              <Text fontSize={14} colorTheme='text_secondary' fontWeight='500'  >Hủy</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+            onPress={() =>{
+              setShow(false)
+              goBack()
+            }}
+              style={styles.containButton('exit')}>
+              <Text fontSize={14} colorTheme='white'  fontWeight='700'   >Thoát</Text>
+            </TouchableOpacity>
+          </Block>
+        </Block>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -122,4 +178,25 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.bg_default,
       // marginHorizontal:16
     } as ViewStyle,
+    containerStyle: {
+      backgroundColor: theme.colors.white,
+      // paddingTop: 20,
+      marginHorizontal: 30,
+      borderRadius: 16,
+    } as ViewStyle,
+    containButton: (title: string) => ({
+      backgroundColor: title === 'exit'  ? theme.colors.primary : theme.colors.bg_neutral,
+      flex: 1,
+      marginHorizontal: 6,
+      marginVertical:8,
+      justifyContent:'center',
+      alignItems:'center',
+      padding:8,
+      borderRadius:20
+      
+    }) as ViewStyle,
+    containContainerButton:{
+      marginBottom:20,
+      backgroundColor:theme.colors.bg_neutral
+    } as ViewStyle
   });

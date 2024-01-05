@@ -36,6 +36,8 @@ import {rootStyles} from './styles';
 import ItemLoading from './components/ItemLoading';
 import CardLoading from './components/CardLoading';
 import ItemNotiLoading from './components/ItemNotiLoading';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppActions, AppSelector} from '../../redux-store';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -48,6 +50,8 @@ const HomeScreen = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
+  const dispatch = useDispatch();
+  const showModal = useSelector(AppSelector.getShowModal);
 
   const [notifiCations, setNotifications] = useState([
     {
@@ -84,7 +88,7 @@ const HomeScreen = () => {
 
   const getWidget = () => {
     if (!widgets) {
-      const arrWg = DataConstant.DataWidget.slice(0, 8);
+      const arrWg = DataConstant.DataWidget.slice(0, 4);
       setWidgets(JSON.stringify(arrWg));
     }
   };
@@ -302,10 +306,11 @@ const HomeScreen = () => {
             size={20}
             mode="contained"
             containerColor={colors.border}
-            onPress={() =>
+            onPress={() => {
               bottomSheetNotification.current &&
-              bottomSheetNotification.current.snapToIndex(0)
-            }
+                bottomSheetNotification.current.snapToIndex(0);
+              dispatch(AppActions.setShowModal(!showModal));
+            }}
           />
         </View>
       </View>
@@ -411,12 +416,12 @@ const HomeScreen = () => {
 
             <View style={styles.map}>
               <Mapbox.MapView
-                pitchEnabled={false}
+                // pitchEnabled={false}
                 attributionEnabled={false}
-                scaleBarEnabled={false}
+                // scaleBarEnabled={false}
                 styleURL={Mapbox.StyleURL.Street}
                 logoEnabled={false}
-                style={{width: '99%', height: 360}}>
+                style={{width: '98%', height: 360, borderRadius: 16}}>
                 <Mapbox.Camera
                   ref={mapboxCameraRef}
                   centerCoordinate={[

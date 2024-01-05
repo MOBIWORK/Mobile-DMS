@@ -51,7 +51,7 @@ export interface IAppRedux {
 export const INITIAL_STATE: IAppRedux = {
   error: undefined,
   isProcessing: false,
-  showModal: true,
+  showModal: false,
   searchProductValue: '',
   searchVisitValue: '',
   theme: 'default',
