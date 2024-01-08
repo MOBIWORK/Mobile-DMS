@@ -34,6 +34,7 @@ import AddNote from './Checkin/Note/AddNote';
 import CheckInLocation from './Checkin/CheckInLocation';
 import CheckIn from './Visit/CheckinVisit/CheckIn';
 import SearchCustomer from './Customer/SearchCustomer';
+import UpdateScreen from './UpdateScreen/UpdateScreen';
 export {
   SelectOrganization,
   SignIn,
@@ -71,7 +72,7 @@ export {
   CheckInLocation,
   CheckIn,
   SearchCustomer,
-  
+  UpdateScreen
 };
 
 
