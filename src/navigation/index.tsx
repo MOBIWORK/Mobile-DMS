@@ -66,6 +66,7 @@ import {
   Inventory,
   InventoryAddProduct,
   RouteResult,
+  
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import { MyAppTheme } from '../layouts/theme';
@@ -117,11 +118,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={Inventory}
         /> */}
         {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} /> */}
-        <Stack.Screen
+        {/* <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> */}
 
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
        
@@ -134,7 +135,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NOTIFYCATION}
           component={NotificationScreen}
         />
+        {/* <Stack.Screen
+        name={ScreenConstant.UPDATE_SCREEN}
+        component={UpdateScreen}
         
+        /> */}
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
           component={ForgotPassword}
@@ -148,7 +153,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
-
         <Stack.Screen
           name={ScreenConstant.LIST_PRODUCT}
           component={ListProduct}

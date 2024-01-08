@@ -64,7 +64,7 @@ export default React.memo(ModalUpdate,isEqual);
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
-      // flex: 1,
+      flex: 1,
       // backgroundColor:theme.colors.white,
       // height:'40%',
     } as ViewStyle,

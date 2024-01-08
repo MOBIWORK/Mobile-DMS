@@ -82,7 +82,6 @@ export {
   CheckInLocation,
   CheckIn,
   SearchCustomer,
-  UpdateScreen,
   Report,
   NonOrderCustomer,
   Statistical,
@@ -92,4 +91,5 @@ export {
   NewCustomer,
   ReportDebt,
   KPI,
+  UpdateScreen
 };

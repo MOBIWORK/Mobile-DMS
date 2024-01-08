@@ -20,12 +20,7 @@ import {ImageAssets} from '../../assets';
 import {AppConstant, ScreenConstant} from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import BarChartStatistical from './BarChart';
-import {
-  AppAvatar,
-  AppContainer,
-  AppIcons,
-  Block,
-} from '../../components/common';
+import {AppAvatar, AppContainer, AppIcons, Block} from '../../components/common';
 
 import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
@@ -50,6 +45,7 @@ import UpdateScreen from '../UpdateScreen/UpdateScreen';
 import ModalUpdate from './components/ModalUpdate';
 import {useBackgroundLocation} from '../../config/function';
 
+
 const HomeScreen = () => {
   const {colors} = useTheme();
   const styles = rootStyles(useTheme());
@@ -62,7 +58,7 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
   const dispatch = useDispatch();
-  // const showModal = useSelector(AppSelector.getShowModal);
+  const showModal = useSelector(AppSelector.getShowModal);
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
@@ -345,7 +341,7 @@ const HomeScreen = () => {
         break;
       }
       case codePush.SyncStatus.UPDATE_INSTALLED: {
-        // codePush.notifyAppReady();
+        codePush.notifyAppReady();
         setUpdateMessage('Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!');
         // setShowModalUpdate(false);
         break;

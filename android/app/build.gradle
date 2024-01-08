@@ -112,7 +112,6 @@ android {
             resValue "string", "CodePushDeploymentKey",""
         }
          releaseStaging {
-    
             resValue "string", "CodePushDeploymentKey", 'sYbkNWwV1OMlC0hSEjARyIn0cRfZdoligQm_u'
             // Note: It's a good idea to provide matchingFallbacks for the new buildType you create to prevent build issues
             // Add the following line if not already there
