@@ -6,6 +6,7 @@ import BottomSheet, {
 import {useTheme} from '@react-navigation/native';
 import {View} from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 const AppBottomSheet: FC<AppBottomSheetProps> = ({
   bottomSheetRef,
   snapPointsCustom,
@@ -96,7 +97,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
 };
 
 interface AppBottomSheetProps {
-  bottomSheetRef: any;
+  bottomSheetRef: React.Ref<BottomSheetMethods>;
   snapPointsCustom?: any;
   hiddenBackdrop?: boolean;
   enablePanDownToClose?: boolean;

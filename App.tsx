@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect} from 'react';
 import 'react-native-gesture-handler';
 import {registerTranslation} from 'react-native-paper-dates';
 
@@ -23,30 +23,27 @@ import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
 import {SnackBar} from './src/components/common/AppSnack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import codePush  from "react-native-code-push";
-
+import codePush from 'react-native-code-push';
 
 
 let codePushOptions = {
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  installMode: codePush.InstallMode.IMMEDIATE
+  checkFrequency: codePush.CheckFrequency.ON_APP_START,
+  installMode: codePush.InstallMode.IMMEDIATE,
 };
 
 function App(): JSX.Element {
+  
 
-  const [updateMessage, setUpdateMessage] = React.useState('');
-  const [updateStatus, setUpdateStatus] = React.useState(-1);
-
-
+  
   useEffect(() => {
     LogBox.ignoreAllLogs();
+    
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => true,
     );
     return () => backHandler.remove();
   }, []);
-
 
   registerTranslation('vi', {
     save: 'Lưu',
@@ -142,65 +139,8 @@ function App(): JSX.Element {
   //     // onHttp.remove();
   //   };
   // }, []);
-  const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
-    console.log('syncStatus', syncStatus);
-    switch (syncStatus) {
-      case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
-        setUpdateMessage('Đang kiểm tra bản cập nhật...');
-        break;
-      }
-      case codePush.SyncStatus.DOWNLOADING_PACKAGE: {
-        setUpdateMessage('Đang tải xuống bản cập nhật...');
-        break;
-      }
-      case codePush.SyncStatus.INSTALLING_UPDATE: {
-        setUpdateMessage('Đang cài đặt bản cập nhật...');
-        break;
-      }
-      case codePush.SyncStatus.UPDATE_INSTALLED: {
-        codePush.notifyAppReady();
-        setUpdateMessage('Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!');
-        break;
-      }
-      case codePush.SyncStatus.UNKNOWN_ERROR: {
-        setUpdateMessage('Cập nhật thất bại!');
-      
-        setTimeout(() => {
-          codePush.restartApp();
-        }, 800);
-        break;
-      }
-      case codePush.SyncStatus.UP_TO_DATE: {
-        // codePush.notifyAppReady();
-        // setTimeout(() => {
-          codePush.restartApp();
-        // }, 800);
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-    setUpdateStatus(syncStatus);
-  }, []);
-
-
-  useEffect(() =>{
-    codePush.sync({
-      updateDialog:{
-        appendReleaseDescription:true,
-        
-      }, 
-      
-      installMode: codePush.InstallMode.ON_NEXT_RESTART,
-      mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
-      
-     
-  },
-  onSyncStatusChanged
-  );
-  },[onSyncStatusChanged])
-
+  
+  // Alert.alert(updateMessage)
 
   return (
     <Provider store={store}>
@@ -211,18 +151,24 @@ function App(): JSX.Element {
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
             {/* <PortalProvider> */}
-              <AppNavigationContainer>
-                <StatusBar backgroundColor={'#fff'} />
-                <HandlingError />
-                <SnackBar />
-              </AppNavigationContainer>
-            {/* </PortalProvider> */}
+      
+            <AppNavigationContainer>
+              <StatusBar backgroundColor={'#fff'} />
+              <HandlingError />
+              <SnackBar />
+            </AppNavigationContainer>
+            {/* </PortalProvider>xs */}
           </GestureHandlerRootView>
           <HandlingLoading />
         </KeyboardAvoidingView>
       </SafeAreaProvider>
     </Provider>
   );
+  // return(
+  //   <Block block middle >
+  //       <AppText>Hello from the another side </AppText>
+  //   </Block>
+  // )
 }
 
 export default codePush(codePushOptions)(App);
