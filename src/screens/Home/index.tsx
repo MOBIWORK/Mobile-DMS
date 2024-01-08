@@ -47,7 +47,7 @@ import ItemNotiLoading from './components/ItemNotiLoading';
 import {useDispatch} from 'react-redux';
 // import {AppActions, AppSelector} from '../../redux-store';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
-import ModalUpdate from './components/ModalUpdate';
+
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import { useSelector } from '../../config/function';
