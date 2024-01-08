@@ -20,7 +20,12 @@ import {ImageAssets} from '../../assets';
 import {AppConstant, ScreenConstant} from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import BarChartStatistical from './BarChart';
-import {AppAvatar, AppContainer, AppIcons, Block} from '../../components/common';
+import {
+  AppAvatar,
+  AppContainer,
+  AppIcons,
+  Block,
+} from '../../components/common';
 
 import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
