@@ -44,13 +44,12 @@ import {rootStyles} from './styles';
 import ItemLoading from './components/ItemLoading';
 import CardLoading from './components/CardLoading';
 import ItemNotiLoading from './components/ItemNotiLoading';
-import {useDispatch} from 'react-redux';
-// import {AppActions, AppSelector} from '../../redux-store';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
 
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import { useSelector } from '../../config/function';
+import ModalUpdate from './components/ModalUpdate';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
