@@ -133,7 +133,7 @@ const ListProduct = () => {
 
   const _renderItemProduct = (item: IProduct) => {
     return (
-      <TouchableOpacity onPress={() => console.log('123')}>
+      <TouchableOpacity onPress={() => navigation.navigate(ScreenConstant.PRODUCT_DETAIL, { item })}>
         <View
           style={{
             borderRadius: 16,
