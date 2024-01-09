@@ -21,7 +21,7 @@ const ModalUpdate = ({show,onPress}: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   return (
-    <Modal visible={show} style={styles.container}>
+    <Modal visible={show} style={styles.container} onDismiss={onPress} >
       <Block
         colorTheme="white"
         paddingHorizontal={16}
@@ -64,7 +64,7 @@ export default React.memo(ModalUpdate,isEqual);
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
-      flex: 1,
+      // flex: 1,
       // backgroundColor:theme.colors.white,
       // height:'40%',
     } as ViewStyle,

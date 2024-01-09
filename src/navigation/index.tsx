@@ -9,7 +9,6 @@ import { AppConstant, ScreenConstant } from '../const';
 import { useMMKVBoolean, useMMKVObject, useMMKVString } from 'react-native-mmkv';
 import {
   IDataCustomer,
-  IProduct,
   IProductList,
   IResOrganization,
   ItemNoteVisitDetail,
@@ -98,18 +97,15 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={Inventory}
         /> */}
         {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} /> */}
-        {/* <Stack.Screen
-          name={ScreenConstant.SELECT_ORGANIZATION}
-          component={SelectOrganization}
-        />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> */}
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
-        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> */}
 
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+       
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen
           name={ScreenConstant.WIDGET_FVR_SCREEN}
@@ -261,7 +257,6 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN]: {
     item: any;
   };
-  [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
   [ScreenConstant.NOTE_DETAIL]: { data: ItemNoteVisitDetail };
