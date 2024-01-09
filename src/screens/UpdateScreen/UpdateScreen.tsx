@@ -1,31 +1,61 @@
 import {
-  StatusBar,
   StyleSheet,
   TextStyle,
-  TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React from 'react';
-import {Block, AppText as Text} from '../../components/common';
+import React, { useEffect } from 'react';
+import {Block, ProgressLinear, AppText as Text} from '../../components/common';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {Modal} from 'react-native-paper';
-import codePush from 'react-native-code-push';
 import AppImage from '../../components/common/AppImage';
 
 
-const UpdateScreen = () => {
-  
+type Props = {
+  progress:number,
+  setScreen:React.Dispatch<React.SetStateAction<boolean>>
+}
+
+
+const UpdateScreen = ({progress,setScreen}:Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  console.log(codePush.SyncStatus);
+
+
+ useEffect(() =>{
+  if(progress < 100 ) return;
+  else if (progress === 100){
+    setScreen(false)
+  }
+ },[progress,setScreen])
+
 
   return (
-   <SafeAreaView style={styles.container}  edges={['bottom','top']}>
-        <Block block middle>
-        <Text>Hello</Text>
+    <SafeAreaView style={styles.container} edges={['bottom', 'top']}>
+      <Block  justifyContent="center" alignItems="center">
+        <AppImage source="LogoMBW" size={40} />
+        <Block
+          marginTop={16}
+          marginBottom={8}
+          middle
+          justifyContent="center"
+          alignItems="center"
+          paddingHorizontal={16}>
+          <Text fontWeight="bold" fontSize={16} lineHeight={24}>
+            Đang cập nhật
+          </Text>
+          <Text
+            textAlign="center"
+            colorTheme="text_secondary"
+            fontSize={14}
+            fontWeight="400">
+            Ứng dụng đang được cập nhật, {'\n'} vui lòng chờ trong giây lát.
+          </Text>
         </Block>
-   </SafeAreaView>
+      </Block>
+      <Block height={10}  paddingHorizontal={80}   >
+        <ProgressLinear strokeWidth={12} progress={progress} />
+      </Block>
+    </SafeAreaView>
   );
 };
 
@@ -35,7 +65,7 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor:theme.colors.white,
+      backgroundColor: theme.colors.white,
       // height:'40%',
     } as ViewStyle,
     textTitle: {
