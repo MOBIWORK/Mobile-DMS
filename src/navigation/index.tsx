@@ -17,6 +17,7 @@ import {AppConstant, ScreenConstant} from '../const';
 import {useMMKVObject} from 'react-native-mmkv';
 import {
   IDataCustomer,
+  IProduct,
   IProductList,
   IResOrganization,
   ItemNoteVisitDetail,
@@ -66,12 +67,12 @@ import {
   InventoryAddProduct,
   RouteResult,
 } from '../screens';
-import {MyAppTheme} from '../layouts/theme';
+// import { MAIN_TAB } from '../const/screen.const';
+import { MyAppTheme } from '../layouts/theme';
 
+// import { MAIN_TAB } from '../const/screen.const';
 
-// import PushNotification from 'react-native-push-notification';
-
-import MainTab, {TabParamList} from './MainTab';
+import MainTab, { TabParamList } from './MainTab';
 import linking from '../utils/linking.utils';
 import { useSelector } from '../config/function';
 import { RXStore } from '../utils/redux';
@@ -105,12 +106,13 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       linking={linking}
       ref={navigationRef}>
       <Stack.Navigator
+        initialRouteName={ScreenConstant.MAIN_TAB}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}
-        initialRouteName={ScreenConstant.MAIN_TAB}>
+        >
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
@@ -129,7 +131,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NOTIFYCATION}
           component={NotificationScreen}
         />
+        {/* <Stack.Screen
+          name={ScreenConstant.UPDATE_SCREEN}
+          component={UpdateScreen}
 
+        /> */}
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
           component={ForgotPassword}
@@ -263,8 +269,8 @@ interface AppNavigationContainerProps {
 export default AppNavigationContainer;
 
 export type RootStackParamList = {
-  [ScreenConstant.SIGN_IN]: {organizationName?: string};
-  [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
+  [ScreenConstant.SIGN_IN]: { organizationName?: string };
+  [ScreenConstant.SELECT_ORGANIZATION]: { data?: string };
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
   [ScreenConstant.HOME_SCREEN]: undefined;
@@ -274,9 +280,9 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: {
-    item: IProductList;
+    item: IProduct
   };
-  [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.IMAGE_VIEW]: { data: any };
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
@@ -290,9 +296,9 @@ export type RootStackParamList = {
   [ScreenConstant.CKECKIN_ORDER_CREATE]: undefined;
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
-  [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
-  [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
+  [ScreenConstant.DETAIL_CUSTOMER]: { data: IDataCustomer };
+  [ScreenConstant.VISIT_DETAIL]: { data: VisitListItemType };
+  [ScreenConstant.REPORT_ORDER_DETAIL]: { item: ReportOrderItemType };
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
@@ -302,7 +308,7 @@ export type RootStackParamList = {
   [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
-  [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
+  [ScreenConstant.NOTE_DETAIL]: { data: ItemNoteVisitDetail };
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;

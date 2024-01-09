@@ -428,3 +428,30 @@ export type ReportKPIType = {
   visit: ReportKPIItemType;
   newCustomer: ReportKPIItemType;
 };
+type UinitProduct = {
+  uom : string;
+  price_list_rate : number;
+  valid_from : string;
+  currency : string
+}
+
+type DataUnit = {
+  uom : string;
+  conversion_factor : string;
+}
+
+export type IProduct = {
+  name : string;
+  item_code : string;
+  item_name : string;
+  item_group : string;
+  stock_uom : string;
+  min_order_qty : number;
+  description : string;
+  brand : string;
+  country_of_origin : string;
+  image : string;
+  custom_industry : string;
+  detail : UinitProduct;
+  unit : DataUnit[]
+}

@@ -18,6 +18,8 @@ export const STT_NOT_MODIFIED = 304;
 
 const URL_PREFIX = '/api/method/mbw_service_v2.api';
 const URL = '/api/method'
+// const URL_PREFIX = '/api/method/mbw_dms';
+// const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
 
 //POST
 export const POST_USER_LOGIN = URL_PREFIX + '.auth.login';
@@ -28,3 +30,10 @@ export const POST_RESET_PASSWORD = URL_PREFIX + '.auth.reset_password';
 
 export const PUT_USER_PROFILE = URL_PREFIX + '.user.update_profile';
 export const POST_CHECKIN = URL + '.mbw_dms.api.checkin.create_checkin'
+
+
+// Product
+export const GET_PRODUCT = URL_PREFIX +  ".api.selling.product.list_product";
+export const GET_BRAND_PRODUCT = URL_PREFIX +  "..api.selling.product.list_brand";
+export const GET_INDUSTRY_PRODUCT = URL_PREFIX +  ".api.selling.product.list_industry";
+export const GET_GROUP_PRODUCT = URL_PREFIX +  ".api.selling.product.list_item_group";

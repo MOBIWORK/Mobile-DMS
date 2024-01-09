@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {AppContainer, AppHeader} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
-import {useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation';
+import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
+import {NavigationProp, RouterProp} from '../../../navigation';
 import ProductDetailTab, {PRODUCT_DETAIL_TAB_VALUES} from './ProductDetailTab';
 import {AppConstant} from '../../../const';
 import Overview from './Overview';
@@ -17,6 +17,8 @@ const ProductDetail = () => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const router = useRoute<RouterProp<"PRODUCT_DETAIL">>();
+  const data = router.params.item;
   const {bottom} = useSafeAreaInsets();
 
   const [overviewData, setOverviewData] = useState<IProductOverview | null>(
@@ -27,9 +29,6 @@ const ProductDetail = () => {
     PRODUCT_DETAIL_TAB_VALUES.tong_quan,
   );
 
-  useEffect(() => {
-    setOverviewData(OverviewData);
-  }, []);
 
   return (
     <MainLayout
@@ -48,9 +47,9 @@ const ProductDetail = () => {
       />
       <AppContainer style={{marginBottom: bottom}}>
         {selectedTab === PRODUCT_DETAIL_TAB_VALUES.tong_quan ? (
-          overviewData && <Overview overviewData={overviewData} />
+          data && <Overview overviewData={data} />
         ) : selectedTab === PRODUCT_DETAIL_TAB_VALUES.don_vi_tinh ? (
-          <Unit />
+          <Unit data={data} />
         ) : (
           <Inventory inventoryData={InventoryData} />
         )}
@@ -60,43 +59,6 @@ const ProductDetail = () => {
 };
 
 export default ProductDetail;
-
-const OverviewData: IProductOverview = {
-  name: 'MacBook Air M2 2022 (8GB RAM | 256GB SSD)',
-  code: 'Sp-1234',
-  unit: 'Chiếc',
-  price: 39000000,
-  trademark: 'Apple',
-  commodity_industry: null,
-  note: 'Gần bốn năm sau bản nâng cấp lớn với màn hình Retina, Apple tiếp tục “đại tu” MacBook Air với thiết kế mới. Máy được làm vuông hơn, các cạnh bo cong và độ dày dàn đều tương tự MacBook Pro 14 hoặc 16 inch. Cân nặng của sản phẩm là 1,22 kg, mỏng 11 mm cùng lớp vỏ nhôm nguyên khối....',
-  image: [
-    ImageAssets.ImgAppWatch,
-    ImageAssets.ImgAppWatch,
-    ImageAssets.ImgAppWatch,
-    ImageAssets.ImgAppWatch,
-    ImageAssets.ImgAppWatch,
-    ImageAssets.ImgAppWatch,
-    ImageAssets.ImgAppWatch,
-    ImageAssets.ImgAppWatch,
-  ],
-  file: [
-    {
-      file_name: 'file A',
-      size: 137,
-      url: 'https://thientonphatquang.com/',
-    },
-    {
-      file_name: 'file B',
-      size: 167,
-      url: 'https://thientonphatquang.com/',
-    },
-    {
-      file_name: 'file X',
-      size: 97,
-      url: 'https://thientonphatquang.com/',
-    },
-  ],
-};
 
 const InventoryData: IProductInventory[] = [
   {
