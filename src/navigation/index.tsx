@@ -1,14 +1,15 @@
-import React, {FC, useEffect} from 'react';
-import type {RouteProp} from '@react-navigation/native';
-import {NavigationContainer} from '@react-navigation/native';
-import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigatorScreenParams} from '@react-navigation/native';
-import {AppConstant, ScreenConstant} from '../const';
+import React, { FC, useEffect } from 'react';
+import type { RouteProp } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { AppConstant, ScreenConstant } from '../const';
 
-import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
+import { useMMKVBoolean, useMMKVObject, useMMKVString } from 'react-native-mmkv';
 import {
   IDataCustomer,
+  IProduct,
   IProductList,
   IResOrganization,
   ItemNoteVisitDetail,
@@ -51,22 +52,22 @@ import {
   UpdateScreen,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
-import {MyAppTheme} from '../layouts/theme';
+import { MyAppTheme } from '../layouts/theme';
 
 // import { MAIN_TAB } from '../const/screen.const';
 
-import {IAppReduxState} from '../redux-store';
+import { IAppReduxState } from '../redux-store';
 
 // import PushNotification from 'react-native-push-notification';
-import {useSelector} from 'react-redux';
-import MainTab, {TabParamList} from './MainTab';
+import { useSelector } from 'react-redux';
+import MainTab, { TabParamList } from './MainTab';
 import linking from '../utils/linking.utils';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const {theme} = useSelector((state: IAppReduxState) => state.appRedux);
+  const { theme } = useSelector((state: IAppReduxState) => state.appRedux);
   const [organiztion] = useMMKVObject<IResOrganization>(
     AppConstant.Organization,
   );
@@ -86,6 +87,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   return (
     <NavigationContainer theme={MyAppTheme[theme]} linking={linking} >
       <Stack.Navigator
+        initialRouteName={ScreenConstant.MAIN_TAB}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -101,9 +103,13 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={SelectOrganization}
         />
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> */}
-
+        <Stack.Screen
+          name={ScreenConstant.SELECT_ORGANIZATION}
+          component={SelectOrganization}
+        />
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
-       
+
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen
           name={ScreenConstant.WIDGET_FVR_SCREEN}
@@ -114,9 +120,9 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={NotificationScreen}
         />
         <Stack.Screen
-        name={ScreenConstant.UPDATE_SCREEN}
-        component={UpdateScreen}
-        
+          name={ScreenConstant.UPDATE_SCREEN}
+          component={UpdateScreen}
+
         />
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
@@ -131,7 +137,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
-        
+
         <Stack.Screen
           name={ScreenConstant.LIST_PRODUCT}
           component={ListProduct}
@@ -219,8 +225,8 @@ interface AppNavigationContainerProps {
 export default AppNavigationContainer;
 
 export type RootStackParamList = {
-  [ScreenConstant.SIGN_IN]: {organizationName?: string};
-  [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
+  [ScreenConstant.SIGN_IN]: { organizationName?: string };
+  [ScreenConstant.SELECT_ORGANIZATION]: { data?: string };
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
   [ScreenConstant.HOME_SCREEN]: undefined;
@@ -230,9 +236,9 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: {
-    item:IProductList
+    item: IProduct
   };
-  [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.IMAGE_VIEW]: { data: any };
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
@@ -246,19 +252,19 @@ export type RootStackParamList = {
   [ScreenConstant.CKECKIN_ORDER_CREATE]: undefined;
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
-  [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
-  [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
+  [ScreenConstant.DETAIL_CUSTOMER]: { data: IDataCustomer };
+  [ScreenConstant.VISIT_DETAIL]: { data: VisitListItemType };
+  [ScreenConstant.REPORT_ORDER_DETAIL]: { item: ReportOrderItemType };
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
   [ScreenConstant.CHECKIN]: {
     item: any;
   };
-  [ScreenConstant.UPDATE_SCREEN]:any;
+  [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
-  [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
+  [ScreenConstant.NOTE_DETAIL]: { data: ItemNoteVisitDetail };
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
