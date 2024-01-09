@@ -113,11 +113,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NOTIFYCATION}
           component={NotificationScreen}
         />
-        <Stack.Screen
-        name={ScreenConstant.UPDATE_SCREEN}
-        component={UpdateScreen}
-        
-        />
+
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
           component={ForgotPassword}
