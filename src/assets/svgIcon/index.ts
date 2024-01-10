@@ -49,7 +49,26 @@ import IconOrder from './iconOrder.svg';
 import RedLocation from './redLocation.svg';
 import CameraPurple from './cameraPurple.svg'
 import ChevronDown from './chevron-down.svg'
+import NewCustomerIcon from './newCustomerIcon.svg';
+import ReportCustomerDebtIcon from './reportCustomerDebtIcon.svg';
+import ReportKPI from './reportKPIIcon.svg';
+import ReportOrder from './reportOrderIcon.svg';
+import ReportTravel from './reportTravelIcon.svg';
+import StatisticalIcon from './statisticalIcon.svg'
+import ReportVisit from './reportVistIcon.svg';
+import EmptyOrderCustomer from './emptyOrderCustomerIcon.svg';
+import ReportLine from './reportLineIcon.svg'
+
 export const SvgComponent = {
+  NewCustomerIcon,
+  ReportCustomerDebtIcon,
+  ReportLine,
+  ReportKPI,
+  ReportOrder,
+  ReportTravel,
+  StatisticalIcon,
+  ReportVisit,
+  EmptyOrderCustomer,
   IconCustomer,
   IconCustomerActive,
   IconHome,

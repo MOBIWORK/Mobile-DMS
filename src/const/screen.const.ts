@@ -70,3 +70,4 @@ export const CHECKIN =  'CHECKIN'
 export const SEARCH_CUSTOMER =  'SEARCH_CUSTOMER';
 export const CHECKIN_ORDER = 'CHECKIN_ORDER'
 export const UPDATE_SCREEN = 'UPDATE_SCREEN'
+export const REPORT_SCREEN ='REPORT_SCREEN'

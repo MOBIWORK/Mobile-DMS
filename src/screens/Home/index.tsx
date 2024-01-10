@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {View, Text, Image, Linking, Platform} from 'react-native';
+import {View, Text, Image, Linking, Platform, Alert} from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -49,6 +49,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppActions, AppSelector} from '../../redux-store';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
 import ModalUpdate from './components/ModalUpdate';
+import {useBackgroundLocation} from '../../config/function';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -58,7 +59,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
-  const [location, setLocation] = useState<Location | null>(null);
+  // const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
   const dispatch = useDispatch();
@@ -69,6 +70,7 @@ const HomeScreen = () => {
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
   const [screen, setScreen] = useState(false);
+  const {location, error} = useBackgroundLocation();
   const syncWithCodePush = (status: number) => {
     console.log('Codepush sync status', status);
   };
@@ -302,9 +304,15 @@ const HomeScreen = () => {
 
   useLayoutEffect(() => {
     setLoading(true);
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+    BackgroundGeolocation.getCurrentPosition({
+      samples: 1,
+      timeout: 30,
+      maximumAge: 0,
+      persist: false,
+      desiredAccuracy: 10,
+    })
       .then(location => {
-        setLocation(location);
+        // setLocation(location);
         mapboxCameraRef.current?.flyTo(
           [location.coords.longitude, location.coords.latitude],
           1000,
@@ -624,16 +632,19 @@ const HomeScreen = () => {
             />
           </>
         ) : (
-          <UpdateScreen   progress={updatePercent} setScreen={setScreen} />
+          <UpdateScreen progress={updatePercent} setScreen={setScreen} />
         )}
       </Block>
 
       {/* <Block block > */}
-      <ModalUpdate show={showModalHotUpdate} onPress={() => {
-        setScreen(true)
-        setShowModalHotUpdate(false)
-        dispatch(AppActions.setShowModal(true))
-      }} />
+      <ModalUpdate
+        show={showModalHotUpdate}
+        onPress={() => {
+          setScreen(true);
+          setShowModalHotUpdate(false);
+          dispatch(AppActions.setShowModal(true));
+        }}
+      />
       {/* </Block> */}
     </SafeAreaView>
   );

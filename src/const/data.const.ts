@@ -1,6 +1,4 @@
 import {ScreenConstant} from '.';
-import {Colors} from '../assets';
-import {SvgComponent} from '../assets/svgIcon';
 import {IFilterType} from '../components/common/FilterListComponent';
 import {IWidget} from '../models/types';
 
@@ -51,7 +49,7 @@ export const DataWidget: IWidget[] = [
     id: 8,
     name: 'Báo cáo',
     icon: 'iconBar',
-    navigate: '',
+    navigate: ScreenConstant.REPORT_SCREEN,
   },
 ];
 

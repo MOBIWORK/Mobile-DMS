@@ -1,7 +1,8 @@
 import React, {FC} from 'react';
 import {AppHeader} from './index';
 import {View, Text} from 'react-native';
-import {useTheme} from '@react-navigation/native';
+import { useTheme } from '../../layouts/theme';
+
 const AuthenHeader: FC<AuthenHeaderProps> = ({title, description, onBack}) => {
   const {colors} = useTheme();
   return (
