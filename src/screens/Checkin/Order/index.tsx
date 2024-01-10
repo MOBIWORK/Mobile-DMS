@@ -7,8 +7,8 @@ import { Button } from 'react-native-paper'
 import { AppTheme, useTheme } from '../../../layouts/theme'
 import { ImageAssets } from '../../../assets'
 import { Image } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
-import { NavigationProp } from '../../../navigation'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { NavigationProp, RouterProp } from '../../../navigation'
 import { ScreenConstant } from '../../../const'
 
 const CheckinOrder = () => {
@@ -16,25 +16,27 @@ const CheckinOrder = () => {
     const { colors } = useTheme();
     const navigation = useNavigation<NavigationProp>();
     const styles = createSheetStyle(useTheme());
+    const router = useRoute<RouterProp<"CKECKIN_ORDER">>()
+    const type = router.params.type;
 
     return (
         <MainLayout style={styles.layout} >
 
-            <AppHeader label='Đặt hàng' onBack={()=> navigation.goBack()} />
+            <AppHeader label={type === "ORDER" ? "Đặt hàng" :"Trả hàng"} onBack={()=> navigation.goBack()} />
 
             <AppContainer>
                 <View>
                     <View style={[styles.containerNodata as any]}>
                         <View style={{ alignItems: "center" }}>
                             <Image style={styles.iconImage} source={ImageAssets.IconOrder} resizeMode='cover' />
-                            <Text style={[styles.lableNoOr]}>Chưa có đơn đặt hàng</Text>
+                            <Text style={[styles.lableNoOr]}>{type=="ORDER" ? "Chưa có đơn đặt hàng" :"Chưa có đơn trả hàng"}</Text>
                         </View>
                         <View style={{marginTop : 16}}>
                             <Button
                                 style={{borderColor: colors.action }}
                                 textColor={colors.action}
                                 labelStyle={[styles.textBt]}
-                                icon="plus" mode="outlined" onPress={() => navigation.navigate(ScreenConstant.CKECKIN_ORDER_CREATE)} >
+                                icon="plus" mode="outlined" onPress={() => navigation.navigate(ScreenConstant.CKECKIN_ORDER_CREATE,{type : type})} >
                                 Tạo đơn
                             </Button>
                         </View>
