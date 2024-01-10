@@ -10,6 +10,7 @@ export interface IItemCheckIn {
   isDone: boolean;
   screenName:any,
   backgroundColor:keyof Colors
+  type?:string
 }
 export const item: IItemCheckIn[] = [
   {
@@ -34,9 +35,9 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: true,
     name: 'Đặt hàng',
-    screenName:'CHECKIN_ORDER',
-    backgroundColor:'blueBackground'
-
+    screenName:'CKECKIN_ORDER',
+    backgroundColor:'blueBackground',
+    type : "ORDER"
   },
   {
     icon: 'GreenEdit',
@@ -59,7 +60,8 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Trả hàng',
-    screenName:'ADVANCE',
-    backgroundColor:'undoBackground'
+    screenName:'CKECKIN_ORDER',
+    backgroundColor:'undoBackground',
+    type :"RETURN_ORDER"
   },
 ];

@@ -1,8 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { MainLayout } from '../../../layouts'
 import { AppBottomSheet, AppButton, AppContainer, AppHeader, AppIcons, AppInput } from '../../../components/common'
-import { useNavigation } from '@react-navigation/native'
-import { NavigationProp } from '../../../navigation'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { NavigationProp, RouterProp } from '../../../navigation'
 import { ImageStyle, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native'
 import { AppTheme, useTheme } from '../../../layouts/theme'
 import { Button, TextInput } from 'react-native-paper'
@@ -23,27 +23,29 @@ const CreateOrder = () => {
     const bottomSheetRef = useRef<BottomSheet>(null);
     const bottomSheetWh = useRef<BottomSheet>(null);
     const snapPointDetail = useMemo(() => ["70%"], []);
+    const router = useRoute<RouterProp<"CKECKIN_ORDER">>()
+    const type = router.params.type;
 
-    const [date,setDate] = useState<number>(new Date().getTime())
-    const [DataWarehouse,setDataWarehouse] = useState<IFilterType[]>([
+    const [date, setDate] = useState<number>(new Date().getTime())
+    const [DataWarehouse, setDataWarehouse] = useState<IFilterType[]>([
         {
-            label :"Hn-1946",
-            value : 1,
-            isSelected : false
+            label: "Hn-1946",
+            value: 1,
+            isSelected: false
         },
         {
-            label :"Aphal-TEST",
-            value : 2,
-            isSelected : false
+            label: "Aphal-TEST",
+            value: 2,
+            isSelected: false
         }
     ])
 
-    const [warehouse,setWarehouse] = useState<IFilterType>();
+    const [warehouse, setWarehouse] = useState<IFilterType>();
     const [products, setPrpducts] = useState<any[]>([{}]);
     const [productsKm, setPrpductsKm] = useState<any[]>([{}]);
     const [toggleTab, setToggleTab] = useState<number>(1);
     const [totalPrice, setTotalPrice] = useState<number>(4100000);
-    const [number,setNumber] = useState(1)
+    const [number, setNumber] = useState(1)
 
 
     const renderUiNoData = () => {
@@ -80,22 +82,28 @@ const CreateOrder = () => {
     }
 
     const toggleButtonUi = (tab: number, productKm: number) => {
-        return (
-            <View style={[styles.flexSpace, { marginBottom: 20 }]}>
-                <Pressable
-                    onPress={() => setToggleTab(1)}
-                    style={[styles.toggleBt(tab == 1 ? true : false)]}
-                >
-                    <Text style={[styles.txTgBt(tab == 1 ? true : false)]}>Sản phẩm</Text>
-                </Pressable>
-                <Pressable
-                    onPress={() => setToggleTab(2)}
-                    style={[styles.toggleBt(tab == 2 ? true : false)]}
-                >
-                    <Text style={[styles.txTgBt(tab == 2 ? true : false)]}>Sản phẩm KM ({productKm})</Text>
-                </Pressable>
-            </View>
-        )
+        if (type == "ORDER") {
+
+            return (
+                <View style={[styles.flexSpace, { marginBottom: 20 }]}>
+                    <Pressable
+                        onPress={() => setToggleTab(1)}
+                        style={[styles.toggleBt(tab == 1 ? true : false)]}
+                    >
+                        <Text style={[styles.txTgBt(tab == 1 ? true : false)]}>Sản phẩm</Text>
+                    </Pressable>
+                    <Pressable
+                        onPress={() => setToggleTab(2)}
+                        style={[styles.toggleBt(tab == 2 ? true : false)]}
+                    >
+                        <Text style={[styles.txTgBt(tab == 2 ? true : false)]}>Sản phẩm KM ({productKm})</Text>
+                    </Pressable>
+                </View>
+            )
+        } else {
+            return ""
+        }
+
     }
 
     const renderProduct = (tab: number) => {
@@ -175,64 +183,67 @@ const CreateOrder = () => {
                 <AppInput label='Đơn giá'
                     value='500.000'
                     hiddenRightIcon
-                    editable ={false}
-                    styles={{backgroundColor :colors.bg_neutral}}
+                    editable={false}
+                    styles={{ backgroundColor: colors.bg_neutral }}
                     rightIcon={
-                        <TextInput.Affix text='VND' textStyle={{color :colors.text_secondary ,fontSize :12}} />
+                        <TextInput.Affix text='VND' textStyle={{ color: colors.text_secondary, fontSize: 12 }} />
                     }
                 />
                 <AppInput label='Số lượng'
                     value='3'
                     hiddenRightIcon
                 />
-                
+
                 <AppInput label='Thành tiền'
                     value='1.500.000'
                     hiddenRightIcon
                     editable={false}
-                    styles={{backgroundColor :colors.bg_neutral}}
+                    styles={{ backgroundColor: colors.bg_neutral }}
                     rightIcon={
-                        <TextInput.Affix text='VND' textStyle={{color :colors.text_secondary ,fontSize :12}} />
+                        <TextInput.Affix text='VND' textStyle={{ color: colors.text_secondary, fontSize: 12 }} />
                     }
                 />
             </View>
         )
     }
 
-    const onChangeWarehouse = (item : IFilterType) =>{
+    const onChangeWarehouse = (item: IFilterType) => {
         setWarehouse(item);
-        const newWhs = DataWarehouse.map(item1=> item1.value == item.value ? {...item,isSelected : true} : {...item1,isSelected :false});
+        const newWhs = DataWarehouse.map(item1 => item1.value == item.value ? { ...item, isSelected: true } : { ...item1, isSelected: false });
         setDataWarehouse(newWhs);
     }
 
     return (
         <>
             <MainLayout style={styles.layout}>
-                <AppHeader label='Tạo đơn đặt' onBack={() => navigation.goBack()} />
+                <AppHeader style={{ paddingHorizontal: 16 }} label={type == "ORDER" ? "Tạo đơn đặt" : "Tạo đơn trả hàng"} onBack={() => navigation.goBack()} />
                 <AppContainer style={styles.appContainer}>
                     <View style={{ rowGap: 20, paddingHorizontal: 16 }}>
 
                         <View style={{ rowGap: 20 }}>
-                            <AppInput
-                                label='Ngày giao'
-                                value={CommonUtils.convertDate(date)}
-                                disable
-                                rightIcon={
-                                    <TextInput.Icon
-                                        icon={'calendar-month-outline'}
-                                        size={20}
-                                        color={colors.text_secondary}
-                                    />
-                                }
-                            />
+                            {type == "ORDER" && (
+                                <AppInput
+                                    label='Ngày giao'
+                                    value={CommonUtils.convertDate(date)}
+                                    disable
+                                    rightIcon={
+                                        <TextInput.Icon
+                                            icon={'calendar-month-outline'}
+                                            size={20}
+                                            color={colors.text_secondary}
+                                        />
+                                    }
+                                />
+                            )}
+
                             <AppInput
                                 label='Kho xuất'
                                 value={warehouse?.label ? warehouse.label : ""}
                                 editable={false}
-                                onPress={()=> bottomSheetWh.current && bottomSheetWh.current.snapToIndex(0)}
+                                onPress={() => bottomSheetWh.current && bottomSheetWh.current.snapToIndex(0)}
                                 rightIcon={
                                     <TextInput.Icon
-                                        onPress={()=> bottomSheetWh.current && bottomSheetWh.current.snapToIndex(0)}
+                                        onPress={() => bottomSheetWh.current && bottomSheetWh.current.snapToIndex(0)}
                                         icon={'chevron-down'}
                                         color={colors.text_secondary}
                                     />
@@ -385,21 +396,22 @@ const CreateOrder = () => {
                         }
                     />
                     {renderDetailProduct()}
-                    <View style={[styles.flexSpace,{marginTop :36}]}>
-                        <AppButton 
-                            style={{width :"49%",backgroundColor :colors.bg_neutral}} 
-                            styleLabel={{color :colors.text_secondary}} 
-                            label='Huỷ' 
-                            onPress={()=> bottomSheetRef.current && bottomSheetRef.current.close()}
+                    <View style={[styles.flexSpace, { marginTop: 36 }]}>
+                        <AppButton
+                            style={{ width: "49%", backgroundColor: colors.bg_neutral }}
+                            styleLabel={{ color: colors.text_secondary }}
+                            label='Huỷ'
+                            onPress={() => bottomSheetRef.current && bottomSheetRef.current.close()}
                         />
-                        <AppButton style={{width :"49%"}} label='Cập nhật' onPress={()=> console.log(1)}/>
+                        <AppButton style={{ width: "49%" }} label='Cập nhật' onPress={() => console.log(1)} />
                     </View>
                 </View>
 
             </AppBottomSheet>
             <AppBottomSheet bottomSheetRef={bottomSheetWh} snapPointsCustom={snapPointDetail}>
-                <FilterListComponent title='Kho xuất' data={DataWarehouse} 
-                    onClose={() =>console.log(1)}
+                <FilterListComponent title='Kho xuất' data={DataWarehouse}
+                    searchPlaceholder='Tìm kiém kho hàng'
+                    onClose={() => console.log(1)}
                     handleItem={onChangeWarehouse}
                 />
             </AppBottomSheet>
