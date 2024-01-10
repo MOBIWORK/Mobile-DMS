@@ -179,43 +179,10 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
     );
   };
 
-  const _renderFile = () => {
-    return (
-      <View style={{ marginTop: 16 }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: colors.bg_default,
-            padding: 16,
-            marginVertical: 4,
-            marginHorizontal: 16,
-            borderRadius: 16,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-          }}>
-          <Image
-            source={ImageAssets.ImgFile}
-            style={{ width: 28, height: 28 }}
-            resizeMode={'cover'}
-          />
-          <View style={{ rowGap: 5, marginLeft: 16 }}>
-            <Text style={{ color: colors.text_primary }}>
-              File A
-            </Text>
-            <Text style={{ color: colors.text_secondary }}>
-              123 MB
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
   return (
     <>
       {_renderInfo()}
       {_renderImg()}
-      {_renderFile()}
     </>
   );
 };
