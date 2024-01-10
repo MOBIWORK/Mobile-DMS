@@ -1,6 +1,6 @@
-import React, {FC, useEffect} from 'react';
-import type {RouteProp} from '@react-navigation/native';
-import {NavigationContainer} from '@react-navigation/native';
+import React, {FC, createRef, useEffect} from 'react';
+import type {NavigationAction, NavigationContainerRef, RouteProp} from '@react-navigation/native';
+import {CommonActions, NavigationContainer, StackActions} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigatorScreenParams} from '@react-navigation/native';
@@ -49,6 +49,9 @@ import {
   CheckIn,
   SearchCustomer,
   UpdateScreen,
+  Report,
+  NonOrderCustomer,
+  Statistical,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -61,6 +64,7 @@ import {IAppReduxState} from '../redux-store';
 import {useSelector} from 'react-redux';
 import MainTab, {TabParamList} from './MainTab';
 import linking from '../utils/linking.utils';
+
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -84,7 +88,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   // }, []);
 
   return (
-    <NavigationContainer theme={MyAppTheme[theme]} linking={linking} >
+    <NavigationContainer theme={MyAppTheme[theme]} linking={linking} ref={navigationRef}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -103,7 +107,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> */}
 
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
-       
+
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen
           name={ScreenConstant.WIDGET_FVR_SCREEN}
@@ -127,7 +131,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
-        
+
         <Stack.Screen
           name={ScreenConstant.LIST_PRODUCT}
           component={ListProduct}
@@ -202,6 +206,12 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_CUSTOMER}
           component={SearchCustomer}
         />
+        <Stack.Screen name={ScreenConstant.REPORT_SCREEN} component={Report} />
+        <Stack.Screen name={ScreenConstant.STATISTICAL} component={Statistical} />
+        <Stack.Screen
+          name={ScreenConstant.NON_ORDER_CUSTOMER}
+          component={NonOrderCustomer}
+        />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -226,7 +236,7 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: {
-    item:IProductList
+    item: IProductList;
   };
   [ScreenConstant.IMAGE_VIEW]: {data: any};
   [ScreenConstant.ORDER_SCREEN]: undefined;
@@ -251,7 +261,7 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN]: {
     item: any;
   };
-  [ScreenConstant.UPDATE_SCREEN]:any;
+  [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
   [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
@@ -259,6 +269,9 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_ORDER]: undefined;
+  [ScreenConstant.REPORT_SCREEN]: undefined;
+  [ScreenConstant.STATISTICAL]: undefined;
+  [ScreenConstant.NON_ORDER_CUSTOMER]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute
@@ -268,3 +281,32 @@ export type RouterProp<RouteName extends keyof RootStackParamList> = RouteProp<
   RootStackParamList,
   RouteName
 >;
+export const navigationRef =
+  createRef<NavigationContainerRef<RootStackParamList>>();
+
+export function navigate<RouteName extends keyof RootStackParamList>(
+  ...arg: undefined extends RootStackParamList[RouteName]
+    ?
+        | [screen: RouteName]
+        | [screen: RouteName, params?: RootStackParamList[RouteName]]
+    : [screen: RouteName, params?: RootStackParamList[RouteName]]
+) {
+  navigationRef.current?.navigate(
+    arg[0] as any,
+    arg.length > 1 ? arg[1] : undefined,
+  );
+}
+export function goBack() {
+  navigationRef.current?.dispatch(CommonActions.goBack);
+}
+
+export function pop(screenCount: number) {
+  navigationRef?.current?.dispatch(StackActions.pop(screenCount));
+}
+
+export function dispatch(action: NavigationAction) {
+  navigationRef.current?.dispatch(action);
+}
+export function popToTop() {
+  navigationRef.current?.dispatch(StackActions.popToTop());
+}

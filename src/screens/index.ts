@@ -35,6 +35,9 @@ import CheckInLocation from './Checkin/CheckInLocation';
 import CheckIn from './Visit/CheckinVisit/CheckIn';
 import SearchCustomer from './Customer/SearchCustomer';
 import UpdateScreen from './UpdateScreen/UpdateScreen';
+import Report from './Report/Report'
+import NonOrderCustomer from './NonOrderCustomer/NonOrderCustomer';
+import Statistical from './Statistical/Statistical';
 export {
   SelectOrganization,
   SignIn,
@@ -72,7 +75,10 @@ export {
   CheckInLocation,
   CheckIn,
   SearchCustomer,
-  UpdateScreen
+  UpdateScreen,
+  Report,
+  NonOrderCustomer,
+  Statistical
 };
 
 

@@ -25,6 +25,7 @@ import { Block } from './Block/index';
 import BottomSheet from './CustomBottomSheet/index';
 import Accordion from './Accordion/Accordion';
 import { ProgressLinear } from './Progress/index';
+import AppImage from './AppImage';
 
 
 export {
@@ -53,6 +54,7 @@ export {
   AppCheckBox,
   BottomSheet,
   Accordion,
-  ProgressLinear
+  ProgressLinear,
+  AppImage
   
 };

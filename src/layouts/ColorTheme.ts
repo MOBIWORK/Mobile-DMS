@@ -33,7 +33,8 @@ export const ColorDefault = {
   blueBackground:'#1877F214',
   greenBackground:'#22C55E14',
   redBackground:'#FF563014',
-  undoBackground:'#00B8D914'
+  undoBackground:'#00B8D914',
+  primaryBackground:'#C4161C14'
 
 
 
@@ -71,5 +72,7 @@ export const ColorDark = {
   blueBackground:'#1877F214',
   greenBackground:'#22C55E14',
   redBackground:'#FF563014',
-  undoBackground:'#00B8D914'
+  undoBackground:'#00B8D914',
+  primaryBackground:'#C4161C14'
+
 };

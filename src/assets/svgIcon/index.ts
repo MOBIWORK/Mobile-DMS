@@ -58,8 +58,9 @@ import StatisticalIcon from './statisticalIcon.svg'
 import ReportVisit from './reportVistIcon.svg';
 import EmptyOrderCustomer from './emptyOrderCustomerIcon.svg';
 import ReportLine from './reportLineIcon.svg'
-
+import MoneyIcon from './moneyIcon.svg';
 export const SvgComponent = {
+  MoneyIcon,
   NewCustomerIcon,
   ReportCustomerDebtIcon,
   ReportLine,
