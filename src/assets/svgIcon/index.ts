@@ -49,6 +49,16 @@ import IconOrder from './iconOrder.svg';
 import RedLocation from './redLocation.svg';
 import CameraPurple from './cameraPurple.svg';
 import ChevronDown from './chevron-down.svg';
+import NewCustomerIcon from './newCustomerIcon.svg';
+import ReportCustomerDebtIcon from './reportCustomerDebtIcon.svg';
+import ReportKPI from './reportKPIIcon.svg';
+import ReportOrder from './reportOrderIcon.svg';
+import ReportTravel from './reportTravelIcon.svg';
+import StatisticalIcon from './statisticalIcon.svg';
+import ReportVisit from './reportVistIcon.svg';
+import EmptyOrderCustomer from './emptyOrderCustomerIcon.svg';
+import ReportLine from './reportLineIcon.svg';
+import MoneyIcon from './moneyIcon.svg';
 import ChevronDownFill from './chervron-down-fill.svg';
 import Dot from './dot.svg';
 import Money from './money.svg';
@@ -57,6 +67,16 @@ import NotVisit from './notVisit.svg';
 import Folder from './folder.svg';
 import UserGroup2 from './userGroup.svg';
 export const SvgComponent = {
+  MoneyIcon,
+  NewCustomerIcon,
+  ReportCustomerDebtIcon,
+  ReportLine,
+  ReportKPI,
+  ReportOrder,
+  ReportTravel,
+  StatisticalIcon,
+  ReportVisit,
+  EmptyOrderCustomer,
   IconCustomer,
   IconCustomerActive,
   IconHome,

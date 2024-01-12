@@ -20,6 +20,32 @@ export type IProfile = {
   current_address?: string;
 };
 
+export type CheckinData = {
+  kh_ma: string;
+  kh_ten: string;
+  kh_diachi: string;
+  kh_long?: number;
+  kh_lat?: number;
+  checkin_giovao: string;
+  checkin_giora: string;
+  checkin_pinvao: string;
+  checkin_pinra?: string;
+  checkin_khoangcach?: number;
+  checkin_trangthaicuahang?: boolean;
+  checkin_donhang?: string;
+  checkin_hinhanh: any[];
+  checkin_long?: number;
+  checkin_lat?:  number;
+  checkin_timegps?: string;
+  checkin_dochinhxac?: number;
+  checkout_khoangcach?: number;
+  checkinvalidate_khoangcachcheckin?: number;
+  checkinvalidate_khoangcachcheckout?: number;
+  createdDate: number;
+  createdByEmail?: string;
+  createByName?: string;
+};
+
 export const login = (data: ILogin, deleteHeader: boolean) =>
   createApi(deleteHeader).post(ApiConstant.POST_USER_LOGIN, data);
 
@@ -35,13 +61,10 @@ export const verifyOrganization = (data: object) =>
   createApi(true).get(ApiConstant.POST_USER_ORGANIZATION, data, {
     baseURL: BASE_URL,
   });
+  export const verifyOrganizations = (data: object) => client.get(ApiConstant.POST_USER_ORGANIZATION,data)
+
 
 export const updateProfile = (data: IProfile) =>
   createApi().put(ApiConstant.PUT_USER_PROFILE, data);
 
-export const getDetailLocation = (lat?: number, lon?: number) =>
-  client
-    .get(
-      BASE_URL_MAP + `?point.lon=${lon}&point.lat=${lat}&api_key=${API_EK_KEY}`,
-    )
-    .then(res => res.data);
+export const postChecking = (data:CheckinData) => createApi().post(ApiConstant.POST_CHECKIN,data)

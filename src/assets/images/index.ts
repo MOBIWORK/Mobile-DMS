@@ -52,7 +52,7 @@ const IconFilter = require('./iconFilter.png');
 const IconBill = require('./ic-solar_bill.png');
 const IconOrder = require('./icfile.png');
 const IconKebab = require('./kebab.png');
-
+const LogoMBW  = require('./logoMBW.png')
 export {
   IconBill,
   IconOrder,
@@ -61,6 +61,7 @@ export {
   SuccessApiIcon,
   ErrorApiIcon,
   ArrowLeftIcon,
+  LogoMBW,
   CheckIcon,
   TouchIDIcon,
   FaceIDIcon,

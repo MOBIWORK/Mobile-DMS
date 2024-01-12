@@ -2,7 +2,9 @@ import {useCallback, useEffect} from 'react';
 import Animated, {
   AnimationCallback,
   Easing,
+  Extrapolation,
   WithTimingConfig,
+  interpolate,
   useDerivedValue,
   useSharedValue,
   withTiming,
@@ -50,7 +52,24 @@ export const useSharedTransition = (
   );
 };
 
+export const useInterpolate = (
+  progress: Animated.SharedValue<number>,
+  input: number[],
+  output: number[],
+  type?: Extrapolation,
+) => useDerivedValue(() => interpolate(progress.value, input, output, type));
 
+
+export const useShareClamp = (
+  value: Animated.SharedValue<number>,
+  lowerValue: number,
+  upperValue: number,
+) => {
+  'worklet';
+  return useDerivedValue(() =>
+    sharedClamp(value.value, lowerValue, upperValue),
+  );
+};
 export const sharedClamp = (
   value: number,
   lowerValue: number,

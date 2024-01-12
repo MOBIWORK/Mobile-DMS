@@ -1,4 +1,4 @@
-import { API_KEY, GEOCODING_URL } from "@env";
+
 
 export const HEADER_DEFAULT = {
   'Content-Type': 'application/json',
@@ -17,7 +17,7 @@ export const STT_INTERNAL_SERVER = 500;
 export const STT_NOT_MODIFIED = 304;
 
 const URL_PREFIX = '/api/method/mbw_service_v2.api';
-const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
+const URL = '/api/method'
 
 //POST
 export const POST_USER_LOGIN = URL_PREFIX + '.auth.login';
@@ -27,3 +27,4 @@ export const POST_USER_ORGANIZATION =
 export const POST_RESET_PASSWORD = URL_PREFIX + '.auth.reset_password';
 
 export const PUT_USER_PROFILE = URL_PREFIX + '.user.update_profile';
+export const POST_CHECKIN = URL + '.mbw_dms.api.checkin.create_checkin'

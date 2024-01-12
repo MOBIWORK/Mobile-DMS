@@ -87,8 +87,8 @@ android {
         applicationId 'mbw.next.dms'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "0.0.1"
+        versionCode 7
+        versionName "0.1.7"
     }
     signingConfigs {
         debug {
@@ -109,12 +109,21 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            resValue "string", "CodePushDeploymentKey",""
+        }
+         releaseStaging {
+            resValue "string", "CodePushDeploymentKey", 'sYbkNWwV1OMlC0hSEjARyIn0cRfZdoligQm_u'
+            // Note: It's a good idea to provide matchingFallbacks for the new buildType you create to prevent build issues
+            // Add the following line if not already there
+            matchingFallbacks = ['release']
+        
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
+            resValue "string", "CodePushDeploymentKey", '_-MWbV6ZGxV89-6iXRT1QVNBEoj-u1EZSiIdl'
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             // Add following proguardFiles (leave existing one above untouched)
             proguardFiles "${background_geolocation.projectDir}/proguard-rules.pro"

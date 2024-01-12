@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect} from 'react';
 import 'react-native-gesture-handler';
 import {registerTranslation} from 'react-native-paper-dates';
 
@@ -23,25 +23,27 @@ import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
 import {SnackBar} from './src/components/common/AppSnack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import codePush from "react-native-code-push";
-
+import codePush from 'react-native-code-push';
 
 
 let codePushOptions = {
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  installMode: codePush.InstallMode.IMMEDIATE
+  checkFrequency: codePush.CheckFrequency.ON_APP_START,
+  installMode: codePush.InstallMode.IMMEDIATE,
 };
 
 function App(): JSX.Element {
+  
+
+  
   useEffect(() => {
     LogBox.ignoreAllLogs();
+    
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => true,
     );
     return () => backHandler.remove();
   }, []);
-
 
   registerTranslation('vi', {
     save: 'Lưu',
@@ -137,6 +139,8 @@ function App(): JSX.Element {
   //     // onHttp.remove();
   //   };
   // }, []);
+  
+  // Alert.alert(updateMessage)
 
   return (
     <Provider store={store}>
@@ -147,18 +151,24 @@ function App(): JSX.Element {
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
             {/* <PortalProvider> */}
-              <AppNavigationContainer>
-                <StatusBar backgroundColor={'#fff'} />
-                <HandlingError />
-                <SnackBar />
-              </AppNavigationContainer>
-            {/* </PortalProvider> */}
+      
+            <AppNavigationContainer>
+              <StatusBar backgroundColor={'#fff'} />
+              <HandlingError />
+              <SnackBar />
+            </AppNavigationContainer>
+            {/* </PortalProvider>xs */}
           </GestureHandlerRootView>
           <HandlingLoading />
         </KeyboardAvoidingView>
       </SafeAreaProvider>
     </Provider>
   );
+  // return(
+  //   <Block block middle >
+  //       <AppText>Hello from the another side </AppText>
+  //   </Block>
+  // )
 }
 
 export default codePush(codePushOptions)(App);

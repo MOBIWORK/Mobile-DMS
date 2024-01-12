@@ -10,7 +10,8 @@
     "test": "jest",
     "yarn pod": "cd ios && pod install && cd..",
     "reset:cache": "npx react-native start --reset-cache",
-    "apk:android33-": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
+    "apk:android33-": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "codePush:android": "appcenter codepush release-react -a Mobiwork/DMS-Android  -d Production -t '*'"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "4.4.7",
@@ -60,6 +61,7 @@
     "react-native-svg": "^14.1.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.0.2",
+    "react-native-version-check": "^3.4.7",
     "react-redux": "^8.1.2",
     "redux-saga": "^1.2.3",
     "reduxsauce": "^1.2.1",
@@ -74,6 +76,7 @@
     "@tsconfig/react-native": "^3.0.0",
     "@types/react": "^18.0.24",
     "@types/react-native-vector-icons": "^6.4.18",
+    "@types/react-native-version-check": "^3.4.8",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.2.1",
     "eslint": "^8.19.0",
