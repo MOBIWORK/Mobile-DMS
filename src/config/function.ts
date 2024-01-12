@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {BackHandler, Keyboard, Platform} from 'react-native';
@@ -158,6 +159,22 @@ const useBackgroundLocation = () => {
   return memoizedValue;
 };
 
+function calculateDateDifference(targetDate:string) {
+  const currentDate = moment();
+  const targetDateObj = moment(targetDate, 'DD/MM/YYYY');
+
+  const daysDifference = currentDate.diff(targetDateObj, 'days');
+  const monthsDifference = currentDate.diff(targetDateObj, 'months');
+  const yearsDifference = currentDate.diff(targetDateObj, 'years');
+
+  const remainingDays = daysDifference - (monthsDifference * 30);
+
+  return {
+    years: yearsDifference,
+    months: monthsDifference,
+    days: remainingDays,
+  };
+}
 export {
   formatPhoneNumber,
   formatMoney,
@@ -168,5 +185,6 @@ export {
   isIos,
   useDismissKeyboard,
   calculateDistance,
-  useBackgroundLocation
+  useBackgroundLocation,
+  calculateDateDifference
 };

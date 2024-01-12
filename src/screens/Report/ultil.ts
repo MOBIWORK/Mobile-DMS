@@ -53,7 +53,7 @@ export const SalesItem:ItemProps[] = [
         onPress:() => navigate(ScreenConstant.REPORT_SCREEN)
     },
     {
-        title:'Khách hàng mới',
+        title:'Khách hàng chưa phát sinh đơn',
         content:'Các khách hàng chưa phát sinh đơn hàng',
         icon:'EmptyOrderCustomer',
         onPress:() => navigate(ScreenConstant.NON_ORDER_CUSTOMER)
