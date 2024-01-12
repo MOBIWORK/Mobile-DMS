@@ -51,7 +51,7 @@ const ProductDetail = () => {
         ) : selectedTab === PRODUCT_DETAIL_TAB_VALUES.don_vi_tinh ? (
           <Unit data={data} />
         ) : (
-          <Inventory inventoryData={InventoryData} />
+          <Inventory inventoryData={data.stock} />
         )}
       </AppContainer>
     </MainLayout>
