@@ -440,6 +440,11 @@ type DataUnit = {
   conversion_factor : string;
 }
 
+export type StockProduct = {
+  t_warehouse : string,
+  qty : number
+}
+
 export type IProduct = {
   name : string;
   item_code : string;
@@ -453,5 +458,6 @@ export type IProduct = {
   image : string;
   custom_industry : string;
   detail : UinitProduct;
-  unit : DataUnit[]
+  unit : DataUnit[],
+  stock : StockProduct[];
 }
