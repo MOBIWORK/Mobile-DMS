@@ -1,12 +1,12 @@
 import React, {FC, createRef, useEffect} from 'react';
 import type {NavigationAction, NavigationContainerRef, RouteProp} from '@react-navigation/native';
-import {CommonActions, NavigationContainer, StackActions} from '@react-navigation/native';
+import {CommonActions, StackActions,  NavigationContainer,
+  NavigatorScreenParams} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigatorScreenParams} from '@react-navigation/native';
 import {AppConstant, ScreenConstant} from '../const';
 
-import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
+import {useMMKVObject} from 'react-native-mmkv';
 import {
   IDataCustomer,
   IProductList,
@@ -16,42 +16,48 @@ import {
   VisitListItemType,
 } from '../models/types';
 import {
+  AddingNewCustomer,
+  AddNote,
+  CheckIn,
+  CheckInLocation,
+  CheckinNote,
+  CheckinOrder,
+  CheckinOrderCreated,
+  DetailCustomer,
   ForgotPassword,
+  Home,
   ImageView,
+  Index,
+  Inventory,
+  InventoryAddProduct,
   ListProduct,
+  ListVisit,
+  NoteDetail,
+  NotificationScreen,
   OrderDetail,
   OrderList,
-  ListVisit,
   ProductDetail,
+  Profile,
+  ReportOrderDetail,
+  RouteResult,
+  SearchCustomer,
   SearchProduct,
   SearchVisit,
   SelectOrganization,
   SignIn,
   SuccessChanged,
-  Inventory,
-  InventoryAddProduct,
-  WidgetFavouriteScreen,
-  NotificationScreen,
-  CheckinOrder,
-  CheckinOrderCreated,
-  Index,
-  AddingNewCustomer,
-  DetailCustomer,
-  ReportOrderDetail,
-  Home,
-  DropDrag,
-  Profile,
   TakePicture,
-  CheckinNote,
-  NoteDetail,
-  AddNote,
-  CheckInLocation,
-  CheckIn,
-  SearchCustomer,
   UpdateScreen,
   Report,
   NonOrderCustomer,
   Statistical,
+  TravelDiary,
+  WidgetFavouriteScreen,
+  VisitResult,
+  CustomerNoOrder,
+  NewCustomer,
+  ReportDebt,
+  KPI,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -60,6 +66,7 @@ import {MyAppTheme} from '../layouts/theme';
 
 // import {IAppReduxState} from '../redux-store';
 
+
 // import PushNotification from 'react-native-push-notification';
 
 import MainTab, {TabParamList} from './MainTab';
@@ -67,6 +74,7 @@ import linking from '../utils/linking.utils';
 import { useSelector } from '../config/function';
 import { RXStore } from '../utils/redux';
 
+import {MAIN_TAB} from '../const/screen.const';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -96,7 +104,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
-        }}>
+        }}
+        initialRouteName={ScreenConstant.REPORT_KPI}>
         {/* <Stack.Screen
           name={ScreenConstant.CHECKIN_INVENTORY}
           component={Inventory}
@@ -214,6 +223,31 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NON_ORDER_CUSTOMER}
           component={NonOrderCustomer}
         />
+        <Stack.Screen
+          name={ScreenConstant.TRAVEL_DIARY}
+          component={TravelDiary}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ROUTE_RESULT}
+          component={RouteResult}
+        />
+        <Stack.Screen
+          name={ScreenConstant.VISIT_RESULT}
+          component={VisitResult}
+        />
+        <Stack.Screen
+          name={ScreenConstant.CUSTOMER_NO_ORDER}
+          component={CustomerNoOrder}
+        />
+        <Stack.Screen
+          name={ScreenConstant.NEW_CUSTOMER}
+          component={NewCustomer}
+        />
+        <Stack.Screen
+          name={ScreenConstant.REPORT_DEBT}
+          component={ReportDebt}
+        />
+        <Stack.Screen name={ScreenConstant.REPORT_KPI} component={KPI} />
       </Stack.Navigator>
       {children}
       <RXStore />
@@ -276,6 +310,13 @@ export type RootStackParamList = {
   [ScreenConstant.REPORT_SCREEN]: undefined;
   [ScreenConstant.STATISTICAL]: undefined;
   [ScreenConstant.NON_ORDER_CUSTOMER]: undefined;
+  [ScreenConstant.TRAVEL_DIARY]: undefined;
+  [ScreenConstant.ROUTE_RESULT]: undefined;
+  [ScreenConstant.VISIT_RESULT]: undefined;
+  [ScreenConstant.CUSTOMER_NO_ORDER]: undefined;
+  [ScreenConstant.NEW_CUSTOMER]: undefined;
+  [ScreenConstant.REPORT_DEBT]: undefined;
+  [ScreenConstant.REPORT_KPI]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

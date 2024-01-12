@@ -23,7 +23,7 @@ import IconUser from './user.svg';
 import Sync from './sync.svg';
 import IconDarkMode from './darkMode.svg';
 import Language from './language.svg';
-import Close from './close.svg'
+import Close from './close.svg';
 import IconHomeActive from './iconHomeActive.svg';
 import IconCustomerActive from './iconCustomerActive.svg';
 import IconVisitActive from './iconVisitActive.svg';
@@ -59,6 +59,13 @@ import ReportVisit from './reportVistIcon.svg';
 import EmptyOrderCustomer from './emptyOrderCustomerIcon.svg';
 import ReportLine from './reportLineIcon.svg'
 import MoneyIcon from './moneyIcon.svg';
+import ChevronDownFill from './chervron-down-fill.svg';
+import Dot from './dot.svg';
+import Money from './money.svg';
+import Visited from './visited.svg';
+import NotVisit from './notVisit.svg';
+import Folder from './folder.svg';
+import UserGroup2 from './userGroup.svg';
 export const SvgComponent = {
   MoneyIcon,
   NewCustomerIcon,
@@ -120,6 +127,13 @@ export const SvgComponent = {
   TrashIcon,
   EmptyNote,
   IconClose,
-  ChevronDown
+  ChevronDown,
+  ChevronDownFill,
+  Dot,
+  Money,
+  Visited,
+  NotVisit,
+  Folder,
+  UserGroup2,
 };
 export type SvgIconTypes = keyof typeof SvgComponent;

@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {AppHeader, AppIcons} from './index';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {MainLayout} from '../../layouts';
-import {AppConstant, ScreenConstant} from '../../const';
+import {AppConstant} from '../../const';
 import {useTheme} from '@react-navigation/native';
 import {Searchbar} from 'react-native-paper';
 import {ImageAssets} from '../../assets';
@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 
 const FilterListComponent: FC<FilterListComponentProps> = ({
   title,
@@ -28,13 +29,15 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   isSearch = true,
 }) => {
   const {colors} = useTheme();
+  const {t: getLabel} = useTranslation();
   return (
     <MainLayout
       style={{
         backgroundColor: colors.bg_default,
-        paddingTop: screenName === ScreenConstant.VISIT_DETAIL ? 0 : 16,
+        paddingTop: 0,
       }}>
       <AppHeader
+        style={{marginTop: 0}}
         label={title}
         labelStyle={{fontSize: 18}}
         onBack={onClose}
@@ -84,7 +87,9 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
                 }}
                 onPress={() => handleItem(item)}
                 key={index}>
-                <Text style={{color: colors.text_primary}}>{item.label}</Text>
+                <Text style={{color: colors.text_primary}}>
+                  {getLabel(item.label)}
+                </Text>
                 <Image
                   source={ImageAssets.CheckIcon}
                   style={{
