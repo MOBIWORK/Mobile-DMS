@@ -109,7 +109,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       theme={MyAppTheme[theme]}
       linking={linking}
       ref={navigationRef}>
-
       <Stack.Navigator
         initialRouteName={  validate ? ScreenConstant.MAIN_TAB : ScreenConstant.SELECT_ORGANIZATION}
         screenOptions={{
@@ -117,12 +116,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}
-        initialRouteName={ScreenConstant.REPORT_KPI}>
-        {/* <Stack.Screen
-          name={ScreenConstant.CHECKIN_INVENTORY}
-          component={Inventory}
-        /> */}
-        {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} /> */}
+        initialRouteName={ScreenConstant.MAIN_TAB}>
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}

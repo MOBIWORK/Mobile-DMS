@@ -50,6 +50,7 @@ import UpdateScreen from '../UpdateScreen/UpdateScreen';
 import ModalUpdate from './components/ModalUpdate';
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
+import { useSelector } from '../../config/function';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -62,8 +63,7 @@ const HomeScreen = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
-  const dispatch = useDispatch();
-  const showModal = useSelector(AppSelector.getShowModal);
+  const showModal = useSelector(state => state.app.showModal);
 
   // const showModal = useSelector(AppSelector.getShowModal);
   const [updateMessage, setUpdateMessage] = React.useState('');
