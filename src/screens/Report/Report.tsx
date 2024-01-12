@@ -43,6 +43,7 @@ const Report = () => {
       <Block paddingHorizontal={16}>
         <AppHeader
           label="Báo cáo"
+          onBack={() => navigation.goBack()}
           labelStyle={{flex: 0}}
           rightButton={
             <TouchableOpacity
