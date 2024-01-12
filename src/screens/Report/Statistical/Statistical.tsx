@@ -1,12 +1,13 @@
-import { TouchableOpacity} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import isEqual from 'react-fast-compare';
-import {Block, AppText as Text} from '../../components/common';
-import {MainLayout} from '../../layouts';
+import {Block, AppText as Text} from '../../../components/common';
+import {MainLayout} from '../../../layouts';
 import {rootStyles} from './styles';
-import {useTheme} from '../../layouts/theme';
+import {useTheme} from '../../../layouts/theme';
 import Customer from './screens/Customer';
 import Products from './screens/Products';
+import ReportHeader from '../Component/ReportHeader';
 
 type Tabs = {
   id: number;
@@ -30,10 +31,15 @@ const Statistical = () => {
 
   return (
     <MainLayout style={styles.root}>
+      <ReportHeader
+        title={'Thống kê phiếu đặt hàng'}
+        date={new Date().getTime()}
+        onSelected={() => console.log('123')}
+      />
       <Block
         middle
         colorTheme="white"
-        marginTop={8}
+        marginTop={16}
         marginBottom={24}
         direction="row"
         paddingVertical={4}
@@ -48,16 +54,18 @@ const Statistical = () => {
               <Block paddingHorizontal={30} paddingVertical={2}>
                 <Text
                   fontSize={14}
-                  colorTheme={selectTab === index ? 'primary' : 'black'}
-                  fontWeight={selectTab === index ? '700' : '500'}>
+                  colorTheme={
+                    selectTab === index ? 'primary' : 'text_secondary'
+                  }
+                  fontWeight={'500'}>
                   {item.title}
                 </Text>
               </Block>
             </TouchableOpacity>
           );
         })}
-      </Block> 
-      {selectTab ===  0 ? <Customer/>   : <Products/>  }
+      </Block>
+      {selectTab === 0 ? <Customer /> : <Products />}
     </MainLayout>
   );
 };

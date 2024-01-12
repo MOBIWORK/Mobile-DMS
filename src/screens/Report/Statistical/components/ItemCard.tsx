@@ -1,29 +1,26 @@
 import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React from 'react';
-import {AppTheme, useTheme} from '../../../layouts/theme';
-import {Block, AppText as Text} from '../../../components/common';
-import {formatMoney} from '../../../config/function';
-import { ItemCardCustomer, ItemCardProduct } from './data';
+import {AppTheme, useTheme} from '../../../../layouts/theme';
+import {Block, AppText as Text} from '../../../../components/common';
+import {formatMoney} from '../../../../config/function';
+import {ItemCardCustomer, ItemCardProduct} from './data';
 import isEqual from 'react-fast-compare';
 
-
-
 type Product = {
-    item:ItemCardProduct,
-    type:'product'
-}
+  item: ItemCardProduct;
+  type: 'product';
+};
 type Customer = {
-    item:ItemCardCustomer,
-    type:'customer'
-}
+  item: ItemCardCustomer;
+  type: 'customer';
+};
 
-type Props = Customer | Product
+type Props = Customer | Product;
 const ItemCard = (props: Props) => {
-
   const theme = useTheme();
   const styles = rootStyles(theme);
   return (
-    <Block colorTheme="white" borderRadius={12}>
+    <Block colorTheme="white" borderRadius={12} marginTop={8} marginBottom={8}>
       <TouchableOpacity style={styles.containContent}>
         <Text fontSize={16} fontWeight="500" colorTheme="text_primary">
           {props.item.nameCompany}
@@ -48,7 +45,8 @@ const ItemCard = (props: Props) => {
             fontSize={14}
             fontWeight="400"
             lineHeight={21}>
-            {props.item.amount}{props.type === 'product' && <Text> {props.item.unit}</Text>}{' '}
+            {props.item.amount}
+            {props.type === 'product' && <Text> {props.item.unit}</Text>}{' '}
           </Text>
         </Block>
         <Block
@@ -75,7 +73,7 @@ const ItemCard = (props: Props) => {
   );
 };
 
-export default React.memo(ItemCard,isEqual);
+export default React.memo(ItemCard, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

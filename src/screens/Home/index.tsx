@@ -59,7 +59,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
-  // const [location, setLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
   const dispatch = useDispatch();
@@ -70,7 +70,7 @@ const HomeScreen = () => {
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
   const [screen, setScreen] = useState(false);
-  const {location, error} = useBackgroundLocation();
+  // const {location, error} = useBackgroundLocation();
   const syncWithCodePush = (status: number) => {
     console.log('Codepush sync status', status);
   };
@@ -312,7 +312,7 @@ const HomeScreen = () => {
       desiredAccuracy: 10,
     })
       .then(location => {
-        // setLocation(location);
+        setLocation(location);
         mapboxCameraRef.current?.flyTo(
           [location.coords.longitude, location.coords.latitude],
           1000,
@@ -363,7 +363,7 @@ const HomeScreen = () => {
         // codePush.notifyAppReady();
         // setTimeout(() => {
         VersionCheck.needUpdate({}).then(res => {
-          console.log(res,'res');
+          console.log(res, 'res');
           if (res.isNeeded) {
             setShowModalUpdate(res.isNeeded);
           }
@@ -540,6 +540,7 @@ const HomeScreen = () => {
                   <View style={styles.map}>
                     <Mapbox.MapView
                       // pitchEnabled={false}
+                      scrollEnabled={false}
                       attributionEnabled={false}
                       // scaleBarEnabled={false}
                       styleURL={Mapbox.StyleURL.Street}
