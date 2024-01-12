@@ -34,6 +34,14 @@ import AddNote from './Checkin/Note/AddNote';
 import CheckInLocation from './Checkin/CheckInLocation';
 import CheckIn from './Visit/CheckinVisit/CheckIn';
 import SearchCustomer from './Customer/SearchCustomer';
+import TravelDiary from './Report/Route/TravelDiary';
+import RouteResult from './Report/Route/RouteResult';
+import VisitResult from './Report/Route/VisitResult';
+import CustomerNoOrder from './Report/Sale/CustomerNoOrder';
+import NewCustomer from './Report/Sale/NewCustomer';
+import ReportDebt from './Report/Debt/ReportDebt';
+import KPI from './Report/Sale/KPI';
+
 export {
   SelectOrganization,
   SignIn,
@@ -71,8 +79,11 @@ export {
   CheckInLocation,
   CheckIn,
   SearchCustomer,
-  
+  TravelDiary,
+  RouteResult,
+  VisitResult,
+  CustomerNoOrder,
+  NewCustomer,
+  ReportDebt,
+  KPI,
 };
-
-
-

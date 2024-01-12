@@ -23,7 +23,7 @@ import IconUser from './user.svg';
 import Sync from './sync.svg';
 import IconDarkMode from './darkMode.svg';
 import Language from './language.svg';
-import Close from './close.svg'
+import Close from './close.svg';
 import IconHomeActive from './iconHomeActive.svg';
 import IconCustomerActive from './iconCustomerActive.svg';
 import IconVisitActive from './iconVisitActive.svg';
@@ -47,8 +47,15 @@ import BlueUndo from './blueUndo.svg';
 import GreenEdit from './greenEdit.svg';
 import IconOrder from './iconOrder.svg';
 import RedLocation from './redLocation.svg';
-import CameraPurple from './cameraPurple.svg'
-import ChevronDown from './chevron-down.svg'
+import CameraPurple from './cameraPurple.svg';
+import ChevronDown from './chevron-down.svg';
+import ChevronDownFill from './chervron-down-fill.svg';
+import Dot from './dot.svg';
+import Money from './money.svg';
+import Visited from './visited.svg';
+import NotVisit from './notVisit.svg';
+import Folder from './folder.svg';
+import UserGroup2 from './userGroup.svg';
 export const SvgComponent = {
   IconCustomer,
   IconCustomerActive,
@@ -100,6 +107,13 @@ export const SvgComponent = {
   TrashIcon,
   EmptyNote,
   IconClose,
-  ChevronDown
+  ChevronDown,
+  ChevronDownFill,
+  Dot,
+  Money,
+  Visited,
+  NotVisit,
+  Folder,
+  UserGroup2,
 };
 export type SvgIconTypes = keyof typeof SvgComponent;

@@ -1,12 +1,14 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC} from 'react';
 import type {RouteProp} from '@react-navigation/native';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigatorScreenParams} from '@react-navigation/native';
 import {AppConstant, ScreenConstant} from '../const';
 
-import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
+import {useMMKVObject} from 'react-native-mmkv';
 import {
   IDataCustomer,
   IProductList,
@@ -16,50 +18,56 @@ import {
   VisitListItemType,
 } from '../models/types';
 import {
+  AddingNewCustomer,
+  AddNote,
+  CheckIn,
+  CheckInLocation,
+  CheckinNote,
+  CheckinOrder,
+  CheckinOrderCreated,
+  DetailCustomer,
   ForgotPassword,
+  Home,
   ImageView,
+  Index,
+  Inventory,
+  InventoryAddProduct,
   ListProduct,
+  ListVisit,
+  NoteDetail,
+  NotificationScreen,
   OrderDetail,
   OrderList,
-  ListVisit,
   ProductDetail,
+  Profile,
+  ReportOrderDetail,
+  RouteResult,
+  SearchCustomer,
   SearchProduct,
   SearchVisit,
   SelectOrganization,
   SignIn,
   SuccessChanged,
-  Inventory,
-  InventoryAddProduct,
-  WidgetFavouriteScreen,
-  NotificationScreen,
-  CheckinOrder,
-  CheckinOrderCreated,
-  Index,
-  AddingNewCustomer,
-  DetailCustomer,
-  ReportOrderDetail,
-  Home,
-  DropDrag,
-  Profile,
   TakePicture,
-  CheckinNote,
-  NoteDetail,
-  AddNote,
-  CheckInLocation,
-  CheckIn,
-  SearchCustomer,
+  TravelDiary,
+  WidgetFavouriteScreen,
+  VisitResult,
+  CustomerNoOrder,
+  NewCustomer,
+  ReportDebt,
+  KPI,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
 
 // import { MAIN_TAB } from '../const/screen.const';
-
 import {IAppReduxState} from '../redux-store';
 
 // import PushNotification from 'react-native-push-notification';
 import {useSelector} from 'react-redux';
 import MainTab, {TabParamList} from './MainTab';
 import linking from '../utils/linking.utils';
+import {MAIN_TAB} from '../const/screen.const';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -89,7 +97,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
-        }}>
+        }}
+        initialRouteName={ScreenConstant.REPORT_KPI}>
         {/* <Stack.Screen
           name={ScreenConstant.CHECKIN_INVENTORY}
           component={Inventory}
@@ -197,6 +206,31 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_CUSTOMER}
           component={SearchCustomer}
         />
+        <Stack.Screen
+          name={ScreenConstant.TRAVEL_DIARY}
+          component={TravelDiary}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ROUTE_RESULT}
+          component={RouteResult}
+        />
+        <Stack.Screen
+          name={ScreenConstant.VISIT_RESULT}
+          component={VisitResult}
+        />
+        <Stack.Screen
+          name={ScreenConstant.CUSTOMER_NO_ORDER}
+          component={CustomerNoOrder}
+        />
+        <Stack.Screen
+          name={ScreenConstant.NEW_CUSTOMER}
+          component={NewCustomer}
+        />
+        <Stack.Screen
+          name={ScreenConstant.REPORT_DEBT}
+          component={ReportDebt}
+        />
+        <Stack.Screen name={ScreenConstant.REPORT_KPI} component={KPI} />
       </Stack.Navigator>
       {children}
     </NavigationContainer>
@@ -221,7 +255,7 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: {
-    item:IProductList
+    item: IProductList;
   };
   [ScreenConstant.IMAGE_VIEW]: {data: any};
   [ScreenConstant.ORDER_SCREEN]: undefined;
@@ -253,6 +287,13 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_ORDER]: undefined;
+  [ScreenConstant.TRAVEL_DIARY]: undefined;
+  [ScreenConstant.ROUTE_RESULT]: undefined;
+  [ScreenConstant.VISIT_RESULT]: undefined;
+  [ScreenConstant.CUSTOMER_NO_ORDER]: undefined;
+  [ScreenConstant.NEW_CUSTOMER]: undefined;
+  [ScreenConstant.REPORT_DEBT]: undefined;
+  [ScreenConstant.REPORT_KPI]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute
