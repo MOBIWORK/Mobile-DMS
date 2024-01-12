@@ -1,7 +1,15 @@
-import React, {FC, createRef, useEffect} from 'react';
-import type {NavigationAction, NavigationContainerRef, RouteProp} from '@react-navigation/native';
-import {CommonActions, StackActions,  NavigationContainer,
-  NavigatorScreenParams} from '@react-navigation/native';
+import React, {FC, createRef} from 'react';
+import type {
+  NavigationAction,
+  NavigationContainerRef,
+  RouteProp,
+} from '@react-navigation/native';
+import {
+  CommonActions,
+  NavigationContainer,
+  StackActions,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {AppConstant, ScreenConstant} from '../const';
@@ -28,8 +36,6 @@ import {
   Home,
   ImageView,
   Index,
-  Inventory,
-  InventoryAddProduct,
   ListProduct,
   ListVisit,
   NoteDetail,
@@ -39,7 +45,6 @@ import {
   ProductDetail,
   Profile,
   ReportOrderDetail,
-  RouteResult,
   SearchCustomer,
   SearchProduct,
   SearchVisit,
@@ -58,6 +63,9 @@ import {
   NewCustomer,
   ReportDebt,
   KPI,
+  Inventory,
+  InventoryAddProduct,
+  RouteResult,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -98,19 +106,18 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   // }, []);
 
   return (
-    <NavigationContainer theme={MyAppTheme[theme]} linking={linking} ref={navigationRef}>
+    <NavigationContainer
+      theme={MyAppTheme[theme]}
+      linking={linking}
+      ref={navigationRef}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}
-        initialRouteName={ScreenConstant.REPORT_KPI}>
-        {/* <Stack.Screen
-          name={ScreenConstant.CHECKIN_INVENTORY}
-          component={Inventory}
-        /> */}
-        {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} /> */}
+        initialRouteName={ScreenConstant.MAIN_TAB}>
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
@@ -218,7 +225,10 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={SearchCustomer}
         />
         <Stack.Screen name={ScreenConstant.REPORT_SCREEN} component={Report} />
-        <Stack.Screen name={ScreenConstant.STATISTICAL} component={Statistical} />
+        <Stack.Screen
+          name={ScreenConstant.STATISTICAL}
+          component={Statistical}
+        />
         <Stack.Screen
           name={ScreenConstant.NON_ORDER_CUSTOMER}
           component={NonOrderCustomer}

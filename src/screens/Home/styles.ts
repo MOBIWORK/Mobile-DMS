@@ -146,15 +146,10 @@ export const rootStyles = (theme: AppTheme) =>
     map: {
       width: '100%',
       height: 360,
-      borderRadius:20,
-      // backgroundColor:theme.colors.bg_default,
-      // borderWidth:1
-      // backgroundColor:'red',
-      alignContent:'center',
-      alignItems:'center'
-      // marginHorizontal:16
-
-      // ...StyleSheet.absoluteFill
+      borderRadius: 16,
+      alignContent: 'center',
+      alignItems: 'center',
+      overflow: 'hidden',
     } as ViewStyle,
     editView: {
       backgroundColor: theme.colors.bg_default,

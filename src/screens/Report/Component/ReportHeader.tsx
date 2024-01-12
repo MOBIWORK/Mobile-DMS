@@ -8,9 +8,10 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {ExtendedTheme, useTheme} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
 import {AppSelectedDate} from '../../../components/common';
+import {NavigationProp} from '../../../navigation';
 const ReportHeader: FC<ReportHeaderProps> = ({
   title,
   date,
@@ -19,11 +20,12 @@ const ReportHeader: FC<ReportHeaderProps> = ({
 }) => {
   const theme = useTheme();
   const style = createStyleSheet(theme);
+  const navigation = useNavigation<NavigationProp>();
 
   return (
     <View style={style.container}>
       <View style={style.title}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={ImageAssets.ArrowLeftIcon}
             style={{width: 24, height: 24}}

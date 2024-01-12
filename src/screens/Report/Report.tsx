@@ -39,7 +39,7 @@ const Report = () => {
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   return (
-    <SafeAreaView style={styles.root} edges={['top','bottom']}>
+    <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <Block paddingHorizontal={16}>
         <AppHeader
           label="Báo cáo"
@@ -58,9 +58,8 @@ const Report = () => {
           }
         />
       </Block>
-      <Block marginTop={24} marginLeft={16} marginRight={16}  marginBottom={30} >
-        <ScrollView showsVerticalScrollIndicator={false} >
-
+      <Block marginTop={24} marginLeft={16} marginRight={16} marginBottom={30}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <Text fontSize={14} fontWeight="400" colorTheme="text_secondary">
             Báo cáo kết quả đi tuyến
           </Text>
@@ -81,14 +80,12 @@ const Report = () => {
             <Text fontSize={14} fontWeight="400" colorTheme="text_secondary">
               Báo cáo công nợ khách hàng
             </Text>
-              <ReportItem
-              title='Báo cáo công nợ khách hàng'
-              content='Hiển thị công nợ của khách hàng'
-              icon='ReportCustomerDebtIcon'
-              onPress={() =>{}}
-              
-              
-              />
+            <ReportItem
+              title="Báo cáo công nợ khách hàng"
+              content="Hiển thị công nợ của khách hàng"
+              icon="ReportCustomerDebtIcon"
+              onPress={() => navigation.navigate(ScreenConstant.REPORT_DEBT)}
+            />
           </Block>
         </ScrollView>
       </Block>

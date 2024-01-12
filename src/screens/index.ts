@@ -37,7 +37,7 @@ import SearchCustomer from './Customer/SearchCustomer';
 import UpdateScreen from './UpdateScreen/UpdateScreen';
 import Report from './Report/Report'
 import NonOrderCustomer from './NonOrderCustomer/NonOrderCustomer';
-import Statistical from './Statistical/Statistical';
+import Statistical from './Report/Statistical/Statistical';
 import TravelDiary from './Report/Route/TravelDiary';
 import RouteResult from './Report/Route/RouteResult';
 import VisitResult from './Report/Route/VisitResult';
