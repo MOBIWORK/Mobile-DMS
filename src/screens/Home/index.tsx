@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {View, Text, Image, Linking, Platform} from 'react-native';
+import {View, Text, Image, Linking, Platform, Alert} from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -49,6 +49,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppActions, AppSelector} from '../../redux-store';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
 import ModalUpdate from './components/ModalUpdate';
+import {useBackgroundLocation} from '../../config/function';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -69,6 +70,7 @@ const HomeScreen = () => {
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
   const [screen, setScreen] = useState(false);
+  // const {location, error} = useBackgroundLocation();
   const syncWithCodePush = (status: number) => {
     console.log('Codepush sync status', status);
   };
@@ -302,7 +304,13 @@ const HomeScreen = () => {
 
   useLayoutEffect(() => {
     setLoading(true);
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+    BackgroundGeolocation.getCurrentPosition({
+      samples: 1,
+      timeout: 30,
+      maximumAge: 0,
+      persist: false,
+      desiredAccuracy: 10,
+    })
       .then(location => {
         setLocation(location);
         mapboxCameraRef.current?.flyTo(
@@ -338,7 +346,7 @@ const HomeScreen = () => {
         break;
       }
       case codePush.SyncStatus.UPDATE_INSTALLED: {
-        codePush.notifyAppReady();
+        // codePush.notifyAppReady();
         setUpdateMessage('Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!');
         // setShowModalUpdate(false);
         break;
@@ -346,21 +354,22 @@ const HomeScreen = () => {
       case codePush.SyncStatus.UNKNOWN_ERROR: {
         setUpdateMessage('Cập nhật thất bại!');
 
-        setTimeout(() => {
-          codePush.restartApp();
-        }, 800);
+        // setTimeout(() => {
+        //   codePush.restartApp();
+        // }, 800);
         break;
       }
       case codePush.SyncStatus.UP_TO_DATE: {
         // codePush.notifyAppReady();
         // setTimeout(() => {
         VersionCheck.needUpdate({}).then(res => {
+          console.log(res, 'res');
           if (res.isNeeded) {
             setShowModalUpdate(res.isNeeded);
           }
         });
 
-        codePush.restartApp();
+        // codePush.restartApp();
         // }, 800);
         break;
       }
@@ -523,119 +532,166 @@ const HomeScreen = () => {
                   )}
                 </View>
 
-                <View>
-                  <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>Bản đồ viếng thăm</Text>
-                  </View>
-
-                  <View style={styles.map}>
-                    <Mapbox.MapView
-                      // pitchEnabled={false}
-                      attributionEnabled={false}
-                      // scaleBarEnabled={false}
-                      styleURL={Mapbox.StyleURL.Street}
-                      logoEnabled={false}
-                      style={{width: '98%', height: 360, borderRadius: 16}}>
-                      <Mapbox.Camera
-                        ref={mapboxCameraRef}
-                        centerCoordinate={[
-                          location?.coords.longitude ?? 0,
-                          location?.coords.latitude ?? 0,
-                        ]}
-                        animationMode={'flyTo'}
-                        animationDuration={500}
-                        zoomLevel={12}
+<<<<<<<<< Temporary merge branch 1
+            <View style={styles.map}>
+              <Mapbox.MapView
+                // pitchEnabled={false}
+                attributionEnabled={false}
+                // scaleBarEnabled={false}
+                styleURL={Mapbox.StyleURL.Street}
+                logoEnabled={false}
+                style={{width: '98%', height: 360, borderRadius: 16}}>
+                <Mapbox.Camera
+                  ref={mapboxCameraRef}
+                  centerCoordinate={[
+                    location?.coords.longitude ?? 0,
+                    location?.coords.latitude ?? 0,
+                  ]}
+                  animationMode={'flyTo'}
+                  animationDuration={500}
+                  zoomLevel={12}
+                />
+                {VisitListData.map((item, index) => {
+                  return (
+                    <Mapbox.MarkerView
+                      key={index}
+                      coordinate={[Number(item.long), Number(item.lat)]}>
+                      <MarkerItem
+                        item={item}
+                        index={index}
+                        onPress={() => setVisitItemSelected(item)}
                       />
-                      {VisitListData.map((item, index) => {
-                        return (
-                          <Mapbox.MarkerView
-                            key={index}
-                            coordinate={[Number(item.long), Number(item.lat)]}>
-                            <MarkerItem
-                              item={item}
-                              index={index}
-                              onPress={() => setVisitItemSelected(item)}
-                            />
-                          </Mapbox.MarkerView>
-                        );
-                      })}
-                      <Mapbox.UserLocation
-                        visible={true}
-                        animated
-                        androidRenderMode="gps"
-                        showsUserHeadingIndicator={true}
-                      />
-                      {visitItemSelected && (
-                        <View
-                          style={{
-                            position: 'absolute',
-                            bottom: bottom + 16,
-                            left: 24,
-                            right: 24,
-                          }}>
-                          <VisitItem
-                            item={visitItemSelected}
-                            handleClose={() => setVisitItemSelected(null)}
-                          />
-                        </View>
-                      )}
-                    </Mapbox.MapView>
+                    </Mapbox.MarkerView>
+                  );
+                })}
+                <Mapbox.UserLocation
+                  visible={true}
+                  animated
+                  androidRenderMode="gps"
+                  showsUserHeadingIndicator={true}
+                />
+                {visitItemSelected && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      bottom: bottom + 16,
+                      left: 24,
+                      right: 24,
+                    }}>
+                    <VisitItem
+                      item={visitItemSelected}
+                      handleClose={() => setVisitItemSelected(null)}
+                    />
                   </View>
-                </View>
+                )}
+              </Mapbox.MapView>
+            </View>
+          </View>
+=========
+    //       <View>
+    //         <View style={[styles.flexSpace]}>
+    //           <Text style={[styles.tilteSection]}>Bản đồ viếng thăm</Text>
+    //         </View>
+>>>>>>>>> Temporary merge branch 2
 
-                <View>
-                  <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>Thông báo nội bộ</Text>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate(ScreenConstant.NOTIFYCATION)
-                      }>
-                      <Text
-                        style={[styles.tilteSection, {color: colors.action}]}>
-                        Tất cả
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.containerNtf}>
-                    {notifiCations?.map((item, i) => (
-                      <View key={i}>
-                        {loading ? (
-                          <ItemNotiLoading />
-                        ) : (
-                          <ItemNotification
-                            isSend={true}
-                            title={item.name}
-                            time={item.time}
-                            description={item.description}
-                            avatar={
-                              'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
-                            }
-                          />
-                        )}
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              </View>
-            </AppContainer>
-            <NotificationScreen
-              bottomSheetRef={bottomSheetNotification}
-              snapPointsCustom={snapPoint}
-            />
-          </>
-        ) : (
-          <UpdateScreen   progress={updatePercent} setScreen={setScreen} />
-        )}
-      </Block>
+    //         <View style={styles.map}>
+    //           <Mapbox.MapView
+    //             // pitchEnabled={false}
+    //             attributionEnabled={false}
+    //             // scaleBarEnabled={false}
+    //             styleURL={Mapbox.StyleURL.Street}
+    //             logoEnabled={false}
+    //             style={{width: '98%', height: 360, borderRadius: 16}}>
+    //             <Mapbox.Camera
+    //               ref={mapboxCameraRef}
+    //               centerCoordinate={[
+    //                 location?.coords.longitude ?? 0,
+    //                 location?.coords.latitude ?? 0,
+    //               ]}
+    //               animationMode={'flyTo'}
+    //               animationDuration={500}
+    //               zoomLevel={12}
+    //             />
+    //             {VisitListData.map((item, index) => {
+    //               return (
+    //                 <Mapbox.MarkerView
+    //                   key={index}
+    //                   coordinate={[Number(item.long), Number(item.lat)]}>
+    //                   <MarkerItem
+    //                     item={item}
+    //                     index={index}
+    //                     onPress={() => setVisitItemSelected(item)}
+    //                   />
+    //                 </Mapbox.MarkerView>
+    //               );
+    //             })}
+    //             <Mapbox.UserLocation
+    //               visible={true}
+    //               animated
+    //               androidRenderMode="gps"
+    //               showsUserHeadingIndicator={true}
+    //             />
+    //             {visitItemSelected && (
+    //               <View
+    //                 style={{
+    //                   position: 'absolute',
+    //                   bottom: bottom + 16,
+    //                   left: 24,
+    //                   right: 24,
+    //                 }}>
+    //                 <VisitItem
+    //                   item={visitItemSelected}
+    //                   handleClose={() => setVisitItemSelected(null)}
+    //                 />
+    //               </View>
+    //             )}
+    //           </Mapbox.MapView>
+    //         </View>
+    //       </View>
 
-      {/* <Block block > */}
-      <ModalUpdate show={showModalHotUpdate} onPress={() => {
-        setScreen(true)
-        setShowModalHotUpdate(false)
-        dispatch(AppActions.setShowModal(true))
-      }} />
-      {/* </Block> */}
-    </SafeAreaView>
+    //       <View>
+    //         <View style={[styles.flexSpace]}>
+    //           <Text style={[styles.tilteSection]}>Thông báo nội bộ</Text>
+    //           <TouchableOpacity
+    //             onPress={() =>
+    //               navigation.navigate(ScreenConstant.NOTIFYCATION)
+    //             }>
+    //             <Text style={[styles.tilteSection, {color: colors.action}]}>
+    //               Tất cả
+    //             </Text>
+    //           </TouchableOpacity>
+    //         </View>
+    //         <View style={styles.containerNtf}>
+    //           {notifiCations?.map((item, i) => (
+    //             <View key={i}>
+    //               {loading ? (
+    //                 <ItemNotiLoading />
+    //               ) : (
+    //                 <ItemNotification
+    //                   isSend={true}
+    //                   title={item.name}
+    //                   time={item.time}
+    //                   description={item.description}
+    //                   avatar={
+    //                     'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
+    //                   }
+    //                 />
+    //               )}
+    //             </View>
+    //           ))}
+    //         </View>
+    //       </View>
+    //     </View>
+    //   </AppContainer>
+    //   <NotificationScreen
+    //     bottomSheetRef={bottomSheetNotification}
+    //     snapPointsCustom={snapPoint}
+    //   />
+    // </SafeAreaView>
+    <Block  middle block justifyContent='center'    >
+        <ModalUpdate show={true}  onPress={() => setScreen(true)}/>
+      {screen && <UpdateScreen />}
+    </Block>
   );
 };
 

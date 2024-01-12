@@ -35,6 +35,16 @@ import CheckInLocation from './Checkin/CheckInLocation';
 import CheckIn from './Visit/CheckinVisit/CheckIn';
 import SearchCustomer from './Customer/SearchCustomer';
 import UpdateScreen from './UpdateScreen/UpdateScreen';
+import Report from './Report/Report';
+import NonOrderCustomer from './NonOrderCustomer/NonOrderCustomer';
+import Statistical from './Report/Statistical/Statistical';
+import TravelDiary from './Report/Route/TravelDiary';
+import RouteResult from './Report/Route/RouteResult';
+import VisitResult from './Report/Route/VisitResult';
+import CustomerNoOrder from './Report/Sale/CustomerNoOrder';
+import NewCustomer from './Report/Sale/NewCustomer';
+import ReportDebt from './Report/Debt/ReportDebt';
+import KPI from './Report/Sale/KPI';
 
 export {
   SelectOrganization,
@@ -74,7 +84,14 @@ export {
   CheckIn,
   SearchCustomer,
   UpdateScreen,
+  Report,
+  NonOrderCustomer,
+  Statistical,
+  TravelDiary,
+  RouteResult,
+  VisitResult,
+  CustomerNoOrder,
+  NewCustomer,
+  ReportDebt,
+  KPI,
 };
-
-
-

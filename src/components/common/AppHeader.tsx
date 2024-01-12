@@ -13,6 +13,7 @@ import {
 import {ImageAssets} from '../../assets';
 import {CommonUtils} from '../../utils';
 import {useTheme} from '@react-navigation/native';
+import {Block} from './Block';
 
 const AppHeader: FC<AppHeaderProps> = ({
   label,
@@ -26,32 +27,39 @@ const AppHeader: FC<AppHeaderProps> = ({
   const {colors} = useTheme();
   return (
     <View style={[styles.header as any, style]}>
-      {!hiddenBackButton && (
-        <TouchableOpacity
-          onPress={() => {
-            Keyboard.dismiss();
-            CommonUtils.sleep(100).then(() => {
-              onBack && onBack();
-            });
-          }}
-          style={styles.backButton as any}>
-          {backButtonIcon ? (
-            backButtonIcon
-          ) : (
-            <Image
-              source={ImageAssets.ArrowLeftIcon}
-              style={[{width: 24, height: 24}]}
-              resizeMode={'cover'}
-              tintColor={colors.text_primary}
-            />
-          )}
-        </TouchableOpacity>
-      )}
-      {label && (
-        <Text style={[styles.label as any, {color: colors.text_primary}, labelStyle]}>
-          {label}
-        </Text>
-      )}
+      <Block direction="row">
+        {!hiddenBackButton && (
+          <TouchableOpacity
+            onPress={() => {
+              Keyboard.dismiss();
+              CommonUtils.sleep(100).then(() => {
+                onBack && onBack();
+              });
+            }}
+            style={styles.backButton as any}>
+            {backButtonIcon ? (
+              backButtonIcon
+            ) : (
+              <Image
+                source={ImageAssets.ArrowLeftIcon}
+                style={[{width: 24, height: 24}]}
+                resizeMode={'cover'}
+                tintColor={colors.text_primary}
+              />
+            )}
+          </TouchableOpacity>
+        )}
+        {label && (
+          <Text
+            style={[
+              styles.label as any,
+              {color: colors.text_primary, flex: rightButton ? 0 : 1},
+              labelStyle,
+            ]}>
+            {label}
+          </Text>
+        )}
+      </Block>
       {rightButton ? rightButton : <View style={{width: 32}} />}
     </View>
   );
@@ -64,7 +72,11 @@ interface AppHeaderProps {
   backButtonStyle?: TextStyle;
   onBack?: () => void;
   hiddenBackButton?: boolean;
-  rightButton?: JSX.Element | JSX.Element[] | React.JSX.Element | React.JSX.Element[];
+  rightButton?:
+    | JSX.Element
+    | JSX.Element[]
+    | React.JSX.Element
+    | React.JSX.Element[];
   backButtonIcon?: JSX.Element;
 }
 
@@ -82,9 +94,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 20,
     fontWeight: '500',
-    flex: 1,
+    // flex: 1,
     textAlign: 'center',
-  },
+    marginLeft:17
+  } ,
   backButton: {
     position: 'relative',
     left: 0,

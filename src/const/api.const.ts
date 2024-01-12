@@ -1,4 +1,4 @@
-import { API_KEY, GEOCODING_URL } from "@env";
+
 
 export const HEADER_DEFAULT = {
   'Content-Type': 'application/json',
@@ -34,3 +34,4 @@ export const GET_PRODUCT = URL_PREFIX +  ".api.selling.product.list_product";
 export const GET_BRAND_PRODUCT = URL_PREFIX +  "..api.selling.product.list_brand";
 export const GET_INDUSTRY_PRODUCT = URL_PREFIX +  ".api.selling.product.list_industry";
 export const GET_GROUP_PRODUCT = URL_PREFIX +  ".api.selling.product.list_item_group";
+export const POST_CHECKIN = URL + '.mbw_dms.api.checkin.create_checkin'

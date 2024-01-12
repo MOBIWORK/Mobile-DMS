@@ -71,13 +71,13 @@ export const VisitFilterType = {
   customerType: 'customerType',
 };
 
-export enum CustomerFilterType  {
+export enum CustomerFilterType {
   nhom_khach_hang = 'nhom_khach_hang',
-  loai_khach_hang ='loai_khach_hang',
-  ngay_sinh_nhat ='ngay_sinh_nhat',
-  dia_chi='dia_chi',
-  nguoi_lien_he ='nguoi_lien_he',
-  khu_vuc ='khu_vuc'
+  loai_khach_hang = 'loai_khach_hang',
+  ngay_sinh_nhat = 'ngay_sinh_nhat',
+  dia_chi = 'dia_chi',
+  nguoi_lien_he = 'nguoi_lien_he',
+  khu_vuc = 'khu_vuc',
 }
 const DURATION_HIDE = 1000;
 const DURATION_ANIMATED = 500;
@@ -105,7 +105,7 @@ export const SelectedDateFilterData: IFilterType[] = [
     isSelected: false,
   },
   {
-    label: 'thisMouth',
+    label: 'thisMonth',
     value: 2,
     isSelected: false,
   },
@@ -116,3 +116,30 @@ export const SelectedDateFilterData: IFilterType[] = [
   },
 ];
 
+export const ReportFilterData: IFilterType[] = [
+  {
+    label: 'today',
+    value: 1,
+    isSelected: true,
+  },
+  {
+    label: 'yesterday',
+    value: 2,
+    isSelected: false,
+  },
+  {
+    label: 'thisMonth',
+    value: 3,
+    isSelected: false,
+  },
+  {
+    label: 'lastMonth',
+    value: 4,
+    isSelected: false,
+  },
+  {
+    label: 'selectDate',
+    value: 5,
+    isSelected: false,
+  },
+];

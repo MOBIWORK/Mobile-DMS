@@ -13,7 +13,6 @@ import {AppText} from './AppText';
 import AppFAB from './AppFAB';
 import AppContainer from '../AppContainer';
 import FilterView from './FilterView';
-// import AppAccordion from './AppAccordion';
 import AppSegmentedButtons from './AppSegmentedButtons';
 import AppCheckBox from './AppCheckBox';
 import {SvgIcon} from './AppSvgIcon';
@@ -21,11 +20,13 @@ import {showSnack} from './AppSnack';
 
 import AppCustomHeader from './AppCustomHeader';
 import AppSwitch from './AppSwitch';
-import { Block } from './Block/index';
+import {Block} from './Block';
 import BottomSheet from './CustomBottomSheet/index';
 import Accordion from './Accordion/Accordion';
-import { ProgressLinear } from './Progress/index';
-
+import {ProgressLinear} from './Progress/index';
+import AppImage from './AppImage';
+import AppSelectedDate from './AppSelectedDate';
+import TabSelected from './TabSelected';
 
 export {
   AppBottomSheet,
@@ -44,7 +45,6 @@ export {
   AppText,
   FilterView,
   SvgIcon,
-  // AppAccordion,
   AppSegmentedButtons,
   showSnack,
   AppCustomHeader,
@@ -53,6 +53,8 @@ export {
   AppCheckBox,
   BottomSheet,
   Accordion,
-  ProgressLinear
-  
+  ProgressLinear,
+  AppImage,
+  AppSelectedDate,
+  TabSelected,
 };
