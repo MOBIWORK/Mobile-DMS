@@ -346,7 +346,7 @@ const HomeScreen = () => {
         break;
       }
       case codePush.SyncStatus.UPDATE_INSTALLED: {
-        codePush.notifyAppReady();
+        // codePush.notifyAppReady();
         setUpdateMessage('Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!');
         // setShowModalUpdate(false);
         break;
@@ -354,21 +354,22 @@ const HomeScreen = () => {
       case codePush.SyncStatus.UNKNOWN_ERROR: {
         setUpdateMessage('Cập nhật thất bại!');
 
-        setTimeout(() => {
-          codePush.restartApp();
-        }, 800);
+        // setTimeout(() => {
+        //   codePush.restartApp();
+        // }, 800);
         break;
       }
       case codePush.SyncStatus.UP_TO_DATE: {
         // codePush.notifyAppReady();
         // setTimeout(() => {
         VersionCheck.needUpdate({}).then(res => {
+          console.log(res,'res');
           if (res.isNeeded) {
             setShowModalUpdate(res.isNeeded);
           }
         });
 
-        codePush.restartApp();
+        // codePush.restartApp();
         // }, 800);
         break;
       }

@@ -100,11 +100,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={Inventory}
         /> */}
         {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} /> */}
-        {/* <Stack.Screen
+        <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> */}
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> 
 
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
 
