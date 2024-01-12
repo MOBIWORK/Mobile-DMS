@@ -24,7 +24,6 @@ const VisitResult = () => {
   const [selectedValue, setSelectedValue] = useState<number | string>(
     dataSeg[0].value,
   );
-
   const [visitedData, setVisitedData] =
     useState<VisitedItemType[]>(VisitedDataFake);
   const [notVisitData, setNotVisitData] =

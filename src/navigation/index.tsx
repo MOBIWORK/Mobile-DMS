@@ -116,7 +116,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
-        }}>
+        }}
+        initialRouteName={ScreenConstant.REPORT_KPI}>
         {/* <Stack.Screen
           name={ScreenConstant.CHECKIN_INVENTORY}
           component={Inventory}
