@@ -155,7 +155,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
-        
         <Stack.Screen
           name={ScreenConstant.LIST_PRODUCT}
           component={ListProduct}
