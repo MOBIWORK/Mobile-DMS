@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useRef, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
 import {
@@ -16,11 +16,36 @@ import {AppContainer, SvgIcon} from '../../../components/common';
 import {TravelDiaryType} from '../../../models/types';
 import {CommonUtils} from '../../../utils';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {IFilterType} from '../../../components/common/FilterListComponent';
+import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 const TravelDiary = () => {
   const theme = useTheme();
   const styles = createStyle(theme);
   const {bottom} = useSafeAreaInsets();
-  const curDate = new Date().getTime();
+  const {t: getLabel} = useTranslation();
+
+  const filerBottomSheetRef = useRef<BottomSheet>(null);
+
+  const [headerDate, setHeaderDate] = useState<string>(
+    `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
+  );
+
+  const onChangeHeaderDate = (item: IFilterType) => {
+    if (CommonUtils.isNumber(item.value)) {
+      const newDateLabel = CommonUtils.isToday(Number(item.value))
+        ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
+        : `${CommonUtils.convertDate(Number(item.value))}`;
+      setHeaderDate(newDateLabel);
+    } else {
+      setHeaderDate(getLabel(String(item.value)));
+    }
+  };
+
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
+  };
 
   const Item: FC<ItemProps> = ({item}) => {
     return (
@@ -57,8 +82,11 @@ const TravelDiary = () => {
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
         title={'Nhật ký di chuyển'}
-        date={curDate}
-        onSelected={() => console.log('123')}
+        date={headerDate}
+        onSelected={() =>
+          filerBottomSheetRef.current &&
+          filerBottomSheetRef.current.snapToIndex(0)
+        }
         rightIcon={
           <TouchableOpacity onPress={() => console.log('123')}>
             <Image
@@ -83,6 +111,11 @@ const TravelDiary = () => {
           })}
         </View>
       </AppContainer>
+      <ReportFilterBottomSheet
+        filerBottomSheetRef={filerBottomSheetRef}
+        onChange={onChangeHeaderDate}
+        onChangeDateCalender={onChangeDateCalender}
+      />
     </MainLayout>
   );
 };

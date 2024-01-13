@@ -7,7 +7,6 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {CommonUtils} from '../../utils';
 import {SvgIcon} from './AppSvgIcon';
 
 const AppSelectedDate: FC<AppSelectedDateProps> = ({
@@ -21,14 +20,10 @@ const AppSelectedDate: FC<AppSelectedDateProps> = ({
     <TouchableOpacity onPress={onSelected} style={styles.container}>
       {date && endDate ? (
         <Text style={styles.text}>
-          {CommonUtils.convertDate(date)} - {CommonUtils.convertDate(endDate)}
+          {date} - {endDate}
         </Text>
       ) : (
-        <Text style={styles.text}>
-          {CommonUtils.isToday(date)
-            ? `Hôm nay, ${CommonUtils.convertDate(date)}`
-            : CommonUtils.convertDate(date)}
-        </Text>
+        <Text style={styles.text}>{date}</Text>
       )}
       <SvgIcon
         source={'ChevronDownFill'}
@@ -40,8 +35,8 @@ const AppSelectedDate: FC<AppSelectedDateProps> = ({
   );
 };
 interface AppSelectedDateProps {
-  date: number;
-  endDate?: number;
+  date: string;
+  endDate?: string;
   onSelected: () => void;
 }
 export default AppSelectedDate;

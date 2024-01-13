@@ -43,7 +43,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({
 };
 interface ReportHeaderProps {
   title: string;
-  date: number;
+  date: string;
   onSelected: () => void;
   rightIcon?: ReactElement;
 }

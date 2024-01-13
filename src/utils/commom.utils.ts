@@ -1,5 +1,12 @@
 import {MMKV} from 'react-native-mmkv';
-import {Dimensions, InteractionManager, Keyboard, Linking, Platform, StyleSheet} from 'react-native';
+import {
+  Dimensions,
+  InteractionManager,
+  Keyboard,
+  Linking,
+  Platform,
+  StyleSheet,
+} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import  {AppActions} from '../redux-store';
 import * as LocalAuthentication from 'expo-local-authentication';
@@ -413,26 +420,30 @@ const [shortDimension] = width < height ? [width, height] : [height, width];
 export const sizeScale = (size: number, factor = 0.5) =>
   size + (scale(size) - size) * factor;
 
-  export const enhance = <T>(arrStyle: Array<T>) => {
-    return StyleSheet.flatten<T>(arrStyle);
-  };
-  
-  export const propsToStyle = <T = any>(arrStyle: Array<T>) => {
-    return arrStyle
-      .filter(
-        (x:any) => x !== undefined && !Object.values(x).some(v => v === undefined),
-      )
-      .reduce((prev: any, curr: any) => {
-        // eslint-disable-next-line prefer-destructuring
-        const firstKey = Object.keys(curr)[0];
-        const firstValue = curr[firstKey];
-  
-        if (
-          !['opacity', 'zIndex', 'flex'].includes(firstKey as never) &&
-          typeof firstValue === 'number'
-        ) {
-          curr[firstKey as string] = sizeScale(firstValue);
-        }
-        return {...prev, ...curr};
-      }, {});
-  };
+export const enhance = <T>(arrStyle: Array<T>) => {
+  return StyleSheet.flatten<T>(arrStyle);
+};
+
+export const propsToStyle = <T = any>(arrStyle: Array<T>) => {
+  return arrStyle
+    .filter(
+      (x: any) =>
+        x !== undefined && !Object.values(x).some(v => v === undefined),
+    )
+    .reduce((prev: any, curr: any) => {
+      const firstKey = Object.keys(curr)[0];
+      const firstValue = curr[firstKey];
+
+      if (
+        !['opacity', 'zIndex', 'flex'].includes(firstKey as never) &&
+        typeof firstValue === 'number'
+      ) {
+        curr[firstKey as string] = sizeScale(firstValue);
+      }
+      return {...prev, ...curr};
+    }, {});
+};
+
+export const isNumber = (value: any) => {
+  return typeof value === 'number';
+};

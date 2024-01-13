@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useRef, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
 import {ProgressBar} from 'react-native-paper';
@@ -8,13 +8,36 @@ import {StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {CommonUtils} from '../../../utils';
 import {AppContainer, SvgIcon} from '../../../components/common';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {IFilterType} from '../../../components/common/FilterListComponent';
+import {useTranslation} from 'react-i18next';
 
 const KPI = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
   const styles = createStyle(theme);
 
+  const filerBottomSheetRef = useRef<BottomSheet>(null);
+
+  const [headerDate, setHeaderDate] = useState<string>(getLabel('thisMonth'));
   const [KPIData, setKpiData] = useState<ReportKPIType>(KPIDataFake);
+
+  const onChangeHeaderDate = (item: IFilterType) => {
+    if (CommonUtils.isNumber(item.value)) {
+      const newDateLabel = CommonUtils.isToday(Number(item.value))
+        ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
+        : `${CommonUtils.convertDate(Number(item.value))}`;
+      setHeaderDate(newDateLabel);
+    } else {
+      setHeaderDate(getLabel(String(item.value)));
+    }
+  };
+
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
+  };
 
   const RowItem: FC<RowProps> = ({label, content, contentColor, icon}) => {
     return (
@@ -75,8 +98,11 @@ const KPI = () => {
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
         title={'Chỉ tiêu KPI'}
-        date={new Date().getTime()}
-        onSelected={() => console.log('123')}
+        date={headerDate}
+        onSelected={() =>
+          filerBottomSheetRef.current &&
+          filerBottomSheetRef.current.snapToIndex(0)
+        }
       />
       <AppContainer style={{marginTop: 16, marginBottom: bottom}}>
         <KPIItem item={KPIData.revenue} />
@@ -84,6 +110,12 @@ const KPI = () => {
         <KPIItem item={KPIData.order} />
         <KPIItem item={KPIData.visit} />
       </AppContainer>
+      <ReportFilterBottomSheet
+        filerBottomSheetRef={filerBottomSheetRef}
+        onChange={onChangeHeaderDate}
+        onChangeDateCalender={onChangeDateCalender}
+        isKPI
+      />
     </MainLayout>
   );
 };

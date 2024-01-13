@@ -119,27 +119,40 @@ export const SelectedDateFilterData: IFilterType[] = [
 export const ReportFilterData: IFilterType[] = [
   {
     label: 'today',
-    value: 1,
+    value: new Date().getTime(),
     isSelected: true,
   },
   {
     label: 'yesterday',
-    value: 2,
+    value: new Date().setDate(new Date().getDate() - 1),
     isSelected: false,
   },
   {
     label: 'thisMonth',
-    value: 3,
+    value: 'thisMonth',
     isSelected: false,
   },
   {
     label: 'lastMonth',
-    value: 4,
+    value: 'lastMonth',
     isSelected: false,
   },
   {
     label: 'selectDate',
-    value: 5,
+    value: 'selectDate',
+    isSelected: false,
+  },
+];
+
+export const ReportFilterKPIData: IFilterType[] = [
+  {
+    label: 'thisMonth',
+    value: 'thisMonth',
+    isSelected: true,
+  },
+  {
+    label: 'lastMonth',
+    value: 'lastMonth',
     isSelected: false,
   },
 ];
