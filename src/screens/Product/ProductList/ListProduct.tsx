@@ -77,6 +77,8 @@ const ListProduct = () => {
   const [filterBrand, setFilterBrand] = useState<string | number>("");
   const [filterIndustry, setFilterIndustry] = useState<string | number>("");
   const [searchProduct, setSearchProduct] = useState<string>("");
+  const [placeholder,setPlaceholder] = useState<string>("");
+  const [titleModal,setTitleModal] = useState<string>("");
 
   const handleItem = (item: IFilterType) => {
     switch (filterType) {
@@ -198,7 +200,7 @@ const ListProduct = () => {
     return (
       <View style={{ padding: 16, height: '100%' }}>
         <AppHeader
-          label={'Bộ lọc'}
+          label={getLabel("filter")}
           onBack={() =>
             bottomSheetRef.current && bottomSheetRef.current.close()
           }
@@ -213,8 +215,8 @@ const ListProduct = () => {
         />
         <View style={{ marginTop: 32, rowGap: 24 }}>
           <AppInput
-            label={'Nhóm sản phẩm'}
-            value={groupItem?.label || "Tất cả"}
+            label={getLabel("groupProduct")}
+            value={groupItem?.label || getLabel("all")}
             onPress={() => {
               openDataFilter(AppConstant.ProductFilterType.nhom_sp)
             }}
@@ -229,8 +231,8 @@ const ListProduct = () => {
             }
           />
           <AppInput
-            label={'Thương hiệu'}
-            value={brand?.label || "Tất cả"}
+            label={getLabel("brand")}
+            value={brand?.label || getLabel("all")}
             onPress={() => {openDataFilter(AppConstant.ProductFilterType.thuong_hieu) }}
             editable={false}
             rightIcon={
@@ -243,8 +245,8 @@ const ListProduct = () => {
             }
           />
           <AppInput
-            label={'Nghành hàng'}
-            value={industry?.label || "Tất cả"}
+            label={getLabel("industry")}
+            value={industry?.label || getLabel("all")}
             editable={false}
             onPress={() => {openDataFilter(AppConstant.ProductFilterType.nghanh_hang)}}
             rightIcon={
@@ -270,13 +272,13 @@ const ListProduct = () => {
           }}>
           <AppButton
             style={{ width: '45%', backgroundColor: colors.bg_neutral }}
-            label={'Đặt lại'}
+            label={getLabel("reset")}
             styleLabel={{ color: colors.text_secondary }}
             onPress={() => resetFilter()}
           />
           <AppButton
             style={{ width: '45%' }}
-            label={'Áp dụng'}
+            label={getLabel("apply")}
             onPress={() => submitFilter()}
           />
         </View>
@@ -352,14 +354,20 @@ const ListProduct = () => {
     setFilterType(type)
     switch (type) {
       case AppConstant.ProductFilterType.nhom_sp: {
-        setDataFilter(dataGroupItem)
+        setPlaceholder(getLabel("searchGroupProduct"));
+        setTitleModal(getLabel("groupProduct"));
+        setDataFilter(dataGroupItem);
         break;
       }
       case AppConstant.ProductFilterType.thuong_hieu: {
+        setPlaceholder(getLabel("searchBrandProduct"));
+        setTitleModal(getLabel("brand"));
         setDataFilter(dataBrand)
         break;
       }
       case AppConstant.ProductFilterType.nghanh_hang: {
+        setPlaceholder(getLabel("searchIndustryProduct"));
+        setTitleModal(getLabel("industry"));
         setDataFilter(dataIndustry)
         break;
       }
@@ -438,7 +446,7 @@ const ListProduct = () => {
           style={{ color: colors.text_primary, fontWeight: '500', fontSize: 16 }}>
           {totalData}
           {'  '}
-          <Text style={{ fontWeight: '400', fontSize: 14 }}>sản phẩm</Text>
+          <Text style={{ fontWeight: '400', fontSize: 14 }}>{getLabel("product").toLocaleLowerCase()}</Text>
         </Text>
         <FlatList
           data={productData}
@@ -480,20 +488,8 @@ const ListProduct = () => {
           style={{ paddingBottom: bottom + 16 }}
           onLayout={handleContentLayout}>
           <FilterListComponent
-            title={
-              filterType === AppConstant.ProductFilterType.nhom_sp
-                ? 'Nhóm sản phẩm'
-                : filterType === AppConstant.ProductFilterType.nghanh_hang
-                  ? 'Nghành hàng'
-                  : 'Thương hiệu'
-            }
-            searchPlaceholder={
-              filterType === AppConstant.ProductFilterType.nhom_sp
-                ? 'Tìm kiếm nhóm sản phẩm'
-                : filterType === AppConstant.ProductFilterType.nghanh_hang
-                  ? 'Tìm kiếm nghành hàng'
-                  : 'Tìm kiếm thương hiệu'
-            }
+            title={titleModal}
+            searchPlaceholder={placeholder}
             data={dataFilter}
             handleItem={handleItem}
             searchValue={searchFilter}

@@ -3,13 +3,14 @@ import {MainLayout} from '../../../layouts';
 import {AppHeader, AppIcons} from '../../../components/common';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../../navigation';
-import {FlatList, Image, Pressable, StyleSheet, View} from 'react-native';
+import {FlatList, Image, ImageStyle, Pressable, StyleSheet, View, ViewStyle} from 'react-native';
 import {AppConstant} from '../../../const';
-import {ImageAssets} from '../../../assets';
+import { useTranslation } from 'react-i18next';
 
 const ImageView = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'IMAGE_VIEW'>>();
+  const {t :getLabel} = useTranslation();
   const {colors} = useTheme();
 
   const [displayImage, setDisplayImage] = useState<boolean>(false);
@@ -23,7 +24,7 @@ const ImageView = () => {
       }}>
       <AppHeader
         style={{marginHorizontal: 16}}
-        label={displayImage ? undefined : 'Hình ảnh'}
+        label={displayImage ? undefined : getLabel("image")}
         backButtonIcon={
           displayImage ? (
             <AppIcons
@@ -88,10 +89,10 @@ const styles = StyleSheet.create({
     margin: 4,
     alignItems: 'center',
     justifyContent: 'center',
-  },
+  }as ViewStyle ,
   img: {
     width: AppConstant.WIDTH * 0.3,
     height: AppConstant.WIDTH * 0.3,
     marginHorizontal: 4,
-  },
+  } as ImageStyle,
 });

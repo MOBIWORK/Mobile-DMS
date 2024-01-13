@@ -94,4 +94,14 @@ export default {
   October: 'Tháng 10',
   November: 'Tháng 11',
   December: 'Tháng 12',
+  brand : "Thương hiệu",
+  groupProduct :"Nhóm sản phẩm",
+  searchGroupProduct :"Tìm kiếm nhóm sản phẩm",
+  searchIndustryProduct :"Tìm kiếm ngành hàng",
+  searchBrandProduct :"Tìm kiếm thương hiệu sản phẩm",
+  filter :"Bộ lọc",
+  apply :"Áp dụng",
+  reset :"Đặt lại",
+  searchProduct : "Tìm kiếm sản phẩm",
+  
 };
