@@ -4,8 +4,8 @@ import {Image, Text, View} from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {Searchbar} from 'react-native-paper';
 import {useTheme} from '@react-navigation/native';
-import {IProductInventory, StockProduct} from '../../../models/types';
-import {CommonUtils} from '../../../utils';
+import {StockProduct} from '../../../models/types';
+
 const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
@@ -13,6 +13,15 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   const [data, setData] = useState<StockProduct[]>(inventoryData);
 
   const [searchValue, setSearch] = useState<string>('');
+
+  const onChangeSearcData = ()=>{
+    const newArr = inventoryData.filter(item => item.t_warehouse.includes(searchValue))
+    setData(newArr)
+  }
+
+  useEffect(()=>{
+    onChangeSearcData()
+  },[searchValue])
 
   return (
     <View style={{marginTop: 16}}>
@@ -27,9 +36,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
         placeholderTextColor={colors.text_disable}
         icon={ImageAssets.SearchIcon}
         value={searchValue}
-        onChangeText={text =>
-          CommonUtils.handleSearch(text, setSearch, inventoryData, setData)
-        }
+        onChangeText={text =>setSearch(text)}
         inputStyle={{color: colors.text_primary}}
       />
       {data &&
