@@ -17,12 +17,13 @@ import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
 import {useDispatch} from 'react-redux';
 import {AppActions} from '../../../redux-store';
+import { useTranslation } from 'react-i18next';
 
 const SearchProduct = ({}) => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
-
+  const {t :getLabel} = useTranslation()
   const [listProductNearly, setListProductNearly] = useMMKVString(
     AppConstant.ListSearchProductNearly,
   );
@@ -123,7 +124,7 @@ const SearchProduct = ({}) => {
             width: '90%',
             marginLeft: 12,
           }}
-          placeholder={'Tìm kiếm sản phẩm'}
+          placeholder={getLabel("searchProduct")}
           placeholderTextColor={colors.text_disable}
           icon={ImageAssets.SearchIcon}
           value={searchValue}

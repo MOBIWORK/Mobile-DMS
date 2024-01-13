@@ -1,15 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {AppContainer, AppHeader} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../../navigation';
 import ProductDetailTab, {PRODUCT_DETAIL_TAB_VALUES} from './ProductDetailTab';
-import {AppConstant} from '../../../const';
 import Overview from './Overview';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {IProductInventory, IProductOverview} from '../../../models/types';
-import {ImageAssets} from '../../../assets';
 import Unit from './Unit';
 import Inventory from './Inventory';
 
@@ -20,11 +18,6 @@ const ProductDetail = () => {
   const router = useRoute<RouterProp<"PRODUCT_DETAIL">>();
   const data = router.params.item;
   const {bottom} = useSafeAreaInsets();
-
-  const [overviewData, setOverviewData] = useState<IProductOverview | null>(
-    null,
-  );
-
   const [selectedTab, setSelectedTab] = useState<number>(
     PRODUCT_DETAIL_TAB_VALUES.tong_quan,
   );

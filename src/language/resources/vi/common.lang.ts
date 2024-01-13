@@ -75,4 +75,14 @@ export default {
   company: 'Công ty',
   individual: 'Cá nhân',
   loyal: 'Thân thiết',
+  brand : "Thương hiệu",
+  groupProduct :"Nhóm sản phẩm",
+  searchGroupProduct :"Tìm kiếm nhóm sản phẩm",
+  searchIndustryProduct :"Tìm kiếm ngành hàng",
+  searchBrandProduct :"Tìm kiếm thương hiệu sản phẩm",
+  filter :"Bộ lọc",
+  apply :"Áp dụng",
+  reset :"Đặt lại",
+  searchProduct : "Tìm kiếm sản phẩm",
+  
 };
