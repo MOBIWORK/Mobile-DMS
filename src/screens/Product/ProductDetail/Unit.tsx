@@ -2,8 +2,9 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useTheme} from '@react-navigation/native';
 import {StyleSheet, Text, View} from 'react-native';
+import { IProduct } from '../../../models/types';
 
-const Unit = () => {
+const Unit = ({data} :PropsType) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
 
@@ -16,11 +17,11 @@ const Unit = () => {
       // borderTopWidth: 1,
       borderBottomWidth: 1,
       borderColor: colors.border,
-    },
+    } as any,
     itemText: {
       color: colors.text_primary,
       fontWeight: '500',
-    },
+    } as any,
   });
 
   return (
@@ -35,36 +36,38 @@ const Unit = () => {
         <Text style={styles.itemText}>{getLabel('unit')}</Text>
         <Text style={styles.itemText}>{getLabel('conversionRate')}</Text>
       </View>
-      <View style={[styles.item]}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-          }}>
-          <Text style={styles.itemText}>Cái</Text>
+      {data.unit.map((item,i) => (
+        <View key={i} style={[styles.item , {borderBottomWidth : i === data.unit.length - 1 ? 0 : 1}]}>
           <View
             style={{
-              marginLeft: 16,
-              padding: 8,
-              borderRadius: 16,
-              borderColor: colors.border,
-              borderWidth: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
             }}>
-            <Text style={{color: colors.primary}}>{getLabel('standUnit')}</Text>
+            <Text style={styles.itemText}>{item.uom}</Text>
+            {item.uom === data.stock_uom  &&(
+              <View
+                style={{
+                  marginLeft: 16,
+                  padding: 8,
+                  borderRadius: 16,
+                  borderColor: colors.border,
+                  borderWidth: 1,
+                }}>
+                <Text style={{color: colors.primary}}>{getLabel('standUnit')}</Text>
+              </View>
+            )}
+
           </View>
+          <Text style={styles.itemText}>{item.conversion_factor}</Text>
         </View>
-        <Text style={styles.itemText}>1</Text>
-      </View>
-      <View style={styles.item}>
-        <Text style={styles.itemText}>Hộp</Text>
-        <Text style={styles.itemText}>2</Text>
-      </View>
-      <View style={[styles.item, {borderBottomWidth: 0}]}>
-        <Text style={styles.itemText}>Thùng</Text>
-        <Text style={styles.itemText}>20</Text>
-      </View>
+      ))}
     </View>
   );
 };
+
+interface PropsType {
+  data : IProduct
+}
+
 export default Unit;

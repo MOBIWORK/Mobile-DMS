@@ -1,21 +1,22 @@
-import React, {FC, memo} from 'react';
-import {IProductOverview} from '../../../models/types';
-import {useTranslation} from 'react-i18next';
-import {useNavigation, useTheme} from '@react-navigation/native';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {AppConstant, ScreenConstant} from '../../../const';
-import {ImageAssets} from '../../../assets';
-import {CommonUtils} from '../../../utils';
-import {NavigationProp} from '../../../navigation';
+import React, { FC, memo } from 'react';
+import { IProduct, IProductOverview } from '../../../models/types';
+import { useTranslation } from 'react-i18next';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AppConstant, ScreenConstant } from '../../../const';
+import { ImageAssets } from '../../../assets';
+import { CommonUtils } from '../../../utils';
+import { NavigationProp } from '../../../navigation';
+import RenderHtml from 'react-native-render-html';
 
-const Overview: FC<OverviewProps> = ({overviewData}) => {
-  const {t: getLabel} = useTranslation();
-  const {colors} = useTheme();
+const Overview: FC<OverviewProps> = ({ overviewData }) => {
+  const { t: getLabel } = useTranslation();
+  const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp>();
 
   const _renderImg = () => {
     return (
-      <View style={{marginTop: 16}}>
+      <View style={{ marginTop: 16 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -52,7 +53,7 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
             justifyContent: 'space-evenly',
           }}>
           <View
-            style={[styles.imgContainer as any, {backgroundColor: colors.bg_default}]}>
+            style={[styles.imgContainer as any, { backgroundColor: colors.bg_default }]}>
             <Image
               source={ImageAssets.ImgAppWatch}
               style={styles.img}
@@ -60,7 +61,7 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
             />
           </View>
           <View
-            style={[styles.imgContainer as any, {backgroundColor: colors.bg_default}]}>
+            style={[styles.imgContainer as any, { backgroundColor: colors.bg_default }]}>
             <Image
               source={ImageAssets.ImgAppWatch}
               style={styles.img}
@@ -68,7 +69,7 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
             />
           </View>
           <View
-            style={[styles.imgContainer as any, {backgroundColor: colors.bg_default}]}>
+            style={[styles.imgContainer as any, { backgroundColor: colors.bg_default }]}>
             <Image
               source={ImageAssets.ImgAppWatch}
               style={styles.img}
@@ -82,7 +83,7 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
 
   const _renderInfo = () => {
     return (
-      <View style={{marginTop: 16}}>
+      <View style={{ marginTop: 16 }}>
         <Text
           style={{
             fontWeight: '500',
@@ -92,121 +93,88 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
           {getLabel('details')}
         </Text>
         <View
-          style={[styles.infoContainer, {backgroundColor: colors.bg_default}]}>
+          style={[styles.infoContainer, { backgroundColor: colors.bg_default }]}>
           <Image
-            source={ImageAssets.ImgAppWatch}
-            style={{width: 90, height: 90, alignSelf: 'center'}}
+            source={{
+              uri : overviewData.image
+            }}
+            style={{ width: 90, height: 90, alignSelf: 'center' }}
             resizeMode="cover"
           />
           <View
             style={[
               styles.element,
-              {borderColor: colors.border, borderTopWidth: 0},
+              { borderColor: colors.border, borderTopWidth: 0 },
             ]}>
-            <Text style={{color: colors.text_disable, fontSize: 16}}>
+            <Text style={{ color: colors.text_disable, fontSize: 16 }}>
               {getLabel('productName')}
             </Text>
-            <Text style={[styles.text, {color: colors.text_primary}]}>
-              {overviewData.name}
+            <Text style={[styles.text, { color: colors.text_primary }]}>
+              {overviewData.item_name}
             </Text>
           </View>
-          <View style={[styles.element, {borderColor: colors.border}]}>
-            <Text style={{color: colors.text_disable, fontSize: 16}}>
+          <View style={[styles.element, { borderColor: colors.border }]}>
+            <Text style={{ color: colors.text_disable, fontSize: 16 }}>
               {getLabel('productCode')}
             </Text>
-            <Text style={[styles.text, {color: colors.text_primary}]}>
-              {overviewData.code}
+            <Text style={[styles.text, { color: colors.text_primary }]}>
+              {overviewData.item_code}
             </Text>
           </View>
-          <View style={[styles.element, {borderColor: colors.border}]}>
-            <Text style={{color: colors.text_disable, fontSize: 16}}>
+          <View style={[styles.element, { borderColor: colors.border }]}>
+            <Text style={{ color: colors.text_disable, fontSize: 16 }}>
               {getLabel('unitDefault')}
             </Text>
-            <Text style={[styles.text, {color: colors.text_primary}]}>
-              {overviewData.unit}
+            <Text style={[styles.text, { color: colors.text_primary }]}>
+              {overviewData.stock_uom}
             </Text>
           </View>
-          <View style={[styles.element, {borderColor: colors.border}]}>
-            <Text style={{color: colors.text_disable, fontSize: 16}}>
+          <View style={[styles.element, { borderColor: colors.border }]}>
+            <Text style={{ color: colors.text_disable, fontSize: 16 }}>
               {getLabel('standPrice')}
             </Text>
-            <Text style={[styles.text, {color: colors.text_primary}]}>
-              {overviewData.price
-                ? CommonUtils.convertNumber(overviewData.price)
+            <Text style={[styles.text, { color: colors.text_primary }]}>
+              {overviewData.detail?.price_list_rate
+                ? CommonUtils.convertNumber(overviewData.detail.price_list_rate)
                 : '---'}
             </Text>
           </View>
-          <View style={[styles.element, {borderColor: colors.border}]}>
-            <Text style={{color: colors.text_disable, fontSize: 16}}>
+          <View style={[styles.element, { borderColor: colors.border }]}>
+            <Text style={{ color: colors.text_disable, fontSize: 16 }}>
               {getLabel('trademark')}
             </Text>
-            <Text style={[styles.text, {color: colors.text_primary}]}>
-              {overviewData.trademark}
+            <Text style={[styles.text, { color: colors.text_primary }]}>
+              {overviewData.item_group}
             </Text>
           </View>
           <View
             style={[
               styles.element,
-              {borderColor: colors.border, borderBottomWidth: 0},
+              { borderColor: colors.border, borderBottomWidth: 0 },
             ]}>
-            <Text style={{color: colors.text_disable, fontSize: 16}}>
+            <Text style={{ color: colors.text_disable, fontSize: 16 }}>
               {getLabel('industry')}
             </Text>
-            <Text style={[styles.text, {color: colors.text_primary}]}>
-              {overviewData.commodity_industry ?? '---'}
+            <Text style={[styles.text, { color: colors.text_primary }]}>
+              {overviewData.custom_industry ?? '---'}
             </Text>
           </View>
           <View
             style={[
               styles.element,
-              {borderColor: colors.border, borderBottomWidth: 0},
+              { borderColor: colors.border, borderBottomWidth: 0 },
             ]}>
-            <Text style={{color: colors.text_disable, fontSize: 16}}>
+            <Text style={{ color: colors.text_disable, fontSize: 16 }}>
               {getLabel('describe')}
             </Text>
-            <Text style={[styles.text, {color: colors.text_primary}]}>
-              {overviewData.note ?? '---'}
-            </Text>
+            <View>
+              <RenderHtml
+                contentWidth={AppConstant.WIDTH - 64}
+                source={{html : overviewData.description}}
+              />
+            </View>
           </View>
         </View>
-      </View>
-    );
-  };
-
-  const _renderFile = () => {
-    return (
-      <View style={{marginTop: 16}}>
-        {overviewData.file?.map((item, index) => {
-          return (
-            <TouchableOpacity
-              key={index}
-              onPress={() => console.log(item.url)}
-              style={{
-                backgroundColor: colors.bg_default,
-                padding: 16,
-                marginVertical: 4,
-                marginHorizontal: 16,
-                borderRadius: 16,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-              }}>
-              <Image
-                source={ImageAssets.ImgFile}
-                style={{width: 28, height: 28}}
-                resizeMode={'cover'}
-              />
-              <View style={{rowGap: 5, marginLeft: 16}}>
-                <Text style={{color: colors.text_primary}}>
-                  {item.file_name}
-                </Text>
-                <Text style={{color: colors.text_secondary}}>
-                  {item.size} MB
-                </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
       </View>
     );
   };
@@ -215,13 +183,12 @@ const Overview: FC<OverviewProps> = ({overviewData}) => {
     <>
       {_renderInfo()}
       {_renderImg()}
-      {_renderFile()}
     </>
   );
 };
 
 interface OverviewProps {
-  overviewData: IProductOverview;
+  overviewData: IProduct;
 }
 export default memo(Overview);
 

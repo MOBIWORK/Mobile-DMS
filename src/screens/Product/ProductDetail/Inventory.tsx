@@ -4,21 +4,24 @@ import {Image, Text, View} from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {Searchbar} from 'react-native-paper';
 import {useTheme} from '@react-navigation/native';
-import {IProductInventory} from '../../../models/types';
-import {CommonUtils} from '../../../utils';
+import {StockProduct} from '../../../models/types';
+
 const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
 
-  const [data, setData] = useState<IProductInventory[]>([]);
+  const [data, setData] = useState<StockProduct[]>(inventoryData);
 
   const [searchValue, setSearch] = useState<string>('');
 
-  useEffect(() => {
-    if (data.length === 0) {
-      setData(inventoryData);
-    }
-  }, []);
+  const onChangeSearcData = ()=>{
+    const newArr = inventoryData.filter(item => item.t_warehouse.includes(searchValue))
+    setData(newArr)
+  }
+
+  useEffect(()=>{
+    onChangeSearcData()
+  },[searchValue])
 
   return (
     <View style={{marginTop: 16}}>
@@ -33,9 +36,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
         placeholderTextColor={colors.text_disable}
         icon={ImageAssets.SearchIcon}
         value={searchValue}
-        onChangeText={text =>
-          CommonUtils.handleSearch(text, setSearch, inventoryData, setData)
-        }
+        onChangeText={text =>setSearch(text)}
         inputStyle={{color: colors.text_primary}}
       />
       {data &&
@@ -70,7 +71,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
                     fontWeight: '500',
                     marginLeft: 8,
                   }}>
-                  {item.label}
+                  {item.t_warehouse}
                 </Text>
               </View>
               <View
@@ -84,7 +85,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
                   {getLabel('inventoryNumber')}
                 </Text>
                 <Text style={{fontSize: 16, color: colors.text_primary}}>
-                  {item.count}
+                  {item.qty}
                 </Text>
               </View>
             </View>
@@ -94,6 +95,6 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   );
 };
 interface InventoryProps {
-  inventoryData: IProductInventory[];
+  inventoryData: StockProduct[];
 }
 export default memo(Inventory);

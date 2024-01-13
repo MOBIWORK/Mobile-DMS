@@ -50,9 +50,9 @@ const handleErrorResponse = (
 };
 
 const createInstance = (deleteHeader?: boolean) => {
-  const api_key = CommonUtils.storage.getString(AppConstant.Api_key) ?? '';
+  const api_key = CommonUtils.storage.getString(AppConstant.Api_key) ?? 'd58272b345f5754';
   const api_secret =
-    CommonUtils.storage.getString(AppConstant.Api_secret) ?? '';
+    CommonUtils.storage.getString(AppConstant.Api_secret) ?? '4b872a205a170c9';
   const header =
     api_key && api_secret ? CommonUtils.Auth_header(api_key, api_secret) : null;
 

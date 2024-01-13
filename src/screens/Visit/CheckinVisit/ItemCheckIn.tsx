@@ -15,7 +15,7 @@ const ItemCheckIn = ({item}: Props) => {
   const {colors}  = useTheme()
   return (
     <Block>
-      <TouchableOpacity onPress={() =>  navigation.navigate(item.screenName)}>
+      <TouchableOpacity onPress={() =>  navigation.navigate(item.screenName,{type : item.type ? item.type : ""})}>
         <Block
           direction="row"
           justifyContent="space-between"
