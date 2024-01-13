@@ -540,6 +540,7 @@ const HomeScreen = () => {
                   <View style={styles.map}>
                     <Mapbox.MapView
                       // pitchEnabled={false}
+                      scrollEnabled={false}
                       attributionEnabled={false}
                       // scaleBarEnabled={false}
                       styleURL={Mapbox.StyleURL.Street}
@@ -633,16 +634,19 @@ const HomeScreen = () => {
             />
           </>
         ) : (
-          <UpdateScreen   progress={updatePercent} setScreen={setScreen} />
+          <UpdateScreen progress={updatePercent} setScreen={setScreen} />
         )}
       </Block>
 
       {/* <Block block > */}
-      <ModalUpdate show={showModalHotUpdate} onPress={() => {
-        setScreen(true)
-        setShowModalHotUpdate(false)
-        dispatch(AppActions.setShowModal(true))
-      }} />
+      <ModalUpdate
+        show={showModalHotUpdate}
+        onPress={() => {
+          setScreen(true);
+          setShowModalHotUpdate(false);
+          dispatch(AppActions.setShowModal(true));
+        }}
+      />
       {/* </Block> */}
     </SafeAreaView>
   );

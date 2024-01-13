@@ -107,7 +107,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       linking={linking}
       ref={navigationRef}>
       <Stack.Navigator
-        initialRouteName={ScreenConstant.MAIN_TAB}
+        initialRouteName={ScreenConstant.SELECT_ORGANIZATION}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -125,7 +125,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
 
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
-       
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen
           name={ScreenConstant.WIDGET_FVR_SCREEN}
