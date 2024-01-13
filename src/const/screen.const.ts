@@ -72,7 +72,6 @@ export const CHECKIN_ORDER = 'CHECKIN_ORDER';
 export const TRAVEL_DIARY = 'TRAVEL_DIARY';
 export const ROUTE_RESULT = 'ROUTE_RESULT';
 export const VISIT_RESULT = 'VISIT_RESULT';
-export const CUSTOMER_NO_ORDER = 'CUSTOMER_NO_ORDER';
 export const NEW_CUSTOMER = 'NEW_CUSTOMER';
 export const REPORT_DEBT = 'REPORT_DEBT';
 export const REPORT_KPI = 'REPORT_KPI';

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
 import {AppContainer, SvgIcon} from '../../../components/common';
@@ -15,10 +15,36 @@ import {
 import ProgressCircle from 'react-native-progress-circle';
 import {CommonUtils} from '../../../utils';
 import {AppConstant} from '../../../const';
+import {useTranslation} from 'react-i18next';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {IFilterType} from '../../../components/common/FilterListComponent';
+import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 const RouteResult = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
   const styles = createStyle(theme);
+
+  const filerBottomSheetRef = useRef<BottomSheet>(null);
+
+  const [headerDate, setHeaderDate] = useState<string>(
+    `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
+  );
+
+  const onChangeHeaderDate = (item: IFilterType) => {
+    if (CommonUtils.isNumber(item.value)) {
+      const newDateLabel = CommonUtils.isToday(Number(item.value))
+        ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
+        : `${CommonUtils.convertDate(Number(item.value))}`;
+      setHeaderDate(newDateLabel);
+    } else {
+      setHeaderDate(getLabel(String(item.value)));
+    }
+  };
+
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
+  };
 
   const _renderProcess = () => {
     return (
@@ -81,14 +107,22 @@ const RouteResult = () => {
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
         title={'Kết quả đi tuyến'}
-        date={new Date().getTime()}
-        onSelected={() => console.log('123')}
+        date={headerDate}
+        onSelected={() =>
+          filerBottomSheetRef.current &&
+          filerBottomSheetRef.current.snapToIndex(0)
+        }
       />
       <AppContainer style={{marginBottom: bottom}}>
         {_renderProcess()}
         {_renderSales()}
         {_renderVisitReport()}
       </AppContainer>
+      <ReportFilterBottomSheet
+        filerBottomSheetRef={filerBottomSheetRef}
+        onChange={onChangeHeaderDate}
+        onChangeDateCalender={onChangeDateCalender}
+      />
     </MainLayout>
   );
 };

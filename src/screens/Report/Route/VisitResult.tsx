@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useRef, useState} from 'react';
 import {AppSegmentedButtonsType} from '../../../components/common/AppSegmentedButtons';
 import {AppContainer, TabSelected, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
@@ -8,19 +8,46 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {CommonUtils} from '../../../utils';
 import {VisitedItemType} from '../../../models/types';
+import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
+import {useTranslation} from 'react-i18next';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {IFilterType} from '../../../components/common/FilterListComponent';
 const VisitResult = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
   const styles = createStyle(theme);
+
+  const filerBottomSheetRef = useRef<BottomSheet>(null);
 
   const [segData, setSegData] = useState<AppSegmentedButtonsType[]>(dataSeg);
   const [selectedValue, setSelectedValue] = useState<number | string>(
     dataSeg[0].value,
   );
+
   const [visitedData, setVisitedData] =
     useState<VisitedItemType[]>(VisitedDataFake);
   const [notVisitData, setNotVisitData] =
     useState<VisitedItemType[]>(NotVisitedDataFake);
+
+  const [headerDate, setHeaderDate] = useState<string>(
+    `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
+  );
+
+  const onChangeHeaderDate = (item: IFilterType) => {
+    if (CommonUtils.isNumber(item.value)) {
+      const newDateLabel = CommonUtils.isToday(Number(item.value))
+        ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
+        : `${CommonUtils.convertDate(Number(item.value))}`;
+      setHeaderDate(newDateLabel);
+    } else {
+      setHeaderDate(getLabel(String(item.value)));
+    }
+  };
+
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
+  };
 
   const changeIndex = (value: string | number) => {
     setSelectedValue(value);
@@ -175,8 +202,11 @@ const VisitResult = () => {
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
         title={'Báo cáo viếng thăm'}
-        date={new Date().getTime()}
-        onSelected={() => console.log('123')}
+        date={headerDate}
+        onSelected={() =>
+          filerBottomSheetRef.current &&
+          filerBottomSheetRef.current.snapToIndex(0)
+        }
       />
       <AppContainer style={{marginTop: 24, marginBottom: bottom}}>
         {_renderTotal()}
@@ -188,6 +218,11 @@ const VisitResult = () => {
         />
         {selectedValue === 1 ? _renderVisited() : _renderNotVisit()}
       </AppContainer>
+      <ReportFilterBottomSheet
+        filerBottomSheetRef={filerBottomSheetRef}
+        onChange={onChangeHeaderDate}
+        onChangeDateCalender={onChangeDateCalender}
+      />
     </MainLayout>
   );
 };

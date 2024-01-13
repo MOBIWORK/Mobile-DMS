@@ -59,7 +59,6 @@ import {
   NonOrderCustomer,
   Statistical,
   VisitResult,
-  CustomerNoOrder,
   NewCustomer,
   ReportDebt,
   KPI,
@@ -67,10 +66,7 @@ import {
   InventoryAddProduct,
   RouteResult,
 } from '../screens';
-// import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
-
-// import { MAIN_TAB } from '../const/screen.const';
 import {IAppReduxState} from '../redux-store';
 
 // import PushNotification from 'react-native-push-notification';
@@ -235,10 +231,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={VisitResult}
         />
         <Stack.Screen
-          name={ScreenConstant.CUSTOMER_NO_ORDER}
-          component={CustomerNoOrder}
-        />
-        <Stack.Screen
           name={ScreenConstant.NEW_CUSTOMER}
           component={NewCustomer}
         />
@@ -310,7 +302,6 @@ export type RootStackParamList = {
   [ScreenConstant.TRAVEL_DIARY]: undefined;
   [ScreenConstant.ROUTE_RESULT]: undefined;
   [ScreenConstant.VISIT_RESULT]: undefined;
-  [ScreenConstant.CUSTOMER_NO_ORDER]: undefined;
   [ScreenConstant.NEW_CUSTOMER]: undefined;
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;

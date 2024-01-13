@@ -1,18 +1,29 @@
 import {StyleSheet, ScrollView, ViewStyle} from 'react-native';
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
-import {Block, AppText as Text} from '../../components/common';
-import {MainLayout} from '../../layouts';
-import {AppTheme, useTheme} from '../../layouts/theme';
-import ItemCash from '../Report/Statistical/components/ItemCash';
+import {Block} from '../../../../components/common';
+import {AppTheme, useTheme} from '../../../../layouts/theme';
+import ItemCash from '../../Statistical/components/ItemCash';
 import CardNonOrder from './component/cardNonOrder';
 import {IDataNonOrderCustomer} from './component/ultil';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import ReportHeader from '../Report/Component/ReportHeader';
+import ReportHeader from '../../Component/ReportHeader';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {CommonUtils} from '../../../../utils';
+import {useTranslation} from 'react-i18next';
+import {IFilterType} from '../../../../components/common/FilterListComponent';
+import ReportFilterBottomSheet from '../../Component/ReportFilterBottomSheet';
 
 const NonOrderCustomer = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const {t: getLabel} = useTranslation();
+
+  const filerBottomSheetRef = useRef<BottomSheet>(null);
+
+  const [headerDate, setHeaderDate] = useState<string>(
+    `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
+  );
 
   const generateFakeData = useCallback(() => {
     const fakeData: IDataNonOrderCustomer[] = [];
@@ -56,12 +67,30 @@ const NonOrderCustomer = () => {
   }, []);
   const fakeDataList = useMemo(() => generateFakeData(), []);
 
+  const onChangeHeaderDate = (item: IFilterType) => {
+    if (CommonUtils.isNumber(item.value)) {
+      const newDateLabel = CommonUtils.isToday(Number(item.value))
+        ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
+        : `${CommonUtils.convertDate(Number(item.value))}`;
+      setHeaderDate(newDateLabel);
+    } else {
+      setHeaderDate(getLabel(String(item.value)));
+    }
+  };
+
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
+  };
+
   return (
     <SafeAreaView edges={['bottom', 'top']} style={styles.root}>
       <ReportHeader
         title={'Khách hàng chưa phát sinh đơn'}
-        date={new Date().getTime()}
-        onSelected={() => console.log('123')}
+        date={headerDate}
+        onSelected={() =>
+          filerBottomSheetRef.current &&
+          filerBottomSheetRef.current.snapToIndex(0)
+        }
       />
       <ItemCash
         label={'Tổng số khách hàng'}
@@ -75,6 +104,11 @@ const NonOrderCustomer = () => {
           })}
         </Block>
       </ScrollView>
+      <ReportFilterBottomSheet
+        filerBottomSheetRef={filerBottomSheetRef}
+        onChange={onChangeHeaderDate}
+        onChangeDateCalender={onChangeDateCalender}
+      />
     </SafeAreaView>
   );
 };

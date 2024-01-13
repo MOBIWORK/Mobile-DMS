@@ -3,27 +3,42 @@ import {MainLayout} from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
 import {StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {AppContainer, AppIcons, SvgIcon} from '../../../components/common';
+import {AppContainer, SvgIcon} from '../../../components/common';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ReportCustomerType} from '../../../models/types';
 import {CommonUtils} from '../../../utils';
-// @ts-ignore
-import CalendarPicker from 'react-native-calendar-picker';
-import {AppConstant} from '../../../const';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import BottomSheet from '@gorhom/bottom-sheet';
+import {useTranslation} from 'react-i18next';
+import {IFilterType} from '../../../components/common/FilterListComponent';
 const NewCustomer = () => {
   const theme = useTheme();
   const styles = createStyle(theme);
   const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
+
+  const [headerDate, setHeaderDate] = useState<string>(
+    `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
+  );
 
   const [newCustomerData, setNewCustomerData] =
     useState<ReportCustomerType[]>(NewCustomerDataFake);
 
-  const onDateChange = (date: any, type: any) => {
-    console.log('date', date);
+  const onChangeHeaderDate = (item: IFilterType) => {
+    if (CommonUtils.isNumber(item.value)) {
+      const newDateLabel = CommonUtils.isToday(Number(item.value))
+        ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
+        : `${CommonUtils.convertDate(Number(item.value))}`;
+      setHeaderDate(newDateLabel);
+    } else {
+      setHeaderDate(getLabel(String(item.value)));
+    }
+  };
+
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
 
   const RowItem: FC<RowProps> = ({label, content}) => {
@@ -89,7 +104,7 @@ const NewCustomer = () => {
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
         title={'Khách hàng mới'}
-        date={new Date().getTime()}
+        date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&
           filerBottomSheetRef.current.snapToIndex(0)
@@ -98,38 +113,12 @@ const NewCustomer = () => {
       <AppContainer style={{marginTop: 24, marginBottom: bottom}}>
         {_renderTotal()}
         {_renderContent()}
-        {/*<CalendarPicker*/}
-        {/*  startFromMonday={true}*/}
-        {/*  allowBackwardRangeSelect*/}
-        {/*  textStyle={{color: theme.colors.text_primary}}*/}
-        {/*  todayBackgroundColor={theme.colors.text_secondary}*/}
-        {/*  todayTextStyle={{color: theme.colors.bg_default}}*/}
-        {/*  previousComponent={*/}
-        {/*    <AppIcons*/}
-        {/*      iconType={AppConstant.ICON_TYPE.EntypoIcon}*/}
-        {/*      name={'chevron-left'}*/}
-        {/*      size={30}*/}
-        {/*      color={theme.colors.text_primary}*/}
-        {/*    />*/}
-        {/*  }*/}
-        {/*  nextComponent={*/}
-        {/*    <AppIcons*/}
-        {/*      iconType={AppConstant.ICON_TYPE.EntypoIcon}*/}
-        {/*      name={'chevron-right'}*/}
-        {/*      size={30}*/}
-        {/*      color={theme.colors.text_primary}*/}
-        {/*    />*/}
-        {/*  }*/}
-        {/*  // selectedStartDate={startDate !== '' ? startDate : null}*/}
-        {/*  // selectedEndDate={endDate !== '' ? endDate : null}*/}
-        {/*  selectedDayStyle={{*/}
-        {/*    backgroundColor: theme.colors.primary,*/}
-        {/*  }}*/}
-        {/*  selectedDayTextStyle={{color: theme.colors.bg_default}}*/}
-        {/*  onDateChange={onDateChange}*/}
-        {/*/>*/}
       </AppContainer>
-      <ReportFilterBottomSheet filerBottomSheetRef={filerBottomSheetRef} />
+      <ReportFilterBottomSheet
+        filerBottomSheetRef={filerBottomSheetRef}
+        onChange={onChangeHeaderDate}
+        onChangeDateCalender={onChangeDateCalender}
+      />
     </MainLayout>
   );
 };

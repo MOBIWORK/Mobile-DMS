@@ -24,6 +24,7 @@ import BottomSheet, {
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
+import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 
 const ReportDebt = () => {
   const theme = useTheme();
@@ -50,6 +51,11 @@ const ReportDebt = () => {
   const [isFilterType, setFilterType] = useState<boolean>(true);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const filerBottomSheetRef = useRef<BottomSheet>(null);
+
+  const [headerDate, setHeaderDate] = useState<string>(
+    `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
+  );
 
   const customerTypeLabel = useMemo(() => {
     const selected = filterTypeData.filter(item => item.isSelected);
@@ -60,6 +66,21 @@ const ReportDebt = () => {
     const selected = filterGroupData.filter(item => item.isSelected);
     return getLabel(selected[0].label);
   }, [filterGroupData]);
+
+  const onChangeHeaderDate = (item: IFilterType) => {
+    if (CommonUtils.isNumber(item.value)) {
+      const newDateLabel = CommonUtils.isToday(Number(item.value))
+        ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
+        : `${CommonUtils.convertDate(Number(item.value))}`;
+      setHeaderDate(newDateLabel);
+    } else {
+      setHeaderDate(getLabel(String(item.value)));
+    }
+  };
+
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
+  };
 
   const handleItemFilter = (item: IFilterType) => {
     if (isFilterType) {
@@ -228,8 +249,11 @@ const ReportDebt = () => {
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
         title={'Báo cáo công nợ'}
-        date={new Date().getTime()}
-        onSelected={() => console.log(123)}
+        date={headerDate}
+        onSelected={() =>
+          filerBottomSheetRef.current &&
+          filerBottomSheetRef.current.snapToIndex(0)
+        }
       />
       <AppContainer style={{marginBottom: bottom, marginTop: 24}}>
         {_renderChart()}
@@ -258,6 +282,11 @@ const ReportDebt = () => {
           />
         </BottomSheetScrollView>
       </AppBottomSheet>
+      <ReportFilterBottomSheet
+        filerBottomSheetRef={filerBottomSheetRef}
+        onChange={onChangeHeaderDate}
+        onChangeDateCalender={onChangeDateCalender}
+      />
     </MainLayout>
   );
 };
