@@ -532,166 +532,123 @@ const HomeScreen = () => {
                   )}
                 </View>
 
-<<<<<<<<< Temporary merge branch 1
-            <View style={styles.map}>
-              <Mapbox.MapView
-                // pitchEnabled={false}
-                attributionEnabled={false}
-                // scaleBarEnabled={false}
-                styleURL={Mapbox.StyleURL.Street}
-                logoEnabled={false}
-                style={{width: '98%', height: 360, borderRadius: 16}}>
-                <Mapbox.Camera
-                  ref={mapboxCameraRef}
-                  centerCoordinate={[
-                    location?.coords.longitude ?? 0,
-                    location?.coords.latitude ?? 0,
-                  ]}
-                  animationMode={'flyTo'}
-                  animationDuration={500}
-                  zoomLevel={12}
-                />
-                {VisitListData.map((item, index) => {
-                  return (
-                    <Mapbox.MarkerView
-                      key={index}
-                      coordinate={[Number(item.long), Number(item.lat)]}>
-                      <MarkerItem
-                        item={item}
-                        index={index}
-                        onPress={() => setVisitItemSelected(item)}
-                      />
-                    </Mapbox.MarkerView>
-                  );
-                })}
-                <Mapbox.UserLocation
-                  visible={true}
-                  animated
-                  androidRenderMode="gps"
-                  showsUserHeadingIndicator={true}
-                />
-                {visitItemSelected && (
-                  <View
-                    style={{
-                      position: 'absolute',
-                      bottom: bottom + 16,
-                      left: 24,
-                      right: 24,
-                    }}>
-                    <VisitItem
-                      item={visitItemSelected}
-                      handleClose={() => setVisitItemSelected(null)}
-                    />
+                <View>
+                  <View style={[styles.flexSpace]}>
+                    <Text style={[styles.tilteSection]}>Bản đồ viếng thăm</Text>
                   </View>
-                )}
-              </Mapbox.MapView>
-            </View>
-          </View>
-=========
-    //       <View>
-    //         <View style={[styles.flexSpace]}>
-    //           <Text style={[styles.tilteSection]}>Bản đồ viếng thăm</Text>
-    //         </View>
->>>>>>>>> Temporary merge branch 2
 
-    //         <View style={styles.map}>
-    //           <Mapbox.MapView
-    //             // pitchEnabled={false}
-    //             attributionEnabled={false}
-    //             // scaleBarEnabled={false}
-    //             styleURL={Mapbox.StyleURL.Street}
-    //             logoEnabled={false}
-    //             style={{width: '98%', height: 360, borderRadius: 16}}>
-    //             <Mapbox.Camera
-    //               ref={mapboxCameraRef}
-    //               centerCoordinate={[
-    //                 location?.coords.longitude ?? 0,
-    //                 location?.coords.latitude ?? 0,
-    //               ]}
-    //               animationMode={'flyTo'}
-    //               animationDuration={500}
-    //               zoomLevel={12}
-    //             />
-    //             {VisitListData.map((item, index) => {
-    //               return (
-    //                 <Mapbox.MarkerView
-    //                   key={index}
-    //                   coordinate={[Number(item.long), Number(item.lat)]}>
-    //                   <MarkerItem
-    //                     item={item}
-    //                     index={index}
-    //                     onPress={() => setVisitItemSelected(item)}
-    //                   />
-    //                 </Mapbox.MarkerView>
-    //               );
-    //             })}
-    //             <Mapbox.UserLocation
-    //               visible={true}
-    //               animated
-    //               androidRenderMode="gps"
-    //               showsUserHeadingIndicator={true}
-    //             />
-    //             {visitItemSelected && (
-    //               <View
-    //                 style={{
-    //                   position: 'absolute',
-    //                   bottom: bottom + 16,
-    //                   left: 24,
-    //                   right: 24,
-    //                 }}>
-    //                 <VisitItem
-    //                   item={visitItemSelected}
-    //                   handleClose={() => setVisitItemSelected(null)}
-    //                 />
-    //               </View>
-    //             )}
-    //           </Mapbox.MapView>
-    //         </View>
-    //       </View>
+                  <View style={styles.map}>
+                    <Mapbox.MapView
+                      // pitchEnabled={false}
+                      scrollEnabled={false}
+                      attributionEnabled={false}
+                      // scaleBarEnabled={false}
+                      styleURL={Mapbox.StyleURL.Street}
+                      logoEnabled={false}
+                      style={{width: '98%', height: 360, borderRadius: 16}}>
+                      <Mapbox.Camera
+                        ref={mapboxCameraRef}
+                        centerCoordinate={[
+                          location?.coords.longitude ?? 0,
+                          location?.coords.latitude ?? 0,
+                        ]}
+                        animationMode={'flyTo'}
+                        animationDuration={500}
+                        zoomLevel={12}
+                      />
+                      {VisitListData.map((item, index) => {
+                        return (
+                          <Mapbox.MarkerView
+                            key={index}
+                            coordinate={[Number(item.long), Number(item.lat)]}>
+                            <MarkerItem
+                              item={item}
+                              index={index}
+                              onPress={() => setVisitItemSelected(item)}
+                            />
+                          </Mapbox.MarkerView>
+                        );
+                      })}
+                      <Mapbox.UserLocation
+                        visible={true}
+                        animated
+                        androidRenderMode="gps"
+                        showsUserHeadingIndicator={true}
+                      />
+                      {visitItemSelected && (
+                        <View
+                          style={{
+                            position: 'absolute',
+                            bottom: bottom + 16,
+                            left: 24,
+                            right: 24,
+                          }}>
+                          <VisitItem
+                            item={visitItemSelected}
+                            handleClose={() => setVisitItemSelected(null)}
+                          />
+                        </View>
+                      )}
+                    </Mapbox.MapView>
+                  </View>
+                </View>
 
-    //       <View>
-    //         <View style={[styles.flexSpace]}>
-    //           <Text style={[styles.tilteSection]}>Thông báo nội bộ</Text>
-    //           <TouchableOpacity
-    //             onPress={() =>
-    //               navigation.navigate(ScreenConstant.NOTIFYCATION)
-    //             }>
-    //             <Text style={[styles.tilteSection, {color: colors.action}]}>
-    //               Tất cả
-    //             </Text>
-    //           </TouchableOpacity>
-    //         </View>
-    //         <View style={styles.containerNtf}>
-    //           {notifiCations?.map((item, i) => (
-    //             <View key={i}>
-    //               {loading ? (
-    //                 <ItemNotiLoading />
-    //               ) : (
-    //                 <ItemNotification
-    //                   isSend={true}
-    //                   title={item.name}
-    //                   time={item.time}
-    //                   description={item.description}
-    //                   avatar={
-    //                     'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
-    //                   }
-    //                 />
-    //               )}
-    //             </View>
-    //           ))}
-    //         </View>
-    //       </View>
-    //     </View>
-    //   </AppContainer>
-    //   <NotificationScreen
-    //     bottomSheetRef={bottomSheetNotification}
-    //     snapPointsCustom={snapPoint}
-    //   />
-    // </SafeAreaView>
-    <Block  middle block justifyContent='center'    >
-        <ModalUpdate show={true}  onPress={() => setScreen(true)}/>
-      {screen && <UpdateScreen />}
-    </Block>
+                <View>
+                  <View style={[styles.flexSpace]}>
+                    <Text style={[styles.tilteSection]}>Thông báo nội bộ</Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate(ScreenConstant.NOTIFYCATION)
+                      }>
+                      <Text
+                        style={[styles.tilteSection, {color: colors.action}]}>
+                        Tất cả
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.containerNtf}>
+                    {notifiCations?.map((item, i) => (
+                      <View key={i}>
+                        {loading ? (
+                          <ItemNotiLoading />
+                        ) : (
+                          <ItemNotification
+                            isSend={true}
+                            title={item.name}
+                            time={item.time}
+                            description={item.description}
+                            avatar={
+                              'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
+                            }
+                          />
+                        )}
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              </View>
+            </AppContainer>
+            <NotificationScreen
+              bottomSheetRef={bottomSheetNotification}
+              snapPointsCustom={snapPoint}
+            />
+          </>
+        ) : (
+          <UpdateScreen progress={updatePercent} setScreen={setScreen} />
+        )}
+      </Block>
+
+      {/* <Block block > */}
+      <ModalUpdate
+        show={showModalHotUpdate}
+        onPress={() => {
+          setScreen(true);
+          setShowModalHotUpdate(false);
+          dispatch(AppActions.setShowModal(true));
+        }}
+      />
+      {/* </Block> */}
+    </SafeAreaView>
   );
 };
 

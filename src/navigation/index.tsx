@@ -107,22 +107,20 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       linking={linking}
       ref={navigationRef}>
       <Stack.Navigator
-        initialRouteName={ScreenConstant.MAIN_TAB}
+        initialRouteName={ScreenConstant.SELECT_ORGANIZATION}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}
-        initialRouteName={ScreenConstant.MAIN_TAB}>
-        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+        >
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> */}
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
 
         <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
-       
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen
           name={ScreenConstant.WIDGET_FVR_SCREEN}
@@ -132,7 +130,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NOTIFYCATION}
           component={NotificationScreen}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
           component={ForgotPassword}
@@ -146,7 +143,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_VISIT}
           component={SearchVisit}
         />
-        
         <Stack.Screen
           name={ScreenConstant.LIST_PRODUCT}
           component={ListProduct}

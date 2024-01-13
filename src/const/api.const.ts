@@ -17,11 +17,11 @@ export const STT_INTERNAL_SERVER = 500;
 export const STT_NOT_MODIFIED = 304;
 
 const URL_PREFIX = '/api/method/mbw_dms';
-const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
+// const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
 
 //POST
-export const POST_USER_LOGIN = URL_PREFIX + '.auth.login';
-export const POST_USER_LOGOUT = URL_PREFIX + '.auth.logout';
+export const POST_USER_LOGIN ='/api/method/mbw_service_v2.api.auth.login';
+export const POST_USER_LOGOUT ='/api/method/mbw_service_v2.api.auth.logout';
 export const POST_USER_ORGANIZATION =
   '/api/method/mbw_ess_registration.api.ess.organization.get_info_organization';
 export const POST_RESET_PASSWORD = URL_PREFIX + '.auth.reset_password';
