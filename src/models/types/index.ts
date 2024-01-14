@@ -451,11 +451,6 @@ export type StockProduct = {
   qty: number;
 };
 
-export type StockProduct = {
-  t_warehouse : string,
-  qty : number
-}
-
 export type IProduct = {
   name : string;
   item_code : string;
