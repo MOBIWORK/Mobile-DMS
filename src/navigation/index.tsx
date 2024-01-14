@@ -18,7 +18,6 @@ import {useMMKVObject} from 'react-native-mmkv';
 import {
   IDataCustomer,
   IProduct,
-  IProductList,
   IResOrganization,
   ItemNoteVisitDetail,
   ReportOrderItemType,
@@ -282,7 +281,7 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: {
-    item: IProduct
+    item: IProduct;
   };
   [ScreenConstant.IMAGE_VIEW]: { data: any };
   [ScreenConstant.ORDER_SCREEN]: undefined;
@@ -294,8 +293,8 @@ export type RootStackParamList = {
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_INVENTORY]: undefined;
   [ScreenConstant.INVENTORY_ADD_PRODUCT]: undefined;
-  [ScreenConstant.CKECKIN_ORDER]: {type : string};
-  [ScreenConstant.CKECKIN_ORDER_CREATE]: {type :string};
+  [ScreenConstant.CKECKIN_ORDER]: {type: string};
+  [ScreenConstant.CKECKIN_ORDER_CREATE]: {type: string};
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.DETAIL_CUSTOMER]: { data: IDataCustomer };

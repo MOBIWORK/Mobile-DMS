@@ -429,21 +429,21 @@ export type ReportKPIType = {
   newCustomer: ReportKPIItemType;
 };
 type UinitProduct = {
-  uom : string;
-  price_list_rate : number;
-  valid_from : string;
-  currency : string
-}
+  uom: string;
+  price_list_rate: number;
+  valid_from: string;
+  currency: string;
+};
 
 type DataUnit = {
-  uom : string;
-  conversion_factor : string;
-}
+  uom: string;
+  conversion_factor: string;
+};
 
 export type StockProduct = {
-  t_warehouse : string,
-  qty : number
-}
+  t_warehouse: string;
+  qty: number;
+};
 
 export type IProduct = {
   name : string;
