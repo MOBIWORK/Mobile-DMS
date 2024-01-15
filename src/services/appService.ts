@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
-import {BASE_URL, BASE_URL_MAP, API_EK_KEY} from '@env';
+import {BASE_URL, BASE_URL_MAP, API_EK_KEY, API_URL} from '@env';
 import { client } from '../config/client';
 
 export type ILogin = {
@@ -67,4 +67,13 @@ export const verifyOrganization = (data: object) =>
 export const updateProfile = (data: IProfile) =>
   createApi().put(ApiConstant.PUT_USER_PROFILE, data);
 
-export const postChecking = (data:CheckinData) => createApi().post(ApiConstant.POST_CHECKIN,data)
+export const postChecking = (data:any) => createApi().post('http://hr.mbwcloud.com:8004/api/method/mbw_dms.api.checkin.create_checkin',data,{
+  // baseURL:API_URL
+})
+
+export const getDetailLocation = (lat?: number, lon?: number) =>
+  client
+    .get(
+      BASE_URL_MAP + `?point.lon=${lon}&point.lat=${lat}&api_key=${API_EK_KEY}`,
+    )
+    .then(res => res.data);

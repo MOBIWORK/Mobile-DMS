@@ -1,20 +1,21 @@
 import React, {FC, useMemo} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, AppSelector} from '../redux-store';
+import {useDispatch} from 'react-redux';
+import {AppActions} from '../redux-store';
 
 import {AppDialog} from './common';
 import {ApiConstant, ScreenConstant} from '../const';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../navigation';
 import {useTranslation} from 'react-i18next';
+import { useSelector } from '../config/function';
 
 const HandlingError: FC = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
 
-  const error = useSelector(AppSelector.getErrorInfo);
-  const isShowModalError = useSelector(AppSelector.getShowModal);
+  const error = useSelector(state => state.app.error);
+  const isShowModalError = useSelector(state => state.app.showModal);
 
   const open = useMemo(
     () =>

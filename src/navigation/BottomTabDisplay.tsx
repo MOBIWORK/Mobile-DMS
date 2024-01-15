@@ -17,9 +17,8 @@ import {RootStackParamList} from '.';
 import {ScreenConstant} from '../const';
 
 import {AppTheme, useTheme} from '../layouts/theme';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, AppSelector} from '../redux-store';
 import { SvgIcon } from '../components/common';
+import { useSelector } from '../config/function';
 
 
 const BottomTabDisplay = (props: BottomTabBarProps) => {
@@ -28,8 +27,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {t: getLabel} = useTranslation();
   const styles = bottomStyles(theme);
   const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
-  const showModal = useSelector(AppSelector.getShowModal);
-  const dispatch = useDispatch()
+  const showModal = useSelector(state => state.app.showModal);
   const pressNavigator = React.useCallback(
     (curTab: any) => {
       const previousRouteName = navigationRef?.current?.getCurrentRoute()?.name;

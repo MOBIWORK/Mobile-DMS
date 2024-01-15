@@ -1,11 +1,13 @@
 import {MMKV} from 'react-native-mmkv';
 import {Dimensions, InteractionManager, Keyboard, Linking, Platform, StyleSheet} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import store, {AppActions} from '../redux-store';
+import  {AppActions} from '../redux-store';
 import * as LocalAuthentication from 'expo-local-authentication';
 import {AppConstant} from '../const';
 import * as Location from 'expo-location';
 import {LocationAccuracy} from 'expo-location';
+import { dispatch } from './redux';
+import { appActions } from '../redux-store/app-reducer/reducer';
 
 export const storage = new MMKV();
 
@@ -238,14 +240,14 @@ export const handleSearchStaff = (
 export const CheckNetworkState = async () => {
   const state = await NetInfo.fetch();
   if (!state.isConnected) {
-    store.dispatch(
+    dispatch(
       AppActions.setError({
         title: null,
         message: 'Không có kết nối mạng',
         viewOnly: true,
       }),
     );
-    store.dispatch(AppActions.setProcessingStatus(false));
+    dispatch(appActions.setProcessingStatus(false));
     return;
   }
 };

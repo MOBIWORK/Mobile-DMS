@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react';
+import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
 import {registerTranslation} from 'react-native-paper-dates';
 
@@ -10,13 +10,14 @@ import {
   LogBox,
   Platform,
   StatusBar,
+  UIManager,
 } from 'react-native';
 
 import 'react-native-gesture-handler';
 import './src/language';
 
 import {Provider} from 'react-redux';
-import store from './src/redux-store';
+
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import AppNavigationContainer from './src/navigation';
 import HandlingError from './src/components/HandlingError';
@@ -24,20 +25,24 @@ import HandlingLoading from './src/components/HandlingLoading';
 import {SnackBar} from './src/components/common/AppSnack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import codePush from 'react-native-code-push';
-
+import {store} from './src/redux-store/';
+import {isIos} from './src/config/function';
+import {AppModule} from './src/native-module';
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_START,
   installMode: codePush.InstallMode.IMMEDIATE,
 };
 
+if (!isIos) {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 function App(): JSX.Element {
-  
-
-  
   useEffect(() => {
     LogBox.ignoreAllLogs();
-    
+
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => true,
@@ -139,30 +144,27 @@ function App(): JSX.Element {
   //     // onHttp.remove();
   //   };
   // }, []);
-  
+
   // Alert.alert(updateMessage)
 
   return (
-    <Provider store={store}>
-      <SafeAreaProvider>
+    <SafeAreaProvider>
+      <Provider store={store}>
         <KeyboardAvoidingView
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
-            {/* <PortalProvider> */}
-      
             <AppNavigationContainer>
               <StatusBar backgroundColor={'#fff'} />
               <HandlingError />
               <SnackBar />
             </AppNavigationContainer>
-            {/* </PortalProvider>xs */}
           </GestureHandlerRootView>
           <HandlingLoading />
         </KeyboardAvoidingView>
-      </SafeAreaProvider>
-    </Provider>
+      </Provider>
+    </SafeAreaProvider>
   );
   // return(
   //   <Block block middle >

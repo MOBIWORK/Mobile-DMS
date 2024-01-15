@@ -17,8 +17,9 @@ import {AppBottomSheet} from '../../components/common';
 import {NavigationProp} from '../../navigation';
 // import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {AppActions, AppSelector} from '../../redux-store';
+import { useSelector } from '../../config/function';
 
 const arrNotification: any[] = [
   {
@@ -149,7 +150,7 @@ const NotificationScreen: FC<NotificationScreenProps> = ({
   const {t: getLable} = useTranslation();
   const styles = createSheetStyle(useTheme());
   const dispatch = useDispatch();
-  const showModal = useSelector(AppSelector.getShowModal);
+  const showModal = useSelector(state => state.app.showModal);
 
   useEffect(() => {
     if (isRead) {

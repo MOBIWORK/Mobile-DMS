@@ -16,7 +16,6 @@ import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {useNavigation} from '@react-navigation/native';
 import VersionCheck from 'react-native-version-check';
-
 import {ImageAssets} from '../../assets';
 import {AppConstant, ScreenConstant} from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
@@ -46,7 +45,7 @@ import ItemLoading from './components/ItemLoading';
 import CardLoading from './components/CardLoading';
 import ItemNotiLoading from './components/ItemNotiLoading';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, AppSelector} from '../../redux-store';
+// import {AppActions, AppSelector} from '../../redux-store';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
 import ModalUpdate from './components/ModalUpdate';
 import {useBackgroundLocation} from '../../config/function';
@@ -63,7 +62,7 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
   const dispatch = useDispatch();
-  const showModal = useSelector(AppSelector.getShowModal);
+  // const showModal = useSelector(AppSelector.getShowModal);
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
@@ -432,7 +431,7 @@ const HomeScreen = () => {
                   onPress={() => {
                     bottomSheetNotification.current &&
                       bottomSheetNotification.current.snapToIndex(0);
-                    dispatch(AppActions.setShowModal(!showModal));
+                    // dispatch(AppActions.setShowModal(!showModal));
                   }}
                 />
               </View>
@@ -643,7 +642,7 @@ const HomeScreen = () => {
         onPress={() => {
           setScreen(true);
           setShowModalHotUpdate(false);
-          dispatch(AppActions.setShowModal(true));
+          // dispatch(AppActions.setShowModal(true));
         }}
       />
       {/* </Block> */}

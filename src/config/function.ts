@@ -1,10 +1,12 @@
 import moment from 'moment';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
-import {BackHandler, Keyboard, Platform} from 'react-native';
+import {BackHandler, Keyboard, Platform, processColor} from 'react-native';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
+import { RootState } from '../redux-store/all-reducer';
+import {useSelector as useReduxSelector} from 'react-redux';
 
 type TypesBase =
   | 'bigint'
@@ -107,6 +109,14 @@ const calculateDistance = (
   return distance;
 };
 
+export const hexStringFromCSSColor = (color: string) => {
+  const processedColor = processColor(color);
+  const colorStr = `${(processedColor ?? '').toString(16)}`;
+  const withoutAlpha = colorStr.substring(2, colorStr.length);
+  const alpha = colorStr.substring(0, 2);
+  return `#${withoutAlpha}${alpha}`;
+};
+
 const useBackgroundLocation = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string>('');
@@ -175,6 +185,14 @@ function calculateDateDifference(targetDate:string) {
     days: remainingDays,
   };
 }
+
+function useSelector<T>(
+  selector: (state: RootState) => T,
+  equalityFn = isEqual,
+): T {
+  return useReduxSelector<RootState, T>(selector, equalityFn);
+}
+
 export {
   formatPhoneNumber,
   formatMoney,
@@ -186,5 +204,6 @@ export {
   useDismissKeyboard,
   calculateDistance,
   useBackgroundLocation,
-  calculateDateDifference
+  calculateDateDifference,
+  useSelector
 };

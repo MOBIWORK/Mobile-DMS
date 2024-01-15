@@ -58,22 +58,24 @@ import {MyAppTheme} from '../layouts/theme';
 
 // import { MAIN_TAB } from '../const/screen.const';
 
-import {IAppReduxState} from '../redux-store';
+// import {IAppReduxState} from '../redux-store';
 
 // import PushNotification from 'react-native-push-notification';
-import {useSelector} from 'react-redux';
+
 import MainTab, {TabParamList} from './MainTab';
 import linking from '../utils/linking.utils';
+import { useSelector } from '../config/function';
+import { RXStore } from '../utils/redux';
 
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const {theme} = useSelector((state: IAppReduxState) => state.appRedux);
-  const [organiztion] = useMMKVObject<IResOrganization>(
-    AppConstant.Organization,
-  );
+  const theme = useSelector(state => state.app.theme);
+  // const [organiztion] = useMMKVObject<IResOrganization>(
+  //   AppConstant.Organization,
+  // );
 
   // const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
@@ -214,6 +216,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         />
       </Stack.Navigator>
       {children}
+      <RXStore />
+
     </NavigationContainer>
   );
 };

@@ -12,14 +12,28 @@ import {
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
 import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp, navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
+// import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { useDispatch } from 'react-redux';
+import { onCheckInData } from '../../../saga/app-saga/saga';
+
 
 const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
-  const navigation = useNavigation<NavigationProp>();
   const theme = useTheme()
+  const dispatch = useDispatch()
+
+
+  const onPressCheckIn = (item:VisitListItemType) =>{
+    dispatch(appActions.onCheckIn(item));
+    dispatch(appActions.onGetLost(0))
+    dispatch(appActions.onSetAppTheme('default'))
+  }
+
+
   const statusItem = (status: boolean) => {
     return (
       <View
@@ -40,7 +54,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   return (
     <Pressable
       onPress={() =>
-        navigation.navigate(ScreenConstant.VISIT_DETAIL, {data: item})
+        navigate(ScreenConstant.VISIT_DETAIL, {data: item})
       }>
       <View style={styles.viewContainer}>
         <View style={styles.user}>
@@ -86,7 +100,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
             {marginTop: 8, justifyContent: 'space-between'},
           ]}>
           <AppButton
-            onPress={() =>  navigation.navigate(ScreenConstant.CHECKIN,{item})}
+            onPress={() => onPressCheckIn(item)}
             style={createStyleSheet(theme).button(item.status)}
             label={'Checkin'}
             styleLabel={{

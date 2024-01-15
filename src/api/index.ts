@@ -1,11 +1,13 @@
 import {ApiResponse, create} from 'apisauce';
 import {ApiConstant, AppConstant} from '../const';
 
-import store, {AppActions} from '../redux-store';
+
 import {IApiResponse} from '../models/types';
 import axios, {CreateAxiosDefaults} from 'axios';
 import {BASE_URL} from '@env';
 import {CommonUtils} from '../utils';
+import { dispatch } from '../utils/redux';
+import { appActions } from '../redux-store/app-reducer/reducer';
 
 const DEFAULT_CONFIG: CreateAxiosDefaults = {
   baseURL: BASE_URL,
@@ -28,19 +30,19 @@ const handleErrorResponse = (
     if (isSuccessRequest && response.data?.result) {
       return;
     } else if (throwErrorIfFailed || response.data?.message) {
-      store.dispatch(
-        AppActions.setError({
+      dispatch(
+        appActions.setError({
           title: response.data?.title,
           message: response.data?.message || response.data,
           viewOnly: true,
           status: response.status,
         }),
       );
-      store.dispatch(AppActions.setProcessingStatus(false));
+      dispatch(appActions.setProcessingStatus(false));
     }
   } else {
-    store.dispatch(
-      AppActions.setError({
+    dispatch(
+      appActions.setError({
         title: 'Không có kết nối đến máy chủ',
         message: null,
         viewOnly: true,
