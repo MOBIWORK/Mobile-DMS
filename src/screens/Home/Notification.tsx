@@ -20,6 +20,7 @@ import {AppTheme, useTheme} from '../../layouts/theme';
 import {useDispatch} from 'react-redux';
 // import {AppActions, AppSelector} from '../../redux-store';
 import { useSelector } from '../../config/function';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 
 const arrNotification: any[] = [
   {
@@ -169,7 +170,7 @@ const NotificationScreen: FC<NotificationScreenProps> = ({
           label={getLable('Thông báo')}
           onBack={() => {
             bottomSheetRef.current && bottomSheetRef.current.close();
-            dispatch(AppActions.setShowModal(!showModal));
+            dispatch(appActions.setShowModal(!showModal));
           }}
           backButtonIcon={
             <AppIcons
