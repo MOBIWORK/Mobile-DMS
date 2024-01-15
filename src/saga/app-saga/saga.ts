@@ -37,7 +37,7 @@ export function* onLost(action:PayloadAction){
   console.log(action.payload)
 }
 
-export function* onCheckInData(action:PayloadAction<any>){
+export function* onCheckInData(action:PayloadAction){
 
   console.log(action,'actions saga')
     if(appActions.onCheckIn.match(action)){

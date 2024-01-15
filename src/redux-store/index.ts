@@ -23,7 +23,7 @@ const persistedReducer = persistReducer(
 
 const devMode = __DEV__;
 const sagaMiddleware = createSagaMiddleware();
-const middleware = [sagaMiddleware];
+const middleware = [sagaMiddleware,subscribeActionMiddleware];
 
 const storeConfig = () => {
   const store = configureStore({

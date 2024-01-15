@@ -2,7 +2,7 @@ import {PayloadAction, createAction, createSlice} from '@reduxjs/toolkit';
 import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
 import * as Actions from './type';
-import { VisitListItemType } from '../../models/types';
+import {VisitListItemType} from '../../models/types';
 
 const initialAppState: IAppRedux = {
   error: undefined,
@@ -79,23 +79,35 @@ const appSlice = createSlice({
   },
 });
 
-const onCheckIn = createAction(Actions.CHECKIN, ({label,useName,address,distance,status,phone_number,lat,long}:VisitListItemType) => ({
-  payload: {
+const onCheckIn = createAction(
+  Actions.CHECKIN,
+  ({
     label,
-    long,
-    lat,
-    status,
-    address,
     useName,
+    address,
     distance,
-    phone_number
-  },
+    status,
+    phone_number,
+    lat,
+    long,
+  }: VisitListItemType) => ({
+    payload: {
+      label,
+      long,
+      lat,
+      status,
+      address,
+      useName,
+      distance,
+      phone_number,
+    },
+  }),
+);
+const onGetLost = createAction('LOST', (data: number) => ({
+  payload: data,
 }));
-const onGetLost = createAction('LOST',(data:number) =>({
-  payload:data
-}))
 
-export const appActions = {...appSlice.actions, onCheckIn,onGetLost};
+export const appActions = {...appSlice.actions, onCheckIn, onGetLost};
 export const appReducer = appSlice.reducer;
 export const {
   setError,
@@ -109,5 +121,5 @@ export const {
   setShowModal,
   onLoadApp,
   onLoadAppEnd,
-  onSetAppTheme
+  onSetAppTheme,
 } = appSlice.actions;
