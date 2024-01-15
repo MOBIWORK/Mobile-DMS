@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import React, {useRef, useState, useLayoutEffect} from 'react';
-import {useDispatch} from 'react-redux';
+
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
@@ -33,6 +33,7 @@ import {getDetailLocation} from '../../../services/appService';
 import {formatMoney, useSelector} from '../../../config/function';
 import CardAddress from './CardAddress';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../../utils/redux';
 
 
 type Props = {
@@ -74,8 +75,6 @@ const FormAdding = (props: Props) => {
   const [dataLocation, setDataLocation] = useState<string>('');
   const mainAddress = useSelector(state => state.app.mainAddress);
   const mainContactAddress = useSelector(state=>state.app.mainContactAddress);
-
-  const dispatch = useDispatch();
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
 

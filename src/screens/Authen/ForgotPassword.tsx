@@ -15,14 +15,15 @@ import {AppService} from '../../services';
 // @ts-ignore
 import StringFormat from 'string-format';
 
-import {useDispatch} from 'react-redux';
+
 import {CommonUtils} from '../../utils';
 import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 const ForgotPassword = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
-  const dispatch = useDispatch();
+  
 
   const [email, setEmail] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);

@@ -16,15 +16,15 @@ import {NavigationProp, navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
 // import { dispatch } from '../../../utils/redux';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
-import { useDispatch } from 'react-redux';
-import { onCheckInData } from '../../../saga/app-saga/saga';
+import { dispatch } from '../../../utils/redux';
+
 
 
 const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const theme = useTheme()
-  const dispatch = useDispatch()
+  
 
 
   const onPressCheckIn = (item:VisitListItemType) =>{

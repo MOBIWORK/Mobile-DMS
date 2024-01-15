@@ -62,7 +62,7 @@ const HomeScreen = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
-  const dispatch = useDispatch();
+  
   // const showModal = useSelector(AppSelector.getShowModal);
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);

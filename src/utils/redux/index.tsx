@@ -5,6 +5,7 @@ import isEqual from 'react-fast-compare';
 import {useDispatch} from 'react-redux';
 
 
+
 import { RootState } from '../../redux-store/all-reducer';
 import { useSelector } from '../../config/function';
 
@@ -15,6 +16,7 @@ export type ActionBase<T = any> = {
 
 const RXStoreComponent = forwardRef((props, ref) => {
   const dispatch = useDispatch();
+  
   const store = useSelector(x => x);
   useImperativeHandle(
     ref,

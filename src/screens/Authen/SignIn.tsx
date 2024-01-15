@@ -30,15 +30,15 @@ import {
   KeyAbleProps,
 } from '../../models/types';
 import {AppService} from '../../services';
-import {useDispatch} from 'react-redux';
+
 import {useTranslation} from 'react-i18next';
 import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 const SignIn = () => {
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-  const dispatch = useDispatch();
 
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
   const [isLogOut] = useMMKVBoolean(AppConstant.isLogOut);

@@ -8,7 +8,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useMMKVString} from 'react-native-mmkv';
-import {useDispatch} from 'react-redux';
+import { dispatch } from '../../utils/redux';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {NavigationProp} from '../../navigation';
 import {AppConstant} from '../../const';
@@ -23,7 +23,6 @@ type Props = {};
 const SearchCustomer = (props: Props) => {
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const dispatch = useDispatch();
   const [listCustomerNearly, setListCustomerNearly] = useMMKVString(
     AppConstant.ListSearchCustomerNearly,
   );

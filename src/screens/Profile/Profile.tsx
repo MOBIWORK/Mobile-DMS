@@ -9,7 +9,7 @@ import {
   SvgIcon,
 } from '../../components/common';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {useDispatch} from 'react-redux';
+import { dispatch } from '../../utils/redux';
 
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation';
@@ -21,7 +21,6 @@ type Props = {};
 
 const Profile = (props: Props) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const appTheme = useSelector(state => state.app.theme);
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();

@@ -1,5 +1,5 @@
 import React, {FC, useMemo} from 'react';
-import {useDispatch} from 'react-redux';
+import { dispatch } from '../utils/redux';
 
 
 import {AppDialog} from './common';
@@ -11,7 +11,6 @@ import { useSelector } from '../config/function';
 import { appActions } from '../redux-store/app-reducer/reducer';
 
 const HandlingError: FC = () => {
-  const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
 

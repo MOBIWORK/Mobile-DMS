@@ -21,7 +21,7 @@ const AppSwitch = (props: Props) => {
   const theme = useTheme()
   const styles = rootStyles(theme)
   const {onSwitch} = props;
-  // const dispatch = useDispatch()
+  // ()
   const switchTranslate = useSharedValue(0);
   // state for activate Switch
   const [active, setActive] = useState(false);

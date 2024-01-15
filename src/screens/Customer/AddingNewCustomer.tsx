@@ -30,10 +30,10 @@ import {IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
-import {useDispatch} from 'react-redux';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
 import { useSelector } from '../../config/function';
 import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -88,7 +88,6 @@ const AddingNewCustomer = () => {
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const [show, setShow] = useState<boolean>(false);
-  const dispatch = useDispatch();
 
   const snapPoint = useMemo(() => ['40%'], []);
   const snapPointAdding = useMemo(

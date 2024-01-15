@@ -31,9 +31,9 @@ import ListFilter from './components/ListFilter';
 import {NavigationProp} from '../../navigation';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
 import { useSelector } from '../../config/function';
 import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 export type IValueType = {
   customerType: string;
@@ -45,7 +45,6 @@ const Customer = () => {
   const {t: getLabel} = useTranslation();
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const dispatch = useDispatch();
   const [value, setValue] = React.useState({
     first: 'Gần nhất',
     second: '',

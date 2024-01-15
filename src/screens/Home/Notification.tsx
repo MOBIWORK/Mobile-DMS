@@ -17,7 +17,7 @@ import {AppBottomSheet} from '../../components/common';
 import {NavigationProp} from '../../navigation';
 // import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {useDispatch} from 'react-redux';
+import { dispatch } from '../../utils/redux';
 // import {AppActions, AppSelector} from '../../redux-store';
 import { useSelector } from '../../config/function';
 import { appActions } from '../../redux-store/app-reducer/reducer';
@@ -150,7 +150,6 @@ const NotificationScreen: FC<NotificationScreenProps> = ({
   const [data, setData] = useState<any[]>(arrNotification);
   const {t: getLable} = useTranslation();
   const styles = createSheetStyle(useTheme());
-  const dispatch = useDispatch();
   const showModal = useSelector(state => state.app.showModal);
 
   useEffect(() => {

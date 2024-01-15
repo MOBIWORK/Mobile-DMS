@@ -27,7 +27,7 @@ import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {RootEkMapResponse} from '../../../models/types';
-import {useDispatch} from 'react-redux';
+import { dispatch } from '../../../utils/redux';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 type Props = {
@@ -39,7 +39,6 @@ const FormAddress = (props: Props) => {
   const {onPressClose, typeFilter} = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const dispatch = useDispatch();
 
   const [addressValue, setAddressValue] = useState({
     city: 'Tỉnh/Thành phố',

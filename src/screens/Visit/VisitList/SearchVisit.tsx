@@ -15,13 +15,12 @@ import {NavigationProp} from '../../../navigation';
 import {useMMKVString} from 'react-native-mmkv';
 import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
-import {useDispatch} from 'react-redux';
+import { dispatch } from '../../../utils/redux';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 const SearchVisit = () => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const dispatch = useDispatch();
 
   const [listVisitNearly, setListVisitNearly] = useMMKVString(
     AppConstant.ListSearchVisitNearly,

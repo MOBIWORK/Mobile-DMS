@@ -28,16 +28,17 @@ import {NavigationProp, RouterProp} from '../../navigation';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {CommonUtils} from '../../utils';
 
-import {useDispatch} from 'react-redux';
+
 import {AppService} from '../../services';
 import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 const SelectOrganization = () => {
   const {t: getLabel, i18n} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'SELECT_ORGANIZATION'>>();
   const {colors} = useTheme();
-  const dispatch = useDispatch();
+
 
   const [organizationName, setOrganizationName] = useState<string>(
     route.params?.data ?? '',
