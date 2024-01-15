@@ -63,7 +63,7 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
   const dispatch = useDispatch();
-  const showModal = useSelector(AppSelector.getShowModal);
+  // const showModal = useSelector(AppSelector.getShowModal);
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
@@ -432,7 +432,7 @@ const HomeScreen = () => {
                   onPress={() => {
                     bottomSheetNotification.current &&
                       bottomSheetNotification.current.snapToIndex(0);
-                    dispatch(AppActions.setShowModal(!showModal));
+                    // dispatch(AppActions.setShowModal(!showModal));
                   }}
                 />
               </View>
@@ -644,7 +644,7 @@ const HomeScreen = () => {
         onPress={() => {
           setScreen(true);
           setShowModalHotUpdate(false);
-          dispatch(AppActions.setShowModal(true));
+          // dispatch(AppActions.setShowModal(true));
         }}
       />
       {/* </Block> */}

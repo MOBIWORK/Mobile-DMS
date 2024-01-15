@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react';
+import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
 import {registerTranslation} from 'react-native-paper-dates';
 
@@ -40,12 +40,9 @@ if (!isIos) {
   }
 }
 function App(): JSX.Element {
-  
-
-  
   useEffect(() => {
     LogBox.ignoreAllLogs();
-    
+
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => true,
@@ -147,7 +144,7 @@ function App(): JSX.Element {
   //     // onHttp.remove();
   //   };
   // }, []);
-  
+
   // Alert.alert(updateMessage)
 
   // Alert.alert(updateMessage)
@@ -160,14 +157,11 @@ function App(): JSX.Element {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
-            {/* <PortalProvider> */}
-      
             <AppNavigationContainer>
               <StatusBar backgroundColor={'#fff'} />
               <HandlingError />
               <SnackBar />
             </AppNavigationContainer>
-            {/* </PortalProvider>xs */}
           </GestureHandlerRootView>
           <HandlingLoading />
         </KeyboardAvoidingView>
