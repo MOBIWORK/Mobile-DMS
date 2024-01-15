@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import React, {useRef, useState, useLayoutEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
@@ -30,9 +30,9 @@ import {IDataCustomer, RootEkMapResponse} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
-import {formatMoney} from '../../../config/function';
-import {AppActions, AppSelector} from '../../../redux-store';
+import {formatMoney, useSelector} from '../../../config/function';
 import CardAddress from './CardAddress';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 
 type Props = {
@@ -72,8 +72,8 @@ const FormAdding = (props: Props) => {
     timestamp: 0,
   });
   const [dataLocation, setDataLocation] = useState<string>('');
-  const mainAddress = useSelector(AppSelector.getMainAddress);
-  const mainContactAddress = useSelector(AppSelector.getMainContactAddress);
+  const mainAddress = useSelector(state => state.app.mainAddress);
+  const mainContactAddress = useSelector(state=>state.app.mainContactAddress);
 
   const dispatch = useDispatch();
   const fetchData = async (lat: any, lon: any) => {
@@ -311,7 +311,7 @@ const FormAdding = (props: Props) => {
             <SvgIcon
               size={20}
               source="Trash"
-              onPress={() => dispatch(AppActions.removeAddress([]))}
+              onPress={() => dispatch(appActions.removeAddress([]))}
             />
           )}
         </View>
@@ -346,7 +346,7 @@ const FormAdding = (props: Props) => {
             <SvgIcon
               size={20}
               source="Trash"
-              onPress={() => dispatch(AppActions.removeContactAddress([]))}
+              onPress={() => dispatch(appActions.removeContactAddress([]))}
             />
           )}
         </View>

@@ -8,7 +8,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import  {AppActions} from '../redux-store';
 import * as LocalAuthentication from 'expo-local-authentication';
 import {AppConstant} from '../const';
 import * as Location from 'expo-location';
@@ -248,7 +247,7 @@ export const CheckNetworkState = async () => {
   const state = await NetInfo.fetch();
   if (!state.isConnected) {
     dispatch(
-      AppActions.setError({
+      appActions.setError({
         title: null,
         message: 'Không có kết nối mạng',
         viewOnly: true,

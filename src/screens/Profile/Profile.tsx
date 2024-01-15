@@ -9,27 +9,29 @@ import {
   SvgIcon,
 } from '../../components/common';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, AppSelector} from '../../redux-store';
+import {useDispatch} from 'react-redux';
+
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation';
 import ContentList from './components/ContentList';
 import {ContentProfile} from './ultil/config';
+import { useSelector } from '../../config/function';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 type Props = {};
 
 const Profile = (props: Props) => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const appTheme = useSelector(AppSelector.getTheme);
+  const appTheme = useSelector(state => state.app.theme);
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
 
   const onSwitch = useCallback(() => {
     // 'worklet';
     if (theme.dark) {
-      dispatch(AppActions.setAppTheme('default'));
+      dispatch(appActions.onSetAppTheme('default'));
     } else {
-      dispatch(AppActions.setAppTheme('dark'));
+      dispatch(appActions.onSetAppTheme('dark'));
     }
   }, [appTheme]);
 

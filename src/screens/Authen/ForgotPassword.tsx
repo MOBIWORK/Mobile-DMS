@@ -14,9 +14,10 @@ import {KeyAbleProps} from '../../models/types';
 import {AppService} from '../../services';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {AppActions} from '../../redux-store';
+
 import {useDispatch} from 'react-redux';
 import {CommonUtils} from '../../utils';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 
 const ForgotPassword = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -31,13 +32,13 @@ const ForgotPassword = () => {
   }, [email]);
 
   const handleAccuracy = async () => {
-    dispatch(AppActions.setProcessingStatus(true));
+    dispatch(appActions.setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
     const response: KeyAbleProps = await AppService.resetPassword(email, true);
     if (response?.status === ApiConstant.STT_OK) {
       setOpen(true);
     }
-    dispatch(AppActions.setProcessingStatus(false));
+    dispatch(appActions.setProcessingStatus(false));
   };
 
   return (

@@ -16,7 +16,7 @@ import {useMMKVString} from 'react-native-mmkv';
 import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
 import {useDispatch} from 'react-redux';
-import {AppActions} from '../../../redux-store';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 const SearchVisit = () => {
   const {colors} = useTheme();
@@ -49,7 +49,7 @@ const SearchVisit = () => {
                   }}>
                   <Text
                     onPress={() => {
-                      dispatch(AppActions.setSearchVisitValue(item.label));
+                      dispatch(appActions.setSearchVisitValue(item.label));
                       navigation.goBack();
                     }}
                     style={{
@@ -77,7 +77,7 @@ const SearchVisit = () => {
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => {
     //TODO:save to redux
-    dispatch(AppActions.setSearchVisitValue(String(e.nativeEvent.text)));
+    dispatch(appActions.setSearchVisitValue(String(e.nativeEvent.text)));
     const newListNearly = listVisitNearly && JSON.parse(listVisitNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
     setListVisitNearly(JSON.stringify(newListNearly));

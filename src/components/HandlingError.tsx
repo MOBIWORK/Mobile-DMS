@@ -1,6 +1,6 @@
 import React, {FC, useMemo} from 'react';
 import {useDispatch} from 'react-redux';
-import {AppActions} from '../redux-store';
+
 
 import {AppDialog} from './common';
 import {ApiConstant, ScreenConstant} from '../const';
@@ -8,6 +8,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../navigation';
 import {useTranslation} from 'react-i18next';
 import { useSelector } from '../config/function';
+import { appActions } from '../redux-store/app-reducer/reducer';
 
 const HandlingError: FC = () => {
   const dispatch = useDispatch();
@@ -40,8 +41,8 @@ const HandlingError: FC = () => {
   }, [error]);
 
   const onSubmitDialog = () => {
-    dispatch(AppActions.setError(null));
-    dispatch(AppActions.setShowErrorModalStatus(true));
+    dispatch(appActions.setError(null));
+    dispatch(appActions.setShowErrorModalStatus(true));
     if (error?.status === ApiConstant.STT_UNAUTHORIZED) {
       navigation.navigate(ScreenConstant.SIGN_IN, {});
     }

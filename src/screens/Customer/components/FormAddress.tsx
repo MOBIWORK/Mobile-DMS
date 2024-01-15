@@ -27,8 +27,8 @@ import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {RootEkMapResponse} from '../../../models/types';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, AppSelector} from '../../../redux-store';
+import {useDispatch} from 'react-redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 type Props = {
   onPressClose: () => void;
@@ -281,7 +281,7 @@ const FormAddress = (props: Props) => {
               <TouchableOpacity
                 style={styles.buttonApply}
                 onPress={() => {
-                  dispatch(AppActions.setMainAddress(addressValue));
+                  dispatch(appActions.setMainAddress(addressValue));
                   onPressClose();
                 }}>
                 <Text style={styles.applyText}>Lưu</Text>
@@ -369,7 +369,7 @@ const FormAddress = (props: Props) => {
                         : false
                     }
                     onPress={() => {
-                      dispatch(AppActions.setMainContactAddress(contactValue));
+                      dispatch(appActions.setMainContactAddress(contactValue));
                       onPressClose();
                     }}>
                     <Text style={styles.applyText}>Lưu</Text>

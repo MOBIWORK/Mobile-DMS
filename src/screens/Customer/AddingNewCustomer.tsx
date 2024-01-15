@@ -30,9 +30,10 @@ import {IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, IAppReduxState} from '../../redux-store';
+import {useDispatch} from 'react-redux';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
+import { useSelector } from '../../config/function';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -44,7 +45,7 @@ const AddingNewCustomer = () => {
     customerBirthday: 'Tất cả',
   });
   const {mainContactAddress, mainAddress} = useSelector(
-    (state: IAppReduxState) => state.appRedux,
+    (state) => state.app,
   );
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
@@ -105,7 +106,7 @@ const AddingNewCustomer = () => {
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
   const onPressAdding = (listData: IDataCustomer) => {
-    dispatch(AppActions.setNewCustomer(listData));
+    dispatch(appActions.setNewCustomer(listData));
     navigation.navigate(ScreenConstant.MAIN_TAB, {
       screen: ScreenConstant.CUSTOMER,
     });
