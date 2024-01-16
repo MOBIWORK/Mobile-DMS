@@ -6,11 +6,10 @@ import {
   AppIcons,
 } from '../../components/common';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { FlatList, Image, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { FlatList, Image, Text, TextStyle, View, ViewStyle,StyleSheet ,ImageStyle} from 'react-native';
 import { ImageAssets } from '../../assets';
 import { useNavigation } from '@react-navigation/native';
 import ButtonFilter from '../../components/common/ButtonFilter';
-import { StyleSheet } from 'react-native';
 import { ICON_TYPE } from '../../const/app.const';
 import { Button } from 'react-native-paper';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
@@ -20,7 +19,6 @@ import FilterListComponent, {
 } from '../../components/common/FilterListComponent';
 import { NavigationProp } from '../../navigation';
 import { AppTheme, useTheme } from '../../layouts/theme';
-import { ImageStyle } from 'react-native';
 import { CommonUtils } from '../../utils';  
 import { useTranslation } from 'react-i18next';
 import { IOrderList, KeyAbleProps } from '../../models/types';

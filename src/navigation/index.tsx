@@ -1,4 +1,4 @@
-import React, {FC, createRef} from 'react';
+import React, { FC, createRef } from 'react';
 import type {
   NavigationAction,
   NavigationContainerRef,
@@ -10,15 +10,13 @@ import {
   StackActions,
   NavigatorScreenParams,
 } from '@react-navigation/native';
-import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {AppConstant, ScreenConstant} from '../const';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { AppConstant, ScreenConstant } from '../const';
 
-import {useMMKVObject} from 'react-native-mmkv';
 import {
   IDataCustomer,
   IProduct,
-  IResOrganization,
   ItemNoteVisitDetail,
   ReportOrderItemType,
   VisitListItemType,
@@ -189,11 +187,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={AddingNewCustomer}
         />
         <Stack.Screen
-          name={ScreenConstant.CKECKIN_ORDER}
+          name={ScreenConstant.CHECKIN_ORDER}
           component={CheckinOrder}
         />
         <Stack.Screen
-          name={ScreenConstant.CKECKIN_ORDER_CREATE}
+          name={ScreenConstant.CHECKIN_ORDER_CREATE}
           component={CheckinOrderCreated}
         />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
@@ -259,6 +257,10 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={ReportDebt}
         />
         <Stack.Screen name={ScreenConstant.REPORT_KPI} component={KPI} />
+        <Stack.Screen
+          name={ScreenConstant.TRAVEL_DIARY}
+          component={TravelDiary}
+        />
         <Stack.Screen name={ScreenConstant.SEARCH_COMMON_SCREEN} component={SearchSreen} />
       </Stack.Navigator>
       {children}
@@ -298,8 +300,8 @@ export type RootStackParamList = {
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_INVENTORY]: undefined;
   [ScreenConstant.INVENTORY_ADD_PRODUCT]: undefined;
-  [ScreenConstant.CKECKIN_ORDER]: {type: string};
-  [ScreenConstant.CKECKIN_ORDER_CREATE]: {type: string};
+  [ScreenConstant.CHECKIN_ORDER]: { type: string };
+  [ScreenConstant.CHECKIN_ORDER_CREATE]: { type: string };
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.DETAIL_CUSTOMER]: { data: IDataCustomer };
@@ -318,7 +320,7 @@ export type RootStackParamList = {
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
-  [ScreenConstant.CHECKIN_ORDER]: undefined;
+  [ScreenConstant.CHECKIN_ORDER]: { type: string };
   [ScreenConstant.REPORT_SCREEN]: undefined;
   [ScreenConstant.STATISTICAL]: undefined;
   [ScreenConstant.NON_ORDER_CUSTOMER]: undefined;
@@ -328,7 +330,7 @@ export type RootStackParamList = {
   [ScreenConstant.NEW_CUSTOMER]: undefined;
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;
-  [ScreenConstant.SEARCH_COMMON_SCREEN]: {type :string};
+  [ScreenConstant.SEARCH_COMMON_SCREEN]: { type: string };
 };
 
 // Define prop type for useNavigation and useRoute
@@ -344,8 +346,8 @@ export const navigationRef =
 export function navigate<RouteName extends keyof RootStackParamList>(
   ...arg: undefined extends RootStackParamList[RouteName]
     ?
-        | [screen: RouteName]
-        | [screen: RouteName, params?: RootStackParamList[RouteName]]
+    | [screen: RouteName]
+    | [screen: RouteName, params?: RootStackParamList[RouteName]]
     : [screen: RouteName, params?: RootStackParamList[RouteName]]
 ) {
   navigationRef.current?.navigate(
