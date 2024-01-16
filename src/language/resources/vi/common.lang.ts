@@ -103,6 +103,22 @@ export default {
   apply :"Áp dụng",
   reset :"Đặt lại",
   searchProduct : "Tìm kiếm sản phẩm",
-  frequency:"Tần suất"
-  
+  time :"Thời gian",
+  status : "Trạng thái",
+  order: "Đơn hàng",
+  pendingOrder : "Chờ gửi",
+  pending :"Chờ duyệt",
+  approved :"Đã duyệt",
+  dayNow : "Hôm nay",
+  weekly :"Tuần nay",
+  montly :"Tháng này",
+  lastMonthly :"Tháng trước",
+  lastMonthlyAgain :"Tháng trước nữa",
+  pendingBill :"Chờ thanh toán",
+  pendingDeliverAndBill :"Chờ vận chuyển và thanh toán",
+  pendingDeliver : "Chờ vận chuyển",
+  completed :"Hoàn thành",
+  cancelled :"Đã huỷ",
+  recentSearches : "Tìm kiém gần đây",
+  searchOrder :"Tìm kiếm đơn hàng"
 };

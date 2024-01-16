@@ -65,7 +65,7 @@ import {
   Inventory,
   InventoryAddProduct,
   RouteResult,
-  
+  SearchSreen,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import { MyAppTheme } from '../layouts/theme';
@@ -259,6 +259,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={ReportDebt}
         />
         <Stack.Screen name={ScreenConstant.REPORT_KPI} component={KPI} />
+        <Stack.Screen name={ScreenConstant.SEARCH_COMMON_SCREEN} component={SearchSreen} />
       </Stack.Navigator>
       {children}
       <RXStore />
@@ -327,6 +328,7 @@ export type RootStackParamList = {
   [ScreenConstant.NEW_CUSTOMER]: undefined;
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;
+  [ScreenConstant.SEARCH_COMMON_SCREEN]: {type :string};
 };
 
 // Define prop type for useNavigation and useRoute

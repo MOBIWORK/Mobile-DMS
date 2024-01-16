@@ -1,110 +1,136 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MainLayout } from '../../layouts';
 import {
   AppBottomSheet,
-  AppButton,
   AppHeader,
   AppIcons,
-  AppInput,
 } from '../../components/common';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Image, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { FlatList, Image, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { ImageAssets } from '../../assets';
 import { useNavigation } from '@react-navigation/native';
 import ButtonFilter from '../../components/common/ButtonFilter';
 import { StyleSheet } from 'react-native';
-import AppContainer from '../../components/AppContainer';
 import { ICON_TYPE } from '../../const/app.const';
-import { Button, TextInput } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import { AppConstant, ScreenConstant } from '../../const';
+import { ApiConstant, AppConstant, ScreenConstant } from '../../const';
 import FilterListComponent, {
   IFilterType,
 } from '../../components/common/FilterListComponent';
 import { NavigationProp } from '../../navigation';
 import { AppTheme, useTheme } from '../../layouts/theme';
 import { ImageStyle } from 'react-native';
+import { CommonUtils } from '../../utils';  
+import { useTranslation } from 'react-i18next';
+import { IOrderList, KeyAbleProps } from '../../models/types';
+import { OrderService } from '../../services';
 
 const OrderList = () => {
 
+  const { t: getLabel } = useTranslation()
   const { colors } = useTheme();
   const styles = createStyles(useTheme())
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetRefStatus = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['90%'], []);
   const navigation = useNavigation<NavigationProp>();
 
-  
   const [dataStatus, setDataStatus] = useState<IFilterType[]>([
     {
-      label: 'Tất cả',
+      label: 'all',
+      value :"",
       isSelected: true,
     },
     {
-      label: 'Chờ gửi',
+      label: 'pending',
+      value :"Draft",
       isSelected: false,
     },
     {
-      label: 'Chờ duyệt',
+      label: 'pendingDeliverAndBill',
+      value: 'To Deliver and Bill',
       isSelected: false,
     },
     {
-      label: 'Đã duyệt',
+      label: 'pendingBill',
+      value: 'To Bill',
       isSelected: false,
     },
+    {
+      label: 'pendingDeliver',
+      value: 'To Deliver',
+      isSelected: false,
+    },
+    {
+      label: 'completed',
+      value: 'Completed',
+      isSelected: false,
+    },
+    {
+      label: 'cancelled',
+      value: 'Cancelled',
+      isSelected: false,
+    }
   ]);
+
   const [dataTimeOrder, setDataTimeOrder] = useState<IFilterType[]>([
     {
-      label: 'Tất cả',
+      label: 'all',
+      value: "",
       isSelected: true,
     },
     {
-      label: 'Hôm nay',
+      label: 'dayNow',
+      value: "today",
       isSelected: false,
     },
     {
-      label: 'Tuần này',
+      label: 'weekly',
+      value: "weekly",
       isSelected: false,
     },
     {
-      label: 'Tháng này',
+      label: 'montly',
+      value: "monthly",
       isSelected: false,
     },
     {
-      label: 'Tháng trước',
+      label: 'lastMonthly',
+      value: "last_month",
+      isSelected: false,
+    },
+    {
+      label: 'lastMonthlyAgain',
+      value: "last_month_again",
       isSelected: false,
     },
   ]);
-  const [dataTypeOrder, setDataTypeOrder] = useState<IFilterType[]>([
-    {
-      label: 'Phiếu đặt hàng',
-      isSelected: true,
-    },
-    {
-      label: 'Phiếu mua hàng',
-      isSelected: false,
-    },
-  ]);
+
+  const [dataOrder,setDataOrder] = useState<IOrderList[]>([]);
+  const [totalData,setTotalData] = useState<number>();
 
   const [dataFilter, setDataFilter] = useState<IFilterType[]>([]);
   const [label, setLabel] = useState<string>('');
-  const [status, setStatus] = useState<string>('Tất cả');
-  const [timeOrder, setTimeOrder] = useState<string>('Tất cả');
-  const [typeOrder, setTypeOrder] = useState<string>('Phiếu đặt hàng');
+  const [type, setType] = useState<string>('');
+  const [status, setStatus] = useState<IFilterType>();
+  const [timeOrder, setTimeOrder] = useState<IFilterType>();
+  // Filter Order
+  const [fromDate, setFromDate] = useState<number>(0);
+  const [toDate, setToDate] = useState<number>(0);
+  const [filterStatus, setFilterStatus] = useState<string>();
+  const [page,setPage]= useState<number>(1);
+  const [pageSize ,setPageSize] = useState(10);
 
   const onOpenBottomSheet = (type: string) => {
+    setType(type);
     switch (type) {
       case 'status':
-        setLabel('Trạng thái');
+        setLabel(getLabel("status"));
         setDataFilter(dataStatus);
         break;
-      case 'timeOder':
-        setLabel('Thời gian');
+      case 'timeOrder':
+        setLabel(getLabel("time"));
         setDataFilter(dataTimeOrder);
-        break;
-      case 'typeOrder':
-        setLabel('Loại phiếu');
-        setDataFilter(dataTypeOrder);
         break;
       default:
         setDataFilter([]);
@@ -116,8 +142,8 @@ const OrderList = () => {
   };
 
   const onChangeData = (item: IFilterType) => {
-    switch (label) {
-      case 'Trạng thái': {
+    switch (type) {
+      case 'status': {
         const newData = dataStatus.map(itemRes => {
           if (item.label === itemRes.label) {
             return { ...itemRes, isSelected: true };
@@ -125,11 +151,12 @@ const OrderList = () => {
             return { ...itemRes, isSelected: false };
           }
         });
-        setStatus(item.label);
+        setFilterStatus(item.value?.toString())
+        setStatus(item);
         setDataStatus(newData);
         break;
       }
-      case 'Thời gian': {
+      case 'timeOrder': {
         const newData = dataTimeOrder.map(itemRes => {
           if (item.label === itemRes.label) {
             return { ...itemRes, isSelected: true };
@@ -137,23 +164,18 @@ const OrderList = () => {
             return { ...itemRes, isSelected: false };
           }
         });
-        setTimeOrder(item.label);
+        if (item.value) {
+          const {from_date ,to_date} = CommonUtils.dateToDate(item.value.toString());
+          setFromDate(new Date(from_date).getTime());
+          setToDate(new Date(to_date).getTime())
+        } else {
+          setFromDate(0);
+          setToDate(0)
+        }
+        setTimeOrder(item);
         setDataTimeOrder(newData);
         break;
       }
-      case 'Loại phiếu': {
-        const newData = dataTypeOrder.map(itemRes => {
-          if (item.label === itemRes.label) {
-            return { ...itemRes, isSelected: true };
-          } else {
-            return { ...itemRes, isSelected: false };
-          }
-        });
-        setTypeOrder(item.label);
-        setDataTypeOrder(newData);
-        break;
-      }
-
       default:
         break;
     }
@@ -163,19 +185,13 @@ const OrderList = () => {
     }
   };
 
-  const onSubmitFilter = () => {
-    if (bottomSheetRef.current) {
-      bottomSheetRef.current.close();
-    }
-  };
-
-  const renderUiItem = () => {
+  const renderUiItem = (item :IOrderList) => {
     return (
       <View
         style={[styles.containerItem]}>
         <View style={[styles.flexSpace as any, { paddingBottom: 8 }]}>
           <Text style={[styles.nameCustomer]}>
-            Tên khách hàng - Mã KH
+            {item.customer} - {item.custom_id}
           </Text>
           <View
             style={[
@@ -202,7 +218,7 @@ const OrderList = () => {
                 styles.itemDesc as any,
                 { marginLeft: 6, color: colors.text_primary },
               ]}>
-              DH-12345
+                {item.name}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -219,7 +235,7 @@ const OrderList = () => {
                 styles.itemDesc as any,
                 { marginLeft: 6, color: colors.text_primary },
               ]}>
-              101 Tôn Dật Tiên, Tân Phú, Quận 7, Thành phố Hồ Chí Minh
+              {item.address_display}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -233,7 +249,7 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.itemDesc as any, { marginLeft: 6 }]}>
-              08:00, 20/11/2023
+              {CommonUtils.convertDateToString(item.po_date * 1000)}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -247,7 +263,7 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.itemDesc as any, { marginLeft: 6 }]}>
-              20/11/2023
+              {CommonUtils.convertDate(item.delivery_date *1000)}
             </Text>
           </View>
         </View>
@@ -275,81 +291,33 @@ const OrderList = () => {
     );
   };
 
-  const bottomSheetFilter = () => {
-    return (
-      <View style={{ padding: 16, paddingTop: 0, height: '100%' }}>
-        <AppHeader
-          label={'Bộ lọc'}
-          onBack={() =>
-            bottomSheetRef.current && bottomSheetRef.current.close()
-          }
-          backButtonIcon={
-            <AppIcons
-              iconType={AppConstant.ICON_TYPE.IonIcon}
-              name={'close'}
-              size={24}
-              color={colors.text_primary}
-            />
-          }
-        />
-        <View style={{ marginTop: 32, rowGap: 24 }}>
-          <AppInput
-            label={'Thời gian đặt hàng'}
-            value={timeOrder}
-            editable={false}
-            onPress={() => onOpenBottomSheet('timeOder')}
-            rightIcon={
-              <TextInput.Icon
-                onPress={() => onOpenBottomSheet('timeOder')}
-                icon={'chevron-down'}
-                style={styles.iconInput}
-                color={colors.text_secondary}
-              />
-            }
-          />
-          <AppInput
-            label={'Loại phiếu'}
-            value={typeOrder}
-            editable={false}
-            onPress={() => onOpenBottomSheet('typeOrder')}
-            rightIcon={
-              <TextInput.Icon
-                onPress={() => onOpenBottomSheet('typeOrder')}
-                icon={'chevron-down'}
-                style={styles.iconInput}
-                color={colors.text_secondary}
-              />
-            }
-          />
-        </View>
-        <View style={styles.footerBtSheet}>
-          <AppButton
-            style={{ width: '45%', backgroundColor: colors.bg_neutral }}
-            label={'Bỏ qua'}
-            styleLabel={{ color: colors.text_secondary }}
-            onPress={() =>
-              bottomSheetRef.current && bottomSheetRef.current.close()
-            }
-          />
-          <AppButton
-            style={{ width: '45%' }}
-            label={'Áp dụng'}
-            onPress={() => onSubmitFilter()}
-          />
-        </View>
-      </View>
-    );
-  };
+  const fetchData = async ()=>{
+    const {status , data} : KeyAbleProps = await OrderService.get({
+      from_date : fromDate > 0 ? fromDate / 1000 : undefined,
+      to_date : toDate > 0 ? toDate / 1000 : undefined,
+      status : filterStatus,
+      page_number : page,
+      page_size : pageSize
+    })
+    if (status === ApiConstant.STT_OK) {
+      setDataOrder(data.result.data)
+      setTotalData(data.result.total)
+    }
+  }
+
+  useEffect(()=>{
+    fetchData();
+  },[fromDate,toDate,filterStatus,page])
 
   return (
     <>
       <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
         <AppHeader
-          label={'Đơn hàng'}
+          label={getLabel("order")}
           labelStyle={{ textAlign: 'left', marginLeft: 8 }}
           onBack={() => navigation.goBack()}
           rightButton={
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=> navigation.navigate(ScreenConstant.SEARCH_COMMON_SCREEN,{type :"order"})}>
               <Image
                 source={ImageAssets.SearchIcon}
                 style={styles.iconBack}
@@ -358,50 +326,51 @@ const OrderList = () => {
             </TouchableOpacity>
           }
         />
-        <View style={styles.containerFilter}>
+        <View style={[styles.containerFilter]}>
           <ButtonFilter
-            label="Trạng thái"
-            value={status}
+            style={{maxWidth : "48%"}}
+            label={getLabel("status")}
+            value={getLabel(status?.label || "") || getLabel("all")}
             onPress={() => onOpenBottomSheet('status')}
           />
-          {/* <FilterView
-            style={{ marginLeft: 8 }}
-            onPress={() =>
-              bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
-            }
-          /> */}
-           <ButtonFilter
-            label="Thời gian"
-            value={timeOrder}
+          <ButtonFilter
+            style={{maxWidth : "48%"}}
+            label={getLabel("time")}
+            value={getLabel(timeOrder?.label || "") || getLabel("all")}
             onPress={() => onOpenBottomSheet('timeOrder')}
           />
         </View>
         <Text style={[styles.countOrder]}>
-          300 <Text style={{ color: colors.text_secondary }}>Đơn hàng</Text>
+          {dataOrder.length > 0 && (
+            <>
+              {totalData} <Text style={{ color: colors.text_secondary }}>{getLabel("order")}</Text>
+            </>
+          )}
+
         </Text>
-        <AppContainer>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() =>
-              navigation.navigate(ScreenConstant.ORDER_DETAIL_SCREEN)
-            }>
-            {renderUiItem()}
-          </TouchableOpacity>
-        </AppContainer>
+        <View>
+          <FlatList
+            data={dataOrder}
+            onEndReached={()=>setPage(page + 1)}
+            initialNumToRender={pageSize}
+            renderItem={({item}) => 
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() =>
+                  navigation.navigate(ScreenConstant.ORDER_DETAIL_SCREEN)
+                }>
+                {renderUiItem(item)}
+              </TouchableOpacity>}
+          />
+        </View>
       </MainLayout>
-
-      <AppBottomSheet
-        bottomSheetRef={bottomSheetRef}
-        snapPointsCustom={snapPoints}>
-        {bottomSheetFilter()}
-      </AppBottomSheet>
-
       <AppBottomSheet
         bottomSheetRef={bottomSheetRefStatus}
         snapPointsCustom={snapPoints}>
         <FilterListComponent
           title={label}
           data={dataFilter}
+          isSearch={false}
           handleItem={onChangeData}
           onClose={() =>
             bottomSheetRefStatus.current && bottomSheetRefStatus.current.close()
@@ -427,7 +396,10 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
   containerFilter: {
     flexDirection: 'row',
     marginTop: 16,
-    paddingVertical: 8
+    paddingVertical: 8,
+    columnGap: 8,
+    flexWrap :"wrap",
+    rowGap : 8
   } as ViewStyle,
   flexSpace: {
     flexDirection: 'row',
