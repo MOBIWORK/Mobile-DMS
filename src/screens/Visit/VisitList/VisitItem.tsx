@@ -11,12 +11,12 @@ import {
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp, navigate} from '../../../navigation';
+import {ExtendedTheme, useTheme} from '@react-navigation/native';
+import { navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
-// import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
 import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { useDispatch } from 'react-redux';
 
 
 
@@ -24,6 +24,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const theme = useTheme()
+  const dispatch = useDispatch()
   
 
 
@@ -31,6 +32,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
     dispatch(appActions.onCheckIn(item));
     dispatch(appActions.onGetLost(0))
     dispatch(appActions.onSetAppTheme('default'))
+    console.log(dispatch(appActions.onGetLost(0)),'dispatch function')
   }
 
 

@@ -7,7 +7,7 @@ import {VisitListItemType} from '../../models/types';
 const initialAppState: IAppRedux = {
   error: undefined,
   isProcessing: false,
-  showModal: false,
+  showModal: true,
   searchProductValue: '',
   searchVisitValue: '',
   theme: 'default',

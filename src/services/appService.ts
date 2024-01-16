@@ -69,7 +69,7 @@ export const updateProfile = (data: IProfile) =>
 
 export const postChecking = (data:any) => createApi().post('http://hr.mbwcloud.com:8004/api/method/mbw_dms.api.checkin.create_checkin',data,{
   // baseURL:API_URL
-})
+}).then(res => res.data)
 
 export const getDetailLocation = (lat?: number, lon?: number) =>
   client

@@ -1,9 +1,9 @@
 import {MyAppTheme, ThemeType} from '../../layouts/theme';
 import {loadString} from '../../utils/storage';
-import {all, call, put} from '../../utils/typed-redux-saga';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
 import { postChecking } from '../../services/appService';
+import { all ,call,put} from 'typed-redux-saga';
 
 export const checkKeyInObject = (T: any, key: string) => {
   return Object.keys(T).includes(key);
@@ -34,17 +34,15 @@ export function* onLoadAppModeAndTheme() {
   
 }
 export function* onLost(action:PayloadAction){
-  console.log(action.payload)
+  console.log(action.payload,'payload zero')
 }
 
 export function* onCheckInData(action:PayloadAction){
-
-  console.log(action,'actions saga')
     if(appActions.onCheckIn.match(action)){
       console.log('run saga')
       try{
         // yield put(appActions.onLoadApp())
-        console.log(action.payload)
+        console.log(action.payload,'payload saga')
         const response:any = yield* call(postChecking,action.payload)
         console.log(response,'repsonse saga ')
        
@@ -56,5 +54,5 @@ export function* onCheckInData(action:PayloadAction){
         // yield put(appActions.onLoadAppEnd())
       }
     }
-    console.log('test')
+    
 }
