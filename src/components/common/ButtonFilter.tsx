@@ -22,9 +22,12 @@ const ButtonFilter: FC<FilterViewProp> = ({ style, label,value, onPress }) => {
                 {label ?? 'Trạng thái'} :
             </Text>
             <Text
+                ellipsizeMode='tail'
+                numberOfLines={1}
                 style={{
                     color: colors.text_primary,
                     marginLeft: 8,
+                    maxWidth :"55%",
                 }}>
                 {value ?? 'Tất cả'}
             </Text>

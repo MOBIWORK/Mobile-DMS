@@ -100,5 +100,22 @@ export default {
   apply :"Apply",
   reset :"Reset",
   searchProduct : "Search product",
-
+  time :"Time",
+  status : "Status",
+  order: "Order",
+  pendingOrder : "Waiting for delivery",
+  pending :"Pending",
+  approved :"Approved",
+  dayNow : "To day",
+  weekly :"This week",
+  montly :"This month",
+  lastMonthly :"Last month",
+  lastMonthlyAgain :"Last month too",
+  pendingBill :"Wait for pay",
+  pendingDeliverAndBill :"Wait for shipping and payment",
+  pendingDeliver : "Waiting for shipping",
+  completed :"Complete",
+  cancelled :"Canceled",
+  recentSearches : "Recent searches",
+  searchOrder :"Search for orders"
 };

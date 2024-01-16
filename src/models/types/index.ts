@@ -462,3 +462,13 @@ export type IProduct = {
   unit: DataUnit[];
   stock: StockProduct[];
 };
+
+export type IOrderList = {
+  customer:string;
+  name:string;
+  address_display:string;
+  po_date:number;
+  delivery_date:number;
+  status:number;
+  custom_id:number | string;
+}

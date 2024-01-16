@@ -1,4 +1,4 @@
-import {MMKV} from 'react-native-mmkv';
+import { MMKV } from 'react-native-mmkv';
 import {
   Dimensions,
   InteractionManager,
@@ -8,11 +8,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import store, {AppActions} from '../redux-store';
+import store, { AppActions } from '../redux-store';
 import * as LocalAuthentication from 'expo-local-authentication';
-import {AppConstant} from '../const';
+import { AppConstant } from '../const';
 import * as Location from 'expo-location';
-import {LocationAccuracy} from 'expo-location';
+import { LocationAccuracy } from 'expo-location';
 
 export const storage = new MMKV();
 
@@ -413,7 +413,7 @@ export const formatCash = (str: string) => {
 
 const guidelineBaseWidth = 350;
 const scale = (size: number) => (shortDimension / guidelineBaseWidth) * size;
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const [shortDimension] = width < height ? [width, height] : [height, width];
 export const sizeScale = (size: number, factor = 0.5) =>
   size + (scale(size) - size) * factor;
@@ -438,10 +438,80 @@ export const propsToStyle = <T = any>(arrStyle: Array<T>) => {
       ) {
         curr[firstKey as string] = sizeScale(firstValue);
       }
-      return {...prev, ...curr};
+      return { ...prev, ...curr };
     }, {});
 };
 
 export const isNumber = (value: any) => {
   return typeof value === 'number';
 };
+
+
+export const dateToDate = (type : string) => {
+
+  const curr = new Date(); // get current date
+  let firstDateString = ``
+  let lastDateString = ``
+
+  switch (type) {
+    case "today":
+        firstDateString = `${curr.getFullYear()}-${curr.getMonth() +1 }-${curr.getDate()}`
+        lastDateString = `${curr.getFullYear()}-${curr.getMonth() +1 }-${curr.getDate()}`
+      break;
+    case "weekly" :
+      const first = curr.getDate() - curr.getDay() + 1;
+      const last = first + 6;
+      const firstday = new Date(curr.setDate(first));
+      const lastday = new Date(curr.setDate(last));
+      firstDateString = `${firstday.getFullYear()}-${firstday.getMonth() +1 }-${firstday.getDate()}`
+      lastDateString = `${lastday.getFullYear()}-${lastday.getMonth() +1 }-${lastday.getDate()}`
+      break;
+    case "monthly": {
+      let date = new Date(curr.getFullYear(), curr.getMonth() + 1);
+      date.setDate(date.getDate() - 1);
+      const lastDateMonthly = date.getDate()
+      firstDateString = `${curr.getFullYear()}-${curr.getMonth() +1 }-01`
+      lastDateString = `${curr.getFullYear()}-${curr.getMonth() +1 }-${lastDateMonthly}`
+      break;
+    }
+    case "last_month": {
+      let year:number
+      let month = curr.getMonth() +1
+      if(month === 1) {
+        year = curr.getFullYear() - 1
+        month = 12
+      } else {
+        year = curr.getFullYear()
+      }
+      let date = new Date(year, month)
+      date.setDate(date.getDate() - 1);
+      const lastDateMonthly = date.getDate()
+      firstDateString = `${year}-${month}-01`
+      lastDateString = `${year}-${month}-${lastDateMonthly}`
+      break;
+    }
+    case "last_month_again": {
+      let year:number
+      let month = curr.getMonth() - 1
+      if(month <1) {
+        year = curr.getFullYear() - 1
+        month = 11
+      } else {
+        year = curr.getFullYear()
+      }
+      let date = new Date(year, month)
+      date.setDate(date.getDate() - 1);
+      const lastDateMonthly = date.getDate()
+      firstDateString = `${year}-${month}-01`
+      lastDateString = `${year}-${month}-${lastDateMonthly}`
+      break;
+    }
+    default:
+      break;
+  }
+
+  return {
+    from_date : firstDateString,
+    to_date : lastDateString
+  }
+}
