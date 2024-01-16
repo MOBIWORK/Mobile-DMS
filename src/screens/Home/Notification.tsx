@@ -17,8 +17,10 @@ import {AppBottomSheet} from '../../components/common';
 import {NavigationProp} from '../../navigation';
 // import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, AppSelector} from '../../redux-store';
+import { dispatch } from '../../utils/redux';
+// import {AppActions, AppSelector} from '../../redux-store';
+import { useSelector } from '../../config/function';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 
 const arrNotification: any[] = [
   {
@@ -148,8 +150,7 @@ const NotificationScreen: FC<NotificationScreenProps> = ({
   const [data, setData] = useState<any[]>(arrNotification);
   const {t: getLable} = useTranslation();
   const styles = createSheetStyle(useTheme());
-  const dispatch = useDispatch();
-  const showModal = useSelector(AppSelector.getShowModal);
+  const showModal = useSelector(state => state.app.showModal);
 
   useEffect(() => {
     if (isRead) {
@@ -168,7 +169,7 @@ const NotificationScreen: FC<NotificationScreenProps> = ({
           label={getLable('Thông báo')}
           onBack={() => {
             bottomSheetRef.current && bottomSheetRef.current.close();
-            dispatch(AppActions.setShowModal(!showModal));
+            dispatch(appActions.setShowModal(!showModal));
           }}
           backButtonIcon={
             <AppIcons

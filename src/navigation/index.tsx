@@ -24,13 +24,28 @@ import {
   VisitListItemType,
 } from '../models/types';
 import {
+  AddingNewCustomer,
+  AddNote,
+  CheckIn,
+  CheckInLocation,
+  CheckinNote,
+  CheckinOrder,
+  CheckinOrderCreated,
+  DetailCustomer,
   ForgotPassword,
+  Home,
   ImageView,
+  Index,
   ListProduct,
+  ListVisit,
+  NoteDetail,
+  NotificationScreen,
   OrderDetail,
   OrderList,
-  ListVisit,
   ProductDetail,
+  Profile,
+  ReportOrderDetail,
+  SearchCustomer,
   SearchProduct,
   SearchVisit,
   SelectOrganization,
@@ -58,31 +73,31 @@ import {
   Report,
   NonOrderCustomer,
   Statistical,
-  VisitResult,
-  NewCustomer,
-  ReportDebt,
-  KPI,
-  Inventory,
-  InventoryAddProduct,
-  RouteResult,
-  SearchSreen,
 } from '../screens';
+// import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
+
+// import { MAIN_TAB } from '../const/screen.const';
+
 import {IAppReduxState} from '../redux-store';
 
 // import PushNotification from 'react-native-push-notification';
 import {useSelector} from 'react-redux';
 import MainTab, {TabParamList} from './MainTab';
 import linking from '../utils/linking.utils';
+import { useSelector } from '../config/function';
+import { RXStore } from '../utils/redux';
+
+import {MAIN_TAB} from '../const/screen.const';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const {theme} = useSelector((state: IAppReduxState) => state.appRedux);
-  const [organiztion] = useMMKVObject<IResOrganization>(
-    AppConstant.Organization,
-  );
+  const theme = useSelector(state => state.app.theme);
+  // const [organiztion] = useMMKVObject<IResOrganization>(
+  //   AppConstant.Organization,
+  // );
 
   // const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
@@ -108,11 +123,14 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           animation: 'slide_from_left',
         }}
         initialRouteName={ScreenConstant.MAIN_TAB}>
-        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
         />
+        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} /> 
+
+        <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
+
         <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
         <Stack.Screen
           name={ScreenConstant.WIDGET_FVR_SCREEN}
@@ -122,7 +140,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NOTIFYCATION}
           component={NotificationScreen}
         />
-        <Stack.Screen name={ScreenConstant.SIGN_IN} component={SignIn} />
+
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
           component={ForgotPassword}
@@ -241,8 +259,31 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         />
         <Stack.Screen name={ScreenConstant.REPORT_KPI} component={KPI} />
         <Stack.Screen name={ScreenConstant.SEARCH_COMMON_SCREEN} component={SearchSreen} />
+        <Stack.Screen
+          name={ScreenConstant.TRAVEL_DIARY}
+          component={TravelDiary}
+        />
+        <Stack.Screen
+          name={ScreenConstant.ROUTE_RESULT}
+          component={RouteResult}
+        />
+        <Stack.Screen
+          name={ScreenConstant.VISIT_RESULT}
+          component={VisitResult}
+        />
+        <Stack.Screen
+          name={ScreenConstant.NEW_CUSTOMER}
+          component={NewCustomer}
+        />
+        <Stack.Screen
+          name={ScreenConstant.REPORT_DEBT}
+          component={ReportDebt}
+        />
+        <Stack.Screen name={ScreenConstant.REPORT_KPI} component={KPI} />
       </Stack.Navigator>
       {children}
+      <RXStore />
+
     </NavigationContainer>
   );
 };
@@ -254,8 +295,8 @@ interface AppNavigationContainerProps {
 export default AppNavigationContainer;
 
 export type RootStackParamList = {
-  [ScreenConstant.SIGN_IN]: {organizationName?: string};
-  [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
+  [ScreenConstant.SIGN_IN]: { organizationName?: string };
+  [ScreenConstant.SELECT_ORGANIZATION]: { data?: string };
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
   [ScreenConstant.HOME_SCREEN]: undefined;
@@ -267,7 +308,7 @@ export type RootStackParamList = {
   [ScreenConstant.PRODUCT_DETAIL]: {
     item: IProduct;
   };
-  [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.IMAGE_VIEW]: { data: any };
   [ScreenConstant.ORDER_SCREEN]: undefined;
   [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
   [ScreenConstant.LIST_VISIT]: undefined;
@@ -281,9 +322,9 @@ export type RootStackParamList = {
   [ScreenConstant.CKECKIN_ORDER_CREATE]: {type: string};
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
-  [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
-  [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
+  [ScreenConstant.DETAIL_CUSTOMER]: { data: IDataCustomer };
+  [ScreenConstant.VISIT_DETAIL]: { data: VisitListItemType };
+  [ScreenConstant.REPORT_ORDER_DETAIL]: { item: ReportOrderItemType };
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
@@ -293,7 +334,7 @@ export type RootStackParamList = {
   [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
-  [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
+  [ScreenConstant.NOTE_DETAIL]: { data: ItemNoteVisitDetail };
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;

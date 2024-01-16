@@ -4,6 +4,7 @@
 #import <AppCenterReactNativeAnalytics.h>
 #import <AppCenterReactNativeCrashes.h>
 #import <CodePush/CodePush.h>
+#import <MMKV/MMKV.h>
 
 #import <React/RCTBundleURLProvider.h>
 
@@ -28,6 +29,8 @@
    [AppCenterReactNative register];
    [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
    [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
+    [MMKV initializeMMKV:nil];
+
 // #endif
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];

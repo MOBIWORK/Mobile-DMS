@@ -15,15 +15,15 @@ import {NavigationProp} from '../../../navigation';
 import {useMMKVString} from 'react-native-mmkv';
 import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
-import {useDispatch} from 'react-redux';
-import {AppActions} from '../../../redux-store';
+import { dispatch } from '../../../utils/redux';
+import { useTranslation } from 'react-i18next';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 import { useTranslation } from 'react-i18next';
 
 const SearchProduct = ({}) => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const dispatch = useDispatch();
-  const {t :getLabel} = useTranslation()
+  const {t :getLabel} = useTranslation()  const {t :getLabel} = useTranslation()
   const [listProductNearly, setListProductNearly] = useMMKVString(
     AppConstant.ListSearchProductNearly,
   );
@@ -50,7 +50,7 @@ const SearchProduct = ({}) => {
                   }}>
                   <Text
                     onPress={() => {
-                      dispatch(AppActions.setSearchProductValue(item.label));
+                      dispatch(appActions.setSearchProductValue(item.label));
                       navigation.goBack();
                     }}
                     style={{
@@ -78,7 +78,7 @@ const SearchProduct = ({}) => {
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => {
     //TODO:save to redux
-    dispatch(AppActions.setSearchProductValue(String(e.nativeEvent.text)));
+    dispatch(appActions.setSearchProductValue(String(e.nativeEvent.text)));
     const newListNearly = listProductNearly && JSON.parse(listProductNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
     setListProductNearly(JSON.stringify(newListNearly));

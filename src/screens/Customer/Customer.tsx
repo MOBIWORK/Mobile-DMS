@@ -31,8 +31,9 @@ import ListFilter from './components/ListFilter';
 import {NavigationProp} from '../../navigation';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, AppSelector} from '../../redux-store';
+import { useSelector } from '../../config/function';
+import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 export type IValueType = {
   customerType: string;
@@ -44,7 +45,6 @@ const Customer = () => {
   const {t: getLabel} = useTranslation();
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const dispatch = useDispatch();
   const [value, setValue] = React.useState({
     first: 'Gần nhất',
     second: '',
@@ -61,7 +61,7 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
-  const showModal = useSelector(AppSelector.getShowModal);
+  const showModal = useSelector(state => state.app.showModal);
   const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
@@ -72,14 +72,14 @@ const Customer = () => {
     setShow(prev => ({...prev, firstModal: !show.firstModal}));
     bottomRef.current?.snapToIndex(0);
     // console.log(show.firstModal);
-    dispatch(AppActions.setShowModal(true));
+    dispatch(appActions.setShowModal(true));
   };
   const onPressType2 = () => {
     setShow(prev => ({...prev, secondModal: !show.secondModal}));
     bottomRef2.current?.snapToIndex(0);
-    dispatch(AppActions.setShowModal(true));
+    dispatch(appActions.setShowModal(true));
   };
-  const customer = useSelector(AppSelector.getNewCustomer);
+  const customer = useSelector(state => state.app.newCustomer);
 
 
 
@@ -196,7 +196,7 @@ const Customer = () => {
         onChange={index =>
           index === -1 &&
           (setShow(prev => ({...prev, firstModal: false})),
-          dispatch(AppActions.setShowModal(false)))
+          dispatch(appActions.setShowModal(false)))
         }
         enablePanDownToClose={true}>
         <View>
@@ -238,7 +238,7 @@ const Customer = () => {
         onChange={index =>
           index === -1 &&
           (setShow(prev => ({...prev, secondModal: false})),
-          dispatch(AppActions.setShowModal(false)))
+          dispatch(appActions.setShowModal(false)))
         }
         enablePanDownToClose={true}>
         {renderBottomView()}

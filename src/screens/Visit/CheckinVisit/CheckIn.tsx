@@ -12,11 +12,11 @@ import {NavigationProp, RouterProp} from '../../../navigation';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {VisitListItemType} from '../../../models/types';
-import {Divider, Modal} from 'react-native-paper';
+import { Modal} from 'react-native-paper';
 import {item} from './ultil';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
-import { ScreenConstant } from '../../../const';
+
 type Props = {};
 
 const CheckIn = (props: Props) => {

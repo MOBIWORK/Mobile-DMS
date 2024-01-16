@@ -30,9 +30,10 @@ import {IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppActions, IAppReduxState} from '../../redux-store';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
+import { useSelector } from '../../config/function';
+import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -44,7 +45,7 @@ const AddingNewCustomer = () => {
     customerBirthday: 'Tất cả',
   });
   const {mainContactAddress, mainAddress} = useSelector(
-    (state: IAppReduxState) => state.appRedux,
+    (state) => state.app,
   );
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
@@ -87,7 +88,6 @@ const AddingNewCustomer = () => {
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const [show, setShow] = useState<boolean>(false);
-  const dispatch = useDispatch();
 
   const snapPoint = useMemo(() => ['40%'], []);
   const snapPointAdding = useMemo(
@@ -105,7 +105,7 @@ const AddingNewCustomer = () => {
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
   const onPressAdding = (listData: IDataCustomer) => {
-    dispatch(AppActions.setNewCustomer(listData));
+    dispatch(appActions.setNewCustomer(listData));
     navigation.navigate(ScreenConstant.MAIN_TAB, {
       screen: ScreenConstant.CUSTOMER,
     });

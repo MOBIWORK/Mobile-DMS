@@ -19,7 +19,7 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
-import {AppActions} from '../../redux-store';
+// import {AppActions} from '../../redux-store';
 import {CommonUtils} from '../../utils';
 import {ImageAssets} from '../../assets';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -30,14 +30,15 @@ import {
   KeyAbleProps,
 } from '../../models/types';
 import {AppService} from '../../services';
-import {useDispatch} from 'react-redux';
+
 import {useTranslation} from 'react-i18next';
+import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 const SignIn = () => {
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-  const dispatch = useDispatch();
 
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
   const [isLogOut] = useMMKVBoolean(AppConstant.isLogOut);
@@ -71,7 +72,7 @@ const SignIn = () => {
 
   const handleLogin = async () => {
     //TODO: call API
-    dispatch(AppActions.setProcessingStatus(true));
+    dispatch(appActions.setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
     const response: KeyAbleProps = await AppService.login(
       {
@@ -99,7 +100,7 @@ const SignIn = () => {
       });
     }
 
-    dispatch(AppActions.setProcessingStatus(false));
+    dispatch(appActions.setProcessingStatus(false));
   };
 
   const Authenticate = async () => {

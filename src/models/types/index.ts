@@ -428,6 +428,192 @@ export type ReportKPIType = {
   visit: ReportKPIItemType;
   newCustomer: ReportKPIItemType;
 };
+type UinitProduct = {
+  uom: string;
+  price_list_rate: number;
+  valid_from: string;
+  currency: string;
+};
+
+type DataUnit = {
+  uom: string;
+  conversion_factor: string;
+};
+
+export type StockProduct = {
+  t_warehouse: string;
+  qty: number;
+};
+
+export type IProduct = {
+  name : string;
+  item_code : string;
+  item_name : string;
+  item_group : string;
+  stock_uom : string;
+  min_order_qty : number;
+  description : string;
+  brand : string;
+  country_of_origin : string;
+  image : string;
+  custom_industry : string;
+  detail : UinitProduct;
+  unit : DataUnit[],
+  stock : StockProduct[];
+}
+
+export type TravelDiaryType = {
+  time: string;
+  date: number;
+  isCheckIn: boolean;
+  locationName: string;
+  locationAddress: string;
+};
+
+export type VisitedItemType = {
+  name: string;
+  code: string;
+  time?: string;
+  date?: number;
+  inChannel?: boolean;
+  imgCount?: number;
+  isOrder?: boolean;
+  totalSale?: number;
+  businessType?: string;
+  address?: string;
+  phone?: string;
+};
+
+export type ReportCustomerType = {
+  name: string;
+  code: string;
+  address: string | null;
+  lastOrder?: string;
+  customerType?: string;
+  customerGroup?: string;
+  channel?: string | null;
+  collectionDate?: number;
+};
+
+export type ReportDebtTotalType = {
+  name: string;
+  code: string;
+  phone: string;
+  address: string;
+  totalDebt: number;
+  paid: number;
+  remaining: number;
+};
+
+export type ReportKPIItemType = {
+  title: string;
+  progress: number;
+  time: number;
+  plan: number;
+  perform: number;
+  remaining: number;
+};
+
+export type ReportKPIType = {
+  revenue: ReportKPIItemType;
+  sales: ReportKPIItemType;
+  order: ReportKPIItemType;
+  visit: ReportKPIItemType;
+  newCustomer: ReportKPIItemType;
+};
+type UinitProduct = {
+  uom: string;
+  price_list_rate: number;
+  valid_from: string;
+  currency: string;
+};
+
+type DataUnit = {
+  uom: string;
+  conversion_factor: string;
+};
+
+export type StockProduct = {
+  t_warehouse: string;
+  qty: number;
+};
+
+export type IProduct = {
+  name : string;
+  item_code : string;
+  item_name : string;
+  item_group : string;
+  stock_uom : string;
+  min_order_qty : number;
+  description : string;
+  brand : string;
+  country_of_origin : string;
+  image : string;
+  custom_industry : string;
+  detail : UinitProduct;
+  unit : DataUnit[],
+  stock : StockProduct[];
+}
+
+export type TravelDiaryType = {
+  time: string;
+  date: number;
+  isCheckIn: boolean;
+  locationName: string;
+  locationAddress: string;
+};
+
+export type VisitedItemType = {
+  name: string;
+  code: string;
+  time?: string;
+  date?: number;
+  inChannel?: boolean;
+  imgCount?: number;
+  isOrder?: boolean;
+  totalSale?: number;
+  businessType?: string;
+  address?: string;
+  phone?: string;
+};
+
+export type ReportCustomerType = {
+  name: string;
+  code: string;
+  address: string | null;
+  lastOrder?: string;
+  customerType?: string;
+  customerGroup?: string;
+  channel?: string | null;
+  collectionDate?: number;
+};
+
+export type ReportDebtTotalType = {
+  name: string;
+  code: string;
+  phone: string;
+  address: string;
+  totalDebt: number;
+  paid: number;
+  remaining: number;
+};
+
+export type ReportKPIItemType = {
+  title: string;
+  progress: number;
+  time: number;
+  plan: number;
+  perform: number;
+  remaining: number;
+};
+
+export type ReportKPIType = {
+  revenue: ReportKPIItemType;
+  sales: ReportKPIItemType;
+  order: ReportKPIItemType;
+  visit: ReportKPIItemType;
+  newCustomer: ReportKPIItemType;
+};
 
 type UinitProduct = {
   uom: string;

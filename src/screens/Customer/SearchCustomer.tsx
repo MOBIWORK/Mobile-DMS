@@ -8,22 +8,21 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useMMKVString} from 'react-native-mmkv';
-import {useDispatch} from 'react-redux';
+import { dispatch } from '../../utils/redux';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {NavigationProp} from '../../navigation';
 import {AppConstant} from '../../const';
 import {AppText as Text, Block, SvgIcon} from '../../components/common';
-import {AppActions} from '../../redux-store';
 import {MainLayout} from '../../layouts';
 import {Searchbar} from 'react-native-paper';
 import {ImageAssets} from '../../assets';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 
 type Props = {};
 
 const SearchCustomer = (props: Props) => {
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const dispatch = useDispatch();
   const [listCustomerNearly, setListCustomerNearly] = useMMKVString(
     AppConstant.ListSearchCustomerNearly,
   );
@@ -56,7 +55,7 @@ const SearchCustomer = (props: Props) => {
                   marginVertical={6}>
                   <Text
                     onPress={() => {
-                      dispatch(AppActions.setSearchCustomerValue(item.label));
+                      dispatch(appActions.setSearchCustomerValue(item.label));
                       navigation.goBack();
                     }}
                     colorTheme="text_primary"
@@ -80,7 +79,7 @@ const SearchCustomer = (props: Props) => {
   const onSubmitEnditing = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => {
-    dispatch(AppActions.setSearchCustomerValue(String(e.nativeEvent.text)));
+    dispatch(appActions.setSearchCustomerValue(String(e.nativeEvent.text)));
     const newListNearly = listCustomerNearly && JSON.parse(listCustomerNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
     setListCustomerNearly(JSON.stringify(newListNearly));
