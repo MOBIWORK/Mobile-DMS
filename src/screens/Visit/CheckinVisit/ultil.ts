@@ -35,7 +35,7 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: true,
     name: 'Đặt hàng',
-    screenName:'CKECKIN_ORDER',
+    screenName:'CHECKIN_ORDER',
     backgroundColor:'blueBackground',
     type : "ORDER"
   },
@@ -60,7 +60,7 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Trả hàng',
-    screenName:'CKECKIN_ORDER',
+    screenName:'CHECKIN_ORDER',
     backgroundColor:'undoBackground',
     type :"RETURN_ORDER"
   },
