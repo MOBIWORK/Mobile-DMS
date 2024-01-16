@@ -15,6 +15,11 @@ const initialAppState: IAppRedux = {
   mainContactAddress: [],
   newCustomer: [],
   searchCustomerValue: '',
+  loadingApp: false,
+  listCustomerType:[],
+  systemConfig:{},
+  listCustomer:[]
+  
 };
 
 const appSlice = createSlice({
@@ -76,6 +81,15 @@ const appSlice = createSlice({
     setProcessingStatus: (state, action: PayloadAction<any>) => {
       state.isProcessing = action.payload;
     },
+    setListCustomerType:(state,action:PayloadAction<any>) =>{
+      state.listCustomerType = action.payload
+    },
+    setSystemConfig:(state,action:PayloadAction<any>) => {
+      state.systemConfig = action.payload
+    },
+    setListCustomer:(state,action:PayloadAction<any>) =>{
+      state.listCustomer = action.payload
+    }
   },
 });
 
@@ -107,7 +121,34 @@ const onGetLost = createAction('LOST', (data: number) => ({
   payload: data,
 }));
 
-export const appActions = {...appSlice.actions, onCheckIn, onGetLost};
+const onGetSystemConfig = createAction(
+  Actions.GET_SYSTEM_CONFIG,
+  (data?: any) => ({payload: data}),
+);
+
+const onGetCustomer = createAction(Actions.GET_CUSTOMER, (data?: any) => ({
+  payload: data,
+}));
+const onGetCustomerByName = createAction(
+  Actions.GET_CUSTOMER_BY_NAME,
+  (name: string) => ({payload: name}),
+);
+
+const onGetCustomerType = createAction(
+  Actions.GET_CUSTOMER_TYPE,
+  (data?: any) => ({payload: data}),
+);
+
+export const appActions = {
+  ...appSlice.actions,
+  onCheckIn,
+  onGetLost,
+  onGetSystemConfig,
+  onGetCustomer,
+  onGetCustomerByName,
+  onGetCustomerType
+};
+
 export const appReducer = appSlice.reducer;
 export const {
   setError,

@@ -1,4 +1,4 @@
-import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {Platform, StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {AppTheme} from '../../layouts/theme';
 import {AppConstant} from '../../const';
 export const rootStyles = (theme: AppTheme) =>
@@ -28,13 +28,20 @@ export const rootStyles = (theme: AppTheme) =>
     shadow: {
       shadowColor: '#919EAB',
 
-      shadowOffset: {
-        width: 0,
-        height: 12,
-      },
-      shadowOpacity: 0.3,
-      shadowRadius: 24,
-      elevation: 12,
+      ...Platform.select({
+        android: {
+          elevation: 12,
+          // borderTopWidth: 2,
+        },
+        ios: {
+          shadowOffset: {
+            width: 0,
+            height: 12,
+          },
+          shadowOpacity: 0.3,
+          shadowRadius: 1.41,
+        },
+      }),
     } as ViewStyle,
     widgetView: {
       flexDirection: 'row',

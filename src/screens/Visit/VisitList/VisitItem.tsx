@@ -29,10 +29,10 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
 
 
   const onPressCheckIn = (item:VisitListItemType) =>{
-    dispatch(appActions.onCheckIn(item));
+    // dispatch(appActions.onCheckIn(item));
     dispatch(appActions.onGetLost(0))
     dispatch(appActions.onSetAppTheme('default'))
-    console.log(dispatch(appActions.onGetLost(0)),'dispatch function')
+    navigate(ScreenConstant.CHECKIN,{item})
   }
 
 
