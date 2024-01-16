@@ -1,9 +1,20 @@
 import {MyAppTheme, ThemeType} from '../../layouts/theme';
 import {loadString} from '../../utils/storage';
-import {all, call, put} from '../../utils/typed-redux-saga';
-import {appActions} from '../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  onLoadApp,
+  onLoadAppEnd,
+  setNewCustomer,
+} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
-import { postChecking } from '../../services/appService';
+import {
+  getCustomer,
+  getCustomerType,
+  getSystemConfig,
+  postChecking,
+} from '../../services/appService';
+import {all, call, put} from 'typed-redux-saga';
+import {showSnack} from '../../components/common';
 
 export const checkKeyInObject = (T: any, key: string) => {
   return Object.keys(T).includes(key);
@@ -16,11 +27,10 @@ export type ResponseGenerator = {
   request?: any;
   status?: any;
   code?: number;
-  messages?: string;
-  classList?: any;
+  message?: any;
   exception?: any;
+  result?: any;
 };
-
 
 export function* onLoadAppModeAndTheme() {
   const {appTheme} = yield* all({
@@ -31,30 +41,86 @@ export function* onLoadAppModeAndTheme() {
     yield* put(appActions.onSetAppTheme(appTheme as ThemeType));
   }
   yield* put(appActions.onLoadAppEnd());
-  
-}
-export function* onLost(action:PayloadAction){
-  console.log(action.payload)
 }
 
-export function* onCheckInData(action:PayloadAction){
-
-  console.log(action,'actions saga')
-    if(appActions.onCheckIn.match(action)){
-      console.log('run saga')
-      try{
-        // yield put(appActions.onLoadApp())
-        console.log(action.payload)
-        const response:any = yield* call(postChecking,action.payload)
-        console.log(response,'repsonse saga ')
-       
-
-      }catch(err){
-        console.log(err,'err')
-
-      }finally{
-        // yield put(appActions.onLoadAppEnd())
-      }
+export function* onCheckInData(action: PayloadAction) {
+  if (appActions.onCheckIn.match(action)) {
+    try {
+      // yield put(appActions.onLoadApp())
+      console.log(action.payload, 'payload saga');
+      const response: any = yield* call(postChecking, action.payload);
+    } catch (err) {
+      console.log(err, 'err');
+    } finally {
+      // yield put(appActions.onLoadAppEnd())
     }
-    console.log('test')
+  }
+}
+export function* onGetCustomer(action: PayloadAction) {
+  if (appActions.onGetCustomer.match(action)) {
+    try {
+      // yield put(onLoadApp());
+      const response: ResponseGenerator = yield call(
+        getCustomer,
+        action.payload,
+      );
+      if(response.message === 'ok'){
+        yield put(appActions.setListCustomer(response.result?.data))
+      }
+      
+      
+    } catch (err) {
+    } finally {
+      // yield put(onLoadAppEnd());
+    }
+  }
+}
+export function* onGetCustomerType(action: PayloadAction) {
+  if (appActions.onGetCustomerType.match(action)) {
+    try {
+      yield put(onLoadApp());
+      const response: ResponseGenerator = yield call(
+        getCustomerType,
+        action.payload,
+      );
+      if (response.message === 'Thành công') {
+        yield put(appActions.setListCustomerType(response.result));
+      } else {
+        showSnack({
+          msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+          interval: 2000,
+          type: 'error',
+        });
+      }
+    } catch (err) {
+      console.error('err: ', err);
+    } finally {
+      yield put(onLoadAppEnd());
+    }
+  }
+}
+
+export function* onGetSystemConfiguration(action: PayloadAction) {
+  if (appActions.onGetSystemConfig.match(action)) {
+    try {
+      yield put(onLoadApp());
+      const response: ResponseGenerator = yield call(
+        getSystemConfig,
+        action.payload,
+      );
+      if (response.message === 'Thành công') {
+        yield put(appActions.setSystemConfig(response.result));
+      } else {
+        showSnack({
+          msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+          interval: 2000,
+          type: 'error',
+        });
+      }
+    } catch (err) {
+      console.error('err: ', err);
+    } finally {
+      yield put(onLoadAppEnd());
+    }
+  }
 }

@@ -26,20 +26,21 @@ import BackgroundGeolocation, {
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import { useSelector } from '../../../config/function';
+import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const ListVisit = () => {
-  const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
   const {bottom} = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
 
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-
-  const searchVisitValue = useSelector(state => state.app.searchVisitValue);
+  const systemConfig = useSelector(state => state.app.systemConfig);
+  const listCustomer = useSelector(state => state.app.listCustomer)
   const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
@@ -70,6 +71,7 @@ const ListVisit = () => {
     );
   };
 
+// console.log(listCustomer,'a')
   const _renderHeader = () => {
     return (
       <View style={{paddingHorizontal: 16}}>
@@ -210,6 +212,11 @@ const ListVisit = () => {
 
   useLayoutEffect(() => {
     setLoading(true);
+    dispatch(appActions.onGetCustomer())
+    if (Object.keys(systemConfig).length > 0) return;
+    else {
+      dispatch(appActions.onGetSystemConfig());
+    }
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));

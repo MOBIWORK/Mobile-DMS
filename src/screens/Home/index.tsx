@@ -44,12 +44,11 @@ import {rootStyles} from './styles';
 import ItemLoading from './components/ItemLoading';
 import CardLoading from './components/CardLoading';
 import ItemNotiLoading from './components/ItemNotiLoading';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 // import {AppActions, AppSelector} from '../../redux-store';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
 import ModalUpdate from './components/ModalUpdate';
-import {useBackgroundLocation} from '../../config/function';
-
+import {useBackgroundLocation, useSelector} from '../../config/function';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -62,7 +61,7 @@ const HomeScreen = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
-  
+
   // const showModal = useSelector(AppSelector.getShowModal);
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);
@@ -107,7 +106,7 @@ const HomeScreen = () => {
 
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
   const [passwordStore] = useMMKVString(AppConstant.passwordStore);
-
+  
   const getWidget = () => {
     if (!widgets) {
       const arrWg = DataConstant.DataWidget.slice(0, 4);
@@ -304,6 +303,7 @@ const HomeScreen = () => {
 
   useLayoutEffect(() => {
     setLoading(true);
+    
     BackgroundGeolocation.getCurrentPosition({
       samples: 1,
       timeout: 30,

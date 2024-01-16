@@ -79,6 +79,7 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 2,
       borderRadius: 16,
       marginTop: 4,
+      shadowColor: Colors.darker,
       // flexDirection: 'row',
       // justifyContent: 'space-around',
       // alignItems: 'center',
