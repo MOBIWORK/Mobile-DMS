@@ -1,5 +1,4 @@
-import React, {FC, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {MainLayout} from '../../../layouts';
+import React, {FC,  useLayoutEffect, useRef, useState} from 'react';
 import {AppHeader, FilterView} from '../../../components/common';
 import {
   FlatList,
@@ -11,7 +10,6 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {useTranslation} from 'react-i18next';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {VisitListItemType} from '../../../models/types';
@@ -28,6 +26,7 @@ import SkeletonLoading from '../SkeletonLoading';
 import { useSelector } from '../../../config/function';
 import { dispatch } from '../../../utils/redux';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { customerActions } from '../../../redux-store/customer-reducer/reducer';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -40,7 +39,7 @@ const ListVisit = () => {
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
-  const listCustomer = useSelector(state => state.app.listCustomer)
+  const listCustomer = useSelector(state => state.customer.listCustomer)
   const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
@@ -212,7 +211,7 @@ const ListVisit = () => {
 
   useLayoutEffect(() => {
     setLoading(true);
-    dispatch(appActions.onGetCustomer())
+    dispatch(customerActions.onGetCustomer())
     if (Object.keys(systemConfig).length > 0) return;
     else {
       dispatch(appActions.onGetSystemConfig());

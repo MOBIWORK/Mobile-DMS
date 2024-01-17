@@ -108,6 +108,8 @@ export const getDetailLocation = (lat?: number, lon?: number) =>
     )
     .then(res => res.data);
 
+export const getCustomerVisit = () =>createApi().get(ApiConstant.GET_CUSTOMER_VISIT).then(res => res.data)
+
 export const getSystemConfig = () =>
   createApi()
     .get(ApiConstant.GET_SYSTEM_CONFIG)

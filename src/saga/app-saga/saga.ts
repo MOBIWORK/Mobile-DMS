@@ -56,49 +56,6 @@ export function* onCheckInData(action: PayloadAction) {
     }
   }
 }
-export function* onGetCustomer(action: PayloadAction) {
-  if (appActions.onGetCustomer.match(action)) {
-    try {
-      // yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(
-        getCustomer,
-        action.payload,
-      );
-      if(response.message === 'ok'){
-        yield put(appActions.setListCustomer(response.result?.data))
-      }
-      
-      
-    } catch (err) {
-    } finally {
-      // yield put(onLoadAppEnd());
-    }
-  }
-}
-export function* onGetCustomerType(action: PayloadAction) {
-  if (appActions.onGetCustomerType.match(action)) {
-    try {
-      yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(
-        getCustomerType,
-        action.payload,
-      );
-      if (response.message === 'Thành công') {
-        yield put(appActions.setListCustomerType(response.result));
-      } else {
-        showSnack({
-          msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
-          interval: 2000,
-          type: 'error',
-        });
-      }
-    } catch (err) {
-      console.error('err: ', err);
-    } finally {
-      yield put(onLoadAppEnd());
-    }
-  }
-}
 
 export function* onGetSystemConfiguration(action: PayloadAction) {
   if (appActions.onGetSystemConfig.match(action)) {

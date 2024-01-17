@@ -46,7 +46,7 @@ export const POST_CHECKIN = URL_PREFIX + '.api.checkin.create_checkin'
 export const GET_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer'
 export const GET_TYPE_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer_typ'
 export const GET_SYSTEM_CONFIG ='/api/method/mbw_dms.api.config_mobile.get_list_config_mobile'
-
+export const GET_CUSTOMER_VISIT = 'api/method/mbw_dms.api.router.get_customer_router'
 
 // Order
 export const GET_ORDER = URL_PREFIX +  ".api.selling.order.get_list_sales_order";
