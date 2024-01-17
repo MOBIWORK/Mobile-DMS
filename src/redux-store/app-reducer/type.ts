@@ -1,40 +1,41 @@
 import { ThemeType } from "../../layouts/theme";
 
 
-interface ListCustomerType  {
-  name:string,
-  customer_group_name:string
+interface ListCustomerType {
+  name: string,
+  customer_group_name: string
 }
 
 export interface IAppRedux {
-    error?: {
-      title: string;
-      message: string;
-      viewOnly?: boolean;
-      status?: number;
-    };
-    isProcessing: boolean;
-    showModal: boolean;
-    searchProductValue: string;
-    searchVisitValue: string;
-    searchCustomerValue: string;
-    theme: ThemeType;
-    mainAddress:any[],
-    mainContactAddress:any[],
-    newCustomer:any[],
-    loadingApp?:boolean,
-    systemConfig?:any,
-   currentLocation?:any
-  }
+  error?: {
+    title: string;
+    message: string;
+    viewOnly?: boolean;
+    status?: number;
+  };
+  isProcessing: boolean;
+  showModal: boolean;
+  searchProductValue: string;
+  searchVisitValue: string;
+  searchCustomerValue: string;
+  theme: ThemeType;
+  mainAddress: any[],
+  mainContactAddress: any[],
+  newCustomer: any[],
+  loadingApp?: boolean,
+  listCustomerType?: ListCustomerType[],
+  systemConfig?: any,
+  listCustomer?: any[]
+}
 
 
 
 export enum SLICE_NAME {
-  CHECKIN = 'CHECKIN_' ,
+  CHECKIN = 'CHECKIN_',
   SET_ERROR = 'SET_ERROR_',
   SET_PROCESSING_STATUS = 'SET_PROCESSING_STATUS_',
   SET_FAILURE = 'SET_FAILURE_',
-  APP ='APP_',
+  APP = 'APP_',
   GET_SYSTEM_CONFIG = 'GET_SYSTEM_CONFIG_',
   GET_CUSTOMER = 'GET_CUSTOMER_',
   GET_CUSTOMER_BY_NAME = 'GET_CUSTOMER_BY_NAME_',
