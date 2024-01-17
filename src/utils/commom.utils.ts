@@ -2,26 +2,20 @@ import { MMKV } from 'react-native-mmkv';
 import {
   
   Dimensions,
- 
   InteractionManager,
- 
   Keyboard,
- 
   Linking,
- 
   Platform,
- 
   StyleSheet,
-,
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import store, { AppActions } from '../redux-store';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { AppConstant } from '../const';
 import * as Location from 'expo-location';
 import { LocationAccuracy } from 'expo-location';
 import { dispatch } from './redux';
 import { appActions } from '../redux-store/app-reducer/reducer';
+import { AppTheme } from '../layouts/theme';
 
 export const storage = new MMKV();
 
@@ -523,5 +517,33 @@ export const dateToDate = (type : string) => {
   return {
     from_date : firstDateString,
     to_date : lastDateString
+  }
+}
+
+export const getStatusColor = (status : string,color :any)=>{
+  let sttText = "";
+  let sttColor = "";
+  let sttBgColor = "";
+  switch (status) {
+    case "Draft":
+        sttText = "pending";
+        sttColor = color.warning;
+        sttBgColor = "rgba(255, 171, 0, 0.08)"
+      break;
+    case "To Deliver and Bill":
+        sttText = "pendingDeliverAndBill";
+        sttColor = color.warning;
+        sttBgColor = "rgba(255, 171, 0, 0.08)"
+    break;
+    default:
+        sttText = status;
+        sttColor = color.warning;
+        sttBgColor = "rgba(255, 171, 0, 0.08)"
+      break;
+  }
+  return {
+    color : sttColor,
+    text : sttText,
+    bg : sttBgColor
   }
 }

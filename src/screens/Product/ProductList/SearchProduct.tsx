@@ -16,14 +16,13 @@ import {useMMKVString} from 'react-native-mmkv';
 import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
 import { dispatch } from '../../../utils/redux';
-import { useTranslation } from 'react-i18next';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
 import { useTranslation } from 'react-i18next';
 
 const SearchProduct = ({}) => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const {t :getLabel} = useTranslation()  const {t :getLabel} = useTranslation()
+  const {t :getLabel} = useTranslation()
   const [listProductNearly, setListProductNearly] = useMMKVString(
     AppConstant.ListSearchProductNearly,
   );

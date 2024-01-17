@@ -468,6 +468,35 @@ export type IOrderList = {
   address_display:string;
   po_date:number;
   delivery_date:number;
-  status:number;
+  status:string;
   custom_id:number | string;
+  grand_total : number;
+  rounding_adjustment : number;
+  rounded_total :number
+}
+
+type ItemProductOrder = {
+  item_name:string;
+  name:string;
+  item_code:string;
+  qty:number;
+  uom:string;
+  amount:number;
+  discount_percentage:number;
+}
+
+export type IOrderDetail = {
+  list_items : ItemProductOrder[];
+  customer :string;
+  customer_name :string;
+  address_display :string;
+  delivery_date :string;
+  set_warehouse :string;
+  taxes_and_charges :number;
+  total_taxes_and_charges :number;
+  apply_discount_on :number;
+  additional_discount_percentage :number;
+  discount_amount :null;
+  contact_person :string;
+  rounded_total :number;
 }

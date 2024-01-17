@@ -117,5 +117,9 @@ export default {
   completed :"Complete",
   cancelled :"Canceled",
   recentSearches : "Recent searches",
-  searchOrder :"Search for orders"
+  searchOrder :"Search for orders",
+  totalPrice : "Total amount",
+  printOrder :"Print",
+  orderDetail : "Order details",
+
 };

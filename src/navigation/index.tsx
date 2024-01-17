@@ -219,10 +219,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={NonOrderCustomer}
         />
         <Stack.Screen
-          name={ScreenConstant.TRAVEL_DIARY}
-          component={TravelDiary}
-        />
-        <Stack.Screen
           name={ScreenConstant.ROUTE_RESULT}
           component={RouteResult}
         />
@@ -269,12 +265,10 @@ export type RootStackParamList = {
   [ScreenConstant.SUCCESS_CHANGE]: undefined;
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
-  [ScreenConstant.PRODUCT_DETAIL]: {
-    item: IProduct;
-  };
+  [ScreenConstant.PRODUCT_DETAIL]: {item: IProduct};
   [ScreenConstant.IMAGE_VIEW]: { data: any };
   [ScreenConstant.ORDER_SCREEN]: undefined;
-  [ScreenConstant.ORDER_DETAIL_SCREEN]: undefined;
+  [ScreenConstant.ORDER_DETAIL_SCREEN]: {name : string};
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
@@ -292,9 +286,7 @@ export type RootStackParamList = {
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
-  [ScreenConstant.CHECKIN]: {
-    item: any;
-  };
+  [ScreenConstant.CHECKIN]: {item: any};
   [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;

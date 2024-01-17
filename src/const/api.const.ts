@@ -28,7 +28,6 @@ export const POST_RESET_PASSWORD = URL_PREFIX + '.auth.reset_password';
 
 // Profile
 export const PUT_USER_PROFILE = URL_PREFIX + '.user.update_profile';
-export const POST_CHECKIN = URL + '.mbw_dms.api.checkin.create_checkin'
 
 
 // Product
@@ -36,14 +35,17 @@ export const GET_PRODUCT = URL_PREFIX +  ".api.selling.product.list_product";
 export const GET_BRAND_PRODUCT = URL_PREFIX +  "..api.selling.product.list_brand";
 export const GET_INDUSTRY_PRODUCT = URL_PREFIX +  ".api.selling.product.list_industry";
 export const GET_GROUP_PRODUCT = URL_PREFIX +  ".api.selling.product.list_item_group";
+
+
 // Chekcin
-export const POST_CHECKIN = URL + '.mbw_dms.api.checkin.create_checkin'
-//GET
+export const POST_CHECKIN = URL_PREFIX + '.api.checkin.create_checkin'
+
+
+// Customer
 
 export const GET_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer'
 export const GET_TYPE_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer_typ'
 export const GET_SYSTEM_CONFIG ='/api/method/mbw_dms.api.config_mobile.get_list_config_mobile'
-export const POST_CHECKIN = URL + '.mbw_dms.api.checkin.create_checkin'
 
 
 // Order

@@ -56,28 +56,7 @@ export default {
   contactName: 'Người liên hệ',
   location: 'Vị trí',
   dob: 'Sinh nhật',
-  error: {
-    haveError: 'Đã có lỗi xảy ra, hãy thử lại sau',
-  home: 'Trang chủ',
-  visit: 'Viếng thăm',
-  customer: 'Khách hàng',
-  lookingMore: 'Xem thêm',
-  groupCustomer: 'Nhóm khách hàng',
-  customerType: 'Loại khách hàng',
-  customerBirthDay: 'Ngày sinh nhật',
-  debtLimit: 'Hạn mức công nợ',
-  gland: 'Tuyến',
-  distance: 'Khoảng cách',
-  description: 'Mô tả',
-  websiteUrl: 'Địa chỉ web',
-  area: 'Khu vực',
-  address: 'Địa chỉ',
-  contactName: 'Người liên hệ',
-  location: 'Vị trí',
-  dob: 'Sinh nhật',
-  error: {
-    haveError: 'Đã có lỗi xảy ra, hãy thử lại sau',
-  },
+  haveError: 'Đã có lỗi xảy ra, hãy thử lại sau',
   infor: 'Thông tin tài khoản',
   language: 'Ngôn ngữ',
   accountSetting: 'Cài đặt tài khoản',
@@ -139,5 +118,9 @@ export default {
   completed :"Hoàn thành",
   cancelled :"Đã huỷ",
   recentSearches : "Tìm kiém gần đây",
-  searchOrder :"Tìm kiếm đơn hàng"
-};
+  searchOrder :"Tìm kiếm đơn hàng",
+  totalPrice : "Tổng tiền",
+  printOrder :"In đơn",
+  orderDetail : "Chi tiết đơn",
+  remind :"Nhắc duyệt"
+}
