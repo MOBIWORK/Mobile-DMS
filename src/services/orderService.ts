@@ -1,7 +1,7 @@
 import { createApi } from "../api"
 import { ApiConstant } from "../const"
 
-type PramsType = {
+export type PramsTypeOrder = {
     from_date? :number,
     to_date? :number,
     status? : string,
@@ -10,5 +10,5 @@ type PramsType = {
 }
 
 
-export const get = (params? : PramsType) => createApi().get(ApiConstant.GET_ORDER,params)
+export const get = (params? : PramsTypeOrder) => createApi().get(ApiConstant.GET_ORDER,params)
 export const getDetail = (name : string) => createApi().get(ApiConstant.GET_ORDER_DETAIL,{name})
