@@ -124,5 +124,21 @@ export default {
   totalPrice : "Tổng tiền",
   printOrder :"In đơn",
   orderDetail : "Chi tiết đơn",
-  remind :"Nhắc duyệt"
+  remind :"Nhắc duyệt",
+  edit :"Chỉnh sửa",
+  delete : "Xoá",
+  detail :"Chi tiết",
+  exchange :"Trao đổi",
+  deliveryDate : "Ngày giao",
+  eXwarehouse :"Kho xuất",
+  orderInfor :"Thông tin đơn hàng",
+  intoMoney : "Thành tiền",
+  formVat : "Biểu mẫu VAT",
+  discount :"Chiết khấu",
+  typeDiscount :"Loại chiết khấu",
+  detailPay : "Chi tiết thanh toán",
+  unitPrice :"Đơn giá",
+  quantity :"Số lượng",
+  cancel :"Huỷ",
+  update :"Cập nhật"
 }
