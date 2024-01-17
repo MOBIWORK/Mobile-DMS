@@ -28,7 +28,6 @@ import FilterListComponent, {
 import { TextInput } from 'react-native-paper';
 import { AppConstant, ScreenConstant } from '../../../const';
 import { NavigationProp } from '../../../navigation';
-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProductService } from '../../../services';
 import { STT_OK } from '../../../const/api.const';
