@@ -44,3 +44,4 @@ export const GET_GROUP_PRODUCT = URL_PREFIX +  ".api.selling.product.list_item_g
 export const GET_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer'
 export const GET_TYPE_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer_typ'
 export const GET_SYSTEM_CONFIG ='/api/method/mbw_dms.api.config_mobile.get_list_config_mobile'
+export const GET_CUSTOMER_VISIT = 'api/method/mbw_dms.api.router.get_customer_router'

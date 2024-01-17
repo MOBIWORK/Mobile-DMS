@@ -23,9 +23,8 @@ export interface IAppRedux {
     mainContactAddress:any[],
     newCustomer:any[],
     loadingApp?:boolean,
-    listCustomerType?:ListCustomerType[],
     systemConfig?:any,
-    listCustomer?:any[]
+   
   }
 
 
@@ -41,7 +40,9 @@ export enum SLICE_NAME {
   GET_CUSTOMER_BY_NAME = 'GET_CUSTOMER_BY_NAME_',
   GET_CUSTOMER_TYPE = 'GET_CUSTOMER_TYPE_',
   GET_CUSTOMER_BY_DATE = 'GET_CUSTOMER_BY_DATE_',
-  GET_TYPE_CUSTOMER = 'GET_TYPE_CUSTOMER_'
+  GET_TYPE_CUSTOMER = 'GET_TYPE_CUSTOMER_',
+  CUSTOMER = 'CUSTOMER_',
+  GET_CUSTOMER_VISIT = 'GET_CUSTOMER_VISIT_',
 }
 
 
@@ -65,3 +66,4 @@ export enum SLICE_NAME {
   export const GET_CUSTOMER_BY_NAME = SLICE_NAME.GET_CUSTOMER_BY_NAME + 'GET_CUSTOMER_BY_NAME';
   export const GET_CUSTOMER_BY_DATE = SLICE_NAME.GET_CUSTOMER_BY_NAME + "GET_CUSTOMER_BY_DATE";
   export const GET_CUSTOMER_TYPE = SLICE_NAME.GET_CUSTOMER_TYPE + "GET_CUSTOMER_TYPE";
+  export const GET_CUSTOMER_VISIT = SLICE_NAME.GET_CUSTOMER_VISIT + 'GET_CUSTOMER_VISIT';
