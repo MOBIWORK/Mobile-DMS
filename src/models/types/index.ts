@@ -475,7 +475,7 @@ export type IOrderList = {
   rounded_total :number
 }
 
-type ItemProductOrder = {
+export type ItemProductOrder = {
   item_name:string;
   name:string;
   item_code:string;
@@ -490,13 +490,19 @@ export type IOrderDetail = {
   customer :string;
   customer_name :string;
   address_display :string;
-  delivery_date :string;
+  delivery_date :number;
   set_warehouse :string;
   taxes_and_charges :number;
   total_taxes_and_charges :number;
   apply_discount_on :number;
   additional_discount_percentage :number;
-  discount_amount :null;
+  discount_amount :number;
   contact_person :string;
   rounded_total :number;
+  grand_total :number;
+  total :number;
+  tax_amount? :number;
+  rate? : number;
+  account_head? : string;
+  charge_type? : string;
 }

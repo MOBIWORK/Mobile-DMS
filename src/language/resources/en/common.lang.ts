@@ -121,5 +121,22 @@ export default {
   totalPrice : "Total amount",
   printOrder :"Print",
   orderDetail : "Order details",
+  remind :"Reminder for approving applications",
+  edit :"Edit",
+  delete : "Delete",
+  detail :"Detail",
+  exchange :"Conversation",
+  deliveryDate : "Delivery date",
+  eXwarehouse :"Export warehouse",
+  orderInfor :"Order information",
+  intoMoney : "Total price",
+  formVat : "VAT Form",
+  discount :"Discount",
+  typeDiscount :"Discount type",
+  detailPay : "Payment details",
+  unitPrice :"Unit selling price",
+  quantity :"Quantity",
+  cancel :"Cancel",
+  update :"Update"
 
 };

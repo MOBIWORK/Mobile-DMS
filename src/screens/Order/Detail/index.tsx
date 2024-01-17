@@ -19,10 +19,6 @@ import { IOrderDetail, KeyAbleProps } from '../../../models/types';
 import { useTranslation } from 'react-i18next';
 
 
-const renderScene = SceneMap({
-    overview: TabOverview,
-    comments: TabComment,
-});
 
 const OrderDetail = () => {
     const layout = useWindowDimensions();
@@ -33,13 +29,14 @@ const OrderDetail = () => {
     const bottomSheet = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ["15%"], []);
     const [routes] = useState([
-        { key: 'overview', title: 'Tổng quan' },
-        { key: 'comments', title: 'Trao đổi' },
+        { key: 'overview', title: 'overview' },
+        { key: 'comments', title: 'exchange' },
     ]);
     
     const route = useRoute<RouterProp<"ORDER_DETAIL_SCREEN">>();
     const name = route.params.name;
     const [data ,setData] = useState<IOrderDetail>();
+
     const renderTabBar = (props: any) => {
         return (
             <TabBar
@@ -47,7 +44,7 @@ const OrderDetail = () => {
                 renderLabel={({ focused, route }) => {
                     return (
                         <Text style={[styles.textTabBar as any, { color: focused ? colors.primary : colors.text_disable }]}>
-                            {route.title}
+                            {getLabel(route.title || "")}
                         </Text>
                     );
                 }}
@@ -84,6 +81,11 @@ const OrderDetail = () => {
         },
     });
 
+    const renderScreen = SceneMap({
+        overview: () => <TabOverview data={data}/> ,
+        comments: TabComment,
+    });
+
     const fetchDataDetail = async ()=>{
         const {status ,data} :KeyAbleProps= await OrderService.getDetail(name);
         if (status === ApiConstant.STT_OK) {
@@ -110,30 +112,31 @@ const OrderDetail = () => {
             <TabView
                 navigationState={{ index, routes }}
                 renderTabBar={renderTabBar}
-                renderScene={renderScene}
+                renderScene={renderScreen}
                 onIndexChange={setIndex}
                 initialLayout={{ width: layout.width }}
+                
             />
 
             <AppBottomSheet snapPointsCustom={snapPoints} bottomSheetRef={bottomSheet}>
                 <View style={{ paddingHorizontal: 16, marginTop: -5 }}>
                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: "center" }}>
                         <AppIcons name='bell-outline' iconType='MaterialCommunity' size={18} color={colors.text_secondary} />
-                        <Text style={{ fontSize: 14, lineHeight: 24, fontWeight: "400", color: colors.text_primary, marginLeft: 8, paddingVertical: 4 }}>Nhắc duyệt</Text>
+                        <Text style={{ fontSize: 14, lineHeight: 24, fontWeight: "400", color: colors.text_primary, marginLeft: 8, paddingVertical: 4 }}>{getLabel("remind")}</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => {
                         bottomSheet.current && bottomSheet.current.close()
                     }} style={{ flexDirection: 'row', alignItems: "center" }}>
                         <AppIcons name='edit' iconType='AntIcon' size={18} color={colors.text_secondary} />
-                        <Text style={{ fontSize: 14, lineHeight: 24, fontWeight: "400", color: colors.text_primary, marginLeft: 8, paddingVertical: 4 }}>Chỉnh sửa</Text>
+                        <Text style={{ fontSize: 14, lineHeight: 24, fontWeight: "400", color: colors.text_primary, marginLeft: 8, paddingVertical: 4 }}>{getLabel("edit")}</Text>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity onPress={() => {
                         bottomSheet.current && bottomSheet.current.close()
                     }} style={{ flexDirection: 'row', alignItems: "center" }}>
                         <AppIcons name='delete-outline' iconType='MaterialCommunity' size={18} color={colors.primary} />
-                        <Text style={{ fontSize: 14, lineHeight: 24, fontWeight: "400", color: colors.primary, marginLeft: 8, paddingVertical: 4 }}>Xoá đơn</Text>
+                        <Text style={{ fontSize: 14, lineHeight: 24, fontWeight: "400", color: colors.primary, marginLeft: 8, paddingVertical: 4 }}>{getLabel("delete")}</Text>
                     </TouchableOpacity>
 
                 </View>
