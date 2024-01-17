@@ -40,6 +40,15 @@ export const GET_INDUSTRY_PRODUCT = URL_PREFIX +  ".api.selling.product.list_ind
 export const GET_GROUP_PRODUCT = URL_PREFIX +  ".api.selling.product.list_item_group";
 
 
+
+
+// Customer
+
+export const GET_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer'
+export const GET_TYPE_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer_typ'
+export const GET_SYSTEM_CONFIG ='/api/method/mbw_dms.api.config_mobile.get_list_config_mobile'
+
+
 // Order
 export const GET_ORDER = URL_PREFIX +  ".api.selling.order.get_list_sales_order";
 export const GET_ORDER_DETAIL = URL_PREFIX +  ".api.selling.order.get_sale_order";

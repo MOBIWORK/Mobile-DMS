@@ -1,18 +1,22 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { MainLayout } from '../../../layouts'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { View, useWindowDimensions } from 'react-native';
 import TabOverview from './TabOverview';
 import TabComment from './TabComment';
 import { AppBottomSheet, AppHeader, AppIcons } from '../../../components/common';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../../../navigation';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, RouterProp } from '../../../navigation';
 import { useTheme } from '@react-navigation/native';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { ICON_TYPE } from '../../../const/app.const';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
+import { OrderService } from '../../../services';
+import { ApiConstant } from '../../../const';
+import { IOrderDetail, KeyAbleProps } from '../../../models/types';
+import { useTranslation } from 'react-i18next';
 
 
 const renderScene = SceneMap({
@@ -24,16 +28,18 @@ const OrderDetail = () => {
     const layout = useWindowDimensions();
     const navigation = useNavigation<NavigationProp>();
     const { colors } = useTheme();
+    const {t  :getLabel}= useTranslation()
     const [index, setIndex] = React.useState(0);
-    const bottomSheet = useRef<BottomSheet>();
+    const bottomSheet = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ["15%"], []);
     const [routes] = useState([
         { key: 'overview', title: 'Tổng quan' },
         { key: 'comments', title: 'Trao đổi' },
     ]);
-
-
-
+    
+    const route = useRoute<RouterProp<"ORDER_DETAIL_SCREEN">>();
+    const name = route.params.name;
+    const [data ,setData] = useState<IOrderDetail>();
     const renderTabBar = (props: any) => {
         return (
             <TabBar
@@ -78,10 +84,19 @@ const OrderDetail = () => {
         },
     });
 
+    const fetchDataDetail = async ()=>{
+        const {status ,data} :KeyAbleProps= await OrderService.getDetail(name);
+        if (status === ApiConstant.STT_OK) {
+            setData(data.result)
+        }
+    }
 
+    useEffect(()=>{
+        fetchDataDetail()
+    },[name])
     return (
         <MainLayout style={{paddingHorizontal :0}}>
-            <AppHeader label='Chi tiết đơn'
+            <AppHeader label={getLabel("orderDetail")}
                 onBack={() => navigation.goBack()}
                 style={{ paddingHorizontal: 16, marginBottom: 20 }}
                 rightButton={
@@ -113,6 +128,7 @@ const OrderDetail = () => {
                         <AppIcons name='edit' iconType='AntIcon' size={18} color={colors.text_secondary} />
                         <Text style={{ fontSize: 14, lineHeight: 24, fontWeight: "400", color: colors.text_primary, marginLeft: 8, paddingVertical: 4 }}>Chỉnh sửa</Text>
                     </TouchableOpacity>
+                    
                     <TouchableOpacity onPress={() => {
                         bottomSheet.current && bottomSheet.current.close()
                     }} style={{ flexDirection: 'row', alignItems: "center" }}>

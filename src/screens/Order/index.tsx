@@ -184,6 +184,7 @@ const OrderList = () => {
   };
 
   const renderUiItem = (item :IOrderList) => {
+    const status = CommonUtils.getStatusColor(item.status,colors)
     return (
       <View
         style={[styles.containerItem]}>
@@ -194,10 +195,10 @@ const OrderList = () => {
           <View
             style={[
               styles.statusView,
-              { backgroundColor: 'rgba(255, 171, 0, 0.08)' },
+              { backgroundColor: status.bg },
             ]}>
-            <Text style={[styles.textStatus as any, { color: colors.warning }]}>
-              Chờ duyệt
+            <Text style={[styles.textStatus as any, { color: status.color }]}>
+              {getLabel(status.text)}
             </Text>
           </View>
         </View>
@@ -274,14 +275,14 @@ const OrderList = () => {
             }}
             textColor={colors.action}
             onPress={() => console.log('Pressed')}>
-            In đơn
+            {getLabel("printOrder")}
           </Button>
           <View style={styles.flex}>
             <Text style={styles.itemTotal}>
-              Tổng tiền :
+              {getLabel("totalPrice")} :
             </Text>
             <Text style={[styles.nameCustomer]}>
-              7.000.000
+              {CommonUtils.formatCash(item.rounded_total.toString())}
             </Text>
           </View>
         </View>
@@ -355,7 +356,7 @@ const OrderList = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() =>
-                  navigation.navigate(ScreenConstant.ORDER_DETAIL_SCREEN)
+                  navigation.navigate(ScreenConstant.ORDER_DETAIL_SCREEN,{name :item.name})
                 }>
                 {renderUiItem(item)}
               </TouchableOpacity>}

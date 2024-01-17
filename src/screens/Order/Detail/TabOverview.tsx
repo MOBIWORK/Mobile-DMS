@@ -136,55 +136,17 @@ const TabOverview = () => {
 
                             <View style={[styles.containerIfOd]}>
 
-                                <View style={[styles.orderInforE]}>
+                                <View style={[styles.orderInforE,styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>Ngày giao</Text>
                                     <Text style={[styles.textInforO]}>28/11/2023</Text>
                                 </View>
 
-                                <View style={[styles.orderInforE]}>
-                                    <Text style={[styles.labelDetail]}>Gợi ý tổng tiền</Text>
-                                    <Text style={[styles.textInforO]}>28/11/2023</Text>
-                                </View>
-
-                                <View style={[styles.orderInforE]}>
-                                    <Text style={[styles.labelDetail]}>Tiền khách trả</Text>
-                                    <Text style={[styles.textInforO]}>28/11/2023</Text>
-                                </View>
-
-                                <View style={[styles.orderInforE]}>
-                                    <Text style={[styles.labelDetail]}>Ghi công nợ</Text>
-                                    <View style={[styles.flex]}>
-                                        <AppIcons iconType={ICON_TYPE.AntIcon} name='checkcircle' size={14} color={colors.success} />
-                                        <Text style={[styles.textInforO, { marginLeft: 8 }]}>Có</Text>
-                                    </View>
-                                </View>
-
-                                <View style={[styles.orderInforE, { borderColor: colors.bg_default }]}>
-                                    <Text style={[styles.labelDetail]}>Ghi chú đơn hàng</Text>
-                                    <Text style={[styles.textInforO]}>28/11/2023</Text>
-                                </View>
-
-                            </View>
-
-                            <View style={[styles.containerIfOd]}>
-                                <View style={[styles.orderInforE, { borderColor: colors.border }]}>
-                                    <Text style={[styles.labelDetail]}>Loại đơn hàng</Text>
-                                    <Text style={[styles.textInforO]}>Đặt hàng</Text>
-                                </View>
-                                <View style={[styles.orderInforE, { borderColor: colors.border }]}>
+                                <View style={[styles.orderInforE,styles.flexSpace ,{borderColor : colors.bg_default}]}>
                                     <Text style={[styles.labelDetail]}>Kho xuất</Text>
-                                    <Text style={[styles.textInforO]}>Kho HN_TEST</Text>
+                                    <Text style={[styles.textInforO]}>HN-Tst</Text>
                                 </View>
-                                <View style={[styles.orderInforE, { borderColor: colors.border }]}>
-                                    <Text style={[styles.labelDetail]}>Nhóm</Text>
-                                    <Text style={[styles.textInforO]}>Bắc Từ</Text>
-                                </View>
-                                <View style={[styles.orderInforE, { borderColor: colors.bg_default }]}>
-                                    <Text style={[styles.labelDetail]}>Chiết khấu</Text>
-                                    <Text style={[styles.textInforO]}>100.000</Text>
-                                </View>
-                            </View>
 
+                            </View>
                         </View>
                     </View>
 
@@ -273,7 +235,8 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
     containerIfOd :{
         backgroundColor: theme.colors.bg_default,
         paddingVertical: 8,
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
+        borderRadius  :16
     }as ViewStyle,
     textLabel: {
         color: theme.colors.text_secondary,
@@ -282,9 +245,9 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
         fontWeight: "500"
     } as TextStyle,
     labelDetail: {
-        fontSize: 14,
-        lineHeight: 21,
-        fontWeight: "500",
+        fontSize: 16,
+        lineHeight: 24,
+        fontWeight: "400",
         color: theme.colors.text_disable,
         marginBottom: 4 
     } as TextStyle,

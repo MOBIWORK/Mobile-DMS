@@ -120,5 +120,9 @@ export default {
   completed :"Hoàn thành",
   cancelled :"Đã huỷ",
   recentSearches : "Tìm kiém gần đây",
-  searchOrder :"Tìm kiếm đơn hàng"
-};
+  searchOrder :"Tìm kiếm đơn hàng",
+  totalPrice : "Tổng tiền",
+  printOrder :"In đơn",
+  orderDetail : "Chi tiết đơn",
+  remind :"Nhắc duyệt"
+}
