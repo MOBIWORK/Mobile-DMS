@@ -1,9 +1,9 @@
 import { ThemeType } from "../../layouts/theme";
 
 
-interface ListCustomerType {
-  name: string,
-  customer_group_name: string
+interface ListCustomerType  {
+  name:string,
+  customer_group_name:string
 }
 
 export interface IAppRedux {
@@ -23,19 +23,18 @@ export interface IAppRedux {
     mainContactAddress:any[],
     newCustomer:any[],
     loadingApp?:boolean,
-    listCustomerType?:ListCustomerType[],
     systemConfig?:any,
-    listCustomer?:any[]
+   
   }
 
 
 
 export enum SLICE_NAME {
-  CHECKIN = 'CHECKIN_',
+  CHECKIN = 'CHECKIN_' ,
   SET_ERROR = 'SET_ERROR_',
   SET_PROCESSING_STATUS = 'SET_PROCESSING_STATUS_',
   SET_FAILURE = 'SET_FAILURE_',
-  APP = 'APP_',
+  APP ='APP_',
   GET_SYSTEM_CONFIG = 'GET_SYSTEM_CONFIG_',
   GET_CUSTOMER = 'GET_CUSTOMER_',
   GET_CUSTOMER_BY_NAME = 'GET_CUSTOMER_BY_NAME_',
@@ -67,3 +66,4 @@ export enum SLICE_NAME {
   export const GET_CUSTOMER_BY_NAME = SLICE_NAME.GET_CUSTOMER_BY_NAME + 'GET_CUSTOMER_BY_NAME';
   export const GET_CUSTOMER_BY_DATE = SLICE_NAME.GET_CUSTOMER_BY_NAME + "GET_CUSTOMER_BY_DATE";
   export const GET_CUSTOMER_TYPE = SLICE_NAME.GET_CUSTOMER_TYPE + "GET_CUSTOMER_TYPE";
+  export const GET_CUSTOMER_VISIT = SLICE_NAME.GET_CUSTOMER_VISIT + 'GET_CUSTOMER_VISIT';

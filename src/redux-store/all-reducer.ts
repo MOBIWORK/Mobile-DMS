@@ -5,7 +5,7 @@ import { customerReducer } from './customer-reducer/reducer';
 
 export const allReducer = combineReducers({
   app: appReducer,
-  customer:customerReducer
+  customer:customerReducer,
   order : orderReducer
 });
 
