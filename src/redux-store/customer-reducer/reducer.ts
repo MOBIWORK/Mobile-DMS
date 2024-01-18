@@ -1,7 +1,7 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {IProduct} from './type';
-import {SLICE_NAME} from '../app-reducer/type';
-import {PayloadAction, createAction} from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import { IProduct } from "./type";
+import { SLICE_NAME } from "../app-reducer/type";
+import { PayloadAction, createAction } from '@reduxjs/toolkit/dist/createAction';
 import * as Actions from '../app-reducer/type';
 
 const initialState: IProduct = {

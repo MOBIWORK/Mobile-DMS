@@ -28,11 +28,10 @@ import FilterListComponent, {
 import { TextInput } from 'react-native-paper';
 import { AppConstant, ScreenConstant } from '../../../const';
 import { NavigationProp } from '../../../navigation';
-import { useSelector } from 'react-redux';
-import { AppSelector } from '../../../redux-store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProductService } from '../../../services';
 import { STT_OK } from '../../../const/api.const';
+import { useSelector } from '../../../config/function';
 
 
 const ListProduct = () => {
@@ -42,7 +41,7 @@ const ListProduct = () => {
   const { bottom } = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
 
-  const searchProductValue = useSelector(AppSelector.getSearchProductValue);
+  const searchProductValue = useSelector(state => state.app.searchProductValue);
 
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);

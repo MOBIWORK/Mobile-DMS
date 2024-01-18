@@ -16,20 +16,18 @@ export const STT_REQUEST_TIME_OUT = 408;
 export const STT_INTERNAL_SERVER = 500;
 export const STT_NOT_MODIFIED = 304;
 
-const URL_PREFIX = '/api/method/mbw_service_v2.api';
-const URL = '/api/method'
-// const URL_PREFIX = '/api/method/mbw_dms';
+const URL_PREFIX = '/api/method/mbw_dms';
 // const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
 
-//POST
+// Authentication
 export const POST_USER_LOGIN ='/api/method/mbw_service_v2.api.auth.login';
 export const POST_USER_LOGOUT ='/api/method/mbw_service_v2.api.auth.logout';
 export const POST_USER_ORGANIZATION =
   '/api/method/mbw_ess_registration.api.ess.organization.get_info_organization';
 export const POST_RESET_PASSWORD = URL_PREFIX + '.auth.reset_password';
 
+// Profile
 export const PUT_USER_PROFILE = URL_PREFIX + '.user.update_profile';
-export const POST_CHECKIN =  '/api/method/mbw_dms.api.checkin.create_checkin'
 
 
 // Product
@@ -39,9 +37,17 @@ export const GET_INDUSTRY_PRODUCT = URL_PREFIX +  ".api.selling.product.list_ind
 export const GET_GROUP_PRODUCT = URL_PREFIX +  ".api.selling.product.list_item_group";
 
 
-//GET
+// Chekcin
+export const POST_CHECKIN = URL_PREFIX + '.api.checkin.create_checkin'
+
+
+// Customer
 
 export const GET_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer'
 export const GET_TYPE_CUSTOMER = '/api/method/mbw_dms.api.selling.customer.list_customer_typ'
 export const GET_SYSTEM_CONFIG ='/api/method/mbw_dms.api.config_mobile.get_list_config_mobile'
 export const GET_CUSTOMER_VISIT = 'api/method/mbw_dms.api.router.get_customer_router'
+
+// Order
+export const GET_ORDER = URL_PREFIX +  ".api.selling.order.get_list_sales_order";
+export const GET_ORDER_DETAIL = URL_PREFIX +  ".api.selling.order.get_sale_order";

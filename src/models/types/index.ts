@@ -461,3 +461,48 @@ export type IProduct = {
   unit : DataUnit[],
   stock : StockProduct[];
 }
+
+export type IOrderList = {
+  customer:string;
+  name:string;
+  address_display:string;
+  po_date:number;
+  delivery_date:number;
+  status:string;
+  custom_id:number | string;
+  grand_total : number;
+  rounding_adjustment : number;
+  rounded_total :number
+}
+
+export type ItemProductOrder = {
+  item_name:string;
+  name:string;
+  item_code:string;
+  qty:number;
+  uom:string;
+  amount:number;
+  discount_percentage:number;
+}
+
+export type IOrderDetail = {
+  list_items : ItemProductOrder[];
+  customer :string;
+  customer_name :string;
+  address_display :string;
+  delivery_date :number;
+  set_warehouse :string;
+  taxes_and_charges :number;
+  total_taxes_and_charges :number;
+  apply_discount_on :number;
+  additional_discount_percentage :number;
+  discount_amount :number;
+  contact_person :string;
+  rounded_total :number;
+  grand_total :number;
+  total :number;
+  tax_amount? :number;
+  rate? : number;
+  account_head? : string;
+  charge_type? : string;
+}

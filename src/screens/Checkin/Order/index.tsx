@@ -16,7 +16,7 @@ const CheckinOrder = () => {
     const { colors } = useTheme();
     const navigation = useNavigation<NavigationProp>();
     const styles = createSheetStyle(useTheme());
-    const router = useRoute<RouterProp<"CKECKIN_ORDER">>()
+    const router = useRoute<RouterProp<"CHECKIN_ORDER">>()
     const type = router.params.type;
 
     return (
@@ -36,7 +36,7 @@ const CheckinOrder = () => {
                                 style={{borderColor: colors.action }}
                                 textColor={colors.action}
                                 labelStyle={[styles.textBt]}
-                                icon="plus" mode="outlined" onPress={() => navigation.navigate(ScreenConstant.CKECKIN_ORDER_CREATE,{type : type})} >
+                                icon="plus" mode="outlined" onPress={() => navigation.navigate(ScreenConstant.CHECKIN_ORDER_CREATE,{type : type})} >
                                 Tạo đơn
                             </Button>
                         </View>
