@@ -3,7 +3,11 @@ import { PayloadAction, createAction } from '@reduxjs/toolkit';
 import { OrderStateType } from "./type";
 import { IOrderDetail, IOrderList } from "../../models/types";
 import * as Action from "./type";
+import { PramsTypeOrder } from "../../services/orderService";
 
+
+
+const SLICE_NAME = "ORDER_SLICE"
 const initialState  : OrderStateType= {
     data : [],
     loading : true,
@@ -17,7 +21,7 @@ type DataType = {
 }
 
 const orderSlice = createSlice({
-    name :"ORDER_SLICE",
+    name :SLICE_NAME,
     initialState : initialState,
     reducers : {
         setData : (state , action : PayloadAction<DataType>) => {
@@ -38,7 +42,7 @@ const orderSlice = createSlice({
     }
 })
 
-const onGetData = createAction(Action.GET_ORDERS ,(data :DataType )=> ({payload :data}) )
+const onGetData = createAction(Action.GET_ORDERS ,(params :PramsTypeOrder )=> ({payload :params}) )
 const onGetDetailData = createAction(Action.GET_ORDER_DETAIL , (data : IOrderDetail) =>({payload : data}))
 
 export const orderAction = {

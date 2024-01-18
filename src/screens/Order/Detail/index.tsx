@@ -32,9 +32,9 @@ const OrderDetail = () => {
         { key: 'overview', title: 'overview' },
         { key: 'comments', title: 'exchange' },
     ]);
-    
     const route = useRoute<RouterProp<"ORDER_DETAIL_SCREEN">>();
     const name = route.params.name;
+    
     const [data ,setData] = useState<IOrderDetail>();
 
     const renderTabBar = (props: any) => {
@@ -43,7 +43,7 @@ const OrderDetail = () => {
                 {...props}
                 renderLabel={({ focused, route }) => {
                     return (
-                        <Text style={[styles.textTabBar as any, { color: focused ? colors.primary : colors.text_disable }]}>
+                        <Text key={route.key} style={[styles.textTabBar as any, { color: focused ? colors.primary : colors.text_disable }]}>
                             {getLabel(route.title || "")}
                         </Text>
                     );

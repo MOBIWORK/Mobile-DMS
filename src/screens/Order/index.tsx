@@ -6,7 +6,7 @@ import {
   AppIcons,
 } from '../../components/common';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { FlatList, Image, Text, TextStyle, View, ViewStyle,StyleSheet ,ImageStyle} from 'react-native';
+import { FlatList, Image, Text, TextStyle, View, ViewStyle, StyleSheet, ImageStyle } from 'react-native';
 import { ImageAssets } from '../../assets';
 import { useNavigation } from '@react-navigation/native';
 import ButtonFilter from '../../components/common/ButtonFilter';
@@ -19,10 +19,15 @@ import FilterListComponent, {
 } from '../../components/common/FilterListComponent';
 import { NavigationProp } from '../../navigation';
 import { AppTheme, useTheme } from '../../layouts/theme';
-import { CommonUtils } from '../../utils';  
+import { CommonUtils } from '../../utils';
 import { useTranslation } from 'react-i18next';
 import { IOrderList, KeyAbleProps } from '../../models/types';
 import { OrderService } from '../../services';
+import { orderAction } from '../../redux-store/order-reducer/reducer';
+import { dispatch } from '../../utils/redux';
+import { useSelector } from '../../config/function';
+import { ErrorBoundary } from 'react-error-boundary';
+import ErrorFallback from '../../layouts/ErrorBoundary';
 
 const OrderList = () => {
 
@@ -36,12 +41,12 @@ const OrderList = () => {
   const [dataStatus, setDataStatus] = useState<IFilterType[]>([
     {
       label: 'all',
-      value :"",
+      value: "",
       isSelected: true,
     },
     {
       label: 'pending',
-      value :"Draft",
+      value: "Draft",
       isSelected: false,
     },
     {
@@ -104,8 +109,8 @@ const OrderList = () => {
     },
   ]);
 
-  const [dataOrder,setDataOrder] = useState<IOrderList[]>([]);
-  const [totalData,setTotalData] = useState<number>();
+  const orders = useSelector(state => state.order.data);
+  const totalData = useSelector(state => state.order.totalItem);
 
   const [dataFilter, setDataFilter] = useState<IFilterType[]>([]);
   const [label, setLabel] = useState<string>('');
@@ -116,8 +121,8 @@ const OrderList = () => {
   const [fromDate, setFromDate] = useState<number>(0);
   const [toDate, setToDate] = useState<number>(0);
   const [filterStatus, setFilterStatus] = useState<string>();
-  const [page,setPage]= useState<number>(1);
-  const [pageSize ,setPageSize] = useState(10);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const onOpenBottomSheet = (type: string) => {
     setType(type);
@@ -163,7 +168,7 @@ const OrderList = () => {
           }
         });
         if (item.value) {
-          const {from_date ,to_date} = CommonUtils.dateToDate(item.value.toString());
+          const { from_date, to_date } = CommonUtils.dateToDate(item.value.toString());
           setFromDate(new Date(from_date).getTime());
           setToDate(new Date(to_date).getTime())
         } else {
@@ -183,8 +188,8 @@ const OrderList = () => {
     }
   };
 
-  const renderUiItem = (item :IOrderList) => {
-    const status = CommonUtils.getStatusColor(item.status,colors)
+  const renderUiItem = (item: IOrderList) => {
+    const status = CommonUtils.getStatusColor(item.status, colors)
     return (
       <View
         style={[styles.containerItem]}>
@@ -217,7 +222,7 @@ const OrderList = () => {
                 styles.itemDesc as any,
                 { marginLeft: 6, color: colors.text_primary },
               ]}>
-                {item.name}
+              {item.name}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -262,7 +267,7 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.itemDesc as any, { marginLeft: 6 }]}>
-              {CommonUtils.convertDate(item.delivery_date *1000)}
+              {CommonUtils.convertDate(item.delivery_date * 1000)}
             </Text>
           </View>
         </View>
@@ -290,33 +295,30 @@ const OrderList = () => {
     );
   };
 
-  const fetchData = async ()=>{
-    const {status , data} : KeyAbleProps = await OrderService.get({
-      from_date : fromDate > 0 ? fromDate / 1000 : undefined,
-      to_date : toDate > 0 ? toDate / 1000 : undefined,
-      status : filterStatus,
-      page_number : page,
-      page_size : pageSize
-    })
-    if (status === ApiConstant.STT_OK) {
-      setDataOrder(data.result.data)
-      setTotalData(data.result.total)
-    }
+
+  const fetchData = () => {
+    dispatch(orderAction.onGetData({
+      from_date: fromDate > 0 ? fromDate / 1000 : undefined,
+      to_date: toDate > 0 ? toDate / 1000 : undefined,
+      status: filterStatus,
+      page_number: page,
+      page_size: pageSize
+    }))
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchData();
-  },[fromDate,toDate,filterStatus,page])
+  }, [fromDate, toDate, filterStatus, page])
 
   return (
-    <>
+    <ErrorBoundary fallbackRender={ErrorFallback}>
       <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
         <AppHeader
           label={getLabel("order")}
           labelStyle={{ textAlign: 'left', marginLeft: 8 }}
           onBack={() => navigation.goBack()}
           rightButton={
-            <TouchableOpacity onPress={()=> navigation.navigate(ScreenConstant.SEARCH_COMMON_SCREEN,{type :"order"})}>
+            <TouchableOpacity onPress={() => navigation.navigate(ScreenConstant.SEARCH_COMMON_SCREEN, { type: "order" })}>
               <Image
                 source={ImageAssets.SearchIcon}
                 style={styles.iconBack}
@@ -327,20 +329,20 @@ const OrderList = () => {
         />
         <View style={[styles.containerFilter]}>
           <ButtonFilter
-            style={{maxWidth : "48%"}}
+            style={{ maxWidth: "48%" }}
             label={getLabel("status")}
             value={getLabel(status?.label || "") || getLabel("all")}
             onPress={() => onOpenBottomSheet('status')}
           />
           <ButtonFilter
-            style={{maxWidth : "48%"}}
+            style={{ maxWidth: "48%" }}
             label={getLabel("time")}
             value={getLabel(timeOrder?.label || "") || getLabel("all")}
             onPress={() => onOpenBottomSheet('timeOrder')}
           />
         </View>
         <Text style={[styles.countOrder]}>
-          {dataOrder.length > 0 && (
+          {orders.length > 0 && (
             <>
               {totalData} <Text style={{ color: colors.text_secondary }}>{getLabel("order")}</Text>
             </>
@@ -349,14 +351,14 @@ const OrderList = () => {
         </Text>
         <View>
           <FlatList
-            data={dataOrder}
-            onEndReached={()=>setPage(page + 1)}
+            data={orders}
+            onEndReached={() => setPage(page + 1)}
             initialNumToRender={pageSize}
-            renderItem={({item}) => 
+            renderItem={({ item }) =>
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() =>
-                  navigation.navigate(ScreenConstant.ORDER_DETAIL_SCREEN,{name :item.name})
+                  navigation.navigate(ScreenConstant.ORDER_DETAIL_SCREEN, { name: item.name })
                 }>
                 {renderUiItem(item)}
               </TouchableOpacity>}
@@ -376,7 +378,7 @@ const OrderList = () => {
           }
         />
       </AppBottomSheet>
-    </>
+    </ErrorBoundary>
   );
 };
 
@@ -397,8 +399,8 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
     marginTop: 16,
     paddingVertical: 8,
     columnGap: 8,
-    flexWrap :"wrap",
-    rowGap : 8
+    flexWrap: "wrap",
+    rowGap: 8
   } as ViewStyle,
   flexSpace: {
     flexDirection: 'row',

@@ -32,6 +32,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProductService } from '../../../services';
 import { STT_OK } from '../../../const/api.const';
 import { useSelector } from '../../../config/function';
+import { dispatch } from '../../../utils/redux';
+import { productActions } from '../../../redux-store/product-reducer/reducer';
 
 
 const ListProduct = () => {
@@ -59,9 +61,9 @@ const ListProduct = () => {
   const [filterType, setFilterType] = useState<string>(
     AppConstant.ProductFilterType.nhom_sp,
   );
+  
+  const {data,totalItem} = useSelector(state => state.product);
 
-  const [totalData, setTotalData] = useState<number>(0);
-  const [productData, setProductData] = useState<IProduct[]>();
   const [brand, setBrand] = useState<TypeFilter>();
   const [industry, setIndustry] = useState<TypeFilter>();
   const [groupItem, setGroupItem] = useState<TypeFilter>();
@@ -285,17 +287,13 @@ const ListProduct = () => {
     );
   };
 
-  const fetchProduct = async () => {
-    const { status, data }: KeyAbleProps = await ProductService.get({
+  const fetchProduct =  () => {
+    dispatch(productActions.onGetData({
       brand: filterBrand.toString(),
       industry: filterIndustry.toString(),
       item_group: filterGroup.toString(),
       item_name: searchProduct
-    });
-    if (status === STT_OK) {
-      setProductData(data.result.data);
-      setTotalData(data.result.total)
-    }
+    }))
   }
 
   const fetchBrandProduct = async () => {
@@ -443,12 +441,12 @@ const ListProduct = () => {
       <View style={{ marginTop: 24 }}>
         <Text
           style={{ color: colors.text_primary, fontWeight: '500', fontSize: 16 }}>
-          {totalData}
+          {totalItem}
           {'  '}
           <Text style={{ fontWeight: '400', fontSize: 14 }}>{getLabel("product").toLocaleLowerCase()}</Text>
         </Text>
         <FlatList
-          data={productData}
+          data={data}
           renderItem={({ item }) => _renderItemProduct(item)}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1 }}

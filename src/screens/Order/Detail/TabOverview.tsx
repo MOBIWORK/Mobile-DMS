@@ -165,15 +165,15 @@ const TabOverview = ({ data }: PropsType) => {
                             </View>
 
                             <View style={[styles.divCustomer, styles.shadow, { backgroundColor: colors.bg_default }]}>
-                                <Text style={[styles.inforCustomer]}>{data.customer_name} - {data.customer}</Text>
+                                <Text style={[styles.inforCustomer]}>{data?.customer_name} - {data?.customer}</Text>
                                 <View style={{ marginTop: 8, paddingTop: 8, borderColor: colors.border, borderTopWidth: 1 }}>
                                     <View style={[styles.flex, { marginTop: 4 }]}>
                                         <AppIcons iconType={ICON_TYPE.Feather} name='map-pin' size={18} color={colors.text_primary} />
-                                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.KHinforDesc]}>{data.address_display}</Text>
+                                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.KHinforDesc]}>{data?.address_display}</Text>
                                     </View>
                                     <View style={[styles.flex, { marginTop: 4 }]}>
                                         <AppIcons iconType={ICON_TYPE.Feather} name='phone' size={18} color={colors.text_primary} />
-                                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.KHinforDesc]}>{data.contact_person}</Text>
+                                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.KHinforDesc]}>{data?.contact_person}</Text>
                                     </View>
                                 </View>
 
@@ -194,12 +194,12 @@ const TabOverview = ({ data }: PropsType) => {
 
                                     <View style={[styles.orderInforE, styles.flexSpace]}>
                                         <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
-                                        <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data.delivery_date)}</Text>
+                                        <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data?.delivery_date)}</Text>
                                     </View>
 
                                     <View style={[styles.orderInforE, styles.flexSpace, { borderColor: colors.bg_default }]}>
                                         <Text style={[styles.labelDetail]}>{getLabel("eXwarehouse")}</Text>
-                                        <Text style={[styles.textInforO]}>{data.set_warehouse}</Text>
+                                        <Text style={[styles.textInforO]}>{data?.set_warehouse}</Text>
                                     </View>
 
                                 </View>
@@ -214,9 +214,9 @@ const TabOverview = ({ data }: PropsType) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={[styles.containerOrder]}>
-                                {data.list_items && data.list_items.map(item => (
+                                {data?.list_items && data.list_items.map((item:ItemProductOrder,index : any) => (
                                     <Pressable
-                                        key={item.name}
+                                        key={index}
                                         onPress={() => onOpenBottomSheetProduct(item)}
                                     >
                                         <ItemProduct
@@ -245,15 +245,15 @@ const TabOverview = ({ data }: PropsType) => {
                             <View style={[styles.containerIfOd, { rowGap: 12, paddingVertical: 16 }]}>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("formVat")}</Text>
-                                    <Text style={[styles.textInforO]}>{data.taxes_and_charges}</Text>
+                                    <Text style={[styles.textInforO]}>{data?.taxes_and_charges}</Text>
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("VAT")} (%) </Text>
-                                    <Text style={[styles.textInforO]}>{data.rate ? data.rate : ""}</Text>
+                                    <Text style={[styles.textInforO]}>{data?.rate}</Text>
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("VAT")} (VND)</Text>
-                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data.total_taxes_and_charges?.toString())}</Text>
+                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data?.total_taxes_and_charges?.toString())}</Text>
                                 </View>
                             </View>
                         </View>
@@ -268,15 +268,15 @@ const TabOverview = ({ data }: PropsType) => {
                             <View style={[styles.containerIfOd, { rowGap: 12, paddingVertical: 16 }]}>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("typeDiscount")}</Text>
-                                    <Text style={[styles.textInforO]}>{data.apply_discount_on}</Text>
+                                    <Text style={[styles.textInforO]}>{data?.apply_discount_on}</Text>
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("discount")} (%) </Text>
-                                    <Text style={[styles.textInforO]}>{data.additional_discount_percentage}</Text>
+                                    <Text style={[styles.textInforO]}>{data?.additional_discount_percentage}</Text>
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("discount")} (VND)</Text>
-                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data.discount_amount?.toString())}</Text>
+                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data?.discount_amount?.toString())}</Text>
                                 </View>
                             </View>
                         </View>
@@ -291,7 +291,7 @@ const TabOverview = ({ data }: PropsType) => {
                             <View style={[styles.containerIfOd, { rowGap: 12, paddingVertical: 16 }]}>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("intoMoney")}</Text>
-                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data.total?.toString())}</Text>
+                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data?.total?.toString())}</Text>
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("discount")}</Text>
@@ -314,7 +314,7 @@ const TabOverview = ({ data }: PropsType) => {
                 <View style={styles.footerDetail}>
                     <View style={[styles.flexSpace, { alignItems: "flex-end", paddingHorizontal: 16 }]}>
                         <Text style={[styles.textLabel]}>{getLabel("totalPrice")} :</Text>
-                        <Text style={[styles.totalPrice]}>{CommonUtils.formatCash(data.grand_total ? data.grand_total.toString() : "")}</Text>
+                        <Text style={[styles.totalPrice]}>{CommonUtils.formatCash(data?.grand_total ? data.grand_total.toString() : "")}</Text>
                     </View>
                 </View>
 
@@ -327,7 +327,7 @@ const TabOverview = ({ data }: PropsType) => {
 }
 
 interface PropsType {
-    data: IOrderDetail
+    data: IOrderDetail | any
 }
 
 export default TabOverview;
