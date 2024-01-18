@@ -172,6 +172,23 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
+            Tần suất
+          </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            Tuần 1 , Tuần 2, Tuần 3
+          </AppText>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_secondary"
+            lineHeight={24}>
             Hạn mức công nợ
           </AppText>
           <AppText

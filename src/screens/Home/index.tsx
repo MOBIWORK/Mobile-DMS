@@ -48,7 +48,8 @@ import {useDispatch} from 'react-redux';
 // import {AppActions, AppSelector} from '../../redux-store';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
 import ModalUpdate from './components/ModalUpdate';
-import {useBackgroundLocation, useSelector} from '../../config/function';
+import {dispatch} from '../../utils/redux';
+import {appActions} from '../../redux-store/app-reducer/reducer';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -68,11 +69,11 @@ const HomeScreen = () => {
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
+  const [error, setError] = useState('');
   const [screen, setScreen] = useState(false);
-  // const {location, error} = useBackgroundLocation();
-  const syncWithCodePush = (status: number) => {
-    console.log('Codepush sync status', status);
-  };
+  // const syncWithCodePush = (status: number) => {
+  //   console.log('Codepush sync status', status);
+  // };
 
   const [notifiCations, setNotifications] = useState([
     {
@@ -106,7 +107,7 @@ const HomeScreen = () => {
 
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
   const [passwordStore] = useMMKVString(AppConstant.passwordStore);
-  
+
   const getWidget = () => {
     if (!widgets) {
       const arrWg = DataConstant.DataWidget.slice(0, 4);
@@ -152,6 +153,24 @@ const HomeScreen = () => {
       </View>
     );
   };
+
+  const backgroundErrorListener = useCallback((errorCode: number) => {
+    // Handle background location errors
+    switch (errorCode) {
+      case 0:
+        setError(
+          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+        );
+        break;
+      case 1:
+        setError('GPS đã bị tắt. Vui lòng bật lại.');
+        break;
+      default:
+        setError(
+          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+        );
+    }
+  }, []);
 
   const renderUiStatistical = () => {
     return (
@@ -303,24 +322,31 @@ const HomeScreen = () => {
 
   useLayoutEffect(() => {
     setLoading(true);
-    
-    BackgroundGeolocation.getCurrentPosition({
-      samples: 1,
-      timeout: 30,
-      maximumAge: 0,
-      persist: false,
-      desiredAccuracy: 10,
-    })
-      .then(location => {
+
+    BackgroundGeolocation.getCurrentPosition(
+      {
+        samples: 1,
+        timeout: 30,
+        maximumAge: 0,
+        persist: false,
+        desiredAccuracy: 10,
+      },
+      location => {
         setLocation(location);
+        dispatch(appActions.onSetCurrentLocation(location));
         mapboxCameraRef.current?.flyTo(
           [location.coords.longitude, location.coords.latitude],
           1000,
         );
-      })
-      .catch(e => console.log('err', e));
+      },
+      err => backgroundErrorListener(err),
+    );
+
     setLoading(false);
+    return () => {};
   }, []);
+
+
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
     console.log(
@@ -363,9 +389,10 @@ const HomeScreen = () => {
         // codePush.notifyAppReady();
         // setTimeout(() => {
         VersionCheck.needUpdate({}).then(res => {
-          console.log(res, 'res');
-          if (res.isNeeded) {
+          if (res.isNeeded != undefined) {
             setShowModalUpdate(res.isNeeded);
+          } else {
+            return;
           }
         });
 
@@ -406,8 +433,13 @@ const HomeScreen = () => {
       onSyncStatusChanged,
       onDownloadProgress,
     );
-    syncWithCodePush;
+    // syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
+
+  if(error != ''){
+      Alert.alert(error)
+  }
+
 
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>

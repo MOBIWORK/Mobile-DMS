@@ -53,7 +53,7 @@ const Customer = () => {
     firstModal: false,
     secondModal: false,
   });
-  const [valueFilter, setValueFilter] = React.useState<IValueType>({
+  const [valueFilter, setValueFilter] = React.useState<IValueType | any>({
     customerType: 'Cá nhân',
     customerGroupType: 'Tất cả',
     customerBirthday: 'Tất cả',

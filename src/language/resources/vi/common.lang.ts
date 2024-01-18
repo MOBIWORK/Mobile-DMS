@@ -103,5 +103,6 @@ export default {
   apply :"Áp dụng",
   reset :"Đặt lại",
   searchProduct : "Tìm kiếm sản phẩm",
+  frequency:"Tần suất"
   
 };

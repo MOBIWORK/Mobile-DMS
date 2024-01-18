@@ -101,3 +101,17 @@ export const listBirthDayType:any = [
     title:'Tháng này'
   }
 ]
+export const listFrequencyType:any = [
+  {
+    id:0,
+    title:'Tuần 1'
+  },
+  {
+    id:1,
+    title:'Tuần 2'
+  },
+  {
+    id:2,
+    title:'Tuần 3'
+  }
+]
