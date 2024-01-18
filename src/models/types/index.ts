@@ -505,4 +505,10 @@ export type IOrderDetail = {
   rate? : number;
   account_head? : string;
   charge_type? : string;
+};
+
+export type BrandProduct = {
+  name : string,
+  brand :string,
+  description : string | null
 }
