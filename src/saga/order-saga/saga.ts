@@ -6,6 +6,7 @@ import { onLoadApp, onLoadAppEnd } from '../../redux-store/app-reducer/reducer';
 import { OrderService } from '../../services';
 import { KeyAbleProps } from '../../models/types';
 import { ApiConstant } from '../../const';
+import { PramsTypeOrder } from '../../services/orderService';
 
 export type ResponseGenerator = {
     config?: any;
@@ -19,13 +20,13 @@ export type ResponseGenerator = {
     result?: any;
 };
 
-export function* onGetOrders(action: PayloadAction) {
+export function* onGetOrders(action: PayloadAction<PramsTypeOrder>) {
     if (orderAction.onGetData.match(action)) {
         try {
             const { status, data }: KeyAbleProps = yield call(OrderService.get, action.payload);
             yield put(orderAction.setLoading())
             if (status === ApiConstant.STT_OK) {
-                yield put(orderAction.setData({data : data.result?.data , totalItem : data.result.total}));
+                yield put(orderAction.setData({ data: data.result?.data, totalItem: data.result.total }));
             }
         } catch (err: any) {
             yield put(orderAction.setMessage(err.message));
@@ -34,10 +35,16 @@ export function* onGetOrders(action: PayloadAction) {
 
 }
 
-export function* onGetDetailOrder(action: PayloadAction) {
-    try {
-
-    } catch (error) {
-
+export function* onGetDetailOrder(action: PayloadAction<string>) {
+    if (orderAction.onGetDetailData.match(action)) {
+        try {
+            const {status ,data} : KeyAbleProps = yield call(OrderService.getDetail,action.payload)
+            yield put(orderAction.setLoading())
+            if(status === ApiConstant.STT_OK){
+                yield put(orderAction.setItemData(data.result))
+            }
+        } catch (error : any) {
+            yield put(orderAction.setMessage(error.message));
+        }
     }
 }

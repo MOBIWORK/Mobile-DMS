@@ -1,13 +1,15 @@
-import {createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAction } from '@reduxjs/toolkit';
 import { OrderStateType } from "./type";
-import { PayloadAction, createAction } from '@reduxjs/toolkit/dist/createAction';
-import { IOrderList } from "../../models/types";
-import * as Action from "./type"
+import { IOrderDetail, IOrderList } from "../../models/types";
+import * as Action from "./type";
+
 const initialState  : OrderStateType= {
     data : [],
     loading : true,
     message : "",
-    totalItem : 0
+    totalItem : 0,
+    item : null
 }
 type DataType = {
     data : IOrderList[],
@@ -28,15 +30,20 @@ const orderSlice = createSlice({
         },
         setLoading : (state ,action :PayloadAction)=>{
             state.loading = false
+        },
+        setItemData : (state ,action : PayloadAction<IOrderDetail>) =>{
+            state.loading = false,
+            state.item = action.payload
         }
     }
 })
 
 const onGetData = createAction(Action.GET_ORDERS ,(data :DataType )=> ({payload :data}) )
-
+const onGetDetailData = createAction(Action.GET_ORDER_DETAIL , (data : IOrderDetail) =>({payload : data}))
 
 export const orderAction = {
     ...orderSlice.actions,
-    onGetData
+    onGetData,
+    onGetDetailData
 }
 export const orderReducer =  orderSlice.reducer;
