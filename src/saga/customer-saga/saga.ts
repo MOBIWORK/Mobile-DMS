@@ -5,6 +5,7 @@ import {showSnack} from '../../components/common';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {
   getCustomer,
+  getCustomerByName,
   getCustomerType,
   getCustomerVisit,
 } from '../../services/appService';
@@ -78,3 +79,18 @@ export function* onGetCustomerVisit(action: PayloadAction) {
     }
   }
 }
+
+// export function* onGetCustomerByName(action:PayloadAction){
+//   if(customerActions.onGetCustomerByName.match(action)){
+//     try{
+//         const response:ResponseGenerator = yield call(getCustomerByName,action.payload)
+//         if(response.message != '' || response.message != undefined}{
+//           yield put(customerActions.setCustomer())
+//         }
+        
+//     }catch{
+
+//     }
+//   }
+// }
+

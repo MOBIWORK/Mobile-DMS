@@ -97,7 +97,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
 };
 
 interface AppBottomSheetProps {
-  bottomSheetRef: React.Ref<BottomSheetMethods>;
+  bottomSheetRef: any;
   snapPointsCustom?: any;
   hiddenBackdrop?: boolean;
   enablePanDownToClose?: boolean;

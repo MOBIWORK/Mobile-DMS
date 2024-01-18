@@ -86,6 +86,8 @@ export const getCustomer = () =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER)
     .then(res => res.data);
+
+    
 export const getCustomerByName = (name: string) =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER + `?customer_name=${name}`)
@@ -108,7 +110,10 @@ export const getDetailLocation = (lat?: number, lon?: number) =>
     )
     .then(res => res.data);
 
-export const getCustomerVisit = () =>createApi().get(ApiConstant.GET_CUSTOMER_VISIT).then(res => res.data)
+export const getCustomerVisit = () =>
+  createApi()
+    .get(ApiConstant.GET_CUSTOMER_VISIT)
+    .then(res => res.data);
 
 export const getSystemConfig = () =>
   createApi()

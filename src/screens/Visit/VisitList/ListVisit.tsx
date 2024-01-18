@@ -212,6 +212,7 @@ const ListVisit = () => {
   useLayoutEffect(() => {
     setLoading(true);
     dispatch(customerActions.onGetCustomer())
+    
     if (Object.keys(systemConfig).length > 0) return;
     else {
       dispatch(appActions.onGetSystemConfig());

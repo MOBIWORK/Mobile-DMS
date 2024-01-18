@@ -6,9 +6,9 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import CardContactOverview from '../component/CardView';
 import {IDataCustomer} from '../../../models/types';
 import CardAddress from '../../Customer/components/CardAddress';
-import {useSelector} from 'react-redux';
-import {AppSelector} from '../../../redux-store';
+
 import InforView from '../component/InforView';
+import { useSelector } from '../../../config/function';
 
 type Props = {
   data: IDataCustomer;
@@ -17,7 +17,7 @@ type Props = {
 const Overview = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const mainAddress = useSelector(AppSelector.getMainAddress);
+  const mainAddress = useSelector(state => state.app.mainAddress);
   return (
     <MainLayout style={styles.containLayout}>
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>

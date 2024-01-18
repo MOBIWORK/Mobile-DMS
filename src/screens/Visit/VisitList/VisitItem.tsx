@@ -17,7 +17,8 @@ import {ScreenConstant} from '../../../const';
 import { dispatch } from '../../../utils/redux';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
 import { useDispatch } from 'react-redux';
-
+import {ErrorBoundary} from 'react-error-boundary'
+import ErrorFallback from '../../../layouts/ErrorBoundary';
 
 
 const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
@@ -30,7 +31,6 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
 
   const onPressCheckIn = (item:VisitListItemType) =>{
     // dispatch(appActions.onCheckIn(item));
-    dispatch(appActions.onGetLost(0))
     dispatch(appActions.onSetAppTheme('default'))
     navigate(ScreenConstant.CHECKIN,{item})
   }
@@ -54,6 +54,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
   };
 
   return (
+    <ErrorBoundary fallbackRender={ErrorFallback}>
     <Pressable
       onPress={() =>
         navigate(ScreenConstant.VISIT_DETAIL, {data: item})
@@ -138,6 +139,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
         )}
       </View>
     </Pressable>
+    </ErrorBoundary>
   );
 };
 interface VisitItemProps {

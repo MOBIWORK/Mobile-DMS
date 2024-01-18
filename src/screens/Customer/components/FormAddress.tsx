@@ -1,7 +1,6 @@
 import {
   ScrollView,
   StyleSheet,
-  Text,
   TextStyle,
   TouchableOpacity,
   View,
@@ -16,6 +15,7 @@ import {
   AppIcons,
   AppInput,
   AppText,
+  Block,
   SvgIcon,
   showSnack,
 } from '../../../components/common';
@@ -27,8 +27,8 @@ import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {RootEkMapResponse} from '../../../models/types';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 type Props = {
   onPressClose: () => void;
@@ -52,7 +52,10 @@ const FormAddress = (props: Props) => {
     nameContact: 'Người liên hệ',
     phoneNumber: 'Số điện thoại',
     addressContact: 'Địa chỉ',
-    isMainAddress:addressValue.addressGet ? true :false
+    city: 'Tỉnh/Thành phố',
+    district: 'Quận/Huyện',
+    ward: 'Phường/xã',
+    isMainAddress: addressValue.addressGet ? true : false,
   });
   const listCheckBox = useRef([
     {
@@ -67,7 +70,7 @@ const FormAddress = (props: Props) => {
 
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
-    console.log(data,'data')
+    console.log(data, 'data');
     if (data.status === 'OK') {
       setAddressValue(prev => ({
         ...prev,
@@ -86,13 +89,12 @@ const FormAddress = (props: Props) => {
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
         fetchData(res?.coords?.latitude, res?.coords?.longitude);
-        
+
         showSnack({
           msg: 'Thành công',
           type: 'success',
           interval: 1000,
         });
-        
       })
       .catch(err => console.log(err));
   };
@@ -275,7 +277,7 @@ const FormAddress = (props: Props) => {
               <TouchableOpacity
                 style={styles.buttonRestart}
                 onPress={onPressClose}>
-                <Text style={styles.restartText}>Hủy</Text>
+                <AppText style={styles.restartText}>Hủy</AppText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonApply}
@@ -283,7 +285,7 @@ const FormAddress = (props: Props) => {
                   dispatch(appActions.setMainAddress(addressValue));
                   onPressClose();
                 }}>
-                <Text style={styles.applyText}>Lưu</Text>
+                <AppText style={styles.applyText}>Lưu</AppText>
               </TouchableOpacity>
             </View>
           </View>
@@ -334,8 +336,80 @@ const FormAddress = (props: Props) => {
               }
               hiddenRightIcon={true}
             />
+            <Block marginTop={8} marginBottom={8}>
+              <AppText
+                fontSize={14}
+                fontWeight="500"
+                colorTheme="text_secondary">
+                Địa chỉ
+              </AppText>
+            </Block>
             <AppInput
-              label={'Địa chỉ'}
+                label={'Tỉnh/Thành phố'}
+                contentStyle={styles.contentStyle(
+                  addressValue.city,
+                  'Tỉnh/Thành phố',
+                )}
+                onPress={() => {
+                  setContactValue(prev => ({...prev, city: 'Hà Nội'}));
+                }}
+                value={addressValue.city}
+                editable={false}
+                hiddenRightIcon={false}
+                styles={styles.marginInputView}
+                rightIcon={
+                  <TextInput.Icon
+                    icon={'chevron-down'}
+                    style={styles.iconStyle}
+                    color={theme.colors.text_secondary}
+                  />
+                }
+              />
+              <AppInput
+                label={'Quận/Huyện'}
+                value={addressValue.district}
+                editable={false}
+                onPress={() => {
+                  setContactValue(prev => ({
+                    ...prev,
+                    district: 'Quận Bắc Từ Liêm',
+                  }));
+                }}
+                contentStyle={styles.contentStyle(
+                  addressValue.district,
+                  'Quận/Huyện',
+                )}
+                styles={styles.marginInputView}
+                rightIcon={
+                  <TextInput.Icon
+                    icon={'chevron-down'}
+                    style={styles.iconStyle}
+                    color={theme.colors.text_secondary}
+                  />
+                }
+              />
+              <AppInput
+                label={'Phường/xã'}
+                value={addressValue.ward}
+                editable={false}
+                contentStyle={styles.contentStyle(
+                  addressValue.ward,
+                  'Phường/xã',
+                )}
+                onPress={() => {
+                  setContactValue(prev => ({...prev, ward: 'Cổ Nhuế'}));
+                }}
+                styles={styles.marginInputView}
+                rightIcon={
+                  <TextInput.Icon
+                    icon={'chevron-down'}
+                    style={styles.iconStyle}
+                    color={theme.colors.text_secondary}
+                  />
+                }
+              />
+            <AppInput
+              label={'Địa chỉ chi tiết'}
               value={contactValue.addressContact}
               editable={true}
               contentStyle={styles.contentStyle(
@@ -353,7 +427,7 @@ const FormAddress = (props: Props) => {
                 <TouchableOpacity
                   style={styles.buttonRestart}
                   onPress={onPressClose}>
-                  <Text style={styles.restartText}>Hủy</Text>
+                  <AppText style={styles.restartText}>Hủy</AppText>
                 </TouchableOpacity>
                 {contactValue.addressContact === 'Địa chỉ' ||
                 contactValue.nameContact === 'Người liên hệ' ||
@@ -371,7 +445,7 @@ const FormAddress = (props: Props) => {
                       dispatch(appActions.setMainContactAddress(contactValue));
                       onPressClose();
                     }}>
-                    <Text style={styles.applyText}>Lưu</Text>
+                    <AppText style={styles.applyText}>Lưu</AppText>
                   </TouchableOpacity>
                 )}
               </View>

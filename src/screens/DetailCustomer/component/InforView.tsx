@@ -1,16 +1,11 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-  Image,
-  ImageStyle,
-} from 'react-native';
-import React from 'react';
+import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
+import React, {useLayoutEffect, useRef, useState} from 'react';
 import {IDataCustomer} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {AppText} from '../../../components/common';
+import {AppText, Block, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
+import Mapbox, {Location} from '@rnmapbox/maps';
+import BackgroundGeolocation from 'react-native-background-geolocation';
 
 type Props = {
   data: IDataCustomer;
@@ -19,10 +14,27 @@ type Props = {
 const InforView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  console.log(props.data);
+  const ref = useRef<Mapbox.Camera>(null);
+
+  const [location, setLocation] = useState<Location | any>({
+    coords: {
+      latitude: 0,
+      longitude: 0,
+    },
+    timestamp: 0,
+  });
+
+  useLayoutEffect(() => {
+    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+      .then(res => {
+        setLocation(res);
+      })
+      .catch(err => console.log(err));
+  }, []);
+
   return (
-    <View style={styles.root}>
-      <View style={styles.containImage}>
+    <Block style={styles.root}>
+      <Block style={styles.containImage}>
         <Image
           source={{
             uri:
@@ -33,9 +45,9 @@ const InforView = (props: Props) => {
           style={styles.imageStyle}
           resizeMode="center"
         />
-      </View>
+      </Block>
       <MainLayout style={styles.containContent}>
-        <View>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -50,9 +62,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.nameCompany != '' ? props.data.nameCompany : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -67,9 +79,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             KH-12345
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -84,9 +96,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.type != '' ? props.data.type : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -101,9 +113,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.group != '' ? props.data.group : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -118,9 +130,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.area != '' ? props.data.area : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -135,9 +147,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.dob != '' ? props.data.dob : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -152,9 +164,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.gland != '' ? props.data.gland : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -169,9 +181,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.debtLimit != '' ? props.data.debtLimit : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -186,9 +198,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.description != '' ? props.data.description : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -203,10 +215,46 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             {props.data.websiteURL != '' ? props.data.websiteURL : ` ---`}
           </AppText>
-          <View style={styles.divider} />
-        </View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block marginTop={16}>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_secondary"
+            lineHeight={24}>
+            Vị trí
+          </AppText>
+          <Mapbox.MapView
+            pitchEnabled={false}
+            styleURL={Mapbox.StyleURL.Street}
+            attributionEnabled={false}
+            scaleBarEnabled={false}
+            logoEnabled={false}
+            style={styles.mapView}>
+            <Mapbox.Camera
+              // ref={mapboxCameraRef}
+              ref={ref}
+              centerCoordinate={[
+                location?.coords.longitude ?? 0,
+                location?.coords.latitude ?? 0,
+              ]}
+              animationMode={'flyTo'}
+              animationDuration={500}
+              zoomLevel={12}
+            />
+
+            <Mapbox.MarkerView
+              coordinate={[
+                location?.coords.longitude ?? 0,
+                location?.coords.latitude ?? 0,
+              ]}>
+              <SvgIcon source="Location" size={32} colorTheme="action" />
+            </Mapbox.MarkerView>
+          </Mapbox.MapView>
+        </Block>
       </MainLayout>
-    </View>
+    </Block>
   );
 };
 
@@ -238,5 +286,9 @@ const rootStyles = (theme: AppTheme) =>
       height: 1,
       backgroundColor: theme.colors.divider,
       marginVertical: 12,
+    } as ViewStyle,
+    mapView: {
+      width: '100%',
+      height: 381,
     } as ViewStyle,
   });

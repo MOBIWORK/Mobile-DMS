@@ -42,6 +42,9 @@ const appSlice = createSlice({
     setMainContactAddress: (state, {payload}: PayloadAction<any>) => {
       state.mainContactAddress = payload;
     },
+    setMainAddress:(state,action:PayloadAction<any>) =>{
+      state.mainAddress = action.payload
+    },
     removeContactAddress: (state, action: PayloadAction<any>) => {
       const updateMainContact = state.mainContactAddress?.filter(
         (item: any) => item != action.payload,
