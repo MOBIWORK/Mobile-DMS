@@ -75,7 +75,7 @@ export const verifyOrganizations = (data: object) =>
 export const updateProfile = (data: IProfile) =>
   createApi().put(ApiConstant.PUT_USER_PROFILE, data);
 
-export const postChecking = (data: any) =>
+export const postChecking = (data: CheckinData) =>
   createApi()
     .post(ApiConstant.POST_CHECKIN, data, {
       baseURL: BASE_URL,

@@ -78,12 +78,16 @@ import { useSelector } from '../config/function';
 import { RXStore } from '../utils/redux';
 
 import {MAIN_TAB} from '../const/screen.const';
+import { CommonUtils } from '../utils';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const theme = useSelector(state => state.app.theme);
+      
+  const validate =  CommonUtils.storage.getString(AppConstant.Api_key);
+
   // const [organiztion] = useMMKVObject<IResOrganization>(
   //   AppConstant.Organization,
   // );
@@ -105,8 +109,9 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       theme={MyAppTheme[theme]}
       linking={linking}
       ref={navigationRef}>
+
       <Stack.Navigator
-        initialRouteName={ScreenConstant.SELECT_ORGANIZATION}
+        initialRouteName={  validate ? ScreenConstant.MAIN_TAB : ScreenConstant.SELECT_ORGANIZATION}
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,

@@ -40,11 +40,14 @@ const ListVisit = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
   const listCustomer = useSelector(state => state.customer.listCustomer)
-  const [loading, setLoading] = useState<boolean>(true);
+  const appLoading = useSelector(state => state.app.loadingApp)
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
+
+console.log(listCustomer,'listCustomer')
+
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
     return (
@@ -210,7 +213,7 @@ const ListVisit = () => {
   };
 
   useLayoutEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     dispatch(customerActions.onGetCustomer())
     
     if (Object.keys(systemConfig).length > 0) return;
@@ -221,14 +224,15 @@ const ListVisit = () => {
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
 
-    setLoading(false);
+    // setLoading(false);
   }, []);
 
   return (
     <SafeAreaView
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
-      {loading ? <SkeletonLoading loading={loading} /> : _renderContent()}
+      {/* <SkeletonLoading loading={true}  /> */}
+      {appLoading ? <SkeletonLoading loading={appLoading!} /> : _renderContent()}
 
       <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
     </SafeAreaView>

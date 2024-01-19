@@ -3,6 +3,7 @@ import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
 import * as Actions from './type';
 import {VisitListItemType} from '../../models/types';
+import {CheckinData} from '../../services/appService';
 
 const initialAppState: IAppRedux = {
   error: undefined,
@@ -16,7 +17,7 @@ const initialAppState: IAppRedux = {
   newCustomer: [],
   searchCustomerValue: '',
   loadingApp: false,
-  currentLocation:{},
+  currentLocation: {},
   systemConfig: {},
 };
 
@@ -36,8 +37,8 @@ const appSlice = createSlice({
     onLoadAppEnd: state => {
       state.loadingApp = false;
     },
-    onSetCurrentLocation:(state,action:PayloadAction<any> ) =>{
-      state.currentLocation = action.payload
+    onSetCurrentLocation: (state, action: PayloadAction<any>) => {
+      state.currentLocation = action.payload;
     },
     setShowModal: (state, {payload}: PayloadAction<boolean>) => {
       state.showModal = payload;
@@ -45,8 +46,8 @@ const appSlice = createSlice({
     setMainContactAddress: (state, {payload}: PayloadAction<any>) => {
       state.mainContactAddress = payload;
     },
-    setMainAddress:(state,action:PayloadAction<any>) =>{
-      state.mainAddress = action.payload
+    setMainAddress: (state, action: PayloadAction<any>) => {
+      state.mainAddress = action.payload;
     },
     removeContactAddress: (state, action: PayloadAction<any>) => {
       const updateMainContact = state.mainContactAddress?.filter(
@@ -92,30 +93,9 @@ const appSlice = createSlice({
   },
 });
 
-const onCheckIn = createAction(
-  Actions.CHECKIN,
-  ({
-    label,
-    useName,
-    address,
-    distance,
-    status,
-    phone_number,
-    lat,
-    long,
-  }: VisitListItemType) => ({
-    payload: {
-      label,
-      long,
-      lat,
-      status,
-      address,
-      useName,
-      distance,
-      phone_number,
-    },
-  }),
-);
+const onCheckIn = createAction(Actions.CHECKIN, (data: CheckinData) => ({
+  payload: data,
+}));
 
 const onGetSystemConfig = createAction(
   Actions.GET_SYSTEM_CONFIG,

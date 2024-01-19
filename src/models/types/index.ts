@@ -127,6 +127,11 @@ export type VisitListItemType = {
   distance: number;
 };
 
+
+
+
+
+
 export interface RootObjectGeoDecoding {
   plus_code: PlusCode;
   results: ResultDecode[];
