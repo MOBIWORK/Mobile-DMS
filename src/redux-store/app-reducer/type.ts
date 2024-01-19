@@ -24,7 +24,7 @@ export interface IAppRedux {
     newCustomer:any[],
     loadingApp?:boolean,
     systemConfig?:any,
-   
+   currentLocation?:any
   }
 
 

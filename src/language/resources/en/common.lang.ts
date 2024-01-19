@@ -100,6 +100,7 @@ export default {
   apply :"Apply",
   reset :"Reset",
   searchProduct : "Search product",
+  frequency:"Frequency",
   time :"Time",
   status : "Status",
   order: "Order",

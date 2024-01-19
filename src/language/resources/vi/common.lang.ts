@@ -101,6 +101,7 @@ export default {
   apply :"Áp dụng",
   reset :"Đặt lại",
   searchProduct : "Tìm kiếm sản phẩm",
+  frequency:"Tần suất",
   time :"Thời gian",
   status : "Trạng thái",
   order: "Đơn hàng",

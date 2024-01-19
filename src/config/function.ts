@@ -5,7 +5,7 @@ import {BackHandler, Keyboard, Platform, processColor} from 'react-native';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
-import { RootState } from '../redux-store/all-reducer';
+import {RootState} from '../redux-store/all-reducer';
 import {useSelector as useReduxSelector} from 'react-redux';
 
 type TypesBase =
@@ -117,59 +117,9 @@ export const hexStringFromCSSColor = (color: string) => {
   return `#${withoutAlpha}${alpha}`;
 };
 
-const useBackgroundLocation = () => {
-  const [location, setLocation] = useState<Location | null>(null);
-  const [error, setError] = useState<string>('');
 
-  const backgroundLocationListener = (location: Location) => {
-    // Handle the retrieved location data
-    setLocation(location);
 
-  };
-
-  const backgroundErrorListener = (errorCode: number) => {
-    // Handle background location errors
-    switch (errorCode) {
-      case 0:
-        setError(
-          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-        );
-        break;
-      case 1:
-        setError('GPS đã bị tắt. Vui lòng bật lại.');
-        break;
-      default:
-        setError(
-          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-        );
-    }
-  };
-
-  useEffect(() => {
-    // Add listeners
-    BackgroundGeolocation.onLocation((location) =>{
-      backgroundLocationListener(location)
-    },error =>{
-      backgroundErrorListener(error)
-    });
-   
-
-    // Start background geolocation
-    BackgroundGeolocation.start();
-
-    // Clean up
-    return () => {
-      BackgroundGeolocation.un('location', backgroundLocationListener);
-      BackgroundGeolocation.un('locationError', backgroundErrorListener);
-    };
-  }, []);
-
-  const memoizedValue = useMemo(() => ({ location, error }), [location, error]);
-
-  return memoizedValue;
-};
-
-function calculateDateDifference(targetDate:string) {
+function calculateDateDifference(targetDate: string) {
   const currentDate = moment();
   const targetDateObj = moment(targetDate, 'DD/MM/YYYY');
 
@@ -177,7 +127,7 @@ function calculateDateDifference(targetDate:string) {
   const monthsDifference = currentDate.diff(targetDateObj, 'months');
   const yearsDifference = currentDate.diff(targetDateObj, 'years');
 
-  const remainingDays = daysDifference - (monthsDifference * 30);
+  const remainingDays = daysDifference - monthsDifference * 30;
 
   return {
     years: yearsDifference,
@@ -203,7 +153,6 @@ export {
   isIos,
   useDismissKeyboard,
   calculateDistance,
-  useBackgroundLocation,
   calculateDateDifference,
-  useSelector
+  useSelector,
 };

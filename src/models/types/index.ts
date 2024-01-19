@@ -269,6 +269,7 @@ export type IDataCustomer = {
   area?: string;
   dob: string | any;
   gland?: string;
+  frequency?:any,
   debtLimit?: number | any;
   description: string;
   websiteURL: string;

@@ -16,7 +16,7 @@ const initialAppState: IAppRedux = {
   newCustomer: [],
   searchCustomerValue: '',
   loadingApp: false,
-
+  currentLocation:{},
   systemConfig: {},
 };
 
@@ -35,6 +35,9 @@ const appSlice = createSlice({
     },
     onLoadAppEnd: state => {
       state.loadingApp = false;
+    },
+    onSetCurrentLocation:(state,action:PayloadAction<any> ) =>{
+      state.currentLocation = action.payload
     },
     setShowModal: (state, {payload}: PayloadAction<boolean>) => {
       state.showModal = payload;

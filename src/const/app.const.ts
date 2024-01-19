@@ -78,6 +78,8 @@ export enum CustomerFilterType {
   dia_chi = 'dia_chi',
   nguoi_lien_he = 'nguoi_lien_he',
   khu_vuc = 'khu_vuc',
+  tuyen = 'tuyen',
+  tan_suat='tan_suat'
 }
 const DURATION_HIDE = 1000;
 const DURATION_ANIMATED = 500;

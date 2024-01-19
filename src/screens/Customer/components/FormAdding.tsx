@@ -251,7 +251,27 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
-          setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
+          setTypeFilter(AppConstant.CustomerFilterType.tuyen);
+          filterRef.current?.snapToIndex(0);
+          setShow(true);
+        }}
+        rightIcon={
+          <TextInput.Icon
+            icon={'chevron-down'}
+            style={{width: 24, height: 24}}
+            color={theme.colors.text_secondary}
+          />
+        }
+      />
+       <AppInput
+        label={translate('frequency')}
+        value={''}
+        editable={false}
+        isRequire={false}
+        contentStyle={styles.contentStyle}
+        styles={{marginBottom: 20}}
+        onPress={() => {
+          setTypeFilter(AppConstant.CustomerFilterType.tan_suat);
           filterRef.current?.snapToIndex(0);
           setShow(true);
         }}
