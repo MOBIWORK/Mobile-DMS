@@ -23,13 +23,12 @@ type Props = {
   valueFilter: IValueType;
   setData: React.Dispatch<React.SetStateAction<IDataCustomer>>;
   data: IDataCustomer;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ListFilterAdding = (props: Props) => {
-  const {type, filterRef, setValueFilter, valueFilter, setData, data, setShow} =
-    props;
-  const styles = rootStyles(useTheme());
+  const {type, filterRef, setValueFilter, valueFilter, setData, data} = props;
+  const theme = useTheme();
+  const styles = rootStyles(theme);
 
   const handlePress = useCallback(
     (item: any) => {
@@ -52,9 +51,8 @@ const ListFilterAdding = (props: Props) => {
       }));
 
       filterRef?.current?.close();
-      setShow(false);
     },
-    [setData, setValueFilter, filterRef, setShow],
+    [setData, setValueFilter, filterRef],
   );
 
   return (
@@ -65,19 +63,18 @@ const ListFilterAdding = (props: Props) => {
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
-                setShow && setShow(false);
               }}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name={'close'}
                 size={24}
-                color={useTheme().colors.text_primary}
+                color={theme.colors.text_primary}
               />
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Ngày sinh nhật </Text>
           </View>
-          {listBirthDayType.map((item: any, index: number) => {
+          {listBirthDayType.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
@@ -88,7 +85,6 @@ const ListFilterAdding = (props: Props) => {
                     customerBirthday: item.title,
                   }));
                   filterRef?.current?.close();
-                  setShow(false);
                 }}>
                 <Text
                   style={styles.itemText(
@@ -102,7 +98,7 @@ const ListFilterAdding = (props: Props) => {
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
                     size={24}
-                    color={useTheme().colors.primary}
+                    color={theme.colors.primary}
                   />
                 )}
               </TouchableOpacity>
@@ -115,19 +111,18 @@ const ListFilterAdding = (props: Props) => {
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
-                setShow && setShow(false);
               }}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name={'close'}
                 size={24}
-                color={useTheme().colors.text_primary}
+                color={theme.colors.text_primary}
               />
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Loại khách hàng</Text>
           </View>
-          {listFilterType.map((item: any, index: number) => {
+          {listFilterType.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
@@ -139,21 +134,20 @@ const ListFilterAdding = (props: Props) => {
                   }));
                   setData(prev => ({
                     ...prev,
-                    type: item.title,
+                    customer_type: item.title,
                   }));
                   console.log('v');
                   filterRef?.current?.close();
-                  setShow(false);
                 }}>
-                <Text style={styles.itemText(item.title, data.type)}>
+                <Text style={styles.itemText(item.title, data.customer_type)}>
                   {item.title}
                 </Text>
-                {item.title === data.type && (
+                {item.title === data.customer_type && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
                     size={24}
-                    color={useTheme().colors.primary}
+                    color={theme.colors.primary}
                   />
                 )}
               </TouchableOpacity>
@@ -166,41 +160,39 @@ const ListFilterAdding = (props: Props) => {
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
-                setShow && setShow(false);
               }}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name={'close'}
                 size={24}
-                color={useTheme().colors.text_primary}
+                color={theme.colors.text_primary}
               />
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Nhóm khách hàng</Text>
           </View>
-          {listFilterType.map((item: any, index: number) => {
+          {listFilterType.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() => {
-                  setData(prev => ({...prev, group: item.title}));
+                  setData(prev => ({...prev, customer_group: item.title}));
                   setValueFilter(prev => ({
                     ...prev,
                     customerGroupType: item.title,
                   }));
                   filterRef?.current?.close();
-                  setShow(false);
                 }}>
-                <Text style={styles.itemText(item.title, data.group)}>
+                <Text style={styles.itemText(item.title, data.customer_group)}>
                   {item.title}
                 </Text>
-                {item.title === data.group && (
+                {item.title === data.customer_group && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
                     size={24}
-                    color={useTheme().colors.primary}
+                    color={theme.colors.primary}
                   />
                 )}
               </TouchableOpacity>
@@ -213,41 +205,39 @@ const ListFilterAdding = (props: Props) => {
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
-                setShow && setShow(false);
               }}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name={'close'}
                 size={24}
-                color={useTheme().colors.text_primary}
+                color={theme.colors.text_primary}
               />
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Khu vực</Text>
           </View>
-          {listFilterType.map((item: any, index: number) => {
+          {listFilterType.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() => {
-                  setData(prev => ({...prev, area: item.title}));
+                  setData(prev => ({...prev, territory: item.title}));
                   setValueFilter(prev => ({
                     ...prev,
-                    area: item.title,
+                    territory: item.title,
                   }));
                   filterRef?.current?.close();
-                  setShow(false);
                 }}>
-                <Text style={styles.itemText(item.title, data.area!)}>
+                <Text style={styles.itemText(item.title, data.territory!)}>
                   {item.title}
                 </Text>
-                {item.title === data?.area && (
+                {item.title === data?.territory && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
                     size={24}
-                    color={useTheme().colors.primary}
+                    color={theme.colors.primary}
                   />
                 )}
               </TouchableOpacity>
@@ -260,19 +250,18 @@ const ListFilterAdding = (props: Props) => {
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
-                setShow && setShow(false);
               }}>
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
                 name={'close'}
                 size={24}
-                color={useTheme().colors.text_primary}
+                color={theme.colors.text_primary}
               />
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Tần suất</Text>
           </View>
-          {listFrequencyType.map((item: any, index: number) => {
+          {listFrequencyType.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
@@ -286,7 +275,7 @@ const ListFilterAdding = (props: Props) => {
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
                     size={24}
-                    color={useTheme().colors.primary}
+                    color={theme.colors.primary}
                   />
                 )}
               </TouchableOpacity>
@@ -303,20 +292,18 @@ export default React.memo(ListFilterAdding);
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     titleHeaderText: {
-      // alignSelf:'center',
       fontSize: 18,
       fontWeight: '500',
       lineHeight: 24,
       flex: 1,
       marginLeft: 8,
-      // backgroundColor:'blue',
       textAlign: 'center',
+      color: theme.colors.text_primary,
     } as TextStyle,
     headerBottomSheet: {
       marginHorizontal: 16,
       marginBottom: 16,
       flexDirection: 'row',
-      // justifyContent:'space-around',
       alignItems: 'center',
     } as ViewStyle,
     itemText: (text: string, value: string) =>
@@ -325,6 +312,7 @@ const rootStyles = (theme: AppTheme) =>
         fontWeight: text === value ? '600' : '400',
         lineHeight: 21,
         marginBottom: 16,
+        color: theme.colors.text_primary,
       } as TextStyle),
     containItemBottomView: {
       flexDirection: 'row',

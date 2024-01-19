@@ -1,13 +1,15 @@
 import {ApiResponse, create} from 'apisauce';
 import {ApiConstant, AppConstant} from '../const';
 
-
 import {IApiResponse} from '../models/types';
 import axios, {CreateAxiosDefaults} from 'axios';
 import {BASE_URL} from '@env';
 import {CommonUtils} from '../utils';
-import { dispatch } from '../utils/redux';
-import { appActions } from '../redux-store/app-reducer/reducer';
+import {dispatch} from '../utils/redux';
+import {
+  setError,
+  setProcessingStatus,
+} from '../redux-store/app-reducer/reducer';
 
 const DEFAULT_CONFIG: CreateAxiosDefaults = {
   baseURL: BASE_URL,
@@ -31,18 +33,18 @@ const handleErrorResponse = (
       return;
     } else if (throwErrorIfFailed || response.data?.message) {
       dispatch(
-        appActions.setError({
+        setError({
           title: response.data?.title,
           message: response.data?.message || response.data,
           viewOnly: true,
           status: response.status,
         }),
       );
-      dispatch(appActions.setProcessingStatus(false));
+      dispatch(setProcessingStatus(false));
     }
   } else {
     dispatch(
-      appActions.setError({
+      setError({
         title: 'Không có kết nối đến máy chủ',
         message: null,
         viewOnly: true,
@@ -52,7 +54,8 @@ const handleErrorResponse = (
 };
 
 const createInstance = (deleteHeader?: boolean) => {
-  const api_key = CommonUtils.storage.getString(AppConstant.Api_key) ?? 'd58272b345f5754';
+  const api_key =
+    CommonUtils.storage.getString(AppConstant.Api_key) ?? 'd58272b345f5754';
   const api_secret =
     CommonUtils.storage.getString(AppConstant.Api_secret) ?? '4b872a205a170c9';
   const header =

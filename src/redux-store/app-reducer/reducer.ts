@@ -1,7 +1,7 @@
-import {PayloadAction, createAction, createSlice} from '@reduxjs/toolkit';
+import {createAction, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import * as Actions from './type';
 import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
-import * as Actions from './type';
 import {VisitListItemType} from '../../models/types';
 
 const initialAppState: IAppRedux = {
@@ -16,7 +16,7 @@ const initialAppState: IAppRedux = {
   newCustomer: [],
   searchCustomerValue: '',
   loadingApp: false,
-  currentLocation:{},
+  currentLocation: {},
   systemConfig: {},
 };
 
@@ -36,8 +36,8 @@ const appSlice = createSlice({
     onLoadAppEnd: state => {
       state.loadingApp = false;
     },
-    onSetCurrentLocation:(state,action:PayloadAction<any> ) =>{
-      state.currentLocation = action.payload
+    onSetCurrentLocation: (state, action: PayloadAction<any>) => {
+      state.currentLocation = action.payload;
     },
     setShowModal: (state, {payload}: PayloadAction<boolean>) => {
       state.showModal = payload;
@@ -45,20 +45,18 @@ const appSlice = createSlice({
     setMainContactAddress: (state, {payload}: PayloadAction<any>) => {
       state.mainContactAddress = payload;
     },
-    setMainAddress:(state,action:PayloadAction<any>) =>{
-      state.mainAddress = action.payload
+    setMainAddress: (state, action: PayloadAction<any>) => {
+      state.mainAddress = action.payload;
     },
     removeContactAddress: (state, action: PayloadAction<any>) => {
-      const updateMainContact = state.mainContactAddress?.filter(
-        (item: any) => item != action.payload,
+      state.mainContactAddress = state.mainContactAddress?.filter(
+        (item: any) => item !== action.payload,
       );
-      state.mainContactAddress = updateMainContact;
     },
     removeAddress: (state, action: PayloadAction<any>) => {
-      const updateMainAddress = state.mainAddress?.filter(
-        (item: any) => item != action.payload,
+      state.mainAddress = state.mainAddress?.filter(
+        (item: any) => item !== action.payload,
       );
-      state.mainAddress = updateMainAddress;
     },
     setNewCustomer: (state, action: PayloadAction<any>) => {
       if (state.newCustomer.length === 0) {
@@ -142,4 +140,6 @@ export const {
   onLoadApp,
   onLoadAppEnd,
   onSetAppTheme,
+  removeContactAddress,
+  removeAddress,
 } = appSlice.actions;

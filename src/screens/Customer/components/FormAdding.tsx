@@ -32,9 +32,11 @@ import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
 import {formatMoney, useSelector} from '../../../config/function';
 import CardAddress from './CardAddress';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-import { dispatch } from '../../../utils/redux';
-
+import {
+  removeAddress,
+  removeContactAddress,
+} from '../../../redux-store/app-reducer/reducer';
+import {dispatch} from '../../../utils/redux';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -44,7 +46,6 @@ type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   valueDate: Date | any;
   addingBottomRef: React.RefObject<BottomSheetMethods>;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
   cameraBottomRef: React.RefObject<BottomSheetMethods>;
   imageSource: any;
 };
@@ -58,7 +59,6 @@ const FormAdding = (props: Props) => {
     setOpen,
     valueDate,
     addingBottomRef,
-    setShow,
     imageSource,
   } = props;
   const theme = useTheme();
@@ -74,13 +74,12 @@ const FormAdding = (props: Props) => {
   });
   const [dataLocation, setDataLocation] = useState<string>('');
   const mainAddress = useSelector(state => state.app.mainAddress);
-  const mainContactAddress = useSelector(state=>state.app.mainContactAddress);
+  const mainContactAddress = useSelector(state => state.app.mainContactAddress);
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
 
     if (data.status === 'OK') {
       setDataLocation(data.results[0].formatted_address);
-    
     } else {
       showSnack({
         msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
@@ -91,7 +90,6 @@ const FormAdding = (props: Props) => {
     // return console.log(data, 'data');
   };
 
-  
   const onPressButtonGetLocation = () => {
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
@@ -141,27 +139,27 @@ const FormAdding = (props: Props) => {
       </TouchableOpacity>
       <AppInput
         label="Tên khách hàng"
-        value={valueFilter.nameCompany}
+        value={valueFilter.customer_name}
         editable={true}
         hiddenRightIcon={true}
         isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onChangeValue={text => {
-          setData(prev => ({...prev, nameCompany: text}));
+          setData(prev => ({...prev, customer_name: text}));
           console.log('text');
         }}
       />
-        <AppInput
+      <AppInput
         label="Mã khách hàng"
-        value={valueFilter?.guestCode!}
+        value={valueFilter.customer_id}
         editable={true}
         hiddenRightIcon={true}
         isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onChangeValue={text => {
-          setData(prev => ({...prev, guestCode: text}));
+          setData(prev => ({...prev, customer_id: text}));
           console.log('text');
         }}
       />
@@ -169,13 +167,12 @@ const FormAdding = (props: Props) => {
         label={translate('customerType')}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        value={valueFilter.type}
+        value={valueFilter.customer_type}
         editable={false}
         styles={{marginBottom: 20}}
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
           filterRef.current?.snapToIndex(0);
-          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -187,7 +184,7 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('groupCustomer')}
-        value={valueFilter.group}
+        value={valueFilter.customer_group}
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
@@ -195,7 +192,6 @@ const FormAdding = (props: Props) => {
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
           filterRef.current?.snapToIndex(0);
-          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -207,7 +203,7 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('area')}
-        value={valueFilter.area!}
+        value={valueFilter.territory!}
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
@@ -215,7 +211,6 @@ const FormAdding = (props: Props) => {
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.khu_vuc);
           filterRef.current?.snapToIndex(0);
-          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -253,7 +248,6 @@ const FormAdding = (props: Props) => {
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.tuyen);
           filterRef.current?.snapToIndex(0);
-          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -263,7 +257,7 @@ const FormAdding = (props: Props) => {
           />
         }
       />
-       <AppInput
+      <AppInput
         label={translate('frequency')}
         value={''}
         editable={false}
@@ -273,7 +267,6 @@ const FormAdding = (props: Props) => {
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.tan_suat);
           filterRef.current?.snapToIndex(0);
-          setShow(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -286,9 +279,9 @@ const FormAdding = (props: Props) => {
       <AppInput
         label={translate('debtLimit')}
         value={
-          valueFilter.debtLimit
-            ? formatMoney(valueFilter.debtLimit)
-            : valueFilter.debtLimit
+          valueFilter.credit_limit
+            ? formatMoney(valueFilter.credit_limit)
+            : valueFilter.credit_limit
         }
         editable={true}
         isRequire={false}
@@ -296,13 +289,13 @@ const FormAdding = (props: Props) => {
         styles={{marginBottom: 20}}
         hiddenRightIcon={true}
         onChangeValue={text => {
-          setData(prev => ({...prev, debtLimit: text}));
+          setData(prev => ({...prev, credit_limit: text}));
           console.log(formatMoney(text));
         }}
       />
       <AppInput
         label={translate('description')}
-        value={valueFilter.description}
+        value={valueFilter.customer_details}
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
@@ -311,17 +304,19 @@ const FormAdding = (props: Props) => {
           multiline: true,
         }}
         hiddenRightIcon={true}
-        onChangeValue={text => setData(prev => ({...prev, description: text}))}
+        onChangeValue={text =>
+          setData(prev => ({...prev, customer_details: text}))
+        }
       />
       <AppInput
         label={translate('websiteUrl')}
-        value={valueFilter.websiteURL}
+        value={valueFilter.website}
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         hiddenRightIcon={true}
-        onChangeValue={text => setData(prev => ({...prev, websiteURL: text}))}
+        onChangeValue={text => setData(prev => ({...prev, website: text}))}
       />
       <View>
         <View style={styles.contentLabelAddingStyle}>
@@ -330,12 +325,12 @@ const FormAdding = (props: Props) => {
             <SvgIcon
               size={20}
               source="Trash"
-              onPress={() => dispatch(appActions.removeAddress([]))}
+              onPress={() => dispatch(removeAddress([]))}
             />
           )}
         </View>
         {Object.keys(mainAddress).length > 0 ? (
-          <CardAddress type="address"   mainAddress={mainAddress[0]}     />
+          <CardAddress type="address" mainAddress={mainAddress[0]} />
         ) : (
           <View style={styles.contentView}>
             <TouchableOpacity
@@ -343,7 +338,6 @@ const FormAdding = (props: Props) => {
               onPress={() => {
                 addingBottomRef.current?.snapToIndex(0);
                 setTypeFilter(AppConstant.CustomerFilterType.dia_chi);
-                setShow(true);
               }}>
               <View style={styles.containIcon}>
                 <AppIcons
@@ -365,12 +359,15 @@ const FormAdding = (props: Props) => {
             <SvgIcon
               size={20}
               source="Trash"
-              onPress={() => dispatch(appActions.removeContactAddress([]))}
+              onPress={() => dispatch(removeContactAddress([]))}
             />
           )}
         </View>
         {Object.keys(mainContactAddress).length > 0 ? (
-          <CardAddress type="contact"   mainContactAddress={mainContactAddress[0]} />
+          <CardAddress
+            type="contact"
+            mainContactAddress={mainContactAddress[0]}
+          />
         ) : (
           <View style={styles.contentView}>
             <TouchableOpacity
@@ -378,7 +375,6 @@ const FormAdding = (props: Props) => {
               onPress={() => {
                 addingBottomRef.current?.snapToIndex(0);
                 setTypeFilter(AppConstant.CustomerFilterType.nguoi_lien_he);
-                setShow(true);
               }}>
               <View style={styles.containIcon}>
                 <AppIcons

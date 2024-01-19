@@ -262,17 +262,17 @@ export type ReportDebtType = {
   listDebt: ReportDebtListType[];
 };
 export type IDataCustomer = {
-  nameCompany: string;
-  guestCode?: string;
-  type: string;
-  group: string;
-  area?: string;
-  dob: string | any;
-  gland?: string;
-  frequency?:any,
-  debtLimit?: number | any;
-  description: string;
-  websiteURL: string;
+  customer_id: string;
+  customer_name: string;
+  customer_type: string;
+  customer_group: string;
+  territory?: string;
+  customer_birthday?: string | any;
+  router_name?: string;
+  frequency?: any;
+  credit_limit?: number | any;
+  customer_details: string;
+  website: string;
   address: {
     address: string;
     isSetAddressGet: boolean;
@@ -447,69 +447,69 @@ export type StockProduct = {
 };
 
 export type IProduct = {
-  name : string;
-  item_code : string;
-  item_name : string;
-  item_group : string;
-  stock_uom : string;
-  min_order_qty : number;
-  description : string;
-  brand : string;
-  country_of_origin : string;
-  image : string;
-  custom_industry : string;
-  detail : UinitProduct;
-  unit : DataUnit[],
-  stock : StockProduct[];
-}
+  name: string;
+  item_code: string;
+  item_name: string;
+  item_group: string;
+  stock_uom: string;
+  min_order_qty: number;
+  description: string;
+  brand: string;
+  country_of_origin: string;
+  image: string;
+  custom_industry: string;
+  detail: UinitProduct;
+  unit: DataUnit[];
+  stock: StockProduct[];
+};
 
 export type IOrderList = {
-  customer:string;
-  name:string;
-  address_display:string;
-  po_date:number;
-  delivery_date:number;
-  status:string;
-  custom_id:number | string;
-  grand_total : number;
-  rounding_adjustment : number;
-  rounded_total :number
-}
+  customer: string;
+  name: string;
+  address_display: string;
+  po_date: number;
+  delivery_date: number;
+  status: string;
+  custom_id: number | string;
+  grand_total: number;
+  rounding_adjustment: number;
+  rounded_total: number;
+};
 
 export type ItemProductOrder = {
-  item_name:string;
-  name:string;
-  item_code:string;
-  qty:number;
-  uom:string;
-  amount:number;
-  discount_percentage:number;
-}
+  item_name: string;
+  name: string;
+  item_code: string;
+  qty: number;
+  uom: string;
+  amount: number;
+  discount_percentage: number;
+};
 
 export type IOrderDetail = {
-  list_items : ItemProductOrder[];
-  customer :string;
-  customer_name :string;
-  address_display :string;
-  delivery_date :number;
-  set_warehouse :string;
-  taxes_and_charges :number;
-  total_taxes_and_charges :number;
-  apply_discount_on :number;
-  additional_discount_percentage :number;
-  discount_amount :number;
-  contact_person :string;
-  rounded_total :number;
-  grand_total :number;
-  total :number;
-  tax_amount? :number;
-  rate? : number;
-  account_head? : string;
-  charge_type? : string;
+  list_items: ItemProductOrder[];
+  customer: string;
+  customer_name: string;
+  address_display: string;
+  delivery_date: number;
+  set_warehouse: string;
+  taxes_and_charges: number;
+  total_taxes_and_charges: number;
+  apply_discount_on: number;
+  additional_discount_percentage: number;
+  discount_amount: number;
+  contact_person: string;
+  rounded_total: number;
+  grand_total: number;
+  total: number;
+  tax_amount?: number;
+  rate?: number;
+  account_head?: string;
+  charge_type?: string;
 };
 
 export type BrandProduct = {
-  name : string,
-  brand :string,
-  description : string | null
-}
+  name: string;
+  brand: string;
+  description: string | null;
+};
