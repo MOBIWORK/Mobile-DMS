@@ -11,7 +11,7 @@ type Props = {
   data: IDataCustomer;
 };
 
-const InforView = (props: Props) => {
+const InforBlock = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const ref = useRef<Mapbox.Camera>(null);
@@ -60,7 +60,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.nameCompany != '' ? props.data.nameCompany : ` ---`}
+            {props.data.customer_name != '' ? props.data.customer_name : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -96,9 +96,9 @@ const InforView = (props: Props) => {
             lineHeight={24}>
             KH-12345
           </AppText>
-          <View style={styles.divider} />
-        </View>
-        <View>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -111,7 +111,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.type != '' ? props.data.type : ` ---`}
+            {props.data.customer_type != '' ? props.data.customer_type : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -128,7 +128,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.group != '' ? props.data.group : ` ---`}
+            {props.data.customer_group != '' ? props.data.customer_group : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -145,7 +145,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.area != '' ? props.data.area : ` ---`}
+            {props.data.territory != '' ? props.data.territory : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -162,7 +162,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.dob != '' ? props.data.dob : ` ---`}
+            {props.data.customer_birthday != '' ? props.data.customer_birthday : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -179,7 +179,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.gland != '' ? props.data.gland : ` ---`}
+            {props.data.router_name != '' ? props.data.router_name : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -213,7 +213,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.debtLimit != '' ? props.data.debtLimit : ` ---`}
+            {props.data.credit_limit != '' ? props.data.credit_limit : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -247,7 +247,7 @@ const InforView = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.websiteURL != '' ? props.data.websiteURL : ` ---`}
+            {props.data.website != '' ? props.data.website : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -265,7 +265,7 @@ const InforView = (props: Props) => {
             attributionEnabled={false}
             scaleBarEnabled={false}
             logoEnabled={false}
-            style={styles.mapView}>
+            style={styles.mapBlock}>
             <Mapbox.Camera
               // ref={mapboxCameraRef}
               ref={ref}
@@ -292,7 +292,7 @@ const InforView = (props: Props) => {
   );
 };
 
-export default React.memo(InforView);
+export default React.memo(InforBlock);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -321,7 +321,7 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.divider,
       marginVertical: 12,
     } as ViewStyle,
-    mapView: {
+    mapBlock: {
       width: '100%',
       height: 381,
     } as ViewStyle,

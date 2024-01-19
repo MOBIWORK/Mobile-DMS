@@ -17,6 +17,7 @@ import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
 import { dispatch } from '../../../utils/redux';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { useTranslation } from 'react-i18next';
 
 const SearchProduct = ({}) => {
   const {colors} = useTheme();

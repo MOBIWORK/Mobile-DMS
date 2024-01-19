@@ -30,8 +30,15 @@ const ListFilterAdding = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
 
+
+
+
+
   const handlePress = useCallback(
     (item: any) => {
+
+      
+
       setData(prev => {
         const updatedFrequency = prev.frequency.includes(item.title)
           ? prev.frequency.filter(

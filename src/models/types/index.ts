@@ -289,6 +289,7 @@ export type IDataCustomer = {
     phoneNumber: string;
   };
   imageSource: string;
+  description?:string
 };
 
 export interface RootEkMapResponse {
