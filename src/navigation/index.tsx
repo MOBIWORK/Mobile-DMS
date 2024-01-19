@@ -107,6 +107,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       theme={MyAppTheme[theme]}
       linking={linking}
       ref={navigationRef}>
+
       <Stack.Navigator
         initialRouteName={  validate ? ScreenConstant.MAIN_TAB : ScreenConstant.SELECT_ORGANIZATION}
         screenOptions={{
