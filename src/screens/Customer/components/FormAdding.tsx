@@ -75,6 +75,7 @@ const FormAdding = (props: Props) => {
   const [dataLocation, setDataLocation] = useState<string>('');
   const mainAddress = useSelector(state => state.app.mainAddress);
   const mainContactAddress = useSelector(state=>state.app.mainContactAddress);
+  
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
 
