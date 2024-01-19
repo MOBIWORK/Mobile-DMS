@@ -31,12 +31,14 @@ import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
-import { useSelector } from '../../config/function';
-import { appActions } from '../../redux-store/app-reducer/reducer';
-import { dispatch } from '../../utils/redux';
+import {useSelector} from '../../config/function';
+import {setNewCustomer} from '../../redux-store/app-reducer/reducer';
+import {dispatch} from '../../utils/redux';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
+  const {bottom} = useSafeAreaInsets();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const [valueFilter, setValueFilter] = React.useState<IValueType>({
@@ -44,22 +46,20 @@ const AddingNewCustomer = () => {
     customerGroupType: 'Tất cả',
     customerBirthday: 'Tất cả',
   });
-  const {mainContactAddress, mainAddress} = useSelector(
-    (state) => state.app,
-  );
+  const {mainContactAddress, mainAddress} = useSelector(state => state.app);
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
   const [listData, setListData] = useState<IDataCustomer>({
-    nameCompany: '',
-    type: valueFilter.customerType,
-    group: valueFilter.customerGroupType,
-    guestCode:'',
-    dob: date,
-    area: '',
-    gland: '',
-    debtLimit: 0,
-    description: '',
-    websiteURL: '',
+    customer_id: '',
+    customer_name: '',
+    customer_type: valueFilter.customerType,
+    customer_group: valueFilter.customerGroupType,
+    customer_birthday: date,
+    territory: '',
+    router_name: '',
+    credit_limit: 0,
+    customer_details: '',
+    website: '',
     address: {
       address: mainAddress?.length >= 0 ? mainAddress[0]?.detailAddress : '',
       isSetAddressGet:
@@ -87,7 +87,6 @@ const AddingNewCustomer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
-  const [show, setShow] = useState<boolean>(false);
 
   const snapPoint = useMemo(() => ['40%'], []);
   const snapPointAdding = useMemo(
@@ -104,8 +103,8 @@ const AddingNewCustomer = () => {
   const addingAddress = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
-  const onPressAdding = (listData: IDataCustomer) => {
-    dispatch(appActions.setNewCustomer(listData));
+  const onPressAdding = (newListData: IDataCustomer) => {
+    dispatch(setNewCustomer(newListData));
     navigation.navigate(ScreenConstant.MAIN_TAB, {
       screen: ScreenConstant.CUSTOMER,
     });
@@ -154,7 +153,7 @@ const AddingNewCustomer = () => {
           />
         }
       />
-      <View style={styles.containContentView}>
+      <View style={[styles.containContentView, {marginBottom: bottom + 60}]}>
         <FormAdding
           filterRef={filterRef}
           setTypeFilter={setTypeFilter}
@@ -163,10 +162,14 @@ const AddingNewCustomer = () => {
           setOpen={setOpenDate}
           setData={setListData}
           addingBottomRef={addingAddress}
-          setShow={setShow}
           imageSource={imageSource}
           cameraBottomRef={cameraBottomRef}
         />
+        <TouchableOpacity
+          style={styles.buttonAddingNew}
+          onPress={() => onPressAdding(listData)}>
+          <Text style={styles.textButtonStyle}>Thêm mới</Text>
+        </TouchableOpacity>
       </View>
       <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
         <ListFilterAdding
@@ -176,7 +179,6 @@ const AddingNewCustomer = () => {
           valueFilter={valueFilter}
           setData={setListData}
           data={listData}
-          setShow={setShow}
         />
       </AppBottomSheet>
       <DatePickerModal
@@ -194,18 +196,10 @@ const AddingNewCustomer = () => {
         <FormAddress
           onPressClose={() => {
             addingAddress.current?.close();
-            setShow(false);
           }}
           typeFilter={typeFilter}
         />
       </AppBottomSheet>
-      {!show && (
-        <TouchableOpacity
-          style={styles.buttonAddingNew}
-          onPress={() => onPressAdding(listData)}>
-          <Text style={styles.textButtonStyle}>Thêm mới</Text>
-        </TouchableOpacity>
-      )}
       <AppBottomSheet
         bottomSheetRef={cameraBottomRef}
         snapPointsCustom={['28%']}>
@@ -264,16 +258,18 @@ const rootStyles = (theme: AppTheme) =>
     containContentView: {
       marginTop: 24,
       flex: 1,
-      // backgroundColor: 'red',
     } as ViewStyle,
 
     buttonAddingNew: {
       backgroundColor: theme.colors.primary,
       borderRadius: 20,
       alignItems: 'center',
-      marginBottom: 40,
+      // marginBottom: 40,
+      width: '100%',
+      alignSelf: 'center',
+      position: 'absolute',
+      bottom: -40,
       height: 40,
-      // marginBottom:40,
       justifyContent: 'center',
     } as ViewStyle,
     textButtonStyle: {

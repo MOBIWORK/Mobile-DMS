@@ -33,7 +33,6 @@ export type MainContactAddress = {
 const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  // const {mainAddress,mainContactAddress} = props
   console.log(props, 'props');
   return (
     <View style={styles.card}>
@@ -58,7 +57,6 @@ const CardAddress = (props: Props) => {
                   fontSize={16}
                   fontWeight="300"
                   style={{maxWidth: '90%'}}
-                  // textAlign='justify'
                   colorTheme="black"
                   lineHeight={21}>
                   {props.mainAddress.detailAddress}
@@ -102,7 +100,7 @@ const CardAddress = (props: Props) => {
               {props.mainContactAddress.nameContact}
             </AppText>
           </View>
-          <View style={[styles.containAddressLabel,{paddingHorizontal:4}]}>
+          <View style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <View style={styles.containIcon}>
               <SvgIcon source="MapPin" size={16} />
             </View>
@@ -115,7 +113,7 @@ const CardAddress = (props: Props) => {
               {props.mainContactAddress.addressContact}
             </AppText>
           </View>
-          <View style={[styles.containAddressLabel,{paddingHorizontal:4}]}>
+          <View style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <View style={styles.containIcon}>
               <SvgIcon source="Phone" size={16} />
             </View>
@@ -209,11 +207,10 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
       paddingVertical: 3,
     } as ViewStyle,
-    containMain:{
+    containMain: {
       marginLeft: 8,
       alignContent: 'center',
       flexDirection: 'row',
-      marginTop:4
-
-    } as ViewStyle
+      marginTop: 4,
+    } as ViewStyle,
   });

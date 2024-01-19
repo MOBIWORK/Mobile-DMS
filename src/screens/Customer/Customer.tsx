@@ -8,7 +8,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, { useRef, useMemo} from 'react';
+import React, {useRef, useMemo} from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -17,7 +17,7 @@ import {Colors} from '../../assets';
 import MainLayout from '../../layouts/MainLayout';
 import AppImage from '../../components/common/AppImage';
 import FilterHandle from './components/FilterHandle';
-import { listFilter} from './components/data';
+import {listFilter} from './components/data';
 import ListCard from './components/ListCard';
 import {
   AppBottomSheet,
@@ -31,9 +31,9 @@ import ListFilter from './components/ListFilter';
 import {NavigationProp} from '../../navigation';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
-import { useSelector } from '../../config/function';
-import { appActions } from '../../redux-store/app-reducer/reducer';
-import { dispatch } from '../../utils/redux';
+import {useSelector} from '../../config/function';
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import {dispatch} from '../../utils/redux';
 
 export type IValueType = {
   customerType: string;
@@ -81,8 +81,6 @@ const Customer = () => {
   };
   const customer = useSelector(state => state.app.newCustomer);
 
-
-
   const renderBottomView = () => {
     return (
       <MainLayout>
@@ -94,7 +92,7 @@ const Customer = () => {
               iconType={AppConstant.ICON_TYPE.IonIcon}
               name={'close'}
               size={24}
-              color={useTheme().colors.text_primary}
+              color={theme.colors.text_primary}
             />
           }
         />
@@ -203,7 +201,7 @@ const Customer = () => {
           <View style={styles.tittleHeader}>
             <Text style={styles.titleText}>{getLabel('distance')}</Text>
           </View>
-          {listFilter.map((item, index) => {
+          {listFilter.map(item => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
@@ -223,7 +221,7 @@ const Customer = () => {
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
                     size={24}
-                    color={useTheme().colors.primary}
+                    color={theme.colors.primary}
                   />
                 )}
               </TouchableOpacity>
@@ -260,7 +258,7 @@ const Customer = () => {
         color="white"
         customIconSize={32}
         mode="flat"
-        visible={show.firstModal || show.secondModal ? false : true}
+        visible={!(show.firstModal || show.secondModal)}
         onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
       />
     </Block>

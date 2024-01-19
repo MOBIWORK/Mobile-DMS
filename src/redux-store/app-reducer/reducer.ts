@@ -1,7 +1,7 @@
-import {PayloadAction, createAction, createSlice} from '@reduxjs/toolkit';
+import {createAction, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import * as Actions from './type';
 import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
-import * as Actions from './type';
 import {VisitListItemType} from '../../models/types';
 import {CheckinData} from '../../services/appService';
 
@@ -50,16 +50,14 @@ const appSlice = createSlice({
       state.mainAddress = action.payload;
     },
     removeContactAddress: (state, action: PayloadAction<any>) => {
-      const updateMainContact = state.mainContactAddress?.filter(
-        (item: any) => item != action.payload,
+      state.mainContactAddress = state.mainContactAddress?.filter(
+        (item: any) => item !== action.payload,
       );
-      state.mainContactAddress = updateMainContact;
     },
     removeAddress: (state, action: PayloadAction<any>) => {
-      const updateMainAddress = state.mainAddress?.filter(
-        (item: any) => item != action.payload,
+      state.mainAddress = state.mainAddress?.filter(
+        (item: any) => item !== action.payload,
       );
-      state.mainAddress = updateMainAddress;
     },
     setNewCustomer: (state, action: PayloadAction<any>) => {
       if (state.newCustomer.length === 0) {
@@ -122,4 +120,6 @@ export const {
   onLoadApp,
   onLoadAppEnd,
   onSetAppTheme,
+  removeContactAddress,
+  removeAddress,
 } = appSlice.actions;
