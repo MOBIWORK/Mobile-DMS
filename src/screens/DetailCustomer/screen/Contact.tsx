@@ -1,8 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
 import React from 'react'
 import { AppTheme, useTheme } from '../../../layouts/theme'
-import { AppSelector } from '../../../redux-store'
-import { useSelector } from 'react-redux'
+
 import CardAddress, { MainContactAddress } from '../../Customer/components/CardAddress'
 import { MainLayout } from '../../../layouts'
 import { AppIcons, AppText } from '../../../components/common'
@@ -16,7 +15,7 @@ const Contact = (props: Props) => {
   const {onPressAdding} = props
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const mainAddress: MainContactAddress[] = useSelector(AppSelector.getMainContactAddress);
+  // const mainAddress: MainContactAddress[] = useSelector(AppSelector.getMainContactAddress);
   return (
     <MainLayout style={styles.root}>
       <View style={styles.containLabel}>
@@ -32,7 +31,7 @@ const Contact = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {mainAddress?.map((item, index) => {
+      {/* {mainAddress?.map((item, index) => {
         return (
           <CardAddress
             key={index.toString()}
@@ -40,7 +39,7 @@ const Contact = (props: Props) => {
             mainContactAddress={item}
           />
         );
-      })}
+      })} */}
     </MainLayout>
   )
 }

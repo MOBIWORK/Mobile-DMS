@@ -21,7 +21,7 @@ import {ErrorBoundary} from 'react-error-boundary'
 import ErrorFallback from '../../../layouts/ErrorBoundary';
 
 
-const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
+const VisitItem: FC<VisitItemProps> = ({item, handleClose,onPress}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const theme = useTheme()
@@ -31,7 +31,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
 
   const onPressCheckIn = (item:VisitListItemType) =>{
     // dispatch(appActions.onCheckIn(item));
-    dispatch(appActions.onSetAppTheme('default'))
+    // dispatch(appActions.onSetAppTheme('default'))
     navigate(ScreenConstant.CHECKIN,{item})
   }
 
@@ -57,7 +57,9 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
     <ErrorBoundary fallbackRender={ErrorFallback}>
     <Pressable
       onPress={() =>
-        navigate(ScreenConstant.VISIT_DETAIL, {data: item})
+        {navigate(ScreenConstant.VISIT_DETAIL, {data: item}),
+          onPress!()
+      }
       }>
       <View style={styles.viewContainer}>
         <View style={styles.user}>
@@ -145,6 +147,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose}) => {
 interface VisitItemProps {
   item: VisitListItemType;
   handleClose?: () => void;
+  onPress?:() => void
 }
 
 export default VisitItem;

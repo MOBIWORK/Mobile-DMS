@@ -87,7 +87,6 @@ export const getCustomer = () =>
     .get(ApiConstant.GET_CUSTOMER)
     .then(res => res.data);
 
-    
 export const getCustomerByName = (name: string) =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER + `?customer_name=${name}`)
@@ -118,4 +117,19 @@ export const getCustomerVisit = () =>
 export const getSystemConfig = () =>
   createApi()
     .get(ApiConstant.GET_SYSTEM_CONFIG)
+    .then(res => res.data);
+
+export const getListCity = () => {
+  createApi()
+    .get(ApiConstant.GET_LIST_CITY)
+    .then(res => res.data);
+};
+export const getListDistrict = (ma_tinh_thanh: any) =>
+  createApi()
+    .get(ApiConstant.GET_LIST_DISTRICT + `${ma_tinh_thanh}`)
+    .then(res => res.data);
+
+export const getListWard = (ma_quan_huyen: any) =>
+  createApi()
+    .get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`)
     .then(res => res.data);

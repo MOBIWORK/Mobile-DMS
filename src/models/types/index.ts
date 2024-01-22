@@ -275,20 +275,20 @@ export type IDataCustomer = {
   customer_birthday?: string | any;
   router_name?: string;
   frequency?: any[];
-  credit_limit?: number | any;
+  credit_limid?:  any;
   customer_details: string;
   website: string;
-  address: {
+  address?: {
     address: string;
     isSetAddressGet: boolean;
     isSetAddressTake: boolean;
   };
-  contact: {
+  contact?: {
     name: string;
-    address: string;
-    phoneNumber: string;
+    address_line1: string;
+    phone: string;
   };
-  imageSource: string;
+  image: string;
   description?:string
 };
 

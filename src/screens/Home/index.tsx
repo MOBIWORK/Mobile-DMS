@@ -452,7 +452,7 @@ const HomeScreen = () => {
                 <AppAvatar name="Long" size={48} />
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}> Xin chào ,</Text>
-                  <Text style={[styles.userName]}>Khuất Thanh Long</Text>
+                  <Text style={[styles.userName]}>Trái Thanh Long</Text>
                 </View>
               </View>
               <View>

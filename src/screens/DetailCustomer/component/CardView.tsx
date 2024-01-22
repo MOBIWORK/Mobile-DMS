@@ -19,6 +19,7 @@ type Props = {
 const CardContactOverview = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
+  console.log(props.data.address,'address')
   return (
     <View style={styles.card}>
       <View style={styles.rootLayout}>
@@ -27,17 +28,17 @@ const CardContactOverview = (props: Props) => {
           fontWeight="500"
           lineHeight={24}
           style={styles.labelText}>
-          {props.data.contact.name}
+          {props.data.customer_name}
         </AppText>
         <View style={styles.labelView}>
           <SvgIcon source="MapPin" size={18} />
-          <AppText numberOfLines={1} style={{maxWidth:'90%'}}> {props.data.address.address}</AppText>
+          <AppText numberOfLines={1} style={{maxWidth:'90%'}}> {props.data?.address?.address ? props.data?.address?.address : '---'}</AppText>
         </View>
         <View style={styles.labelView}>
           <SvgIcon source="Phone" size={18} />
           <AppText numberOfLines={1}>
             {' '}
-            {formatPhoneNumber(props.data.contact.phoneNumber)}
+            {props.data?.contact?.phone ? formatPhoneNumber(props.data?.contact?.phone) : '---'}
           </AppText>
         </View>
       </View>

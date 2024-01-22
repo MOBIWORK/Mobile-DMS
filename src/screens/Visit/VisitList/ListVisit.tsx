@@ -1,4 +1,4 @@
-import React, {FC,  useLayoutEffect, useRef, useState} from 'react';
+import React, {FC,  useCallback,  useLayoutEffect, useRef, useState} from 'react';
 import {AppHeader, FilterView} from '../../../components/common';
 import {
   FlatList,
@@ -28,6 +28,7 @@ import { dispatch } from '../../../utils/redux';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
 import { customerActions } from '../../../redux-store/customer-reducer/reducer';
 
+
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
@@ -43,11 +44,36 @@ const ListVisit = () => {
   const appLoading = useSelector(state => state.app.loadingApp)
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
+  const [error,setError] = useState<string>('')
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
 
+    const backgroundErrorListener = useCallback((errorCode: number) => {
+      // Handle background location errors
+      switch (errorCode) {
+        case 0:
+          setError(
+            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+          );
+          break;
+        case 1:
+          setError('GPS đã bị tắt. Vui lòng bật lại.');
+          break;
+        default:
+          setError(
+            'Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại',
+          );
+      }
+    }, []);
 
+
+const handleBackground = () =>{
+  BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3},(location) =>{
+    console.log('location: ',location)
+  },backgroundErrorListener)
+  
+}
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
     return (
@@ -154,7 +180,7 @@ const ListVisit = () => {
               style={{height: '90%'}}
               showsVerticalScrollIndicator={false}
               data={VisitListData}
-              renderItem={({item}) => <VisitItem item={item} />}
+              renderItem={({item}) => <VisitItem item={item} onPress={handleBackground}/>}
             />
           </View>
         ) : (
@@ -214,7 +240,7 @@ const ListVisit = () => {
 
   useLayoutEffect(() => {
     // setLoading(true);
-    dispatch(customerActions.onGetCustomer())
+    
     
     if (Object.keys(systemConfig).length > 0) return;
     else {
@@ -226,6 +252,7 @@ const ListVisit = () => {
 
     // setLoading(false);
   }, []);
+  console.log(location,'location background')
 
   return (
     <SafeAreaView

@@ -5,6 +5,23 @@ interface ListCustomerType {
   customer_group_name: string;
 }
 
+
+interface ListCity {
+  ma_tinh:string,
+  ten_tinh:string
+}
+
+interface ListDistrict {
+  ma_huyen:string,
+  ten_huyen:string,
+  ma_tinh_thanh:string
+}
+interface ListWard {
+  ma_xa:string,
+  ten_xa:string,
+  ma_quan_huyen:string
+}
+
 export interface IAppRedux {
   error?: {
     title: string;
@@ -25,9 +42,9 @@ export interface IAppRedux {
   systemConfig?: any;
   currentLocation?: any;
   listDataCity:{
-    city:any[],
-    district:any[],
-    ward:any[]
+    city:ListCity[],
+    district:ListDistrict[],
+    ward:ListWard[]
   }
 }
 

@@ -1,11 +1,12 @@
 import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {IDataCustomer} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {AppText, Block, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
 import Mapbox, {Location} from '@rnmapbox/maps';
 import BackgroundGeolocation from 'react-native-background-geolocation';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   data: IDataCustomer;
@@ -15,6 +16,8 @@ const InforBlock = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const ref = useRef<Mapbox.Camera>(null);
+  const {t:translate} = useTranslation()
+  console.log(props)
 
   const [location, setLocation] = useState<Location | any>({
     coords: {
@@ -24,7 +27,7 @@ const InforBlock = (props: Props) => {
     timestamp: 0,
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
         setLocation(res);
@@ -32,14 +35,17 @@ const InforBlock = (props: Props) => {
       .catch(err => console.log(err));
   }, []);
 
+
+
+
   return (
     <Block style={styles.root}>
       <Block style={styles.containImage}>
         <Image
           source={{
             uri:
-              props.data.imageSource != undefined
-                ? props.data.imageSource
+              props.data.image != undefined
+                ? props.data.image
                 : 'https://yt3.googleusercontent.com/ytc/APkrFKa93uRfPROMhBKD5UCngwnLlJqVyhbfJEptGLtK=s900-c-k-c0x00ffffff-no-rj',
           }}
           style={styles.imageStyle}
@@ -77,11 +83,11 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            KH-12345
+            {props.data.customer_id != null ? props.data.customer_id : '---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
-        <Block>
+        {/* <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -97,31 +103,14 @@ const InforBlock = (props: Props) => {
             KH-12345
           </AppText>
           <Block style={styles.divider} />
-        </Block>
-        <Block>
+        </Block> */}
+         <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
             Loại khách hàng
-          </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            {props.data.customer_type != '' ? props.data.customer_type : ` ---`}
-          </AppText>
-          <Block style={styles.divider} />
-        </Block>
-        <Block>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            Nhóm khách hàng
           </AppText>
           <AppText
             fontSize={16}
@@ -138,6 +127,24 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
+            Nhóm khách hàng
+          </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            {props.data.customer_type != '' ? translate(props.data.customer_type) : ` ---`}
+          </AppText>
+          <Block style={styles.divider} />
+        </Block>
+       
+        <Block>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_secondary"
+            lineHeight={24}>
             Khu vực
           </AppText>
           <AppText
@@ -145,7 +152,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.territory != '' ? props.data.territory : ` ---`}
+            {props.data.territory != null ? props.data.territory : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -162,7 +169,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_birthday != '' ? props.data.customer_birthday : ` ---`}
+            {props.data.customer_birthday != null ? props.data.customer_birthday : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -179,7 +186,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.router_name != '' ? props.data.router_name : ` ---`}
+            {props.data.router_name != null ? props.data.router_name : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -196,7 +203,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            Tuần 1 , Tuần 2, Tuần 3
+            {props.data.frequency && props.data.frequency?.length > 0 ? props.data.frequency.join(',') : '---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -213,7 +220,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.credit_limit != '' ? props.data.credit_limit : ` ---`}
+            {props.data.credit_limid && props.data.credit_limid.length > 0 ? props.data.credit_limid.join(',') : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -230,7 +237,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.description != '' ? props.data.description : ` ---`}
+            {props.data?.description && props.data?.description != '' ? props.data.description : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -247,7 +254,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.website != '' ? props.data.website : ` ---`}
+            {props.data?.website && props.data?.website != '' ? props.data.website : ` ---`}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -324,5 +331,6 @@ const rootStyles = (theme: AppTheme) =>
     mapBlock: {
       width: '100%',
       height: 381,
+      marginTop:8
     } as ViewStyle,
   });

@@ -10,8 +10,8 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {MainLayout} from '../../../layouts';
 import { AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
-import {useSelector} from 'react-redux';
-import {AppSelector} from '../../../redux-store';
+
+// import {AppSelector} from '../../../redux-store';
 import CardAddress, {MainAddress} from '../../Customer/components/CardAddress';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -25,7 +25,7 @@ const Address = (props: Props) => {
   const {onPressAdding} = props
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const mainAddress: MainAddress[] = useSelector(AppSelector.getMainAddress);
+  // const mainAddress: MainAddress[] = useSelector(AppSelector.getMainAddress);
   
 
   return (
@@ -46,7 +46,7 @@ const Address = (props: Props) => {
             />
           </TouchableOpacity>
         </View>
-        {mainAddress?.map((item, index) => {
+        {/* {mainAddress?.map((item, index) => {
           return (
             <CardAddress
               key={index.toString()}
@@ -54,7 +54,7 @@ const Address = (props: Props) => {
               mainAddress={item}
             />
           );
-        })}
+        })} */}
        
       </MainLayout>
     </>

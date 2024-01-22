@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useState, useRef} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {TextInput} from 'react-native-paper';
+import {Searchbar, TextInput} from 'react-native-paper';
 import debounce from 'debounce';
 import {
   AppHeader,
@@ -29,6 +29,8 @@ import Colors from '../../../assets/Colors';
 import {RootEkMapResponse} from '../../../models/types';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {ImageAssets} from '../../../assets';
+import {useSelector} from '../../../config/function';
 
 type Props = {
   onPressClose: () => void;
@@ -39,6 +41,13 @@ const FormAddress = (props: Props) => {
   const {onPressClose, typeFilter} = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const [screen, setScreen] = useState('');
+  const listAddress = useSelector(state => state.app.listDataCity);
+  const [listCity, setListAddress] = useState({
+    city: listAddress.city,
+    ward: '',
+    district: '',
+  });
 
   const [addressValue, setAddressValue] = useState({
     city: 'Tỉnh/Thành phố',
@@ -110,9 +119,74 @@ const FormAddress = (props: Props) => {
     [addressValue],
   );
 
+  const handleItem = (item: any) => {
+    const newData =
+      listCity && listCity.city.filter((res: any) => res.label !== item.label);
+    setListAddress(prev => ({
+      ...prev,
+      city: newData,
+    }));
+  };
+
+  const SearchNearly = () => {
+    return (
+      <Block marginTop={20}>
+        <AppText colorTheme="text_primary" fontWeight="500">
+          Tìm kiếm gần đây
+        </AppText>
+        <Block marginTop={16}>
+          {listCity &&
+            listCity?.city.map((item: any, index: number) => {
+              return (
+                <Block
+                  key={index}
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  marginVertical={6}>
+                  <AppText colorTheme="text_primary" style={{width: '80%'}}>
+                    {item.label}
+                  </AppText>
+                  <SvgIcon
+                    source="Close"
+                    color={theme.colors.text_secondary}
+                    size={24}
+                    onPress={() => handleItem(item)}
+                  />
+                </Block>
+              );
+            })}
+        </Block>
+      </Block>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
-      {typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
+      {screen === 'Adding' || screen === 'AddingContact' ? (
+        <MainLayout>
+          <Block
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            width={'100%'}>
+            <TouchableOpacity onPress={() => console.log('run bitch')}>
+              <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
+            </TouchableOpacity>
+            <Searchbar
+              placeholder={'Tìm kiếm'}
+              value={''}
+              onChangeText={text => console.log(text)}
+              onSubmitEditing={e => console.log(e.nativeEvent.text)}
+              icon={ImageAssets.SearchIcon}
+              placeholderTextColor={theme.colors.text_disable}
+              inputStyle={{color: theme.colors.text_primary}}
+              style={styles.searchBar}
+            />
+            <SearchNearly />
+          </Block>
+        </MainLayout>
+      ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
         <>
           <View style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
@@ -153,7 +227,7 @@ const FormAddress = (props: Props) => {
                   'Tỉnh/Thành phố',
                 )}
                 onPress={() => {
-                  setAddressValue(prev => ({...prev, city: 'Hà Nội'}));
+                  setScreen('Adding');
                 }}
                 value={addressValue.city}
                 editable={false}
@@ -172,10 +246,7 @@ const FormAddress = (props: Props) => {
                 value={addressValue.district}
                 editable={false}
                 onPress={() => {
-                  setAddressValue(prev => ({
-                    ...prev,
-                    district: 'Quận Bắc Từ Liêm',
-                  }));
+                  setScreen('Adding');
                 }}
                 contentStyle={styles.contentStyle(
                   addressValue.district,
@@ -199,7 +270,7 @@ const FormAddress = (props: Props) => {
                   'Phường/xã',
                 )}
                 onPress={() => {
-                  setAddressValue(prev => ({...prev, ward: 'Cổ Nhuế'}));
+                  setScreen('Adding');
                 }}
                 styles={styles.marginInputView}
                 rightIcon={
@@ -292,7 +363,7 @@ const FormAddress = (props: Props) => {
         </>
       ) : (
         <>
-          <View style={styles.headerContentView('')}>
+          <View style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
               label="Người liên hệ chính"
               onBack={() => {}}
@@ -345,69 +416,63 @@ const FormAddress = (props: Props) => {
               </AppText>
             </Block>
             <AppInput
-                label={'Tỉnh/Thành phố'}
-                contentStyle={styles.contentStyle(
-                  addressValue.city,
-                  'Tỉnh/Thành phố',
-                )}
-                onPress={() => {
-                  setContactValue(prev => ({...prev, city: 'Hà Nội'}));
-                }}
-                value={addressValue.city}
-                editable={false}
-                hiddenRightIcon={false}
-                styles={styles.marginInputView}
-                rightIcon={
-                  <TextInput.Icon
-                    icon={'chevron-down'}
-                    style={styles.iconStyle}
-                    color={theme.colors.text_secondary}
-                  />
-                }
-              />
-              <AppInput
-                label={'Quận/Huyện'}
-                value={addressValue.district}
-                editable={false}
-                onPress={() => {
-                  setContactValue(prev => ({
-                    ...prev,
-                    district: 'Quận Bắc Từ Liêm',
-                  }));
-                }}
-                contentStyle={styles.contentStyle(
-                  addressValue.district,
-                  'Quận/Huyện',
-                )}
-                styles={styles.marginInputView}
-                rightIcon={
-                  <TextInput.Icon
-                    icon={'chevron-down'}
-                    style={styles.iconStyle}
-                    color={theme.colors.text_secondary}
-                  />
-                }
-              />
-              <AppInput
-                label={'Phường/xã'}
-                value={addressValue.ward}
-                editable={false}
-                contentStyle={styles.contentStyle(
-                  addressValue.ward,
-                  'Phường/xã',
-                )}
-                onPress={() => {
-                  setContactValue(prev => ({...prev, ward: 'Cổ Nhuế'}));
-                }}
-                styles={styles.marginInputView}
-                rightIcon={
-                  <TextInput.Icon
-                    icon={'chevron-down'}
-                    style={styles.iconStyle}
-                    color={theme.colors.text_secondary}
-                  />
-                }
-              />
+              label={'Tỉnh/Thành phố'}
+              contentStyle={styles.contentStyle(
+                addressValue.city,
+                'Tỉnh/Thành phố',
+              )}
+              onPress={() => {
+                setScreen('AddingContact');
+              }}
+              value={addressValue.city}
+              editable={false}
+              hiddenRightIcon={false}
+              styles={styles.marginInputView}
+              rightIcon={
+                <TextInput.Icon
+                  icon={'chevron-down'}
+                  style={styles.iconStyle}
+                  color={theme.colors.text_secondary}
+                />
+              }
+            />
+            <AppInput
+              label={'Quận/Huyện'}
+              value={addressValue.district}
+              editable={false}
+              onPress={() => {
+                setScreen('AddingContact');
+              }}
+              contentStyle={styles.contentStyle(
+                addressValue.district,
+                'Quận/Huyện',
+              )}
+              styles={styles.marginInputView}
+              rightIcon={
+                <TextInput.Icon
+                  icon={'chevron-down'}
+                  style={styles.iconStyle}
+                  color={theme.colors.text_secondary}
+                />
+              }
+            />
+            <AppInput
+              label={'Phường/xã'}
+              value={addressValue.ward}
+              editable={false}
+              contentStyle={styles.contentStyle(addressValue.ward, 'Phường/xã')}
+              onPress={() => {
+                setScreen('AddingContact');
+              }}
+              styles={styles.marginInputView}
+              rightIcon={
+                <TextInput.Icon
+                  icon={'chevron-down'}
+                  style={styles.iconStyle}
+                  color={theme.colors.text_secondary}
+                />
+              }
+            />
             <AppInput
               label={'Địa chỉ chi tiết'}
               value={contactValue.addressContact}
@@ -590,4 +655,10 @@ const rootStyles = (theme: AppTheme) =>
       lineHeight: 24,
       color: Colors.white,
     } as TextStyle,
+    searchBar: {
+      backgroundColor: theme.colors.bg_neutral,
+      borderRadius: 10,
+      width: '90%',
+      marginLeft: 12,
+    } as ViewStyle,
   });

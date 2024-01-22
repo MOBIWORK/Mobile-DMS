@@ -72,7 +72,7 @@ export default {
   custom: 'Tùy chỉnh',
   selectDate: 'Chọn ngày',
   all: 'Tất cả',
-  company: 'Công ty',
+  Company: 'Công ty',
   individual: 'Cá nhân',
   loyal: 'Thân thiết',
   Sunday: 'CN',

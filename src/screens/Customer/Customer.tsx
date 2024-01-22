@@ -32,6 +32,8 @@ import {NavigationProp} from '../../navigation';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from '../../config/function';
+import { dispatch } from '../../utils/redux';
+import { customerActions } from '../../redux-store/customer-reducer/reducer';
 
 
 export type IValueType = {
@@ -80,7 +82,9 @@ const Customer = () => {
   };
   // const customer = useSelector(state => state.app.newCustomer);
 
-  useEffect(() =>{},[])
+  useEffect(() =>{
+    dispatch(customerActions.onGetCustomer())
+  },[])
 
 
   const renderBottomView = () => {
