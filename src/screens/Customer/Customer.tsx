@@ -8,7 +8,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, {useRef, useMemo} from 'react';
+import React, {useRef, useMemo, useEffect} from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -32,8 +32,7 @@ import {NavigationProp} from '../../navigation';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from '../../config/function';
-import {appActions} from '../../redux-store/app-reducer/reducer';
-import {dispatch} from '../../utils/redux';
+
 
 export type IValueType = {
   customerType: string;
@@ -61,25 +60,28 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
-  const showModal = useSelector(state => state.app.showModal);
   const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
   const snapPoints = useMemo(() => ['100%'], []);
+ const listCustomer = useSelector(state => state.customer.listCustomer)
+ console.log(listCustomer,'abbbb')
 
   const onPressType1 = () => {
-    setShow(prev => ({...prev, firstModal: !show.firstModal}));
     bottomRef.current?.snapToIndex(0);
-    // console.log(show.firstModal);
-    dispatch(appActions.setShowModal(true));
+    // dispatch(appActions.setShowModal(true))
+
   };
   const onPressType2 = () => {
-    setShow(prev => ({...prev, secondModal: !show.secondModal}));
     bottomRef2.current?.snapToIndex(0);
-    dispatch(appActions.setShowModal(true));
+    // dispatch(appActions.setShowModal(true))
+
   };
-  const customer = useSelector(state => state.app.newCustomer);
+  // const customer = useSelector(state => state.app.newCustomer);
+
+  useEffect(() =>{},[])
+
 
   const renderBottomView = () => {
     return (
@@ -183,19 +185,28 @@ const Customer = () => {
         </View>
 
         <Text style={styles.containCustomer}>
-          <Text style={styles.numberCustomer}>{customer?.length} </Text>
+          <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
           {getLabel('customer')}
         </Text>
-        <ListCard data={customer} />
+        <ListCard data={listCustomer} />
       </MainLayout>
+    
       <AppBottomSheet
         bottomSheetRef={bottomRef}
         useBottomSheetView={show.firstModal}
-        onChange={index =>
-          index === -1 &&
-          (setShow(prev => ({...prev, firstModal: false})),
-          dispatch(appActions.setShowModal(false)))
-        }
+        // onClose={() => dispatch(appActions.setShowModal(false))}
+        onAnimated={(index,toIndex) =>{
+          if((index != undefined && toIndex!= undefined )){
+              let cal = index -toIndex
+              if(cal > 0){
+                setShow(prev => ({...prev,firstModal: false}))
+              //  dispatch(appActions.setShowModal(false))
+              }else{
+               setShow(prev => ({...prev, firstModal: true}))
+              //  dispatch(appActions.setShowModal(true))
+              }
+          }
+        }}
         enablePanDownToClose={true}>
         <View>
           <View style={styles.tittleHeader}>
@@ -233,11 +244,22 @@ const Customer = () => {
         bottomSheetRef={bottomRef2}
         useBottomSheetView={show.secondModal}
         snapPointsCustom={snapPoints}
-        onChange={index =>
-          index === -1 &&
-          (setShow(prev => ({...prev, secondModal: false})),
-          dispatch(appActions.setShowModal(false)))
-        }
+        // onClose={() => dispatch(appActions.setShowModal(false)) }
+        onAnimated={(index,toIndex) =>{
+          if((index != undefined && toIndex!= undefined )){
+              let cal = index -toIndex
+              if(cal > 0){
+                setShow(prev => ({...prev, secondModal: false}))
+              //  dispatch(appActions.setShowModal(false))
+
+              
+              }else{
+               setShow(prev => ({...prev, secondModal: true}))
+              //  dispatch(appActions.setShowModal(true))
+              }
+          }
+        }}
+       
         enablePanDownToClose={true}>
         {renderBottomView()}
       </AppBottomSheet>
@@ -252,6 +274,7 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
+    
       <AppFAB
         icon="plus"
         style={styles.fab}

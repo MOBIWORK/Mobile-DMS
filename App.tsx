@@ -28,6 +28,7 @@ import codePush from 'react-native-code-push';
 import {store} from './src/redux-store/';
 import {isIos} from './src/config/function';
 import {AppModule} from './src/native-module';
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_START,
@@ -161,11 +162,14 @@ function App(): JSX.Element {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
+            <BottomSheetModalProvider>
+
             <AppNavigationContainer>
               <StatusBar backgroundColor={'#fff'} />
               <HandlingError />
               <SnackBar />
             </AppNavigationContainer>
+            </BottomSheetModalProvider>
           </GestureHandlerRootView>
           <HandlingLoading />
         </KeyboardAvoidingView>

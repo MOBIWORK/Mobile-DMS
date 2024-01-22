@@ -46,7 +46,7 @@ const ListVisit = () => {
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
-console.log(listCustomer,'listCustomer')
+
 
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {

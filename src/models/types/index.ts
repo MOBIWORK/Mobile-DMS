@@ -274,7 +274,7 @@ export type IDataCustomer = {
   territory?: string;
   customer_birthday?: string | any;
   router_name?: string;
-  frequency?: any;
+  frequency?: any[];
   credit_limit?: number | any;
   customer_details: string;
   website: string;
@@ -518,4 +518,9 @@ export type BrandProduct = {
   name : string,
   brand :string,
   description : string | null
+}
+
+export type ListCustomerType = {
+    name:string,
+    customer_group_name:string
 }
