@@ -37,6 +37,7 @@ import {
   removeContactAddress,
 } from '../../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
+import { customerActions } from '../../../redux-store/customer-reducer/reducer';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -74,7 +75,8 @@ const FormAdding = (props: Props) => {
   });
   const [dataLocation, setDataLocation] = useState<string>('');
   const mainAddress = useSelector(state => state.app.mainAddress);
-  const mainContactAddress = useSelector(state => state.app.mainContactAddress);
+  const mainContactAddress = useSelector(state=>state.app.mainContactAddress);
+  
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
 
@@ -108,6 +110,7 @@ const FormAdding = (props: Props) => {
   };
 
   useLayoutEffect(() => {
+    dispatch(customerActions.onGetCustomerType())
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
         setLocation(res);

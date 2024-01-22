@@ -1,11 +1,10 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { ICustomer } from './data'
 import CardView from './CardView'
-import { IDataItem } from '../../../models/types'
+import { IDataCustomer } from '../../../models/types'
 
 type Props = {
-    data:IDataItem[]
+    data:IDataCustomer[]
 }
 
 const ListCard = (props: Props) => {

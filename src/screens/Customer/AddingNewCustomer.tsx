@@ -6,7 +6,7 @@ import {
   TextStyle,
   TouchableOpacity,
 } from 'react-native';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {useNavigation} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -32,9 +32,10 @@ import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
 import {useSelector} from '../../config/function';
-import {setNewCustomer} from '../../redux-store/app-reducer/reducer';
+import {appActions, setNewCustomer} from '../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { customerActions } from '../../redux-store/customer-reducer/reducer';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -138,6 +139,13 @@ const AddingNewCustomer = () => {
     },
     [setOpenDate, setDate],
   );
+
+
+  useEffect(() =>{
+    dispatch(customerActions.onGetCustomerType())
+    dispatch(appActions.onGetListCity())
+  },[])
+
 
   return (
     <MainLayout>

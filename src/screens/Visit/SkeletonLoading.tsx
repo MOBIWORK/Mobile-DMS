@@ -169,7 +169,7 @@ export const styleLoading = (theme: AppTheme) =>
       backgroundColor: theme.colors.bg_neutral,
     } as ViewStyle,
     root: {
-      flex: 1,
+      // flex: 1,
       backgroundColor: theme.colors.white,
     } as ViewStyle,
     containTitle: {

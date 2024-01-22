@@ -3,11 +3,12 @@ import * as Actions from './type';
 import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
 import {VisitListItemType} from '../../models/types';
+import {CheckinData} from '../../services/appService';
 
 const initialAppState: IAppRedux = {
   error: undefined,
   isProcessing: false,
-  showModal: true,
+  showModal: false,
   searchProductValue: '',
   searchVisitValue: '',
   theme: 'default',
@@ -18,6 +19,11 @@ const initialAppState: IAppRedux = {
   loadingApp: false,
   currentLocation: {},
   systemConfig: {},
+  listDataCity:{
+    city:[],
+    district:[],
+    ward:[]
+  }
 };
 
 const appSlice = createSlice({
@@ -87,44 +93,54 @@ const appSlice = createSlice({
     setSystemConfig: (state, action: PayloadAction<any>) => {
       state.systemConfig = action.payload;
     },
+    setDataCity:(state,action:PayloadAction<any>) =>{
+      state.listDataCity.city = action.payload
+    },
+    setDataDistrict:(state,action:PayloadAction<any>) =>{
+      state.listDataCity.district = action.payload
+    },
+    setDataWard:(state,action:PayloadAction<any>) =>{
+      state.listDataCity.ward = action.payload
+    },
   },
 });
 
-const onCheckIn = createAction(
-  Actions.CHECKIN,
-  ({
-    label,
-    useName,
-    address,
-    distance,
-    status,
-    phone_number,
-    lat,
-    long,
-  }: VisitListItemType) => ({
-    payload: {
-      label,
-      long,
-      lat,
-      status,
-      address,
-      useName,
-      distance,
-      phone_number,
-    },
-  }),
-);
+const onCheckIn = createAction(Actions.CHECKIN, (data: CheckinData) => ({
+  payload: data,
+}));
 
 const onGetSystemConfig = createAction(
   Actions.GET_SYSTEM_CONFIG,
   (data?: any) => ({payload: data}),
 );
 
+const onGetListTerritory = createAction(
+  Actions.GET_LIST_TERRITORY,
+    (data?:any) => ({payload:data})
+)
+
+const onGetListCity = createAction(
+  Actions.GET_LIST_CITY,(data?:any) => ({payload:data})
+)
+const onGetListDistrict = createAction(
+  Actions.GET_LIST_DISTRICT,(ma_tinh_thanh:any) =>({payload:ma_tinh_thanh})
+)
+const onGetListWard = createAction(Actions.GET_LIST_WARD,(ma_quan_huyen:any) =>({payload:ma_quan_huyen}))
+
+
 export const appActions = {
   ...appSlice.actions,
   onCheckIn,
   onGetSystemConfig,
+  onGetListTerritory,
+  onGetListCity,
+  onGetListDistrict,
+  onGetListWard
 };
+
+
+
+
 
 export const appReducer = appSlice.reducer;
 export const {

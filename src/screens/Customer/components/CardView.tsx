@@ -15,10 +15,10 @@ import {useTheme, AppTheme} from '../../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
-import {IDataItem} from '../../../models/types';
+import {IDataCustomer, IDataItem} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
 
-const CardView = (props: IDataItem) => {
+const CardView = (props: IDataCustomer) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
@@ -32,7 +32,7 @@ const CardView = (props: IDataItem) => {
           justifyContent="space-between"
           alignItems="center">
           <Block block>
-            <Text style={styles.textName}>{props.nameCompany}</Text>
+            <Text style={styles.textName}>{props.customer_name}</Text>
             <Text style={styles.textName}>KH-1234</Text>
           </Block>
 
@@ -61,7 +61,7 @@ const CardView = (props: IDataItem) => {
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconType'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props?.type}</Text>
+          <Text style={styles.contentText}>{props?.customer_type}</Text>
         </View>
       </View>
     </TouchableOpacity>

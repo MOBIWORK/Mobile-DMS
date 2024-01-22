@@ -28,6 +28,8 @@ import codePush from 'react-native-code-push';
 import {store} from './src/redux-store/';
 import {isIos} from './src/config/function';
 import {AppModule} from './src/native-module';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import {PortalProvider} from './src/components/common/portal';
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_START,
@@ -42,7 +44,6 @@ if (!isIos) {
 function App(): JSX.Element {
   useEffect(() => {
     LogBox.ignoreAllLogs();
-
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => true,
@@ -149,6 +150,8 @@ function App(): JSX.Element {
 
   // Alert.alert(updateMessage)
 
+  // Alert.alert(updateMessage)
+
   return (
     <SafeAreaProvider>
       <Provider store={store}>
@@ -157,11 +160,13 @@ function App(): JSX.Element {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
-            <AppNavigationContainer>
-              <StatusBar backgroundColor={'#fff'} />
-              <HandlingError />
-              <SnackBar />
-            </AppNavigationContainer>
+              <PortalProvider>
+                <AppNavigationContainer>
+                  <StatusBar backgroundColor={'#fff'} />
+                  <HandlingError />
+                  <SnackBar />
+                </AppNavigationContainer>
+              </PortalProvider>
           </GestureHandlerRootView>
           <HandlingLoading />
         </KeyboardAvoidingView>

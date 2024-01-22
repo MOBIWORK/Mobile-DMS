@@ -56,7 +56,9 @@ export default {
   contactName: 'Người liên hệ',
   location: 'Vị trí',
   dob: 'Sinh nhật',
-  haveError: 'Đã có lỗi xảy ra, hãy thử lại sau',
+  error: {
+    haveError: 'Đã có lỗi xảy ra, hãy thử lại sau',
+  },
   infor: 'Thông tin tài khoản',
   language: 'Ngôn ngữ',
   accountSetting: 'Cài đặt tài khoản',

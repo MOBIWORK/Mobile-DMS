@@ -6,7 +6,8 @@ import BottomSheet, {
 import {useTheme} from '@react-navigation/native';
 import {View} from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { Portal } from './portal';
+
 const AppBottomSheet: FC<AppBottomSheetProps> = ({
   bottomSheetRef,
   snapPointsCustom,
@@ -19,6 +20,8 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   backgroundColor,
   handleHeight,
   onChange,
+  index=-1,
+  onAnimated,
   ...otherProps
 
 }) => {
@@ -37,6 +40,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
     [],
   );
   return (
+  <Portal hostName={'Bottom-Sheet'}>
     <BottomSheet
       snapPoints={snapPointsCustom ?? snapPoints}
       onClose={onClose}
@@ -44,6 +48,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       contentHeight={contentHeight}
       handleHeight={handleHeight}
       onChange={onChange}
+      onAnimate={onAnimated}
       handleIndicatorStyle={{
         backgroundColor: backgroundColor ?? colors.bg_default,
       }}
@@ -60,7 +65,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
       enableContentPanningGesture={true}
 
       enableOverDrag={false}
-      index={-1}
+      index={index}
       style={{
         // backgroundColor: 'transparent',
         shadowColor: '#000',
@@ -93,6 +98,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         </View>
       )}
     </BottomSheet>
+    </Portal>
   );
 };
 
@@ -108,7 +114,9 @@ interface AppBottomSheetProps {
   backgroundColor?: any;
   onChange?:(index:number) => void,
   contentHeight?:number | SharedValue<number>,
-  handleHeight?:number | SharedValue<number>
+  handleHeight?:number | SharedValue<number>,
+  index?:number,
+  onAnimated?:(fromIndex?:number,toIndex?:number) => void
 }
 
 export default AppBottomSheet;

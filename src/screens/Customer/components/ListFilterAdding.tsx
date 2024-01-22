@@ -1,20 +1,14 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  TextStyle,
-  ViewStyle,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, TextStyle, ViewStyle} from 'react-native';
 import React, {useCallback} from 'react';
-import {AppIcons} from '../../../components/common';
+import {AppIcons, Block, AppText as Text} from '../../../components/common';
 import {AppConstant} from '../../../const';
 
 import {listBirthDayType, listFilterType, listFrequencyType} from './data';
 import {IValueType} from '../Customer';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
-import {IDataCustomer} from '../../../models/types';
+import {IDataCustomer, ListCustomerType} from '../../../models/types';
+import {useSelector} from '../../../config/function';
 
 type Props = {
   type: string;
@@ -29,15 +23,19 @@ const ListFilterAdding = (props: Props) => {
   const {type, filterRef, setValueFilter, valueFilter, setData, data} = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const customerType:ListCustomerType[] = useSelector(state => state.customer.listCustomerType);
 
+  
   const handlePress = useCallback(
     (item: any) => {
       setData(prev => {
-        const updatedFrequency = prev.frequency.includes(item.title)
-          ? prev.frequency.filter(
+        const isItemInFrequency = prev?.frequency?.includes(item.title);
+        // If item is not in the frequency array, add it; otherwise, remove it
+        const updatedFrequency = isItemInFrequency
+          ? prev?.frequency?.filter(
               (selectedItem: any) => selectedItem !== item.title,
             )
-          : [...prev.frequency, item.title];
+          : [...(prev?.frequency || []), item.title];
 
         return {
           ...prev,
@@ -50,16 +48,16 @@ const ListFilterAdding = (props: Props) => {
         customerGroupType: item.title,
       }));
 
-      filterRef?.current?.close();
+      // filterRef?.current?.close();
     },
     [setData, setValueFilter, filterRef],
   );
 
   return (
-    <View>
+    <Block>
       {type === AppConstant.CustomerFilterType.ngay_sinh_nhat ? (
-        <View>
-          <View style={styles.headerBottomSheet}>
+        <Block>
+          <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
@@ -73,7 +71,7 @@ const ListFilterAdding = (props: Props) => {
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Ngày sinh nhật </Text>
-          </View>
+          </Block>
           {listBirthDayType.map((item: any) => {
             return (
               <TouchableOpacity
@@ -104,10 +102,10 @@ const ListFilterAdding = (props: Props) => {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </Block>
       ) : type === AppConstant.CustomerFilterType.loai_khach_hang ? (
-        <View>
-          <View style={styles.headerBottomSheet}>
+        <Block>
+          <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
@@ -121,7 +119,7 @@ const ListFilterAdding = (props: Props) => {
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Loại khách hàng</Text>
-          </View>
+          </Block>
           {listFilterType.map((item: any) => {
             return (
               <TouchableOpacity
@@ -153,10 +151,10 @@ const ListFilterAdding = (props: Props) => {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </Block>
       ) : type === AppConstant.CustomerFilterType.nhom_khach_hang ? (
-        <View>
-          <View style={styles.headerBottomSheet}>
+        <Block>
+          <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
@@ -170,8 +168,8 @@ const ListFilterAdding = (props: Props) => {
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Nhóm khách hàng</Text>
-          </View>
-          {listFilterType.map((item: any) => {
+          </Block>
+          {(customerType && customerType.length>0) &&  customerType?.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
@@ -198,10 +196,10 @@ const ListFilterAdding = (props: Props) => {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </Block>
       ) : type === AppConstant.CustomerFilterType.khu_vuc ? (
-        <View>
-          <View style={styles.headerBottomSheet}>
+        <Block>
+          <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
@@ -215,7 +213,7 @@ const ListFilterAdding = (props: Props) => {
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Khu vực</Text>
-          </View>
+          </Block>
           {listFilterType.map((item: any) => {
             return (
               <TouchableOpacity
@@ -243,10 +241,10 @@ const ListFilterAdding = (props: Props) => {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </Block>
       ) : type === AppConstant.CustomerFilterType.tan_suat ? (
-        <View>
-          <View style={styles.headerBottomSheet}>
+        <Block>
+          <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
               onPress={() => {
                 filterRef.current?.close();
@@ -260,16 +258,14 @@ const ListFilterAdding = (props: Props) => {
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>Tần suất</Text>
-          </View>
+          </Block>
           {listFrequencyType.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() => handlePress(item)}>
-                <Text style={styles.itemText(item.title, data.frequency!)}>
-                  {item.title}
-                </Text>
+                <Text style={{}}>{item.title}</Text>
                 {data.frequency && data.frequency.includes(item.title) && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
@@ -281,9 +277,9 @@ const ListFilterAdding = (props: Props) => {
               </TouchableOpacity>
             );
           })}
-        </View>
+        </Block>
       ) : null}
-    </View>
+    </Block>
   );
 };
 

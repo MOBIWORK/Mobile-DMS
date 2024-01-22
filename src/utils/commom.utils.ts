@@ -1,6 +1,5 @@
 import { MMKV } from 'react-native-mmkv';
 import {
-  
   Dimensions,
   InteractionManager,
   Keyboard,
@@ -12,10 +11,11 @@ import NetInfo from '@react-native-community/netinfo';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { AppConstant } from '../const';
 import * as Location from 'expo-location';
-import { LocationAccuracy } from 'expo-location';
+import {LocationAccuracy} from 'expo-location';
 import { dispatch } from './redux';
 import { appActions } from '../redux-store/app-reducer/reducer';
 import { AppTheme } from '../layouts/theme';
+
 
 export const storage = new MMKV();
 
@@ -420,7 +420,6 @@ const { width, height } = Dimensions.get('window');
 const [shortDimension] = width < height ? [width, height] : [height, width];
 export const sizeScale = (size: number, factor = 0.5) =>
   size + (scale(size) - size) * factor;
-
 
 export const enhance = <T>(arrStyle: Array<T>) => {
   return StyleSheet.flatten<T>(arrStyle);

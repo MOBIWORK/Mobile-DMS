@@ -92,5 +92,6 @@ export {
   NewCustomer,
   ReportDebt,
   KPI,
+  UpdateScreen,
   SearchSreen
 };
