@@ -1,5 +1,9 @@
-import React, {FC,  useLayoutEffect, useRef, useState} from 'react';
-import {AppHeader, FilterView} from '../../../components/common';
+import React, {FC, useLayoutEffect, useRef, useState} from 'react';
+import {
+  AppBottomSheet,
+  AppHeader,
+  FilterView,
+} from '../../../components/common';
 import {
   FlatList,
   Image,
@@ -23,10 +27,14 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
-import { useSelector } from '../../../config/function';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-import { customerActions } from '../../../redux-store/customer-reducer/reducer';
+import {useSelector} from '../../../config/function';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import FilterListComponent, {
+  IFilterType,
+} from '../../../components/common/FilterListComponent';
+import {useTranslation} from 'react-i18next';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -34,20 +42,38 @@ Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 const ListVisit = () => {
   const {colors} = useTheme();
   const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
 
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const distanceRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
-  const listCustomer = useSelector(state => state.customer.listCustomer)
-  const appLoading = useSelector(state => state.app.loadingApp)
+  const listCustomer = useSelector(state => state.customer.listCustomer);
+  const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
+  const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
+    getLabel('nearest'),
+  );
+  const [distanceFilterData, setDistanceFilterData] = useState<IFilterType[]>(
+    AppConstant.DistanceFilterData,
+  );
 
-
+  const handleItemDistanceFilter = (itemData: IFilterType) => {
+    setDistanceFilterValue(getLabel(itemData.label));
+    const newData = distanceFilterData.map(item => {
+      if (itemData.value === item.value) {
+        return {...item, isSelected: true};
+      } else {
+        return {...item, isSelected: false};
+      }
+    });
+    setDistanceFilterData(newData);
+  };
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
     return (
@@ -73,7 +99,6 @@ const ListVisit = () => {
     );
   };
 
-// console.log(listCustomer,'a')
   const _renderHeader = () => {
     return (
       <View style={{paddingHorizontal: 16}}>
@@ -115,7 +140,10 @@ const ListVisit = () => {
             justifyContent: 'flex-start',
             marginTop: 16,
           }}>
-          <View
+          <TouchableOpacity
+            onPress={() =>
+              distanceRef.current && distanceRef.current.snapToIndex(0)
+            }
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -126,11 +154,13 @@ const ListVisit = () => {
               borderColor: colors.border,
               maxWidth: 180,
             }}>
-            <Text style={{color: colors.text_secondary}}>Khoảng cách:</Text>
-            <Text style={{color: colors.text_primary, marginLeft: 8}}>
-              Gần nhất
+            <Text style={{color: colors.text_secondary}}>
+              {getLabel('distance')}:
             </Text>
-          </View>
+            <Text style={{color: colors.text_primary, marginLeft: 8}}>
+              {distanceFilterValue}
+            </Text>
+          </TouchableOpacity>
           <FilterView
             style={{marginLeft: 12}}
             onPress={() =>
@@ -214,10 +244,10 @@ const ListVisit = () => {
 
   useLayoutEffect(() => {
     // setLoading(true);
-    dispatch(customerActions.onGetCustomer())
-    
-    if (Object.keys(systemConfig).length > 0) return;
-    else {
+    dispatch(customerActions.onGetCustomer());
+    if (Object.keys(systemConfig).length > 0) {
+      return;
+    } else {
       dispatch(appActions.onGetSystemConfig());
     }
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
@@ -231,10 +261,19 @@ const ListVisit = () => {
     <SafeAreaView
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
-      {/* <SkeletonLoading loading={true}  /> */}
-      {appLoading ? <SkeletonLoading loading={appLoading!} /> : _renderContent()}
-
+      {appLoading ? (
+        <SkeletonLoading loading={appLoading!} />
+      ) : (
+        _renderContent()
+      )}
       <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
+      <AppBottomSheet bottomSheetRef={distanceRef}>
+        <FilterListComponent
+          title={getLabel('distance')}
+          data={distanceFilterData}
+          handleItem={handleItemDistanceFilter}
+        />
+      </AppBottomSheet>
     </SafeAreaView>
   );
 };

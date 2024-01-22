@@ -33,7 +33,6 @@ import {AppTheme, useTheme} from '../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from '../../config/function';
 
-
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -65,29 +64,22 @@ const Customer = () => {
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
   const snapPoints = useMemo(() => ['100%'], []);
- const listCustomer = useSelector(state => state.customer.listCustomer)
- console.log(listCustomer,'abbbb')
+  const listCustomer = useSelector(state => state.customer.listCustomer);
 
   const onPressType1 = () => {
     bottomRef.current?.snapToIndex(0);
-    // dispatch(appActions.setShowModal(true))
-
   };
   const onPressType2 = () => {
     bottomRef2.current?.snapToIndex(0);
-    // dispatch(appActions.setShowModal(true))
-
   };
-  // const customer = useSelector(state => state.app.newCustomer);
 
-  useEffect(() =>{},[])
-
+  useEffect(() => {}, []);
 
   const renderBottomView = () => {
     return (
-      <MainLayout>
+      <MainLayout style={{paddingTop: 16}}>
         <AppHeader
-          label={'Khách hàng'}
+          label={getLabel('customer')}
           onBack={() => bottomRef2.current && bottomRef2.current.close()}
           backButtonIcon={
             <AppIcons
@@ -190,21 +182,18 @@ const Customer = () => {
         </Text>
         <ListCard data={listCustomer} />
       </MainLayout>
-    
+
       <AppBottomSheet
         bottomSheetRef={bottomRef}
         useBottomSheetView={show.firstModal}
-        // onClose={() => dispatch(appActions.setShowModal(false))}
-        onAnimated={(index,toIndex) =>{
-          if((index != undefined && toIndex!= undefined )){
-              let cal = index -toIndex
-              if(cal > 0){
-                setShow(prev => ({...prev,firstModal: false}))
-              //  dispatch(appActions.setShowModal(false))
-              }else{
-               setShow(prev => ({...prev, firstModal: true}))
-              //  dispatch(appActions.setShowModal(true))
-              }
+        onAnimated={(index, toIndex) => {
+          if (index !== undefined && toIndex !== undefined) {
+            let cal = index - toIndex;
+            if (cal > 0) {
+              setShow(prev => ({...prev, firstModal: false}));
+            } else {
+              setShow(prev => ({...prev, firstModal: true}));
+            }
           }
         }}
         enablePanDownToClose={true}>
@@ -218,7 +207,6 @@ const Customer = () => {
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() =>
-                  // console.log(item,'item')
                   setValue(prev => ({
                     ...prev,
                     first: item.title,
@@ -244,22 +232,16 @@ const Customer = () => {
         bottomSheetRef={bottomRef2}
         useBottomSheetView={show.secondModal}
         snapPointsCustom={snapPoints}
-        // onClose={() => dispatch(appActions.setShowModal(false)) }
-        onAnimated={(index,toIndex) =>{
-          if((index != undefined && toIndex!= undefined )){
-              let cal = index -toIndex
-              if(cal > 0){
-                setShow(prev => ({...prev, secondModal: false}))
-              //  dispatch(appActions.setShowModal(false))
-
-              
-              }else{
-               setShow(prev => ({...prev, secondModal: true}))
-              //  dispatch(appActions.setShowModal(true))
-              }
+        onAnimated={(index, toIndex) => {
+          if (index !== undefined && toIndex !== undefined) {
+            let cal = index - toIndex;
+            if (cal > 0) {
+              setShow(prev => ({...prev, secondModal: false}));
+            } else {
+              setShow(prev => ({...prev, secondModal: true}));
+            }
           }
         }}
-       
         enablePanDownToClose={true}>
         {renderBottomView()}
       </AppBottomSheet>
@@ -274,7 +256,7 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-    
+
       <AppFAB
         icon="plus"
         style={styles.fab}

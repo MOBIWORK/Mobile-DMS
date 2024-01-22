@@ -1,4 +1,4 @@
-import React, { FC, createRef } from 'react';
+import React, {FC, createRef} from 'react';
 import type {
   NavigationAction,
   NavigationContainerRef,
@@ -10,9 +10,9 @@ import {
   StackActions,
   NavigatorScreenParams,
 } from '@react-navigation/native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AppConstant, ScreenConstant } from '../const';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {AppConstant, ScreenConstant} from '../const';
 
 import {
   IDataCustomer,
@@ -66,26 +66,24 @@ import {
   SearchSreen,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
-import { MyAppTheme } from '../layouts/theme';
+import {MyAppTheme} from '../layouts/theme';
 
 // import { MAIN_TAB } from '../const/screen.const';
 
-import MainTab, { TabParamList } from './MainTab';
+import MainTab, {TabParamList} from './MainTab';
 import linking from '../utils/linking.utils';
-import { useSelector } from '../config/function';
-import { RXStore } from '../utils/redux';
-
-import {MAIN_TAB} from '../const/screen.const';
-import { CommonUtils } from '../utils';
-import { PortalHost } from '../components/common/portal';
+import {useSelector} from '../config/function';
+import {RXStore} from '../utils/redux';
+import {CommonUtils} from '../utils';
+import {PortalHost} from '../components/common/portal';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const theme = useSelector(state => state.app.theme);
-      
-  const validate =  CommonUtils.storage.getString(AppConstant.Api_key);
+
+  const validate = CommonUtils.storage.getString(AppConstant.Api_key);
 
   // const [organiztion] = useMMKVObject<IResOrganization>(
   //   AppConstant.Organization,
@@ -108,19 +106,17 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       theme={MyAppTheme[theme]}
       linking={linking}
       ref={navigationRef}>
-
       <Stack.Navigator
-        initialRouteName={  validate ? ScreenConstant.MAIN_TAB : ScreenConstant.SELECT_ORGANIZATION}
+        initialRouteName={
+          validate
+            ? ScreenConstant.MAIN_TAB
+            : ScreenConstant.SELECT_ORGANIZATION
+        }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}>
-        {/* <Stack.Screen
-          name={ScreenConstant.CHECKIN_INVENTORY}
-          component={Inventory}
-        /> */}
-        {/* <Stack.Screen name={ScreenConstant.DROP_DRAG} component={DropDrag} /> */}
         <Stack.Screen
           name={ScreenConstant.SELECT_ORGANIZATION}
           component={SelectOrganization}
@@ -140,7 +136,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         {/* <Stack.Screen
         name={ScreenConstant.UPDATE_SCREEN}
         component={UpdateScreen}
-        
+
         /> */}
         <Stack.Screen
           name={ScreenConstant.FORGOT_PASSWORD}
@@ -259,12 +255,14 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.TRAVEL_DIARY}
           component={TravelDiary}
         />
-        <Stack.Screen name={ScreenConstant.SEARCH_COMMON_SCREEN} component={SearchSreen} />
+        <Stack.Screen
+          name={ScreenConstant.SEARCH_COMMON_SCREEN}
+          component={SearchSreen}
+        />
       </Stack.Navigator>
       {children}
       <RXStore />
-      <PortalHost  name={'Bottom-Sheet'}  />
-
+      <PortalHost name={'Bottom-Sheet'} />
     </NavigationContainer>
   );
 };
@@ -276,8 +274,8 @@ interface AppNavigationContainerProps {
 export default AppNavigationContainer;
 
 export type RootStackParamList = {
-  [ScreenConstant.SIGN_IN]: { organizationName?: string };
-  [ScreenConstant.SELECT_ORGANIZATION]: { data?: string };
+  [ScreenConstant.SIGN_IN]: {organizationName?: string};
+  [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
   [ScreenConstant.HOME_SCREEN]: undefined;
@@ -287,9 +285,9 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
   [ScreenConstant.PRODUCT_DETAIL]: {item: IProduct};
-  [ScreenConstant.IMAGE_VIEW]: { data: any };
+  [ScreenConstant.IMAGE_VIEW]: {data: any};
   [ScreenConstant.ORDER_SCREEN]: undefined;
-  [ScreenConstant.ORDER_DETAIL_SCREEN]: {name : string};
+  [ScreenConstant.ORDER_DETAIL_SCREEN]: {name: string};
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
@@ -297,13 +295,13 @@ export type RootStackParamList = {
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_INVENTORY]: undefined;
   [ScreenConstant.INVENTORY_ADD_PRODUCT]: undefined;
-  [ScreenConstant.CHECKIN_ORDER]: { type: string };
-  [ScreenConstant.CHECKIN_ORDER_CREATE]: { type: string };
+  [ScreenConstant.CHECKIN_ORDER]: {type: string};
+  [ScreenConstant.CHECKIN_ORDER_CREATE]: {type: string};
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: { data: IDataCustomer };
-  [ScreenConstant.VISIT_DETAIL]: { data: VisitListItemType };
-  [ScreenConstant.REPORT_ORDER_DETAIL]: { item: ReportOrderItemType };
+  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
+  [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
+  [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
@@ -311,11 +309,11 @@ export type RootStackParamList = {
   [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
-  [ScreenConstant.NOTE_DETAIL]: { data: ItemNoteVisitDetail };
+  [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: undefined;
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
-  [ScreenConstant.CHECKIN_ORDER]: { type: string };
+  [ScreenConstant.CHECKIN_ORDER]: {type: string};
   [ScreenConstant.REPORT_SCREEN]: undefined;
   [ScreenConstant.STATISTICAL]: undefined;
   [ScreenConstant.NON_ORDER_CUSTOMER]: undefined;
@@ -325,7 +323,7 @@ export type RootStackParamList = {
   [ScreenConstant.NEW_CUSTOMER]: undefined;
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;
-  [ScreenConstant.SEARCH_COMMON_SCREEN]: { type: string };
+  [ScreenConstant.SEARCH_COMMON_SCREEN]: {type: string};
 };
 
 // Define prop type for useNavigation and useRoute
@@ -341,8 +339,8 @@ export const navigationRef =
 export function navigate<RouteName extends keyof RootStackParamList>(
   ...arg: undefined extends RootStackParamList[RouteName]
     ?
-    | [screen: RouteName]
-    | [screen: RouteName, params?: RootStackParamList[RouteName]]
+        | [screen: RouteName]
+        | [screen: RouteName, params?: RootStackParamList[RouteName]]
     : [screen: RouteName, params?: RootStackParamList[RouteName]]
 ) {
   navigationRef.current?.navigate(
