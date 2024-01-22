@@ -1,4 +1,4 @@
-import React, { useEffect} from 'react';
+import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
 import {registerTranslation} from 'react-native-paper-dates';
 
@@ -28,7 +28,8 @@ import codePush from 'react-native-code-push';
 import {store} from './src/redux-store/';
 import {isIos} from './src/config/function';
 import {AppModule} from './src/native-module';
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import {PortalProvider} from './src/components/common/portal';
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_START,
@@ -41,9 +42,6 @@ if (!isIos) {
   }
 }
 function App(): JSX.Element {
-  
-
-  
   useEffect(() => {
     LogBox.ignoreAllLogs();
     const backHandler = BackHandler.addEventListener(
@@ -147,7 +145,7 @@ function App(): JSX.Element {
   //     // onHttp.remove();
   //   };
   // }, []);
-  
+
   // Alert.alert(updateMessage)
 
   // Alert.alert(updateMessage)
@@ -162,14 +160,13 @@ function App(): JSX.Element {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
-            <BottomSheetModalProvider>
-
-            <AppNavigationContainer>
-              <StatusBar backgroundColor={'#fff'} />
-              <HandlingError />
-              <SnackBar />
-            </AppNavigationContainer>
-            </BottomSheetModalProvider>
+              <PortalProvider>
+                <AppNavigationContainer>
+                  <StatusBar backgroundColor={'#fff'} />
+                  <HandlingError />
+                  <SnackBar />
+                </AppNavigationContainer>
+              </PortalProvider>
           </GestureHandlerRootView>
           <HandlingLoading />
         </KeyboardAvoidingView>

@@ -6,6 +6,7 @@ import BottomSheet, {
 import {useTheme} from '@react-navigation/native';
 import {View} from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
+import { Portal } from './portal';
 
 const AppBottomSheet: FC<AppBottomSheetProps> = ({
   bottomSheetRef,
@@ -39,6 +40,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
     [],
   );
   return (
+  <Portal hostName={'Bottom-Sheet'}>
     <BottomSheet
       snapPoints={snapPointsCustom ?? snapPoints}
       onClose={onClose}
@@ -96,6 +98,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         </View>
       )}
     </BottomSheet>
+    </Portal>
   );
 };
 

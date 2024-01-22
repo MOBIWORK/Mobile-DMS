@@ -77,6 +77,7 @@ import { RXStore } from '../utils/redux';
 
 import {MAIN_TAB} from '../const/screen.const';
 import { CommonUtils } from '../utils';
+import { PortalHost } from '../components/common/portal';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -262,6 +263,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       </Stack.Navigator>
       {children}
       <RXStore />
+      <PortalHost  name={'Bottom-Sheet'}  />
 
     </NavigationContainer>
   );
