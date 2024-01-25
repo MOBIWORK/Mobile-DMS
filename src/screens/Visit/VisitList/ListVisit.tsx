@@ -267,7 +267,7 @@ const ListVisit = () => {
   }, []);
   const getCustomer = async () => {
     await getCustomerVisit().then((res: any) => {
-      if (Object.keys(res?.result.data).length > 0) {
+      if (Object.keys(res?.result).length > 0) {
         dispatch(customerActions.setCustomerVisit(res.result.data));
       }
     });
@@ -275,11 +275,10 @@ const ListVisit = () => {
   useEffect(() => {
     mounted.current = true;
     getCustomer();
-    // console.log(dispatch(customerActions.onGetCustomerVisit('')),'aaaaa');
     return () => {
       mounted.current = false;
     };
-  }, [getCustomer]);
+  }, []);
 
   return (
     <SafeAreaView
