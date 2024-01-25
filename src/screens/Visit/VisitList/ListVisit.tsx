@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import {AppHeader, Block, FilterView} from '../../../components/common';
 import {
-  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -31,10 +30,11 @@ import BackgroundGeolocation, {
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {useSelector} from '../../../config/function';
-import {dispatch} from '../../../utils/redux';
+
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-
+import {dispatch} from '../../../utils/redux';
+import {getCustomerVisit} from '../../../services/appService';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
@@ -50,6 +50,7 @@ const ListVisit = () => {
   const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
+  const system = useSelector(state => state.app.systemConfig);
   const [error, setError] = useState<string>('');
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
@@ -256,19 +257,29 @@ const ListVisit = () => {
     else {
       dispatch(appActions.onGetSystemConfig());
     }
+    dispatch(customerActions.onGetCustomerVisit());
+
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
 
     // setLoading(false);
   }, []);
+  const getCustomer = async () => {
+    await getCustomerVisit().then((res: any) => {
+      if (Object.keys(res?.result.data).length > 0) {
+        dispatch(customerActions.setCustomerVisit(res.result.data));
+      }
+    });
+  };
   useEffect(() => {
     mounted.current = true;
-    dispatch(customerActions.onGetCustomerVisit());
+    getCustomer();
+    // console.log(dispatch(customerActions.onGetCustomerVisit('')),'aaaaa');
     return () => {
       mounted.current = false;
     };
-  }, []);
+  }, [getCustomer]);
 
   return (
     <SafeAreaView

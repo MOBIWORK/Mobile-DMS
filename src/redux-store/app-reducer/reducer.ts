@@ -2,7 +2,6 @@ import {createAction, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import * as Actions from './type';
 import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
-import {VisitListItemType} from '../../models/types';
 import {CheckinData} from '../../services/appService';
 
 const initialAppState: IAppRedux = {

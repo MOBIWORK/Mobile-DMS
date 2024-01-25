@@ -1,15 +1,14 @@
-import {loadString} from '../../utils/storage';
-import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
 import {all, call, put} from 'typed-redux-saga';
 import {showSnack} from '../../components/common';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {
   getCustomer,
-  getCustomerByName,
   getCustomerType,
   getCustomerVisit,
 } from '../../services/appService';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
+import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
+
 
 export type ResponseGenerator = {
   config?: any;
@@ -64,19 +63,16 @@ export function* onGetCustomerType(action: PayloadAction) {
     }
   }
 }
-export function* onGetCustomerVisit(action: PayloadAction) {
-  if (customerActions.onGetCustomerVisit.match(action)) {
-    try {
-      const response: ResponseGenerator = yield call(
-        getCustomerVisit,
-        action.payload,
-      );
-      if (Object.keys(response.result?.length > 0)) {
-        yield put(customerActions.setCustomerVisit(response.result.data));
-      }
-    } catch (err) {
-      console.error('error: ', err);
+export function* getCustomerVisitSaga() {
+  console.log('run')
+  try {
+    const response: ResponseGenerator = yield call(getCustomerVisit);
+    console.log(response,'response')
+    if (Object.keys(response.result?.length > 0)) {
+      yield put(customerActions.setCustomerVisit(response.result.data));
     }
+  } catch (err) {
+    console.error('error: ', err);
   }
 }
 
@@ -87,10 +83,9 @@ export function* onGetCustomerVisit(action: PayloadAction) {
 //         if(response.message != '' || response.message != undefined}{
 //           yield put(customerActions.setCustomer())
 //         }
-        
+
 //     }catch{
 
 //     }
 //   }
 // }
-
