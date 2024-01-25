@@ -1,5 +1,12 @@
-import React, {FC,  useCallback,  useLayoutEffect, useRef, useState} from 'react';
-import {AppHeader, FilterView} from '../../../components/common';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import {AppHeader, Block, FilterView} from '../../../components/common';
 import {
   FlatList,
   Image,
@@ -23,11 +30,10 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
-import { useSelector } from '../../../config/function';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-import { customerActions } from '../../../redux-store/customer-reducer/reducer';
-
+import {useSelector} from '../../../config/function';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -40,40 +46,40 @@ const ListVisit = () => {
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
-  const listCustomer = useSelector(state => state.customer.listCustomer)
-  const appLoading = useSelector(state => state.app.loadingApp)
+  const listCustomer = useSelector(state => state.customer.listCustomerVisit);
+  const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
-  const [error,setError] = useState<string>('')
+  const [error, setError] = useState<string>('');
+  const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
+  const backgroundErrorListener = useCallback((errorCode: number) => {
+    // Handle background location errors
+    switch (errorCode) {
+      case 0:
+        setError(
+          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+        );
+        break;
+      case 1:
+        setError('GPS đã bị tắt. Vui lòng bật lại.');
+        break;
+      default:
+        setError('Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại');
+    }
+  }, []);
 
-    const backgroundErrorListener = useCallback((errorCode: number) => {
-      // Handle background location errors
-      switch (errorCode) {
-        case 0:
-          setError(
-            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-          );
-          break;
-        case 1:
-          setError('GPS đã bị tắt. Vui lòng bật lại.');
-          break;
-        default:
-          setError(
-            'Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại',
-          );
-      }
-    }, []);
-
-
-const handleBackground = () =>{
-  BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3},(location) =>{
-    console.log('location: ',location)
-  },backgroundErrorListener)
-  
-}
+  const handleBackground = () => {
+    BackgroundGeolocation.getCurrentPosition(
+      {samples: 1, timeout: 3},
+      location => {
+        console.log('location: ', location);
+      },
+      backgroundErrorListener,
+    );
+  };
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
     return (
@@ -92,14 +98,14 @@ const handleBackground = () =>{
         <Image
           source={ImageAssets.MapPinFillIcon}
           style={{width: 32, height: 32}}
-          tintColor={item.status ? colors.success : colors.warning}
+          tintColor={item.is_checkin ? colors.success : colors.warning}
           resizeMode={'cover'}
         />
       </TouchableOpacity>
     );
   };
 
-// console.log(listCustomer,'a')
+  // console.log(listCustomer,'a')
   const _renderHeader = () => {
     return (
       <View style={{paddingHorizontal: 16}}>
@@ -176,12 +182,12 @@ const handleBackground = () =>{
             <Text style={{color: colors.text_secondary}}>
               Viếng thăm 3/10 khách hàng
             </Text>
-            <FlatList
+            {/* <FlatList
               style={{height: '90%'}}
               showsVerticalScrollIndicator={false}
               data={VisitListData}
               renderItem={({item}) => <VisitItem item={item} onPress={handleBackground}/>}
-            />
+            /> */}
           </View>
         ) : (
           <View style={styles.map as ViewStyle}>
@@ -202,15 +208,20 @@ const handleBackground = () =>{
                 animationDuration={500}
                 zoomLevel={12}
               />
-              {VisitListData.map((item, index) => {
+              {/* {VisitListData.map((item, index) => {
                 return (
-                  <Mapbox.MarkerView
-                    key={index}
-                    coordinate={[Number(item.long), Number(item.lat)]}>
-                    <MarkerItem item={item} index={index} />
-                  </Mapbox.MarkerView>
+                  <Block key={index}>
+                    <Text>
+
+                    </Text>
+                  </Block>
+                  // <Mapbox.MarkerView
+                  //   key={index}
+                  //   coordinate={[Number(item.customer_location_primary?.long!), Number(item.lat)]}>
+                  //   <MarkerItem item={item} index={index} />
+                  // </Mapbox.MarkerView>
                 );
-              })}
+              })} */}
               <Mapbox.UserLocation
                 visible={true}
                 animated
@@ -240,8 +251,7 @@ const handleBackground = () =>{
 
   useLayoutEffect(() => {
     // setLoading(true);
-    
-    
+
     if (Object.keys(systemConfig).length > 0) return;
     else {
       dispatch(appActions.onGetSystemConfig());
@@ -252,14 +262,24 @@ const handleBackground = () =>{
 
     // setLoading(false);
   }, []);
-  console.log(location,'location background')
+  useEffect(() => {
+    mounted.current = true;
+    dispatch(customerActions.onGetCustomerVisit());
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   return (
     <SafeAreaView
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
       {/* <SkeletonLoading loading={true}  /> */}
-      {appLoading ? <SkeletonLoading loading={appLoading!} /> : _renderContent()}
+      {appLoading ? (
+        <SkeletonLoading loading={appLoading!} />
+      ) : (
+        _renderContent()
+      )}
 
       <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
     </SafeAreaView>
@@ -280,48 +300,48 @@ const styles = StyleSheet.create({
   },
 });
 
-export const VisitListData: VisitListItemType[] = [
-  {
-    label: 'Nintendo',
-    useName: 'Chu Quýnh Anh',
-    status: true,
-    address: '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-    phone_number: '+84 667 435 265',
-    lat: 37.785839,
-    long: -122.4267,
-    distance: 1,
-  },
-  {
-    label: "McDonald's",
-    useName: 'Chu Quýnh Anh',
-    status: false,
-    address:
-      'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-    phone_number: '+84 234 234 456',
-    lat: 37.784839,
-    long: -122.4467,
-    distance: 1.5,
-  },
-  {
-    label: 'General Electric',
-    useName: 'Chu Quýnh Anh',
-    status: false,
-    address:
-      '495A Cách Mạng Tháng Tám, Phường 13, Quận 10, Thành phố Hồ Chí Minh',
-    phone_number: '+84 234 234 456',
-    lat: 37.785839,
-    long: -122.4667,
-    distance: 2,
-  },
-  {
-    label: "McDonald's",
-    useName: 'Chu Quýnh Anh',
-    status: false,
-    address:
-      'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-    phone_number: '+84 234 234 456',
-    lat: 37.789839,
-    long: -122.4667,
-    distance: 1.5,
-  },
-];
+// export const VisitListData: VisitListItemType[] = [
+//   {
+//     label: 'Nintendo',
+//     useName: 'Chu Quýnh Anh',
+//     status: true,
+//     address: '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
+//     phone_number: '+84 667 435 265',
+//     lat: 37.785839,
+//     long: -122.4267,
+//     distance: 1,
+//   },
+//   {
+//     label: "McDonald's",
+//     useName: 'Chu Quýnh Anh',
+//     status: false,
+//     address:
+//       'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
+//     phone_number: '+84 234 234 456',
+//     lat: 37.784839,
+//     long: -122.4467,
+//     distance: 1.5,
+//   },
+//   {
+//     label: 'General Electric',
+//     useName: 'Chu Quýnh Anh',
+//     status: false,
+//     address:
+//       '495A Cách Mạng Tháng Tám, Phường 13, Quận 10, Thành phố Hồ Chí Minh',
+//     phone_number: '+84 234 234 456',
+//     lat: 37.785839,
+//     long: -122.4667,
+//     distance: 2,
+//   },
+//   {
+//     customer_name: "McDonald's",
+//     useName: 'Chu Quýnh Anh',
+//     status: false,
+//     address:
+//       'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
+//     phone_number: '+84 234 234 456',
+//     lat: 37.789839,
+//     long: -122.4667,
+//     distance: 1.5,
+//   },
+// ];

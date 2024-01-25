@@ -117,14 +117,14 @@ export interface PlusCode {
   global_code: string;
 }
 export type VisitListItemType = {
-  label: string;
-  useName: string;
-  status: boolean;
-  address: string | null;
-  phone_number: string | null;
-  lat: number;
-  long: number;
-  distance: number;
+  name: string;
+  customer_primary_address: string;
+  customer_id: string;
+  customer_location_primary: string | null;
+  mobile_no: string | null;
+  customer_name: string;
+  birthday: string | null;
+  is_checkin: boolean;
 };
 
 

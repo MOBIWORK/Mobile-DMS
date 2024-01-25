@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useMemo} from 'react';
 import {VisitListItemType} from '../../../models/types';
 import {
   Image,
@@ -12,29 +12,46 @@ import {
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import { navigate} from '../../../navigation';
+import {navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-import { useDispatch } from 'react-redux';
-import {ErrorBoundary} from 'react-error-boundary'
+import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorBoundary';
+import {calculateDistance, useSelector} from '../../../config/function';
+import {shallowEqual} from 'react-redux';
 
+interface LocationProps {
+  long: number;
+  lat: number;
+}
 
-const VisitItem: FC<VisitItemProps> = ({item, handleClose,onPress}) => {
+const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
-  const theme = useTheme()
-  const dispatch = useDispatch()
-  
+  const theme = useTheme();
+  const currentLocation = useSelector(
+    state => state.app.currentLocation,
+    shallowEqual,
+  );
 
+  const distanceCal = useMemo(() => {
+    let location: LocationProps = JSON.parse(
+      item.customer_location_primary?.replace(/\\/g, '')!,
+    );
+    let distance = calculateDistance(
+      currentLocation.coords.latitude,
+      currentLocation.coords.longitude,
+      location.lat,
+      location.long,
+    );
 
-  const onPressCheckIn = (item:VisitListItemType) =>{
+    return distance;
+  }, [item,currentLocation]);
+
+  const onPressCheckIn = (item: VisitListItemType) => {
     // dispatch(appActions.onCheckIn(item));
     // dispatch(appActions.onSetAppTheme('default'))
-    navigate(ScreenConstant.CHECKIN,{item})
-  }
-
+    navigate(ScreenConstant.CHECKIN, {item});
+  };
 
   const statusItem = (status: boolean) => {
     return (
@@ -55,99 +72,98 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose,onPress}) => {
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
-    <Pressable
-      onPress={() =>
-        {navigate(ScreenConstant.VISIT_DETAIL, {data: item}),
-          onPress!()
-      }
-      }>
-      <View style={styles.viewContainer}>
-        <View style={styles.user}>
-          <View style={styles.userLeft}>
-            <Image
-              source={ImageAssets.UserGroupIcon}
-              style={{width: 24, height: 24}}
-              resizeMode={'cover'}
-              tintColor={item.status ? colors.success : colors.warning}
-            />
-            <Text style={styles.userTextLeft}>{item.label}</Text>
+      <Pressable
+        onPress={() => {
+          navigate(ScreenConstant.VISIT_DETAIL, {data: item}), onPress!();
+        }}>
+        <View style={styles.viewContainer}>
+          <View style={styles.user}>
+            <View style={styles.userLeft}>
+              <Image
+                source={ImageAssets.UserGroupIcon}
+                style={{width: 24, height: 24}}
+                resizeMode={'cover'}
+                tintColor={item.is_checkin ? colors.success : colors.warning}
+              />
+              <Text style={styles.userTextLeft}>{item.customer_name}</Text>
+            </View>
+            {statusItem(item.is_checkin)}
           </View>
-          {statusItem(item.status)}
-        </View>
-        <View style={styles.content}>
-          <Image
-            source={ImageAssets.MapPinIcon}
-            style={{width: 16, height: 16}}
-            resizeMode={'cover'}
-            tintColor={colors.text_primary}
-          />
-          <Text
-            style={{color: colors.text_primary, marginHorizontal: 8}}
-            numberOfLines={1}
-            ellipsizeMode={'tail'}>
-            {item.address}
-          </Text>
-        </View>
-        <View style={styles.content}>
-          <Image
-            source={ImageAssets.PhoneIcon}
-            style={{width: 16, height: 16}}
-            resizeMode={'cover'}
-            tintColor={colors.text_primary}
-          />
-          <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
-            {item.phone_number}
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.content,
-            {marginTop: 8, justifyContent: 'space-between'},
-          ]}>
-          <AppButton
-            onPress={() => onPressCheckIn(item)}
-            style={createStyleSheet(theme).button(item.status)}
-            label={'Checkin'}
-            styleLabel={{
-              color: !item.status ? colors.action : colors.text_disable,
-              fontWeight: '400',
-            }}
-          />
-          <TouchableOpacity
-            onPress={() => console.log('handle Map')}
-            style={styles.content}>
+          <View style={styles.content}>
             <Image
-              source={ImageAssets.SendIcon}
+              source={ImageAssets.MapPinIcon}
               style={{width: 16, height: 16}}
               resizeMode={'cover'}
-              tintColor={colors.action}
+              tintColor={colors.text_primary}
             />
             <Text
-              style={{color: colors.action, textDecorationLine: 'underline'}}>
-              {item.distance}km
+              style={{color: colors.text_primary, marginHorizontal: 8}}
+              numberOfLines={1}
+              ellipsizeMode={'tail'}>
+              {item.customer_primary_address}
             </Text>
-          </TouchableOpacity>
-        </View>
-        {handleClose && (
-          <TouchableOpacity
-            onPress={handleClose}
-            style={{position: 'absolute', top: -12, right: -12}}>
+          </View>
+          <View style={styles.content}>
             <Image
-              source={ImageAssets.CloseFameIcon}
-              style={{width: 32, height: 32}}
-              resizeMode={'contain'}
+              source={ImageAssets.PhoneIcon}
+              style={{width: 16, height: 16}}
+              resizeMode={'cover'}
+              tintColor={colors.text_primary}
             />
-          </TouchableOpacity>
-        )}
-      </View>
-    </Pressable>
+            <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
+              {item.mobile_no}
+            </Text>
+          </View>
+          <View
+            style={[
+              styles.content,
+              {marginTop: 8, justifyContent: 'space-between'},
+            ]}>
+            <AppButton
+              onPress={() => onPressCheckIn(item)}
+              disabled={item.is_checkin ? false : true}
+              style={createStyleSheet(theme).button(item.is_checkin)}
+              label={'Checkin'}
+              styleLabel={{
+                color: !item.is_checkin ? colors.action : colors.text_disable,
+                fontWeight: '400',
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => console.log('handle Map')}
+              style={styles.content}>
+              <Image
+                source={ImageAssets.SendIcon}
+                style={{width: 16, height: 16}}
+                resizeMode={'cover'}
+                tintColor={colors.action}
+              />
+              <Text
+                style={{color: colors.action, textDecorationLine: 'underline'}}>
+                {Math.floor(distanceCal)}km
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {handleClose && (
+            <TouchableOpacity
+              onPress={handleClose}
+              style={{position: 'absolute', top: -12, right: -12}}>
+              <Image
+                source={ImageAssets.CloseFameIcon}
+                style={{width: 32, height: 32}}
+                resizeMode={'contain'}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      </Pressable>
     </ErrorBoundary>
   );
 };
 interface VisitItemProps {
   item: VisitListItemType;
   handleClose?: () => void;
-  onPress?:() => void
+  onPress?: () => void;
 }
 
 export default VisitItem;
@@ -186,13 +202,14 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
     } as ViewStyle,
-    button:(itemStatus:boolean) =>({
-      backgroundColor: itemStatus
-      ? theme.colors.bg_neutral
-      : theme.colors.bg_default,
-    borderColor: !itemStatus ? theme.colors.action : undefined,
-    borderWidth: !itemStatus ? 1 : 0,
-    alignItems:'center',
-    justifyContent:'center'
-    }) as ViewStyle
+    button: (itemStatus: boolean) =>
+      ({
+        backgroundColor: itemStatus
+          ? theme.colors.bg_neutral
+          : theme.colors.bg_default,
+        borderColor: !itemStatus ? theme.colors.action : undefined,
+        borderWidth: !itemStatus ? 1 : 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+      } as ViewStyle),
   });
