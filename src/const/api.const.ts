@@ -55,3 +55,9 @@ export const GET_CUSTOMER_VISIT = '/api/method/mbw_dms.api.router.get_customer_r
 // Order
 export const GET_ORDER = URL_PREFIX +  ".api.selling.order.get_list_sales_order";
 export const GET_ORDER_DETAIL = URL_PREFIX +  ".api.selling.order.get_sale_order";
+
+
+//Address
+export const GET_LIST_CITY =  '/mbw_dms.api.location.list_province'
+export const GET_LIST_DISTRICT = '/mbw_dms.api.location.list_district?ma_tinh='
+export const GET_LIST_WARD = '/mbw_dms.api.location.list_ward?ma_quan_huyen='

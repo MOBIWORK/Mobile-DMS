@@ -8,7 +8,7 @@ import {IDataCustomer} from '../../../models/types';
 import CardAddress from '../../Customer/components/CardAddress';
 
 import InforView from '../component/InforView';
-import { useSelector } from '../../../config/function';
+import {useSelector} from '../../../config/function';
 
 type Props = {
   data: IDataCustomer;
@@ -17,7 +17,8 @@ type Props = {
 const Overview = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const mainAddress = useSelector(state => state.app.mainAddress);
+  
+
   return (
     <MainLayout style={styles.containLayout}>
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
@@ -27,17 +28,24 @@ const Overview = (props: Props) => {
           </AppText>
           <CardContactOverview data={props.data} />
         </View>
+        {props.data.address && Object.keys(props.data.address).length > 0 ? (
+          <View>
+            <AppText fontSize={14} fontWeight="500" lineHeight={21}>
+              Địa chỉ chính
+            </AppText>
+            <CardAddress type="address" mainAddress={props.data.address} />
+          </View>
+        ) : null}
+
         <View>
-          <AppText fontSize={14} fontWeight="500" lineHeight={21}>
-            Địa chỉ chính
+          <AppText
+            fontSize={14}
+            fontWeight="500"
+            lineHeight={21}
+            colorTheme="text_secondary">
+            Thông tin khách hàng
           </AppText>
-          <CardAddress type="address" mainAddress={mainAddress[0] as any} />
-        </View>
-        <View>
-          <AppText fontSize={14} fontWeight="500" lineHeight={21} colorTheme='text_secondary'>
-            Thông tin khách hàng 
-          </AppText>
-            <InforView  data={props.data} />
+          <InforView data={props.data} />
         </View>
       </ScrollView>
     </MainLayout>

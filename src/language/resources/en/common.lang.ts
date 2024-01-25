@@ -69,7 +69,7 @@ export default {
   custom: 'Custom',
   selectDate: 'Select date',
   all: 'All',
-  company: 'Company',
+  Company: 'Company',
   individual: 'Cá nhân',
   loyal: 'Loyal',
   Sunday: 'SUN',

@@ -282,9 +282,9 @@ const FormAdding = (props: Props) => {
       <AppInput
         label={translate('debtLimit')}
         value={
-          valueFilter.credit_limit
-            ? formatMoney(valueFilter.credit_limit)
-            : valueFilter.credit_limit
+          valueFilter.credit_limid[0]
+            ? formatMoney(valueFilter.credit_limid[0])
+            : valueFilter.credit_limid[0]
         }
         editable={true}
         isRequire={false}

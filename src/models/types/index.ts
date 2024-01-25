@@ -117,14 +117,14 @@ export interface PlusCode {
   global_code: string;
 }
 export type VisitListItemType = {
-  label: string;
-  useName: string;
-  status: boolean;
-  address: string | null;
-  phone_number: string | null;
-  lat: number;
-  long: number;
-  distance: number;
+  name: string;
+  customer_primary_address: string;
+  customer_id: string;
+  customer_location_primary: string | null;
+  mobile_no: string | null;
+  customer_name: string;
+  birthday: string | null;
+  is_checkin: boolean;
 };
 
 export interface RootObjectGeoDecoding {
@@ -270,20 +270,20 @@ export type IDataCustomer = {
   customer_birthday?: string | any;
   router_name?: string;
   frequency?: any[];
-  credit_limit?: number | any;
+  credit_limid?:  any;
   customer_details: string;
   website: string;
-  address: {
+  address?: {
     address: string;
     isSetAddressGet: boolean;
     isSetAddressTake: boolean;
   };
-  contact: {
+  contact?: {
     name: string;
-    address: string;
-    phoneNumber: string;
+    address_line1: string;
+    phone: string;
   };
-  imageSource: string;
+  image: string;
   description?:string
 };
 

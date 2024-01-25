@@ -13,19 +13,22 @@ import AppImage from '../../../components/common/AppImage';
 import {TextStyle} from 'react-native';
 import {useTheme, AppTheme} from '../../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp, navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
 import {IDataCustomer, IDataItem} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
+import { useTranslation } from 'react-i18next';
 
 const CardView = (props: IDataCustomer) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
+  const {t:translate} = useTranslation()
   // console.log(props);
+  console.log(props)
 
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={() => navigate(ScreenConstant.DETAIL_CUSTOMER,{data:props})}>
       <View style={styles.containContentView}>
         <Block
           direction="row"
@@ -33,7 +36,7 @@ const CardView = (props: IDataCustomer) => {
           alignItems="center">
           <Block block>
             <Text style={styles.textName}>{props.customer_name}</Text>
-            <Text style={styles.textName}>KH-1234</Text>
+            <Text style={styles.textName}>{props.customer_id}</Text>
           </Block>
 
           <View style={styles.containButton}>
@@ -57,11 +60,11 @@ const CardView = (props: IDataCustomer) => {
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconPhone'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props?.contact?.phoneNumber}</Text>
+          <Text style={styles.contentText}>{props?.contact?.phone}</Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconType'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props?.customer_type}</Text>
+          <Text style={styles.contentText}>{translate(props?.customer_type)}</Text>
         </View>
       </View>
     </TouchableOpacity>

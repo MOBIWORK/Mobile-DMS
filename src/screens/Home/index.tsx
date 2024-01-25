@@ -34,7 +34,6 @@ import ItemWidget from '../../components/Widget/ItemWidget';
 import {NavigationProp} from '../../navigation';
 import NotificationScreen from './Notification';
 import Mapbox from '@rnmapbox/maps';
-import {VisitListData} from '../Visit/VisitList/ListVisit';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
@@ -452,7 +451,7 @@ const HomeScreen = () => {
                 <AppAvatar name="Long" size={48} />
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}> Xin chào ,</Text>
-                  <Text style={[styles.userName]}>Khuất Thanh Long</Text>
+                  <Text style={[styles.userName]}>Trái Thanh Long</Text>
                 </View>
               </View>
               <View>
@@ -589,7 +588,7 @@ const HomeScreen = () => {
                         animationDuration={500}
                         zoomLevel={12}
                       />
-                      {VisitListData.map((item, index) => {
+                      {/* {VisitListData.map((item, index) => {
                         return (
                           <Mapbox.MarkerView
                             key={index}
@@ -601,7 +600,7 @@ const HomeScreen = () => {
                             />
                           </Mapbox.MarkerView>
                         );
-                      })}
+                      })} */}
                       <Mapbox.UserLocation
                         visible={true}
                         animated
