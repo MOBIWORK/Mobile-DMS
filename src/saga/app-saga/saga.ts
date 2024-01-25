@@ -4,12 +4,9 @@ import {
   appActions,
   onLoadApp,
   onLoadAppEnd,
-  setNewCustomer,
 } from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
 import {
-  getCustomer,
-  getCustomerType,
   getListCity,
   getListDistrict,
   getListWard,

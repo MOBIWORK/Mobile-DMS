@@ -1,12 +1,13 @@
-import React, {FC, useLayoutEffect, useRef, useState,   useCallback,
-  useEffect} from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import {AppHeader, Block, FilterView} from '../../../components/common';
 import {
-  AppBottomSheet,
-  AppHeader,
-  FilterView,
-} from '../../../components/common';
-import {
-  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -29,42 +30,32 @@ import BackgroundGeolocation, {
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {useSelector} from '../../../config/function';
-import {dispatch} from '../../../utils/redux';
+
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-import FilterListComponent, {
-  IFilterType,
-} from '../../../components/common/FilterListComponent';
-import {useTranslation} from 'react-i18next';
-
+import {dispatch} from '../../../utils/redux';
+import {getCustomerVisit} from '../../../services/appService';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const ListVisit = () => {
   const {colors} = useTheme();
   const {bottom} = useSafeAreaInsets();
-  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
 
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const distanceRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
   const listCustomer = useSelector(state => state.customer.listCustomerVisit);
   const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
+  const system = useSelector(state => state.app.systemConfig);
   const [error, setError] = useState<string>('');
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
-  const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
-    getLabel('nearest'),
-  );
-  const [distanceFilterData, setDistanceFilterData] = useState<IFilterType[]>(
-    AppConstant.DistanceFilterData,
-  );
   const backgroundErrorListener = useCallback((errorCode: number) => {
     // Handle background location errors
     switch (errorCode) {
@@ -81,17 +72,6 @@ const ListVisit = () => {
     }
   }, []);
 
-  const handleItemDistanceFilter = (itemData: IFilterType) => {
-    setDistanceFilterValue(getLabel(itemData.label));
-    const newData = distanceFilterData.map(item => {
-      if (itemData.value === item.value) {
-        return {...item, isSelected: true};
-      } else {
-        return {...item, isSelected: false};
-      }
-    });
-    setDistanceFilterData(newData);
-  };
   const handleBackground = () => {
     BackgroundGeolocation.getCurrentPosition(
       {samples: 1, timeout: 3},
@@ -126,6 +106,7 @@ const ListVisit = () => {
     );
   };
 
+  // console.log(listCustomer,'a')
   const _renderHeader = () => {
     return (
       <View style={{paddingHorizontal: 16}}>
@@ -167,10 +148,7 @@ const ListVisit = () => {
             justifyContent: 'flex-start',
             marginTop: 16,
           }}>
-          <TouchableOpacity
-            onPress={() =>
-              distanceRef.current && distanceRef.current.snapToIndex(0)
-            }
+          <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -181,13 +159,11 @@ const ListVisit = () => {
               borderColor: colors.border,
               maxWidth: 180,
             }}>
-            <Text style={{color: colors.text_secondary}}>
-              {getLabel('distance')}:
-            </Text>
+            <Text style={{color: colors.text_secondary}}>Khoảng cách:</Text>
             <Text style={{color: colors.text_primary, marginLeft: 8}}>
-              {distanceFilterValue}
+              Gần nhất
             </Text>
-          </TouchableOpacity>
+          </View>
           <FilterView
             style={{marginLeft: 12}}
             onPress={() =>
@@ -257,7 +233,7 @@ const ListVisit = () => {
                 <View
                   style={{
                     position: 'absolute',
-                    bottom: bottom + 70,
+                    bottom: bottom + 16,
                     left: 24,
                     right: 24,
                   }}>
@@ -281,19 +257,29 @@ const ListVisit = () => {
     else {
       dispatch(appActions.onGetSystemConfig());
     }
+    dispatch(customerActions.onGetCustomerVisit());
+
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
 
     // setLoading(false);
   }, []);
+  const getCustomer = async () => {
+    await getCustomerVisit().then((res: any) => {
+      if (Object.keys(res?.result.data).length > 0) {
+        dispatch(customerActions.setCustomerVisit(res.result.data));
+      }
+    });
+  };
   useEffect(() => {
     mounted.current = true;
-    dispatch(customerActions.onGetCustomerVisit());
+    getCustomer();
+    // console.log(dispatch(customerActions.onGetCustomerVisit('')),'aaaaa');
     return () => {
       mounted.current = false;
     };
-  }, []);
+  }, [getCustomer]);
 
   return (
     <SafeAreaView
@@ -307,13 +293,6 @@ const ListVisit = () => {
       )}
 
       <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
-      <AppBottomSheet bottomSheetRef={distanceRef}>
-        <FilterListComponent
-          title={getLabel('distance')}
-          data={distanceFilterData}
-          handleItem={handleItemDistanceFilter}
-        />
-      </AppBottomSheet>
     </SafeAreaView>
   );
 };

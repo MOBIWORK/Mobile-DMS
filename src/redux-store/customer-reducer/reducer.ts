@@ -1,7 +1,6 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice,PayloadAction, createAction} from '@reduxjs/toolkit';
 import {IProduct} from './type';
 import {SLICE_NAME} from '../app-reducer/type';
-import {PayloadAction, createAction} from '@reduxjs/toolkit';
 import * as Actions from '../app-reducer/type';
 
 const initialState: IProduct = {
@@ -48,6 +47,7 @@ const onGetCustomerType = createAction(
   Actions.GET_CUSTOMER_TYPE,
   (data?: any) => ({payload: data}),
 );
+export const customerReducer = customerSlice.reducer;
 export const customerActions = {
   ...customerSlice.actions,
   onGetCustomer,
@@ -56,4 +56,4 @@ export const customerActions = {
   onGetCustomerVisit,
 };
 
-export const customerReducer = customerSlice.reducer;
+
