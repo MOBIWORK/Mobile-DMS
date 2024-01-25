@@ -6,8 +6,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {AppHeader, Block, FilterView} from '../../../components/common';
+import {AppHeader, FilterView} from '../../../components/common';
 import {
+  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -183,12 +184,16 @@ const ListVisit = () => {
             <Text style={{color: colors.text_secondary}}>
               Viếng thăm 3/10 khách hàng
             </Text>
-            {/* <FlatList
-              style={{height: '90%'}}
-              showsVerticalScrollIndicator={false}
-              data={VisitListData}
-              renderItem={({item}) => <VisitItem item={item} onPress={handleBackground}/>}
-            /> */}
+            {listCustomer && (
+              <FlatList
+                style={{height: '90%'}}
+                showsVerticalScrollIndicator={false}
+                data={listCustomer}
+                renderItem={({item}) => (
+                  <VisitItem item={item} onPress={handleBackground} />
+                )}
+              />
+            )}
           </View>
         ) : (
           <View style={styles.map as ViewStyle}>
@@ -209,20 +214,19 @@ const ListVisit = () => {
                 animationDuration={500}
                 zoomLevel={12}
               />
-              {/* {VisitListData.map((item, index) => {
-                return (
-                  <Block key={index}>
-                    <Text>
-
-                    </Text>
-                  </Block>
-                  // <Mapbox.MarkerView
-                  //   key={index}
-                  //   coordinate={[Number(item.customer_location_primary?.long!), Number(item.lat)]}>
-                  //   <MarkerItem item={item} index={index} />
-                  // </Mapbox.MarkerView>
-                );
-              })} */}
+              {/*{listCustomer &&*/}
+              {/*  listCustomer.map((item, index) => {*/}
+              {/*    return (*/}
+              {/*      <Mapbox.MarkerView*/}
+              {/*        key={index}*/}
+              {/*        coordinate={[*/}
+              {/*          Number(item.customer_location_primary?.long!),*/}
+              {/*          Number(item.lat),*/}
+              {/*        ]}>*/}
+              {/*        <MarkerItem item={item} index={index} />*/}
+              {/*      </Mapbox.MarkerView>*/}
+              {/*    );*/}
+              {/*  })}*/}
               <Mapbox.UserLocation
                 visible={true}
                 animated
@@ -253,8 +257,9 @@ const ListVisit = () => {
   useLayoutEffect(() => {
     // setLoading(true);
 
-    if (Object.keys(systemConfig).length > 0) return;
-    else {
+    if (Object.keys(systemConfig).length > 0) {
+      return;
+    } else {
       dispatch(appActions.onGetSystemConfig());
     }
     dispatch(customerActions.onGetCustomerVisit());
@@ -265,21 +270,24 @@ const ListVisit = () => {
 
     // setLoading(false);
   }, []);
+
   const getCustomer = async () => {
     await getCustomerVisit().then((res: any) => {
       if (Object.keys(res?.result.data).length > 0) {
-        dispatch(customerActions.setCustomerVisit(res.result.data));
+        const data: VisitListItemType[] = res?.result.data;
+        const newData = data.filter(item => item.customer_location_primary);
+        dispatch(customerActions.setCustomerVisit(newData));
       }
     });
   };
+
   useEffect(() => {
     mounted.current = true;
     getCustomer();
-    // console.log(dispatch(customerActions.onGetCustomerVisit('')),'aaaaa');
     return () => {
       mounted.current = false;
     };
-  }, [getCustomer]);
+  }, []);
 
   return (
     <SafeAreaView

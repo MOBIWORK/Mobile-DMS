@@ -141,4 +141,6 @@ export default {
   update: 'Update',
   nearest: 'Gần nhất',
   furthest: 'Xa nhất',
+  visited: 'Visited',
+  notVisited: "Haven't visited",
 };

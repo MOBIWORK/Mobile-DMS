@@ -17,18 +17,20 @@ import {NavigationProp, navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
 import {IDataCustomer, IDataItem} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 const CardView = (props: IDataCustomer) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
-  const {t:translate} = useTranslation()
+  const {t: translate} = useTranslation();
   // console.log(props);
-  console.log(props)
+  console.log(props);
 
   return (
-    <TouchableOpacity style={styles.card} onPress={() => navigate(ScreenConstant.DETAIL_CUSTOMER,{data:props})}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigate(ScreenConstant.DETAIL_CUSTOMER, {data: props})}>
       <View style={styles.containContentView}>
         <Block
           direction="row"
@@ -36,7 +38,7 @@ const CardView = (props: IDataCustomer) => {
           alignItems="center">
           <Block block>
             <Text style={styles.textName}>{props.customer_name}</Text>
-            <Text style={styles.textName}>{props.customer_id}</Text>
+            <Text style={styles.textName}>{props.customer_code}</Text>
           </Block>
 
           <View style={styles.containButton}>
@@ -51,7 +53,7 @@ const CardView = (props: IDataCustomer) => {
             </TouchableOpacity>
           </View>
         </Block>
-          <Block height={1} colorTheme='border' marginTop={4} marginBottom={4}  />
+        <Block height={1} colorTheme="border" marginTop={4} marginBottom={4} />
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconAddress'} style={styles.iconStyle} />
           <Text numberOfLines={1} style={styles.contentText}>
@@ -64,7 +66,9 @@ const CardView = (props: IDataCustomer) => {
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconType'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{translate(props?.customer_type)}</Text>
+          <Text style={styles.contentText}>
+            {translate(props?.customer_type)}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -77,7 +81,7 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     card: {
       backgroundColor: theme.colors.bg_default,
-      paddingVertical:8,
+      paddingVertical: 8,
       marginBottom: 16,
       marginHorizontal: 2,
       borderRadius: 16,
@@ -109,7 +113,7 @@ const rootStyles = (theme: AppTheme) =>
       // justifyContent: 'center',
       alignItems: 'center',
       paddingVertical: 4,
-      paddingRight:16
+      paddingRight: 16,
     } as ViewStyle,
     iconStyle: {
       width: 16,

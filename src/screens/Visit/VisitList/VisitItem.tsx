@@ -18,6 +18,7 @@ import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorBoundary';
 import {calculateDistance, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 
 interface LocationProps {
   long: number;
@@ -28,28 +29,25 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const theme = useTheme();
+  const {t: getLabel} = useTranslation();
+
   const currentLocation = useSelector(
     state => state.app.currentLocation,
     shallowEqual,
   );
 
   const distanceCal = useMemo(() => {
-    let location: LocationProps = JSON.parse(
-      item.customer_location_primary?.replace(/\\/g, '')!,
-    );
+    let location: LocationProps = JSON.parse(item.customer_location_primary!);
     let distance = calculateDistance(
       currentLocation.coords.latitude,
       currentLocation.coords.longitude,
       location.lat,
       location.long,
     );
-
-    return distance;
-  }, [item,currentLocation]);
+    return parseInt(Number(distance / 1000).toString(), 10);
+  }, [item, currentLocation]);
 
   const onPressCheckIn = (item: VisitListItemType) => {
-    // dispatch(appActions.onCheckIn(item));
-    // dispatch(appActions.onSetAppTheme('default'))
     navigate(ScreenConstant.CHECKIN, {item});
   };
 
@@ -64,7 +62,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
             : 'rgba(255, 171, 0, 0.08)',
         }}>
         <Text style={{color: status ? colors.success : colors.warning}}>
-          {status ? 'Đã viếng thăm' : 'Chưa viếng thăm'}
+          {status ? getLabel('visited') : getLabel('notVisited')}
         </Text>
       </View>
     );
@@ -111,7 +109,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
               tintColor={colors.text_primary}
             />
             <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
-              {item.mobile_no}
+              {item.mobile_no ?? '---'}
             </Text>
           </View>
           <View
@@ -121,7 +119,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
             ]}>
             <AppButton
               onPress={() => onPressCheckIn(item)}
-              disabled={item.is_checkin ? false : true}
+              disabled={!item.is_checkin}
               style={createStyleSheet(theme).button(item.is_checkin)}
               label={'Checkin'}
               styleLabel={{

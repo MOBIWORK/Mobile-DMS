@@ -32,10 +32,13 @@ import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
 import {useSelector} from '../../config/function';
-import {appActions, setNewCustomer} from '../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  setNewCustomer,
+} from '../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import { customerActions } from '../../redux-store/customer-reducer/reducer';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -51,7 +54,7 @@ const AddingNewCustomer = () => {
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
   const [listData, setListData] = useState<IDataCustomer>({
-    customer_id: '',
+    customer_code: '',
     customer_name: '',
     customer_type: valueFilter.customerType,
     customer_group: valueFilter.customerGroupType,
@@ -104,15 +107,12 @@ const AddingNewCustomer = () => {
   const addingAddress = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
-
   const onPressAdding = (newListData: IDataCustomer) => {
     dispatch(setNewCustomer(newListData));
     navigation.navigate(ScreenConstant.MAIN_TAB, {
       screen: ScreenConstant.CUSTOMER,
     });
   };
-
-  
 
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);
@@ -143,12 +143,10 @@ const AddingNewCustomer = () => {
     [setOpenDate, setDate],
   );
 
-
-  useEffect(() =>{
-    dispatch(customerActions.onGetCustomerType())
-    dispatch(appActions.onGetListCity())
-  },[])
-
+  useEffect(() => {
+    dispatch(customerActions.onGetCustomerType());
+    dispatch(appActions.onGetListCity());
+  }, []);
 
   return (
     <MainLayout>

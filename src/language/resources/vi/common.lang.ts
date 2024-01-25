@@ -144,4 +144,6 @@ export default {
   update: 'Cập nhật',
   nearest: 'Gần nhất',
   furthest: 'Xa nhất',
+  visited: 'Đã viếng thăm',
+  notVisited: 'Chưa viếng thăm',
 };

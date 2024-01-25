@@ -119,7 +119,7 @@ export interface PlusCode {
 export type VisitListItemType = {
   name: string;
   customer_primary_address: string;
-  customer_id: string;
+  customer_code: string;
   customer_location_primary: string | null;
   mobile_no: string | null;
   customer_name: string;
@@ -262,7 +262,7 @@ export type ReportDebtType = {
   listDebt: ReportDebtListType[];
 };
 export type IDataCustomer = {
-  customer_id: string;
+  customer_code: string;
   customer_name: string;
   customer_type: string;
   customer_group: string;
@@ -270,7 +270,7 @@ export type IDataCustomer = {
   customer_birthday?: string | any;
   router_name?: string;
   frequency?: any[];
-  credit_limid?:  any;
+  credit_limid?: any;
   customer_details: string;
   website: string;
   address?: {
@@ -284,7 +284,7 @@ export type IDataCustomer = {
     phone: string;
   };
   image: string;
-  description?:string
+  description?: string;
 };
 
 export interface RootEkMapResponse {
@@ -516,6 +516,6 @@ export type BrandProduct = {
 };
 
 export type ListCustomerType = {
-    name:string,
-    customer_group_name:string
-}
+  name: string;
+  customer_group_name: string;
+};
