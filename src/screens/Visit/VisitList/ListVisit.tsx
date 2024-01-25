@@ -225,7 +225,7 @@ const ListVisit = () => {
                 <View
                   style={{
                     position: 'absolute',
-                    bottom: bottom + 16,
+                    bottom: bottom + 70,
                     left: 24,
                     right: 24,
                   }}>

@@ -87,7 +87,6 @@ export const getCustomer = () =>
     .get(ApiConstant.GET_CUSTOMER)
     .then(res => res.data);
 
-    
 export const getCustomerByName = (name: string) =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER + `?customer_name=${name}`)
@@ -107,6 +106,13 @@ export const getDetailLocation = (lat?: number, lon?: number) =>
   client
     .get(
       BASE_URL_MAP + `?point.lon=${lon}&point.lat=${lat}&api_key=${API_EK_KEY}`,
+    )
+    .then(res => res.data);
+
+export const autocompleteGeoLocation = (autocompleteText: string) =>
+  client
+    .get(
+      `https://api.ekgis.vn/v2/geocode/autocomplete?text=${autocompleteText}&api_key=${API_EK_KEY}`,
     )
     .then(res => res.data);
 

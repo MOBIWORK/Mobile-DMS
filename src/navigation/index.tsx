@@ -1,4 +1,4 @@
-import React, {FC, createRef} from 'react';
+import React, {createRef, FC} from 'react';
 import type {
   NavigationAction,
   NavigationContainerRef,
@@ -7,8 +7,8 @@ import type {
 import {
   CommonActions,
   NavigationContainer,
-  StackActions,
   NavigatorScreenParams,
+  StackActions,
 } from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -34,42 +34,40 @@ import {
   Home,
   ImageView,
   Index,
+  Inventory,
+  InventoryAddProduct,
+  KPI,
   ListProduct,
   ListVisit,
+  NewCustomer,
+  NonOrderCustomer,
   NoteDetail,
   NotificationScreen,
   OrderDetail,
   OrderList,
   ProductDetail,
   Profile,
+  Report,
+  ReportDebt,
   ReportOrderDetail,
+  RouteResult,
   SearchCustomer,
   SearchProduct,
+  SearchSreen,
   SearchVisit,
   SelectOrganization,
   SignIn,
+  Statistical,
   SuccessChanged,
   TakePicture,
-  UpdateScreen,
-  Report,
-  NonOrderCustomer,
-  Statistical,
   TravelDiary,
-  WidgetFavouriteScreen,
   VisitResult,
-  NewCustomer,
-  ReportDebt,
-  KPI,
-  Inventory,
-  InventoryAddProduct,
-  RouteResult,
-  SearchSreen,
+  WidgetFavouriteScreen,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
 
 // import { MAIN_TAB } from '../const/screen.const';
-
 import MainTab, {TabParamList} from './MainTab';
 import linking from '../utils/linking.utils';
 import {useSelector} from '../config/function';

@@ -88,7 +88,12 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
                 }}
                 onPress={() => handleItem(item)}
                 key={index}>
-                <Text style={{color: colors.text_primary}}>
+                <Text
+                  style={{
+                    color: colors.text_primary,
+                    fontSize: 16,
+                    fontWeight: item.isSelected ? '500' : '400',
+                  }}>
                   {getLabel(item.label)}
                 </Text>
                 <Image

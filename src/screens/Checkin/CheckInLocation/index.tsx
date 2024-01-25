@@ -1,6 +1,6 @@
 import React, {useLayoutEffect, useRef, useState} from 'react';
 import {MainLayout} from '../../../layouts';
-import {AppHeader} from '../../../components/common';
+import {AppButton, AppHeader, SvgIcon} from '../../../components/common';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import Mapbox from '@rnmapbox/maps';
@@ -8,12 +8,11 @@ import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
 import {AppConstant} from '../../../const';
-import {Image, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
-import VisitItem from '../../Visit/VisitList/VisitItem';
-import {VisitListData} from '../../Visit/VisitList/ListVisit';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {AppService} from '../../../services';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -21,6 +20,8 @@ Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 const CheckInLocation = () => {
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
+  const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
 
   const [location, setLocation] = useState<Location | null>(null);
   const mapboxCameraRef = useRef<CameraRef>(null);
@@ -77,12 +78,15 @@ const CheckInLocation = () => {
             animationDuration={500}
             zoomLevel={12}
           />
-          <Mapbox.UserLocation
-            visible={true}
-            animated
-            androidRenderMode="gps"
-            showsUserHeadingIndicator={true}
-          />
+          {location?.coords && (
+            <Mapbox.MarkerView
+              coordinate={[
+                Number(location?.coords.longitude),
+                Number(location?.coords.latitude),
+              ]}>
+              <SvgIcon source={'LocationCheckIn'} size={40} />
+            </Mapbox.MarkerView>
+          )}
           <View
             style={{
               width: '90%',
@@ -131,6 +135,18 @@ const CheckInLocation = () => {
               Vị trí hiện tại
             </Text>
           </TouchableOpacity>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: bottom,
+              width: '90%',
+              alignSelf: 'center',
+            }}>
+            <AppButton
+              label={getLabel('completed')}
+              onPress={() => console.log('complete')}
+            />
+          </View>
         </Mapbox.MapView>
       </View>
     </MainLayout>
