@@ -83,7 +83,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_id != null ? props.data.customer_id : '---'}
+            {props.data.customer_code != null ? props.data.customer_code : '---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>

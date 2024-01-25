@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import {AppHeader, Block, FilterView} from '../../../components/common';
 import {
+  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -183,12 +184,12 @@ const ListVisit = () => {
             <Text style={{color: colors.text_secondary}}>
               Viếng thăm 3/10 khách hàng
             </Text>
-            {/* <FlatList
+            <FlatList
               style={{height: '90%'}}
               showsVerticalScrollIndicator={false}
-              data={VisitListData}
+              data={listCustomer}
               renderItem={({item}) => <VisitItem item={item} onPress={handleBackground}/>}
-            /> */}
+            />
           </View>
         ) : (
           <View style={styles.map as ViewStyle}>
@@ -209,7 +210,7 @@ const ListVisit = () => {
                 animationDuration={500}
                 zoomLevel={12}
               />
-              {/* {VisitListData.map((item, index) => {
+              {listCustomer?.map((item, index) => {
                 return (
                   <Block key={index}>
                     <Text>
@@ -222,7 +223,7 @@ const ListVisit = () => {
                   //   <MarkerItem item={item} index={index} />
                   // </Mapbox.MarkerView>
                 );
-              })} */}
+              })}
               <Mapbox.UserLocation
                 visible={true}
                 animated

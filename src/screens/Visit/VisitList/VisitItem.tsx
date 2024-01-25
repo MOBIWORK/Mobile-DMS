@@ -34,9 +34,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
   );
 
   const distanceCal = useMemo(() => {
-    let location: LocationProps = JSON.parse(
-      item.customer_location_primary?.replace(/\\/g, '')!,
-    );
+    let location: LocationProps = JSON.parse(item?.customer_location_primary!);
     let distance = calculateDistance(
       currentLocation.coords.latitude,
       currentLocation.coords.longitude,
@@ -45,7 +43,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
     );
 
     return distance;
-  }, [item,currentLocation]);
+  }, [item, currentLocation]);
 
   const onPressCheckIn = (item: VisitListItemType) => {
     // dispatch(appActions.onCheckIn(item));

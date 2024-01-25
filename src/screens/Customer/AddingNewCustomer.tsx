@@ -51,7 +51,7 @@ const AddingNewCustomer = () => {
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
   const [listData, setListData] = useState<IDataCustomer>({
-    customer_id: '',
+    customer_code: '',
     customer_name: '',
     customer_type: valueFilter.customerType,
     customer_group: valueFilter.customerGroupType,

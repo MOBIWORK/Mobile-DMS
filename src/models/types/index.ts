@@ -119,7 +119,7 @@ export interface PlusCode {
 export type VisitListItemType = {
   name: string;
   customer_primary_address: string;
-  customer_id: string;
+  customer_code: string;
   customer_location_primary: string | null;
   mobile_no: string | null;
   customer_name: string;
@@ -267,7 +267,7 @@ export type ReportDebtType = {
   listDebt: ReportDebtListType[];
 };
 export type IDataCustomer = {
-  customer_id: string;
+  customer_code: string;
   customer_name: string;
   customer_type: string;
   customer_group: string;

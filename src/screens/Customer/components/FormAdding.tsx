@@ -155,14 +155,14 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label="Mã khách hàng"
-        value={valueFilter.customer_id}
+        value={valueFilter.customer_code}
         editable={true}
         hiddenRightIcon={true}
         isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onChangeValue={text => {
-          setData(prev => ({...prev, customer_id: text}));
+          setData(prev => ({...prev, customer_code: text}));
           console.log('text');
         }}
       />

@@ -36,7 +36,7 @@ const CardView = (props: IDataCustomer) => {
           alignItems="center">
           <Block block>
             <Text style={styles.textName}>{props.customer_name}</Text>
-            <Text style={styles.textName}>{props.customer_id}</Text>
+            <Text style={styles.textName}>{props.customer_code}</Text>
           </Block>
 
           <View style={styles.containButton}>
