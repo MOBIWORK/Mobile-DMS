@@ -146,4 +146,5 @@ export default {
   furthest: 'Xa nhất',
   visited: 'Đã viếng thăm',
   notVisited: 'Chưa viếng thăm',
+  currentPosition: 'Vị trí hiện tại',
 };

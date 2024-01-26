@@ -143,4 +143,5 @@ export default {
   furthest: 'Xa nhất',
   visited: 'Visited',
   notVisited: "Haven't visited",
+  currentPosition: 'Current position',
 };

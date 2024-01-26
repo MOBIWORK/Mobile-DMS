@@ -20,7 +20,7 @@ import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {VisitListItemType} from '../../../models/types';
-import VisitItem from './VisitItem';
+import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
@@ -36,6 +36,7 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {getCustomerVisit} from '../../../services/appService';
+import {shallowEqual} from 'react-redux';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
@@ -107,7 +108,6 @@ const ListVisit = () => {
     );
   };
 
-  // console.log(listCustomer,'a')
   const _renderHeader = () => {
     return (
       <View style={{paddingHorizontal: 16}}>
@@ -214,19 +214,22 @@ const ListVisit = () => {
                 animationDuration={500}
                 zoomLevel={12}
               />
-              {/*{listCustomer &&*/}
-              {/*  listCustomer.map((item, index) => {*/}
-              {/*    return (*/}
-              {/*      <Mapbox.MarkerView*/}
-              {/*        key={index}*/}
-              {/*        coordinate={[*/}
-              {/*          Number(item.customer_location_primary?.long!),*/}
-              {/*          Number(item.lat),*/}
-              {/*        ]}>*/}
-              {/*        <MarkerItem item={item} index={index} />*/}
-              {/*      </Mapbox.MarkerView>*/}
-              {/*    );*/}
-              {/*  })}*/}
+              {listCustomer &&
+                listCustomer.map((item, index) => {
+                  const location: LocationProps = JSON.parse(
+                    item.customer_location_primary!,
+                  );
+                  return (
+                    <Mapbox.MarkerView
+                      key={index}
+                      coordinate={[
+                        Number(location.long),
+                        Number(location.lat),
+                      ]}>
+                      <MarkerItem item={item} index={index} />
+                    </Mapbox.MarkerView>
+                  );
+                })}
               <Mapbox.UserLocation
                 visible={true}
                 animated
@@ -237,7 +240,7 @@ const ListVisit = () => {
                 <View
                   style={{
                     position: 'absolute',
-                    bottom: bottom + 16,
+                    bottom: bottom + 70,
                     left: 24,
                     right: 24,
                   }}>

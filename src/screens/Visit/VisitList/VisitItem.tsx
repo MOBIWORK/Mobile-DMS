@@ -19,8 +19,9 @@ import ErrorFallback from '../../../layouts/ErrorBoundary';
 import {calculateDistance, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
+import {CommonUtils} from '../../../utils';
 
-interface LocationProps {
+export interface LocationProps {
   long: number;
   lat: number;
 }
@@ -119,7 +120,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
             ]}>
             <AppButton
               onPress={() => onPressCheckIn(item)}
-              disabled={!item.is_checkin}
+              disabled={item.is_checkin}
               style={createStyleSheet(theme).button(item.is_checkin)}
               label={'Checkin'}
               styleLabel={{

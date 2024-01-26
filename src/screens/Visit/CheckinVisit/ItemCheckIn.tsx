@@ -2,20 +2,28 @@ import {StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {IItemCheckIn} from './ultil';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../../../navigation';
-import { useTheme } from '../../../layouts/theme';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationProp} from '../../../navigation';
+import {useTheme} from '../../../layouts/theme';
+import {VisitListItemType} from '../../../models/types';
 
 type Props = {
   item: IItemCheckIn;
+  navData: VisitListItemType;
 };
 
-const ItemCheckIn = ({item}: Props) => {
-  const navigation = useNavigation<NavigationProp>()
-  const {colors}  = useTheme()
+const ItemCheckIn = ({item, navData}: Props) => {
+  const navigation = useNavigation<NavigationProp>();
+  const {colors} = useTheme();
   return (
     <Block>
-      <TouchableOpacity onPress={() =>  navigation.navigate(item.screenName,{type : item.type ? item.type : ""})}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(item.screenName, {
+            type: item.type ? item.type : '',
+            data: navData,
+          })
+        }>
         <Block
           direction="row"
           justifyContent="space-between"

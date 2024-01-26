@@ -309,7 +309,7 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
   [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
   [ScreenConstant.ADD_NOTE]: undefined;
-  [ScreenConstant.CHECKIN_LOCATION]: undefined;
+  [ScreenConstant.CHECKIN_LOCATION]: {type: string; data: VisitListItemType};
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_ORDER]: {type: string};
   [ScreenConstant.REPORT_SCREEN]: undefined;

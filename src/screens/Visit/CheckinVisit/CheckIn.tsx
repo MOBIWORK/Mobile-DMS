@@ -16,7 +16,7 @@ import {Divider, Modal} from 'react-native-paper';
 import {item} from './ultil';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
-import { ScreenConstant } from '../../../const';
+import {ScreenConstant} from '../../../const';
 type Props = {};
 
 const CheckIn = (props: Props) => {
@@ -27,9 +27,6 @@ const CheckIn = (props: Props) => {
   const [title, setTitle] = useState('Đóng cửa');
   const params: VisitListItemType =
     useRoute<RouterProp<'CHECKIN'>>().params.item;
-
- 
-
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -58,7 +55,7 @@ const CheckIn = (props: Props) => {
             </Text>
           </Block>
           <Switch
-          type='text'
+            type="text"
             onSwitch={() => {
               title === 'Mở cửa' ? setTitle('Đóng cửa') : setTitle('Mở cửa');
             }}
@@ -74,10 +71,10 @@ const CheckIn = (props: Props) => {
             <SvgIcon source="UserGroup" size={20} colorTheme="main" />
             <Text fontSize={16} fontWeight="500" colorTheme="text">
               {' '}
-              {params.useName}
+              {params.name}
             </Text>
           </Block>
-         <Block  colorTheme='border'   height={1}  />
+          <Block colorTheme="border" height={1} />
           <Block paddingTop={8}>
             <Block
               direction="row"
@@ -85,7 +82,7 @@ const CheckIn = (props: Props) => {
               marginLeft={32}
               marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
-              <Text numberOfLines={1}> {params.address} </Text>
+              <Text numberOfLines={1}> {params.customer_primary_address} </Text>
             </Block>
             <Block
               direction="row"
@@ -95,7 +92,7 @@ const CheckIn = (props: Props) => {
               marginRight={32}
               paddingBottom={20}>
               <SvgIcon source="Phone" size={16} />
-              <Text numberOfLines={1}> {params.phone_number} </Text>
+              <Text numberOfLines={1}> {params.mobile_no} </Text>
             </Block>
           </Block>
         </Block>
@@ -107,7 +104,7 @@ const CheckIn = (props: Props) => {
           colorTheme="white"
           borderRadius={16}>
           {item.map((item, index) => {
-            return <ItemCheckIn key={index} item={item} />;
+            return <ItemCheckIn key={index} item={item} navData={params} />;
           })}
         </Block>
       </Block>
@@ -117,7 +114,7 @@ const CheckIn = (props: Props) => {
           marginLeft={16}
           borderColor={theme.colors.primary}
           marginRight={16}
-          colorTheme='bg_default'
+          colorTheme="bg_default"
           // style={{borderColor:theme.colors.primary} as ViewStyle}
           alignItems="center"
           height={40}
@@ -150,17 +147,21 @@ const CheckIn = (props: Props) => {
           </Block>
           <Block marginTop={8} direction="row" alignItems="center">
             <TouchableOpacity
-            onPress={() => setShow(false)}
+              onPress={() => setShow(false)}
               style={styles.containButton('cancel')}>
-              <Text fontSize={14} colorTheme='text_secondary' fontWeight='500'  >Hủy</Text>
+              <Text fontSize={14} colorTheme="text_secondary" fontWeight="500">
+                Hủy
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-            onPress={() =>{
-              setShow(false)
-              goBack()
-            }}
+              onPress={() => {
+                setShow(false);
+                goBack();
+              }}
               style={styles.containButton('exit')}>
-              <Text fontSize={14} colorTheme='white'  fontWeight='700'   >Thoát</Text>
+              <Text fontSize={14} colorTheme="white" fontWeight="700">
+                Thoát
+              </Text>
             </TouchableOpacity>
           </Block>
         </Block>
@@ -184,19 +185,20 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 30,
       borderRadius: 16,
     } as ViewStyle,
-    containButton: (title: string) => ({
-      backgroundColor: title === 'exit'  ? theme.colors.primary : theme.colors.bg_neutral,
-      flex: 1,
-      marginHorizontal: 6,
-      marginVertical:8,
-      justifyContent:'center',
-      alignItems:'center',
-      padding:8,
-      borderRadius:20
-      
-    }) as ViewStyle,
-    containContainerButton:{
-      marginBottom:20,
-      backgroundColor:theme.colors.bg_neutral
-    } as ViewStyle
+    containButton: (title: string) =>
+      ({
+        backgroundColor:
+          title === 'exit' ? theme.colors.primary : theme.colors.bg_neutral,
+        flex: 1,
+        marginHorizontal: 6,
+        marginVertical: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 8,
+        borderRadius: 20,
+      } as ViewStyle),
+    containContainerButton: {
+      marginBottom: 20,
+      backgroundColor: theme.colors.bg_neutral,
+    } as ViewStyle,
   });

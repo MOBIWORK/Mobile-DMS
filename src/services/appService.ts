@@ -115,7 +115,6 @@ export const autocompleteGeoLocation = (autocompleteText: string) =>
       `https://api.ekgis.vn/v2/geocode/autocomplete?text=${autocompleteText}&api_key=${API_EK_KEY}`,
     )
     .then(res => res.data);
-
 export const getCustomerVisit = () =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER_VISIT)
