@@ -211,7 +211,9 @@ const Detail: FC<VisitItemProps> = ({item}) => {
 
   return (
     <>
-      {item.is_checkin && <StatisticalItem orderCount={15} payment={10000000} />}
+      {item.is_checkin && (
+        <StatisticalItem orderCount={15} payment={10000000} />
+      )}
       {_renderCustomer()}
       {_renderInfo()}
       {!item.is_checkin ? (

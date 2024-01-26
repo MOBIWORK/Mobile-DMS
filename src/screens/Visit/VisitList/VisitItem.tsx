@@ -29,7 +29,10 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import moment from 'moment';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import isEquals from 'react-fast-compare'
-interface LocationProps {
+import {CommonUtils} from '../../../utils';
+
+
+export interface LocationProps {
   long: number;
   lat: number;
 }
