@@ -157,4 +157,8 @@ export default {
   warehouse: "Warehouse",
   selectProduct: "Select product",
   scanCode : "Scan the code",
+  inventoryControl :"Inventory control",
+  listProduct :"List product",
+  selectProductInvetory :"Select the product to be inspected",
+
 };

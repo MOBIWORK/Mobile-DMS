@@ -108,7 +108,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       ref={navigationRef}>
       <Stack.Navigator
         initialRouteName={
-          ScreenConstant.CHECKIN_ORDER_CREATE
+          ScreenConstant.CHECKIN_INVENTORY
         }
         screenOptions={{
           headerShown: false,

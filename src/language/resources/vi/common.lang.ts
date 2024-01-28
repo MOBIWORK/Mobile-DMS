@@ -160,4 +160,7 @@ export default {
   warehouse: "Kho hàng",
   selectProduct: "Chọn sản phẩm",
   scanCode : "Quét mã",
+  inventoryControl :"Kiểm tồn",
+  listProduct :"Danh sách sản phẩm",
+  selectProductInvetory :"Chọn sản phẩm cần kiểm tồn",
 };

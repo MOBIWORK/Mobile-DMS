@@ -58,3 +58,6 @@ export const GET_ORDER_DETAIL = URL_PREFIX +  ".api.selling.order.get_sale_order
 export const GET_WAREHOUSES = URL_PREFIX + ".api.selling.product.list_warehouse";
 export const GET_VATS = URL_PREFIX + ".api.selling.product.list_vat";
 export const POST_ORDER = URL_PREFIX + ".api.selling.order.create_sale_order";
+
+// Inventory
+export const POST_CHECKIN_INVENTORY = URL_PREFIX + ".api.checkin.create_checkin_inventory"; 
