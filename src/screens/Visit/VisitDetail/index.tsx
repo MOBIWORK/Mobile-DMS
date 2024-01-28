@@ -40,7 +40,7 @@ const Index = () => {
   const DetailScreen = () => (
     <AppContainer style={{marginBottom: bottom}}>
       <View style={{flex: 1, padding: 16}}>
-        <Detail item={route.params ? route.params.data : ItemFake} />
+        <Detail item={route.params && route.params.data} />
       </View>
     </AppContainer>
   );
@@ -139,14 +139,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const ItemFake: VisitListItemType = {
-  label: "McDonald's",
-  useName: 'Chu Quỳnh Anh',
-  status: true,
-  address:
-    'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-  phone_number: '+84 234 234 456',
-  lat: 37.789839,
-  long: -122.4667,
-  distance: 1.5,
-};
+

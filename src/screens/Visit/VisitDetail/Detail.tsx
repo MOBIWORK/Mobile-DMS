@@ -115,11 +115,11 @@ const Detail: FC<VisitItemProps> = ({item}) => {
               source={ImageAssets.UserGroupIcon}
               style={{width: 24, height: 24}}
               resizeMode={'cover'}
-              tintColor={item.status ? colors.success : colors.warning}
+              tintColor={item.is_checkin ? colors.success : colors.warning}
             />
-            <Text style={styles.userTextLeft}>{item.label}</Text>
+            <Text style={styles.userTextLeft}>{item.customer_name}</Text>
           </View>
-          {statusItem(item.status)}
+          {statusItem(item.is_checkin)}
         </View>
         <View style={styles.content}>
           <Image
@@ -129,7 +129,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
             tintColor={colors.text_primary}
           />
           <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
-            {item.useName}
+            {item.name}
           </Text>
         </View>
         <View style={styles.content}>
@@ -143,7 +143,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
             style={{color: colors.text_primary, marginHorizontal: 8}}
             numberOfLines={1}
             ellipsizeMode={'tail'}>
-            {item.address}
+            {item.customer_primary_address}
           </Text>
         </View>
         <View style={styles.content}>
@@ -154,7 +154,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
             tintColor={colors.text_primary}
           />
           <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
-            {item.phone_number}
+            {item.mobile_no === null ? '---' : item.mobile_no}
           </Text>
         </View>
       </View>
@@ -208,10 +208,10 @@ const Detail: FC<VisitItemProps> = ({item}) => {
 
   return (
     <>
-      {item.status && <StatisticalItem orderCount={15} payment={10000000} />}
+      {item.is_checkin && <StatisticalItem orderCount={15} payment={10000000} />}
       {_renderCustomer()}
       {_renderInfo()}
-      {!item.status ? (
+      {!item.is_checkin ? (
         <AppButton
           style={{
             backgroundColor: colors.action,

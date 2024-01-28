@@ -22,7 +22,8 @@ const initialAppState: IAppRedux = {
     city:[],
     district:[],
     ward:[]
-  }
+  },
+  dataCheckIn:{}
 };
 
 const appSlice = createSlice({
@@ -101,6 +102,9 @@ const appSlice = createSlice({
     setDataWard:(state,action:PayloadAction<any>) =>{
       state.listDataCity.ward = action.payload
     },
+    setDataCheckIn:(state,action:PayloadAction<any>)=>{
+      state.dataCheckIn = action.payload
+    }
   },
 });
 

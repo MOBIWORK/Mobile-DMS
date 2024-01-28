@@ -1,4 +1,4 @@
-import React, {createRef, FC} from 'react';
+import React, {createRef, FC, useEffect, useLayoutEffect, useState} from 'react';
 import type {
   NavigationAction,
   NavigationContainerRef,
@@ -74,13 +74,22 @@ import {useSelector} from '../config/function';
 import {RXStore} from '../utils/redux';
 import {CommonUtils} from '../utils';
 import {PortalHost} from '../components/common/portal';
+import {shallowEqual} from 'react-redux';
+import {CheckinData} from '../services/appService';
+import { AppState, AppStateStatus } from 'react-native';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const theme = useSelector(state => state.app.theme);
-
+  const dataCheckIn: CheckinData = useSelector(
+    state => state.app.dataCheckIn,
+    shallowEqual,
+  );
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState,
+  );
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
 
   // const [organiztion] = useMMKVObject<IResOrganization>(
@@ -98,6 +107,24 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   //     },
   //   });
   // }, []);
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (appState.match(/inactive|background/) && nextAppState === 'active') {
+        console.log(nextAppState,'app state')
+    }
+    setAppState(nextAppState);
+  };
+
+  useEffect(() => {
+    const appState = AppState.addEventListener('change', handleAppStateChange);
+    if (Object.keys(dataCheckIn).length > 0) {
+      navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
+    } else {
+      return;
+    }
+    return () =>{
+      appState.remove()
+    }
+  }, [dataCheckIn]);
 
   return (
     <NavigationContainer
