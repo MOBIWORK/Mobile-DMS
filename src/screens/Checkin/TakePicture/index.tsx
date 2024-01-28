@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState,useCallback} from 'react';
 import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
@@ -64,7 +64,7 @@ const TakePicture = () => {
     );
   };
 
-  const AlbumItem = (item: IAlbumImage) => {
+  const AlbumItem = useCallback((item: IAlbumImage) => {
     return (
       <View style={styles.album}>
         <View style={styles.row}>
@@ -108,7 +108,7 @@ const TakePicture = () => {
         </View>
       </View>
     );
-  };
+  },[handleCamera,albumBottomSheet]);
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>

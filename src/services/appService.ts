@@ -3,6 +3,7 @@ import {createApi} from '../api';
 import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY, API_URL} from '@env';
 import {client} from '../config/client';
+import { VisitListItemType } from '../models/types';
 
 export type ILogin = {
   usr: string;
@@ -35,13 +36,13 @@ export type CheckinData = {
   kh_long?: number;
   kh_lat?: number;
   checkin_giovao: string;
-  checkin_giora: string;
-  checkin_pinvao: string;
-  checkin_pinra?: string;
+  checkin_giora?: string;
+  checkin_pinvao: number;
+  checkin_pinra?: number;
   checkin_khoangcach?: number;
   checkin_trangthaicuahang?: boolean;
   checkin_donhang?: string;
-  checkin_hinhanh: any[];
+  checkin_hinhanh?: any[];
   checkin_long?: number;
   checkin_lat?: number;
   checkin_timegps?: string;
@@ -52,7 +53,27 @@ export type CheckinData = {
   createdDate: number;
   createdByEmail?: string;
   createByName?: string;
+  item:VisitListItemType
 };
+
+export interface DMSConfigMobile {
+  batbuoc_chupanh: number;
+  batbuoc_ghichu: number;
+  batbuoc_kiemton: number;
+  checkout_ngoaisaiso: number;
+  docstatus: number;
+  doctype: string;
+  idx: number;
+  kb_vitringoaisaiso: number;
+  name: string;
+  owner: string;
+  saiso_chophep_checkout_ngoaisaiso: number;
+  saiso_chophep_kb_vitringoaisaiso: number;
+  soluong_album: number;
+  soluong_anh: number;
+  tgcheckin_toithieu: number;
+  vt_ngoaituyen: number;
+}
 
 export const login = (data: ILogin, deleteHeader: boolean) =>
   createApi(deleteHeader).post(ApiConstant.POST_USER_LOGIN, data);

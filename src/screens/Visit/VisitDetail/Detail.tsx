@@ -157,7 +157,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
             tintColor={colors.text_primary}
           />
           <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
-            {item.mobile_no ?? '---'}
+            {item.mobile_no === null ? '---' : item.mobile_no}
           </Text>
         </View>
       </View>
@@ -211,9 +211,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
 
   return (
     <>
-      {item.is_checkin && (
-        <StatisticalItem orderCount={15} payment={10000000} />
-      )}
+      {item.is_checkin && <StatisticalItem orderCount={15} payment={10000000} />}
       {_renderCustomer()}
       {_renderInfo()}
       {!item.is_checkin ? (

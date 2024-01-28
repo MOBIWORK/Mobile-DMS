@@ -7,6 +7,8 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 import {RootState} from '../redux-store/all-reducer';
 import {useSelector as useReduxSelector} from 'react-redux';
+import { dispatch } from '../utils/redux/index';
+import { appActions } from '../redux-store/app-reducer/reducer';
 
 type TypesBase =
   | 'bigint'
@@ -143,6 +145,24 @@ function useSelector<T>(
   return useReduxSelector<RootState, T>(selector, equalityFn);
 }
 
+const backgroundErrorListener =(errorCode: number) => {
+  // Handle background location errors
+  switch (errorCode) {
+    case 0:
+      dispatch(appActions.setError(
+        'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+      ));
+      break;
+    case 1:
+      dispatch(appActions.setError('GPS đã bị tắt. Vui lòng bật lại.'));
+      break;
+    default:
+      dispatch(appActions.setError(
+        'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+      ));
+  }
+};
+
 export {
   formatPhoneNumber,
   formatMoney,
@@ -155,4 +175,5 @@ export {
   calculateDistance,
   calculateDateDifference,
   useSelector,
+  backgroundErrorListener
 };
