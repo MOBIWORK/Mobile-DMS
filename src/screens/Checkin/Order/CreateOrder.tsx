@@ -94,15 +94,16 @@ const CreateOrder = () => {
     const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
 
     const [warehouse, setWarehouse] = useState<IFilterType>();
-    const [vat, setVat] = useState<object | any>({ label: "", value: "", rate: "", price: 0 })
+    const [vat, setVat] = useState<object | any>({ label: "", value: "", rate: ""})
     const [discount, setDiscount] = useState<any>({
         label: 'Grand Total',
         value: 'grand',
         discount_percentage: 0,
-        discount: 0
     });
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const [grandTotalPrice, setGrandTotalPrice] = useState<number>(0);
+    const [discountAmount, setDiscountAmout] = useState<number>(0);
+    const [vatAmount, setVatAmount] = useState<number>(0);
 
     const onBackScreen = () => {
         dispatch(productActions.setProductSelected([]))
@@ -380,8 +381,7 @@ const CreateOrder = () => {
             }
                 break;
             case "typeVat": {
-                let price = totalPrice * item.rate / 100;
-                setVat({ ...item, price: price });
+                setVat(item)
                 const newWhs = dataVat.map(item1 =>
                     item1.value == item.value
                         ? { ...item, isSelected: true }
@@ -422,37 +422,32 @@ const CreateOrder = () => {
         setTotalPrice(sum)
     }
 
-    const onChangeDiscountOrder = (input: string, value: string) => {
-        let discountPercentage = 0;
-        let valueDiscount = 0;
-        if (value !== "") {
-            switch (input) {
-                case "discount":
-                    if (discount.value == "net") {
-                        discountPercentage = Number(((parseInt(value) / totalPrice) * 100).toFixed(1));
-                        valueDiscount = Number(value);
-                    } else {
-                        discountPercentage = Number(((parseInt(value) / (totalPrice + vat.price)) * 100).toFixed(1));
-                        valueDiscount = Number(value);
-                    }
-                    break;
-                case "discount_percentage":
-                    if (discount.value == "net") {
-                        const priceDiscount = totalPrice * (parseInt(value) / 100);
-                        discountPercentage = parseInt(value);
-                        valueDiscount = priceDiscount;
-                    } else {
-                        const priceDiscount = (totalPrice + vat.price) * (parseInt(value) / 100);
-                        discountPercentage = parseInt(value);
-                        valueDiscount = priceDiscount;
-                    }
-                    break;
-                default:
-                    break;
-            }
+    const onChangeDiscount = (input : string , txt : string)=>{
+        let amount = 0;
+        let percentage = 0;
+        switch (input) {
+            case "discount":
+                percentage = Number(txt);
+                if(discount.value == "grand") {
+                    amount = (Number(txt) / 100) * (vatAmount + totalPrice);
+                } else {
+                    amount = (Number(txt) / 100) * totalPrice
+                }
+                break;
+            case "discountAmount" :
+                amount = Number(txt)
+                if(discount.value == "grand") {
+                    percentage = (Number(txt) / (totalPrice + vatAmount)) * 100
+                } else {
+                    percentage = (Number(txt) / totalPrice) * 100
+                }
+                break
+            default:
+                break;
         }
-        setDiscount((prev: any) => ({ ...prev, discount: valueDiscount, discount_percentage: discountPercentage }));
-    };
+        setDiscount(((prev:any) => ({...prev,discount_percentage :percentage})))
+        setDiscountAmout(amount)
+    }
 
     const fetchDataWarehouse = async () => {
         const { data, status }: KeyAbleProps = await ProductService.getWarehouse();
@@ -473,6 +468,8 @@ const CreateOrder = () => {
 
     const fetchDataVat = async () => {
         const { status, data }: KeyAbleProps = await OrderService.getListVat();
+        console.log(status);
+        
         if (status === ApiConstant.STT_OK) {
             const result = data.result;
             const newData: any[] = [];
@@ -518,6 +515,8 @@ const CreateOrder = () => {
     }
 
     const fetchProductPromotion = async () => {
+        console.log(12);
+        
         if (data.length > 0) {
             const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
             const objecData = {
@@ -553,7 +552,7 @@ const CreateOrder = () => {
     }
 
     const onCalculateGrandPriceOrder = () => {
-        const grand_price = totalPrice + vat.price - discount.discount;
+        const grand_price = totalPrice + vatAmount - discountAmount;
         setGrandTotalPrice(grand_price)
     }
 
@@ -574,12 +573,24 @@ const CreateOrder = () => {
             bottomSheetRef.current.close();
         }
     }
-    // Hàm này để tính lại tiền vat và discount của đơn hàng khi sản phẩm thay đổi
-    const recalculateVateorDiscount = () => {
-        let price = totalPrice * vat.rate / 100;
-        setVat(((prev: any) => ({ ...prev, price: price })));
-        onChangeDiscountOrder("discount", discount.discount);
-        onChangeDiscountOrder("discount_percentage", discount.discount_percentage);
+
+    const recalculateVatorDiscount = () => {
+        let vt = 0;
+        let dsc = 0;
+        switch (discount.value) {
+            case "net":
+                dsc = (discount.discount_percentage / 100) * totalPrice
+                vt = (vat.rate / 100) * (totalPrice - dsc);
+                break;
+            case "grand":
+                vt = (vat.rate / 100) * totalPrice;
+                dsc = (discount.discount_percentage / 100) * (totalPrice + vt)
+                break;
+            default:
+                break;
+        }
+        setVatAmount(vt);
+        setDiscountAmout(dsc);
     }
 
     const onCreatedOrder = () => {
@@ -590,7 +601,7 @@ const CreateOrder = () => {
             "set_warehouse": warehouse?.value,
             "apply_discount_on": discount.label,
             "additional_discount_percentage": discount.discount_percentage,
-            "discount_amount": discount.discount,
+            "discount_amount": discountAmount,
             "rate_taxes": vat.rate,
             "taxes_and_charges": vat.value,
             "checkin_id": "843e5141b5",
@@ -619,12 +630,12 @@ const CreateOrder = () => {
 
     useEffect(() => {
         onCalculateGrandPriceOrder();
-    }, [totalPrice, vat, discount])
+    }, [totalPrice, vatAmount, discountAmount])
 
 
     useEffect(() => {
-        recalculateVateorDiscount();
-    }, [totalPrice])
+        recalculateVatorDiscount();
+    }, [products,discount,vat])
 
 
     return (
@@ -719,16 +730,14 @@ const CreateOrder = () => {
                                 <AppInput
                                     value={vat.rate.toString()}
                                     label="VAT(%)"
-                                    onChangeValue={(txt: string) => { }}
-                                    disable
+                                    editable={false}
                                     styles={{ backgroundColor: colors.bg_neutral }}
                                     rightIcon={<TextInput.Affix text="%" />}
                                 />
                                 <AppInput
-                                    value={CommonUtils.formatCash(vat.price.toString())}
+                                    value={CommonUtils.formatCash(vatAmount.toString())}
                                     label={getLabel("priceVate")}
-                                    onChangeValue={(txt: string) => { }}
-                                    disable
+                                    editable={false}
                                     styles={{ backgroundColor: colors.bg_neutral }}
                                     rightIcon={
                                         <TextInput.Affix text="VND" textStyle={{ fontSize: 12 }} />
@@ -769,19 +778,19 @@ const CreateOrder = () => {
                                 <AppInput
                                     value={discount.discount_percentage.toString()}
                                     label={getLabel("discountPercentage")}
+                                    onChangeValue={(txt) => onChangeDiscount("discount", txt)}
                                     inputProp={{
                                         keyboardType: 'numeric'
                                     }}
-                                    onChangeValue={(txt: string) => onChangeDiscountOrder("discount_percentage", txt)}
                                     rightIcon={<TextInput.Affix text="%" />}
                                 />
                                 <AppInput
-                                    value={discount.discount.toString()}
+                                    value={discountAmount.toString()}
                                     label={getLabel("discountAmount")}
+                                    onChangeValue={(txt) => onChangeDiscount("discountAmount", txt)}
                                     inputProp={{
                                         keyboardType: 'numeric'
                                     }}
-                                    onChangeValue={(txt: string) => onChangeDiscountOrder("discount", txt)}
                                     rightIcon={
                                         <TextInput.Affix text="VND" textStyle={{ fontSize: 12 }} />
                                     }
@@ -812,11 +821,11 @@ const CreateOrder = () => {
                                 </View>
                                 <View style={styles.flexSpace}>
                                     <Text style={styles.labelPay}>{getLabel("discount")}</Text>
-                                    <Text style={styles.price}>{CommonUtils.formatCash(discount.discount.toString())}</Text>
+                                    <Text style={styles.price}>{CommonUtils.formatCash(discountAmount.toString())}</Text>
                                 </View>
                                 <View style={styles.flexSpace}>
                                     <Text style={styles.labelPay}>VAT</Text>
-                                    <Text style={styles.price}>{CommonUtils.formatCash(vat.price.toString())}</Text>
+                                    <Text style={styles.price}>{CommonUtils.formatCash(vatAmount.toString())}</Text>
                                 </View>
                                 <View style={[styles.flexSpace, { alignItems: 'flex-end' }]}>
                                     <Text style={styles.labelPay}>{getLabel("totalPrice")}</Text>
