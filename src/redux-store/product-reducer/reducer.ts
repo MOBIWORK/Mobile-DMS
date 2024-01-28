@@ -2,12 +2,14 @@ import { PayloadAction, createAction, createSlice } from "@reduxjs/toolkit";
 import { DataType, StateType } from "./type";
 import * as Actions from "./type"
 import { PramsTypeProduct } from "../../services/productService";
+import { IProduct } from "../../models/types";
 
 const SLICE_NAME = "PRODUCT_SLICE";
 
 const initState: StateType = {
     data: [],
     totalItem: 0,
+    dataSelected : [],
     isLoading: true,
     message: ""
 }
@@ -21,6 +23,9 @@ const productSlice = createSlice({
             state.data = action.payload.data;
             state.totalItem = action.payload.total
         },
+        setProductSelected : (state,action :PayloadAction<IProduct[]>) =>{
+            state.dataSelected = action.payload
+        },
         setMessage: (state, action: PayloadAction<string>) => {
             state.message = action.payload
         },
@@ -30,7 +35,7 @@ const productSlice = createSlice({
     }
 })
 
-const onGetData = createAction(Actions.GET_PRODUCTS, (params: PramsTypeProduct) => ({ payload: params }))
+const onGetData = createAction(Actions.GET_PRODUCTS, (params?: PramsTypeProduct) => ({ payload: params }))
 
 export const productActions = {
     ...productSlice.actions,

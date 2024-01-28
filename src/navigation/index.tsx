@@ -61,9 +61,9 @@ import {
   ReportDebt,
   KPI,
   Inventory,
-  InventoryAddProduct,
   RouteResult,
   SearchSreen,
+  CheckinSelectProdct,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -108,9 +108,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       ref={navigationRef}>
       <Stack.Navigator
         initialRouteName={
-          validate
-            ? ScreenConstant.MAIN_TAB
-            : ScreenConstant.SELECT_ORGANIZATION
+          ScreenConstant.CHECKIN_ORDER_CREATE
         }
         screenOptions={{
           headerShown: false,
@@ -177,8 +175,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={Inventory}
         />
         <Stack.Screen
-          name={ScreenConstant.INVENTORY_ADD_PRODUCT}
-          component={InventoryAddProduct}
+          name={ScreenConstant.CHECKIN_SELECT_PRODUCT}
+          component={CheckinSelectProdct}
         />
         <Stack.Screen
           name={ScreenConstant.ADDING_NEW_CUSTOMER}
@@ -294,7 +292,7 @@ export type RootStackParamList = {
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_INVENTORY]: undefined;
-  [ScreenConstant.INVENTORY_ADD_PRODUCT]: undefined;
+  [ScreenConstant.CHECKIN_SELECT_PRODUCT]: undefined;
   [ScreenConstant.CHECKIN_ORDER]: {type: string};
   [ScreenConstant.CHECKIN_ORDER_CREATE]: {type: string};
   [ScreenConstant.CUSTOMER]: undefined;

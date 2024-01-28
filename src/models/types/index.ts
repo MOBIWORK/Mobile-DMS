@@ -1,4 +1,4 @@
-import {SvgIconTypes} from '../../assets/svgIcon';
+import { SvgIconTypes } from '../../assets/svgIcon';
 
 export interface KeyAbleProps {
   [key: string]: any;
@@ -284,7 +284,7 @@ export type IDataCustomer = {
     phoneNumber: string;
   };
   imageSource: string;
-  description?:string
+  description?: string
 };
 
 export interface RootEkMapResponse {
@@ -447,6 +447,10 @@ export type StockProduct = {
   qty: number;
 };
 
+export type discountProduct = {
+  priority: string,
+  discount_percentage: number
+}
 export type IProduct = {
   name: string;
   item_code: string;
@@ -459,9 +463,15 @@ export type IProduct = {
   country_of_origin: string;
   image: string;
   custom_industry: string;
+  end_of_life: string;
   detail: UinitProduct;
   unit: DataUnit[];
   stock: StockProduct[];
+  quantity?: number;
+  discount_percentage: discountProduct[];
+  discount: number;
+  price: number;
+  isSelected?: boolean;
 };
 
 export type IOrderList = {
@@ -516,6 +526,22 @@ export type BrandProduct = {
 };
 
 export type ListCustomerType = {
-    name:string,
-    customer_group_name:string
+  name: string,
+  customer_group_name: string
+}
+
+export type IProductPromotion = {
+  item_code: string;
+  qty: number;
+  pricing_rules: string;
+  rate: number;
+  price_list_rate: number;
+  is_free_item: number;
+  item_name: string;
+  description: string;
+  stock_uom: string;
+  uom: string;
+  conversion_factor: number;
+  delivery_date: string;
+  parent_item? : string
 }

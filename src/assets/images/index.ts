@@ -53,6 +53,8 @@ const IconBill = require('./ic-solar_bill.png');
 const IconOrder = require('./icfile.png');
 const IconKebab = require('./kebab.png');
 const LogoMBW  = require('./logoMBW.png')
+const NoDataImage = require('./noImage.jpg')
+
 export {
   IconBill,
   IconOrder,
@@ -108,4 +110,5 @@ export {
   ChevronUpIcon,
   CalenderIcon,
   IconKebab,
+  NoDataImage
 };

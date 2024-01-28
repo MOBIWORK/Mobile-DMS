@@ -17,7 +17,7 @@ export const STT_REQUEST_TIME_OUT = 408;
 export const STT_INTERNAL_SERVER = 500;
 export const STT_NOT_MODIFIED = 304;
 
-const URL_PREFIX = '/api/method/mbw_service_v2.api';
+const URL_PREFIX = '/api/method/mbw_dms';
 const URL = '/api/method'
 // const URL_PREFIX = '/api/method/mbw_dms';
 // const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
@@ -39,8 +39,8 @@ export const GET_PRODUCT = URL_PREFIX +  ".api.selling.product.list_product";
 export const GET_BRAND_PRODUCT = URL_PREFIX +  "..api.selling.product.list_brand";
 export const GET_INDUSTRY_PRODUCT = URL_PREFIX +  ".api.selling.product.list_industry";
 export const GET_GROUP_PRODUCT = URL_PREFIX +  ".api.selling.product.list_item_group";
-
-
+export const GET_PRICE_PRODUCT = URL_PREFIX +  ".api.selling.order.price_list";
+export const GET_PRODUCT_PROMOTION = URL_PREFIX +  ".api.selling.order.pricing_rule";
 
 
 // Customer
@@ -55,3 +55,6 @@ export const GET_CUSTOMER_VISIT = '/api/method/mbw_dms.api.router.get_customer_r
 // Order
 export const GET_ORDER = URL_PREFIX +  ".api.selling.order.get_list_sales_order";
 export const GET_ORDER_DETAIL = URL_PREFIX +  ".api.selling.order.get_sale_order";
+export const GET_WAREHOUSES = URL_PREFIX + ".api.selling.product.list_warehouse";
+export const GET_VATS = URL_PREFIX + ".api.selling.product.list_vat";
+export const POST_ORDER = URL_PREFIX + ".api.selling.order.create_sale_order";

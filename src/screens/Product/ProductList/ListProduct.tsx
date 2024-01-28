@@ -135,6 +135,13 @@ const ListProduct = () => {
   };
 
   const _renderItemProduct = (item: IProduct) => {
+    let image = {
+      uri : item.image
+    }
+    if(!item.image){
+      image = ImageAssets.NoDataImage
+    }
+
     return (
       <TouchableOpacity onPress={() => navigation.navigate(ScreenConstant.PRODUCT_DETAIL, { item })}>
         <View
@@ -148,9 +155,7 @@ const ListProduct = () => {
             justifyContent: 'flex-start',
           }}>
           <Image
-            source={{
-              uri : item.image
-            }}
+            source={image}
             style={{ width: 64, height: 82 }}
             resizeMode={'cover'}
           />
