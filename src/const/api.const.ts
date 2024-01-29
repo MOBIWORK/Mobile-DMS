@@ -14,8 +14,8 @@ export const STT_REQUEST_TIME_OUT = 408;
 export const STT_INTERNAL_SERVER = 500;
 export const STT_NOT_MODIFIED = 304;
 
-const URL_PREFIX = '/api/method/mbw_service_v2.api';
-const URL = '/api/method';
+const URL_PREFIX = '/api/method/mbw_dms';
+const URL = '/api/method'
 // const URL_PREFIX = '/api/method/mbw_dms';
 // const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
 
@@ -31,13 +31,13 @@ export const PUT_USER_PROFILE = URL_PREFIX + '.user.update_profile';
 export const POST_CHECKIN = '/api/method/mbw_dms.api.checkin.create_checkin';
 
 // Product
-export const GET_PRODUCT = URL_PREFIX + '.api.selling.product.list_product';
-export const GET_BRAND_PRODUCT =
-  URL_PREFIX + '..api.selling.product.list_brand';
-export const GET_INDUSTRY_PRODUCT =
-  URL_PREFIX + '.api.selling.product.list_industry';
-export const GET_GROUP_PRODUCT =
-  URL_PREFIX + '.api.selling.product.list_item_group';
+export const GET_PRODUCT = URL_PREFIX +  ".api.selling.product.list_product";
+export const GET_BRAND_PRODUCT = URL_PREFIX +  "..api.selling.product.list_brand";
+export const GET_INDUSTRY_PRODUCT = URL_PREFIX +  ".api.selling.product.list_industry";
+export const GET_GROUP_PRODUCT = URL_PREFIX +  ".api.selling.product.list_item_group";
+export const GET_PRICE_PRODUCT = URL_PREFIX +  ".api.selling.order.price_list";
+export const GET_PRODUCT_PROMOTION = URL_PREFIX +  ".api.selling.order.pricing_rule";
+
 
 // Customer
 
@@ -56,8 +56,14 @@ export const UPDATE_CUSTOMER_ADDRESS =
 export const GET_ORDER = URL_PREFIX + '.api.selling.order.get_list_sales_order';
 export const GET_ORDER_DETAIL =
   URL_PREFIX + '.api.selling.order.get_sale_order';
+  export const GET_VATS = URL_PREFIX + ".api.selling.product.list_vat";
+  export const POST_ORDER = URL_PREFIX + ".api.selling.order.create_sale_order";
+  export const GET_WAREHOUSES = URL_PREFIX + ".api.selling.product.list_warehouse";
 
 //Address
 export const GET_LIST_CITY = '/mbw_dms.api.location.list_province';
 export const GET_LIST_DISTRICT = '/mbw_dms.api.location.list_district?ma_tinh=';
 export const GET_LIST_WARD = '/mbw_dms.api.location.list_ward?ma_quan_huyen=';
+
+// Inventory
+export const POST_CHECKIN_INVENTORY = URL_PREFIX + ".api.checkin.create_checkin_inventory"; 

@@ -16,10 +16,21 @@ import {navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorBoundary';
-import {calculateDistance, useSelector} from '../../../config/function';
+import {
+  backgroundErrorListener,
+  calculateDistance,
+  useSelector,
+} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {CheckinData, DMSConfigMobile} from '../../../services/appService';
+import moment from 'moment';
+import BackgroundGeolocation from 'react-native-background-geolocation';
+import isEquals from 'react-fast-compare'
 import {CommonUtils} from '../../../utils';
+
 
 export interface LocationProps {
   long: number;
@@ -36,6 +47,9 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
     state => state.app.currentLocation,
     shallowEqual,
   );
+  const systemConfig: DMSConfigMobile = useSelector(
+    state => state.app.systemConfig,
+  );
 
   const distanceCal = useMemo(() => {
     let location: LocationProps = JSON.parse(item.customer_location_primary!);
@@ -45,11 +59,53 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
       location.lat,
       location.long,
     );
-    return parseInt(Number(distance / 1000).toString(), 10);
+    // console.log(distance,'distance ')
+    return {location, distance};
   }, [item, currentLocation]);
 
   const onPressCheckIn = (item: VisitListItemType) => {
-    navigate(ScreenConstant.CHECKIN, {item});
+    handleBackground(item);
+  };
+
+  const handleBackground = (item:VisitListItemType) => {
+    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+      .then(location => {
+        const data: CheckinData = {
+          kh_ma: item.customer_code,
+          kh_ten: item.customer_name,
+          kh_diachi: item.customer_primary_address,
+          kh_long: distanceCal.location.long,
+          kh_lat: distanceCal.location.lat,
+          checkin_giovao: moment(new Date()).format('HH:mm'),
+          checkin_pinvao: location.battery.level > 0 ? location.battery.level * 100  : -location.battery.level * 100,
+          checkin_khoangcach: distanceCal.distance,
+          createdDate: moment(new Date()).valueOf(),
+          checkin_timegps: location.timestamp,
+          checkin_dochinhxac: location.coords.accuracy,
+          checkinvalidate_khoangcachcheckin:
+            systemConfig.saiso_chophep_kb_vitringoaisaiso,
+          checkinvalidate_khoangcachcheckout:
+            systemConfig.saiso_chophep_checkout_ngoaisaiso,
+          checkin_trangthaicuahang: true,
+          checkin_donhang:'',
+          checkin_giora:'',
+          checkin_hinhanh:[],
+          checkin_lat:location.coords.latitude,
+          checkin_long:location.coords.longitude,
+          checkin_pinra:0,
+          checkout_khoangcach:0,
+          createByName:'',
+          createdByEmail:'',
+          item:item
+          
+        };
+    
+        navigate(ScreenConstant.CHECKIN,{item:data})
+        dispatch(appActions.setDataCheckIn(data));
+      })
+      .catch(err => {
+        backgroundErrorListener(err);
+      });
   };
 
   const statusItem = (status: boolean) => {
@@ -139,7 +195,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
               />
               <Text
                 style={{color: colors.action, textDecorationLine: 'underline'}}>
-                {Math.floor(distanceCal)}km
+                {Math.floor(distanceCal.distance)}km
               </Text>
             </TouchableOpacity>
           </View>
@@ -165,7 +221,7 @@ interface VisitItemProps {
   onPress?: () => void;
 }
 
-export default VisitItem;
+export default React.memo(VisitItem,isEquals);
 
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({

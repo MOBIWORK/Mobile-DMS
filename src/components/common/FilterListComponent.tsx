@@ -118,7 +118,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
 interface FilterListComponentProps {
   title: string;
   searchPlaceholder?: string;
-  data: IFilterType[];
+  data: IFilterType[] | any[];
   handleItem: (item: IFilterType) => void;
   searchValue?: string;
   onChangeSearch?: (text: string) => void;

@@ -5,6 +5,7 @@ import { IProduct } from "../../models/types"
 export type StateType = {
     data : IProduct[],
     totalItem : number,
+    dataSelected : IProduct[]
     message :string,
     isLoading : boolean
 }

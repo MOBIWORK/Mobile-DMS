@@ -1,4 +1,4 @@
-import React, {createRef, FC} from 'react';
+import React, {createRef, FC, useEffect, useLayoutEffect, useState} from 'react';
 import type {
   NavigationAction,
   NavigationContainerRef,
@@ -34,12 +34,9 @@ import {
   Home,
   ImageView,
   Index,
-  Inventory,
-  InventoryAddProduct,
   KPI,
   ListProduct,
   ListVisit,
-  NewCustomer,
   NonOrderCustomer,
   NoteDetail,
   NotificationScreen,
@@ -48,9 +45,7 @@ import {
   ProductDetail,
   Profile,
   Report,
-  ReportDebt,
   ReportOrderDetail,
-  RouteResult,
   SearchCustomer,
   SearchProduct,
   SearchSreen,
@@ -63,6 +58,11 @@ import {
   TravelDiary,
   VisitResult,
   WidgetFavouriteScreen,
+  NewCustomer,
+  ReportDebt,
+  Inventory,
+  RouteResult,
+  CheckinSelectProdct,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -74,13 +74,22 @@ import {useSelector} from '../config/function';
 import {RXStore} from '../utils/redux';
 import {CommonUtils} from '../utils';
 import {PortalHost} from '../components/common/portal';
+import {shallowEqual} from 'react-redux';
+import {CheckinData} from '../services/appService';
+import { AppState, AppStateStatus } from 'react-native';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const theme = useSelector(state => state.app.theme);
-
+  const dataCheckIn: CheckinData = useSelector(
+    state => state.app.dataCheckIn,
+    shallowEqual,
+  );
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState,
+  );
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
 
   // const [organiztion] = useMMKVObject<IResOrganization>(
@@ -98,6 +107,24 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   //     },
   //   });
   // }, []);
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (appState.match(/inactive|background/) && nextAppState === 'active') {
+        console.log(nextAppState,'app state')
+    }
+    setAppState(nextAppState);
+  };
+
+  useEffect(() => {
+    const appState = AppState.addEventListener('change', handleAppStateChange);
+    if (Object.keys(dataCheckIn).length > 0) {
+      navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
+    } else {
+      return;
+    }
+    return () =>{
+      appState.remove()
+    }
+  }, [dataCheckIn]);
 
   return (
     <NavigationContainer
@@ -106,9 +133,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       ref={navigationRef}>
       <Stack.Navigator
         initialRouteName={
-          validate
-            ? ScreenConstant.MAIN_TAB
-            : ScreenConstant.SELECT_ORGANIZATION
+          ScreenConstant.CHECKIN_INVENTORY
         }
         screenOptions={{
           headerShown: false,
@@ -175,8 +200,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={Inventory}
         />
         <Stack.Screen
-          name={ScreenConstant.INVENTORY_ADD_PRODUCT}
-          component={InventoryAddProduct}
+          name={ScreenConstant.CHECKIN_SELECT_PRODUCT}
+          component={CheckinSelectProdct}
         />
         <Stack.Screen
           name={ScreenConstant.ADDING_NEW_CUSTOMER}
@@ -292,7 +317,7 @@ export type RootStackParamList = {
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_INVENTORY]: undefined;
-  [ScreenConstant.INVENTORY_ADD_PRODUCT]: undefined;
+  [ScreenConstant.CHECKIN_SELECT_PRODUCT]: undefined;
   [ScreenConstant.CHECKIN_ORDER]: {type: string};
   [ScreenConstant.CHECKIN_ORDER_CREATE]: {type: string};
   [ScreenConstant.CUSTOMER]: undefined;

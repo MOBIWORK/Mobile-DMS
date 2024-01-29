@@ -19,14 +19,14 @@ const persistedReducer = persistReducer(
 
 const devMode = __DEV__;
 const sagaMiddleware = createSagaMiddleware();
-const middleware = [sagaMiddleware];
+const middlewares = [sagaMiddleware];
 
 const storeConfig = () => {
   const store = configureStore({
     reducer: persistedReducer,
     devTools: devMode,
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware().concat(middleware),
+      getDefaultMiddleware().concat(middlewares),
   });
   sagaMiddleware.run(rootSaga);
   return store;

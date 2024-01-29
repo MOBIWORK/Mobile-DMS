@@ -15,6 +15,8 @@ import {
 } from '../../services/appService';
 import {all, call, put} from 'typed-redux-saga';
 import {showSnack} from '../../components/common';
+import { navigate } from '../../navigation';
+import { ScreenConstant } from '../../const';
 
 export const checkKeyInObject = (T: any, key: string) => {
   return Object.keys(T).includes(key);
@@ -49,6 +51,9 @@ export function* onCheckInData(action: PayloadAction) {
       // yield put(appActions.onLoadApp())
       console.log(action.payload, 'payload saga');
       const response: any = yield* call(postChecking, action.payload);
+      if(response?.result.length > 0){
+        navigate(ScreenConstant.CHECKIN,{item:action.payload})
+      }
     } catch (err) {
       console.log(err, 'err');
     } finally {
