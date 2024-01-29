@@ -4,12 +4,12 @@ import {
   appActions,
   onLoadApp,
   onLoadAppEnd,
-  setNewCustomer,
 } from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
 import {
-  getCustomer,
-  getCustomerType,
+  getListCity,
+  getListDistrict,
+  getListWard,
   getSystemConfig,
   postChecking,
 } from '../../services/appService';
@@ -81,4 +81,57 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
     }
   }
 }
-// export function* 
+export function* onGetListCity(action:PayloadAction){
+  if(appActions.onGetListCity.match(action)){
+    try{
+      const response:ResponseGenerator = yield call(getListCity,action.payload)
+        if(response.message === 'Thành công'){
+          yield put(appActions.setDataCity(response.data))
+        }else{
+          showSnack({
+            msg:'Đã có lỗi xảy ra, hãy thử lại',
+            interval:2000,
+            type:'error'
+          })
+        }
+    }catch(err){
+        console.error('[err]: ',err)
+    }
+  }
+}
+export function* onGetListDistrict(action:PayloadAction){
+  if(appActions.onGetListDistrict.match(action)){
+    try{
+      const response:ResponseGenerator = yield call(getListDistrict,action.payload)
+        if(response.message === 'Thành công'){
+          yield put(appActions.setDataDistrict(response.data))
+        }else{
+          showSnack({
+            msg:'Đã có lỗi xảy ra, hãy thử lại',
+            interval:2000,
+            type:'error'
+          })
+        }
+    }catch(err){
+        console.error('[err]: ',err)
+    }
+  }
+}
+export function* onGetListWard(action:PayloadAction){
+  if(appActions.onGetListWard.match(action)){
+    try{
+      const response:ResponseGenerator = yield call(getListWard,action.payload)
+        if(response.message === 'Thành công'){
+          yield put(appActions.setDataWard(response.data))
+        }else{
+          showSnack({
+            msg:'Đã có lỗi xảy ra, hãy thử lại',
+            interval:2000,
+            type:'error'
+          })
+        }
+    }catch(err){
+        console.error('[err]: ',err)
+    }
+  }
+}

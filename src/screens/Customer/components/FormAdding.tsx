@@ -37,7 +37,7 @@ import {
   removeContactAddress,
 } from '../../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
-import { customerActions } from '../../../redux-store/customer-reducer/reducer';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -75,8 +75,8 @@ const FormAdding = (props: Props) => {
   });
   const [dataLocation, setDataLocation] = useState<string>('');
   const mainAddress = useSelector(state => state.app.mainAddress);
-  const mainContactAddress = useSelector(state=>state.app.mainContactAddress);
-  
+  const mainContactAddress = useSelector(state => state.app.mainContactAddress);
+
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
 
@@ -110,7 +110,7 @@ const FormAdding = (props: Props) => {
   };
 
   useLayoutEffect(() => {
-    dispatch(customerActions.onGetCustomerType())
+    dispatch(customerActions.onGetCustomerType());
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
         setLocation(res);
@@ -155,14 +155,14 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label="Mã khách hàng"
-        value={valueFilter.customer_id}
+        value={valueFilter.customer_code}
         editable={true}
         hiddenRightIcon={true}
         isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onChangeValue={text => {
-          setData(prev => ({...prev, customer_id: text}));
+          setData(prev => ({...prev, customer_code: text}));
           console.log('text');
         }}
       />
@@ -282,9 +282,9 @@ const FormAdding = (props: Props) => {
       <AppInput
         label={translate('debtLimit')}
         value={
-          valueFilter.credit_limit
-            ? formatMoney(valueFilter.credit_limit)
-            : valueFilter.credit_limit
+          valueFilter.credit_limid[0]
+            ? formatMoney(valueFilter.credit_limid[0])
+            : valueFilter.credit_limid[0]
         }
         editable={true}
         isRequire={false}

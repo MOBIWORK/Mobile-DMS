@@ -66,6 +66,7 @@ import Visited from './visited.svg';
 import NotVisit from './notVisit.svg';
 import Folder from './folder.svg';
 import UserGroup2 from './userGroup.svg';
+import LocationCheckIn from './locationCheckin.svg';
 export const SvgComponent = {
   MoneyIcon,
   NewCustomerIcon,
@@ -135,5 +136,6 @@ export const SvgComponent = {
   NotVisit,
   Folder,
   UserGroup2,
+  LocationCheckIn,
 };
 export type SvgIconTypes = keyof typeof SvgComponent;

@@ -1,9 +1,12 @@
-import React, {FC, useLayoutEffect, useRef, useState} from 'react';
-import {
-  AppBottomSheet,
-  AppHeader,
-  FilterView,
-} from '../../../components/common';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import {AppHeader, FilterView} from '../../../components/common';
 import {
   FlatList,
   Image,
@@ -17,7 +20,7 @@ import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {VisitListItemType} from '../../../models/types';
-import VisitItem from './VisitItem';
+import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
@@ -28,51 +31,57 @@ import BackgroundGeolocation, {
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {useSelector} from '../../../config/function';
-import {dispatch} from '../../../utils/redux';
+
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-import FilterListComponent, {
-  IFilterType,
-} from '../../../components/common/FilterListComponent';
-import {useTranslation} from 'react-i18next';
-
+import {dispatch} from '../../../utils/redux';
+import {getCustomerVisit} from '../../../services/appService';
+import {shallowEqual} from 'react-redux';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const ListVisit = () => {
   const {colors} = useTheme();
   const {bottom} = useSafeAreaInsets();
-  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
 
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const distanceRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
-  const listCustomer = useSelector(state => state.customer.listCustomer);
+  const listCustomer = useSelector(state => state.customer.listCustomerVisit);
   const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
+  const system = useSelector(state => state.app.systemConfig);
+  const [error, setError] = useState<string>('');
+  const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
-  const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
-    getLabel('nearest'),
-  );
-  const [distanceFilterData, setDistanceFilterData] = useState<IFilterType[]>(
-    AppConstant.DistanceFilterData,
-  );
+  const backgroundErrorListener = useCallback((errorCode: number) => {
+    // Handle background location errors
+    switch (errorCode) {
+      case 0:
+        setError(
+          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+        );
+        break;
+      case 1:
+        setError('GPS đã bị tắt. Vui lòng bật lại.');
+        break;
+      default:
+        setError('Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại');
+    }
+  }, []);
 
-  const handleItemDistanceFilter = (itemData: IFilterType) => {
-    setDistanceFilterValue(getLabel(itemData.label));
-    const newData = distanceFilterData.map(item => {
-      if (itemData.value === item.value) {
-        return {...item, isSelected: true};
-      } else {
-        return {...item, isSelected: false};
-      }
-    });
-    setDistanceFilterData(newData);
+  const handleBackground = () => {
+    BackgroundGeolocation.getCurrentPosition(
+      {samples: 1, timeout: 3},
+      location => {
+        console.log('location: ', location);
+      },
+      backgroundErrorListener,
+    );
   };
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
@@ -92,7 +101,7 @@ const ListVisit = () => {
         <Image
           source={ImageAssets.MapPinFillIcon}
           style={{width: 32, height: 32}}
-          tintColor={item.status ? colors.success : colors.warning}
+          tintColor={item.is_checkin ? colors.success : colors.warning}
           resizeMode={'cover'}
         />
       </TouchableOpacity>
@@ -140,10 +149,7 @@ const ListVisit = () => {
             justifyContent: 'flex-start',
             marginTop: 16,
           }}>
-          <TouchableOpacity
-            onPress={() =>
-              distanceRef.current && distanceRef.current.snapToIndex(0)
-            }
+          <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -154,13 +160,11 @@ const ListVisit = () => {
               borderColor: colors.border,
               maxWidth: 180,
             }}>
-            <Text style={{color: colors.text_secondary}}>
-              {getLabel('distance')}:
-            </Text>
+            <Text style={{color: colors.text_secondary}}>Khoảng cách:</Text>
             <Text style={{color: colors.text_primary, marginLeft: 8}}>
-              {distanceFilterValue}
+              Gần nhất
             </Text>
-          </TouchableOpacity>
+          </View>
           <FilterView
             style={{marginLeft: 12}}
             onPress={() =>
@@ -180,12 +184,16 @@ const ListVisit = () => {
             <Text style={{color: colors.text_secondary}}>
               Viếng thăm 3/10 khách hàng
             </Text>
-            <FlatList
-              style={{height: '90%'}}
-              showsVerticalScrollIndicator={false}
-              data={VisitListData}
-              renderItem={({item}) => <VisitItem item={item} />}
-            />
+            {listCustomer && (
+              <FlatList
+                style={{height: '90%'}}
+                showsVerticalScrollIndicator={false}
+                data={listCustomer}
+                renderItem={({item}) => (
+                  <VisitItem item={item} onPress={handleBackground} />
+                )}
+              />
+            )}
           </View>
         ) : (
           <View style={styles.map as ViewStyle}>
@@ -206,15 +214,22 @@ const ListVisit = () => {
                 animationDuration={500}
                 zoomLevel={12}
               />
-              {VisitListData.map((item, index) => {
-                return (
-                  <Mapbox.MarkerView
-                    key={index}
-                    coordinate={[Number(item.long), Number(item.lat)]}>
-                    <MarkerItem item={item} index={index} />
-                  </Mapbox.MarkerView>
-                );
-              })}
+              {listCustomer &&
+                listCustomer.map((item, index) => {
+                  const location: LocationProps = JSON.parse(
+                    item.customer_location_primary!,
+                  );
+                  return (
+                    <Mapbox.MarkerView
+                      key={index}
+                      coordinate={[
+                        Number(location.long),
+                        Number(location.lat),
+                      ]}>
+                      <MarkerItem item={item} index={index} />
+                    </Mapbox.MarkerView>
+                  );
+                })}
               <Mapbox.UserLocation
                 visible={true}
                 animated
@@ -225,7 +240,7 @@ const ListVisit = () => {
                 <View
                   style={{
                     position: 'absolute',
-                    bottom: bottom + 16,
+                    bottom: bottom + 70,
                     left: 24,
                     right: 24,
                   }}>
@@ -244,12 +259,14 @@ const ListVisit = () => {
 
   useLayoutEffect(() => {
     // setLoading(true);
-    dispatch(customerActions.onGetCustomer());
+
     if (Object.keys(systemConfig).length > 0) {
       return;
     } else {
       dispatch(appActions.onGetSystemConfig());
     }
+    dispatch(customerActions.onGetCustomerVisit());
+
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
@@ -257,23 +274,36 @@ const ListVisit = () => {
     // setLoading(false);
   }, []);
 
+  const getCustomer = async () => {
+    await getCustomerVisit().then((res: any) => {
+      if (Object.keys(res?.result.data).length > 0) {
+        const data: VisitListItemType[] = res?.result.data;
+        const newData = data.filter(item => item.customer_location_primary);
+        dispatch(customerActions.setCustomerVisit(newData));
+      }
+    });
+  };
+
+  useEffect(() => {
+    mounted.current = true;
+    getCustomer();
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
   return (
     <SafeAreaView
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
+      {/* <SkeletonLoading loading={true}  /> */}
       {appLoading ? (
         <SkeletonLoading loading={appLoading!} />
       ) : (
         _renderContent()
       )}
+
       <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
-      <AppBottomSheet bottomSheetRef={distanceRef}>
-        <FilterListComponent
-          title={getLabel('distance')}
-          data={distanceFilterData}
-          handleItem={handleItemDistanceFilter}
-        />
-      </AppBottomSheet>
     </SafeAreaView>
   );
 };
@@ -292,48 +322,48 @@ const styles = StyleSheet.create({
   },
 });
 
-export const VisitListData: VisitListItemType[] = [
-  {
-    label: 'Nintendo',
-    useName: 'Chu Quýnh Anh',
-    status: true,
-    address: '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-    phone_number: '+84 667 435 265',
-    lat: 37.785839,
-    long: -122.4267,
-    distance: 1,
-  },
-  {
-    label: "McDonald's",
-    useName: 'Chu Quýnh Anh',
-    status: false,
-    address:
-      'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-    phone_number: '+84 234 234 456',
-    lat: 37.784839,
-    long: -122.4467,
-    distance: 1.5,
-  },
-  {
-    label: 'General Electric',
-    useName: 'Chu Quýnh Anh',
-    status: false,
-    address:
-      '495A Cách Mạng Tháng Tám, Phường 13, Quận 10, Thành phố Hồ Chí Minh',
-    phone_number: '+84 234 234 456',
-    lat: 37.785839,
-    long: -122.4667,
-    distance: 2,
-  },
-  {
-    label: "McDonald's",
-    useName: 'Chu Quýnh Anh',
-    status: false,
-    address:
-      'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-    phone_number: '+84 234 234 456',
-    lat: 37.789839,
-    long: -122.4667,
-    distance: 1.5,
-  },
-];
+// export const VisitListData: VisitListItemType[] = [
+//   {
+//     label: 'Nintendo',
+//     useName: 'Chu Quýnh Anh',
+//     status: true,
+//     address: '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
+//     phone_number: '+84 667 435 265',
+//     lat: 37.785839,
+//     long: -122.4267,
+//     distance: 1,
+//   },
+//   {
+//     label: "McDonald's",
+//     useName: 'Chu Quýnh Anh',
+//     status: false,
+//     address:
+//       'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
+//     phone_number: '+84 234 234 456',
+//     lat: 37.784839,
+//     long: -122.4467,
+//     distance: 1.5,
+//   },
+//   {
+//     label: 'General Electric',
+//     useName: 'Chu Quýnh Anh',
+//     status: false,
+//     address:
+//       '495A Cách Mạng Tháng Tám, Phường 13, Quận 10, Thành phố Hồ Chí Minh',
+//     phone_number: '+84 234 234 456',
+//     lat: 37.785839,
+//     long: -122.4667,
+//     distance: 2,
+//   },
+//   {
+//     customer_name: "McDonald's",
+//     useName: 'Chu Quýnh Anh',
+//     status: false,
+//     address:
+//       'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
+//     phone_number: '+84 234 234 456',
+//     lat: 37.789839,
+//     long: -122.4667,
+//     distance: 1.5,
+//   },
+// ];

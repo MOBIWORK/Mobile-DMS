@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, useMemo} from 'react';
+import React, {useRef, useState, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {
@@ -16,13 +16,10 @@ import {
   AppContainer,
   AppHeader,
 } from '../../../components/common';
-import {VisitListItemType} from '../../../models/types';
 import Detail from './Detail';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Report from './Report/Report';
-import BottomSheet, {
-  useBottomSheetDynamicSnapPoints,
-} from '@gorhom/bottom-sheet';
+import BottomSheet from '@gorhom/bottom-sheet';
 import {AppConstant} from '../../../const';
 import FilterListComponent from '../../../components/common/FilterListComponent';
 
@@ -34,13 +31,13 @@ const Index = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'VISIT_DETAIL'>>();
   const snapPoints = useMemo(() => ['40%'], []);
- 
+
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const DetailScreen = () => (
     <AppContainer style={{marginBottom: bottom}}>
       <View style={{flex: 1, padding: 16}}>
-        <Detail item={route.params ? route.params.data : ItemFake} />
+        <Detail item={route.params && route.params.data} />
       </View>
     </AppContainer>
   );
@@ -109,7 +106,7 @@ const Index = () => {
         bottomSheetRef={bottomSheetRef}
         snapPointsCustom={snapPoints}
         // contentHeight={animatedContentHeight}
-       >
+      >
         <FilterListComponent
           title={'Thời gian'}
           data={AppConstant.SelectedDateFilterData}
@@ -138,15 +135,3 @@ const styles = StyleSheet.create({
     marginBottom: -2,
   },
 });
-
-const ItemFake: VisitListItemType = {
-  label: "McDonald's",
-  useName: 'Chu Quỳnh Anh',
-  status: true,
-  address:
-    'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-  phone_number: '+84 234 234 456',
-  lat: 37.789839,
-  long: -122.4667,
-  distance: 1.5,
-};

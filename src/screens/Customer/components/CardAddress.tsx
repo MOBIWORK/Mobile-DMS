@@ -2,7 +2,7 @@ import {StyleSheet, View, ViewStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {Platform} from 'react-native';
-import {AppText, SvgIcon} from '../../../components/common';
+import {AppText as Text, Block, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
 
 type Props = CardAddressType | CardContactType;
@@ -17,18 +17,17 @@ type CardContactType = {
 };
 
 export type MainAddress = {
-  addressGet: boolean;
-  addressOrder: boolean;
-  city: string;
-  detailAddress: string;
-  district: string;
-  ward: string;
+
+    address: string;
+    isSetAddressGet: boolean;
+    isSetAddressTake: boolean;
+  
 };
 export type MainContactAddress = {
-  nameContact: string;
-  addressContact: string;
-  phoneNumber: string;
-  isMainAddress: boolean;
+    // name: string;
+    address_line1: string;
+    phone: string;
+  
 };
 const CardAddress = (props: Props) => {
   const theme = useTheme();
@@ -44,47 +43,48 @@ const CardAddress = (props: Props) => {
                 <SvgIcon source="MapPin" size={16} />
               </View>
               <View>
-                <AppText
+                <Text
                   numberOfLines={2}
                   fontSize={16}
                   fontWeight="300"
                   colorTheme="black"
                   lineHeight={21}>
                   Địa chỉ chi tiết
-                </AppText>
-                <AppText
+                </Text>
+                <Text
                   numberOfLines={2}
                   fontSize={16}
                   fontWeight="300"
                   style={{maxWidth: '90%'}}
                   colorTheme="black"
                   lineHeight={21}>
-                  {props.mainAddress.detailAddress}
-                </AppText>
+                  {/* {props.mainAddress?.address ? props.mainAddress.address : '---'} */}
+                  ---
+                </Text>
               </View>
             </View>
           </View>
           <View style={styles.containAddress}>
-            {props.mainAddress.addressGet && (
+            {props.mainAddress.isSetAddressGet && (
               <View style={styles.addressGetAndOrder}>
-                <AppText
+                <Text
                   fontSize={14}
                   lineHeight={21}
                   fontWeight="400"
                   colorTheme="primary">
                   Địa chỉ giao hàng
-                </AppText>
+                </Text>
               </View>
             )}
-            {props.mainAddress.addressOrder && (
+            {props.mainAddress.isSetAddressTake && (
               <View style={styles.addressGetAndOrder}>
-                <AppText
+                <Text
                   fontSize={14}
                   lineHeight={21}
                   fontWeight="400"
                   colorTheme="primary">
                   Địa chỉ đặt hàng
-                </AppText>
+                </Text>
               </View>
             )}
           </View>
@@ -92,55 +92,60 @@ const CardAddress = (props: Props) => {
       ) : (
         <View style={{paddingHorizontal: 16}}>
           <View style={styles.containAddressLabel}>
-            <AppText
+            <Text
               fontSize={16}
               fontWeight="400"
               colorTheme="black"
               lineHeight={21}>
-              {props.mainContactAddress.nameContact}
-            </AppText>
+              {props.mainContactAddress.address_line1 ? props.mainContactAddress.address_line1 : '---'}
+            </Text>
           </View>
           <View style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <View style={styles.containIcon}>
               <SvgIcon source="MapPin" size={16} />
             </View>
-            <AppText
+            <Text
               numberOfLines={2}
               fontSize={14}
               fontWeight="300"
               colorTheme="black"
               lineHeight={21}>
-              {props.mainContactAddress.addressContact}
-            </AppText>
+              {props.mainContactAddress.address_line1 ? props.mainContactAddress.address_line1 : '---'}
+            </Text>
           </View>
           <View style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <View style={styles.containIcon}>
               <SvgIcon source="Phone" size={16} />
             </View>
-            <AppText
+            <Text
               numberOfLines={2}
               fontSize={14}
               fontWeight="300"
               // textAlign='justify'
               colorTheme="black"
               lineHeight={21}>
-              {formatPhoneNumber(props.mainContactAddress.phoneNumber)}
-            </AppText>
+              { props.mainContactAddress.phone ? formatPhoneNumber(props.mainContactAddress.phone) : '---'}
+            </Text>
           </View>
           <View style={styles.containMain}>
             <View style={styles.addressGetAndOrder}>
-              <AppText
+              <Text
                 fontSize={14}
                 lineHeight={21}
                 fontWeight="400"
                 colorTheme="primary">
                 Liên hệ chính
-              </AppText>
+              </Text>
             </View>
           </View>
         </View>
       )}
     </View>
+    // <Block>
+    //   <Text>
+    //     b
+    //   </Text>
+    // </Block>
   );
 };
 

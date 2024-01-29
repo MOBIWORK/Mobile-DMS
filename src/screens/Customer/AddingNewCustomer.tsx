@@ -32,10 +32,13 @@ import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
 import {useSelector} from '../../config/function';
-import {appActions, setNewCustomer} from '../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  setNewCustomer,
+} from '../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import { customerActions } from '../../redux-store/customer-reducer/reducer';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -47,42 +50,42 @@ const AddingNewCustomer = () => {
     customerGroupType: 'Tất cả',
     customerBirthday: 'Tất cả',
   });
-  const {mainContactAddress, mainAddress} = useSelector(state => state.app);
+
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
   const [listData, setListData] = useState<IDataCustomer>({
-    customer_id: '',
+    customer_code: '',
     customer_name: '',
     customer_type: valueFilter.customerType,
     customer_group: valueFilter.customerGroupType,
     customer_birthday: date,
     territory: '',
     router_name: '',
-    credit_limit: 0,
+    credit_limid: 0,
     customer_details: '',
     website: '',
-    address: {
-      address: mainAddress?.length >= 0 ? mainAddress[0]?.detailAddress : '',
-      isSetAddressGet:
-        mainAddress?.length >= 0 ? mainAddress[0]?.addressGet : false,
-      isSetAddressTake:
-        mainAddress?.length >= 0 ? mainAddress[0]?.addressOrder : false,
-    },
-    contact: {
-      name:
-        mainContactAddress?.length >= 0
-          ? mainContactAddress[0]?.nameContact
-          : '',
-      address:
-        mainContactAddress?.length >= 0
-          ? mainContactAddress[0]?.addressContact
-          : '',
-      phoneNumber:
-        mainContactAddress?.length >= 0
-          ? mainContactAddress[0]?.phoneNumber
-          : '',
-    },
-    imageSource: imageSource ? imageSource : '',
+    // address: {
+    //   address: mainAddress?.length >= 0 ? mainAddress[0]?.detailAddress : '',
+    //   isSetAddressGet:
+    //     mainAddress?.length >= 0 ? mainAddress[0]?.addressGet : false,
+    //   isSetAddressTake:
+    //     mainAddress?.length >= 0 ? mainAddress[0]?.addressOrder : false,
+    // },
+    // contact: {
+    //   name:
+    //     mainContactAddress?.length >= 0
+    //       ? mainContactAddress[0]?.nameContact
+    //       : '',
+    //   address:
+    //     mainContactAddress?.length >= 0
+    //       ? mainContactAddress[0]?.addressContact
+    //       : '',
+    //   phoneNumber:
+    //     mainContactAddress?.length >= 0
+    //       ? mainContactAddress[0]?.phoneNumber
+    //       : '',
+    // },
+    image: imageSource ? imageSource : '',
   });
   const [openDate, setOpenDate] = React.useState<boolean>(false);
   const [typeFilter, setTypeFilter] = React.useState<string>(
@@ -95,7 +98,7 @@ const AddingNewCustomer = () => {
       typeFilter === AppConstant.CustomerFilterType.dia_chi
         ? ['100%']
         : typeFilter === AppConstant.CustomerFilterType.nguoi_lien_he
-        ? ['60%']
+        ? ['100%']
         : ['40%'],
     [typeFilter],
   );
@@ -140,12 +143,10 @@ const AddingNewCustomer = () => {
     [setOpenDate, setDate],
   );
 
-
-  useEffect(() =>{
-    dispatch(customerActions.onGetCustomerType())
-    dispatch(appActions.onGetListCity())
-  },[])
-
+  useEffect(() => {
+    dispatch(customerActions.onGetCustomerType());
+    dispatch(appActions.onGetListCity());
+  }, []);
 
   return (
     <MainLayout>

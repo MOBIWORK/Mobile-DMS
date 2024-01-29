@@ -1,11 +1,10 @@
 import React, {FC} from 'react';
 import {MainLayout} from '../../../../../layouts';
 import {
-
   AppContainer,
   AppCustomHeader,
   Accordion,
-  Block
+  Block,
 } from '../../../../../components/common';
 import {
   ExtendedTheme,
@@ -29,7 +28,7 @@ import {CommonUtils} from '../../../../../utils';
 import {ReportProductOrderType} from '../../../../../models/types';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ProductOrderItem from './ProductOrderItem';
-import { ScreenConstant } from '../../../../../const';
+import {ScreenConstant} from '../../../../../const';
 
 const ReportOrderDetail = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -39,8 +38,6 @@ const ReportOrderDetail = () => {
   const styles = createSheetStyles(useTheme());
   const {t: getLabel} = useTranslation();
   const item = route.params.item;
-
-
 
   // const [productData, setProductData] = useState<ReportProductOrderType[]>([]);
   // const [promotionalData, setPromotionalData] = useState<ReportProductOrderType[]>([]);
@@ -55,7 +52,7 @@ const ReportOrderDetail = () => {
     label,
   }) => {
     return (
-      <Block style={[styles.row as ViewStyle, style]}   >
+      <Block style={[styles.row as ViewStyle, style]}>
         {title ? (
           <Text
             style={{color: colors.text_secondary, fontSize: 16, ...titleStyle}}>
@@ -118,7 +115,11 @@ const ReportOrderDetail = () => {
   const _renderOrderInfo = () => {
     const OrderInfoItem = () => {
       return (
-        <Block  colorTheme='bg_default' padding={4}  borderRadius={16} paddingHorizontal={16} >
+        <Block
+          colorTheme="bg_default"
+          padding={4}
+          borderRadius={16}
+          paddingHorizontal={16}>
           <RowItem
             style={{paddingBottom: 8}}
             title={'Ngày giao'}
@@ -137,7 +138,7 @@ const ReportOrderDetail = () => {
       );
     };
     return (
-      <Accordion type='nested' title={'Thông tin đơn'}>
+      <Accordion type="nested" title={'Thông tin đơn'}>
         <OrderInfoItem />
       </Accordion>
     );
@@ -145,8 +146,12 @@ const ReportOrderDetail = () => {
 
   const _renderVAT = () => {
     return (
-      <Accordion type='nested' title={'VAT'}>
-        <Block colorTheme='white'  style={{rowGap: 8}}  padding={4} borderRadius={16} >
+      <Accordion type="nested" title={'VAT'}>
+        <Block
+          colorTheme="white"
+          style={{rowGap: 8}}
+          padding={4}
+          borderRadius={16}>
           <RowItem title={'Biểu mẫu VAT'} label={'Biểu mẫu A'} />
           <RowItem title={'VAT(%)'} label={'5'} />
           <RowItem
@@ -160,8 +165,12 @@ const ReportOrderDetail = () => {
 
   const _renderDiscount = () => {
     return (
-      <Accordion type='nested' title={'Chiết khấu'}>
-        <Block style={{rowGap: 6}} colorTheme='white' borderRadius={16} padding={4}>
+      <Accordion type="nested" title={'Chiết khấu'}>
+        <Block
+          style={{rowGap: 6}}
+          colorTheme="white"
+          borderRadius={16}
+          padding={4}>
           <RowItem title={'Loại chiết khấu'} label={'Tổng tiền có VAT'} />
           <RowItem title={'Chiết khấu(%)'} label={'5'} />
           <RowItem
@@ -181,7 +190,10 @@ const ReportOrderDetail = () => {
     }) => {
       return (
         <Block
-          style={[styles.rowItemContainer as ViewStyle, {justifyContent: 'space-between'}]}>
+          style={[
+            styles.rowItemContainer as ViewStyle,
+            {justifyContent: 'space-between'},
+          ]}>
           <Text style={{color: colors.text_secondary, fontSize: 16}}>
             {label}
           </Text>
@@ -197,8 +209,12 @@ const ReportOrderDetail = () => {
       );
     };
     return (
-      <Accordion type='nested' title={'Chi tiết thanh toán'}>
-        <Block  colorTheme='white' style={{rowGap:10}} borderRadius={16} padding={16} >
+      <Accordion type="nested" title={'Chi tiết thanh toán'}>
+        <Block
+          colorTheme="white"
+          style={{rowGap: 10}}
+          borderRadius={16}
+          padding={16}>
           <PayItem label={'Thành tiền'} price={5000000} />
           <PayItem label={'Chiết khấu'} price={1000000} />
           <PayItem label={'VAT'} price={100000} />
@@ -211,13 +227,13 @@ const ReportOrderDetail = () => {
   return (
     <MainLayout style={{paddingHorizontal: 0}}>
       <AppCustomHeader
-        styles={{flex: 1.5, paddingHorizontal: 16,marginBottom:12}}
+        styles={{flex: 1.5, paddingHorizontal: 16, marginBottom: 12}}
         onBack={() => navigation.goBack()}
         title={item.label}
         icon={ImageAssets.CalenderIcon}
         description={`${item.time}, ${item.date}`}
       />
-      <Block  flex={9} style={{ backgroundColor: colors.bg_neutral}}>
+      <Block flex={9} style={{backgroundColor: colors.bg_neutral}}>
         <AppContainer style={{marginBottom: bottom}}>
           <View
             style={{
@@ -264,7 +280,7 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       paddingBottom: 16,
       borderBottomWidth: 1,
       borderColor: theme.colors.divider,
-      marginLeft:8
+      marginLeft: 8,
     },
     label: {
       color: theme.colors.text_primary,
@@ -275,9 +291,9 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal:16,
-      paddingVertical:4
-    } as  ViewStyle,
+      paddingHorizontal: 16,
+      paddingVertical: 4,
+    } as ViewStyle,
     rowItemContainer: {
       flexDirection: 'row',
       alignItems: 'center',

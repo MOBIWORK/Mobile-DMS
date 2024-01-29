@@ -69,7 +69,7 @@ export default {
   custom: 'Custom',
   selectDate: 'Select date',
   all: 'All',
-  company: 'Company',
+  Company: 'Company',
   individual: 'Cá nhân',
   loyal: 'Loyal',
   Sunday: 'SUN',
@@ -161,4 +161,7 @@ export default {
   listProduct :"List product",
   selectProductInvetory :"Select the product to be inspected",
 
+  visited: 'Visited',
+  notVisited: "Haven't visited",
+  currentPosition: 'Current position',
 };

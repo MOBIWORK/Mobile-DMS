@@ -72,7 +72,7 @@ export default {
   custom: 'Tùy chỉnh',
   selectDate: 'Chọn ngày',
   all: 'Tất cả',
-  company: 'Công ty',
+  Company: 'Công ty',
   individual: 'Cá nhân',
   loyal: 'Thân thiết',
   Sunday: 'CN',
@@ -163,4 +163,7 @@ export default {
   inventoryControl :"Kiểm tồn",
   listProduct :"Danh sách sản phẩm",
   selectProductInvetory :"Chọn sản phẩm cần kiểm tồn",
+  visited: 'Đã viếng thăm',
+  notVisited: 'Chưa viếng thăm',
+  currentPosition: 'Vị trí hiện tại',
 };
