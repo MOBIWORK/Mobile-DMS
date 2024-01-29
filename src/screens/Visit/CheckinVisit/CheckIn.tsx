@@ -39,6 +39,7 @@ const CheckIn = (props: Props) => {
       ? dataCheckIn.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
+  console.log(params,'a')
 
   const handleSwitch = useCallback(() => {
     if (title === 'Mở cửa') {
@@ -117,9 +118,9 @@ const CheckIn = (props: Props) => {
               <SvgIcon source="Phone" size={16} />
               <Text numberOfLines={1}>
                 {' '}
-                {params?.item.mobile_no === null
+                {params?.item?.mobile_no === null
                   ? '---'
-                  : params?.item.mobile_no}{' '}
+                  : params?.item?.mobile_no}{' '}
               </Text>
             </Block>
           </Block>

@@ -19,6 +19,7 @@ import ErrorFallback from '../../../layouts/ErrorBoundary';
 import {
   backgroundErrorListener,
   calculateDistance,
+  generateRandomObjectId,
   useSelector,
 } from '../../../config/function';
 import {shallowEqual} from 'react-redux';
@@ -29,7 +30,7 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import moment from 'moment';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import isEquals from 'react-fast-compare'
-import {CommonUtils} from '../../../utils';
+
 
 
 export interface LocationProps {
@@ -42,7 +43,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
   const styles = createStyleSheet(useTheme());
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
-
+  const currentCustomerCheckin = useSelector(state => state.app.dataCheckIn,shallowEqual)
   const currentLocation = useSelector(
     state => state.app.currentLocation,
     shallowEqual,
@@ -67,10 +68,12 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
     handleBackground(item);
   };
 
-  const handleBackground = (item:VisitListItemType) => {
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+  const handleBackground = async (item:VisitListItemType) => {
+    await BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 30})
       .then(location => {
-        const data: CheckinData = {
+        console.log(location,'location')
+        let data: CheckinData = {
+          checkin_id: currentCustomerCheckin && currentCustomerCheckin.kh_ma === item.customer_code ?  currentCustomerCheckin.checkin_id :   generateRandomObjectId(),
           kh_ma: item.customer_code,
           kh_ten: item.customer_name,
           kh_diachi: item.customer_primary_address,
@@ -97,13 +100,16 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
           createByName:'',
           createdByEmail:'',
           item:item
-          
         };
+        console.log(data,'data')
+        console.log('fuckkk')
+    navigate(ScreenConstant.CHECKIN,{item:data})
     
-        navigate(ScreenConstant.CHECKIN,{item:data})
+      
         dispatch(appActions.setDataCheckIn(data));
       })
       .catch(err => {
+        console.log(err,'err');
         backgroundErrorListener(err);
       });
   };
@@ -268,3 +274,5 @@ const createStyleSheet = (theme: ExtendedTheme) =>
         justifyContent: 'center',
       } as ViewStyle),
   });
+
+

@@ -64,7 +64,6 @@
     "react-native-screens": "^3.27.0",
     "react-native-svg": "^14.1.0",
     "react-native-tab-view": "^3.5.2",
-    "react-native-turbo-mock-location-detector": "^2.3.1",
     "react-native-vector-icons": "^10.0.2",
     "react-native-version-check": "^3.4.7",
     "react-redux": "^8.1.2",
