@@ -47,7 +47,7 @@ import UpdateScreen from '../UpdateScreen/UpdateScreen';
 
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
-import { useSelector } from '../../config/function';
+import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 
 const HomeScreen = () => {
@@ -326,7 +326,7 @@ const HomeScreen = () => {
     BackgroundGeolocation.getCurrentPosition(
       {
         samples: 1,
-        timeout: 30,
+        timeout: 3,
         maximumAge: 0,
         persist: false,
         desiredAccuracy: 10,
@@ -345,8 +345,6 @@ const HomeScreen = () => {
     setLoading(false);
     return () => {};
   }, []);
-
-
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
     console.log(
@@ -436,10 +434,9 @@ const HomeScreen = () => {
     // syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
-  if(error != ''){
-      Alert.alert(error)
+  if (error != '') {
+    Alert.alert(error);
   }
-
 
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>
