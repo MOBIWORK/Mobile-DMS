@@ -1,4 +1,10 @@
-import React, {createRef, FC, useEffect, useLayoutEffect, useState} from 'react';
+import React, {
+  createRef,
+  FC,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import type {
   NavigationAction,
   NavigationContainerRef,
@@ -76,7 +82,7 @@ import {CommonUtils} from '../utils';
 import {PortalHost} from '../components/common/portal';
 import {shallowEqual} from 'react-redux';
 import {CheckinData} from '../services/appService';
-import { AppState, AppStateStatus } from 'react-native';
+import {AppState, AppStateStatus} from 'react-native';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -109,7 +115,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   // }, []);
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
-        console.log(nextAppState,'app state')
+      console.log(nextAppState, 'app state');
     }
     setAppState(nextAppState);
   };
@@ -121,9 +127,9 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
     } else {
       return;
     }
-    return () =>{
-      appState.remove()
-    }
+    return () => {
+      appState.remove();
+    };
   }, [dataCheckIn]);
 
   return (
@@ -133,7 +139,9 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       ref={navigationRef}>
       <Stack.Navigator
         initialRouteName={
-          ScreenConstant.CHECKIN_INVENTORY
+          validate
+            ? ScreenConstant.MAIN_TAB
+            : ScreenConstant.SELECT_ORGANIZATION
         }
         screenOptions={{
           headerShown: false,
