@@ -157,7 +157,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
             tintColor={colors.text_primary}
           />
           <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
-            {item.mobile_no ?? '---'}
+            {item.mobile_no === null ? '---' : item.mobile_no}
           </Text>
         </View>
       </View>

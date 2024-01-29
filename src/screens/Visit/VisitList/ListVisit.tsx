@@ -48,7 +48,7 @@ const ListVisit = () => {
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
-  const listCustomer = useSelector(state => state.customer.listCustomerVisit);
+  const listCustomer:VisitListItemType[] = useSelector(state => state.customer.listCustomerVisit);
   const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
@@ -57,7 +57,7 @@ const ListVisit = () => {
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
-
+const customerCheckin = useRef<any>()
   const backgroundErrorListener = useCallback((errorCode: number) => {
     // Handle background location errors
     switch (errorCode) {
@@ -182,7 +182,7 @@ const ListVisit = () => {
         {isShowListVisit ? (
           <View style={{marginTop: 16, paddingHorizontal: 16}}>
             <Text style={{color: colors.text_secondary}}>
-              Viếng thăm 3/10 khách hàng
+              Viếng thăm {customerCheckin.current}/{listCustomer?.length} khách hàng
             </Text>
             {listCustomer && (
               <FlatList
@@ -266,7 +266,7 @@ const ListVisit = () => {
       dispatch(appActions.onGetSystemConfig());
     }
     dispatch(customerActions.onGetCustomerVisit());
-
+    customerCheckin.current = listCustomer?.map(item =>item.is_checkin === true )
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
@@ -276,7 +276,7 @@ const ListVisit = () => {
 
   const getCustomer = async () => {
     await getCustomerVisit().then((res: any) => {
-      if (Object.keys(res?.result.data).length > 0) {
+      if (Object.keys(res?.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
         const newData = data.filter(item => item.customer_location_primary);
         dispatch(customerActions.setCustomerVisit(newData));

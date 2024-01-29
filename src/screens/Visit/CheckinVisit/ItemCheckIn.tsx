@@ -1,4 +1,4 @@
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import React from 'react';
 import {IItemCheckIn} from './ultil';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {useTheme} from '../../../layouts/theme';
 import {VisitListItemType} from '../../../models/types';
+import isEqual from 'react-fast-compare';
 
 type Props = {
   item: IItemCheckIn;
@@ -55,6 +56,6 @@ const ItemCheckIn = ({item, navData}: Props) => {
   );
 };
 
-export default ItemCheckIn;
+export default React.memo(ItemCheckIn,isEqual);
 
-const styles = StyleSheet.create({});
+

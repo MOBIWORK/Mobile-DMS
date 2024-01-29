@@ -30,13 +30,11 @@ export async function loadString(key: string, option?: AppModule.MMKVOption) {
 export async function saveString(
   key: string,
   value: string,
-  option?: AppModule.MMKVOption,
 ) {
   try {
     await AppModule.MMKVStorage.setString(
       key,
       value,
-      StyleSheet.flatten([ option]),
     );
     return true;
   } catch {

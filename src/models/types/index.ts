@@ -120,7 +120,7 @@ export type VisitListItemType = {
   name: string;
   customer_primary_address: string;
   customer_code: string;
-  customer_location_primary: string | null;
+  customer_location_primary: any;
   mobile_no: string | null;
   customer_name: string;
   birthday: string | null;

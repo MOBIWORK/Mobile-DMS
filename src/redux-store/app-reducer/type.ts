@@ -45,7 +45,8 @@ export interface IAppRedux {
     city:ListCity[],
     district:ListDistrict[],
     ward:ListWard[]
-  }
+  },
+  dataCheckIn:any
 }
 
 export enum SLICE_NAME {
