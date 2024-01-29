@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {StyleSheet} from 'react-native';
 import { AppModule } from '../../native-module';
 
 
@@ -14,7 +13,7 @@ export async function loadString(key: string, option?: AppModule.MMKVOption) {
   try {
     return await AppModule.MMKVStorage.getString(
       key,
-      StyleSheet.flatten([ option]),
+
     );
   } catch {
     return null;
@@ -51,7 +50,7 @@ export async function load(key: string, option?: AppModule.MMKVOption) {
   try {
     const almostThere = await AppModule.MMKVStorage.getString(
       key,
-      StyleSheet.flatten([ option]),
+
     );
     return typeof almostThere === 'string' ? JSON.parse(almostThere) : null;
   } catch {
@@ -91,7 +90,6 @@ export async function remove(key: string, option?: AppModule.MMKVOption) {
   try {
     await AppModule.MMKVStorage.delete(
       key,
-      StyleSheet.flatten([ option]),
     );
   } catch {}
 }
