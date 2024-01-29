@@ -1,21 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import {StyleSheet} from 'react-native';
-import { AppModule } from '../../native-module';
-
-
+import {AppModule} from '../../native-module';
 
 /**
  * Loads a string from storage.
  *
  * @param key The key to fetch.
  */
-export async function loadString(key: string, option?: AppModule.MMKVOption) {
+export async function loadString(key: string) {
   try {
-    return await AppModule.MMKVStorage.getString(
-      key,
-      StyleSheet.flatten([ option]),
-    );
+    return await AppModule.MMKVStorage.getString(key);
   } catch {
     return null;
   }
@@ -27,15 +19,9 @@ export async function loadString(key: string, option?: AppModule.MMKVOption) {
  * @param key The key to fetch.
  * @param value The value to store.
  */
-export async function saveString(
-  key: string,
-  value: string,
-) {
+export async function saveString(key: string, value: string) {
   try {
-    await AppModule.MMKVStorage.setString(
-      key,
-      value,
-    );
+    await AppModule.MMKVStorage.setString(key, value);
     return true;
   } catch {
     return false;
@@ -47,12 +33,9 @@ export async function saveString(
  *
  * @param key The key to fetch.
  */
-export async function load(key: string, option?: AppModule.MMKVOption) {
+export async function load(key: string) {
   try {
-    const almostThere = await AppModule.MMKVStorage.getString(
-      key,
-      StyleSheet.flatten([ option]),
-    );
+    const almostThere = await AppModule.MMKVStorage.getString(key);
     return typeof almostThere === 'string' ? JSON.parse(almostThere) : null;
   } catch {
     return null;
@@ -65,17 +48,9 @@ export async function load(key: string, option?: AppModule.MMKVOption) {
  * @param key The key to fetch.
  * @param value The value to store.
  */
-export async function save(
-  key: string,
-  value: any,
-  option?: AppModule.MMKVOption,
-) {
+export async function save(key: string, value: any) {
   try {
-    await AppModule.MMKVStorage.setString(
-      key,
-      JSON.stringify(value),
-      // StyleSheet.flatten([ option]),
-    );
+    await AppModule.MMKVStorage.setString(key, JSON.stringify(value));
     return true;
   } catch {
     return false;
@@ -87,12 +62,9 @@ export async function save(
  *
  * @param key The key to kill.
  */
-export async function remove(key: string, option?: AppModule.MMKVOption) {
+export async function remove(key: string) {
   try {
-    await AppModule.MMKVStorage.delete(
-      key,
-      StyleSheet.flatten([ option]),
-    );
+    await AppModule.MMKVStorage.delete(key);
   } catch {}
 }
 
