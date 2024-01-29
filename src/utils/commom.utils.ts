@@ -126,7 +126,7 @@ export function convertHoursMinutes(gioPhutGiay: string) {
   return `${gio}:${phut}`;
 }
 //format dateTime to dd//mm//yyyy
-export const convertDate = (time: number) => {
+export const convertDate = (time: number | string) => {
   const date = new Date(time);
   return `${padTo2Digits(date.getDate())}/${padTo2Digits(
     date.getMonth() + 1,

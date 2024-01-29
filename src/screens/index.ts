@@ -22,7 +22,7 @@ import ReportOrderDetail from './Visit/VisitDetail/Report/Order/ReportOrderDetai
 import Visits from './Visit/Visits';
 import LookingMore from './LookingMore/LookingMore';
 import Inventory from './Checkin/Inventory';
-import InventoryAddProduct from './Checkin/Inventory/AddingProduct';
+import CheckinSelectProdct from './Checkin/SelectProduct/SelectProduct';
 import CheckinOrder from './Checkin/Order';
 import CheckinOrderCreated from './Checkin/Order/CreateOrder';
 import DropDrag from './TestDropDrag/DropDrag';
@@ -68,7 +68,7 @@ export {
   Index,
   LookingMore,
   Inventory,
-  InventoryAddProduct,
+  CheckinSelectProdct,
   WidgetScreen,
   WidgetFavouriteScreen,
   NotificationScreen,
