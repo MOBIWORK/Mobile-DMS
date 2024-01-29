@@ -29,6 +29,8 @@ import {PortalProvider} from './src/components/common/portal';
 import BackgroundGeolocation, {
   Subscription,
 } from 'react-native-background-geolocation';
+import {InstalledApps} from 'react-native-launcher-kit';
+import {AppService} from './src/services';
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_START,
@@ -78,11 +80,22 @@ function App(): JSX.Element {
   //background-geolocation
   useEffect(() => {
     // /// 1.  Subscribe to events.
-    // const onLocation: Subscription = BackgroundGeolocation.onLocation(
-    //   location => {
-    //     console.log('[onLocation]', location);
-    //   },
-    // );
+    const onLocation: Subscription = BackgroundGeolocation.onLocation(
+      location => {
+        if (Platform.OS === 'android' && location.mock) {
+          const apps = InstalledApps.getApps();
+          const appName = apps.map(item => item.label);
+          AppService.addFakeGPS({
+            datetime_fake: new Date().getTime(),
+            location_fake: {
+              lat: location.coords.latitude,
+              long: location.coords.longitude,
+            },
+            list_app: JSON.stringify(appName),
+          });
+        }
+      },
+    );
     //
     // const onMotionChange: Subscription = BackgroundGeolocation.onMotionChange(
     //   (event) => {
@@ -145,7 +158,7 @@ function App(): JSX.Element {
       // Remove BackgroundGeolocation event-subscribers when the View is removed or refreshed
       // during development live-reload.  Without this, event-listeners will accumulate with
       // each refresh during live-reload.
-      // onLocation.remove();
+      onLocation.remove();
       // onMotionChange.remove();
       // onActivityChange.remove();
       // onProviderChange.remove();
