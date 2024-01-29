@@ -28,7 +28,6 @@ end
 
 target 'DMS' do
   use_expo_modules!
-  pod 'MMKV'
   post_integrate do |installer|
     begin
       expo_patch_react_imports!(installer)

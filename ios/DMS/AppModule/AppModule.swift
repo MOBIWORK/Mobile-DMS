@@ -194,17 +194,17 @@ class AppModule: RCTEventEmitter {
     }
     
     if let toolbarDoneBarButtonItemText = options["toolbarDoneBarButtonItemText"] as? String {
-      IQKeyboardManager.shared.toolbarDoneBarButtonItemText = toolbarDoneBarButtonItemText
+      IQKeyboardManager.shared.toolbarConfiguration.doneBarButtonConfiguration.title = toolbarDoneBarButtonItemText
     }
     
     if let toolbarManageBehaviourBy = options["toolbarManageBehaviourBy"] as? String {
       switch toolbarManageBehaviourBy {
       case "subviews":
-        IQKeyboardManager.shared.toolbarManageBehaviour = .bySubviews
+        IQKeyboardManager.shared.toolbarConfiguration.manageBehavior = .bySubviews
       case "tag":
-        IQKeyboardManager.shared.toolbarManageBehaviour = .byTag
+        IQKeyboardManager.shared.toolbarConfiguration.manageBehavior = .byTag
       case "position":
-        IQKeyboardManager.shared.toolbarManageBehaviour = .byPosition
+        IQKeyboardManager.shared.toolbarConfiguration.manageBehavior = .byPosition
       default:
         print("\(toolbarManageBehaviourBy) is not supported")
         break
@@ -226,29 +226,29 @@ class AppModule: RCTEventEmitter {
     }
     
     if let toolbarTintColor = options["toolbarTintColor"] as? String {
-      IQKeyboardManager.shared.toolbarTintColor = UIColor(hex: toolbarTintColor)
+      IQKeyboardManager.shared.toolbarConfiguration.tintColor = UIColor(hex: toolbarTintColor)
     }
     
     if let toolbarBarTintColor = options["toolbarBarTintColor"] as? String {
-      IQKeyboardManager.shared.toolbarBarTintColor = UIColor(hex: toolbarBarTintColor)
+      IQKeyboardManager.shared.toolbarConfiguration.tintColor = UIColor(hex: toolbarBarTintColor)
     }
     
     if let shouldShowToolbarPlaceholder = options["shouldShowToolbarPlaceholder"] as? Bool {
-      IQKeyboardManager.shared.shouldShowToolbarPlaceholder = shouldShowToolbarPlaceholder
+      IQKeyboardManager.shared.toolbarConfiguration.placeholderConfiguration.showPlaceholder = shouldShowToolbarPlaceholder
     }
     
     if let overrideKeyboardAppearance = options["overrideKeyboardAppearance"] as? Bool {
-      IQKeyboardManager.shared.overrideKeyboardAppearance = overrideKeyboardAppearance
+      IQKeyboardManager.shared.keyboardConfiguration.overrideAppearance = overrideKeyboardAppearance
     }
     
     if let keyboardAppearance = options["keyboardAppearance"] as? String {
       switch keyboardAppearance {
       case "default":
-        IQKeyboardManager.shared.keyboardAppearance = .default
+        IQKeyboardManager.shared.keyboardConfiguration.appearance = .default
       case "light":
-        IQKeyboardManager.shared.keyboardAppearance = .light
+        IQKeyboardManager.shared.keyboardConfiguration.appearance = .light
       case "dark":
-        IQKeyboardManager.shared.keyboardAppearance = .dark
+        IQKeyboardManager.shared.keyboardConfiguration.appearance = .dark
       default:
         print("\(keyboardAppearance) is not supported")
         break

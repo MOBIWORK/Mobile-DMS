@@ -5,10 +5,10 @@ import {
   NativeModules,
 } from 'react-native';
 import {isIos, hexStringFromCSSColor} from '../config/function';
-import {storage} from '../utils/commom.utils';
+import {MMKV} from 'react-native-mmkv';
 
 const {AppModule} = NativeModules;
-
+const storage = new MMKV();
 export const getVersion = (): string => {
   return AppModule.getVersion();
 };
@@ -62,65 +62,39 @@ export type MMKVOption = {
 };
 export const MMKVStorage = {
   setString: async (key: string, value: string) => {
-    storage.set(key, value);
-  },
-  setNumber: async (key: string, value: number, option?: MMKVOption) => {
-    const res: boolean = await AppModule.mmkvSetNumber(
-      key,
-      value,
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
+    const res = await storage.set(key, value);
     return res;
   },
-  setBoolean: async (key: string, value: boolean, option?: MMKVOption) => {
-    const res: boolean = await AppModule.mmkvSetBoolean(
-      key,
-      value,
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
+  setNumber: async (key: string, value: number) => {
+    const res = await storage.set(key, value);
+    return res;
+  },
+  setBoolean: async (key: string, value: boolean) => {
+    const res = await storage.set(key, value);
     return res;
   },
   getString: async (key: string) => {
-    return storage.getString(key);
-  },
-  getNumber: async (key: string, option?: MMKVOption) => {
-    const res: number = await AppModule.mmkvGetNumber(
-      key,
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
+    const res: string | any = await storage.getString(key);
     return res;
   },
-  getBoolean: async (key: string, option?: MMKVOption) => {
-    const res: boolean = await AppModule.mmkvGetBoolean(
-      key,
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
+  getNumber: async (key: string) => {
+    const res: number | any = await storage.getNumber(key);
     return res;
   },
-  getAllKeys: async (option?: MMKVOption) => {
-    const res: Array<string> = await AppModule.mmkvGetAllKeys(
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
+  getBoolean: async (key: string) => {
+    const res: boolean | any = await storage.getBoolean(key);
     return res;
   },
-  clearAll: async (option?: MMKVOption) => {
-    const res: Array<string> = await AppModule.mmkvClearAll(
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
+  getAllKeys: async () => {
+    const res: Array<string> = await storage.getAllKeys();
     return res;
   },
-  delete: async (key: string, option?: MMKVOption) => {
-    const res: boolean = await AppModule.mmkvDelete(
-      key,
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
+  clearAll: async () => {
+    const res: void = await storage.clearAll();
+    return res;
+  },
+  delete: async (key: string) => {
+    const res: void = await storage.delete(key);
     return res;
   },
 };
