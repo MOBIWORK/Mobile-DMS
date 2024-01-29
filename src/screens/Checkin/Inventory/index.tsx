@@ -18,7 +18,7 @@ import { IProduct } from '../../../models/types';
 import { CommonUtils } from '../../../utils';
 import { dispatch } from '../../../utils/redux';
 import { productActions } from '../../../redux-store/product-reducer/reducer';
-import { CheckinInvetoryService } from '../../../services';
+import { CheckinService } from '../../../services';
 
 const CheckinInventory = () => {
 
@@ -53,7 +53,7 @@ const CheckinInventory = () => {
             "customer_address": "120/62 Ngọc Hà, Ngọc Hà, Ba Đình, Hà Nội",
             "inventory_items":newItems
         }
-        const {status ,data} = await CheckinInvetoryService.checkinInventory(objectData);
+        const {status ,data} = await CheckinService.checkinInventory(objectData);
         if(status === ApiConstant.STT_OK){
             onBackScreen();
         }
