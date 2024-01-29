@@ -18,9 +18,15 @@ import {AppBottomSheet} from '../../../components/common';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ImageAssets} from '../../../assets';
 import {Button} from 'react-native-paper';
-import { IAlbumImage } from '../../../models/types';
+import {IAlbumImage} from '../../../models/types';
 
-const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData,setAlbumImageData,albumImageData}) => {
+const SelectAlbum: FC<SelectAlbumProps> = ({
+  bottomSheetRef,
+  data,
+  setData,
+  setAlbumImageData,
+  albumImageData,
+}) => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const {bottom} = useSafeAreaInsets();
@@ -34,10 +40,10 @@ const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData,setAlb
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
   const [curData, setCurData] = useState<IFilterType[]>(data);
-  const [selectedItem,setSelectItem] = useState<IFilterType>()
+  const [selectedItem, setSelectItem] = useState<IFilterType>();
 
   const handleItem = (item: IFilterType) => {
-    const newData = curData.map((itemCur) => {
+    const newData = curData.map(itemCur => {
       if (item.value === itemCur.value) {
         return {...itemCur, isSelected: !itemCur.isSelected};
       } else {
@@ -45,87 +51,53 @@ const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData,setAlb
       }
     });
     setCurData(newData);
-    console.log(newData,'newDât')
+    console.log(newData, 'newDât');
   };
 
-  // const handleAlbum = (selectedItem: IFilterType[]) => {
-  //   // Filter out only the selected items
-  //   const selectedData = selectedItem
-  //     .filter((item) => item.isSelected)
-  //     .map((selected, selectedIdx) => ({
-  //       label: selected.label!,
-  //       id: selectedIdx, // Use the selected index as the id
-  //       image: [],
-  //     }));
-  
-  //   // Assuming you want to update state only once with all the new data
-  //   if (selectedData.length > 0) {
-  //     // Combine the existing state with the new data
-  //     setAlbumImageData((prev) => [...prev, ...selectedData]);
-  //     console.log(selectedItem, 'selectedItem');
-  //   }
-  
-  //   // Log selectedData for debugging purposes
-  //   console.log(selectedData, 'selectedData');
-  
-  //   // Return the array of new data
-  //   return selectedData;
-  // };
-  
   const handleAlbum = (selectedItem: IFilterType[]) => {
-    // Filter out only the selected items
     const selectedData = selectedItem
-      .filter((item) => item.isSelected)
+      .filter(item => item.isSelected)
       .map((selected, selectedIdx) => ({
         id: selectedIdx,
         label: selected.label,
         image: [],
       }));
-  
-    // Check if the selected data already exists in albumImageData
+
     const albumImageDataCopy = [...albumImageData];
-  
-    selectedData.forEach((selectedItem) => {
+
+    selectedData.forEach(selectedItem => {
       const existingIndex = albumImageDataCopy.findIndex(
-        (item) => item.label === selectedItem.label
+        item => item.label === selectedItem.label,
       );
-  
-      // If the item is not in albumImageData and isSelected is false, remove it
+
       if (existingIndex === -1 && !('isSelected' in selectedItem)) {
         const indexToRemove = albumImageDataCopy.findIndex(
-          (item) => item.label === selectedItem.label
+          item => item.label === selectedItem.label,
         );
         if (indexToRemove !== -1) {
           albumImageDataCopy.splice(indexToRemove, 1);
         }
       }
     });
-  
-    // Assuming you want to update state only once with all the new data
+
     if (selectedData.length > 0) {
-      // Combine the existing state with the new data
-      setAlbumImageData((prev) => [
-  
-        ...selectedData.map((item) => ({ ...item, isSelected: true })),
+      setAlbumImageData([
+        ...selectedData.map(item => ({...item, isSelected: true})),
       ]);
       console.log(selectedItem, 'selectedItem');
     }
-  
-    // Log selectedData for debugging purposes
+
     console.log(selectedData, 'selectedData');
-  
-    // Return the array of new data
     return selectedData;
   };
-  
-  
 
   const ItemAlbum: FC<ItemAlbumProps> = ({item}) => {
     return (
-      <Pressable style={styles.row} onPress={() => {
-        handleItem(item),
-        setSelectItem(item)
-      }}>
+      <Pressable
+        style={styles.row}
+        onPress={() => {
+          handleItem(item), setSelectItem(item);
+        }}>
         <Text
           style={[
             styles.itemText,
@@ -165,7 +137,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData,setAlb
                 key={index}
                 onPress={() => {
                   handleItem(item);
-                  setSelectItem(item)
+                  setSelectItem(item);
                 }}
                 style={{backgroundColor: theme.colors.bg_neutral}}
                 contentStyle={{flexDirection: 'row-reverse'}}
@@ -209,7 +181,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData,setAlb
               <Text
                 onPress={() => {
                   setData(curData);
-                  handleAlbum(curData)
+                  handleAlbum(curData);
                   bottomSheetRef.current?.close();
                 }}
                 style={styles.confirmTxt}>
@@ -230,8 +202,8 @@ interface SelectAlbumProps {
   bottomSheetRef: any;
   data: IFilterType[];
   setData: (data: IFilterType[]) => void;
-  setAlbumImageData:React.Dispatch<React.SetStateAction<IAlbumImage[]>>
-  albumImageData:IAlbumImage[]
+  setAlbumImageData: React.Dispatch<React.SetStateAction<IAlbumImage[]>>;
+  albumImageData: IAlbumImage[];
 }
 interface ItemAlbumProps {
   item: IFilterType;
