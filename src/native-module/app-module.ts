@@ -4,7 +4,8 @@ import {
   NativeEventEmitter,
   NativeModules,
 } from 'react-native';
-import {isIos,  hexStringFromCSSColor} from '../config/function';
+import {isIos, hexStringFromCSSColor} from '../config/function';
+import {storage} from '../utils/commom.utils';
 
 const {AppModule} = NativeModules;
 
@@ -60,14 +61,8 @@ export type MMKVOption = {
   cryptKey: string;
 };
 export const MMKVStorage = {
-  setString: async (key: string, value: string, option?: MMKVOption) => {
-    const res: boolean = await AppModule.mmkvSetString(
-      key,
-      value,
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
-    return res;
+  setString: async (key: string, value: string) => {
+    storage.set(key, value);
   },
   setNumber: async (key: string, value: number, option?: MMKVOption) => {
     const res: boolean = await AppModule.mmkvSetNumber(
@@ -87,13 +82,8 @@ export const MMKVStorage = {
     );
     return res;
   },
-  getString: async (key: string, option?: MMKVOption) => {
-    const res: string | null = await AppModule.mmkvGetString(
-      key,
-      option?.id ?? undefined,
-      option?.cryptKey ?? undefined,
-    );
-    return res;
+  getString: async (key: string) => {
+    return storage.getString(key);
   },
   getNumber: async (key: string, option?: MMKVOption) => {
     const res: number = await AppModule.mmkvGetNumber(

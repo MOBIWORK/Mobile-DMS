@@ -7,7 +7,7 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation';
+import {dispatch, NavigationProp, RouterProp} from '../../../navigation';
 import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
@@ -30,7 +30,9 @@ import {useTranslation} from 'react-i18next';
 import {LocationProps} from '../../Visit/VisitList/VisitItem';
 import {KeyAbleProps} from '../../../models/types';
 import {CommonUtils} from '../../../utils';
-import {AppService} from '../../../services';
+import {AppService, CheckinService} from '../../../services';
+import {IUpdateAddress} from '../../../services/checkInService';
+import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -102,10 +104,30 @@ const CheckInLocation = () => {
 
   const handleComplete = async () => {
     if (value !== route.params.data.customer_primary_address) {
+      dispatch(setProcessingStatus(true));
       await CommonUtils.CheckNetworkState();
       const split = value.split(',', 4);
-      console.log('split', split[5] ?? '---');
+      // console.log('split', split[5] ?? '---');
+      const params: IUpdateAddress = {
+        customer: route.params.data.name,
+        long: location?.coords.longitude ?? 0,
+        lat: location?.coords.latitude ?? 0,
+        address_line1: split[0] ?? '',
+        state: split[1] ?? '',
+        county: split[2] ?? '',
+        city: split[3] ?? '',
+        country: 'Việt Nam',
+      };
+      const response: KeyAbleProps = await CheckinService.updateCustomerAddress(
+        params,
+      );
+      if (response?.status === ApiConstant.STT_OK) {
+        navigation.goBack();
+      }
+    } else {
+      navigation.goBack();
     }
+    dispatch(setProcessingStatus(false));
   };
 
   useLayoutEffect(() => {
