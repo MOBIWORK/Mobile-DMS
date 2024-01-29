@@ -122,7 +122,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
 
   useEffect(() => {
     const appState = AppState.addEventListener('change', handleAppStateChange);
-    if (Object.keys(dataCheckIn).length > 0) {
+    if ( dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
     } else {
       return;

@@ -35,8 +35,8 @@ const CheckIn = (props: Props) => {
 
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const [status, setStatus] = useState(
-    dataCheckIn.checkin_trangthaicuahang
-      ? dataCheckIn.checkin_trangthaicuahang
+    dataCheckIn?.checkin_trangthaicuahang
+      ? dataCheckIn?.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
   console.log(params,'a')
@@ -52,8 +52,8 @@ const CheckIn = (props: Props) => {
   }, []);
 
   useEffect(() =>{
-      if(Object.keys(dataCheckIn).length > 0){
-        dispatch(appActions.setDataCheckIn((prev:CheckinData) =>({...prev,checkin_trangthaicuahang:status})))
+      if(dataCheckIn && Object.keys(dataCheckIn)?.length > 0){
+        // dispatch(appActions.setDataCheckIn((prev:CheckinData) =>({...prev,checkin_trangthaicuahang:status})))
       }
   },[dataCheckIn,status])
 
@@ -86,11 +86,11 @@ const CheckIn = (props: Props) => {
           </Block>
           <Switch type="text" status onSwitch={handleSwitch} title={title} />
         </Block>
-        <Block colorTheme="white">
+        <Block colorTheme="white" paddingHorizontal={32}>
           <Block
             direction="row"
             paddingTop={20}
-            paddingLeft={32}
+            // paddingLeft={32}
             marginBottom={8}>
             <SvgIcon source="UserGroup" size={20} colorTheme="main" />
             <Text fontSize={16} fontWeight="500" colorTheme="text">
@@ -103,7 +103,7 @@ const CheckIn = (props: Props) => {
             <Block
               direction="row"
               alignItems="center"
-              marginLeft={32}
+              // marginLeft={32}
               marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
               <Text numberOfLines={1}> {params.kh_diachi} </Text>
@@ -112,7 +112,7 @@ const CheckIn = (props: Props) => {
               direction="row"
               alignItems="center"
               marginTop={8}
-              marginLeft={32}
+              // marginLeft={32}
               marginRight={32}
               paddingBottom={20}>
               <SvgIcon source="Phone" size={16} />
