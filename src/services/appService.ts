@@ -30,6 +30,7 @@ export type CustomerParams = {
 };
 
 export type CheckinData = {
+  checkin_id:string,
   kh_ma: string;
   kh_ten: string;
   kh_diachi: string;
