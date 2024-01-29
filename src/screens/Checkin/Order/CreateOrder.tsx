@@ -67,7 +67,7 @@ const CreateOrder = () => {
     const bottomSheetWh = useRef<BottomSheet>(null);
     const snapPointDetail = useMemo(() => ['70%'], []);
     const router = useRoute<RouterProp<'CHECKIN_ORDER'>>();
-    const type = 'ORDER';
+    const type = router.params.type;
 
     const [date, setDate] = useState<number>(new Date().getTime());
     const [DataWarehouse, setDataWarehouse] = useState<IFilterType[]>([]);
