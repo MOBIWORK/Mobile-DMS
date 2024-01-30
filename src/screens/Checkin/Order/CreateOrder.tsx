@@ -490,13 +490,13 @@ const CreateOrder = () => {
                 const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
                 const objecData = {
                     "items": newItems,
-                    "customer": dataCheckin.item.name,        // Khách hàng
+                    "customer": "Anh A",        // Khách hàng
                     "customer_group": "Commercial",    // Nhóm khách hàng
                     "territory": "Vietnam",
                     "currency": "VND",
                     "price_list": "Standard Selling",
                     "price_list_currency": "VND",
-                    "company": organization?.company_name || "",            // Lấy cty hiện tại
+                    "company": "mbw",            // Lấy cty hiện tại
                     "doctype": "Sales Order",
                     "name": "new-sales-order-hnnkmtrehm",
                     "transaction_date": "2024-01-27",
@@ -616,7 +616,7 @@ const CreateOrder = () => {
 
     useEffect(() => {
         recalculateVatorDiscount();
-    }, [products, discount, vat]);
+    }, [products, discount, vat])
 
 
     return (
