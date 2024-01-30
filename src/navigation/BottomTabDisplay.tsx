@@ -103,7 +103,7 @@ export default BottomTabDisplay;
 const bottomStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.bg_default,
       flexDirection: 'row',
       alignItems: 'flex-end',
       justifyContent: 'space-around',

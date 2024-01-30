@@ -51,7 +51,6 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
       }
     });
     setCurData(newData);
-    console.log(newData, 'newDât');
   };
 
   const handleAlbum = (selectedItem: IFilterType[]) => {
@@ -60,7 +59,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
       .map((selected, selectedIdx) => ({
         id: selectedIdx,
         label: selected.label,
-        image: [],
+        image: ['IconCamera'],
       }));
 
     const albumImageDataCopy = [...albumImageData];
@@ -84,10 +83,9 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
       setAlbumImageData([
         ...selectedData.map(item => ({...item, isSelected: true})),
       ]);
-      console.log(selectedItem, 'selectedItem');
+    } else {
+      setAlbumImageData([]);
     }
-
-    console.log(selectedData, 'selectedData');
     return selectedData;
   };
 

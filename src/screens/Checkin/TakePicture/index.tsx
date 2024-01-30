@@ -35,17 +35,25 @@ const TakePicture = () => {
     useState<IFilterType[]>(ListAlbumFake);
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
 
-  const handleCamera = () => {
-    console.log('123');
-    CameraUtils.openImagePickerCamera(image => console.log('image', image));
+  const handleCamera = (item: IAlbumImage) => {
+    CameraUtils.openImagePickerCamera(img => {
+      const newListImage = [...item.image, img!];
+      const newItem = {...item, image: newListImage};
+      setAlbumImageData(prevState => [
+        ...prevState.filter(itemPre => itemPre.label !== newItem.label),
+        newItem,
+      ]);
+    });
   };
 
-  useEffect(() => {
-  }, [albumBottomSheet]);
-  
-
-
-  console.log(albumImageData,'red')
+  const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
+    const newListImage = itemSelected.image.filter(item => item !== img);
+    const newItem = {...itemSelected, image: newListImage};
+    setAlbumImageData(prevState => [
+      ...prevState.filter(itemPre => itemPre.label !== newItem.label),
+      newItem,
+    ]);
+  };
 
   const EmptyAlbum = () => {
     return (
@@ -69,43 +77,52 @@ const TakePicture = () => {
   };
 
   const AlbumItem = useCallback(
-    (item: IAlbumImage) => {
+    (itemAlbum: IAlbumImage) => {
       return (
         <View style={styles.album}>
           <View style={styles.row}>
             <Button mode={'text'} icon={'chevron-down'}>
-              {item.label}
+              {itemAlbum.label}
             </Button>
             <SvgIcon source={'TrashIcon'} size={25} />
           </View>
           <View style={styles.imgContainer}>
-            <Pressable onPress={handleCamera} style={styles.cameraImg}>
-              <SvgIcon source={'IconCamera'} size={24} />
-            </Pressable>
             <FlatList
-              style={{marginLeft: 8}}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-              data={item.image}
-              renderItem={({item}) => {
+              numColumns={3}
+              data={itemAlbum.image}
+              renderItem={({item, index}) => {
                 return (
                   <>
-                    <Pressable style={styles.img}>
-                      <Image
-                        // @ts-ignore
-                        source={item}
-                        style={{width: '100%', height: '100%'}}
-                        resizeMode={'contain'}
-                      />
-                    </Pressable>
-                    <TouchableOpacity
-                      style={{position: 'absolute', top: 0, right: 8}}>
-                      <Image
-                        source={ImageAssets.CloseFameIcon}
-                        style={{width: 20, height: 20}}
-                        resizeMode={'contain'}
-                      />
-                    </TouchableOpacity>
+                    {index === 0 ? (
+                      <View style={{padding: 5, marginHorizontal: 4}}>
+                        <Pressable
+                          onPress={() => handleCamera(itemAlbum)}
+                          style={styles.cameraImg}>
+                          <SvgIcon source={'IconCamera'} size={24} />
+                        </Pressable>
+                      </View>
+                    ) : (
+                      <View
+                        style={{padding: 5, rowGap: 8, marginHorizontal: 4}}>
+                        <View style={styles.img}>
+                          <Image
+                            // @ts-ignore
+                            source={item}
+                            style={{width: '100%', height: '100%'}}
+                            resizeMode={'contain'}
+                          />
+                        </View>
+                        <TouchableOpacity
+                          onPress={() => onDeleteImageOfAlbum(itemAlbum, item)}
+                          style={{position: 'absolute', top: 0, right: 8}}>
+                          <Image
+                            source={ImageAssets.CloseFameIcon}
+                            style={{width: 20, height: 20}}
+                            resizeMode={'contain'}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   </>
                 );
               }}
@@ -124,33 +141,37 @@ const TakePicture = () => {
         label={'Chụp ảnh'}
         onBack={() => navigation.goBack()}
       />
+      <View style={[styles.row, {width: '100%'}]}>
+        <Text style={{color: theme.colors.text_secondary}}>Hình ảnh</Text>
+        <Button
+          onPress={() => bottomSheetRef.current?.snapToIndex(0)}
+          mode={'text'}
+          icon={'plus'}
+          labelStyle={{color: theme.colors.action}}>
+          Thêm album
+        </Button>
+      </View>
       <View style={styles.body}>
-        <View style={[styles.row, {width: '100%'}]}>
-          <Text style={{color: theme.colors.text_secondary}}>Hình ảnh</Text>
-          <Button
-            onPress={() => bottomSheetRef.current?.snapToIndex(0)}
-            mode={'text'}
-            icon={'plus'}
-            labelStyle={{color: theme.colors.action}}>
-            Thêm album
-          </Button>
-        </View>
-        <AppContainer>
-          <>
-            {albumImageData.length > 0 ? (
-              albumImageData.map((item, index) => {
+        {albumImageData.length > 0 ? (
+          <AppContainer style={{width: AppConstant.WIDTH - 32}}>
+            <View
+              style={{
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              {albumImageData.map((item, index) => {
                 return (
                   <View key={index} style={{width: '100%', marginVertical: 8}}>
                     {AlbumItem(item)}
                   </View>
                 );
-              })
-            ) : (
-              <EmptyAlbum />
-            )}
-          </>
-        </AppContainer>
-        {/*<EmptyAlbum />*/}
+              })}
+            </View>
+          </AppContainer>
+        ) : (
+          <EmptyAlbum />
+        )}
       </View>
       <View style={styles.footer}>
         <AppButton
@@ -188,6 +209,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
     album: {
       marginTop: 8,
       padding: 16,
+      paddingHorizontal: 8,
       backgroundColor: theme.colors.bg_default,
       borderRadius: 16,
       width: '100%',
@@ -198,21 +220,21 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       justifyContent: 'space-between',
     } as ViewStyle,
     imgContainer: {
+      alignItems: 'flex-start',
+      justifyContent: 'center',
       marginTop: 8,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
     } as ViewStyle,
     cameraImg: {
       width: AppConstant.WIDTH * 0.25,
       height: AppConstant.WIDTH * 0.25,
       borderRadius: 12,
       backgroundColor: theme.colors.bg_neutral,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
       alignItems: 'center',
       justifyContent: 'center',
     } as ViewStyle,
     img: {
-      marginHorizontal: 8,
       width: AppConstant.WIDTH * 0.25,
       height: AppConstant.WIDTH * 0.25,
       borderRadius: 12,
