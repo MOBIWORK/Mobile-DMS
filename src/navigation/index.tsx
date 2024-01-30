@@ -138,11 +138,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       linking={linking}
       ref={navigationRef}>
       <Stack.Navigator
-        initialRouteName={
-          validate
-            ? ScreenConstant.MAIN_TAB
-            : ScreenConstant.SELECT_ORGANIZATION
-        }
+        // initialRouteName={
+        //   validate
+        //     ? ScreenConstant.MAIN_TAB
+        //     : ScreenConstant.SELECT_ORGANIZATION
+        // }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
