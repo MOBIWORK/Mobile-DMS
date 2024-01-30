@@ -3,7 +3,7 @@ import {createApi} from '../api';
 import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY, API_URL} from '@env';
 import {client} from '../config/client';
-import { VisitListItemType } from '../models/types';
+import {VisitListItemType} from '../models/types';
 
 export type ILogin = {
   usr: string;
@@ -30,6 +30,7 @@ export type CustomerParams = {
 };
 
 export type CheckinData = {
+  checkin_id:string,
   kh_ma: string;
   kh_ten: string;
   kh_diachi: string;
@@ -53,7 +54,7 @@ export type CheckinData = {
   createdDate: number;
   createdByEmail?: string;
   createByName?: string;
-  item:VisitListItemType
+  item: VisitListItemType;
 };
 
 export interface DMSConfigMobile {
@@ -74,6 +75,15 @@ export interface DMSConfigMobile {
   tgcheckin_toithieu: number;
   vt_ngoaituyen: number;
 }
+
+export type ICheckFakeGPS = {
+  datetime_fake: number;
+  location_fake: {
+    long: number;
+    lat: number;
+  };
+  list_app: string;
+};
 
 export const login = (data: ILogin, deleteHeader: boolean) =>
   createApi(deleteHeader).post(ApiConstant.POST_USER_LOGIN, data);
@@ -160,3 +170,6 @@ export const getListWard = (ma_quan_huyen: any) =>
   createApi()
     .get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`)
     .then(res => res.data);
+
+export const addFakeGPS = (data: ICheckFakeGPS) =>
+  createApi().post(ApiConstant.CHECK_FAKE_GPS, data);

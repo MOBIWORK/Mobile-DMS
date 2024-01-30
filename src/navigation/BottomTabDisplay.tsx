@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ImageStyle,
 } from 'react-native';
-import React, {createRef, useLayoutEffect} from 'react';
+import React, {createRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {NavigationContainerRef} from '@react-navigation/native';
@@ -17,9 +17,7 @@ import {RootStackParamList} from '.';
 import {ScreenConstant} from '../const';
 
 import {AppTheme, useTheme} from '../layouts/theme';
-import { SvgIcon } from '../components/common';
-import { useSelector } from '../config/function';
-
+import {SvgIcon} from '../components/common';
 
 const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {state, navigation} = props;
@@ -50,15 +48,12 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
     [navigation, state],
   );
 
-    // useLayoutEffect(() =>{
-    //   dispatch(AppActions.setShowModal(true));
-
-    // },[])
-
   return (
     <SafeAreaView
       edges={['right', 'left', 'bottom']}
-      style={ styles.container}>
+      style={showModal === false ? styles.container : {}}>
+      {!showModal && (
+        <>
           <TouchableOpacity
             style={styles.item}
             onPress={() => pressNavigator(0)}>
@@ -121,6 +116,8 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
               {getLabel('lookingMore')}
             </Text>
           </TouchableOpacity>
+        </>
+      )}
     </SafeAreaView>
   );
 };

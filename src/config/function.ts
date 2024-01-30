@@ -9,6 +9,7 @@ import {RootState} from '../redux-store/all-reducer';
 import {useSelector as useReduxSelector} from 'react-redux';
 import { dispatch } from '../utils/redux/index';
 import { appActions } from '../redux-store/app-reducer/reducer';
+import { ObjectId } from 'bson';
 
 type TypesBase =
   | 'bigint'
@@ -32,6 +33,10 @@ const formatPhoneNumber = (phoneNumber: string) => {
 
   return phoneNumber;
 };
+
+function generateRandomObjectId() {
+  return new ObjectId();
+}
 const randomUniqueId = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     // eslint-disable-next-line no-bitwise
@@ -175,5 +180,6 @@ export {
   calculateDistance,
   calculateDateDifference,
   useSelector,
-  backgroundErrorListener
+  backgroundErrorListener,
+  generateRandomObjectId
 };
