@@ -1,5 +1,5 @@
 import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {useCallback, useState,useEffect} from 'react';
+import React, {useCallback, useState,useEffect, useRef} from 'react';
 import {
   Block,
   AppText as Text,
@@ -39,7 +39,34 @@ const CheckIn = (props: Props) => {
       ? dataCheckIn?.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
-  console.log(params,'a')
+  const [elapsedTime, setElapsedTime] = useState(0);
+   const intervalId = useRef<any>()
+  useEffect(() => {
+    
+
+    // Start the interval when the component mounts
+    const startInterval = () => {
+      intervalId.current = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 1);
+      }, 1000); // Update every second (1000 milliseconds)
+    };
+
+    startInterval();
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId.current);
+  }, []); // The empty dependency array ensures that the effect runs only once
+
+  // Format seconds into HH:mm:ss
+  const formatTime = (seconds:any) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    const pad = (num:number) => (num < 10 ? '0' + num : num);
+
+    return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
+  };
 
   const handleSwitch = useCallback(() => {
     if (title === 'Mở cửa') {
@@ -56,6 +83,9 @@ const CheckIn = (props: Props) => {
         // dispatch(appActions.setDataCheckIn((prev:CheckinData) =>({...prev,checkin_trangthaicuahang:status})))
       }
   },[dataCheckIn,status])
+
+  
+
 
 
   return (
@@ -81,7 +111,7 @@ const CheckIn = (props: Props) => {
             </Block>
             <Text fontSize={14} colorTheme="text" fontWeight="400">
               {' '}
-              Viếng thăm {moment(new Date()).format('HH:mm')}
+              Viếng thăm {formatTime(elapsedTime)}
             </Text>
           </Block>
           <Switch type="text" status onSwitch={handleSwitch} title={title} />

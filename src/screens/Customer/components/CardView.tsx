@@ -24,8 +24,6 @@ const CardView = (props: IDataCustomer) => {
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const {t: translate} = useTranslation();
-  // console.log(props);
-  console.log(props);
 
   return (
     <TouchableOpacity
@@ -57,12 +55,12 @@ const CardView = (props: IDataCustomer) => {
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconAddress'} style={styles.iconStyle} />
           <Text numberOfLines={1} style={styles.contentText}>
-            {props?.address?.address}
+            {props?.address?.[0]?.address_line1 ? props.address[0]?.address_line1 : '---'}
           </Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconPhone'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props?.contact?.phone}</Text>
+          <Text style={styles.contentText}>{props?.contact?.[0]?.phone ?  props?.contact?.[0]?.phone : '---' }</Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconType'} style={styles.iconStyle} />

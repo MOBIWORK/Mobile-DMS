@@ -246,7 +246,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NOTE_DETAIL}
           component={NoteDetail}
         />
-        <Stack.Screen name={ScreenConstant.ADD_NOTE} component={AddNote} />
+        <Stack.Screen name={ScreenConstant.ADD_NOTE} component={CheckinNote} />
         <Stack.Screen
           name={ScreenConstant.CHECKIN_LOCATION}
           component={CheckInLocation}

@@ -40,7 +40,6 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
   const [curData, setCurData] = useState<IFilterType[]>(data);
-  const [selectedItem, setSelectItem] = useState<IFilterType>();
 
   const handleItem = (item: IFilterType) => {
     const newData = curData.map(itemCur => {
@@ -52,6 +51,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
     });
     setCurData(newData);
   };
+  
 
   const handleAlbum = (selectedItem: IFilterType[]) => {
     const selectedData = selectedItem
@@ -62,22 +62,28 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
         image: ['IconCamera'],
       }));
 
-    const albumImageDataCopy = [...albumImageData];
+      const albumImageDataCopy = [...albumImageData];
 
-    selectedData.forEach(selectedItem => {
-      const existingIndex = albumImageDataCopy.findIndex(
-        item => item.label === selectedItem.label,
-      );
-
-      if (existingIndex === -1 && !('isSelected' in selectedItem)) {
-        const indexToRemove = albumImageDataCopy.findIndex(
+      selectedData.forEach(selectedItem => {
+        const existingIndex = albumImageDataCopy.findIndex(
           item => item.label === selectedItem.label,
         );
-        if (indexToRemove !== -1) {
-          albumImageDataCopy.splice(indexToRemove, 1);
+
+        if (existingIndex === -1 && !('isSelected' in selectedItem)) {
+          const indexToRemove = albumImageDataCopy.findIndex(
+            item => item.label === selectedItem.label,
+          );
+          if (indexToRemove !== -1) {
+            albumImageDataCopy.splice(indexToRemove, 1);
+          }
         }
+      });
+
+      if (selectedData.length > 0) {
+        setAlbumImageData([
+          ...selectedData.map(item => ({...item, isSelected: true})),
+        ]);
       }
-    });
 
     if (selectedData.length > 0) {
       setAlbumImageData([
@@ -94,7 +100,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
       <Pressable
         style={styles.row}
         onPress={() => {
-          handleItem(item), setSelectItem(item);
+          handleItem(item);
         }}>
         <Text
           style={[
@@ -135,7 +141,6 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
                 key={index}
                 onPress={() => {
                   handleItem(item);
-                  setSelectItem(item);
                 }}
                 style={{backgroundColor: theme.colors.bg_neutral}}
                 contentStyle={{flexDirection: 'row-reverse'}}
