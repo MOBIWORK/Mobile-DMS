@@ -35,6 +35,16 @@ const TakePicture = () => {
     useState<IFilterType[]>(ListAlbumFake);
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
 
+
+  for (let index = 0; index < albumImageData.length; index++) {
+    const element = albumImageData[index].image;
+      for(let i = 0 ;i < element.length ; i++){
+          let image = element[i]
+          
+      }
+    
+  }
+
   const handleCamera = (item: IAlbumImage) => {
     CameraUtils.openImagePickerCamera(img => {
       const newListImage = [...item.image, img!];
@@ -107,7 +117,7 @@ const TakePicture = () => {
                         <View style={styles.img}>
                           <Image
                             // @ts-ignore
-                            source={item}
+                            source={{uri:item}}
                             style={{width: '100%', height: '100%'}}
                             resizeMode={'contain'}
                           />

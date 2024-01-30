@@ -45,8 +45,10 @@ import {shallowEqual, useDispatch} from 'react-redux';
 import {Location} from 'react-native-background-geolocation';
 import {IDataCustomer, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
-import {getCustomerType} from '../../services/appService';
+import {getCustomer, getCustomerType} from '../../services/appService';
 import {dispatch} from '../../utils/redux';
+import { CommonUtils } from '../../utils';
+// import {dispatch} from '../../utils/redux';
 
 export type IValueType = {
   customerType: string;
@@ -80,6 +82,7 @@ const Customer = () => {
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
   const snapPoints = useMemo(() => ['100%'], []);
+  console.log(CommonUtils.storage.getString(AppConstant.Api_key),'log')
   const listCustomer: IDataCustomer[] = useSelector(
     state => state.customer.listCustomer,
     shallowEqual,
@@ -159,22 +162,24 @@ const Customer = () => {
   React.useEffect(() => {
     let mounted: boolean;
     mounted = true;
-    dispatch(customerActions.onGetCustomer());
-    const getDataType = async () => {
-      const response: any = await getCustomerType();
-      if (response?.result?.length > 0) {
-        // console.log(dispatch(setListCustomerType(response?.result)),'dispatch customer')
-        dispatch(setListCustomerType(response?.result));
-      }
-    };
-    getDataType();
+    if (listCustomer.length > 0) {
+    
+      setCustomerData(listCustomer);
+    } else {
+      dispatch(customerActions.onGetCustomer())
+      const getDataType = async () => {
+        const response: any = await getCustomerType();
+        if (response?.result?.length > 0) {
+          dispatch(setListCustomerType(response?.result));
+        }
+      };
+      getDataType();
+    }
     mounted = false;
     return () => {
       mounted = false;
     };
   }, []);
-
-  React.useEffect(() => {}, [valueFilter, listCustomer]);
 
   const handleApplyFilter = useCallback(() => {
     if (

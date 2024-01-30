@@ -120,10 +120,11 @@ const SignIn = () => {
   useEffect(() => {
     if (!isLogOut) {
       if (biometricObject?.enable) {
-        Authenticate();
-      } else if (userNameStore && passwordStore) {
-        navigation.navigate(ScreenConstant.MAIN_TAB);
-      }
+        Authenticate()
+        }
+      // } else if (userNameStore && passwordStore) {
+      //   navigation.navigate(ScreenConstant.MAIN_TAB);
+      // }
     }
   }, []);
 
