@@ -27,7 +27,6 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {t: getLabel} = useTranslation();
   const styles = bottomStyles(theme);
   const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
-  const showModal = useSelector(state => state.app.showModal);
   const pressNavigator = React.useCallback(
     (curTab: any) => {
       const previousRouteName = navigationRef?.current?.getCurrentRoute()?.name;
@@ -59,9 +58,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   return (
     <SafeAreaView
       edges={['right', 'left', 'bottom']}
-      style={showModal === false ? styles.container : {}}>
-      {!showModal && (
-        <>
+      style={ styles.container}>
           <TouchableOpacity
             style={styles.item}
             onPress={() => pressNavigator(0)}>
@@ -124,8 +121,6 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
               {getLabel('lookingMore')}
             </Text>
           </TouchableOpacity>
-        </>
-      )}
     </SafeAreaView>
   );
 };

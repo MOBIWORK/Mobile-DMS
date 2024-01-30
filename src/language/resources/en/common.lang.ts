@@ -160,8 +160,11 @@ export default {
   inventoryControl :"Inventory control",
   listProduct :"List product",
   selectProductInvetory :"Select the product to be inspected",
-
   visited: 'Visited',
   notVisited: "Haven't visited",
   currentPosition: 'Current position',
+  putOrder :"Order Sales",
+  returnOrder :"Return Order",
+  noOrder :"No orders yet",
+  noReturnOrder :"No orders yet",
 };

@@ -93,7 +93,6 @@ const rootStyles = (theme: AppTheme) =>
       ...Platform.select({
         android: {
           elevation: 2,
-          borderTopWidth: 2,
           shadowColor: Colors.darker,
         },
         ios: {

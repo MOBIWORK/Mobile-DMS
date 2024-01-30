@@ -94,7 +94,7 @@ const CreateOrder = () => {
     const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
 
     const [warehouse, setWarehouse] = useState<IFilterType>();
-    const [vat, setVat] = useState<object | any>({ label: "", value: "", rate: ""})
+    const [vat, setVat] = useState<object | any>({ label: "", value: "", rate: "" })
     const [discount, setDiscount] = useState<any>({
         label: 'Grand Total',
         value: 'grand',
@@ -422,21 +422,21 @@ const CreateOrder = () => {
         setTotalPrice(sum)
     }
 
-    const onChangeDiscount = (input : string , txt : string)=>{
+    const onChangeDiscount = (input: string, txt: string) => {
         let amount = 0;
         let percentage = 0;
         switch (input) {
             case "discount":
                 percentage = Number(txt);
-                if(discount.value == "grand") {
+                if (discount.value == "grand") {
                     amount = (Number(txt) / 100) * (vatAmount + totalPrice);
                 } else {
                     amount = (Number(txt) / 100) * totalPrice
                 }
                 break;
-            case "discountAmount" :
+            case "discountAmount":
                 amount = Number(txt)
-                if(discount.value == "grand") {
+                if (discount.value == "grand") {
                     percentage = (Number(txt) / (totalPrice + vatAmount)) * 100
                 } else {
                     percentage = (Number(txt) / totalPrice) * 100
@@ -445,7 +445,7 @@ const CreateOrder = () => {
             default:
                 break;
         }
-        setDiscount(((prev:any) => ({...prev,discount_percentage :percentage})))
+        setDiscount(((prev: any) => ({ ...prev, discount_percentage: percentage })))
         setDiscountAmout(amount)
     }
 
@@ -469,7 +469,7 @@ const CreateOrder = () => {
     const fetchDataVat = async () => {
         const { status, data }: KeyAbleProps = await OrderService.getListVat();
         console.log(status);
-        
+
         if (status === ApiConstant.STT_OK) {
             const result = data.result;
             const newData: any[] = [];
@@ -515,35 +515,34 @@ const CreateOrder = () => {
     }
 
     const fetchProductPromotion = async () => {
-        console.log(12);
-        
-        if (data.length > 0) {
-            const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
-            const objecData = {
-                "items": newItems,
-                "customer": "Anh A",        // Khách hàng
-                "customer_group": "Commercial",    // Nhóm khách hàng
-                "territory": "Vietnam",
-                "currency": "VND",
-                "price_list": "Standard Selling",
-                "price_list_currency": "VND",
-                "company": "mbw",            // Lấy cty hiện tại
-                "doctype": "Sales Order",
-                "name": "new-sales-order-hnnkmtrehm",
-                "transaction_date": "2024-01-27", 
-            }
-            const { data: res, status }: KeyAbleProps = await ProductService.getPromotionalProducts(objecData);
-            console.log(status);
-            if (status === ApiConstant.STT_OK) {
-                const result = res.result
-                for (let i = 0; i < result.length; i++) {
-                    const element = result[i];
-                    if (element.free_item_data && element.free_item_data.length > 0) {
-                        setProductsPromotion(element.free_item_data)
-                    }
-                    if (element.discount_percentage) {
-                        const newProducts = data.map(item => item.item_code === element.item_code ? { ...item, discount: element.discount_percentage } : item);
-                        setProducts(newProducts)
+        if (type === "ORDER") {
+            if (data.length > 0) {
+                const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
+                const objecData = {
+                    "items": newItems,
+                    "customer": "Anh A",        // Khách hàng
+                    "customer_group": "Commercial",    // Nhóm khách hàng
+                    "territory": "Vietnam",
+                    "currency": "VND",
+                    "price_list": "Standard Selling",
+                    "price_list_currency": "VND",
+                    "company": "mbw",            // Lấy cty hiện tại
+                    "doctype": "Sales Order",
+                    "name": "new-sales-order-hnnkmtrehm",
+                    "transaction_date": "2024-01-27",
+                }
+                const { data: res, status }: KeyAbleProps = await ProductService.getPromotionalProducts(objecData);
+                if (status === ApiConstant.STT_OK) {
+                    const result = res.result
+                    for (let i = 0; i < result.length; i++) {
+                        const element = result[i];
+                        if (element.free_item_data && element.free_item_data.length > 0) {
+                            setProductsPromotion(element.free_item_data)
+                        }
+                        if (element.discount_percentage) {
+                            const newProducts = data.map(item => item.item_code === element.item_code ? { ...item, discount: element.discount_percentage } : item);
+                            setProducts(newProducts)
+                        }
                     }
                 }
             }
@@ -635,7 +634,7 @@ const CreateOrder = () => {
 
     useEffect(() => {
         recalculateVatorDiscount();
-    }, [products,discount,vat])
+    }, [products, discount, vat])
 
 
     return (

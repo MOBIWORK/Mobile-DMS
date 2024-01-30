@@ -10,26 +10,28 @@ import { Image } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { NavigationProp, RouterProp } from '../../../navigation'
 import { ScreenConstant } from '../../../const'
+import { useTranslation } from 'react-i18next'
 
 const CheckinOrder = () => {
 
     const { colors } = useTheme();
+    const {t : getLabel}= useTranslation()
     const navigation = useNavigation<NavigationProp>();
     const styles = createSheetStyle(useTheme());
-    const router = useRoute<RouterProp<"CHECKIN_ORDER">>()
+    const router = useRoute<RouterProp<"CHECKIN_ORDER">>();
     const type = router.params.type;
 
     return (
         <MainLayout style={styles.layout} >
 
-            <AppHeader label={type === "ORDER" ? "Đặt hàng" :"Trả hàng"} onBack={()=> navigation.goBack()} />
+            <AppHeader label={type === "ORDER" ? getLabel("putOrder") : getLabel("returnOrder")} onBack={()=> navigation.goBack()} />
 
             <AppContainer>
                 <View>
                     <View style={[styles.containerNodata as any]}>
                         <View style={{ alignItems: "center" }}>
                             <Image style={styles.iconImage} source={ImageAssets.IconOrder} resizeMode='cover' />
-                            <Text style={[styles.lableNoOr]}>{type=="ORDER" ? "Chưa có đơn đặt hàng" :"Chưa có đơn trả hàng"}</Text>
+                            <Text style={[styles.lableNoOr]}>{type=="ORDER" ? getLabel("noOrder") : getLabel("noReturnOrder")}</Text>
                         </View>
                         <View style={{marginTop : 16}}>
                             <Button
@@ -37,14 +39,14 @@ const CheckinOrder = () => {
                                 textColor={colors.action}
                                 labelStyle={[styles.textBt]}
                                 icon="plus" mode="outlined" onPress={() => navigation.navigate(ScreenConstant.CHECKIN_ORDER_CREATE,{type : type})} >
-                                Tạo đơn
+                                {getLabel("orderCreated")}
                             </Button>
                         </View>
                     </View>
 
                 </View>
             </AppContainer>
-            <AppButton label='Hoàn thành' style={styles.footerBt} onPress={()=> console.log("123")} />
+            <AppButton label={getLabel("completed")} style={styles.footerBt} onPress={()=> console.log("123")} />
         </MainLayout>
     )
 }
