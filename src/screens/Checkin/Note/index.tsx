@@ -127,6 +127,7 @@ const CheckinNote = () => {
   );
 };
 export default CheckinNote;
+
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
     header: {
