@@ -4,7 +4,7 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 
-export const openImagePickerCamera = (callBack: (image: string | undefined) => void) => {
+export const openImagePickerCamera = (callBack: (image: string | undefined,base64?:string) => void) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     includeBase64: true,
@@ -19,8 +19,9 @@ export const openImagePickerCamera = (callBack: (image: string | undefined) => v
     } else if (response.errorMessage) {
       console.log('Camera picker error: ', response.errorMessage);
     } else if (response?.assets?.[0].uri || (response.assets && response.assets.length > 0)) {
-      const selectedImage = response?.assets?.[0].uri|| response.assets[0].base64;
-      callBack(selectedImage);
+      const selectedImage = response?.assets?.[0].uri
+      const base64Image = response?.assets[0].base64
+      callBack(selectedImage,base64Image);
     }
   });
 };

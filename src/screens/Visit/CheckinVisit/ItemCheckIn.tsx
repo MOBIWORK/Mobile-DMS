@@ -5,12 +5,12 @@ import {Block, SvgIcon, AppText as Text} from '../../../components/common';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {useTheme} from '../../../layouts/theme';
-import {VisitListItemType} from '../../../models/types';
 import isEqual from 'react-fast-compare';
+import { CheckinData } from '../../../services/appService';
 
 type Props = {
   item: IItemCheckIn;
-  navData: VisitListItemType;
+  navData: CheckinData;
 };
 
 const ItemCheckIn = ({item, navData}: Props) => {

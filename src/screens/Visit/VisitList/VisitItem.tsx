@@ -70,7 +70,6 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
   const handleBackground = async (item:VisitListItemType) => {
     await BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 30})
       .then(location => {
-        console.log(location,'location')
         let data: CheckinData = {
           checkin_id: currentCustomerCheckin && currentCustomerCheckin.kh_ma === item.customer_code ?  currentCustomerCheckin.checkin_id :   generateRandomObjectId(),
           kh_ma: item.customer_code,
@@ -100,11 +99,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
           createdByEmail:'',
           item:item
         };
-        console.log(data,'data')
-        console.log('fuckkk')
-    navigate(ScreenConstant.CHECKIN,{item:data})
-    
-      
+    navigate(ScreenConstant.CHECKIN,{item:data})  
         dispatch(appActions.setDataCheckIn(data));
       })
       .catch(err => {

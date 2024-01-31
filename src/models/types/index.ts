@@ -377,7 +377,7 @@ export interface IDataItem {
 }
 
 export type IAlbumImage = {
-  id: number | string;
+  id: number | string | any;
   label: string;
   image: string[];
 };
@@ -570,4 +570,18 @@ export type StaffType = {
   user_id: string
   designation: any,
   isCheck? : boolean
+}
+
+
+export type ImageCheckIn = {
+  customer_name: string
+  album_id: string
+  album_name: string
+  checkin_id: string
+  customer_id: string
+  customer_code: string
+  long: number
+  lat: number
+  address?: string
+  image: string
 }
