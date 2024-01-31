@@ -180,8 +180,8 @@ export const getUserNoteReceived = () => {
 export const postNoteUser = (data:any) =>{
   createApi().post(ApiConstant.POST_NEW_NOTE_CHECKIN,data).then(res => res.data)
 }
-export const getListNoteApi = () =>{
-  createApi().get(ApiConstant.GET_LIST_NOTE_API).then(res => res.data)
+export const getListNoteApi = (data: any) =>{
+  createApi().get(ApiConstant.GET_LIST_NOTE_API,data)
 }
 export const createImageCheckinApi = (data:any) =>{
   createApi().post(ApiConstant.CREATE_IMAGE_CHECKIN,data).then(res => res.data)

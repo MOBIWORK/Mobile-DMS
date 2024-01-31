@@ -168,4 +168,11 @@ export default {
   noOrder :"No orders yet",
   noReturnOrder :"No orders yet",
   deselectAll : "Deselect all",
+  addNote : "TAdd notes",
+  typeNote :"Note type",
+  content : "Content",
+  save :"Save",
+  sendEmailToEveryone :"Send emails to everyone",
+  note :"Note",
+
 };

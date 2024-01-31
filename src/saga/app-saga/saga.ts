@@ -158,6 +158,9 @@ export function* onGetListNote(action: PayloadAction) {
         getListNoteApi,
         action.payload,
       );
+      console.log('====================================');
+      console.log(response);
+      console.log('====================================');
       if (response.result?.length > 0) {
         yield put(appActions.setListNote(response.result));
       }

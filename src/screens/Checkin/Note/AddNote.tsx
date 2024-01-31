@@ -13,7 +13,7 @@ import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../../../navigation';
 import { Pressable, Text, TouchableOpacity, View } from 'react-native';
-import { IStaff, KeyAbleProps, StaffType } from '../../../models/types';
+import { StaffType } from '../../../models/types';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import FilterListComponent, { IFilterType } from '../../../components/common/FilterListComponent';
 import { useSelector } from '../../../config/function';
@@ -23,30 +23,8 @@ import { useTranslation } from 'react-i18next';
 import { AppTheme, useTheme } from '../../../layouts/theme';
 import { StyleSheet, TextInput as Input, ViewStyle, TextStyle } from 'react-native';
 import { ICON_TYPE } from '../../../const/app.const';
-
-
-const arrTypeNote = [
-  {
-    label: "Ghi chú về cửa hàng",
-    value: "Ghi chú về cửa hàng",
-    isSelected: false
-  },
-  {
-    label: "Đã checkin của hàng",
-    value: "Đã checkin của hàng",
-    isSelected: false
-  },
-  {
-    label: "Chưa đặt hàng",
-    value: "Chưa đặt hàng",
-    isSelected: false
-  },
-  {
-    label: "Lỗi đặt trả hàng",
-    value: "Lỗi đặt trả hàng",
-    isSelected: false
-  },
-]
+import { dispatch } from '../../../utils/redux';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 
 const AddNote = () => {
 
@@ -56,19 +34,23 @@ const AddNote = () => {
   const styles = createStyle(theme);
   const navigation = useNavigation<NavigationProp>();
   const bottomSheetRef = useRef<BottomSheet>();
-  const snapPoint = useMemo(() => (["80"]), [])
+  const bottomSheetType = useRef<BottomSheet>();
+  const snapPoint = useMemo(() => (["80"]), []);
+
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
-  const [title, setTitle] = useState<string>('');
+  const noteTypes = useSelector(state => state.checkin.dataTypeNote)
+  const personals = useSelector(state => state.checkin.dataStaff);
+
+  const [title, setTitle] = useState<IFilterType>();
   const [content, setContent] = useState<string>('');
+  const [dataType ,setDataType] = useState<IFilterType[]>([]);
   const [sentEmail, setSendEmail] = useState<boolean>(false);
-  const [dataTypeNote, setDataTypeNote] = useState<IFilterType[]>(arrTypeNote);
   const [staffData, setStaffData] = useState<StaffType[]>([]);
-  const [personals, setPersonals] = useState<StaffType[]>([]);
   const [selectPersonal, setSelectPersonal] = useState<any[]>([]);
 
   const onCreateNoteCheckin = async () => {
     const objectData = {
-      title: title,
+      title: title?.label || "",
       content: content,
       custom_checkin_id: dataCheckin.checkin_id,
       email: [
@@ -122,37 +104,47 @@ const AddNote = () => {
     setSendEmail(true);
     if (bottomSheetRef.current) bottomSheetRef.current.snapToIndex(0);
   }
+  
+  const closeStaff =()=>{
+    setSelectPersonal([])
+    if(bottomSheetRef.current) bottomSheetRef.current.close()
+  }
 
-  const fetchDataStaff = async () => {
-    const { data, status }: KeyAbleProps = await CheckinService.getListStaff();
-    console.log('====================================');
-    console.log(status);
-    console.log('====================================');
-    if (status === ApiConstant.STT_OK) {
-      const result = data.result.data;
-      setStaffData(result)
-    }
+  const onChangeDataType = (item :IFilterType) =>{
+      setTitle(item)
   }
 
   useEffect(() => {
-    fetchDataStaff();
+    dispatch(checkinActions.getListStaff({}));
+    dispatch(checkinActions.getListNoteType());
   }, [])
+
+  useEffect(()=>{
+      const newData = noteTypes.map(item => ({label : item.name , value : item.loai_ghi_chu ,isSelected : false}));
+      setDataType(newData)
+  },[noteTypes])
+
+  useEffect(() => {
+    setStaffData(personals)
+  }, [personals])
 
   const renderBottomSheetStaff = () => {
     return (
       <AppBottomSheet bottomSheetRef={bottomSheetRef} snapPointsCustom={snapPoint}>
         <View style={{ paddingHorizontal: 16 }}>
           <AppHeader style={{ marginTop: -5 }} label={getLabel("staff")}
+            onBack={closeStaff}
             backButtonIcon={
               <AppIcons
                 iconType='IonIcon'
                 name='close'
                 size={30}
                 color={colors.text_secondary} />}
-            rightButton={
-              <Text
-                style={styles.textBt}>{getLabel("confirm")}
-              </Text>}
+                rightButton={
+                  <Text style={styles.textBt}>
+                    {getLabel("confirm")}
+                  </Text>
+                }
           />
           <View style={{ marginTop: 24 }}>
             <View style={styles.containerSearch}>
@@ -196,17 +188,19 @@ const AddNote = () => {
 
   return (
     <MainLayout>
-      <AppHeader onBack={() => navigation.goBack()} label={'Thêm ghi chú'} />
+      <AppHeader onBack={() => navigation.goBack()} label={getLabel("addNote")} />
 
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         <View >
           <View style={{ marginTop: 16, gap: 16 }}>
             <AppInput
-              label={'Loại ghi chú'}
-              value={title}
-              onChangeValue={setTitle}
+              label={getLabel("typeNote")}
+              value={title?.label || ""}
+              editable={false}
+              onPress={()=> bottomSheetType.current && bottomSheetType.current.snapToIndex(0)}
               rightIcon={
                 <TextInput.Icon
+                  onPress={()=> bottomSheetType.current && bottomSheetType.current.snapToIndex(0)}
                   icon={'chevron-down'}
                   style={{ width: 24, height: 24 }}
                   color={theme.colors.text_secondary}
@@ -214,7 +208,7 @@ const AddNote = () => {
               }
             />
             <AppInput
-              label={'Nội dung'}
+              label={getLabel("content")}
               value={content}
               onChangeValue={setContent}
               inputProp={{
@@ -236,19 +230,27 @@ const AddNote = () => {
               onChangeValue={() => onOpenBottonSheet()}
             />
             <Text style={{ color: theme.colors.text_primary, marginLeft: 8 }}>
-              Gửi email đến mọi người
+              {getLabel("sendEmailToEveryone")}
             </Text>
           </TouchableOpacity>
 
         </View>
 
         <AppButton
-          label={"Lưu"}
+          label={getLabel("save")}
           style={{ width: "100%", marginBottom: 30 }}
           onPress={() => onCreateNoteCheckin()}
         />
       </View>
       {renderBottomSheetStaff()}
+      <AppBottomSheet bottomSheetRef={bottomSheetType} snapPointsCustom={snapPoint}>
+        <FilterListComponent
+          onClose={() => bottomSheetType.current && bottomSheetType.current.close()}
+          data={dataType}
+          title={getLabel('typeNote')}
+          handleItem={onChangeDataType}
+        />
+      </AppBottomSheet>
     </MainLayout>
   );
 };

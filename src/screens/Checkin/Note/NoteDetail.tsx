@@ -6,6 +6,9 @@ import {MainLayout} from '../../../layouts';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {useTheme} from '../../../layouts/theme';
+import { CommonUtils } from '../../../utils';
+import RenderHTML from 'react-native-render-html';
+
 const NoteDetail = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'NOTE_DETAIL'>>();
@@ -16,8 +19,8 @@ const NoteDetail = () => {
       <AppCustomHeader
         styles={{paddingHorizontal: 16}}
         onBack={() => navigation.goBack()}
-        title={params.noteType}
-        description={`${params.time}, ${params.date}`}
+        title={params.title}
+        description={CommonUtils.convertDateToString(params.creation)}
         rightButton={
           <TouchableOpacity>
             <Image
@@ -32,15 +35,16 @@ const NoteDetail = () => {
       <View
         style={{
           flex: 8,
-          padding: 16,
           backgroundColor: colors.bg_neutral,
-          alignItems: 'center',
-          justifyContent: 'flex-start',
+          paddingHorizontal :16,
         }}>
-        <Text
-          style={{color: colors.text_primary, fontSize: 16, lineHeight: 24}}>
-          {params.content}
-        </Text>
+            <RenderHTML
+              source={{html : params.content}}
+              tagsStyles={{
+                span :{fontSize :16 , color :colors.text_primary},
+                p :{fontSize :16 ,color :colors.text_primary}
+              }}
+            />
       </View>
     </MainLayout>
   );
