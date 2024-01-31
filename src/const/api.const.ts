@@ -1,7 +1,7 @@
 export const HEADER_DEFAULT = {
   'Content-Type': 'application/json',
 };
-export const TIMEOUT = 30000;
+export const TIMEOUT = 50000;
 
 // HTTP Status
 export const STT_OK = 200;
@@ -80,7 +80,7 @@ export const POST_CHECKIN_INVENTORY =
 // NOTE
 export const POST_NEW_NOTE_CHECKIN = '/mbw_dms.api.note.create_note';
 export const GET_NOTE_USER_RECEIVED = '/mbw_dms.api.note.list_email';
-export const GET_LIST_NOTE_API = '/mbw_dms.api.note.list_note'
+export const GET_LIST_NOTE_API = URL_PREFIX + '.api.note.list_note'
 
 // IMAGE_CHECKIN
 export const PUT_IMAGE_CHECKIN = '/mbw_dms.api.checkin.add_checkin_image'

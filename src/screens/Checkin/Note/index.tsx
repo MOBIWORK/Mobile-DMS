@@ -35,10 +35,13 @@ const CheckinNote = () => {
   const mounted = useRef<boolean>(true);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const listNote = useSelector(state => state.app?.dataCheckIn?.listNote);
+  const dataCheckin =  useSelector(state => state.app.dataCheckIn);
 
   useEffect(() => {
     mounted.current;
-    dispatch(appActions.getListNote());
+    dispatch(appActions.getListNote({
+      custom_checkin_id : dataCheckin.checkin_id
+    }));
     mounted.current = false;
     return () => {};
   }, []);
@@ -61,6 +64,7 @@ const CheckinNote = () => {
       </>
     );
   };
+
   const ListNote = () => {
     const _renderNoteItem = (item: ItemNoteVisitDetail) => {
       return (

@@ -9,7 +9,7 @@ import {
   AppIcons,
   AppInput,
 } from '../../../components/common';
-import {TextInput} from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../../../navigation';
 import { Pressable, Text, TouchableOpacity, View } from 'react-native';
@@ -63,6 +63,8 @@ const AddNote = () => {
   const [sentEmail, setSendEmail] = useState<boolean>(false);
   const [dataTypeNote, setDataTypeNote] = useState<IFilterType[]>(arrTypeNote);
   const [staffData, setStaffData] = useState<StaffType[]>([]);
+  const [personals, setPersonals] = useState<StaffType[]>([]);
+  const [selectPersonal, setSelectPersonal] = useState<any[]>([]);
 
   const onCreateNoteCheckin = async () => {
     const objectData = {
@@ -116,18 +118,18 @@ const AddNote = () => {
     // setSelectPersonal(arrStf);
   }
 
-  const onOpenBottonSheet = () =>{
+  const onOpenBottonSheet = () => {
     setSendEmail(true);
-    if(bottomSheetRef.current) bottomSheetRef.current.snapToIndex(0);
+    if (bottomSheetRef.current) bottomSheetRef.current.snapToIndex(0);
   }
 
   const fetchDataStaff = async () => {
     const { data, status }: KeyAbleProps = await CheckinService.getListStaff();
+    console.log('====================================');
     console.log(status);
-
+    console.log('====================================');
     if (status === ApiConstant.STT_OK) {
-      const result = data.result;
-
+      const result = data.result.data;
       setStaffData(result)
     }
   }
@@ -135,6 +137,62 @@ const AddNote = () => {
   useEffect(() => {
     fetchDataStaff();
   }, [])
+
+  const renderBottomSheetStaff = () => {
+    return (
+      <AppBottomSheet bottomSheetRef={bottomSheetRef} snapPointsCustom={snapPoint}>
+        <View style={{ paddingHorizontal: 16 }}>
+          <AppHeader style={{ marginTop: -5 }} label={getLabel("staff")}
+            backButtonIcon={
+              <AppIcons
+                iconType='IonIcon'
+                name='close'
+                size={30}
+                color={colors.text_secondary} />}
+            rightButton={
+              <Text
+                style={styles.textBt}>{getLabel("confirm")}
+              </Text>}
+          />
+          <View style={{ marginTop: 24 }}>
+            <View style={styles.containerSearch}>
+              <AppIcons iconType={ICON_TYPE.IonIcon} name='search' size={20} color={colors.text_secondary} />
+              <Input placeholder={`${getLabel("search")} ...`} style={{ marginLeft: 8, flex: 1 }} />
+            </View>
+
+            <View style={{ marginTop: 20 }}>
+              {selectPersonal.length > 0 && (
+                <View style={{ marginBottom: 16, flexDirection: "row" }}>
+                  {selectPersonal.map(item => (
+                    <View key={item.employee} style={{ flexDirection: "row", marginRight: 12 }}>
+                      <AppAvatar size={48} url={item.image} />
+                      <Pressable
+                        onPress={() => onCheckStaff(item, true)}
+                        style={styles.deleteBt}>
+                        <View style={styles.viewBtt}>
+                          <AppIcons iconType={ICON_TYPE.IonIcon} name='close' size={14} color={colors.text_secondary} />
+                        </View>
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              <BottomSheetScrollView>
+                {staffData.map((item, i) => (
+                    <View key={i}>
+                        {renderItem(item)}
+                    </View>
+                ))}
+              </BottomSheetScrollView>
+
+            </View>
+          </View>
+        </View>
+      </AppBottomSheet>
+
+    )
+  }
 
   return (
     <MainLayout>
@@ -182,10 +240,6 @@ const AddNote = () => {
             </Text>
           </TouchableOpacity>
 
-
-          <AppBottomSheet bottomSheetRef={bottomSheetRef} snapPointsCustom={snapPoint}>
-            
-          </AppBottomSheet>
         </View>
 
         <AppButton
@@ -194,7 +248,7 @@ const AddNote = () => {
           onPress={() => onCreateNoteCheckin()}
         />
       </View>
-
+      {renderBottomSheetStaff()}
     </MainLayout>
   );
 };

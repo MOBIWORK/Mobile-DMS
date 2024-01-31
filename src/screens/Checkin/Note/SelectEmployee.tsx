@@ -23,7 +23,7 @@ const SelectedEmployee = ({ data, onClose, onSubmitSelected }: PropsType) => {
     const onCheckStaff = (staff: any, isCheck: boolean) => {
         if (!isCheck) {
             const newArr = personals.map(item => {
-                if (item.employee == staff.employee) {
+                if (item.name == staff.name) {
                     item.isCheck = true
                 }
                 return item;
@@ -31,7 +31,7 @@ const SelectedEmployee = ({ data, onClose, onSubmitSelected }: PropsType) => {
             setPersonals(newArr);
         } else {
             const newArr = personals.map(item => {
-                if (item.employee == staff.employee) {
+                if (item.name == staff.name) {
                     item.isCheck = false
                 }
                 return item;
@@ -64,9 +64,9 @@ const SelectedEmployee = ({ data, onClose, onSubmitSelected }: PropsType) => {
         onClose()
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         setPersonals(data)
-    },[data])
+    }, [data])
 
     return (
         <View style={{ paddingHorizontal: 16 }}>
@@ -88,7 +88,7 @@ const SelectedEmployee = ({ data, onClose, onSubmitSelected }: PropsType) => {
                     <AppIcons iconType={ICON_TYPE.IonIcon} name='search' size={20} color={colors.text_secondary} />
                     <TextInput placeholder={`${getLabel("search")} ...`} style={{ marginLeft: 8, flex: 1 }} />
                 </View>
-                
+
                 <View style={{ marginTop: 20 }}>
                     {selectPersonal.length > 0 && (
                         <View style={{ marginBottom: 16, flexDirection: "row" }}>
@@ -106,22 +106,19 @@ const SelectedEmployee = ({ data, onClose, onSubmitSelected }: PropsType) => {
                             ))}
                         </View>
                     )}
-                    <BottomSheetScrollView>
 
 
-                    <FlatList
-                        data={personals}
-                        renderItem={(({item}) => renderItem(item))}
-                        initialNumToRender={10}
-                        
-                    />
-                    {/* {personals.map((item, i) => (
+                        <FlatList
+                            data={personals}
+                            renderItem={(({ item }) => renderItem(item))}
+                            initialNumToRender={10}
+
+                        />
+                        {/* {personals.map((item, i) => (
                         <View key={i}>
                             {renderItem(item)}
                         </View>
                     ))} */}
-                    </BottomSheetScrollView>
-
                 </View>
             </View>
         </View>
