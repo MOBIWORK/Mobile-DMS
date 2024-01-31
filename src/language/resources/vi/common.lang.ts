@@ -177,4 +177,5 @@ export default {
   save :"Lưu",
   sendEmailToEveryone :"Gửi email đến mọi người",
   note :"Ghi chú",
+  someThingErr:"Đã có lỗi xảy ra, vui lòng thử lại"
 };

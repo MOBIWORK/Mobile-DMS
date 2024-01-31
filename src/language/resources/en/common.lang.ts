@@ -175,4 +175,5 @@ export default {
   sendEmailToEveryone :"Send emails to everyone",
   note :"Note",
 
+  someThingErr:'Some thing went wrong, please try again'
 };
