@@ -42,8 +42,9 @@ const TakePicture = () => {
           let image = element[i]
           
       }
-    
   }
+  
+  
 
   const handleCamera = (item: IAlbumImage) => {
     CameraUtils.openImagePickerCamera(img => {

@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   FlatList,
   Image,
@@ -23,14 +23,25 @@ import {ItemNoteVisitDetail} from '../../../models/types';
 import {ImageAssets} from '../../../assets';
 import {NavigationProp, goBack} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {useSelector} from '../../../config/function';
 
 const CheckinNote = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const {bottom} = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
-
+  const mounted = useRef<boolean>(true);
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const listNote = useSelector(state => state.app?.dataCheckIn?.listNote);
+
+  useEffect(() => {
+    mounted.current;
+    dispatch(appActions.getListNote());
+    mounted.current = false;
+    return () => {};
+  }, []);
 
   const EmptyNote = () => {
     return (
@@ -104,9 +115,14 @@ const CheckinNote = () => {
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
-      <AppHeader style={styles.header} label={'Ghi chú'}  onBack={() => goBack()} />
+      <AppHeader
+        style={styles.header}
+        label={'Ghi chú'}
+        onBack={() => goBack()}
+      />
       <View style={styles.body}>
-        <EmptyNote />
+        {listNote && listNote?.length > 0 ? <ListNote /> : <EmptyNote />}
+        {/* <EmptyNote /> */}
         {/*<AppContainer*/}
         {/*  style={{*/}
         {/*    marginBottom: bottom,*/}

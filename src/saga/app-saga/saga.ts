@@ -9,6 +9,7 @@ import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
 import {
   getListCity,
   getListDistrict,
+  getListNoteApi,
   getListWard,
   getSystemConfig,
   postChecking,
@@ -137,6 +138,18 @@ export function* onGetListWard(action:PayloadAction){
         }
     }catch(err){
         console.error('[err]: ',err)
+    }
+  }
+}
+export function* onGetListNote(action:PayloadAction){
+  if(appActions.getListNote.match(action)){
+    try{
+      const response:ResponseGenerator = yield call(getListNoteApi,action.payload)
+      if(response.result?.length > 0){
+        yield put(appActions.setListNote(response.result))
+      }
+    }catch(err){
+
     }
   }
 }
