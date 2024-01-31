@@ -60,7 +60,6 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
       location.lat,
       location.long,
     );
-    // console.log(distance,'distance ')
     return {location, distance};
   }, [item, currentLocation]);
 

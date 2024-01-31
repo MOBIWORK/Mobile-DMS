@@ -24,7 +24,7 @@ const customerSlice = createSlice({
       state.newCustomer = action.payload;
     },
     setListCustomerType: (state, action: PayloadAction<any>) =>
-      (state.listCustomerType = action.payload),
+     void(state.listCustomerType = action.payload),
   },
 });
 
@@ -43,16 +43,24 @@ const onGetCustomerByName = createAction(
   (name: string) => ({payload: name}),
 );
 
-const onGetCustomerType = createAction(
+const getCustomerType = createAction(
   Actions.GET_CUSTOMER_TYPE,
   (data?: any) => ({payload: data}),
 );
 export const customerReducer = customerSlice.reducer;
+
+export const {
+  setCustomer,
+  setCustomerVisit,
+  setListCustomerType,
+  setNewCustomer
+} = customerSlice.actions
+
 export const customerActions = {
   ...customerSlice.actions,
   onGetCustomer,
   onGetCustomerByName,
-  onGetCustomerType,
+  getCustomerType,
   onGetCustomerVisit,
 };
 

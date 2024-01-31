@@ -1,4 +1,4 @@
-import { SvgIconTypes } from '../../assets/svgIcon';
+import {SvgIconTypes} from '../../assets/svgIcon';
 
 export interface KeyAbleProps {
   [key: string]: any;
@@ -261,31 +261,49 @@ export type ReportDebtType = {
   total: number;
   listDebt: ReportDebtListType[];
 };
-export type IDataCustomer = {
-  customer_code: string;
-  customer_name: string;
-  customer_type: string;
-  customer_group: string;
-  territory?: string;
-  customer_birthday?: string | any;
-  router_name?: string;
-  frequency?: any[];
-  credit_limid?: any;
-  customer_details: string;
-  website: string;
-  address?: {
-    address: string;
-    isSetAddressGet: boolean;
-    isSetAddressTake: boolean;
-  };
-  contact?: {
-    name: string;
-    address_line1: string;
-    phone: string;
-  };
-  image: string;
-  description?: string;
-};
+export interface IDataCustomer {
+  name: string
+  customer_name: string
+  customer_code: string
+  customer_type: string
+  customer_group: string
+  territory: string
+  industry: any
+  image: any
+  website: string
+  customer_primary_contact: string
+  customer_primary_address: string
+  custom_birthday: number
+  customer_location_primary: any
+  customer_details: any
+  contact: ContactCustomer[]
+  address: AddressCustomer[]
+  cre_limid: CreLimitCustomer[]
+  frequency?:any[]
+  router_name?:string
+}
+
+export interface ContactCustomer {
+  first_name: string
+  phone: string
+  is_primary_contact: number
+  is_billing_contact: number
+}
+
+export interface AddressCustomer {
+  name: string
+  address_line1: string
+  address_line2: any
+  city: string
+  state: any
+  is_primary_address: number
+  is_shipping_address: number
+  county?: string
+}
+
+export interface CreLimitCustomer {
+  credit_limit: number
+}
 
 export interface RootEkMapResponse {
   results: ResultEkMapResponse[];
@@ -448,9 +466,9 @@ export type StockProduct = {
 };
 
 export type discountProduct = {
-  priority: string,
-  discount_percentage: number
-}
+  priority: string;
+  discount_percentage: number;
+};
 export type IProduct = {
   name: string;
   item_code: string;
@@ -525,9 +543,9 @@ export type BrandProduct = {
 };
 
 export type ListCustomerType = {
-  name: string,
-  customer_group_name: string
-}
+  name: string;
+  customer_group_name: string;
+};
 
 export type IProductPromotion = {
   item_code: string;

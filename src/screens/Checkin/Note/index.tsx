@@ -21,7 +21,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ItemNoteVisitDetail} from '../../../models/types';
 import {ImageAssets} from '../../../assets';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp, goBack} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
 
 const CheckinNote = () => {
@@ -104,7 +104,7 @@ const CheckinNote = () => {
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
-      <AppHeader style={styles.header} label={'Ghi chú'} />
+      <AppHeader style={styles.header} label={'Ghi chú'}  onBack={() => goBack()} />
       <View style={styles.body}>
         <EmptyNote />
         {/*<AppContainer*/}

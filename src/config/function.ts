@@ -7,9 +7,9 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 import {RootState} from '../redux-store/all-reducer';
 import {useSelector as useReduxSelector} from 'react-redux';
-import { dispatch } from '../utils/redux/index';
-import { appActions } from '../redux-store/app-reducer/reducer';
-import { ObjectId } from 'bson';
+import {dispatch} from '../utils/redux/index';
+import {appActions} from '../redux-store/app-reducer/reducer';
+import {ObjectId} from 'bson';
 
 type TypesBase =
   | 'bigint'
@@ -116,6 +116,21 @@ const calculateDistance = (
   return distance;
 };
 
+export const handleBackgroundLocation = () => {
+  BackgroundGeolocation.getCurrentPosition({samples: 3, timeout: 5})
+    .then(
+      location => {
+        return dispatch(appActions.onSetCurrentLocation(location));
+      },
+      err => backgroundErrorListener(err),
+    )
+    .catch(err => {
+      console.log('====================================');
+      console.log(err);
+      console.log('====================================');
+    });
+};
+
 export const hexStringFromCSSColor = (color: string) => {
   const processedColor = processColor(color);
   const colorStr = `${(processedColor ?? '').toString(16)}`;
@@ -123,8 +138,6 @@ export const hexStringFromCSSColor = (color: string) => {
   const alpha = colorStr.substring(0, 2);
   return `#${withoutAlpha}${alpha}`;
 };
-
-
 
 function calculateDateDifference(targetDate: string) {
   const currentDate = moment();
@@ -150,21 +163,25 @@ function useSelector<T>(
   return useReduxSelector<RootState, T>(selector, equalityFn);
 }
 
-const backgroundErrorListener =(errorCode: number) => {
+const backgroundErrorListener = (errorCode: number) => {
   // Handle background location errors
   switch (errorCode) {
     case 0:
-      dispatch(appActions.setError(
-        'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-      ));
+      dispatch(
+        appActions.setError(
+          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+        ),
+      );
       break;
     case 1:
       dispatch(appActions.setError('GPS đã bị tắt. Vui lòng bật lại.'));
       break;
     default:
-      dispatch(appActions.setError(
-        'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-      ));
+      dispatch(
+        appActions.setError(
+          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+        ),
+      );
   }
 };
 
@@ -181,5 +198,5 @@ export {
   calculateDateDifference,
   useSelector,
   backgroundErrorListener,
-  generateRandomObjectId
+  generateRandomObjectId,
 };

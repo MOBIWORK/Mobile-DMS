@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -36,7 +37,6 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {getCustomerVisit} from '../../../services/appService';
-import {shallowEqual} from 'react-redux';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
@@ -48,7 +48,9 @@ const ListVisit = () => {
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
-  const listCustomer:VisitListItemType[] = useSelector(state => state.customer.listCustomerVisit);
+  const listCustomer: VisitListItemType[] = useSelector(
+    state => state.customer.listCustomerVisit,
+  );
   const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
@@ -57,7 +59,6 @@ const ListVisit = () => {
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
-  const customerCheckin = useRef<any>()
   const backgroundErrorListener = useCallback((errorCode: number) => {
     // Handle background location errors
     switch (errorCode) {
@@ -73,6 +74,14 @@ const ListVisit = () => {
         setError('Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại');
     }
   }, []);
+
+  const customerCheckinCount = useMemo(() => {
+    if (listCustomer.length > 0) {
+      return listCustomer.filter(item => item.is_checkin).length;
+    } else {
+      return '';
+    }
+  }, [listCustomer]);
 
   const handleBackground = () => {
     BackgroundGeolocation.getCurrentPosition(
@@ -182,7 +191,8 @@ const ListVisit = () => {
         {isShowListVisit ? (
           <View style={{marginTop: 16, paddingHorizontal: 16}}>
             <Text style={{color: colors.text_secondary}}>
-              Viếng thăm {customerCheckin.current}/{listCustomer?.length} khách hàng
+              Viếng thăm {customerCheckinCount}/{listCustomer?.length} khách
+              hàng
             </Text>
             {listCustomer && (
               <FlatList
@@ -260,14 +270,14 @@ const ListVisit = () => {
   useLayoutEffect(() => {
     // setLoading(true);
 
-    if (Object.keys(systemConfig).length > 0) {
-      return;
-    } else {
+    if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
     dispatch(customerActions.onGetCustomerVisit());
-    customerCheckin.current = listCustomer?.map(item =>item.is_checkin === true )
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+    BackgroundGeolocation.getCurrentPosition({
+      samples: 1,
+      timeout: 3,
+    })
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
 

@@ -110,7 +110,7 @@ const FormAdding = (props: Props) => {
   };
 
   useLayoutEffect(() => {
-    dispatch(customerActions.onGetCustomerType());
+    dispatch(customerActions.getCustomerType());
     BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
       .then(res => {
         setLocation(res);
@@ -279,10 +279,10 @@ const FormAdding = (props: Props) => {
           />
         }
       />
-      <AppInput
+      {/* <AppInput
         label={translate('debtLimit')}
         value={
-          valueFilter.credit_limid[0]
+          valueFilter.c
             ? formatMoney(valueFilter.credit_limid[0])
             : valueFilter.credit_limid[0]
         }
@@ -295,7 +295,7 @@ const FormAdding = (props: Props) => {
           setData(prev => ({...prev, credit_limit: text}));
           console.log(formatMoney(text));
         }}
-      />
+      /> */}
       <AppInput
         label={translate('description')}
         value={valueFilter.customer_details}

@@ -53,40 +53,7 @@ const AddingNewCustomer = () => {
 
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
-  const [listData, setListData] = useState<IDataCustomer>({
-    customer_code: '',
-    customer_name: '',
-    customer_type: valueFilter.customerType,
-    customer_group: valueFilter.customerGroupType,
-    customer_birthday: date,
-    territory: '',
-    router_name: '',
-    credit_limid: 0,
-    customer_details: '',
-    website: '',
-    // address: {
-    //   address: mainAddress?.length >= 0 ? mainAddress[0]?.detailAddress : '',
-    //   isSetAddressGet:
-    //     mainAddress?.length >= 0 ? mainAddress[0]?.addressGet : false,
-    //   isSetAddressTake:
-    //     mainAddress?.length >= 0 ? mainAddress[0]?.addressOrder : false,
-    // },
-    // contact: {
-    //   name:
-    //     mainContactAddress?.length >= 0
-    //       ? mainContactAddress[0]?.nameContact
-    //       : '',
-    //   address:
-    //     mainContactAddress?.length >= 0
-    //       ? mainContactAddress[0]?.addressContact
-    //       : '',
-    //   phoneNumber:
-    //     mainContactAddress?.length >= 0
-    //       ? mainContactAddress[0]?.phoneNumber
-    //       : '',
-    // },
-    image: imageSource ? imageSource : '',
-  });
+  const [listData, setListData] = useState<IDataCustomer | any>({});
   const [openDate, setOpenDate] = React.useState<boolean>(false);
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
@@ -144,7 +111,7 @@ const AddingNewCustomer = () => {
   );
 
   useEffect(() => {
-    dispatch(customerActions.onGetCustomerType());
+    dispatch(customerActions.getCustomerType());
     dispatch(appActions.onGetListCity());
   }, []);
 
