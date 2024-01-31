@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { MainLayout } from '../../../layouts'
 import { AppBottomSheet, AppButton, AppContainer, AppHeader, AppIcons, AppInput } from '../../../components/common'
 import { ApiConstant, AppConstant } from '../../../const'
 import { useNavigation, useTheme } from '@react-navigation/native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { Text, TextInput as Input, TextStyle, View, ViewStyle, Pressable } from 'react-native'
+import { Text, TextInput as Input, TextStyle, View, ViewStyle, Pressable,TouchableOpacity } from 'react-native'
 import { TextInput } from 'react-native-paper'
 
 import { StyleSheet } from 'react-native'
@@ -22,20 +21,13 @@ import { IProduct, KeyAbleProps } from '../../../models/types'
 import { ProductService } from '../../../services'
 import { useTranslation } from 'react-i18next'
 import { CommonUtils } from '../../../utils'
-import { appActions } from '../../../redux-store/app-reducer/reducer'
 
 const initFilterValue = {
     label: "",
     value: "",
     isSelected: false
 }
-const defautItem = {
-    "doctype": "Sales Order Item",
-    "name": "new-sales-order-item-itmaedxqwp",
-    "child_docname": "new-sales-order-item-itmaedxqwp",
-    "parenttype": "Sales Order",
-    "parent": "new-sales-order-beozftfgum"
-}
+
 const SelectProducts = () => {
 
     const { colors } = useTheme();
@@ -82,7 +74,7 @@ const SelectProducts = () => {
             case 'unit':
                 setLabel('unit');
                 if (item) {
-                    const units = item.unit;
+                    const units = item.details;
                     const newData = units.map(item1 => {
                         return item.stock_uom === item1.uom ? { label: item1.uom, value: item.item_code, isSelected: true } : { label: item1.uom, value: item.item_code, isSelected: false }
                     });
@@ -97,7 +89,7 @@ const SelectProducts = () => {
         }
     };
 
-    const renderUiItem = (item: IProduct, callBack: (key: string) => string) => {
+    const renderUiItem = (item: IProduct) => {
         return (
             <View style={[styles.itemProduct, { backgroundColor: item.isSelected ? "rgba(196, 22, 28, 0.08)" : colors.bg_default }]}>
                 <View style={[styles.flex as any, { alignItems: "flex-start" }]}>
@@ -109,10 +101,11 @@ const SelectProducts = () => {
                             status={item.isSelected ? 'checked' : 'unchecked'}
                         />
                     </View>
+
                     <View style={{ flex: 1 }}>
 
                         <View style={[styles.flex as any, styles.itemRowIf, styles.itemRowIf, { borderColor: colors.border }]}>
-                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{callBack("productCode")}</Text>
+                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{getLabel("productCode")}</Text>
                             <View style={[styles.flex as any]}>
                                 <AppIcons
                                     iconType={ICON_TYPE.IonIcon}
@@ -125,7 +118,7 @@ const SelectProducts = () => {
                         </View>
 
                         <View style={[styles.flex as any, styles.itemRowIf, { borderColor: colors.border }]}>
-                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{callBack("unt")}</Text>
+                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{getLabel("unt")}</Text>
                             <TouchableOpacity activeOpacity={0.6} onPress={() => openBottomSheetDataFilter("unit",item)}>
                                 <View style={[styles.flex as any, { borderRadius: 8, borderWidth: 1, borderColor: colors.border, paddingVertical: 8 }]}>
                                     <Text style={[styles.filter as TextStyle, { color: colors.text_primary, marginHorizontal: 20 }]}>{item.stock_uom}</Text>
@@ -139,11 +132,11 @@ const SelectProducts = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={[styles.flex as any, styles.itemRowIf, { borderColor: colors.border }]}>
-                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{callBack("quantity")}</Text>
+                        <View style={[styles.flex as any, styles.itemRowIf, { borderColor: colors.border,paddingVertical : 4}]}>
+                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{getLabel("quantity")}</Text>
                             <View style={[styles.flex as any]}>
                                 <TouchableOpacity
-                                    style={{ paddingHorizontal: 10, paddingVertical: 5 }}
+                                    style={{ paddingHorizontal: 10}}
                                     onPress={() => onChangeQuantityProduct(item.item_code, item.quantity && item.quantity > item.min_order_qty ? item.quantity - 1 : item.min_order_qty)}
                                 >
                                     <AppIcons
@@ -162,7 +155,7 @@ const SelectProducts = () => {
                                 />
 
                                 <TouchableOpacity
-                                    style={{ paddingHorizontal: 10, paddingVertical: 5 }}
+                                    style={{ paddingHorizontal: 10}}
                                     onPress={() => onChangeQuantityProduct(item.item_code, item.quantity ? item.quantity + 1 : 2)}
 
                                 >
@@ -176,8 +169,13 @@ const SelectProducts = () => {
                             </View>
                         </View>
 
-                        <View style={[styles.flex as any, styles.itemRowIf, { borderBottomWidth: 0 }]}>
-                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{callBack("expired")}</Text>
+                        <View style={[styles.flex as any, styles.itemRowIf, { borderColor: colors.border}]}>
+                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{getLabel("unitPrice")}</Text>
+                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_primary, marginLeft: 4 }]}>{CommonUtils.formatCash(item.price.toString())}</Text>
+                        </View>
+
+                        <View style={[styles.flex as any, styles.itemRowIf, { borderColor: colors.border,borderBottomWidth : 0  }]}>
+                            <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_disable }]}>{getLabel("expired")}</Text>
                             <TouchableOpacity activeOpacity={0.6}>
                                 <View style={[styles.flex as any, { borderRadius: 8, borderWidth: 1, borderColor: colors.border, paddingVertical: 8, paddingHorizontal: 5 }]}>
                                     <Text style={[styles.filter as TextStyle, { color: colors.text_primary, marginHorizontal: 5 }]}>{CommonUtils.convertDate(item.end_of_life)}</Text>
@@ -332,7 +330,10 @@ const SelectProducts = () => {
                 break;
             }
             case 'unit': {
-                const newProducts = data.map(item1 => item1.item_code === item.value ? ({ ...item1, stock_uom: item.label }) : item1);
+                const newProducts = data.map(item1 => {
+                    let priceUom = item1.details.find(item2 => item2.uom === item.label);
+                    return item1.item_code === item.value ? ({ ...item1, stock_uom: item.label ,price : priceUom ? priceUom.price : 0 }) : item1
+                });
                 setData(newProducts);
                 break;
             }
@@ -351,6 +352,16 @@ const SelectProducts = () => {
         });
         setData(newData);
     }
+    
+    const isSelected = useMemo(()=>{
+        const dataSelect = data.filter(item => item.isSelected);
+        return dataSelect.length > 0 ? false : true
+    },[data])
+
+    const onSelectAllProduct = ()=>{
+        const newData = data.map(item => ({...item , isSelected : isSelected}));
+        setData(newData);
+    }
 
     const onChangeQuantityProduct = (idItem: string, qty: number) => {
         const newData = data.map(item => item.item_code === idItem ? { ...item, quantity: qty } : item);
@@ -359,42 +370,8 @@ const SelectProducts = () => {
 
     const onSubmitProductSelect = async () => {
         const dataSelect = data.filter(item => item.isSelected);
-        dispatch(appActions.setProcessingStatus(true))
-        const newDatas = await fetchPriceProduct(dataSelect)
-        dispatch(productActions.setProductSelected(newDatas));
-        dispatch(appActions.setProcessingStatus(false))
+        dispatch(productActions.setProductSelected(dataSelect));
         navigation.goBack();
-    }
-
-    const fetchPriceProduct = async (data : IProduct[]) => {
-        if (data.length > 0) {
-            const newItem = data.map(item => ({ ...defautItem, item_code: item.item_code, uom: item.stock_uom }));
-            const objectData = {
-                items: newItem,
-                customer: "HR-EMP-00001",    // Mã khách hàng
-                conversion_rate: 1,
-                price_list: "Standard Selling",
-                company: "mbw",        // tên công ty
-                doctype: "Sales Order",
-                name: "new-sales-order-beozftfgum"
-            }
-            const { status, data: data2 }: KeyAbleProps = await ProductService.getPriceListProducts(objectData);
-            const objecPrice: KeyAbleProps = {}
-            if (status === ApiConstant.STT_OK) {
-                const result = data2.result;
-                objecPrice.currency = result.parent.price_list_currency;
-                for (let i = 0; i < result.children.length; i++) {
-                    const element = result.children[i];
-                    objecPrice[element.item_code] = element.price_list_rate
-                }
-                const newProducts = data.map(item => ({ ...item, price: objecPrice[item.item_code] }));
-                return newProducts
-            } else{
-                return []
-            }
-        } else {
-            return []
-        }
     }
 
     const fetchBrandProduct = async () => {
@@ -456,7 +433,9 @@ const SelectProducts = () => {
 
     useEffect(() => {
         const newDaata = products.map(item => {
-            return item.min_order_qty === 0 ? {...item , quantity : 1 , discount : 0} : {...item , quantity : item.min_order_qty ,discount :0}
+            let priceUom = item.details.find(item2 => item2.uom === item.stock_uom);
+            let neItem = {...item,price : priceUom ? priceUom.price : 0}
+            return item.min_order_qty === 0 ? {...neItem , quantity : 1 , discount : 0} : {...neItem , quantity : item.min_order_qty ,discount :0}
         })
         setData(newDaata)
     }, [products])
@@ -521,8 +500,10 @@ const SelectProducts = () => {
 
                 </View>
                 <View style={[styles.flex as any, { justifyContent: "space-between", marginTop: 24, paddingHorizontal: 16, marginBottom: 16 }]}>
-                    <TouchableOpacity>
-                        <Text style={[styles.action as any, { color: colors.action }]}>{getLabel("selectAll")}</Text>
+                    <TouchableOpacity onPress={() => onSelectAllProduct()}>
+                        <Text style={[styles.action as any, { color: colors.action }]}>
+                            {isSelected ?  getLabel("selectAll") : getLabel("deselectAll")}
+                        </Text>
                     </TouchableOpacity>
                     <Text style={[styles.filter as any, { color: colors.text_secondary }]}>{getLabel("total")} : <Text style={{ color: colors.text_primary, fontWeight: "500" }}>{totalItem} {` `}</Text>
                         {getLabel("product").toLowerCase()}
@@ -532,7 +513,7 @@ const SelectProducts = () => {
                     <View style={{ paddingHorizontal: 16, rowGap: 16 }}>
                         {data.map(item => (
                             <Pressable key={item.item_code}>
-                                {renderUiItem(item, getLabel)}
+                                {renderUiItem(item)}
                             </Pressable>
                         ))}
 

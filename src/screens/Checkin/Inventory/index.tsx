@@ -19,6 +19,7 @@ import { CommonUtils } from '../../../utils';
 import { dispatch } from '../../../utils/redux';
 import { productActions } from '../../../redux-store/product-reducer/reducer';
 import { CheckinService } from '../../../services';
+import FilterListComponent, { IFilterType } from '../../../components/common/FilterListComponent';
 
 const CheckinInventory = () => {
 
@@ -27,16 +28,67 @@ const CheckinInventory = () => {
     const { t: getLabel } = useTranslation();
     const bottomSheetRef = useRef<BottomSheet>(null);
     const bottomSheetRefDetail = useRef<BottomSheet>(null);
+    const bottomSheetData = useRef<BottomSheet>(null);
     const snapPointsDetailPr = useMemo(() => ['60%'], []);
-    const [detailProduct, setDetailProduct] = useState<IProduct>();
+    const snapPointsData = useMemo(() => ['60%'], []);
+    const [detailProduct, setDetailProduct] = useState<IProduct | any>();
     const products = useSelector(state => state.product.dataSelected);
-
-
+    const dataCheckin = useSelector(state => state.app.dataCheckIn);
+    const [labelBottonSheet,setLabelBottonSheet] = useState<string>("");
+    const [dataBottomSheet,setDataBottomSheet] =useState<IFilterType[]>([])
     const isDisabled = useMemo(()=> products.length > 0 ? false : true,[products]);
 
     const onBackScreen = ()=>{
         dispatch(productActions.setProductSelected([]))
         navigation.goBack()
+    } 
+
+    const updateProduct = () => {
+        if(detailProduct) {
+            const newData = products.map(item => item.item_code === detailProduct.item_code ? detailProduct : item);
+            dispatch(productActions.setProductSelected(newData))
+        }
+        if (bottomSheetRefDetail.current) {
+            bottomSheetRefDetail.current.close()
+        }
+    }
+
+    const onOpenBottonSheetData = (typeData: string) => {
+        switch (typeData) {
+            case "unit": {
+                setLabelBottonSheet("unit")
+                if (detailProduct) {
+                    const units = detailProduct.details;
+                    const newUnits: IFilterType[] = units.map((item1: any) => {
+                        return detailProduct.stock_uom === item1.uom ? { label: item1.uom, value: detailProduct.item_code, isSelected: true } : { label: item1.uom, value: detailProduct.item_code, isSelected: false }
+                    });
+                    setDataBottomSheet(newUnits);
+                }
+            }
+                break;
+            default:
+                setDataBottomSheet([]);
+                break;
+        }
+        if (bottomSheetData.current) {
+            bottomSheetData.current.snapToIndex(0);
+        }
+    }
+
+    const onChangeData = (item : IFilterType | any) =>{
+        switch (labelBottonSheet) {
+            case "unit":{
+                    if (detailProduct) {
+                        const newData = { ...detailProduct, stock_uom: item.label}
+                        setDetailProduct(newData);
+                    }
+                }
+                break;
+        
+            default:
+                break;
+        }
+        if (bottomSheetData.current) bottomSheetData.current.close()
     }
 
     const onSubmit = async () => { 
@@ -47,16 +99,14 @@ const CheckinInventory = () => {
             exp_time : new Date(item.end_of_life).getTime() / 1000
         }))
         const objectData = {
-            "customer_code": "Anh Hoà",//id khách hàng
-            "customer_id": "BH0068106122023",//mã khách hàng
-            "customer_name": "Anh Hòa",//tên khách hàng
-            "customer_address": "120/62 Ngọc Hà, Ngọc Hà, Ba Đình, Hà Nội",
+            "customer_code": dataCheckin.item.customer_code,//id khách hàng
+            "customer_id": dataCheckin.item.customer_name,//mã khách hàng
+            "customer_name": dataCheckin.item.name,//tên khách hàng
+            "customer_address":dataCheckin.item.customer_primary_address,
             "inventory_items":newItems
         }
         const {status ,data} = await CheckinService.checkinInventory(objectData);
-        if(status === ApiConstant.STT_OK){
-            onBackScreen();
-        }
+        if(status === ApiConstant.STT_OK) onBackScreen();
     }
 
     const removeItem = (id: string) => {
@@ -134,8 +184,10 @@ const CheckinInventory = () => {
                         label={getLabel("unit")}
                         value={detailProduct?.stock_uom || ""}
                         editable={false}
+                        onPress={()=>onOpenBottonSheetData('unit')}
                         rightIcon={
                             <TextInput.Icon
+                                onPress={()=>onOpenBottonSheetData('unit')}
                                 icon={'chevron-down'}
                                 style={{ width: 24, height: 24 }}
                                 color={colors.text_secondary}
@@ -146,6 +198,10 @@ const CheckinInventory = () => {
                         label={getLabel("quantity")}
                         value={detailProduct?.quantity?.toString() || ""}
                         hiddenRightIcon
+                        onChangeValue={(txt: string) => setDetailProduct({...detailProduct, quantity: txt == "" ? 0 : parseInt(txt) })}
+                        inputProp={{
+                            keyboardType: 'numeric'
+                        }}
                     />
                     <AppInput
                         label={getLabel("expired")}
@@ -179,8 +235,7 @@ const CheckinInventory = () => {
                     <AppButton
                         style={{ width: '45%' }}
                         label={getLabel("update")}
-                        onPress={() => bottomSheetRef.current && bottomSheetRef.current.close()}
-
+                        onPress={updateProduct}
                     />
                 </View>
             </View>
@@ -269,6 +324,19 @@ const CheckinInventory = () => {
             />
             <AppBottomSheet bottomSheetRef={bottomSheetRefDetail} snapPointsCustom={snapPointsDetailPr}>
                 {renderUiBottomSheetDetailProduct()}
+            </AppBottomSheet>
+            <AppBottomSheet
+                bottomSheetRef={bottomSheetData}
+                snapPointsCustom={snapPointsData}>
+                <FilterListComponent
+                    title={getLabel(labelBottonSheet)}
+                    data={dataBottomSheet}
+                    onClose={() => {
+                        bottomSheetData.current && bottomSheetData.current.close();
+                        setDataBottomSheet([])
+                    }}
+                    handleItem={onChangeData}
+                />
             </AppBottomSheet>
         </MainLayout>
     )

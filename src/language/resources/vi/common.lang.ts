@@ -166,4 +166,9 @@ export default {
   visited: 'Đã viếng thăm',
   notVisited: 'Chưa viếng thăm',
   currentPosition: 'Vị trí hiện tại',
+  putOrder :"Đặt hàng",
+  returnOrder :"Trả hàng",
+  noOrder :"Chưa có đơn đặt hàng",
+  noReturnOrder :"Chưa có đơn trả hàng",
+  deselectAll : "Bỏ chọn tất cả",
 };

@@ -28,7 +28,15 @@ export type POST_DATA = {
     inventory_items: checkinItemProduct[]
 }
 
+type POST_NOTE_CHECKIN = {
+    title: string
+    content: string
+    custom_checkin_id: string
+    email: string[]
+}
 
 export const checkinInventory = (data: POST_DATA) => createApi().post(ApiConstant.POST_CHECKIN_INVENTORY, data);
-export const updateCustomerAddress = (data: IUpdateAddress) =>
-    createApi().patch(ApiConstant.UPDATE_CUSTOMER_ADDRESS, data);
+export const updateCustomerAddress = (data: IUpdateAddress) =>createApi().patch(ApiConstant.UPDATE_CUSTOMER_ADDRESS, data);
+
+export const createNote = (data: POST_NOTE_CHECKIN) => createApi().post(ApiConstant.POST_NOTE_CHECKIN, data);
+export const getListStaff = () => createApi().get(ApiConstant.GET_LIST_STAFF);
