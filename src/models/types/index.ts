@@ -585,3 +585,11 @@ export type ImageCheckIn = {
   address?: string
   image: string
 }
+
+export type NoteType = {
+  name: string
+  title: string
+  content: string
+  creation: string
+  custom_checkin_id: any
+}

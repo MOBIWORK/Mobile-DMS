@@ -24,6 +24,7 @@ import {
   IDataCustomer,
   IProduct,
   ItemNoteVisitDetail,
+  NoteType,
   ReportOrderItemType,
   VisitListItemType,
 } from '../models/types';
@@ -337,7 +338,7 @@ export type RootStackParamList = {
   [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]:{data:any};
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
-  [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
+  [ScreenConstant.NOTE_DETAIL]: {data:NoteType};
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: {type: string; data: VisitListItemType};
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   FlatList,
   Image,
@@ -8,66 +8,73 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
-import {MainLayout} from '../../../layouts';
+import { ExtendedTheme, useNavigation, useTheme } from '@react-navigation/native';
+import { MainLayout } from '../../../layouts';
 import {
   AppButton,
-  AppContainer,
   AppHeader,
   SvgIcon,
 } from '../../../components/common';
-import {Button} from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ItemNoteVisitDetail} from '../../../models/types';
-import {ImageAssets} from '../../../assets';
-import {NavigationProp, goBack} from '../../../navigation';
-import {ScreenConstant} from '../../../const';
-import {dispatch} from '../../../utils/redux';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {useSelector} from '../../../config/function';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ItemNoteVisitDetail, NoteType } from '../../../models/types';
+import { ImageAssets } from '../../../assets';
+import { NavigationProp, goBack } from '../../../navigation';
+import { ScreenConstant } from '../../../const';
+import { dispatch } from '../../../utils/redux';
+import { useSelector } from '../../../config/function';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import { CommonUtils } from '../../../utils';
+import { useTranslation } from 'react-i18next';
 
 const CheckinNote = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
-  const {bottom} = useSafeAreaInsets();
+  const { t: getLabel } = useTranslation()
+  const { bottom } = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const mounted = useRef<boolean>(true);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const listNote = useSelector(state => state.app?.dataCheckIn?.listNote);
+  const data = useSelector(state => state.checkin.dataNote);
+  const dataCheckin = useSelector(state => state.app.dataCheckIn);
+
 
   useEffect(() => {
     mounted.current;
-    dispatch(appActions.getListNote());
+    dispatch(checkinActions.getListNoteCheckin({
+      // custom_checkin_id : dataCheckin.checkin_id
+    }));
     mounted.current = false;
-    return () => {};
+    return () => { };
   }, []);
 
   const EmptyNote = () => {
     return (
       <>
         <SvgIcon source={'EmptyNote'} size={90} />
-        <Text style={{color: theme.colors.text_secondary}}>
+        <Text style={{ color: theme.colors.text_secondary }}>
           Chưa có ghi chú nào
         </Text>
         <Button
-          style={{marginTop: 16, borderColor: theme.colors.action}}
+          style={{ marginTop: 16, borderColor: theme.colors.action }}
           icon={'plus'}
           mode={'outlined'}
-          labelStyle={{color: theme.colors.action}}
+          labelStyle={{ color: theme.colors.action }}
           onPress={() => navigation.navigate(ScreenConstant.ADD_NOTE)}>
           Tạo ghi chú
         </Button>
       </>
     );
   };
+
   const ListNote = () => {
-    const _renderNoteItem = (item: ItemNoteVisitDetail) => {
+    const _renderNoteItem = (item: NoteType) => {
       return (
         <Pressable>
           <Pressable
             onPress={() =>
-              navigation.navigate(ScreenConstant.NOTE_DETAIL, {data: item})
+              navigation.navigate(ScreenConstant.NOTE_DETAIL, { data: item })
             }
             style={styles.noteItemContainer}>
             <Text
@@ -76,26 +83,26 @@ const CheckinNote = () => {
                 fontSize: 16,
                 fontWeight: '500',
               }}>
-              {item.noteType}
+              {item.title}
             </Text>
-            <View style={[styles.infoContainer, {marginVertical: 4}]}>
+            <View style={[styles.infoContainer, { marginVertical: 4 }]}>
               <Image
                 source={ImageAssets.NoticeIcon}
-                style={{width: 16, height: 16}}
+                style={{ width: 16, height: 16 }}
                 resizeMode={'cover'}
               />
-              <Text style={{color: theme.colors.text_secondary, marginLeft: 4}}>
-                {item.description}
+              <Text numberOfLines={1} ellipsizeMode='tail' style={{ color: theme.colors.text_secondary, marginLeft: 4 }}>
+                {item.content}
               </Text>
             </View>
             <View style={styles.infoContainer}>
               <Image
                 source={ImageAssets.ClockIcon}
-                style={{width: 16, height: 16}}
+                style={{ width: 16, height: 16 }}
                 resizeMode={'cover'}
               />
-              <Text style={{color: theme.colors.text_secondary, marginLeft: 4}}>
-                {item.time}, {item.date}
+              <Text style={{ color: theme.colors.text_secondary, marginLeft: 4 }}>
+                {CommonUtils.convertDateToString(item.creation)}
               </Text>
             </View>
           </Pressable>
@@ -104,38 +111,45 @@ const CheckinNote = () => {
     };
 
     return (
-      <FlatList
-        style={{width: '100%'}}
-        showsVerticalScrollIndicator={false}
-        data={NoteData}
-        renderItem={({item}) => _renderNoteItem(item)}
-      />
+      <View style={{marginTop :20}}>
+        <View style={styles.flexSpace}>
+          <Text>Danh sách ghi chú</Text>
+            <IconButton
+              icon="plus"
+              iconColor={theme.colors.action}
+              size={12}
+              style={{
+                borderColor :theme.colors.action
+              }}
+              mode='outlined'
+              onPress={() => navigation.navigate(ScreenConstant.ADD_NOTE)}
+            />
+        </View>
+        <FlatList
+          style={{ width: '100%' }}
+          showsVerticalScrollIndicator={false}
+          data={data}
+          renderItem={({ item }) => _renderNoteItem(item)}
+        />
+      </View>
+
     );
   };
 
   return (
-    <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
+    <MainLayout style={{ backgroundColor: theme.colors.bg_neutral }}>
       <AppHeader
         style={styles.header}
-        label={'Ghi chú'}
+        label={getLabel("note")}
         onBack={() => goBack()}
       />
       <View style={styles.body}>
-        {listNote && listNote?.length > 0 ? <ListNote /> : <EmptyNote />}
-        {/* <EmptyNote /> */}
-        {/*<AppContainer*/}
-        {/*  style={{*/}
-        {/*    marginBottom: bottom,*/}
-        {/*  }}>*/}
-        {/*  <>*/}
-        {/*  </>*/}
-        {/*</AppContainer>*/}
-        {/*<ListNote />*/}
+        {data.length > 0 ? <ListNote /> : <EmptyNote />}
       </View>
       <View style={styles.footer}>
         <AppButton
-          style={{width: '100%'}}
-          label={'Hoàn thành'}
+          style={{ width: '100%' }}
+          label={getLabel("completed")}
           onPress={() => console.log('123')}
         />
       </View>
@@ -146,6 +160,11 @@ export default CheckinNote;
 
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
+    flexSpace :{
+      flexDirection :"row",
+      justifyContent:"space-between",
+      alignItems :"center",
+    }as ViewStyle,
     header: {
       flex: 0.5,
       alignItems: 'flex-start',
@@ -172,38 +191,3 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       backgroundColor: theme.colors.bg_default,
     } as ViewStyle,
   });
-
-const NoteData: ItemNoteVisitDetail[] = [
-  {
-    noteType: 'Loại ghi chú',
-    description: 'Mô tả ghi chú',
-    content:
-      'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
-    time: '10:20:00',
-    date: '21/11/2023',
-  },
-  {
-    noteType: 'Loại ghi chú',
-    description: 'Mô tả ghi chú',
-    content:
-      'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
-    time: '10:20:00',
-    date: '21/11/2023',
-  },
-  {
-    noteType: 'Loại ghi chú',
-    description: 'Mô tả ghi chú',
-    content:
-      'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
-    time: '10:20:00',
-    date: '21/11/2023',
-  },
-  {
-    noteType: 'Loại ghi chú',
-    description: 'Mô tả ghi chú',
-    content:
-      'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
-    time: '10:20:00',
-    date: '21/11/2023',
-  },
-];
