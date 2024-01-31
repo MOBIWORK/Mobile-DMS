@@ -85,3 +85,5 @@ export const GET_LIST_NOTE_API = '/mbw_dms.api.note.list_note'
 
 // IMAGE_CHECKIN
 export const PUT_IMAGE_CHECKIN = '/mbw_dms.api.checkin.add_checkin_image'
+export const POST_NOTE_CHECKIN = URL_PREFIX + ".api.note.create_note";
+export const GET_LIST_STAFF = URL_PREFIX + ".api.note.list_email";

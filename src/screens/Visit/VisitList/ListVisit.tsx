@@ -59,6 +59,7 @@ const ListVisit = () => {
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
+  const customerCheckin = useRef<any>()
   const backgroundErrorListener = useCallback((errorCode: number) => {
     // Handle background location errors
     switch (errorCode) {
