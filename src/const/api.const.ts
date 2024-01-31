@@ -63,6 +63,7 @@ export const GET_ORDER_DETAIL =
   URL_PREFIX + '.api.selling.order.get_sale_order';
 export const GET_VATS = URL_PREFIX + '.api.selling.product.list_vat';
 export const POST_ORDER = URL_PREFIX + '.api.selling.order.create_sale_order';
+export const POST_RETuRN_ORDER = URL_PREFIX + '.api.selling.order.create_return_order';
 export const GET_WAREHOUSES =
   URL_PREFIX + '.api.selling.product.list_warehouse';
 
@@ -74,3 +75,6 @@ export const GET_LIST_WARD = '/mbw_dms.api.location.list_ward?ma_quan_huyen=';
 // Inventory
 export const POST_CHECKIN_INVENTORY =
   URL_PREFIX + '.api.checkin.create_checkin_inventory';
+
+export const POST_NOTE_CHECKIN = URL_PREFIX + ".api.note.create_note";
+export const GET_LIST_STAFF = URL_PREFIX + ".api.note.list_email";

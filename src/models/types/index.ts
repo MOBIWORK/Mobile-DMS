@@ -432,7 +432,7 @@ export type ReportKPIType = {
 };
 type UinitProduct = {
   uom: string;
-  price_list_rate: number;
+  price: number;
   valid_from: string;
   currency: string;
 };
@@ -464,8 +464,7 @@ export type IProduct = {
   image: string;
   custom_industry: string;
   end_of_life: string;
-  detail: UinitProduct;
-  unit: DataUnit[];
+  details: UinitProduct[];
   stock: StockProduct[];
   quantity?: number;
   discount_percentage: discountProduct[];
@@ -544,4 +543,13 @@ export type IProductPromotion = {
   conversion_factor: number;
   delivery_date: string;
   parent_item? : string
+}
+
+export type StaffType = {
+  name: string
+  first_name: string
+  image: any
+  user_id: string
+  designation: any,
+  isCheck? : boolean
 }

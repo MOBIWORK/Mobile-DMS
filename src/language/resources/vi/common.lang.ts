@@ -170,4 +170,5 @@ export default {
   returnOrder :"Trả hàng",
   noOrder :"Chưa có đơn đặt hàng",
   noReturnOrder :"Chưa có đơn trả hàng",
+  deselectAll : "Bỏ chọn tất cả",
 };

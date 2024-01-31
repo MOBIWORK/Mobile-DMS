@@ -49,75 +49,51 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   );
 
   return (
-    <SafeAreaView
-      edges={['right', 'left', 'bottom']}
-      style={showModal === false ? styles.container : {}}>
-      {!showModal && (
-        <>
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => pressNavigator(0)}>
-            <View pointerEvents="none">
-              {state.index === 0 ? (
-                <SvgIcon source="IconHomeActive" size={29} />
-              ) : (
-                <SvgIcon source="IconHome" size={29} />
-              )}
-            </View>
-            <Text style={styles.txtItem(state.index, 0)}>
-              {getLabel('home')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => pressNavigator(1)}>
-            <View pointerEvents="none">
-              {state.index === 1 ? (
-                <SvgIcon source="IconVisitActive" size={29} />
-              ) : (
-                <SvgIcon source="IconVisit" size={29} />
-              )}
-            </View>
-            <Text style={styles.txtItem(state.index, 1)}>
-              {getLabel('visit')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => pressNavigator(2)}>
-            <View pointerEvents="none">
-              {state.index === 2 ? (
-                <SvgIcon
-                  source="IconCustomerActive"
-                  size={29}
-                />
-              ) : (
-                <SvgIcon source="IconCustomer" size={29} />
-              )}
-            </View>
-            <Text style={styles.txtItem(state.index, 2)}>
-              {getLabel('customer')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => pressNavigator(3)}>
-            <View pointerEvents="none">
-              {state.index === 3 ? (
-                <SvgIcon
-                  source="IconLookingMoreActive"
-                  size={29}
-                />
-              ) : (
-                <SvgIcon source="IconLookingMore" size={29} />
-              )}
-            </View>
-            <Text style={styles.txtItem(state.index, 3)}>
-              {getLabel('lookingMore')}
-            </Text>
-          </TouchableOpacity>
-        </>
-      )}
+    <SafeAreaView edges={['right', 'left', 'bottom']} style={styles.container}>
+      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(0)}>
+        <View pointerEvents="none">
+          {state.index === 0 ? (
+            <SvgIcon source="IconHomeActive" size={29} />
+          ) : (
+            <SvgIcon source="IconHome" size={29} />
+          )}
+        </View>
+        <Text style={styles.txtItem(state.index, 0)}>{getLabel('home')}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(1)}>
+        <View pointerEvents="none">
+          {state.index === 1 ? (
+            <SvgIcon source="IconVisitActive" size={29} />
+          ) : (
+            <SvgIcon source="IconVisit" size={29} />
+          )}
+        </View>
+        <Text style={styles.txtItem(state.index, 1)}>{getLabel('visit')}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(2)}>
+        <View pointerEvents="none">
+          {state.index === 2 ? (
+            <SvgIcon source="IconCustomerActive" size={29} />
+          ) : (
+            <SvgIcon source="IconCustomer" size={29} />
+          )}
+        </View>
+        <Text style={styles.txtItem(state.index, 2)}>
+          {getLabel('customer')}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(3)}>
+        <View pointerEvents="none">
+          {state.index === 3 ? (
+            <SvgIcon source="IconLookingMoreActive" size={29} />
+          ) : (
+            <SvgIcon source="IconLookingMore" size={29} />
+          )}
+        </View>
+        <Text style={styles.txtItem(state.index, 3)}>
+          {getLabel('lookingMore')}
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

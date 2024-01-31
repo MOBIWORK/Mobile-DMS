@@ -31,22 +31,15 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import FilterListComponent, {
     IFilterType,
 } from '../../../components/common/FilterListComponent';
-import { ApiConstant, ScreenConstant } from '../../../const';
+import { ApiConstant, AppConstant, ScreenConstant } from '../../../const';
 import { OrderService, ProductService } from '../../../services';
-import { IProduct, IProductPromotion, KeyAbleProps } from '../../../models/types';
+import { IProduct, IProductPromotion, IResOrganization, KeyAbleProps } from '../../../models/types';
 import { useSelector } from '../../../config/function';
 import { useTranslation } from 'react-i18next';
 import { dispatch } from '../../../utils/redux';
 import { productActions } from '../../../redux-store/product-reducer/reducer';
+import { useMMKVObject } from 'react-native-mmkv';
 
-
-const defautItem = {
-    "doctype": "Sales Order Item",
-    "name": "new-sales-order-item-itmaedxqwp",
-    "child_docname": "new-sales-order-item-itmaedxqwp",
-    "parenttype": "Sales Order",
-    "parent": "new-sales-order-beozftfgum"
-}
 const defautItem1 = {
     "doctype": "Sales Order Item",
     "name": "new-sales-order-item-earlpsogzi",
@@ -69,6 +62,7 @@ const CreateOrder = () => {
     const router = useRoute<RouterProp<'CHECKIN_ORDER'>>();
     const type = router.params.type;
 
+    const [organization,_] = useMMKVObject<IResOrganization>(AppConstant.Organization)
     const [date, setDate] = useState<number>(new Date().getTime());
     const [DataWarehouse, setDataWarehouse] = useState<IFilterType[]>([]);
     const [dataDiscount, setDataDiscount] = useState<IFilterType[]>([
@@ -85,7 +79,8 @@ const CreateOrder = () => {
     ]);
     const [dataVat, setDataVat] = useState<any[]>([]);
     const data = useSelector(state => state.product.dataSelected);
-    const [products, setProducts] = useState<IProduct[]>([])
+    const dataCheckin = useSelector(state => state.app.dataCheckIn);
+    const [products, setProducts] = useState<IProduct[]>([]);
     const [productsPromotion, setProductsPromotion] = useState<IProductPromotion[]>([]);
     const [productDetail, setProductDetail] = useState<IProduct | any>();
 
@@ -94,12 +89,13 @@ const CreateOrder = () => {
     const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
 
     const [warehouse, setWarehouse] = useState<IFilterType>();
-    const [vat, setVat] = useState<object | any>({ label: "", value: "", rate: "" })
+    const [vat, setVat] = useState<object | any>({ label: "", value: "", rate: "" });
     const [discount, setDiscount] = useState<any>({
         label: 'Grand Total',
         value: 'grand',
         discount_percentage: 0,
     });
+
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const [grandTotalPrice, setGrandTotalPrice] = useState<number>(0);
     const [discountAmount, setDiscountAmout] = useState<number>(0);
@@ -108,7 +104,7 @@ const CreateOrder = () => {
     const onBackScreen = () => {
         dispatch(productActions.setProductSelected([]))
         navigation.goBack()
-    }
+    };
 
     const renderUiNoData = () => {
         return (
@@ -297,7 +293,7 @@ const CreateOrder = () => {
                 />
                 <AppInput
                     label={getLabel("quantity")}
-                    value={productDetail?.quantity?.toString() || 0}
+                    value={productDetail?.quantity?.toString() || ""}
                     onChangeValue={(txt: string) => setProductDetail({ ...productDetail, quantity: txt == "" ? 0 : parseInt(txt) })}
                     hiddenRightIcon
                     inputProp={{
@@ -339,7 +335,7 @@ const CreateOrder = () => {
             case "unit": {
                 setLabelBottonSheet("unit")
                 if (productDetail) {
-                    const units = productDetail.unit;
+                    const units = productDetail.details;
                     const newUnits: IFilterType[] = units.map((item1: any) => {
                         return productDetail.stock_uom === item1.uom ? { label: item1.uom, value: productDetail.item_code, isSelected: false } : { label: item1.uom, value: productDetail.item_code, isSelected: false }
                     });
@@ -356,7 +352,7 @@ const CreateOrder = () => {
         if (bottomSheetWh.current) {
             bottomSheetWh.current.snapToIndex(0);
         }
-    }
+    };
 
     const onChangeData = (item: IFilterType | any) => {
         switch (labelBottonSheet) {
@@ -392,7 +388,8 @@ const CreateOrder = () => {
                 break;
             case "unit": {
                 if (productDetail) {
-                    const newData = { ...productDetail, stock_uom: item.label }
+                    const priceUom = productDetail.details.find((item1: any) => item1.uom === item.label);
+                    const newData = { ...productDetail, stock_uom: item.label, price: priceUom ? priceUom.price : 0 }
                     setProductDetail(newData);
                 }
             }
@@ -404,7 +401,7 @@ const CreateOrder = () => {
             setDataCategorie([]);
             bottomSheetWh.current.close();
         }
-    }
+    };
 
     const onCalculateTotalOrderPrice = () => {
         const sum = products.reduce((accumulator, item) => {
@@ -420,7 +417,7 @@ const CreateOrder = () => {
             return accumulator + grandTotal;
         }, 0);
         setTotalPrice(sum)
-    }
+    };
 
     const onChangeDiscount = (input: string, txt: string) => {
         let amount = 0;
@@ -447,7 +444,7 @@ const CreateOrder = () => {
         }
         setDiscount(((prev: any) => ({ ...prev, discount_percentage: percentage })))
         setDiscountAmout(amount)
-    }
+    };
 
     const fetchDataWarehouse = async () => {
         const { data, status }: KeyAbleProps = await ProductService.getWarehouse();
@@ -485,34 +482,7 @@ const CreateOrder = () => {
             }
             setDataVat(newData);
         }
-    }
-
-    const fetchPriceProduct = async (dataProduct: IProduct[] | any[]) => {
-        const newItem = dataProduct.map(item => ({ ...defautItem, item_code: item.item_code, uom: item.stock_uom }));
-        const objectData = {
-            items: newItem,
-            customer: "HR-EMP-00001",    // Mã khách hàng
-            conversion_rate: 1,
-            price_list: "Standard Selling",
-            company: "mbw",        // tên công ty
-            doctype: "Sales Order",
-            name: "new-sales-order-beozftfgum"
-        }
-        const { status, data: data2 }: KeyAbleProps = await ProductService.getPriceListProducts(objectData);
-        const objecPrice: KeyAbleProps = {}
-        if (status === ApiConstant.STT_OK) {
-            const result = data2.result;
-            objecPrice.currency = result.parent.price_list_currency;
-            for (let i = 0; i < result.children.length; i++) {
-                const element = result.children[i];
-                objecPrice[element.item_code] = element.price_list_rate
-            }
-            const newProducts = dataProduct.map(item => ({ ...item, price: objecPrice[item.item_code] }));
-            return newProducts
-        } else {
-            return []
-        }
-    }
+    };
 
     const fetchProductPromotion = async () => {
         if (type === "ORDER") {
@@ -520,13 +490,13 @@ const CreateOrder = () => {
                 const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
                 const objecData = {
                     "items": newItems,
-                    "customer": "Anh A",        // Khách hàng
+                    "customer": dataCheckin.item.name,        // Khách hàng
                     "customer_group": "Commercial",    // Nhóm khách hàng
                     "territory": "Vietnam",
                     "currency": "VND",
                     "price_list": "Standard Selling",
                     "price_list_currency": "VND",
-                    "company": "mbw",            // Lấy cty hiện tại
+                    "company": organization?.company_name || "",            // Lấy cty hiện tại
                     "doctype": "Sales Order",
                     "name": "new-sales-order-hnnkmtrehm",
                     "transaction_date": "2024-01-27",
@@ -548,30 +518,28 @@ const CreateOrder = () => {
             }
         }
 
-    }
+    };
 
     const onCalculateGrandPriceOrder = () => {
         const grand_price = totalPrice + vatAmount - discountAmount;
         setGrandTotalPrice(grand_price)
-    }
+    };
 
     const handlerRemoveItemProduct = (id: string) => {
         const newProducts = products.filter(item => item.item_code !== id);
         setProducts(newProducts);
         dispatch(productActions.setProductSelected(newProducts))
-    }
+    };
 
-    const updateProductOrder = async () => {
-        const arrPro = await fetchPriceProduct([productDetail]);
-        if (arrPro.length > 0) {
-            const itemPro = arrPro[0]
-            const newProducts = products.map(item => item.item_code === itemPro.item_code ? ({ ...item, quantity: itemPro.quantity, price: itemPro.price }) : item);
+    const updateProductOrder = () => {
+        if (productDetail) {
+            const newProducts = products.map(item => item.item_code === productDetail.item_code ? ({ ...item, quantity: productDetail.quantity, price: productDetail.price }) : item);
             dispatch(productActions.setProductSelected(newProducts));
         }
         if (bottomSheetRef.current) {
             bottomSheetRef.current.close();
         }
-    }
+    };
 
     const recalculateVatorDiscount = () => {
         let vt = 0;
@@ -590,28 +558,43 @@ const CreateOrder = () => {
         }
         setVatAmount(vt);
         setDiscountAmout(dsc);
-    }
+    };
 
-    const onCreatedOrder = () => {
+    const onCreatedOrder = async () => {
+        let status :any = 0
         const arrItems = products.map(item => ({ item_code: item.item_code, qty: item.quantity, rate: item.price, uom: item.stock_uom, discount_percentage: item.discount }))
-        const objectData = {
-            "customer": "HR-EMP-00001",
-            "delivery_date": new Date(date).getTime() / 1000,
-            "set_warehouse": warehouse?.value,
-            "apply_discount_on": discount.label,
-            "additional_discount_percentage": discount.discount_percentage,
-            "discount_amount": discountAmount,
-            "rate_taxes": vat.rate,
-            "taxes_and_charges": vat.value,
-            "checkin_id": "843e5141b5",
-            "company": "mbw",
-            "items": arrItems,
-            "grand_total": grandTotalPrice
+        const objectData: any = {
+            set_warehouse: warehouse?.value,
+            apply_discount_on: discount.label,
+            additional_discount_percentage: discount.discount_percentage,
+            discount_amount: discountAmount,
+            rate_taxes: vat.rate,
+            taxes_and_charges: vat.value,
+            company: organization?.company_name,
+            items: arrItems,
         }
-        console.log('====================================');
-        console.log("objectData", objectData);
-        console.log('====================================');
-    }
+        if (dataCheckin) {
+            objectData["checkin_id"] = dataCheckin.checkin_id;
+            objectData["customer"] = dataCheckin.item.name;
+        }
+
+        switch (type) {
+            case "ORDER":
+                objectData['delivery_date'] = new Date(date).getTime() / 1000;
+                objectData["grand_total"] = grandTotalPrice;
+                status = (await OrderService.createdOrder(objectData)).status;
+                break;
+            case "RETURN_ORDER":
+                objectData["is_return"] = 1;
+                objectData["update_billed_amount_in_delivery_note"] = 1;
+                objectData["grand_total"] = grandTotalPrice - (grandTotalPrice * 2);
+                status = (await OrderService.createdReturnOrder(objectData)).status;
+                break
+            default:
+                break;
+        }
+        if(status === ApiConstant.STT_OK) onBackScreen();
+    };
 
     useEffect(() => {
         fetchDataWarehouse();
@@ -621,20 +604,19 @@ const CreateOrder = () => {
     useEffect(() => {
         setProducts(data);
         fetchProductPromotion();
-    }, [data])
+    }, [data]);
 
     useLayoutEffect(() => {
         onCalculateTotalOrderPrice();
-    }, [products])
+    }, [products]);
 
     useEffect(() => {
         onCalculateGrandPriceOrder();
-    }, [totalPrice, vatAmount, discountAmount])
-
+    }, [totalPrice, vatAmount, discountAmount]);
 
     useEffect(() => {
         recalculateVatorDiscount();
-    }, [products, discount, vat])
+    }, [products, discount, vat]);
 
 
     return (
@@ -909,6 +891,7 @@ const CreateOrder = () => {
             </AppBottomSheet>
         </>
     );
+    
 };
 
 export default CreateOrder;

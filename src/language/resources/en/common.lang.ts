@@ -167,4 +167,5 @@ export default {
   returnOrder :"Return Order",
   noOrder :"No orders yet",
   noReturnOrder :"No orders yet",
+  deselectAll : "Deselect all",
 };

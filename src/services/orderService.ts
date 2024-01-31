@@ -11,14 +11,14 @@ export type PramsTypeOrder = {
 
 export interface POST_DATA {
     customer: string
-    delivery_date: string
+    delivery_date?: number
     set_warehouse: string
     apply_discount_on: string
     additional_discount_percentage: number
     discount_amount: number
     rate_taxes: number
     taxes_and_charges: string
-    checkin_id: string
+    checkin_id?: string
     company: string
     items: Item[]
     grand_total: number
@@ -36,4 +36,5 @@ export interface Item {
 export const get = (params?: PramsTypeOrder) => createApi().get(ApiConstant.GET_ORDER, params);
 export const getDetail = (name: string) => createApi().get(ApiConstant.GET_ORDER_DETAIL, { name });
 export const getListVat = () => createApi().get(ApiConstant.GET_VATS);
-export const createdOrder = (data: POST_DATA) => createApi().post(ApiConstant.POST_ORDER, data)
+export const createdOrder = (data: POST_DATA) => createApi().post(ApiConstant.POST_ORDER, data);
+export const createdReturnOrder = (data: POST_DATA) => createApi().post(ApiConstant.POST_RETuRN_ORDER, data);
