@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {AppHeader, FilterView} from '../../../components/common';
+import { AppHeader, FilterView } from '../../../components/common';
 import {
   FlatList,
   Image,
@@ -17,32 +17,32 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {ImageAssets} from '../../../assets';
-import {useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation';
-import {VisitListItemType} from '../../../models/types';
-import VisitItem, {LocationProps} from './VisitItem';
+import { ImageAssets } from '../../../assets';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import { NavigationProp } from '../../../navigation';
+import { VisitListItemType } from '../../../models/types';
+import VisitItem, { LocationProps } from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
-import {AppConstant, ScreenConstant} from '../../../const';
+import { AppConstant, ScreenConstant } from '../../../const';
 import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
-import {useSelector} from '../../../config/function';
+import { useSelector } from '../../../config/function';
 
-import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-import {dispatch} from '../../../utils/redux';
-import {getCustomerVisit} from '../../../services/appService';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { customerActions } from '../../../redux-store/customer-reducer/reducer';
+import { dispatch } from '../../../utils/redux';
+import { getCustomerVisit } from '../../../services/appService';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const ListVisit = () => {
-  const {colors} = useTheme();
-  const {bottom} = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const { bottom } = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
 
   const filterRef = useRef<BottomSheet>(null);
@@ -85,7 +85,7 @@ const ListVisit = () => {
 
   const handleBackground = () => {
     BackgroundGeolocation.getCurrentPosition(
-      {samples: 1, timeout: 3},
+      { samples: 1, timeout: 3 },
       location => {
         console.log('location: ', location);
       },
@@ -93,23 +93,23 @@ const ListVisit = () => {
     );
   };
 
-  const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
+  const MarkerItem: FC<MarkerItemProps> = ({ item, index }) => {
     return (
       <TouchableOpacity
-        style={{alignItems: 'center', justifyContent: 'center'}}
+        style={{ alignItems: 'center', justifyContent: 'center' }}
         onPress={() => setVisitItemSelected(item)}>
         <Image
           source={ImageAssets.TooltipIcon}
-          style={{width: 20, height: 20, marginBottom: -5}}
+          style={{ width: 20, height: 20, marginBottom: -5 }}
           resizeMode={'contain'}
           tintColor={colors.text_primary}
         />
-        <Text style={{color: colors.bg_default, position: 'absolute', top: 0}}>
+        <Text style={{ color: colors.bg_default, position: 'absolute', top: 0 }}>
           {index + 1}
         </Text>
         <Image
           source={ImageAssets.MapPinFillIcon}
-          style={{width: 32, height: 32}}
+          style={{ width: 32, height: 32 }}
           tintColor={item.is_checkin ? colors.success : colors.warning}
           resizeMode={'cover'}
         />
@@ -119,20 +119,20 @@ const ListVisit = () => {
 
   const _renderHeader = () => {
     return (
-      <View style={{paddingHorizontal: 16}}>
+      <View style={{ paddingHorizontal: 16 }}>
         <AppHeader
           hiddenBackButton
           label={'Viếng thăm'}
-          labelStyle={{textAlign: 'left'}}
+          labelStyle={{ textAlign: 'left' }}
           rightButton={
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={() => setShowListVisit(!isShowListVisit)}>
                 <Image
                   source={
                     isShowListVisit ? ImageAssets.MapIcon : ImageAssets.ListIcon
                   }
-                  style={{width: 28, height: 28}}
+                  style={{ width: 28, height: 28 }}
                   tintColor={colors.text_secondary}
                   resizeMode={'cover'}
                 />
@@ -143,7 +143,7 @@ const ListVisit = () => {
                 }>
                 <Image
                   source={ImageAssets.SearchIcon}
-                  style={{width: 28, height: 28, marginLeft: 16}}
+                  style={{ width: 28, height: 28, marginLeft: 16 }}
                   tintColor={colors.text_secondary}
                   resizeMode={'cover'}
                 />
@@ -169,13 +169,13 @@ const ListVisit = () => {
               borderColor: colors.border,
               maxWidth: 180,
             }}>
-            <Text style={{color: colors.text_secondary}}>Khoảng cách:</Text>
-            <Text style={{color: colors.text_primary, marginLeft: 8}}>
+            <Text style={{ color: colors.text_secondary }}>Khoảng cách:</Text>
+            <Text style={{ color: colors.text_primary, marginLeft: 8 }}>
               Gần nhất
             </Text>
           </View>
           <FilterView
-            style={{marginLeft: 12}}
+            style={{ marginLeft: 12 }}
             onPress={() =>
               bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
             }
@@ -187,19 +187,19 @@ const ListVisit = () => {
 
   const _renderContent = () => {
     return (
-      <View style={{marginTop: 8}}>
+      <View style={{ marginTop: 8 }}>
         {isShowListVisit ? (
-          <View style={{marginTop: 16, paddingHorizontal: 16}}>
-            <Text style={{color: colors.text_secondary}}>
+          <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
+            <Text style={{ color: colors.text_secondary }}>
               Viếng thăm {customerCheckinCount}/{listCustomer?.length} khách
               hàng
             </Text>
             {listCustomer && (
               <FlatList
-                style={{height: '90%'}}
+                style={{ height: '90%' }}
                 showsVerticalScrollIndicator={false}
                 data={listCustomer}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                   <VisitItem item={item} onPress={handleBackground} />
                 )}
               />
@@ -213,7 +213,7 @@ const ListVisit = () => {
               scaleBarEnabled={false}
               styleURL={Mapbox.StyleURL.Street}
               logoEnabled={false}
-              style={{flex: 1}}>
+              style={{ flex: 1 }}>
               <Mapbox.Camera
                 // ref={mapboxCameraRef}
                 centerCoordinate={[
@@ -304,7 +304,7 @@ const ListVisit = () => {
 
   return (
     <SafeAreaView
-      style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
+      style={{ backgroundColor: colors.bg_neutral, paddingHorizontal: 0 }}>
       {_renderHeader()}
       {/* <SkeletonLoading loading={true}  /> */}
       {appLoading ? (
