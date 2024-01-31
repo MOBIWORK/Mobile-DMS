@@ -335,7 +335,7 @@ export type RootStackParamList = {
   [ScreenConstant.PROFILE]: undefined;
   [ScreenConstant.CHECKIN]: {item: any};
   [ScreenConstant.UPDATE_SCREEN]: any;
-  [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
+  [ScreenConstant.TAKE_PICTURE_VISIT]:{data:any};
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
   [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
   [ScreenConstant.ADD_NOTE]: undefined;

@@ -42,7 +42,7 @@ const CheckIn = (props: Props) => {
   const [elapsedTime, setElapsedTime] = useState(0);
    const intervalId = useRef<any>()
   useEffect(() => {
-    
+
 
     // Start the interval when the component mounts
     const startInterval = () => {
@@ -163,7 +163,7 @@ const CheckIn = (props: Props) => {
           colorTheme="white"
           borderRadius={16}>
           {item.map((item, index) => {
-            return <ItemCheckIn key={index} item={item} navData={params.item} />;
+            return <ItemCheckIn key={index} item={item} navData={params} />;
           })}
         </Block>
       </Block>

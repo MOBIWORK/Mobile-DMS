@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
   FlatList,
@@ -21,10 +21,13 @@ import {Button} from 'react-native-paper';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import BottomSheet from '@gorhom/bottom-sheet';
 import SelectAlbum from './SelectAlbum';
-import {IAlbumImage} from '../../../models/types';
+import {IAlbumImage, ImageCheckIn} from '../../../models/types';
 import {ImageAssets} from '../../../assets';
 import {AppConstant} from '../../../const';
 import {CameraUtils} from '../../../utils';
+import { RouterProp, dispatch } from '../../../navigation';
+import { CheckinData } from '../../../services/appService';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 const TakePicture = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
@@ -34,22 +37,47 @@ const TakePicture = () => {
   const [albumBottomSheet, setAlbumBottomSheet] =
     useState<IFilterType[]>(ListAlbumFake);
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
+  const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params
+  const dataCheckIn = useRef<CheckinData>(params.data)
+ const data = useRef<ImageCheckIn>({
+  album_id:'',
+  album_name:'',
+  address:'',
+  customer_code:dataCheckIn.current?.kh_ma,
+  checkin_id:dataCheckIn?.current.checkin_id,
+  customer_id:dataCheckIn?.current.kh_ma,
+  customer_name:dataCheckIn?.current.kh_ten,
+  image:'',
+  lat:dataCheckIn?.current.checkin_lat ? dataCheckIn?.current.checkin_lat : 0,
+  long:dataCheckIn?.current.checkin_long ? dataCheckIn?.current.checkin_long : 0
+ })
 
 
+const handlePushImageData = useCallback(() =>{
   for (let index = 0; index < albumImageData.length; index++) {
+    if (data?.current) {
+      data.current.album_id = albumImageData[index].id;
+      data.current.album_name = albumImageData[index].label
+    }
+    console.log(albumImageData[index],'base64')
     const element = albumImageData[index].image;
-      for(let i = 0 ;i < element.length ; i++){
-          let image = element[i]
-          
+    for (let i = 0; i < element.length; i++) {
+      let image = element[i];
+      if(data?.current){
+          data.current.image = image
+       
       }
+      // Your logic with the 'image' variable
+    }
   }
-  
+},[])
+
   
 
   const handleCamera = (item: IAlbumImage) => {
-    CameraUtils.openImagePickerCamera(img => {
+    CameraUtils.openImagePickerCamera((img,base64) => {
       const newListImage = [...item.image, img!];
-      const newItem = {...item, image: newListImage};
+      const newItem = {...item, image: newListImage,base64};
       setAlbumImageData(prevState => [
         ...prevState.filter(itemPre => itemPre.label !== newItem.label),
         newItem,
@@ -188,7 +216,7 @@ const TakePicture = () => {
         <AppButton
           style={{width: '100%'}}
           label={'Hoàn thành'}
-          onPress={() => console.log('123')}
+          onPress={handlePushImageData}
         />
       </View>
       <SelectAlbum
