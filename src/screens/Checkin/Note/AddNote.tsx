@@ -98,6 +98,7 @@ const AddNote = () => {
         data={staffData}
         setData={setStaffData}
         onCancel={() => setSendEmail(false)}
+        
       />
     </MainLayout>
   );

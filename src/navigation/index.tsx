@@ -138,11 +138,11 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       linking={linking}
       ref={navigationRef}>
       <Stack.Navigator
-        // initialRouteName={
-        //   validate
-        //     ? ScreenConstant.MAIN_TAB
-        //     : ScreenConstant.SELECT_ORGANIZATION
-        // }
+        initialRouteName={
+          validate
+            ? ScreenConstant.MAIN_TAB
+            : ScreenConstant.SELECT_ORGANIZATION
+        }
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
@@ -223,6 +223,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.CHECKIN_ORDER_CREATE}
           component={CheckinOrderCreated}
         />
+        <Stack.Screen name={ScreenConstant.ADD_NOTE}   component={AddNote} />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
         <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
         <Stack.Screen
@@ -239,14 +240,10 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={TakePicture}
         />
         <Stack.Screen
-          name={ScreenConstant.CHECKIN_NOTE_VISIT}
-          component={CheckinNote}
-        />
-        <Stack.Screen
           name={ScreenConstant.NOTE_DETAIL}
           component={NoteDetail}
         />
-        <Stack.Screen name={ScreenConstant.ADD_NOTE} component={CheckinNote} />
+        <Stack.Screen name={ScreenConstant.CHECKIN_NOTE_VISIT} component={CheckinNote} />
         <Stack.Screen
           name={ScreenConstant.CHECKIN_LOCATION}
           component={CheckInLocation}

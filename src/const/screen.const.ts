@@ -79,5 +79,5 @@ export const VISIT_RESULT = 'VISIT_RESULT';
 export const NEW_CUSTOMER = 'NEW_CUSTOMER';
 export const REPORT_DEBT = 'REPORT_DEBT';
 export const REPORT_KPI = 'REPORT_KPI';
-
+export const CHECK_IN_NOTE ='CHECK_IN_NOTE';
 export const SEARCH_COMMON_SCREEN = 'SEARCH_COMMON_SCREEN';

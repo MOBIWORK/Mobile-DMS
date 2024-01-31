@@ -18,12 +18,12 @@ const initialAppState: IAppRedux = {
   loadingApp: false,
   currentLocation: {},
   systemConfig: {},
-  listDataCity:{
-    city:[],
-    district:[],
-    ward:[]
+  listDataCity: {
+    city: [],
+    district: [],
+    ward: [],
   },
-  dataCheckIn:{}
+  dataCheckIn: {},
 };
 
 const appSlice = createSlice({
@@ -93,18 +93,20 @@ const appSlice = createSlice({
     setSystemConfig: (state, action: PayloadAction<any>) => {
       state.systemConfig = action.payload;
     },
-    setDataCity:(state,action:PayloadAction<any>) =>{
-      state.listDataCity.city = action.payload
+    setDataCity: (state, action: PayloadAction<any>) => {
+      state.listDataCity.city = action.payload;
     },
-    setDataDistrict:(state,action:PayloadAction<any>) =>{
-      state.listDataCity.district = action.payload
+    setDataDistrict: (state, action: PayloadAction<any>) => {
+      state.listDataCity.district = action.payload;
     },
-    setDataWard:(state,action:PayloadAction<any>) =>{
-      state.listDataCity.ward = action.payload
+    setDataWard: (state, action: PayloadAction<any>) => {
+      state.listDataCity.ward = action.payload;
     },
-    setDataCheckIn:(state,action:PayloadAction<any>)=>{
-      state.dataCheckIn = action.payload
-    }
+    setDataCheckIn: (state, action: PayloadAction<any>) => {
+      state.dataCheckIn = action.payload;
+    },
+    setListNote: (state, action: PayloadAction<any>) =>
+      void (state.dataCheckIn.listNote = action.payload),
   },
 });
 
@@ -119,17 +121,23 @@ const onGetSystemConfig = createAction(
 
 const onGetListTerritory = createAction(
   Actions.GET_LIST_TERRITORY,
-    (data?:any) => ({payload:data})
-)
+  (data?: any) => ({payload: data}),
+);
 
-const onGetListCity = createAction(
-  Actions.GET_LIST_CITY,(data?:any) => ({payload:data})
-)
+const onGetListCity = createAction(Actions.GET_LIST_CITY, (data?: any) => ({
+  payload: data,
+}));
 const onGetListDistrict = createAction(
-  Actions.GET_LIST_DISTRICT,(ma_tinh_thanh:any) =>({payload:ma_tinh_thanh})
-)
-const onGetListWard = createAction(Actions.GET_LIST_WARD,(ma_quan_huyen:any) =>({payload:ma_quan_huyen}))
-
+  Actions.GET_LIST_DISTRICT,
+  (ma_tinh_thanh: any) => ({payload: ma_tinh_thanh}),
+);
+const onGetListWard = createAction(
+  Actions.GET_LIST_WARD,
+  (ma_quan_huyen: any) => ({payload: ma_quan_huyen}),
+);
+const getListNote = createAction(Actions.GET_LIST_NOTE, (data?: any) => ({
+  payload: data,
+}));
 
 export const appActions = {
   ...appSlice.actions,
@@ -138,12 +146,9 @@ export const appActions = {
   onGetListTerritory,
   onGetListCity,
   onGetListDistrict,
-  onGetListWard
+  onGetListWard,
+  getListNote,
 };
-
-
-
-
 
 export const appReducer = appSlice.reducer;
 export const {
