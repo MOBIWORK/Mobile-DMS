@@ -43,7 +43,7 @@ const appSlice = createSlice({
       state.loadingApp = false;
     },
     onSetCurrentLocation: (state, action: PayloadAction<any>) => {
-      state.currentLocation = action.payload;
+      void(state.currentLocation = action.payload);
     },
     setShowModal: (state, {payload}: PayloadAction<boolean>) => {
       state.showModal = payload;

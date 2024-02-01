@@ -274,7 +274,7 @@ const ListVisit = () => {
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
-    dispatch(customerActions.onGetCustomerVisit());
+    // dispatch(customerActions.onGetCustomerVisit());
     BackgroundGeolocation.getCurrentPosition({
       samples: 1,
       timeout: 3,

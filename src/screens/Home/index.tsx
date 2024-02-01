@@ -320,30 +320,30 @@ const HomeScreen = () => {
       .catch(err => console.log('err', err));
   };
 
-  useLayoutEffect(() => {
-    setLoading(true);
-
-    BackgroundGeolocation.getCurrentPosition(
-      {
-        samples: 1,
-        timeout: 3,
-        maximumAge: 0,
-        persist: false,
-        desiredAccuracy: 10,
-      },
-      location => {
-        setLocation(location);
-        dispatch(appActions.onSetCurrentLocation(location));
-        mapboxCameraRef.current?.flyTo(
-          [location.coords.longitude, location.coords.latitude],
-          1000,
-        );
-      },
-      err => backgroundErrorListener(err),
-    );
-
-    setLoading(false);
-    return () => {};
+  useEffect(() => {
+    // setLoading(true);
+    const getLocation = async () => {
+      await BackgroundGeolocation.getCurrentPosition(
+        {
+          samples: 1,
+          timeout: 10,
+          maximumAge: 0,
+          desiredAccuracy: 10,
+        },
+        location => {
+          setLocation(location);
+          console.log(location, 'location');
+          dispatch(appActions.onSetCurrentLocation(location));
+          mapboxCameraRef.current?.flyTo(
+            [location.coords.longitude, location.coords.latitude],
+            1000,
+          );
+        },
+        // err => backgroundErrorListener(err),
+      );
+    };
+    // setLoading(false);
+    getLocation();
   }, []);
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
@@ -585,19 +585,6 @@ const HomeScreen = () => {
                         animationDuration={500}
                         zoomLevel={12}
                       />
-                      {/* {VisitListData.map((item, index) => {
-                        return (
-                          <Mapbox.MarkerView
-                            key={index}
-                            coordinate={[Number(item.long), Number(item.lat)]}>
-                            <MarkerItem
-                              item={item}
-                              index={index}
-                              onPress={() => setVisitItemSelected(item)}
-                            />
-                          </Mapbox.MarkerView>
-                        );
-                      })} */}
                       <Mapbox.UserLocation
                         visible={true}
                         animated

@@ -13,6 +13,7 @@ export const openImagePickerCamera = async(
     maxHeight: 200,
     maxWidth:200,
     presentationStyle: 'fullScreen',
+    quality:0.5
     
   };
   let base64Image: string;
