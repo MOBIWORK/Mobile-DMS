@@ -1,4 +1,8 @@
 import {ThemeType} from '../../layouts/theme';
+import {
+  MainAddress,
+  MainContactAddress,
+} from '../../screens/Customer/components/CardAddress';
 
 export interface ListCity {
   ma_tinh: string;

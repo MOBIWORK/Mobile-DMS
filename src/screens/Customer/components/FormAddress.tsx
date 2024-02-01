@@ -45,7 +45,7 @@ export const AddressType = {
 export type AddressSelected = {
   type: string;
   value: string;
-  id?: string;
+  id?: string | number;
 };
 
 const FormAddress = (props: Props) => {
@@ -66,10 +66,13 @@ const FormAddress = (props: Props) => {
     addressOrder: false,
     addressGet: false,
   });
-  const [contactValue, setContactValue] = useState<MainContactAddress>({
+  const [contactValue, setContactValue] = useState({
     nameContact: '',
     phoneNumber: '',
     addressContact: '',
+    city: '',
+    district: '',
+    ward: '',
     isMainAddress: true,
   });
 
@@ -163,24 +166,30 @@ const FormAddress = (props: Props) => {
     if (contactSelectedData.length === 3) {
       setContactValue(prev => ({
         ...prev,
-        city: contactSelectedData[0],
-        district: contactSelectedData[1],
-        ward: contactSelectedData[2],
+        city: contactSelectedData[0].value,
+        district: contactSelectedData[1].value,
+        ward: contactSelectedData[2].value,
       }));
     } else if (contactSelectedData.length === 2) {
       setContactValue(prev => ({
         ...prev,
-        city: contactSelectedData[0],
-        district: contactSelectedData[1],
+        city: contactSelectedData[0].value,
+        district: contactSelectedData[1].value,
+        ward: '',
       }));
     } else if (contactSelectedData.length === 1) {
       setContactValue(prev => ({
         ...prev,
-        city: contactSelectedData[0],
+        city: contactSelectedData[0].value,
+        district: '',
+        ward: '',
       }));
     } else {
       setContactValue(prev => ({
         ...prev,
+        city: '',
+        district: '',
+        ward: '',
       }));
     }
   }, [contactSelectedData]);
@@ -453,13 +462,13 @@ const FormAddress = (props: Props) => {
             <AppInput
               label={'Tỉnh/Thành phố'}
               contentStyle={styles.contentStyle(
-                contactValue?.city?.value ?? '',
-                '',
+                contactValue.city,
+                'Tỉnh/Thành phố',
               )}
               onPress={() => {
                 setScreen('AddingContact');
               }}
-              value={contactValue?.city?.value ?? ''}
+              value={contactValue.city}
               editable={false}
               hiddenRightIcon={false}
               styles={styles.marginInputView}
@@ -473,14 +482,14 @@ const FormAddress = (props: Props) => {
             />
             <AppInput
               label={'Quận/Huyện'}
-              value={contactValue?.district?.value ?? ''}
+              value={contactValue.district}
               editable={false}
               onPress={() => {
                 setScreen('AddingContact');
               }}
               contentStyle={styles.contentStyle(
-                contactValue?.district?.value ?? '',
-                '',
+                contactValue.district,
+                'Quận/Huyện',
               )}
               styles={styles.marginInputView}
               rightIcon={
@@ -493,12 +502,9 @@ const FormAddress = (props: Props) => {
             />
             <AppInput
               label={'Phường/xã'}
-              value={contactValue?.ward?.value ?? ''}
+              value={contactValue.ward}
               editable={false}
-              contentStyle={styles.contentStyle(
-                contactValue?.ward?.value ?? '',
-                '',
-              )}
+              contentStyle={styles.contentStyle(contactValue.ward, 'Phường/xã')}
               onPress={() => {
                 setScreen('AddingContact');
               }}

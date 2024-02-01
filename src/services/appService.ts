@@ -147,9 +147,7 @@ export const getCustomerByType = (name: string) =>
     .then(res => res.data);
 
 export const getCustomerType = () =>
-  createApi()
-    .get(ApiConstant.GET_TYPE_CUSTOMER)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_TYPE_CUSTOMER);
 
 export const getDetailLocation = (lat?: number, lon?: number) =>
   client
