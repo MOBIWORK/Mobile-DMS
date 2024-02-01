@@ -31,11 +31,7 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
 import {formatMoney, useSelector} from '../../../config/function';
-import CardAddress from './CardAddress';
-import {
-  removeAddress,
-  removeContactAddress,
-} from '../../../redux-store/app-reducer/reducer';
+import CardAddress, {MainContactAddress} from './CardAddress';
 import {dispatch} from '../../../utils/redux';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 
@@ -74,8 +70,10 @@ const FormAdding = (props: Props) => {
     timestamp: 0,
   });
   const [dataLocation, setDataLocation] = useState<string>('');
-  const mainAddress = useSelector(state => state.app.mainAddress);
-  const mainContactAddress = useSelector(state => state.app.mainContactAddress);
+  const mainAddress = useSelector(state => state.customer.mainAddress);
+  const mainContactAddress = useSelector(
+    state => state.customer.mainContactAddress,
+  );
 
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
@@ -328,12 +326,12 @@ const FormAdding = (props: Props) => {
             <SvgIcon
               size={20}
               source="Trash"
-              onPress={() => dispatch(removeAddress([]))}
+              onPress={() => dispatch(customerActions.setMainAddress({}))}
             />
           )}
         </View>
         {Object.keys(mainAddress).length > 0 ? (
-          <CardAddress type="address" mainAddress={mainAddress[0]} />
+          <CardAddress type="address" mainAddress={mainAddress} />
         ) : (
           <View style={styles.contentView}>
             <TouchableOpacity
@@ -362,15 +360,14 @@ const FormAdding = (props: Props) => {
             <SvgIcon
               size={20}
               source="Trash"
-              onPress={() => dispatch(removeContactAddress([]))}
+              onPress={() =>
+                dispatch(customerActions.setMainContactAddress({}))
+              }
             />
           )}
         </View>
         {Object.keys(mainContactAddress).length > 0 ? (
-          <CardAddress
-            type="contact"
-            mainContactAddress={mainContactAddress[0]}
-          />
+          <CardAddress type="contact" mainContactAddress={mainContactAddress} />
         ) : (
           <View style={styles.contentView}>
             <TouchableOpacity

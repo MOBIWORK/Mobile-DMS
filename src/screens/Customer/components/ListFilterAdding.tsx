@@ -23,9 +23,11 @@ const ListFilterAdding = (props: Props) => {
   const {type, filterRef, setValueFilter, valueFilter, setData, data} = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const customerType:ListCustomerType[] = useSelector(state => state.customer.listCustomerType);
+  const customerType: ListCustomerType[] = useSelector(
+    state => state.customer.listCustomerType,
+  );
+  console.log('customerType', customerType);
 
-  
   const handlePress = useCallback(
     (item: any) => {
       setData(prev => {
@@ -133,7 +135,6 @@ const ListFilterAdding = (props: Props) => {
                     ...prev,
                     customer_type: item.title,
                   }));
-                  console.log('v');
                   filterRef?.current?.close();
                 }}>
                 <Text style={styles.itemText(item.title, data.customer_type)}>
@@ -168,33 +169,36 @@ const ListFilterAdding = (props: Props) => {
 
             <Text style={styles.titleHeaderText}>Nhóm khách hàng</Text>
           </Block>
-          {(customerType && customerType.length>0) &&  customerType?.map((item: any) => {
-            return (
-              <TouchableOpacity
-                style={styles.containItemBottomView}
-                key={item.id.toString()}
-                onPress={() => {
-                  setData(prev => ({...prev, customer_group: item.title}));
-                  setValueFilter(prev => ({
-                    ...prev,
-                    customerGroupType: item.title,
-                  }));
-                  filterRef?.current?.close();
-                }}>
-                <Text style={styles.itemText(item.title, data.customer_group)}>
-                  {item.title}
-                </Text>
-                {item.title === data.customer_group && (
-                  <AppIcons
-                    iconType={AppConstant.ICON_TYPE.Feather}
-                    name="check"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          })}
+          {customerType &&
+            customerType.length > 0 &&
+            customerType?.map((item: any) => {
+              return (
+                <TouchableOpacity
+                  style={styles.containItemBottomView}
+                  key={item.id.toString()}
+                  onPress={() => {
+                    setData(prev => ({...prev, customer_group: item.title}));
+                    setValueFilter(prev => ({
+                      ...prev,
+                      customerGroupType: item.title,
+                    }));
+                    filterRef?.current?.close();
+                  }}>
+                  <Text
+                    style={styles.itemText(item.title, data.customer_group)}>
+                    {item.title}
+                  </Text>
+                  {item.title === data.customer_group && (
+                    <AppIcons
+                      iconType={AppConstant.ICON_TYPE.Feather}
+                      name="check"
+                      size={24}
+                      color={theme.colors.primary}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
         </Block>
       ) : type === AppConstant.CustomerFilterType.khu_vuc ? (
         <Block>

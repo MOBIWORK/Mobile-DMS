@@ -69,9 +69,11 @@ export const GET_WAREHOUSES =
 export const GET_DETAIL_CHECKIN_ORDER = URL_PREFIX + ".api.selling.order.get_sale_order_by_checkin_id"
 
 //Address
-export const GET_LIST_CITY = '/mbw_dms.api.location.list_province';
-export const GET_LIST_DISTRICT = '/mbw_dms.api.location.list_district?ma_tinh=';
-export const GET_LIST_WARD = '/mbw_dms.api.location.list_ward?ma_quan_huyen=';
+export const GET_LIST_CITY = '/api/method/mbw_dms.api.location.list_province';
+export const GET_LIST_DISTRICT =
+  '/api/method/mbw_dms.api.location.list_district?ma_tinh=';
+export const GET_LIST_WARD =
+  '/api/method/mbw_dms.api.location.list_ward?ma_quan_huyen=';
 
 // Inventory
 export const POST_CHECKIN_INVENTORY =
