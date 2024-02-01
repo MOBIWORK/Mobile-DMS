@@ -13,7 +13,7 @@ import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../../../navigation';
 import { Pressable, Text, TouchableOpacity, View } from 'react-native';
-import { StaffType } from '../../../models/types';
+import { KeyAbleProps, StaffType } from '../../../models/types';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import FilterListComponent, { IFilterType } from '../../../components/common/FilterListComponent';
 import { useSelector } from '../../../config/function';
@@ -25,6 +25,7 @@ import { StyleSheet, TextInput as Input, ViewStyle, TextStyle } from 'react-nati
 import { ICON_TYPE } from '../../../const/app.const';
 import { dispatch } from '../../../utils/redux';
 import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import InputViewCompoment from './components/InputView';
 
 const AddNote = () => {
 
@@ -43,19 +44,17 @@ const AddNote = () => {
 
   const [title, setTitle] = useState<IFilterType>();
   const [content, setContent] = useState<string>('');
-  const [dataType ,setDataType] = useState<IFilterType[]>([]);
+  const [dataType, setDataType] = useState<IFilterType[]>([]);
   const [sentEmail, setSendEmail] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<StaffType[]>([]);
-  const [selectPersonal, setSelectPersonal] = useState<any[]>([]);
+  const [selectPersonal, setSelectPersonal] = useState<StaffType[]>([]);
 
   const onCreateNoteCheckin = async () => {
     const objectData = {
       title: title?.label || "",
       content: content,
       custom_checkin_id: dataCheckin.checkin_id,
-      email: [
-        "phongtran100401@gmail.com"
-      ]
+      email: sentEmail ? selectPersonal.map(item => item.user_id) : []
     }
     const { status } = await CheckinService.createNote(objectData);
     if (status === ApiConstant.STT_CREATED) navigation.goBack();
@@ -78,10 +77,10 @@ const AddNote = () => {
     )
   }
 
-  const onCheckStaff = (staff: any, isCheck: boolean) => {
+  const onCheckStaff = (staff: StaffType, isCheck: boolean) => {
     if (!isCheck) {
       const newArr = staffData.map(item => {
-        if (item.name == staff.name) {
+        if (item.user_id == staff.user_id) {
           item.isCheck = true
         }
         return item;
@@ -89,7 +88,7 @@ const AddNote = () => {
       setStaffData(newArr);
     } else {
       const newArr = staffData.map(item => {
-        if (item.name == staff.name) {
+        if (item.user_id == staff.user_id) {
           item.isCheck = false
         }
         return item;
@@ -97,36 +96,60 @@ const AddNote = () => {
       setStaffData(newArr);
     }
     const arrStf = staffData.filter(item => item.isCheck == true);
-    // setSelectPersonal(arrStf);
+    setSelectPersonal(arrStf);
   }
 
   const onOpenBottonSheet = () => {
     setSendEmail(true);
     if (bottomSheetRef.current) bottomSheetRef.current.snapToIndex(0);
   }
-  
-  const closeStaff =()=>{
+
+  const closeStaff = () => {
     setSelectPersonal([])
-    if(bottomSheetRef.current) bottomSheetRef.current.close()
+    if (bottomSheetRef.current) bottomSheetRef.current.close()
   }
 
-  const onChangeDataType = (item :IFilterType) =>{
-      setTitle(item)
+  const onChangeDataType = (item: IFilterType) => {
+    setTitle(item);
+    if (bottomSheetType.current) bottomSheetType.current.close()
+  }
+
+  const fetchDataNoteType = async () => {
+    const { status, data }: KeyAbleProps = await CheckinService.getNoteType();
+    if (status === ApiConstant.STT_OK) {
+      const result = data.result;
+      const newData = result.map((item: any) => ({ label: item.name, value: item.loai_ghi_chu, isSelected: false }));
+      dispatch(checkinActions.setData({ typeData: "note_type", data: result }))
+      setDataType(newData)
+    }
+  }
+
+  const fetchDataStaff = async () => {
+    const { status, data }: KeyAbleProps = await CheckinService.getListStaff();
+    if (status === ApiConstant.STT_OK) {
+      const result = data.result.data;
+      dispatch(checkinActions.setData({ typeData: "staff", data: result }))
+      setStaffData(result)
+    }
   }
 
   useEffect(() => {
-    dispatch(checkinActions.getListStaff({}));
-    dispatch(checkinActions.getListNoteType());
+    if (noteTypes.length == 0) {
+      fetchDataNoteType()
+    } else {
+      const newData = noteTypes.map((item: any) => ({ label: item.name, value: item.loai_ghi_chu, isSelected: false }));
+      setDataType(newData)
+    }
   }, [])
 
-  useEffect(()=>{
-      const newData = noteTypes.map(item => ({label : item.name , value : item.loai_ghi_chu ,isSelected : false}));
-      setDataType(newData)
-  },[noteTypes])
-
   useEffect(() => {
-    setStaffData(personals)
-  }, [personals])
+    if (personals.length == 0) {
+      fetchDataStaff()
+    } else {
+      setStaffData(personals)
+    }
+  }, [])
+
 
   const renderBottomSheetStaff = () => {
     return (
@@ -140,11 +163,11 @@ const AddNote = () => {
                 name='close'
                 size={30}
                 color={colors.text_secondary} />}
-                rightButton={
-                  <Text style={styles.textBt}>
-                    {getLabel("confirm")}
-                  </Text>
-                }
+            rightButton={
+              <Text style={styles.textBt}>
+                {getLabel("confirm")}
+              </Text>
+            }
           />
           <View style={{ marginTop: 24 }}>
             <View style={styles.containerSearch}>
@@ -172,9 +195,9 @@ const AddNote = () => {
 
               <BottomSheetScrollView>
                 {staffData.map((item, i) => (
-                    <View key={i}>
-                        {renderItem(item)}
-                    </View>
+                  <View key={i}>
+                    {renderItem(item)}
+                  </View>
                 ))}
               </BottomSheetScrollView>
 
@@ -189,7 +212,6 @@ const AddNote = () => {
   return (
     <MainLayout>
       <AppHeader onBack={() => navigation.goBack()} label={getLabel("addNote")} />
-
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         <View >
           <View style={{ marginTop: 16, gap: 16 }}>
@@ -197,10 +219,10 @@ const AddNote = () => {
               label={getLabel("typeNote")}
               value={title?.label || ""}
               editable={false}
-              onPress={()=> bottomSheetType.current && bottomSheetType.current.snapToIndex(0)}
+              onPress={() => bottomSheetType.current && bottomSheetType.current.snapToIndex(0)}
               rightIcon={
                 <TextInput.Icon
-                  onPress={()=> bottomSheetType.current && bottomSheetType.current.snapToIndex(0)}
+                  onPress={() => bottomSheetType.current && bottomSheetType.current.snapToIndex(0)}
                   icon={'chevron-down'}
                   style={{ width: 24, height: 24 }}
                   color={theme.colors.text_secondary}
@@ -218,7 +240,7 @@ const AddNote = () => {
             />
           </View>
           <TouchableOpacity
-            onPress={() => onOpenBottonSheet()}
+            onPress={() => setSendEmail(!sentEmail)}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -227,13 +249,18 @@ const AddNote = () => {
             }}>
             <AppCheckBox
               status={sentEmail}
-              onChangeValue={() => onOpenBottonSheet()}
+              onChangeValue={() => setSendEmail(!sentEmail)}
             />
             <Text style={{ color: theme.colors.text_primary, marginLeft: 8 }}>
               {getLabel("sendEmailToEveryone")}
             </Text>
           </TouchableOpacity>
 
+          {sentEmail && (
+            <View style={{ marginTop: 24 }}>
+              <InputViewCompoment data={selectPersonal} label={getLabel("userNote")} onPress={() => onOpenBottonSheet()} backgroundColor={colors.bg_default} />
+            </View>
+          )}
         </View>
 
         <AppButton
@@ -253,6 +280,7 @@ const AddNote = () => {
       </AppBottomSheet>
     </MainLayout>
   );
+
 };
 export default AddNote;
 
