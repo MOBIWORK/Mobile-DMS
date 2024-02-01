@@ -32,10 +32,8 @@ const CheckinNote = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const { t: getLabel } = useTranslation()
-  const { bottom } = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const mounted = useRef<boolean>(true);
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const data = useSelector(state => state.checkin.dataNote);
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
 
@@ -43,7 +41,7 @@ const CheckinNote = () => {
   useEffect(() => {
     mounted.current;
     dispatch(checkinActions.getListNoteCheckin({
-      // custom_checkin_id : dataCheckin.checkin_id
+      custom_checkin_id : dataCheckin.checkin_id
     }));
     mounted.current = false;
     return () => { };
@@ -113,7 +111,7 @@ const CheckinNote = () => {
     return (
       <View style={{marginTop :20}}>
         <View style={styles.flexSpace}>
-          <Text>Danh sách ghi chú</Text>
+          <Text>{getLabel("noteList")}</Text>
             <IconButton
               icon="plus"
               iconColor={theme.colors.action}

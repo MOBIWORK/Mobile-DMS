@@ -177,4 +177,6 @@ export default {
   save :"Lưu",
   sendEmailToEveryone :"Gửi email đến mọi người",
   note :"Ghi chú",
+  userNote :"Người nhận ghi chú",
+  noteList :"Danh sách ghi chú"
 };

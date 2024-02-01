@@ -174,5 +174,7 @@ export default {
   save :"Save",
   sendEmailToEveryone :"Send emails to everyone",
   note :"Note",
+  userNote :"Note recipient",
+  noteList :"List of notes"
 
 };
