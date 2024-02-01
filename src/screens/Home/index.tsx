@@ -322,28 +322,28 @@ const HomeScreen = () => {
 
   useEffect(() => {
     // setLoading(true);
-    const getLocation = async () => {
-      await BackgroundGeolocation.getCurrentPosition(
-        {
-          samples: 1,
-          timeout: 10,
-          maximumAge: 0,
-          desiredAccuracy: 10,
-        },
-        location => {
-          setLocation(location);
-          console.log(location, 'location');
-          dispatch(appActions.onSetCurrentLocation(location));
-          mapboxCameraRef.current?.flyTo(
-            [location.coords.longitude, location.coords.latitude],
-            1000,
-          );
-        },
-        // err => backgroundErrorListener(err),
-      );
-    };
+const getLocation = async () =>{
+    await BackgroundGeolocation.getCurrentPosition(
+      {
+        samples: 1,
+        timeout: 10,
+        maximumAge: 0,
+        desiredAccuracy: 10,
+      },
+      location => {
+        setLocation(location);
+        console.log(location,'location')
+        dispatch(appActions.onSetCurrentLocation(location));
+        mapboxCameraRef.current?.flyTo(
+          [location.coords.longitude, location.coords.latitude],
+          1000,
+        );
+      },
+      // err => backgroundErrorListener(err),
+    );
+    }
     // setLoading(false);
-    getLocation();
+   getLocation()
   }, []);
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {

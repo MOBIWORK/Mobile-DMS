@@ -566,9 +566,9 @@ PODS:
     - React-jsi (= 0.72.6)
     - React-logger (= 0.72.6)
     - React-perflogger (= 0.72.6)
-  - RNBackgroundFetch (4.2.1):
+  - RNBackgroundFetch (4.2.2):
     - React-Core
-  - RNBackgroundGeolocation (4.14.5):
+  - RNBackgroundGeolocation (4.14.6):
     - CocoaLumberjack (~> 3.7.2)
     - React-Core
   - RNCMaskedView (0.1.11):
@@ -578,13 +578,13 @@ PODS:
   - RNGestureHandler (2.14.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - rnmapbox-maps (10.1.8):
+  - rnmapbox-maps (10.1.9):
     - MapboxMaps (~> 10.16.4)
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.1.8)
+    - rnmapbox-maps/DynamicLibrary (= 10.1.9)
     - Turf
-  - rnmapbox-maps/DynamicLibrary (10.1.8):
+  - rnmapbox-maps/DynamicLibrary (10.1.9):
     - MapboxMaps (~> 10.16.4)
     - React
     - React-Core
@@ -979,12 +979,12 @@ SPEC CHECKSUMS:
   React-runtimescheduler: f23e337008403341177fc52ee4ca94e442c17ede
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
-  RNBackgroundFetch: 501c34ad6e880818ba17e7840b23f20a2d112923
-  RNBackgroundGeolocation: bf3b45667c4d3c999501f5f8cb16dc35fc01e759
+  RNBackgroundFetch: 35c7183f6eeff69396d42c4b206e1ae2a21e9327
+  RNBackgroundGeolocation: 7dde6957120db41209f0d11427c425f368416afa
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: fe2be3be5598dc74329b211c58c9f2d231461769
-  rnmapbox-maps: d5b10cb87c93865f4960acf5cd0b348f4f5157cd
+  rnmapbox-maps: 3b948182ee265800c9b9cf200de1a934a4f260b0
   RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
