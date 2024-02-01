@@ -1,5 +1,10 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
+import {
+  ExtendedTheme,
+  useNavigation,
+  useRoute,
+  useTheme,
+} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
   FlatList,
@@ -21,10 +26,14 @@ import {Button} from 'react-native-paper';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import BottomSheet from '@gorhom/bottom-sheet';
 import SelectAlbum from './SelectAlbum';
-import {IAlbumImage} from '../../../models/types';
+import {IAlbumImage, ImageCheckIn} from '../../../models/types';
 import {ImageAssets} from '../../../assets';
 import {AppConstant} from '../../../const';
 import {CameraUtils} from '../../../utils';
+import {RouterProp} from '../../../navigation';
+import {CheckinData} from '../../../services/appService';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../../utils/redux';
 const TakePicture = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
@@ -34,21 +43,87 @@ const TakePicture = () => {
   const [albumBottomSheet, setAlbumBottomSheet] =
     useState<IFilterType[]>(ListAlbumFake);
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
+  const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
+  const dataCheckIn = useRef<CheckinData>(params.data);
+  const [message,setMessage] = useState<string>('')
+  const data = useRef<ImageCheckIn>({
+    album_id: '',
+    album_name: '',
+    address: '',
+    customer_code: dataCheckIn.current?.kh_ma,
+    checkin_id: dataCheckIn?.current.checkin_id,
+    customer_id: dataCheckIn?.current.kh_ma,
+    customer_name: dataCheckIn?.current.kh_ten,
+    image: '',
+    lat: dataCheckIn?.current.checkin_lat
+      ? dataCheckIn?.current.checkin_lat
+      : 0,
+    long: dataCheckIn?.current.checkin_long
+      ? dataCheckIn?.current.checkin_long
+      : 0,
+  });
 
-  const handleCamera = (item: IAlbumImage) => {
-    CameraUtils.openImagePickerCamera(img => {
-      const newListImage = [...item.image, img!];
-      const newItem = {...item, image: newListImage};
-      setAlbumImageData(prevState => [
-        ...prevState.filter(itemPre => itemPre.label !== newItem.label),
-        newItem,
-      ]);
+  const [loading, setLoading] = useState(false);
+
+  const handlePushImageData = useCallback(async () => {
+    let totalItemsProcessed = 0;
+    try {
+      setLoading(true);
+
+      for (let index = 0; index < albumImageData.length; index++) {
+        if (data?.current) {
+          data.current.album_id = albumImageData[index].id;
+          data.current.album_name = albumImageData[index].label;
+        }
+        const element = albumImageData[index].image;
+        for (let i = 0; i < element.length; i++) {
+          let image = element[i];
+          if (data?.current) {
+            data.current.image = image.base64!;
+            dispatch(appActions.postImageCheckIn(data?.current));
+            totalItemsProcessed++;
+          }
+        }
+      }
+
+     
+    } catch (error) {
+      console.error('Error during image processing', error);
+    } finally {
+      setLoading(false);
+      setMessage(`Done processing ${totalItemsProcessed-1} items`)
+       console.log(`Done processing ${totalItemsProcessed-1} items`);
+    }
+  }, [albumImageData, data]);
+
+
+
+
+  const handleCamera = async (item: IAlbumImage) => {
+    await CameraUtils.openImagePickerCamera((img, base64) => {
+      const newListImage = [
+        ...item.image,
+        {url: img || '', base64: base64 || ''},
+      ];
+      const newItem: IAlbumImage = {
+        ...item,
+        image: newListImage,
+      };
+
+      setAlbumImageData(prevState => {
+        const updatedState = [
+          ...prevState.filter(itemPre => itemPre.label !== newItem.label),
+          newItem,
+        ];
+
+        return updatedState;
+      });
     });
   };
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
-    const newListImage = itemSelected.image.filter(item => item !== img);
-    const newItem = {...itemSelected, image: newListImage};
+    const newListImage = itemSelected.image.filter(item => item.url !== img);
+    const newItem: IAlbumImage = {...itemSelected, image: newListImage};
     setAlbumImageData(prevState => [
       ...prevState.filter(itemPre => itemPre.label !== newItem.label),
       newItem,
@@ -107,13 +182,15 @@ const TakePicture = () => {
                         <View style={styles.img}>
                           <Image
                             // @ts-ignore
-                            source={item}
+                            source={{uri: item.url}}
                             style={{width: '100%', height: '100%'}}
                             resizeMode={'contain'}
                           />
                         </View>
                         <TouchableOpacity
-                          onPress={() => onDeleteImageOfAlbum(itemAlbum, item)}
+                          onPress={() =>
+                            onDeleteImageOfAlbum(itemAlbum, item.url)
+                          }
                           style={{position: 'absolute', top: 0, right: 8}}>
                           <Image
                             source={ImageAssets.CloseFameIcon}
@@ -177,7 +254,7 @@ const TakePicture = () => {
         <AppButton
           style={{width: '100%'}}
           label={'Hoàn thành'}
-          onPress={() => console.log('123')}
+          onPress={handlePushImageData}
         />
       </View>
       <SelectAlbum

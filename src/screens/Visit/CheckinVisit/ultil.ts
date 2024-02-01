@@ -44,7 +44,7 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Ghi chú',
-    screenName:'ADD_NOTE',
+    screenName:'CHECKIN_NOTE_VISIT',
     backgroundColor:'greenBackground'
   },
   {

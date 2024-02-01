@@ -32,7 +32,6 @@ const ListFilterAdding = (props: Props) => {
     (item: any) => {
       setData(prev => {
         const isItemInFrequency = prev?.frequency?.includes(item.title);
-        // If item is not in the frequency array, add it; otherwise, remove it
         const updatedFrequency = isItemInFrequency
           ? prev?.frequency?.filter(
               (selectedItem: any) => selectedItem !== item.title,
@@ -218,7 +217,7 @@ const ListFilterAdding = (props: Props) => {
 
             <Text style={styles.titleHeaderText}>Khu vực</Text>
           </Block>
-          {listFilterType.map((item: any) => {
+          {listFilterType?.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}

@@ -97,7 +97,13 @@ const appSlice = createSlice({
     setDataCheckIn: (state, action: PayloadAction<any>) => {
       state.dataCheckIn = action.payload;
     },
+    setListNote: (state, action: PayloadAction<any>) =>
+      void (state.dataCheckIn.listNote = action.payload),
+      setListImage:(state,action:PayloadAction<any>) =>{
+        state.dataCheckIn.listImage = action.payload
+      }
   },
+
 });
 
 const onCheckIn = createAction(Actions.CHECKIN, (data: CheckinData) => ({
@@ -125,6 +131,11 @@ const onGetListWard = createAction(
   Actions.GET_LIST_WARD,
   (ma_quan_huyen: any) => ({payload: ma_quan_huyen}),
 );
+const getListNote = createAction(Actions.GET_LIST_NOTE, (data?: any) => ({
+  payload: data,
+}));
+const  postImageCheckIn = createAction(Actions.PUT_IMAGE_CHECKIN,(data:any) => ({payload:data}))
+
 
 export const appActions = {
   ...appSlice.actions,
@@ -134,7 +145,13 @@ export const appActions = {
   onGetListCity,
   onGetListDistrict,
   onGetListWard,
+  getListNote,
+  postImageCheckIn
 };
+
+
+
+
 
 export const appReducer = appSlice.reducer;
 export const {

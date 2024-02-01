@@ -163,3 +163,16 @@ export const getListWard = (ma_quan_huyen: any) =>
 
 export const addFakeGPS = (data: ICheckFakeGPS) =>
   createApi().post(ApiConstant.CHECK_FAKE_GPS, data);
+
+export const getUserNoteReceived = () => {
+  createApi().get(ApiConstant.GET_NOTE_USER_RECEIVED).then(res => res.data)
+}
+export const postNoteUser = (data:any) =>{
+  createApi().post(ApiConstant.POST_NEW_NOTE_CHECKIN,data).then(res => res.data)
+}
+export const getListNoteApi = (data: any) =>{
+  createApi().get(ApiConstant.GET_LIST_NOTE_API,data)
+}
+export const createImageCheckinApi = (data:any) =>{
+  createApi().post(ApiConstant.CREATE_IMAGE_CHECKIN,data).then(res => res.data)
+}

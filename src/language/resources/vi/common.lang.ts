@@ -166,4 +166,18 @@ export default {
   visited: 'Đã viếng thăm',
   notVisited: 'Chưa viếng thăm',
   currentPosition: 'Vị trí hiện tại',
+  putOrder :"Đặt hàng",
+  returnOrder :"Trả hàng",
+  noOrder :"Chưa có đơn đặt hàng",
+  noReturnOrder :"Chưa có đơn trả hàng",
+  deselectAll : "Bỏ chọn tất cả",
+  addNote :"Thêm ghi chú",
+  typeNote :"Loại ghi chú",
+  content : "Nội dung",
+  save :"Lưu",
+  sendEmailToEveryone :"Gửi email đến mọi người",
+  note :"Ghi chú",
+  someThingErr:"Đã có lỗi xảy ra, vui lòng thử lại",
+  userNote :"Người nhận ghi chú",
+  noteList :"Danh sách ghi chú"
 };

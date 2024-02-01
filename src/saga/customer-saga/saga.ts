@@ -1,6 +1,6 @@
 import {all, call, put} from 'typed-redux-saga';
 import {showSnack} from '../../components/common';
-import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {customerActions, setCustomer, setCustomerVisit, setListCustomerType} from '../../redux-store/customer-reducer/reducer';
 import {
   getCustomer,
   getCustomerType,
@@ -8,6 +8,7 @@ import {
 } from '../../services/appService';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
+
 
 export type ResponseGenerator = {
   config?: any;
@@ -30,7 +31,7 @@ export function* onGetCustomer(action: PayloadAction) {
         action.payload,
       );
       if (response.message === 'ok') {
-        yield put(customerActions.setCustomer(response.result?.data));
+        yield put(setCustomer(response.result?.data));
       }
     } catch (err) {
     } finally {
@@ -39,16 +40,16 @@ export function* onGetCustomer(action: PayloadAction) {
   }
 }
 export function* onGetCustomerType(action: PayloadAction) {
-  console.log('onGetCustomerType');
-  if (customerActions.onGetCustomerType.match(action)) {
+  if (customerActions.getCustomerType.match(action)) {
     try {
-      yield put(onLoadApp());
+      // yield put(onLoadApp());
       const response: ResponseGenerator = yield call(
         getCustomerType,
         action.payload,
       );
+      console.log(response,'response customer type')
       if (response.message === 'Thành công') {
-        yield put(customerActions.setListCustomerType(response.result));
+        yield put(setListCustomerType(response.result));
       } else {
         showSnack({
           msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
@@ -59,17 +60,17 @@ export function* onGetCustomerType(action: PayloadAction) {
     } catch (err) {
       console.error('err: ', err);
     } finally {
-      yield put(onLoadAppEnd());
+      // yield put(onLoadAppEnd());
     }
   }
 }
 export function* getCustomerVisitSaga() {
-  console.log('run');
+  console.log('run')
   try {
     const response: ResponseGenerator = yield call(getCustomerVisit);
-    console.log(response, 'response');
+    console.log(response,'response')
     if (Object.keys(response.result?.length > 0)) {
-      yield put(customerActions.setCustomerVisit(response.result.data));
+      yield put(setCustomerVisit(response.result.data));
     }
   } catch (err) {
     console.error('error: ', err);

@@ -18,9 +18,10 @@ const AppCustomHeader: FC<AppCustomHeaderProps> = ({
         <Text
           style={{
             color: colors.text_primary,
-            fontSize: 24,
-            fontWeight: '600',
+            fontSize: 20,
+            fontWeight: '500',
             marginTop: 12,
+            lineHeight :30
           }}>
           {title}
         </Text>
@@ -41,8 +42,9 @@ const AppCustomHeader: FC<AppCustomHeaderProps> = ({
             <Text
               style={{
                 color: colors.text_secondary,
-                fontSize: 16,
-                lineHeight: 24,
+                fontSize: 14,
+                lineHeight: 21,
+                fontWeight :"400",
                 marginLeft: icon ? 4 : 0,
               }}>
               {description}

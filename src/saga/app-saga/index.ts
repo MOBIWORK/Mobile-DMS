@@ -11,6 +11,6 @@ export function* appSaga() {
     yield takeLatest(appActions.onGetListCity.type , Saga.onGetListCity)
     yield takeLatest(appActions.onGetListDistrict.type , Saga.onGetListDistrict)
     yield takeLatest(appActions.onGetListWard.type , Saga.onGetListWard)
-
-
+    yield takeLatest(appActions.getListNote.type,Saga.onGetListNote)
+    yield takeLatest(appActions.postImageCheckIn.type,Saga.createImageCheckIn)
 }

@@ -24,6 +24,7 @@ import {
   IDataCustomer,
   IProduct,
   ItemNoteVisitDetail,
+  NoteType,
   ReportOrderItemType,
   VisitListItemType,
 } from '../models/types';
@@ -223,6 +224,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.CHECKIN_ORDER_CREATE}
           component={CheckinOrderCreated}
         />
+        <Stack.Screen name={ScreenConstant.ADD_NOTE}   component={AddNote} />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
         <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
         <Stack.Screen
@@ -239,14 +241,10 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           component={TakePicture}
         />
         <Stack.Screen
-          name={ScreenConstant.CHECKIN_NOTE_VISIT}
-          component={CheckinNote}
-        />
-        <Stack.Screen
           name={ScreenConstant.NOTE_DETAIL}
           component={NoteDetail}
         />
-        <Stack.Screen name={ScreenConstant.ADD_NOTE} component={AddNote} />
+        <Stack.Screen name={ScreenConstant.CHECKIN_NOTE_VISIT} component={CheckinNote} />
         <Stack.Screen
           name={ScreenConstant.CHECKIN_LOCATION}
           component={CheckInLocation}
@@ -338,9 +336,9 @@ export type RootStackParamList = {
   [ScreenConstant.PROFILE]: undefined;
   [ScreenConstant.CHECKIN]: {item: any};
   [ScreenConstant.UPDATE_SCREEN]: any;
-  [ScreenConstant.TAKE_PICTURE_VISIT]: undefined;
+  [ScreenConstant.TAKE_PICTURE_VISIT]:{data:any};
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
-  [ScreenConstant.NOTE_DETAIL]: {data: ItemNoteVisitDetail};
+  [ScreenConstant.NOTE_DETAIL]: {data:NoteType};
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: {type: string; data: VisitListItemType};
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
