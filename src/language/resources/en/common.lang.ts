@@ -175,7 +175,6 @@ export default {
   sendEmailToEveryone :"Send emails to everyone",
   note :"Note",
   userNote :"Note recipient",
-  noteList :"List of notes"
-
+  noteList :"List of notes",
   someThingErr:'Some thing went wrong, please try again'
 };
