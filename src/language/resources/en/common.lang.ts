@@ -177,4 +177,5 @@ export default {
   userNote :"Note recipient",
   noteList :"List of notes"
 
+  someThingErr:'Some thing went wrong, please try again'
 };

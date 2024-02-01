@@ -379,7 +379,10 @@ export interface IDataItem {
 export type IAlbumImage = {
   id: number | string | any;
   label: string;
-  image: string[];
+  image: {
+    url:string,
+    base64?:string
+  }[];
 };
 
 export type IStaff = {
