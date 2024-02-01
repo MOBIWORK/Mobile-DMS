@@ -33,7 +33,7 @@ export const POST_CHECKIN = '/api/method/mbw_dms.api.checkin.create_checkin';
 // Product
 export const GET_PRODUCT = URL_PREFIX + '.api.selling.product.list_product';
 export const GET_BRAND_PRODUCT =
-  URL_PREFIX + '..api.selling.product.list_brand';
+  URL_PREFIX + '.api.selling.product.list_brand';
 export const GET_INDUSTRY_PRODUCT =
   URL_PREFIX + '.api.selling.product.list_industry';
 export const GET_GROUP_PRODUCT =
