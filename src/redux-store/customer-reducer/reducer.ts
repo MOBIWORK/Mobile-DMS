@@ -1,4 +1,4 @@
-import {createSlice,PayloadAction, createAction} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction, createAction} from '@reduxjs/toolkit';
 import {IProduct} from './type';
 import {SLICE_NAME} from '../app-reducer/type';
 import * as Actions from '../app-reducer/type';
@@ -8,6 +8,8 @@ const initialState: IProduct = {
   listCustomerVisit: [],
   newCustomer: [],
   listCustomerType: [],
+  mainAddress: {},
+  mainContactAddress: {},
 };
 
 const customerSlice = createSlice({
@@ -25,6 +27,12 @@ const customerSlice = createSlice({
     },
     setListCustomerType: (state, action: PayloadAction<any>) =>
       (state.listCustomerType = action.payload),
+    setMainContactAddress: (state, action: PayloadAction<any>) => {
+      state.mainContactAddress = action.payload;
+    },
+    setMainAddress: (state, action: PayloadAction<any>) => {
+      state.mainAddress = action.payload;
+    },
   },
 });
 
@@ -36,7 +44,6 @@ const onGetCustomerVisit = createAction(
   Actions.GET_CUSTOMER_VISIT,
   (data?: any) => ({payload: data}),
 );
-
 
 const onGetCustomerByName = createAction(
   Actions.GET_CUSTOMER_BY_NAME,
@@ -55,5 +62,3 @@ export const customerActions = {
   onGetCustomerType,
   onGetCustomerVisit,
 };
-
-

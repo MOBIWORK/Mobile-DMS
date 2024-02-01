@@ -11,19 +11,17 @@ const initialAppState: IAppRedux = {
   searchProductValue: '',
   searchVisitValue: '',
   theme: 'default',
-  mainAddress: [],
-  mainContactAddress: [],
   newCustomer: [],
   searchCustomerValue: '',
   loadingApp: false,
   currentLocation: {},
   systemConfig: {},
-  listDataCity:{
-    city:[],
-    district:[],
-    ward:[]
+  listDataCity: {
+    city: [],
+    district: [],
+    ward: [],
   },
-  dataCheckIn:{}
+  dataCheckIn: {},
 };
 
 const appSlice = createSlice({
@@ -48,22 +46,16 @@ const appSlice = createSlice({
     setShowModal: (state, {payload}: PayloadAction<boolean>) => {
       state.showModal = payload;
     },
-    setMainContactAddress: (state, {payload}: PayloadAction<any>) => {
-      state.mainContactAddress = payload;
-    },
-    setMainAddress: (state, action: PayloadAction<any>) => {
-      state.mainAddress = action.payload;
-    },
-    removeContactAddress: (state, action: PayloadAction<any>) => {
-      state.mainContactAddress = state.mainContactAddress?.filter(
-        (item: any) => item !== action.payload,
-      );
-    },
-    removeAddress: (state, action: PayloadAction<any>) => {
-      state.mainAddress = state.mainAddress?.filter(
-        (item: any) => item !== action.payload,
-      );
-    },
+    // removeContactAddress: (state, action: PayloadAction<any>) => {
+    //   state.mainContactAddress = state.mainContactAddress?.filter(
+    //     (item: any) => item !== action.payload,
+    //   );
+    // },
+    // removeAddress: (state, action: PayloadAction<any>) => {
+    //   state.mainAddress = state.mainAddress?.filter(
+    //     (item: any) => item !== action.payload,
+    //   );
+    // },
     setNewCustomer: (state, action: PayloadAction<any>) => {
       if (state.newCustomer.length === 0) {
         state.newCustomer = [action.payload];
@@ -93,18 +85,18 @@ const appSlice = createSlice({
     setSystemConfig: (state, action: PayloadAction<any>) => {
       state.systemConfig = action.payload;
     },
-    setDataCity:(state,action:PayloadAction<any>) =>{
-      state.listDataCity.city = action.payload
+    setDataCity: (state, action: PayloadAction<any>) => {
+      state.listDataCity.city = action.payload;
     },
-    setDataDistrict:(state,action:PayloadAction<any>) =>{
-      state.listDataCity.district = action.payload
+    setDataDistrict: (state, action: PayloadAction<any>) => {
+      state.listDataCity.district = action.payload;
     },
-    setDataWard:(state,action:PayloadAction<any>) =>{
-      state.listDataCity.ward = action.payload
+    setDataWard: (state, action: PayloadAction<any>) => {
+      state.listDataCity.ward = action.payload;
     },
-    setDataCheckIn:(state,action:PayloadAction<any>)=>{
-      state.dataCheckIn = action.payload
-    }
+    setDataCheckIn: (state, action: PayloadAction<any>) => {
+      state.dataCheckIn = action.payload;
+    },
   },
 });
 
@@ -119,17 +111,20 @@ const onGetSystemConfig = createAction(
 
 const onGetListTerritory = createAction(
   Actions.GET_LIST_TERRITORY,
-    (data?:any) => ({payload:data})
-)
+  (data?: any) => ({payload: data}),
+);
 
-const onGetListCity = createAction(
-  Actions.GET_LIST_CITY,(data?:any) => ({payload:data})
-)
+const onGetListCity = createAction(Actions.GET_LIST_CITY, (data?: any) => ({
+  payload: data,
+}));
 const onGetListDistrict = createAction(
-  Actions.GET_LIST_DISTRICT,(ma_tinh_thanh:any) =>({payload:ma_tinh_thanh})
-)
-const onGetListWard = createAction(Actions.GET_LIST_WARD,(ma_quan_huyen:any) =>({payload:ma_quan_huyen}))
-
+  Actions.GET_LIST_DISTRICT,
+  (ma_tinh_thanh: any) => ({payload: ma_tinh_thanh}),
+);
+const onGetListWard = createAction(
+  Actions.GET_LIST_WARD,
+  (ma_quan_huyen: any) => ({payload: ma_quan_huyen}),
+);
 
 export const appActions = {
   ...appSlice.actions,
@@ -138,17 +133,13 @@ export const appActions = {
   onGetListTerritory,
   onGetListCity,
   onGetListDistrict,
-  onGetListWard
+  onGetListWard,
 };
-
-
-
-
 
 export const appReducer = appSlice.reducer;
 export const {
   setError,
-  setMainContactAddress,
+  // setMainContactAddress,
   setNewCustomer,
   setProcessingStatus,
   setSearchCustomerValue,
@@ -159,6 +150,6 @@ export const {
   onLoadApp,
   onLoadAppEnd,
   onSetAppTheme,
-  removeContactAddress,
-  removeAddress,
+  // removeContactAddress,
+  // removeAddress,
 } = appSlice.actions;

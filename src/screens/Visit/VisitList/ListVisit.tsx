@@ -7,7 +7,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {AppHeader, FilterView} from '../../../components/common';
+import {
+  AppBottomSheet,
+  AppHeader,
+  FilterView,
+} from '../../../components/common';
 import {
   FlatList,
   Image,
@@ -32,25 +36,40 @@ import BackgroundGeolocation, {
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {useSelector} from '../../../config/function';
+import {useTranslation} from 'react-i18next';
 
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {getCustomerVisit} from '../../../services/appService';
+import FilterListComponent, {
+  IFilterType,
+} from '../../../components/common/FilterListComponent';
+
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const ListVisit = () => {
   const {colors} = useTheme();
   const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
 
   const filterRef = useRef<BottomSheet>(null);
+  const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
   const listCustomer: VisitListItemType[] = useSelector(
     state => state.customer.listCustomerVisit,
   );
+
+  const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
+    getLabel('nearest'),
+  );
+  const [distanceFilterData, setDistanceFilterData] = useState<IFilterType[]>(
+    AppConstant.DistanceFilterData,
+  );
+
   const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
@@ -91,6 +110,18 @@ const ListVisit = () => {
       },
       backgroundErrorListener,
     );
+  };
+
+  const handleItemDistanceFilter = (itemData: IFilterType) => {
+    setDistanceFilterValue(getLabel(itemData.label));
+    const newData = distanceFilterData.map(item => {
+      if (itemData.value === item.value) {
+        return {...item, isSelected: true};
+      } else {
+        return {...item, isSelected: false};
+      }
+    });
+    setDistanceFilterData(newData);
   };
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
@@ -158,7 +189,10 @@ const ListVisit = () => {
             justifyContent: 'flex-start',
             marginTop: 16,
           }}>
-          <View
+          <TouchableOpacity
+            onPress={() =>
+              distanceRef.current && distanceRef.current.snapToIndex(0)
+            }
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -169,11 +203,13 @@ const ListVisit = () => {
               borderColor: colors.border,
               maxWidth: 180,
             }}>
-            <Text style={{color: colors.text_secondary}}>Khoảng cách:</Text>
-            <Text style={{color: colors.text_primary, marginLeft: 8}}>
-              Gần nhất
+            <Text style={{color: colors.text_secondary}}>
+              {getLabel('distance')}:
             </Text>
-          </View>
+            <Text style={{color: colors.text_primary, marginLeft: 8}}>
+              {distanceFilterValue}
+            </Text>
+          </TouchableOpacity>
           <FilterView
             style={{marginLeft: 12}}
             onPress={() =>
@@ -312,8 +348,14 @@ const ListVisit = () => {
       ) : (
         _renderContent()
       )}
-
       <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
+      <AppBottomSheet bottomSheetRef={distanceRef}>
+        <FilterListComponent
+          title={getLabel('distance')}
+          data={distanceFilterData}
+          handleItem={handleItemDistanceFilter}
+        />
+      </AppBottomSheet>
     </SafeAreaView>
   );
 };
@@ -331,49 +373,3 @@ const styles = StyleSheet.create({
     height: AppConstant.HEIGHT * 0.8,
   },
 });
-
-// export const VisitListData: VisitListItemType[] = [
-//   {
-//     label: 'Nintendo',
-//     useName: 'Chu Quýnh Anh',
-//     status: true,
-//     address: '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-//     phone_number: '+84 667 435 265',
-//     lat: 37.785839,
-//     long: -122.4267,
-//     distance: 1,
-//   },
-//   {
-//     label: "McDonald's",
-//     useName: 'Chu Quýnh Anh',
-//     status: false,
-//     address:
-//       'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-//     phone_number: '+84 234 234 456',
-//     lat: 37.784839,
-//     long: -122.4467,
-//     distance: 1.5,
-//   },
-//   {
-//     label: 'General Electric',
-//     useName: 'Chu Quýnh Anh',
-//     status: false,
-//     address:
-//       '495A Cách Mạng Tháng Tám, Phường 13, Quận 10, Thành phố Hồ Chí Minh',
-//     phone_number: '+84 234 234 456',
-//     lat: 37.785839,
-//     long: -122.4667,
-//     distance: 2,
-//   },
-//   {
-//     customer_name: "McDonald's",
-//     useName: 'Chu Quýnh Anh',
-//     status: false,
-//     address:
-//       'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-//     phone_number: '+84 234 234 456',
-//     lat: 37.789839,
-//     long: -122.4667,
-//     distance: 1.5,
-//   },
-// ];

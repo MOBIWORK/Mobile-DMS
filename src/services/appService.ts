@@ -30,7 +30,7 @@ export type CustomerParams = {
 };
 
 export type CheckinData = {
-  checkin_id:string,
+  checkin_id: string;
   kh_ma: string;
   kh_ten: string;
   kh_diachi: string;
@@ -129,9 +129,7 @@ export const getCustomerByType = (name: string) =>
     .then(res => res.data);
 
 export const getCustomerType = () =>
-  createApi()
-    .get(ApiConstant.GET_TYPE_CUSTOMER)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_TYPE_CUSTOMER);
 
 export const getDetailLocation = (lat?: number, lon?: number) =>
   client
@@ -156,20 +154,12 @@ export const getSystemConfig = () =>
     .get(ApiConstant.GET_SYSTEM_CONFIG)
     .then(res => res.data);
 
-export const getListCity = () => {
-  createApi()
-    .get(ApiConstant.GET_LIST_CITY)
-    .then(res => res.data);
-};
+export const getListCity = () => createApi().get(ApiConstant.GET_LIST_CITY);
 export const getListDistrict = (ma_tinh_thanh: any) =>
-  createApi()
-    .get(ApiConstant.GET_LIST_DISTRICT + `${ma_tinh_thanh}`)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_LIST_DISTRICT + `${ma_tinh_thanh}`);
 
 export const getListWard = (ma_quan_huyen: any) =>
-  createApi()
-    .get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`);
 
 export const addFakeGPS = (data: ICheckFakeGPS) =>
   createApi().post(ApiConstant.CHECK_FAKE_GPS, data);

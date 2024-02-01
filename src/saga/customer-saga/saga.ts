@@ -9,7 +9,6 @@ import {
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
 
-
 export type ResponseGenerator = {
   config?: any;
   data?: any;
@@ -40,6 +39,7 @@ export function* onGetCustomer(action: PayloadAction) {
   }
 }
 export function* onGetCustomerType(action: PayloadAction) {
+  console.log('onGetCustomerType');
   if (customerActions.onGetCustomerType.match(action)) {
     try {
       yield put(onLoadApp());
@@ -64,10 +64,10 @@ export function* onGetCustomerType(action: PayloadAction) {
   }
 }
 export function* getCustomerVisitSaga() {
-  console.log('run')
+  console.log('run');
   try {
     const response: ResponseGenerator = yield call(getCustomerVisit);
-    console.log(response,'response')
+    console.log(response, 'response');
     if (Object.keys(response.result?.length > 0)) {
       yield put(customerActions.setCustomerVisit(response.result.data));
     }

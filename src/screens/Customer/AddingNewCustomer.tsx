@@ -6,7 +6,13 @@ import {
   TextStyle,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {useNavigation} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -24,7 +30,7 @@ import {
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
-import {AppConstant, ScreenConstant} from '../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation';
 import {IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
@@ -39,6 +45,8 @@ import {
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {ResponseGenerator} from '../../saga/app-saga/saga';
+import {AppService} from '../../services';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -143,9 +151,18 @@ const AddingNewCustomer = () => {
     [setOpenDate, setDate],
   );
 
-  useEffect(() => {
-    dispatch(customerActions.onGetCustomerType());
-    dispatch(appActions.onGetListCity());
+  // const getCustomerType = async () => {
+  //   const response: ResponseGenerator = await AppService.getCustomerType();
+  //   if (response?.status === ApiConstant.STT_OK) {
+  //     console.log('response.data.result', response.data.result);
+  //     dispatch(customerActions.setListCustomerType(response.data.result));
+  //   }
+  // };
+
+  useLayoutEffect(() => {
+    // getCustomerType();
+    // dispatch(customerActions.onGetCustomerType());
+    // dispatch(appActions.onGetListCity());
   }, []);
 
   return (

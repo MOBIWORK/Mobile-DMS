@@ -6,10 +6,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Searchbar, TextInput} from 'react-native-paper';
-import debounce from 'debounce';
+import {TextInput} from 'react-native-paper';
 import {
   AppHeader,
   AppIcons,
@@ -28,13 +27,24 @@ import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {RootEkMapResponse} from '../../../models/types';
 import {dispatch} from '../../../utils/redux';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {ImageAssets} from '../../../assets';
-import {useSelector} from '../../../config/function';
+import SelectedAddress from './SelectedAddress';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
+};
+
+export const AddressType = {
+  city: 'city',
+  ward: 'ward',
+  district: 'district',
+};
+
+export type AddressSelected = {
+  type: string;
+  value: string;
+  id?: string | number;
 };
 
 const FormAddress = (props: Props) => {
@@ -42,30 +52,35 @@ const FormAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const [screen, setScreen] = useState('');
-  const listAddress = useSelector(state => state.app.listDataCity);
-  const [listCity, setListAddress] = useState({
-    city: listAddress.city,
-    ward: '',
-    district: '',
-  });
+  const [addressSelectedData, setAddressSelectedData] = useState<
+    AddressSelected[]
+  >([]);
+
+  const [contactSelectedData, setContactSelectedData] = useState<
+    AddressSelected[]
+  >([]);
 
   const [addressValue, setAddressValue] = useState({
-    city: 'Tỉnh/Thành phố',
-    district: 'Quận/Huyện',
-    ward: 'Phường/xã',
-    detailAddress: 'Địa chỉ chi tiết',
+    city: '',
+    district: '',
+    ward: '',
+    detailAddress: '',
     addressOrder: false,
     addressGet: false,
   });
   const [contactValue, setContactValue] = useState({
-    nameContact: 'Người liên hệ',
-    phoneNumber: 'Số điện thoại',
-    addressContact: 'Địa chỉ',
-    city: 'Tỉnh/Thành phố',
-    district: 'Quận/Huyện',
-    ward: 'Phường/xã',
-    isMainAddress: addressValue.addressGet ? true : false,
+    nameContact: '',
+    phoneNumber: '',
+    addressContact: '',
+    city: '',
+    district: '',
+    ward: '',
+    isMainAddress: true,
   });
+
+  const [txtAddressDetail, setTxtAddressDetail] = useState<string>('');
+  const [txtContactDetail, setTxtContactDetail] = useState<string>('');
+
   const listCheckBox = useRef([
     {
       id: '1',
@@ -79,12 +94,27 @@ const FormAddress = (props: Props) => {
 
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
-    console.log(data, 'data');
-    if (data.status === 'OK') {
+    if (data.status === 'OK' && data.results.length > 0) {
       setAddressValue(prev => ({
         ...prev,
         detailAddress: data.results[0].formatted_address,
       }));
+      const addressSplit = data.results[0].formatted_address.split(',', 4);
+      const newData: AddressSelected[] = [
+        {
+          type: AddressType.city,
+          value: addressSplit[3] ?? '',
+        },
+        {
+          type: AddressType.ward,
+          value: addressSplit[2] ?? '',
+        },
+        {
+          type: AddressType.district,
+          value: addressSplit[1] ?? '',
+        },
+      ];
+      setAddressSelectedData(newData);
     } else {
       showSnack({
         msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
@@ -108,84 +138,90 @@ const FormAddress = (props: Props) => {
       .catch(err => console.log(err));
   };
 
-  const onChange = React.useCallback(
-    (text: string) => {
-      console.log('text');
+  useEffect(() => {
+    if (addressSelectedData.length === 3) {
       setAddressValue(prev => ({
         ...prev,
-        detailAddress: text,
+        city: addressSelectedData[0].value,
+        district: addressSelectedData[1].value,
+        ward: addressSelectedData[2].value,
       }));
-    },
-    [addressValue],
-  );
+    } else if (addressSelectedData.length === 2) {
+      setAddressValue(prev => ({
+        ...prev,
+        city: addressSelectedData[0].value,
+        district: addressSelectedData[1].value,
+        ward: '',
+      }));
+    } else if (addressSelectedData.length === 1) {
+      setAddressValue(prev => ({
+        ...prev,
+        city: addressSelectedData[0].value,
+        district: '',
+        ward: '',
+      }));
+    } else {
+      setAddressValue(prev => ({
+        ...prev,
+        city: '',
+        district: '',
+        ward: '',
+      }));
+    }
+  }, [addressSelectedData]);
 
-  const handleItem = (item: any) => {
-    const newData =
-      listCity && listCity.city.filter((res: any) => res.label !== item.label);
-    setListAddress(prev => ({
-      ...prev,
-      city: newData,
-    }));
-  };
-
-  const SearchNearly = () => {
-    return (
-      <Block marginTop={20}>
-        <AppText colorTheme="text_primary" fontWeight="500">
-          Tìm kiếm gần đây
-        </AppText>
-        <Block marginTop={16}>
-          {listCity &&
-            listCity?.city.map((item: any, index: number) => {
-              return (
-                <Block
-                  key={index}
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  marginVertical={6}>
-                  <AppText colorTheme="text_primary" style={{width: '80%'}}>
-                    {item.label}
-                  </AppText>
-                  <SvgIcon
-                    source="Close"
-                    color={theme.colors.text_secondary}
-                    size={24}
-                    onPress={() => handleItem(item)}
-                  />
-                </Block>
-              );
-            })}
-        </Block>
-      </Block>
-    );
-  };
+  useEffect(() => {
+    if (contactSelectedData.length === 3) {
+      setContactValue(prev => ({
+        ...prev,
+        city: contactSelectedData[0].value,
+        district: contactSelectedData[1].value,
+        ward: contactSelectedData[2].value,
+      }));
+    } else if (contactSelectedData.length === 2) {
+      setContactValue(prev => ({
+        ...prev,
+        city: contactSelectedData[0].value,
+        district: contactSelectedData[1].value,
+        ward: '',
+      }));
+    } else if (contactSelectedData.length === 1) {
+      setContactValue(prev => ({
+        ...prev,
+        city: contactSelectedData[0].value,
+        district: '',
+        ward: '',
+      }));
+    } else {
+      setContactValue(prev => ({
+        ...prev,
+        city: '',
+        district: '',
+        ward: '',
+      }));
+    }
+  }, [contactSelectedData]);
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
-      {screen === 'Adding' || screen === 'AddingContact' ? (
-        <MainLayout>
-          <Block
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            width={'100%'}>
-            <TouchableOpacity onPress={() => console.log('run bitch')}>
-              <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
-            </TouchableOpacity>
-            <Searchbar
-              placeholder={'Tìm kiếm'}
-              value={''}
-              onChangeText={text => console.log(text)}
-              onSubmitEditing={e => console.log(e.nativeEvent.text)}
-              icon={ImageAssets.SearchIcon}
-              placeholderTextColor={theme.colors.text_disable}
-              inputStyle={{color: theme.colors.text_primary}}
-              style={styles.searchBar}
-            />
-            <SearchNearly />
-          </Block>
-        </MainLayout>
+      {(screen === 'Adding' || screen === 'AddingContact') &&
+      ((typeFilter === AppConstant.CustomerFilterType.dia_chi &&
+        addressSelectedData.length !== 3) ||
+        (typeFilter === AppConstant.CustomerFilterType.nguoi_lien_he &&
+          contactSelectedData.length !== 3)) ? (
+        <SelectedAddress
+          setScreen={setScreen}
+          data={
+            typeFilter === AppConstant.CustomerFilterType.dia_chi
+              ? addressSelectedData
+              : contactSelectedData
+          }
+          setData={
+            typeFilter === AppConstant.CustomerFilterType.dia_chi
+              ? setAddressSelectedData
+              : setContactSelectedData
+          }
+        />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
         <>
           <View style={styles.headerContentView('Địa chỉ chính')}>
@@ -228,6 +264,7 @@ const FormAddress = (props: Props) => {
                 )}
                 onPress={() => {
                   setScreen('Adding');
+                  setAddressSelectedData([]);
                 }}
                 value={addressValue.city}
                 editable={false}
@@ -247,6 +284,10 @@ const FormAddress = (props: Props) => {
                 editable={false}
                 onPress={() => {
                   setScreen('Adding');
+                  const newData = addressSelectedData.filter(
+                    item => item.type === AddressType.city,
+                  );
+                  setAddressSelectedData(newData);
                 }}
                 contentStyle={styles.contentStyle(
                   addressValue.district,
@@ -271,6 +312,10 @@ const FormAddress = (props: Props) => {
                 )}
                 onPress={() => {
                   setScreen('Adding');
+                  const newData = addressSelectedData.filter(
+                    item => item.type !== AddressType.district,
+                  );
+                  setAddressSelectedData(newData);
                 }}
                 styles={styles.marginInputView}
                 rightIcon={
@@ -283,7 +328,7 @@ const FormAddress = (props: Props) => {
               />
               <AppInput
                 label={'Địa chỉ'}
-                value={addressValue.detailAddress}
+                value={txtAddressDetail}
                 editable={true}
                 contentStyle={styles.contentStyle(
                   addressValue.detailAddress,
@@ -295,17 +340,15 @@ const FormAddress = (props: Props) => {
                     : styles.containInput
                 }
                 hiddenRightIcon={true}
-                onChangeValue={text => {
-                  console.log(text), debounce(() => onChange(text), 100);
-                }}
+                onChangeValue={setTxtAddressDetail}
               />
               <View style={styles.checkBoxRootView}>
-                {listCheckBox.current.map((item, index) => {
+                {listCheckBox.current.map(item => {
                   return (
                     <View key={item.id}>
                       <TouchableOpacity
                         onPress={() => {
-                          item.id == '1'
+                          item.id === '1'
                             ? setAddressValue(prev => ({
                                 ...prev,
                                 addressGet: !addressValue.addressGet,
@@ -347,13 +390,22 @@ const FormAddress = (props: Props) => {
             <View style={styles.containContentButton}>
               <TouchableOpacity
                 style={styles.buttonRestart}
-                onPress={onPressClose}>
+                onPress={() => {
+                  setAddressSelectedData([]);
+                  setScreen('');
+                  onPressClose();
+                }}>
                 <AppText style={styles.restartText}>Hủy</AppText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonApply}
                 onPress={() => {
-                  dispatch(appActions.setMainAddress(addressValue));
+                  dispatch(
+                    customerActions.setMainAddress({
+                      ...addressValue,
+                      detailAddress: txtAddressDetail,
+                    }),
+                  );
                   onPressClose();
                 }}>
                 <AppText style={styles.applyText}>Lưu</AppText>
@@ -418,13 +470,13 @@ const FormAddress = (props: Props) => {
             <AppInput
               label={'Tỉnh/Thành phố'}
               contentStyle={styles.contentStyle(
-                addressValue.city,
+                contactValue.city,
                 'Tỉnh/Thành phố',
               )}
               onPress={() => {
                 setScreen('AddingContact');
               }}
-              value={addressValue.city}
+              value={contactValue.city}
               editable={false}
               hiddenRightIcon={false}
               styles={styles.marginInputView}
@@ -438,13 +490,13 @@ const FormAddress = (props: Props) => {
             />
             <AppInput
               label={'Quận/Huyện'}
-              value={addressValue.district}
+              value={contactValue.district}
               editable={false}
               onPress={() => {
                 setScreen('AddingContact');
               }}
               contentStyle={styles.contentStyle(
-                addressValue.district,
+                contactValue.district,
                 'Quận/Huyện',
               )}
               styles={styles.marginInputView}
@@ -458,9 +510,9 @@ const FormAddress = (props: Props) => {
             />
             <AppInput
               label={'Phường/xã'}
-              value={addressValue.ward}
+              value={contactValue.ward}
               editable={false}
-              contentStyle={styles.contentStyle(addressValue.ward, 'Phường/xã')}
+              contentStyle={styles.contentStyle(contactValue.ward, 'Phường/xã')}
               onPress={() => {
                 setScreen('AddingContact');
               }}
@@ -475,44 +527,40 @@ const FormAddress = (props: Props) => {
             />
             <AppInput
               label={'Địa chỉ chi tiết'}
-              value={contactValue.addressContact}
+              value={txtContactDetail}
               editable={true}
               contentStyle={styles.contentStyle(
                 contactValue.addressContact,
                 'Địa chỉ',
               )}
               styles={styles.marginInputView}
-              onChangeValue={text =>
-                setContactValue(prev => ({...prev, addressContact: text}))
-              }
+              onChangeValue={setTxtContactDetail}
               hiddenRightIcon={true}
             />
             <View style={styles.containButtonBottom}>
               <View style={styles.containContentButton}>
                 <TouchableOpacity
                   style={styles.buttonRestart}
-                  onPress={onPressClose}>
+                  onPress={() => {
+                    setContactSelectedData([]);
+                    setScreen('');
+                    onPressClose();
+                  }}>
                   <AppText style={styles.restartText}>Hủy</AppText>
                 </TouchableOpacity>
-                {contactValue.addressContact === 'Địa chỉ' ||
-                contactValue.nameContact === 'Người liên hệ' ||
-                contactValue.phoneNumber === 'Số điện thoại' ? null : (
-                  <TouchableOpacity
-                    style={styles.buttonApply}
-                    disabled={
-                      contactValue.addressContact === 'Địa chỉ' ||
-                      contactValue.nameContact === 'Người liên hệ' ||
-                      contactValue.phoneNumber === 'Số điện thoại'
-                        ? true
-                        : false
-                    }
-                    onPress={() => {
-                      dispatch(appActions.setMainContactAddress(contactValue));
-                      onPressClose();
-                    }}>
-                    <AppText style={styles.applyText}>Lưu</AppText>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                  style={styles.buttonApply}
+                  onPress={() => {
+                    dispatch(
+                      customerActions.setMainContactAddress({
+                        ...contactValue,
+                        addressContact: txtContactDetail,
+                      }),
+                    );
+                    onPressClose();
+                  }}>
+                  <AppText style={styles.applyText}>Lưu</AppText>
+                </TouchableOpacity>
               </View>
             </View>
           </MainLayout>
@@ -590,8 +638,7 @@ const rootStyles = (theme: AppTheme) =>
         borderWidth: !addressGo ? 1 : 0,
         borderColor: theme.colors.text_secondary,
         marginBottom: 20,
-        backgroundColor:
-          addressGo === true ? theme.colors.primary : 'transparent',
+        backgroundColor: addressGo ? theme.colors.primary : 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
       } as ViewStyle),
@@ -603,8 +650,7 @@ const rootStyles = (theme: AppTheme) =>
         borderWidth: !addressOrder ? 1 : 0,
         borderColor: theme.colors.text_secondary,
         marginBottom: 20,
-        backgroundColor:
-          addressOrder === true ? theme.colors.primary : 'transparent',
+        backgroundColor: addressOrder ? theme.colors.primary : 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
       } as ViewStyle),
@@ -655,10 +701,4 @@ const rootStyles = (theme: AppTheme) =>
       lineHeight: 24,
       color: Colors.white,
     } as TextStyle,
-    searchBar: {
-      backgroundColor: theme.colors.bg_neutral,
-      borderRadius: 10,
-      width: '90%',
-      marginLeft: 12,
-    } as ViewStyle,
   });

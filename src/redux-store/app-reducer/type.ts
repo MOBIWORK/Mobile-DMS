@@ -1,25 +1,28 @@
 import {ThemeType} from '../../layouts/theme';
+import {
+  MainAddress,
+  MainContactAddress,
+} from '../../screens/Customer/components/CardAddress';
 
 interface ListCustomerType {
   name: string;
   customer_group_name: string;
 }
 
-
 interface ListCity {
-  ma_tinh:string,
-  ten_tinh:string
+  ma_tinh: string;
+  ten_tinh: string;
 }
 
 interface ListDistrict {
-  ma_huyen:string,
-  ten_huyen:string,
-  ma_tinh_thanh:string
+  ma_huyen: string;
+  ten_huyen: string;
+  ma_tinh_thanh: string;
 }
 interface ListWard {
-  ma_xa:string,
-  ten_xa:string,
-  ma_quan_huyen:string
+  ma_xa: string;
+  ten_xa: string;
+  ma_quan_huyen: string;
 }
 
 export interface IAppRedux {
@@ -35,18 +38,16 @@ export interface IAppRedux {
   searchVisitValue: string;
   searchCustomerValue: string;
   theme: ThemeType;
-  mainAddress: any[];
-  mainContactAddress: any[];
   newCustomer: any[];
   loadingApp?: boolean;
   systemConfig?: any;
   currentLocation?: any;
-  listDataCity:{
-    city:ListCity[],
-    district:ListDistrict[],
-    ward:ListWard[]
-  },
-  dataCheckIn:any
+  listDataCity: {
+    city: ListCity[];
+    district: ListDistrict[];
+    ward: ListWard[];
+  };
+  dataCheckIn: any;
 }
 
 export enum SLICE_NAME {
