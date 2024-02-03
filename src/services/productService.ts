@@ -7,7 +7,9 @@ export type PramsTypeProduct = {
     brand? :string,
     item_name? :string,
     industry? : string,
-    item_group? : string
+    item_group? : string,
+    page_size?: number,
+    page?:number
 }
 
 interface GET_PRODUCT_PROMOTION {

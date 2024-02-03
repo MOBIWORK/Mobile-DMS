@@ -38,3 +38,4 @@ export const getDetail = (name: string) => createApi().get(ApiConstant.GET_ORDER
 export const getListVat = () => createApi().get(ApiConstant.GET_VATS);
 export const createdOrder = (data: POST_DATA) => createApi().post(ApiConstant.POST_ORDER, data);
 export const createdReturnOrder = (data: POST_DATA) => createApi().post(ApiConstant.POST_RETuRN_ORDER, data);
+export const getDetailCheckinOrder = (checkin_id : string) => createApi().get(ApiConstant.GET_DETAIL_CHECKIN_ORDER,{checkin_id});

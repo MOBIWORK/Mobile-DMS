@@ -1,4 +1,4 @@
-import { NoteType, StaffType } from "../../models/types";
+import { CheckinOrderDetail, NoteType, StaffType } from "../../models/types";
 
 
 export const SLICE_NAME = "CHECKIN_SLICE";
@@ -6,7 +6,8 @@ export const SLICE_NAME = "CHECKIN_SLICE";
 export type TypeState = {
     dataNote : NoteType[],
     dataStaff  : StaffType[],
-    dataTypeNote : any[]
+    dataTypeNote : any[],
+    orderDetail : CheckinOrderDetail | null
 }
 
 export const GET_NOTE_ACTIONS = "GET_NOTE_ACTIONS";

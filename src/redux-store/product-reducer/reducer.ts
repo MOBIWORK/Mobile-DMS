@@ -20,7 +20,7 @@ const productSlice = createSlice({
     reducers: {
         setDataProduct: (state, action: PayloadAction<DataType>) => {
             state.isLoading = false;
-            state.data = action.payload.data;
+            state.data = [...state.data, ...action.payload.data];
             state.totalItem = action.payload.total
         },
         setProductSelected : (state,action :PayloadAction<IProduct[]>) =>{
