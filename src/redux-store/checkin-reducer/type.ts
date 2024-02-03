@@ -12,4 +12,4 @@ export type TypeState = {
 
 export const GET_NOTE_ACTIONS = "GET_NOTE_ACTIONS";
 export const GET_STAFF_ACTIONS = "GET_STAFF_ACTIONS";
-export const GET_NOTETYPE_ACTIONS = "GET_STAFF_ACTIONS";
+export const GET_NOTE_TYPE_ACTIONS = "GET_NOTE_TYPE_ACTIONS";

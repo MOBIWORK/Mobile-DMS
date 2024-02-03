@@ -15,9 +15,8 @@ export function* getDataNote(action : PayloadAction){
     }
 }
 
-export function* getDataStaff(action : PayloadAction){
-    console.log(2);
-    
+export function* getDataStaff(action : PayloadAction){  
+    console.log('run ?')
     if(checkinActions.getListStaff.match(action)){
         const {data ,status} : KeyAbleProps = yield call(CheckinService.getListStaff,action.payload);
         if(status === ApiConstant.STT_OK) {
