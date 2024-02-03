@@ -8,6 +8,7 @@ const initState : TypeState = {
     dataNote : [],
     dataStaff : [],
     dataTypeNote : [],
+    orderDetail : null,
 }
 
 const checkinSlice = createSlice({
@@ -24,6 +25,9 @@ const checkinSlice = createSlice({
                     break;
                 case "note_type":
                     state.dataTypeNote = action.payload.data;
+                    break;
+                case "detailOrder":
+                    state.orderDetail = action.payload.data;
                     break;
                 default:
                     break;

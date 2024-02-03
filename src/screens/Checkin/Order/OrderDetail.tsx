@@ -1,15 +1,12 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React from 'react'
 import { View, Text, StyleSheet, Pressable, ImageStyle, TextStyle, ViewStyle } from 'react-native'
 import { MainLayout } from '../../../layouts'
 import AppContainer from '../../../components/AppContainer'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { AppBottomSheet, AppButton, AppHeader, AppIcons, AppInput } from '../../../components/common'
+import { AppIcons } from '../../../components/common'
 import { ICON_TYPE } from '../../../const/app.const'
-import { TextInput } from 'react-native-paper'
-import { AppConstant } from '../../../const'
-import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet'
 import { AppTheme, useTheme } from '../../../layouts/theme'
-import { IOrderDetail, ItemProductOrder } from '../../../models/types'
+import { CheckinOrderDetail, ItemProductOrder } from '../../../models/types'
 import { useTranslation } from 'react-i18next'
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from '../../../layouts/ErrorBoundary'
@@ -17,137 +14,11 @@ import { CommonUtils } from '../../../utils'
 import ItemProduct from '../../../components/Order/ItemProduct'
 
 
-const CheckinDetailOrder = ({ data }: PropsType) => {
+const OrderDetail = (data : CheckinOrderDetail) => {
 
     const { colors } = useTheme();
-    const bottomSheetRef = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['100%'], []);
     const styles = createStyles(useTheme())
     const { t: getLabel } = useTranslation();
-
-    const [productSelect, setProductSelect] = useState<ItemProductOrder>();
-    const [discountProduct, setDiscountProduct] = useState<number>(0);
-    const [totalPriceProduct, setTotalPriceProduct] = useState<number>(0);
-
-    const onOpenBottomSheetProduct = (item: ItemProductOrder) => {
-        setProductSelect(item);
-        discountCalculation(item);
-        if (bottomSheetRef.current) {
-            bottomSheetRef.current.snapToIndex(0);
-        }
-    }
-
-    const discountCalculation = (item: ItemProductOrder) => {
-        const isDiscount = item.discount_percentage / 100
-        const priceDiscount = item.amount * isDiscount * item.qty
-        setDiscountProduct(priceDiscount);
-        setTotalPriceProduct((item.amount * item.qty) - priceDiscount)
-    }
-
-    const renderUiBottomSheet = () => {
-        return (
-            <View style={{ padding: 16, paddingTop: 0, height: '100%', marginTop: -20 }}>
-                <AppHeader
-                    label={getLabel("product")}
-                    onBack={() =>
-                        bottomSheetRef.current && bottomSheetRef.current.close()
-                    }
-                    backButtonIcon={
-                        <AppIcons
-                            iconType={AppConstant.ICON_TYPE.IonIcon}
-                            name={'close'}
-                            size={24}
-                            color={colors.text_primary}
-                        />
-                    }
-                />
-                <View style={{ marginTop: 32, rowGap: 24 }}>
-                    <AppInput
-                        label={getLabel("productCode")}
-                        value={productSelect?.item_code || ""}
-                        editable={false}
-                        styles={{ backgroundColor: colors.bg_neutral }}
-                        hiddenRightIcon
-                    />
-                    <AppInput
-                        label={getLabel("unit")}
-                        value={productSelect?.uom || ""}
-                        editable={false}
-                        rightIcon={
-                            <TextInput.Icon
-                                icon={'chevron-down'}
-                                style={styles.iconInput}
-                                color={colors.text_secondary}
-                            />
-                        }
-                    />
-                    <AppInput
-                        label={getLabel("unitPrice")}
-                        value={productSelect?.amount ? CommonUtils.formatCash(productSelect.amount.toString()) : ""}
-                        editable={false}
-                        styles={{
-                            backgroundColor: colors.bg_neutral
-                        }}
-                        rightIcon={
-                            <TextInput.Affix text="VND" textStyle={{ fontSize: 12 }} />
-                        }
-                    />
-                    <AppInput
-                        label={getLabel("quantity")}
-                        value={productSelect?.qty.toString() || ""}
-                        hiddenRightIcon
-                    />
-                    <AppInput
-                        label={`${getLabel("discount")} (%)`}
-                        value={productSelect?.discount_percentage.toString() || ""}
-                        editable={false}
-                        styles={{
-                            backgroundColor: colors.bg_neutral
-                        }}
-                        rightIcon={
-                            <TextInput.Affix text="%" textStyle={{ fontSize: 20 }} />
-                        }
-                    />
-                    <AppInput
-                        label={getLabel("discount")}
-                        value={CommonUtils.formatCash(discountProduct.toString())}
-                        editable={false}
-                        styles={{
-                            backgroundColor: colors.bg_neutral
-                        }}
-                        rightIcon={
-                            <TextInput.Affix text="VND" textStyle={{ fontSize: 12 }} />
-                        }
-                    />
-                    <AppInput
-                        label={getLabel("intoMoney")}
-                        value={CommonUtils.formatCash(totalPriceProduct.toString())}
-                        editable={false}
-                        styles={{
-                            backgroundColor: colors.bg_neutral
-                        }}
-                        rightIcon={
-                            <TextInput.Affix text="VND" textStyle={{ fontSize: 12 }} />
-                        }
-                    />
-                </View>
-                <View style={styles.footerBttSheet}>
-                    <AppButton
-                        style={{ width: '45%', backgroundColor: colors.bg_neutral }}
-                        label={getLabel("cancel")}
-                        styleLabel={{ color: colors.text_secondary }}
-                        onPress={() => bottomSheetRef.current && bottomSheetRef.current.close()}
-                    />
-                    <AppButton
-                        style={{ width: '45%' }}
-                        label={getLabel("update")}
-                        onPress={() => bottomSheetRef.current && bottomSheetRef.current.close()}
-
-                    />
-                </View>
-            </View>
-        );
-    };
 
     return (
         <ErrorBoundary fallbackRender={ErrorFallback}>
@@ -156,45 +27,13 @@ const CheckinDetailOrder = ({ data }: PropsType) => {
                     <View style={{ paddingHorizontal: 16, rowGap: 24, paddingBottom: 50 }}>
 
                         <View>
-
-                            <View style={[styles.flexSpace]}>
-                                <Text style={[styles.textLabel]}>{getLabel("customer")}</Text>
-                                <TouchableOpacity>
-                                    <Text style={[styles.textLabel, { color: colors.action }]}>{getLabel("detail")}</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={[styles.divCustomer, styles.shadow, { backgroundColor: colors.bg_default }]}>
-                                <Text style={[styles.inforCustomer]}>{data?.customer_name} - {data?.customer}</Text>
-                                <View style={{ marginTop: 8, paddingTop: 8, borderColor: colors.border, borderTopWidth: 1 }}>
-                                    <View style={[styles.flex, { marginTop: 4 }]}>
-                                        <AppIcons iconType={ICON_TYPE.Feather} name='map-pin' size={18} color={colors.text_primary} />
-                                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.KHinforDesc]}>{data?.address_display}</Text>
-                                    </View>
-                                    <View style={[styles.flex, { marginTop: 4 }]}>
-                                        <AppIcons iconType={ICON_TYPE.Feather} name='phone' size={18} color={colors.text_primary} />
-                                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.KHinforDesc]}>{data?.contact_person}</Text>
-                                    </View>
-                                </View>
-
-                            </View>
-
-                        </View>
-
-                        <View>
-                            <View style={[styles.flexSpace]}>
-                                <Text style={[styles.textLabel]}>{getLabel("orderInfor")}</Text>
-                                <TouchableOpacity>
-                                    <AppIcons iconType={ICON_TYPE.Feather} name='chevron-down' size={18} color={colors.text_primary} />
-                                </TouchableOpacity>
-                            </View>
                             <View style={{ marginTop: 8, rowGap: 16 }}>
 
                                 <View style={[styles.containerIfOd]}>
 
                                     <View style={[styles.orderInforE, styles.flexSpace]}>
                                         <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
-                                        <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data?.delivery_date)}</Text>
+                                        <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data.delivery_date *1000)}</Text>
                                     </View>
 
                                     <View style={[styles.orderInforE, styles.flexSpace, { borderColor: colors.bg_default }]}>
@@ -217,7 +56,6 @@ const CheckinDetailOrder = ({ data }: PropsType) => {
                                 {data?.list_items && data.list_items.map((item: ItemProductOrder, index: any) => (
                                     <Pressable
                                         key={index}
-                                        onPress={() => onOpenBottomSheetProduct(item)}
                                     >
                                         <ItemProduct
                                             dvt={item.uom}
@@ -291,22 +129,23 @@ const CheckinDetailOrder = ({ data }: PropsType) => {
                             <View style={[styles.containerIfOd, { rowGap: 12, paddingVertical: 16 }]}>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("intoMoney")}</Text>
-                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data?.total?.toString())}</Text>
+                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data.total?.toString())}</Text>
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("discount")}</Text>
-                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data?.discount_amount?.toString())}</Text>
+                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data.discount_amount?.toString())}</Text>
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("VAT")} </Text>
-                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data?.total_taxes_and_charges?.toString())}</Text>
+                                    <Text style={[styles.textInforO]}>{CommonUtils.formatCash(data.total_taxes_and_charges?.toString())}</Text>
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("totalPrice")} </Text>
-                                    <Text style={[styles.totalPrice]}>{CommonUtils.formatCash(data?.rounded_total?.toString())}</Text>
+                                    <Text style={[styles.totalPrice]}>{CommonUtils.formatCash(data.grand_total.toString())}</Text>
                                 </View>
                             </View>
                         </View>
+
                     </View>
 
                 </AppContainer>
@@ -318,24 +157,17 @@ const CheckinDetailOrder = ({ data }: PropsType) => {
                     </View>
                 </View>
 
-                <AppBottomSheet bottomSheetRef={bottomSheetRef} snapPointsCustom={snapPoints}>
-                    {renderUiBottomSheet()}
-                </AppBottomSheet>
             </MainLayout>
         </ErrorBoundary>
     )
 }
 
-interface PropsType {
-    data: IOrderDetail | any
-}
-
-export default CheckinDetailOrder;
+export default OrderDetail;
 
 const createStyles = (theme: AppTheme) => StyleSheet.create({
     layout: {
         backgroundColor: theme.colors.bg_neutral,
-        paddingHorizontal: 0
+        paddingHorizontal: 0,
     } as ViewStyle,
     iconInput: {
         width: 24,
@@ -441,10 +273,7 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
         paddingHorizontal: 16,
     } as ViewStyle,
     containerOrder: {
-        backgroundColor: theme.colors.bg_default,
-        marginTop: 8,
-        borderRadius: 16,
-        rowGap: 8,
-        padding: 16
+        rowGap : 8,
+        marginTop : 12
     } as ViewStyle
 })
