@@ -8,6 +8,8 @@ const initialState: IProduct = {
   listCustomerVisit: [],
   newCustomer: [],
   listCustomerType: [],
+  listCustomerTerritory: [],
+  listCustomerRoute: [],
   mainAddress: {},
   mainContactAddress: {},
 };
@@ -26,8 +28,13 @@ const customerSlice = createSlice({
       state.newCustomer = action.payload;
     },
     setListCustomerType: (state, action: PayloadAction<any>) =>
-     void(state.listCustomerType = action.payload),
-
+      void (state.listCustomerType = action.payload),
+    setListCustomerTerritory: (state, action: PayloadAction<any>) => {
+      state.listCustomerTerritory = action.payload;
+    },
+    setListCustomerRoute: (state, action: PayloadAction<any>) => {
+      state.listCustomerRoute = action.payload;
+    },
     setMainContactAddress: (state, action: PayloadAction<any>) => {
       state.mainContactAddress = action.payload;
     },
@@ -61,8 +68,9 @@ export const {
   setCustomer,
   setCustomerVisit,
   setListCustomerType,
-  setNewCustomer
-} = customerSlice.actions
+  setListCustomerTerritory,
+  setNewCustomer,
+} = customerSlice.actions;
 
 export const customerActions = {
   ...customerSlice.actions,
@@ -71,5 +79,3 @@ export const customerActions = {
   getCustomerType,
   onGetCustomerVisit,
 };
-
-

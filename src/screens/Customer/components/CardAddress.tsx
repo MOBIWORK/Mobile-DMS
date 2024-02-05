@@ -4,6 +4,7 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {Platform} from 'react-native';
 import {AppText as Text, Block, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
+import {AddressSelected} from './FormAddress';
 
 type Props = CardAddressType | CardContactType;
 
@@ -19,18 +20,18 @@ type CardContactType = {
 export type MainAddress = {
   addressGet: boolean;
   addressOrder: boolean;
-  city: string;
-  detailAddress: string;
-  district: string;
-  ward: string;
+  detailAddress?: string;
+  city?: AddressSelected;
+  district?: AddressSelected;
+  ward?: AddressSelected;
 };
 export type MainContactAddress = {
   nameContact: string;
   phoneNumber: string;
-  addressContact: string;
-  city: string;
-  district: string;
-  ward: string;
+  addressContact?: string;
+  city?: AddressSelected;
+  district?: AddressSelected;
+  ward?: AddressSelected;
   isMainAddress: boolean;
 };
 const CardAddress = (props: Props) => {
@@ -63,7 +64,7 @@ const CardAddress = (props: Props) => {
                   style={{maxWidth: '90%'}}
                   colorTheme="black"
                   lineHeight={21}>
-                  {`${props.mainAddress.ward}, ${props.mainAddress.district}, ${props.mainAddress.city}`}
+                  {`${props.mainAddress.ward?.value}, ${props.mainAddress.district?.value}, ${props.mainAddress.city?.value}`}
                 </Text>
               </View>
             </View>
@@ -120,9 +121,9 @@ const CardAddress = (props: Props) => {
                 props.mainContactAddress.addressContact
                   ? `${props.mainContactAddress.addressContact}, `
                   : ''
-              }${props.mainContactAddress.ward}, ${
-                props.mainContactAddress.district
-              }, ${props.mainContactAddress.city}`}
+              }${props.mainContactAddress.ward?.value}, ${
+                props.mainContactAddress.district?.value
+              }, ${props.mainContactAddress.city?.value}`}
             </Text>
           </View>
           <View style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>

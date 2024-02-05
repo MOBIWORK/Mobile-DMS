@@ -45,13 +45,13 @@ const CheckInLocation = () => {
   const styles = createStyle(theme);
   const {t: getLabel} = useTranslation();
 
-  const customer_location: LocationProps = JSON.parse(
-    route.params.data.customer_location_primary ?? '',
-  );
+  const customer_location: LocationProps =
+    route.params?.data &&
+    JSON.parse(route.params.data.item.customer_location_primary);
 
   const [location, setLocation] = useState<Location | null>(null);
   const [value, setValue] = useState<string>(
-    route.params.data.customer_primary_address ?? '',
+    route.params?.data && route.params.data.item.customer_primary_address,
   );
   const mapboxCameraRef = useRef<CameraRef>(null);
 
@@ -103,13 +103,13 @@ const CheckInLocation = () => {
   };
 
   const handleComplete = async () => {
-    if (value !== route.params.data.customer_primary_address) {
+    if (value !== route.params.data.item.customer_primary_address) {
       dispatch(setProcessingStatus(true));
       await CommonUtils.CheckNetworkState();
       const split = value.split(',', 4);
       // console.log('split', split[5] ?? '---');
       const params: IUpdateAddress = {
-        customer: route.params.data.name,
+        customer: route.params.data.item.name,
         long: location?.coords.longitude ?? 0,
         lat: location?.coords.latitude ?? 0,
         address_line1: split[0] ?? '',

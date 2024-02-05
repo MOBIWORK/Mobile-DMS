@@ -32,8 +32,7 @@ export const POST_CHECKIN = '/api/method/mbw_dms.api.checkin.create_checkin';
 
 // Product
 export const GET_PRODUCT = URL_PREFIX + '.api.selling.product.list_product';
-export const GET_BRAND_PRODUCT =
-  URL_PREFIX + '.api.selling.product.list_brand';
+export const GET_BRAND_PRODUCT = URL_PREFIX + '.api.selling.product.list_brand';
 export const GET_INDUSTRY_PRODUCT =
   URL_PREFIX + '.api.selling.product.list_industry';
 export const GET_GROUP_PRODUCT =
@@ -56,6 +55,12 @@ export const UPDATE_CUSTOMER_ADDRESS =
   '/api/method/mbw_dms.api.checkin.update_address_customer';
 export const CHECK_FAKE_GPS =
   '/api/method/mbw_dms.api.blacklist.insert_fake_gps';
+export const GET_CUSTOMER_TERRITORY =
+  '/api/method/mbw_dms.api.selling.customer.list_territory';
+export const GET_CUSTOMER_ROUTE =
+  '/api/method/mbw_dms.api.router.get_all_router';
+export const POST_ADD_NEW_CUSTOMER =
+  '/api/method/mbw_dms.api.selling.customer.create_customer';
 
 // Order
 export const GET_ORDER = URL_PREFIX + '.api.selling.order.get_list_sales_order';
@@ -63,7 +68,8 @@ export const GET_ORDER_DETAIL =
   URL_PREFIX + '.api.selling.order.get_sale_order';
 export const GET_VATS = URL_PREFIX + '.api.selling.product.list_vat';
 export const POST_ORDER = URL_PREFIX + '.api.selling.order.create_sale_order';
-export const POST_RETuRN_ORDER = URL_PREFIX + '.api.selling.order.create_return_order';
+export const POST_RETuRN_ORDER =
+  URL_PREFIX + '.api.selling.order.create_return_order';
 export const GET_WAREHOUSES =
   URL_PREFIX + '.api.selling.product.list_warehouse';
 
@@ -78,15 +84,14 @@ export const GET_LIST_WARD =
 export const POST_CHECKIN_INVENTORY =
   URL_PREFIX + '.api.checkin.create_checkin_inventory';
 
-
 // NOTE
 export const POST_NEW_NOTE_CHECKIN = '/mbw_dms.api.note.create_note';
 export const GET_NOTE_USER_RECEIVED = '/mbw_dms.api.note.list_email';
-export const GET_LIST_NOTE_API = URL_PREFIX + '.api.note.list_note'
-export const GET_NOTE_TYPE = URL_PREFIX + '.api.note.list_note_type'
+export const GET_LIST_NOTE_API = URL_PREFIX + '.api.note.list_note';
+export const GET_NOTE_TYPE = URL_PREFIX + '.api.note.list_note_type';
 
 // IMAGE_CHECKIN
-export const PUT_IMAGE_CHECKIN = '/mbw_dms.api.checkin.add_checkin_image'
-export const POST_NOTE_CHECKIN = URL_PREFIX + ".api.note.create_note";
-export const GET_LIST_STAFF = URL_PREFIX + ".api.note.list_email";
-export const CREATE_IMAGE_CHECKIN = '/mbw_dms.api.checkin.create_checkin_image'
+export const PUT_IMAGE_CHECKIN = '/mbw_dms.api.checkin.add_checkin_image';
+export const POST_NOTE_CHECKIN = URL_PREFIX + '.api.note.create_note';
+export const GET_LIST_STAFF = URL_PREFIX + '.api.note.list_email';
+export const CREATE_IMAGE_CHECKIN = '/mbw_dms.api.checkin.create_checkin_image';

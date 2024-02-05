@@ -4,6 +4,7 @@ import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY, API_URL} from '@env';
 import {client} from '../config/client';
 import {VisitListItemType} from '../models/types';
+import {GET_CUSTOMER_TERRITORY} from '../const/api.const';
 
 export type ILogin = {
   usr: string;
@@ -129,7 +130,9 @@ export const getCustomerByType = (name: string) =>
     .then(res => res.data);
 
 export const getCustomerType = () =>
-  createApi().get(ApiConstant.GET_TYPE_CUSTOMER);
+  createApi()
+    .get(ApiConstant.GET_TYPE_CUSTOMER)
+    .then(res => res.data);
 
 export const getDetailLocation = (lat?: number, lon?: number) =>
   client
@@ -165,14 +168,20 @@ export const addFakeGPS = (data: ICheckFakeGPS) =>
   createApi().post(ApiConstant.CHECK_FAKE_GPS, data);
 
 export const getUserNoteReceived = () => {
-  createApi().get(ApiConstant.GET_NOTE_USER_RECEIVED).then(res => res.data)
-}
-export const postNoteUser = (data:any) =>{
-  createApi().post(ApiConstant.POST_NEW_NOTE_CHECKIN,data).then(res => res.data)
-}
-export const getListNoteApi = (data: any) =>{
-  createApi().get(ApiConstant.GET_LIST_NOTE_API,data)
-}
-export const createImageCheckinApi = (data:any) =>{
-  createApi().post(ApiConstant.CREATE_IMAGE_CHECKIN,data).then(res => res.data)
-}
+  createApi()
+    .get(ApiConstant.GET_NOTE_USER_RECEIVED)
+    .then(res => res.data);
+};
+export const postNoteUser = (data: any) => {
+  createApi()
+    .post(ApiConstant.POST_NEW_NOTE_CHECKIN, data)
+    .then(res => res.data);
+};
+export const getListNoteApi = (data: any) => {
+  createApi().get(ApiConstant.GET_LIST_NOTE_API, data);
+};
+export const createImageCheckinApi = (data: any) => {
+  createApi()
+    .post(ApiConstant.CREATE_IMAGE_CHECKIN, data)
+    .then(res => res.data);
+};

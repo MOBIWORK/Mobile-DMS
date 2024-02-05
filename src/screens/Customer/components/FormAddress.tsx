@@ -29,6 +29,7 @@ import {RootEkMapResponse} from '../../../models/types';
 import {dispatch} from '../../../utils/redux';
 import SelectedAddress from './SelectedAddress';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import {MainAddress, MainContactAddress} from './CardAddress';
 
 type Props = {
   onPressClose: () => void;
@@ -44,7 +45,7 @@ export const AddressType = {
 export type AddressSelected = {
   type: string;
   value: string;
-  id?: string | number;
+  id?: string;
 };
 
 const FormAddress = (props: Props) => {
@@ -60,21 +61,15 @@ const FormAddress = (props: Props) => {
     AddressSelected[]
   >([]);
 
-  const [addressValue, setAddressValue] = useState({
-    city: '',
-    district: '',
-    ward: '',
+  const [addressValue, setAddressValue] = useState<MainAddress>({
     detailAddress: '',
     addressOrder: false,
     addressGet: false,
   });
-  const [contactValue, setContactValue] = useState({
+  const [contactValue, setContactValue] = useState<MainContactAddress>({
     nameContact: '',
     phoneNumber: '',
     addressContact: '',
-    city: '',
-    district: '',
-    ward: '',
     isMainAddress: true,
   });
 
@@ -142,30 +137,24 @@ const FormAddress = (props: Props) => {
     if (addressSelectedData.length === 3) {
       setAddressValue(prev => ({
         ...prev,
-        city: addressSelectedData[0].value,
-        district: addressSelectedData[1].value,
-        ward: addressSelectedData[2].value,
+        city: addressSelectedData[0],
+        district: addressSelectedData[1],
+        ward: addressSelectedData[2],
       }));
     } else if (addressSelectedData.length === 2) {
       setAddressValue(prev => ({
         ...prev,
-        city: addressSelectedData[0].value,
-        district: addressSelectedData[1].value,
-        ward: '',
+        city: addressSelectedData[0],
+        district: addressSelectedData[1],
       }));
     } else if (addressSelectedData.length === 1) {
       setAddressValue(prev => ({
         ...prev,
-        city: addressSelectedData[0].value,
-        district: '',
-        ward: '',
+        city: addressSelectedData[0],
       }));
     } else {
       setAddressValue(prev => ({
         ...prev,
-        city: '',
-        district: '',
-        ward: '',
       }));
     }
   }, [addressSelectedData]);
@@ -174,30 +163,24 @@ const FormAddress = (props: Props) => {
     if (contactSelectedData.length === 3) {
       setContactValue(prev => ({
         ...prev,
-        city: contactSelectedData[0].value,
-        district: contactSelectedData[1].value,
-        ward: contactSelectedData[2].value,
+        city: contactSelectedData[0],
+        district: contactSelectedData[1],
+        ward: contactSelectedData[2],
       }));
     } else if (contactSelectedData.length === 2) {
       setContactValue(prev => ({
         ...prev,
-        city: contactSelectedData[0].value,
-        district: contactSelectedData[1].value,
-        ward: '',
+        city: contactSelectedData[0],
+        district: contactSelectedData[1],
       }));
     } else if (contactSelectedData.length === 1) {
       setContactValue(prev => ({
         ...prev,
-        city: contactSelectedData[0].value,
-        district: '',
-        ward: '',
+        city: contactSelectedData[0],
       }));
     } else {
       setContactValue(prev => ({
         ...prev,
-        city: '',
-        district: '',
-        ward: '',
       }));
     }
   }, [contactSelectedData]);
@@ -259,14 +242,14 @@ const FormAddress = (props: Props) => {
               <AppInput
                 label={'Tỉnh/Thành phố'}
                 contentStyle={styles.contentStyle(
-                  addressValue.city,
-                  'Tỉnh/Thành phố',
+                  addressValue?.city?.value ?? '',
+                  '',
                 )}
                 onPress={() => {
                   setScreen('Adding');
                   setAddressSelectedData([]);
                 }}
-                value={addressValue.city}
+                value={addressValue?.city?.value ?? ''}
                 editable={false}
                 hiddenRightIcon={false}
                 styles={styles.marginInputView}
@@ -280,7 +263,7 @@ const FormAddress = (props: Props) => {
               />
               <AppInput
                 label={'Quận/Huyện'}
-                value={addressValue.district}
+                value={addressValue?.district?.value ?? ''}
                 editable={false}
                 onPress={() => {
                   setScreen('Adding');
@@ -290,8 +273,8 @@ const FormAddress = (props: Props) => {
                   setAddressSelectedData(newData);
                 }}
                 contentStyle={styles.contentStyle(
-                  addressValue.district,
-                  'Quận/Huyện',
+                  addressValue?.district?.value ?? '',
+                  '',
                 )}
                 styles={styles.marginInputView}
                 rightIcon={
@@ -304,11 +287,11 @@ const FormAddress = (props: Props) => {
               />
               <AppInput
                 label={'Phường/xã'}
-                value={addressValue.ward}
+                value={addressValue?.ward?.value ?? ''}
                 editable={false}
                 contentStyle={styles.contentStyle(
-                  addressValue.ward,
-                  'Phường/xã',
+                  addressValue?.ward?.value ?? '',
+                  '',
                 )}
                 onPress={() => {
                   setScreen('Adding');
@@ -331,8 +314,8 @@ const FormAddress = (props: Props) => {
                 value={txtAddressDetail}
                 editable={true}
                 contentStyle={styles.contentStyle(
-                  addressValue.detailAddress,
-                  'Địa chỉ chi tiết',
+                  addressValue.detailAddress ?? '',
+                  '',
                 )}
                 styles={
                   addressValue.detailAddress === 'Địa chỉ chi tiết'
@@ -470,13 +453,13 @@ const FormAddress = (props: Props) => {
             <AppInput
               label={'Tỉnh/Thành phố'}
               contentStyle={styles.contentStyle(
-                contactValue.city,
-                'Tỉnh/Thành phố',
+                contactValue?.city?.value ?? '',
+                '',
               )}
               onPress={() => {
                 setScreen('AddingContact');
               }}
-              value={contactValue.city}
+              value={contactValue?.city?.value ?? ''}
               editable={false}
               hiddenRightIcon={false}
               styles={styles.marginInputView}
@@ -490,14 +473,14 @@ const FormAddress = (props: Props) => {
             />
             <AppInput
               label={'Quận/Huyện'}
-              value={contactValue.district}
+              value={contactValue?.district?.value ?? ''}
               editable={false}
               onPress={() => {
                 setScreen('AddingContact');
               }}
               contentStyle={styles.contentStyle(
-                contactValue.district,
-                'Quận/Huyện',
+                contactValue?.district?.value ?? '',
+                '',
               )}
               styles={styles.marginInputView}
               rightIcon={
@@ -510,9 +493,12 @@ const FormAddress = (props: Props) => {
             />
             <AppInput
               label={'Phường/xã'}
-              value={contactValue.ward}
+              value={contactValue?.ward?.value ?? ''}
               editable={false}
-              contentStyle={styles.contentStyle(contactValue.ward, 'Phường/xã')}
+              contentStyle={styles.contentStyle(
+                contactValue?.ward?.value ?? '',
+                '',
+              )}
               onPress={() => {
                 setScreen('AddingContact');
               }}
@@ -530,8 +516,8 @@ const FormAddress = (props: Props) => {
               value={txtContactDetail}
               editable={true}
               contentStyle={styles.contentStyle(
-                contactValue.addressContact,
-                'Địa chỉ',
+                contactValue?.addressContact ?? '',
+                '',
               )}
               styles={styles.marginInputView}
               onChangeValue={setTxtContactDetail}

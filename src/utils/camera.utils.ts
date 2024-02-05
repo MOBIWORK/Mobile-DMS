@@ -4,20 +4,20 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
-export const openImagePickerCamera = async(
+export const openImagePickerCamera = async (
   callBack: (image: string | undefined, base64?: string) => void,
 ) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     includeBase64: true,
-    maxHeight: 200,
-    maxWidth:200,
+    quality: 0.5,
+    maxHeight: 300,
+    maxWidth: 300,
     presentationStyle: 'fullScreen',
-    
   };
   let base64Image: string;
 
-  await launchCamera(options, async (response) => {
+  await launchCamera(options, async response => {
     if (response.didCancel) {
       console.log('User cancelled camera picker');
     } else if (response.errorMessage) {
@@ -37,13 +37,14 @@ export const openImagePickerCamera = async(
 
 export const openImagePicker = (
   callBack: (image: string | undefined) => void,
-  isUri?: boolean,
+  isBase64?: boolean,
 ) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
-    includeBase64: true,
-    maxHeight: 2000,
-    maxWidth: 2000,
+    includeBase64: isBase64 ?? false,
+    quality: 0.5,
+    maxHeight: 300,
+    maxWidth: 300,
     presentationStyle: 'fullScreen',
   };
 
@@ -53,7 +54,7 @@ export const openImagePicker = (
     } else if (response.errorMessage) {
       console.log('Image picker error: ', response.errorMessage);
     } else if (response.assets && response.assets.length > 0) {
-      const selectedImage = isUri
+      const selectedImage = isBase64
         ? response.assets[0].base64
         : response.assets[0].uri;
       callBack(selectedImage);
