@@ -15,11 +15,11 @@ import {useTheme, AppTheme} from '../../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp, navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
-import {IDataCustomer, IDataItem} from '../../../models/types';
+import {IDataCustomer, IDataCustomers, IDataItem} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 
-const CardView = (props: IDataCustomer) => {
+const CardView = (props: IDataCustomers) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
@@ -36,7 +36,7 @@ const CardView = (props: IDataCustomer) => {
           alignItems="center">
           <Block block>
             <Text style={styles.textName}>{props.customer_name}</Text>
-            <Text style={styles.textName}>{props.customer_code}</Text>
+            <Text style={styles.textName}>{props.customer_id}</Text>
           </Block>
 
           <View style={styles.containButton}>
@@ -55,12 +55,12 @@ const CardView = (props: IDataCustomer) => {
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconAddress'} style={styles.iconStyle} />
           <Text numberOfLines={1} style={styles.contentText}>
-            {props?.address?.[0]?.address_line1 ? props.address[0]?.address_line1 : '---'}
+            {props?.address?.[0]?.address ? props.address[0]?.address : '---'}
           </Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconPhone'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props?.contact?.[0]?.phone ?  props?.contact?.[0]?.phone : '---' }</Text>
+          <Text style={styles.contentText}>{props?.contact?.[0]?.phoneNumber ?  props?.contact?.[0]?.phoneNumber : '---' }</Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconType'} style={styles.iconStyle} />
