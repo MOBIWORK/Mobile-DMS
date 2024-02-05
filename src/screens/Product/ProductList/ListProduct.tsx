@@ -458,7 +458,7 @@ const ListProduct = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1 }}
           style={{ height: '85%' }}
-          onScrollEndDrag={() => setPage(page + 1)}
+          onEndReached={() => setPage(page + 1)}
           ListEmptyComponent={
             <View
               style={{
