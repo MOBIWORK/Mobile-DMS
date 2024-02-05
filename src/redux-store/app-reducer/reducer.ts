@@ -11,8 +11,6 @@ const initialAppState: IAppRedux = {
   searchProductValue: '',
   searchVisitValue: '',
   theme: 'default',
-  mainAddress: [],
-  mainContactAddress: [],
   newCustomer: [],
   searchCustomerValue: '',
   loadingApp: false,
@@ -48,22 +46,16 @@ const appSlice = createSlice({
     setShowModal: (state, {payload}: PayloadAction<boolean>) => {
       state.showModal = payload;
     },
-    setMainContactAddress: (state, {payload}: PayloadAction<any>) => {
-      state.mainContactAddress = payload;
-    },
-    setMainAddress: (state, action: PayloadAction<any>) => {
-      state.mainAddress = action.payload;
-    },
-    removeContactAddress: (state, action: PayloadAction<any>) => {
-      state.mainContactAddress = state.mainContactAddress?.filter(
-        (item: any) => item !== action.payload,
-      );
-    },
-    removeAddress: (state, action: PayloadAction<any>) => {
-      state.mainAddress = state.mainAddress?.filter(
-        (item: any) => item !== action.payload,
-      );
-    },
+    // removeContactAddress: (state, action: PayloadAction<any>) => {
+    //   state.mainContactAddress = state.mainContactAddress?.filter(
+    //     (item: any) => item !== action.payload,
+    //   );
+    // },
+    // removeAddress: (state, action: PayloadAction<any>) => {
+    //   state.mainAddress = state.mainAddress?.filter(
+    //     (item: any) => item !== action.payload,
+    //   );
+    // },
     setNewCustomer: (state, action: PayloadAction<any>) => {
       if (state.newCustomer.length === 0) {
         state.newCustomer = [action.payload];
@@ -111,7 +103,7 @@ const appSlice = createSlice({
         state.dataCheckIn.listImage = action.payload
       }
   },
- 
+
 });
 
 const onCheckIn = createAction(Actions.CHECKIN, (data: CheckinData) => ({
@@ -157,10 +149,14 @@ export const appActions = {
   postImageCheckIn
 };
 
+
+
+
+
 export const appReducer = appSlice.reducer;
 export const {
   setError,
-  setMainContactAddress,
+  // setMainContactAddress,
   setNewCustomer,
   setProcessingStatus,
   setSearchCustomerValue,
@@ -171,6 +167,6 @@ export const {
   onLoadApp,
   onLoadAppEnd,
   onSetAppTheme,
-  removeContactAddress,
-  removeAddress,
+  // removeContactAddress,
+  // removeAddress,
 } = appSlice.actions;

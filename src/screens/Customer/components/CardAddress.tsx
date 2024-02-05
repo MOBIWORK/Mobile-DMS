@@ -4,6 +4,7 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {Platform} from 'react-native';
 import {AppText as Text, Block, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
+import {AddressSelected} from './FormAddress';
 
 type Props = CardAddressType | CardContactType;
 
@@ -17,22 +18,25 @@ type CardContactType = {
 };
 
 export type MainAddress = {
-
-    address: string;
-    isSetAddressGet: boolean;
-    isSetAddressTake: boolean;
-  
+  addressGet: boolean;
+  addressOrder: boolean;
+  detailAddress?: string;
+  city?: AddressSelected;
+  district?: AddressSelected;
+  ward?: AddressSelected;
 };
 export type MainContactAddress = {
-    // name: string;
-    address_line1: string;
-    phone: string;
-  
+  nameContact: string;
+  phoneNumber: string;
+  addressContact?: string;
+  city?: AddressSelected;
+  district?: AddressSelected;
+  ward?: AddressSelected;
+  isMainAddress: boolean;
 };
 const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  console.log(props, 'props');
   return (
     <View style={styles.card}>
       {props.type === 'address' ? (
@@ -43,29 +47,30 @@ const CardAddress = (props: Props) => {
                 <SvgIcon source="MapPin" size={16} />
               </View>
               <View>
+                {props.mainAddress.detailAddress && (
+                  <Text
+                    numberOfLines={2}
+                    fontSize={16}
+                    fontWeight="300"
+                    colorTheme="black"
+                    lineHeight={21}>
+                    {props.mainAddress.detailAddress}
+                  </Text>
+                )}
                 <Text
                   numberOfLines={2}
-                  fontSize={16}
-                  fontWeight="300"
-                  colorTheme="black"
-                  lineHeight={21}>
-                  Địa chỉ chi tiết
-                </Text>
-                <Text
-                  numberOfLines={2}
-                  fontSize={16}
+                  fontSize={14}
                   fontWeight="300"
                   style={{maxWidth: '90%'}}
                   colorTheme="black"
                   lineHeight={21}>
-                  {/* {props.mainAddress?.address ? props.mainAddress.address : '---'} */}
-                  ---
+                  {`${props.mainAddress.ward?.value}, ${props.mainAddress.district?.value}, ${props.mainAddress.city?.value}`}
                 </Text>
               </View>
             </View>
           </View>
           <View style={styles.containAddress}>
-            {props.mainAddress.isSetAddressGet && (
+            {props.mainAddress.addressGet && (
               <View style={styles.addressGetAndOrder}>
                 <Text
                   fontSize={14}
@@ -76,7 +81,7 @@ const CardAddress = (props: Props) => {
                 </Text>
               </View>
             )}
-            {props.mainAddress.isSetAddressTake && (
+            {props.mainAddress.addressOrder && (
               <View style={styles.addressGetAndOrder}>
                 <Text
                   fontSize={14}
@@ -97,7 +102,9 @@ const CardAddress = (props: Props) => {
               fontWeight="400"
               colorTheme="black"
               lineHeight={21}>
-              {props.mainContactAddress.address_line1 ? props.mainContactAddress.address_line1 : '---'}
+              {props.mainContactAddress.nameContact
+                ? props.mainContactAddress.nameContact
+                : '---'}
             </Text>
           </View>
           <View style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
@@ -110,7 +117,13 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="black"
               lineHeight={21}>
-              {props.mainContactAddress.address_line1 ? props.mainContactAddress.address_line1 : '---'}
+              {`${
+                props.mainContactAddress.addressContact
+                  ? `${props.mainContactAddress.addressContact}, `
+                  : ''
+              }${props.mainContactAddress.ward?.value}, ${
+                props.mainContactAddress.district?.value
+              }, ${props.mainContactAddress.city?.value}`}
             </Text>
           </View>
           <View style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
@@ -124,7 +137,9 @@ const CardAddress = (props: Props) => {
               // textAlign='justify'
               colorTheme="black"
               lineHeight={21}>
-              { props.mainContactAddress.phone ? formatPhoneNumber(props.mainContactAddress.phone) : '---'}
+              {props.mainContactAddress.phoneNumber
+                ? formatPhoneNumber(props.mainContactAddress.phoneNumber)
+                : '---'}
             </Text>
           </View>
           <View style={styles.containMain}>

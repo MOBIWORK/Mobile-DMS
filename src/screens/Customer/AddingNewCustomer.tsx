@@ -6,7 +6,13 @@ import {
   TextStyle,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {useNavigation} from '@react-navigation/native';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -20,25 +26,33 @@ import {
   AppHeader,
   AppIcons,
   AppText,
+  showSnack,
   SvgIcon,
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
-import {AppConstant, ScreenConstant} from '../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation';
-import {IDataCustomer} from '../../models/types';
+import {IDataCustomer, KeyAbleProps} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
-import {useSelector} from '../../config/function';
 import {
-  appActions,
   setNewCustomer,
+  setProcessingStatus,
 } from '../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {CustomerService} from '../../services';
+import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import {useSelector} from '../../config/function';
+import {MainAddress, MainContactAddress} from './components/CardAddress';
+import BackgroundGeolocation, {
+  Location,
+} from 'react-native-background-geolocation';
+import {CommonUtils} from '../../utils';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -47,16 +61,30 @@ const AddingNewCustomer = () => {
   const navigation = useNavigation<NavigationProp>();
   const [valueFilter, setValueFilter] = React.useState<IValueType>({
     customerType: 'Cá nhân',
-    customerGroupType: 'Tất cả',
+    customerGroupType: '',
     customerBirthday: 'Tất cả',
   });
 
+  const [location, setLocation] = useState<Location | null>(null);
+
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
-  const [listData, setListData] = useState<IDataCustomer | any>({});
+  const [listData, setListData] = useState<IDataCustomer>({
+    customer_code: '',
+    customer_name: '',
+    customer_type: '',
+    customer_group: '',
+    territory: '',
+    custom_birthday: new Date().getTime(),
+  });
   const [openDate, setOpenDate] = React.useState<boolean>(false);
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
+  );
+
+  const mainAddress = useSelector(state => state.customer.mainAddress);
+  const mainContactAddress = useSelector(
+    state => state.customer.mainContactAddress,
   );
 
   const snapPoint = useMemo(() => ['40%'], []);
@@ -74,11 +102,51 @@ const AddingNewCustomer = () => {
   const addingAddress = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
-  const onPressAdding = (newListData: IDataCustomer) => {
+  const onPressAdding = async (newListData: IDataCustomer) => {
+    const address: MainAddress = mainAddress;
+    const contact: MainContactAddress = mainContactAddress;
+    const updateListData: IDataCustomer = {
+      ...newListData,
+      frequency: newListData.frequency.toString(),
+      customer_type:
+        newListData.customer_type === 'Cá nhân' ? 'Individual' : 'Company',
+      address_title_cus: `${newListData.customer_name} address`,
+      address_type_cus: address ? 'Billing' : '',
+      detail_address_cus: address?.detailAddress,
+      ward_cus: address?.ward?.id ?? '',
+      district_cus: address?.district?.id ?? '',
+      province_cus: address?.city?.id ?? '',
+      is_primary_address: address.addressOrder,
+      is_shipping_address: address.addressGet,
+      phone: contact?.phoneNumber ?? '',
+      adr_title_contact: `${newListData.customer_name} contact`,
+      detail_adr_contact: contact?.addressContact ?? '',
+      ward_contact: contact?.ward?.id ?? '',
+      district_contact: contact?.district?.id ?? '',
+      province_contact: contact?.city?.id ?? '',
+      first_name: contact?.nameContact ?? '',
+      router_name: newListData.router_name[1] ?? '',
+      website: newListData.website ?? '',
+      longitude: newListData.longitude ?? 0,
+      latitude: newListData.latitude ?? 0,
+      custom_birthday: newListData.custom_birthday
+        ? newListData.custom_birthday / 1000
+        : new Date().getTime() / 1000,
+    };
+
+    // console.log('newObj', updateListData);
     dispatch(setNewCustomer(newListData));
-    navigation.navigate(ScreenConstant.MAIN_TAB, {
-      screen: ScreenConstant.CUSTOMER,
-    });
+    dispatch(setProcessingStatus(true));
+    await CommonUtils.CheckNetworkState();
+    const response: KeyAbleProps = await CustomerService.addNewCustomer(
+      updateListData,
+    );
+    if (response?.status === ApiConstant.STT_OK) {
+      navigation.navigate(ScreenConstant.MAIN_TAB, {
+        screen: ScreenConstant.CUSTOMER,
+      });
+    }
+    dispatch(setProcessingStatus(false));
   };
 
   const onDismissSingle = React.useCallback(() => {
@@ -88,18 +156,18 @@ const AddingNewCustomer = () => {
   const handleImagePicker = () => {
     openImagePicker(selectedImage => {
       // Handle the selected image, e.g., set it to state
-      console.log('Selected Image:', selectedImage);
-      setImageSource(selectedImage);
       cameraBottomRef.current?.close();
-    });
+      setImageSource(selectedImage);
+      setListData(prevState => ({...prevState, faceimage: selectedImage}));
+    }, true);
   };
 
   const handleCameraPicker = () => {
-    openImagePickerCamera(selectedImage => {
+    openImagePickerCamera((selectedImage, base64) => {
       // Handle the selected image, e.g., set it to state
-      setImageSource(selectedImage);
-      console.log('Selected Image from Camera:', selectedImage);
       cameraBottomRef.current?.close();
+      setImageSource(base64);
+      setListData(prevState => ({...prevState, faceimage: base64}));
     });
   };
   const onConfirmSingle = React.useCallback<SingleChange>(
@@ -110,9 +178,39 @@ const AddingNewCustomer = () => {
     [setOpenDate, setDate],
   );
 
+  const getCustomerTerritory = async () => {
+    const response: any = await CustomerService.getCustomerTerritory();
+    if (response?.result.length > 0) {
+      dispatch(customerActions.setListCustomerTerritory(response.result));
+    }
+  };
+
+  const getCustomerRoute = async () => {
+    const response: any = await CustomerService.getCustomerRoute();
+    if (response?.result.length > 0) {
+      dispatch(customerActions.setListCustomerRoute(response.result));
+    }
+  };
+  //get Cur Location
   useEffect(() => {
-    dispatch(customerActions.getCustomerType());
-    dispatch(appActions.onGetListCity());
+    if (!location) {
+      BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+        .then(cur_location => {
+          setLocation(cur_location);
+        })
+        .catch(() => {
+          showSnack({
+            msg: 'Không lấy được GPS',
+            interval: 2000,
+            type: 'error',
+          });
+        });
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    getCustomerTerritory();
+    getCustomerRoute();
   }, []);
 
   return (
@@ -140,6 +238,8 @@ const AddingNewCustomer = () => {
           addingBottomRef={addingAddress}
           imageSource={imageSource}
           cameraBottomRef={cameraBottomRef}
+          location={location}
+          setLocation={setLocation}
         />
         <TouchableOpacity
           style={styles.buttonAddingNew}
@@ -148,14 +248,16 @@ const AddingNewCustomer = () => {
         </TouchableOpacity>
       </View>
       <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
-        <ListFilterAdding
-          type={typeFilter}
-          filterRef={filterRef}
-          setValueFilter={setValueFilter}
-          valueFilter={valueFilter}
-          setData={setListData}
-          data={listData}
-        />
+        <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+          <ListFilterAdding
+            type={typeFilter}
+            filterRef={filterRef}
+            setValueFilter={setValueFilter}
+            valueFilter={valueFilter}
+            setData={setListData}
+            data={listData}
+          />
+        </BottomSheetScrollView>
       </AppBottomSheet>
       <DatePickerModal
         locale="vi"

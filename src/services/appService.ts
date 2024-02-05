@@ -4,6 +4,7 @@ import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY, API_URL} from '@env';
 import {client} from '../config/client';
 import {VisitListItemType} from '../models/types';
+import {GET_CUSTOMER_TERRITORY} from '../const/api.const';
 
 export type ILogin = {
   usr: string;
@@ -30,7 +31,7 @@ export type CustomerParams = {
 };
 
 export type CheckinData = {
-  checkin_id:string,
+  checkin_id: string;
   kh_ma: string;
   kh_ten: string;
   kh_diachi: string;
@@ -156,33 +157,31 @@ export const getSystemConfig = () =>
     .get(ApiConstant.GET_SYSTEM_CONFIG)
     .then(res => res.data);
 
-export const getListCity = () => {
-  createApi()
-    .get(ApiConstant.GET_LIST_CITY)
-    .then(res => res.data);
-};
+export const getListCity = () => createApi().get(ApiConstant.GET_LIST_CITY);
 export const getListDistrict = (ma_tinh_thanh: any) =>
-  createApi()
-    .get(ApiConstant.GET_LIST_DISTRICT + `${ma_tinh_thanh}`)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_LIST_DISTRICT + `${ma_tinh_thanh}`);
 
 export const getListWard = (ma_quan_huyen: any) =>
-  createApi()
-    .get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`);
 
 export const addFakeGPS = (data: ICheckFakeGPS) =>
-  createApi().post(ApiConstant.CHECK_FAKE_GPS, data).then(res => res.data);
+  createApi().post(ApiConstant.CHECK_FAKE_GPS, data);
 
 export const getUserNoteReceived = () => {
-  createApi().get(ApiConstant.GET_NOTE_USER_RECEIVED).then(res => res.data)
-}
-export const postNoteUser = (data:any) =>{
-  createApi().post(ApiConstant.POST_NEW_NOTE_CHECKIN,data).then(res => res.data)
-}
-export const getListNoteApi = (data: any) =>{
-  createApi().get(ApiConstant.GET_LIST_NOTE_API,data).then(res => res.data)
-}
-export const createImageCheckinApi = (data:any) =>{
-  createApi().post(ApiConstant.CREATE_IMAGE_CHECKIN,data).then(res => res.data)
-}
+  createApi()
+    .get(ApiConstant.GET_NOTE_USER_RECEIVED)
+    .then(res => res.data);
+};
+export const postNoteUser = (data: any) => {
+  createApi()
+    .post(ApiConstant.POST_NEW_NOTE_CHECKIN, data)
+    .then(res => res.data);
+};
+export const getListNoteApi = (data: any) => {
+  createApi().get(ApiConstant.GET_LIST_NOTE_API, data);
+};
+export const createImageCheckinApi = (data: any) => {
+  createApi()
+    .post(ApiConstant.CREATE_IMAGE_CHECKIN, data)
+    .then(res => res.data);
+};

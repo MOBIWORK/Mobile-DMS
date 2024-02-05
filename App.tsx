@@ -29,7 +29,7 @@ import {PortalProvider} from './src/components/common/portal';
 import BackgroundGeolocation, {
   Subscription,
 } from 'react-native-background-geolocation';
-// import {InstalledApps} from 'react-native-launcher-kit';
+import RNInstalledApplication from 'react-native-installed-application';
 import {AppService} from './src/services';
 
 let codePushOptions = {
@@ -83,16 +83,28 @@ function App(): JSX.Element {
     const onLocation: Subscription = BackgroundGeolocation.onLocation(
       location => {
         if (Platform.OS === 'android' && location.mock) {
-          // const apps = InstalledApps.getApps();
-         
-          AppService.addFakeGPS({
-            datetime_fake: new Date().getTime(),
-            location_fake: {
-              lat: location.coords.latitude,
-              long: location.coords.longitude,
-            },
-            list_app: JSON.stringify([]),
-          });
+          RNInstalledApplication.getApps()
+            .then((apps: any) => {
+              const allListAppName = apps.map((item: any) => item.appName);
+              const filter = 'com';
+              // const listName = alllistAppName.filter((item: any) => {
+              //   return item.test(filter);
+              // });
+              const listName = allListAppName.filter(function (str: string) {
+                return str.indexOf(filter) === -1;
+              });
+              AppService.addFakeGPS({
+                datetime_fake: new Date().getTime(),
+                location_fake: {
+                  lat: location.coords.latitude,
+                  long: location.coords.longitude,
+                },
+                list_app: JSON.stringify(listName),
+              });
+            })
+            .catch((error: any) => {
+              console.log(error);
+            });
         }
       },
     );
