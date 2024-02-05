@@ -50,6 +50,7 @@
     "react-native-gesture-handler": "^2.14.0",
     "react-native-gifted-charts": "1.3.33",
     "react-native-image-picker": "4.10.3",
+    "react-native-installed-application": "^1.0.6",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-mmkv": "^2.11.0",
     "react-native-pager-view": "^6.2.3",
