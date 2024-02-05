@@ -8,32 +8,30 @@ import {
   TouchableOpacity,
   ImageStyle,
   Image,
+  Pressable,
 } from 'react-native';
-import React, {useRef, useState, useLayoutEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
-import Mapbox, {Location} from '@rnmapbox/maps';
-import {AppConstant} from '../../../const';
-import {Colors} from '../../../assets';
-import {
-  AppFAB,
-  AppIcons,
-  AppInput,
-  AppText,
-  SvgIcon,
-  showSnack,
-} from '../../../components/common';
+import {ApiConstant, AppConstant} from '../../../const';
+import {Colors, ImageAssets} from '../../../assets';
+import {AppIcons, AppInput, SvgIcon} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
-import {IDataCustomer, RootEkMapResponse} from '../../../models/types';
+import {IDataCustomer, KeyAbleProps} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import BackgroundGeolocation from 'react-native-background-geolocation';
-import {getDetailLocation} from '../../../services/appService';
-import {formatMoney, useSelector} from '../../../config/function';
-import CardAddress, {MainContactAddress} from './CardAddress';
+import {useSelector} from '../../../config/function';
+import CardAddress from './CardAddress';
 import {dispatch} from '../../../utils/redux';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import Mapbox from '@rnmapbox/maps';
+import BackgroundGeolocation, {
+  Location,
+} from 'react-native-background-geolocation';
+import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
+import {AppService} from '../../../services';
+import {CommonUtils} from '../../../utils';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -45,6 +43,8 @@ type Props = {
   addingBottomRef: React.RefObject<BottomSheetMethods>;
   cameraBottomRef: React.RefObject<BottomSheetMethods>;
   imageSource: any;
+  location: Location | null;
+  setLocation: (location: Location) => void;
 };
 
 const FormAdding = (props: Props) => {
@@ -57,64 +57,90 @@ const FormAdding = (props: Props) => {
     valueDate,
     addingBottomRef,
     imageSource,
+    location,
+    setLocation,
   } = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: translate} = useTranslation();
-  const ref = useRef<Mapbox.Camera>(null);
-  const [location, setLocation] = useState<Location | any>({
-    coords: {
-      latitude: 0,
-      longitude: 0,
-    },
-    timestamp: 0,
-  });
-  const [dataLocation, setDataLocation] = useState<string>('');
   const mainAddress = useSelector(state => state.customer.mainAddress);
   const mainContactAddress = useSelector(
     state => state.customer.mainContactAddress,
   );
 
-  const fetchData = async (lat: any, lon: any) => {
-    const data: RootEkMapResponse = await getDetailLocation(lat, lon);
+  // const [location, setLocation] = useState<Location | null>(null);
+  const [value, setValue] = useState<string>('');
+  const mapboxCameraRef = useRef<CameraRef>(null);
 
-    if (data.status === 'OK') {
-      setDataLocation(data.results[0].formatted_address);
-    } else {
-      showSnack({
-        msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
-        type: 'error',
-        interval: 1000,
+  const handleMarkerMap = async (lat: number, lng: number) => {
+    setLocation({
+      // @ts-ignore
+      coords: {
+        latitude: lat,
+        longitude: lng,
+      },
+    });
+    setData(prev => ({...prev, latitude: lat, longitude: lng}));
+    const response: KeyAbleProps = await AppService.getDetailLocation(lat, lng);
+    if (response.status === ApiConstant.STT_OK || 'OK') {
+      setValue(response.results[0].formatted_address);
+    }
+  };
+
+  const handleRegainLocation = () => {
+    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+      .then(cur_location => {
+        mapboxCameraRef.current &&
+          mapboxCameraRef.current.moveTo(
+            [cur_location.coords.longitude, cur_location.coords.latitude],
+            1000,
+          );
+        setLocation(cur_location);
+        setData(prev => ({
+          ...prev,
+          latitude: cur_location.coords.latitude,
+          longitude: cur_location.coords.longitude,
+        }));
+      })
+      .catch(e => console.log('err', e));
+  };
+
+  const handleSearchText = async (text: string) => {
+    if (text) {
+      await CommonUtils.CheckNetworkState();
+      const response: KeyAbleProps = await AppService.autocompleteGeoLocation(
+        text,
+      );
+      if (response.status === ApiConstant.STT_OK || 'OK') {
+        const geometry: any = response.results[0].geometry;
+        setLocation({
+          // @ts-ignore
+          coords: {
+            longitude: geometry.location.lng,
+            latitude: geometry.location.lat,
+          },
+        });
+        setValue(response.results[0].formatted_address);
+        setData(prev => ({
+          ...prev,
+          latitude: geometry.location.latitude,
+          longitude: geometry.location.longitude,
+        }));
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (location) {
+      AppService.getDetailLocation(
+        location.coords.latitude,
+        location.coords.longitude,
+      ).then(response => {
+        if (response.status === ApiConstant.STT_OK || 'OK') {
+          setValue(response.results[0].formatted_address);
+        }
       });
     }
-    // return console.log(data, 'data');
-  };
-
-  const onPressButtonGetLocation = () => {
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-      .then(res => {
-        setLocation(res);
-        showSnack({
-          msg: 'Thành công',
-          type: 'success',
-          interval: 1000,
-        });
-        ref?.current?.flyTo(
-          [res?.coords.longitude, res?.coords?.latitude],
-          1000,
-        );
-      })
-      .catch(err => console.log(err));
-  };
-
-  useLayoutEffect(() => {
-    dispatch(customerActions.getCustomerType());
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-      .then(res => {
-        setLocation(res);
-        fetchData(res?.coords?.latitude, res?.coords?.longitude);
-      })
-      .catch(err => console.log(err));
   }, []);
 
   return (
@@ -129,7 +155,7 @@ const FormAdding = (props: Props) => {
         <View style={styles.containImageCamera}>
           {imageSource !== undefined && imageSource ? (
             <Image
-              source={{uri: imageSource}}
+              source={{uri: `data:image/png;base64,${imageSource}`}}
               resizeMode="cover"
               style={styles.imageStyle}
             />
@@ -148,7 +174,6 @@ const FormAdding = (props: Props) => {
         styles={{marginBottom: 20}}
         onChangeValue={text => {
           setData(prev => ({...prev, customer_name: text}));
-          console.log('text');
         }}
       />
       <AppInput
@@ -161,7 +186,6 @@ const FormAdding = (props: Props) => {
         styles={{marginBottom: 20}}
         onChangeValue={text => {
           setData(prev => ({...prev, customer_code: text}));
-          console.log('text');
         }}
       />
       <AppInput
@@ -241,7 +265,7 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('gland')}
-        value={''}
+        value={valueFilter.router_name ? valueFilter.router_name[0] : ''}
         editable={false}
         isRequire={false}
         contentStyle={styles.contentStyle}
@@ -260,7 +284,7 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('frequency')}
-        value={''}
+        value={valueFilter.frequency ? valueFilter.frequency.toString() : ''}
         editable={false}
         isRequire={false}
         contentStyle={styles.contentStyle}
@@ -277,26 +301,9 @@ const FormAdding = (props: Props) => {
           />
         }
       />
-      {/* <AppInput
-        label={translate('debtLimit')}
-        value={
-          valueFilter.c
-            ? formatMoney(valueFilter.credit_limid[0])
-            : valueFilter.credit_limid[0]
-        }
-        editable={true}
-        isRequire={false}
-        contentStyle={styles.contentStyle}
-        styles={{marginBottom: 20}}
-        hiddenRightIcon={true}
-        onChangeValue={text => {
-          setData(prev => ({...prev, credit_limit: text}));
-          console.log(formatMoney(text));
-        }}
-      /> */}
       <AppInput
         label={translate('description')}
-        value={valueFilter.customer_details}
+        value={valueFilter.customer_details ?? ''}
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
@@ -311,7 +318,7 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('websiteUrl')}
-        value={valueFilter.website}
+        value={valueFilter.website ?? ''}
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
@@ -319,7 +326,7 @@ const FormAdding = (props: Props) => {
         hiddenRightIcon={true}
         onChangeValue={text => setData(prev => ({...prev, website: text}))}
       />
-      <View>
+      <Pressable>
         <View style={styles.contentLabelAddingStyle}>
           <Text style={styles.titleText}>Địa chỉ</Text>
           {Object.keys(mainAddress).length > 0 && (
@@ -352,7 +359,7 @@ const FormAdding = (props: Props) => {
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </Pressable>
       <View>
         <View style={styles.contentLabelAddingStyle}>
           <Text style={styles.titleText}>Người liên hệ</Text>
@@ -390,58 +397,84 @@ const FormAdding = (props: Props) => {
         )}
       </View>
 
-      <View>
+      <Pressable>
         <Text style={styles.titleText}>Vị trí</Text>
-        <View style={styles.contentView}>
-          <Mapbox.MapView
-            pitchEnabled={false}
-            styleURL={Mapbox.StyleURL.Street}
-            attributionEnabled={false}
-            scaleBarEnabled={false}
-            logoEnabled={false}
-            style={styles.mapView}>
-            <Mapbox.Camera
-              // ref={mapboxCameraRef}
-              ref={ref}
-              centerCoordinate={[
-                location?.coords.longitude ?? 0,
-                location?.coords.latitude ?? 0,
-              ]}
-              animationMode={'flyTo'}
-              animationDuration={500}
-              zoomLevel={12}
-            />
-            <View style={styles.locationView}>
-              <SvgIcon source={'MapLocation'} size={24} />
-              <Text numberOfLines={1}>
-                {'  '}
-                {dataLocation}
-              </Text>
+        <View style={[styles.contentView, {height: 320}]}>
+          {location && (
+            <View
+              style={{
+                overflow: 'hidden',
+                width: '100%',
+                flex: 1,
+              }}>
+              <Mapbox.MapView
+                pitchEnabled={false}
+                attributionEnabled={false}
+                scaleBarEnabled={false}
+                styleURL={Mapbox.StyleURL.Street}
+                logoEnabled={false}
+                style={{flex: 1}}
+                onPress={feature =>
+                  handleMarkerMap(
+                    // @ts-ignore
+                    feature.geometry.coordinates[1],
+                    // @ts-ignore
+                    feature.geometry.coordinates[0],
+                  )
+                }>
+                <Mapbox.Camera
+                  ref={mapboxCameraRef}
+                  centerCoordinate={[
+                    location?.coords.longitude ?? 0,
+                    location?.coords.latitude ?? 0,
+                  ]}
+                  animationMode={'flyTo'}
+                  animationDuration={500}
+                  zoomLevel={12}
+                />
+                {location?.coords && (
+                  <Mapbox.MarkerView
+                    coordinate={[
+                      Number(location?.coords.longitude),
+                      Number(location?.coords.latitude),
+                    ]}>
+                    <SvgIcon source={'LocationCheckIn'} size={40} />
+                  </Mapbox.MarkerView>
+                )}
+                <View style={styles.searchContainer}>
+                  <Image
+                    source={ImageAssets.MapPinFillIcon}
+                    style={{width: 24, height: 24}}
+                    resizeMode={'cover'}
+                    tintColor={theme.colors.text_secondary}
+                  />
+                  <TextInput
+                    style={styles.textInput}
+                    numberOfLines={1}
+                    value={value}
+                    onChangeText={setValue}
+                    onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}
+                    onBlur={() => handleSearchText(value)}
+                  />
+                </View>
+                <TouchableOpacity
+                  onPress={handleRegainLocation}
+                  style={styles.regainPosition}>
+                  <Image
+                    source={ImageAssets.MapIcon}
+                    style={{width: 16, height: 16}}
+                    resizeMode={'cover'}
+                    tintColor={theme.colors.bg_default}
+                  />
+                  <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
+                    {translate('currentPosition')}
+                  </Text>
+                </TouchableOpacity>
+              </Mapbox.MapView>
             </View>
-            <View style={styles.location2View}>
-              <SvgIcon source={'iconMap'} size={24} colorTheme="white" />
-              <AppText numberOfLines={1} colorTheme="white" fontSize={14}>
-                {'  '}Vị trí hiện tại
-              </AppText>
-            </View>
-            <Mapbox.MarkerView
-              coordinate={[
-                location?.coords.longitude ?? 0,
-                location?.coords.latitude ?? 0,
-              ]}>
-              <SvgIcon source="Location" size={32} colorTheme="action" />
-            </Mapbox.MarkerView>
-          </Mapbox.MapView>
-          <AppFAB
-            icon="google-maps"
-            visible={true}
-            style={styles.fab}
-            mode={'flat'}
-            onPress={onPressButtonGetLocation}
-            customIconSize={24}
-          />
+          )}
         </View>
-      </View>
+      </Pressable>
     </ScrollView>
   );
 };
@@ -586,4 +619,34 @@ const rootStyles = (theme: AppTheme) =>
       height: '100%',
       borderRadius: 16,
     } as ImageStyle,
+    searchContainer: {
+      width: '90%',
+      alignSelf: 'center',
+      borderRadius: 12,
+      marginHorizontal: 16,
+      flexDirection: 'row',
+      backgroundColor: theme.colors.bg_default,
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: 8,
+      top: -20,
+    } as ViewStyle,
+    textInput: {
+      backgroundColor: theme.colors.bg_default,
+      marginLeft: 8,
+      maxWidth: '90%',
+      padding: 0,
+    } as TextStyle,
+    regainPosition: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.action,
+      maxWidth: '50%',
+      alignSelf: 'flex-end',
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+    } as ViewStyle,
   });

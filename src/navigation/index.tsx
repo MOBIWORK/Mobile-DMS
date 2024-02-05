@@ -22,6 +22,7 @@ import {AppConstant, ScreenConstant} from '../const';
 
 import {
   IDataCustomer,
+  IDataCustomers,
   IProduct,
   ItemNoteVisitDetail,
   NoteType,
@@ -123,7 +124,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
 
   useEffect(() => {
     const appState = AppState.addEventListener('change', handleAppStateChange);
-    if ( dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
     } else {
       return;
@@ -224,7 +225,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.CHECKIN_ORDER_CREATE}
           component={CheckinOrderCreated}
         />
-        <Stack.Screen name={ScreenConstant.ADD_NOTE}   component={AddNote} />
+        <Stack.Screen name={ScreenConstant.ADD_NOTE} component={AddNote} />
         <Stack.Screen name={ScreenConstant.VISIT} component={Index} />
         <Stack.Screen name={ScreenConstant.VISIT_DETAIL} component={Index} />
         <Stack.Screen
@@ -244,7 +245,10 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.NOTE_DETAIL}
           component={NoteDetail}
         />
-        <Stack.Screen name={ScreenConstant.CHECKIN_NOTE_VISIT} component={CheckinNote} />
+        <Stack.Screen
+          name={ScreenConstant.CHECKIN_NOTE_VISIT}
+          component={CheckinNote}
+        />
         <Stack.Screen
           name={ScreenConstant.CHECKIN_LOCATION}
           component={CheckInLocation}
@@ -328,19 +332,19 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN_ORDER_CREATE]: {type: string};
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
+  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomers};
   [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
-  [ScreenConstant.CHECKIN]: {item: any};
+  [ScreenConstant.CHECKIN]: {item: CheckinData};
   [ScreenConstant.UPDATE_SCREEN]: any;
-  [ScreenConstant.TAKE_PICTURE_VISIT]:{data:any};
+  [ScreenConstant.TAKE_PICTURE_VISIT]: {data: any};
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
-  [ScreenConstant.NOTE_DETAIL]: {data:NoteType};
+  [ScreenConstant.NOTE_DETAIL]: {data: NoteType};
   [ScreenConstant.ADD_NOTE]: undefined;
-  [ScreenConstant.CHECKIN_LOCATION]: {type: string; data: VisitListItemType};
+  [ScreenConstant.CHECKIN_LOCATION]: {type: string; data: CheckinData};
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_ORDER]: {type: string};
   [ScreenConstant.REPORT_SCREEN]: undefined;

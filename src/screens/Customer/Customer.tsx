@@ -43,7 +43,7 @@ import {
 } from '../../redux-store/customer-reducer/reducer';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {Location} from 'react-native-background-geolocation';
-import {IDataCustomer, ListCustomerType} from '../../models/types';
+import {IDataCustomer, IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {getCustomer, getCustomerType} from '../../services/appService';
 import {dispatch} from '../../utils/redux';
@@ -80,7 +80,7 @@ const Customer = () => {
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
   const snapPoints = useMemo(() => ['100%'], []);
-  const listCustomer: IDataCustomer[] = useSelector(
+  const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer,
     shallowEqual,
   );
@@ -88,7 +88,7 @@ const Customer = () => {
     state => state.customer.listCustomerType,
     shallowEqual,
   );
-  const [customerData, setCustomerData] = React.useState<IDataCustomer[]>(
+  const [customerData, setCustomerData] = React.useState<IDataCustomers[]>(
     listCustomer ? listCustomer : [],
   );
   const location: Location = useSelector(
@@ -105,7 +105,7 @@ const Customer = () => {
 
   useMemo(() => {
     handleBackgroundLocation();
-    let newData: IDataCustomer[] = [...listCustomer];
+    let newData: IDataCustomers[] = [...listCustomer];
     if (value.first === 'Gần nhất') {
       // console.log(newData,'data')
       const sortData = newData.sort((a, b) => {
@@ -159,6 +159,13 @@ const Customer = () => {
   React.useEffect(() => {
     let mounted: boolean;
     mounted = true;
+    const getDataType = async () => {
+      const response: any = await getCustomerType();
+      if (response?.result?.length > 0) {
+        dispatch(setListCustomerType(response?.result));
+      }
+    };
+    getDataType();
     if (listCustomer.length > 0) {
       setCustomerData(listCustomer);
       const getDataType = async () => {
@@ -169,14 +176,7 @@ const Customer = () => {
       };
       getDataType();
     } else {
-      dispatch(customerActions.onGetCustomer())
-      const getDataType = async () => {
-        const response: any = await getCustomerType();
-        if (response?.result?.length > 0) {
-          dispatch(setListCustomerType(response?.result));
-        }
-      };
-      getDataType();
+      dispatch(customerActions.onGetCustomer());
     }
     mounted = false;
     return () => {

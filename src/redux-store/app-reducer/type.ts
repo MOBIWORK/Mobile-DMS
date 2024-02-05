@@ -1,25 +1,16 @@
 import {ThemeType} from '../../layouts/theme';
-import {
-  MainAddress,
-  MainContactAddress,
-} from '../../screens/Customer/components/CardAddress';
 
-interface ListCustomerType {
-  name: string;
-  customer_group_name: string;
-}
-
-interface ListCity {
+export interface ListCity {
   ma_tinh: string;
   ten_tinh: string;
 }
 
-interface ListDistrict {
+export interface ListDistrict {
   ma_huyen: string;
   ten_huyen: string;
   ma_tinh_thanh: string;
 }
-interface ListWard {
+export interface ListWard {
   ma_xa: string;
   ten_xa: string;
   ma_quan_huyen: string;
@@ -111,7 +102,10 @@ export const GET_LIST_CITY = SLICE_NAME.GET_LIST_CITY + 'GET_LIST_CITY';
 export const GET_LIST_WARD = SLICE_NAME.GET_LIST_WARD + 'GET_LIST_WARD';
 export const GET_LIST_ROUTE = SLICE_NAME.GET_LIST_ROUTE + 'GET_LIST_ROUTE';
 export const POST_NEW_ROUTE = SLICE_NAME.POST_NEW_ROUTE + 'POST_NEW_ROUTE';
-export const POST_NEW_NOTE_CHECK_IN = SLICE_NAME.POST_NEW_NOTE_CHECKIN + 'POST_NEW_NOTE_CHECK_IN';
-export const GET_NOTE_USER_RECEIVED = SLICE_NAME.GET_NOTE_USER_RECEIVED + 'GET_NOTE_USER_RECEIVED';
-export const PUT_IMAGE_CHECKIN = SLICE_NAME.PUT_IMAGE_CHECKIN + 'PUT_IMAGE_CHECKIN';
-export const GET_LIST_NOTE = SLICE_NAME.GET_LIST_NOTE + 'GET_LIST_NOTE'
+export const POST_NEW_NOTE_CHECK_IN =
+  SLICE_NAME.POST_NEW_NOTE_CHECKIN + 'POST_NEW_NOTE_CHECK_IN';
+export const GET_NOTE_USER_RECEIVED =
+  SLICE_NAME.GET_NOTE_USER_RECEIVED + 'GET_NOTE_USER_RECEIVED';
+export const PUT_IMAGE_CHECKIN =
+  SLICE_NAME.PUT_IMAGE_CHECKIN + 'PUT_IMAGE_CHECKIN';
+export const GET_LIST_NOTE = SLICE_NAME.GET_LIST_NOTE + 'GET_LIST_NOTE';

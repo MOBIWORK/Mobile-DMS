@@ -133,6 +133,6 @@ export default FilterListComponent;
 
 export type IFilterType = {
   label: string;
-  value?: string | number;
+  value?: string;
   isSelected: boolean;
 };

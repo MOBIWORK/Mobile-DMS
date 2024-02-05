@@ -262,9 +262,43 @@ export type ReportDebtType = {
   listDebt: ReportDebtListType[];
 };
 export interface IDataCustomer {
+  customer_code: string;
+  customer_name: string;
+  customer_type: string;
+  customer_group: string;
+  territory: string;
+  customer_details?: string;
+  custom_birthday?: number;
+  company?: string;
+  credit_limit?: string;
+  address_title_cus?: string;
+  address_type_cus?: string;
+  detail_address_cus?: string;
+  ward_cus?: string;
+  district_cus?: string;
+  province_cus?: string;
+  first_name?: string;
+  phone?: string;
+  adr_title_contact?: string;
+  adr_type_contact?: string;
+  detail_adr_contact?: string;
+  ward_contact?: string;
+  district_contact?: string;
+  province_contact?: string;
+  is_shipping_address?: boolean;
+  is_primary_address?: boolean;
+  router_name?: any;
+  frequency?: any;
+  website?: string;
+  longitude?: number;
+  latitude?: number;
+  name_image?: '';
+  faceimage?: string;
+}
+export interface IDataCustomers {
   name: string
   customer_name: string
-  customer_code: string
+  customer_id: string
   customer_type: string
   customer_group: string
   territory: string
@@ -276,11 +310,9 @@ export interface IDataCustomer {
   custom_birthday: number
   customer_location_primary: any
   customer_details: any
-  contact: ContactCustomer[]
-  address: AddressCustomer[]
-  cre_limid: CreLimitCustomer[]
-  frequency?:any[]
-  router_name?:string
+  contact: Contact[]
+  address: Address[]
+  cre_limid: CreLimid[]
 }
 
 export interface ContactCustomer {
@@ -301,9 +333,33 @@ export interface AddressCustomer {
   county?: string
 }
 
-export interface CreLimitCustomer {
+export interface CreLimid {
   credit_limit: number
 }
+
+
+//
+// export interface ContactCustomer {
+//   first_name: string;
+//   phone: string;
+//   is_primary_contact: number;
+//   is_billing_contact: number;
+// }
+//
+// export interface AddressCustomer {
+//   name: string;
+//   address_line1: string;
+//   address_line2: any;
+//   city: string;
+//   state: any;
+//   is_primary_address: number;
+//   is_shipping_address: number;
+//   county?: string;
+// }
+//
+// export interface CreLimitCustomer {
+//   credit_limit: number;
+// }
 
 export interface RootEkMapResponse {
   results: ResultEkMapResponse[];
@@ -380,8 +436,8 @@ export type IAlbumImage = {
   id: number | string | any;
   label: string;
   image: {
-    url:string,
-    base64?:string
+    url: string;
+    base64?: string;
   }[];
 };
 
@@ -551,6 +607,16 @@ export type ListCustomerType = {
   customer_group_name: string;
 };
 
+export type ListCustomerTerritory = {
+  name: string;
+  territory_name: string;
+};
+
+export type ListCustomerRoute = {
+  name: string;
+  channel_name: string;
+};
+
 export type IProductPromotion = {
   item_code: string;
   qty: number;
@@ -564,31 +630,30 @@ export type IProductPromotion = {
   uom: string;
   conversion_factor: number;
   delivery_date: string;
-  parent_item? : string
-}
+  parent_item?: string;
+};
 
 export type StaffType = {
-  name: string
-  first_name: string
-  image: any
-  user_id: string
-  designation: any,
-  isCheck? : boolean
-}
-
+  name: string;
+  first_name: string;
+  image: any;
+  user_id: string;
+  designation: any;
+  isCheck?: boolean;
+};
 
 export type ImageCheckIn = {
-  customer_name: string
-  album_id: string
-  album_name: string
-  checkin_id: string
-  customer_id: string
-  customer_code: string
-  long: number
-  lat: number
-  address?: string
-  image: string
-}
+  customer_name: string;
+  album_id: string;
+  album_name: string;
+  checkin_id: string;
+  customer_id: string;
+  customer_code: string;
+  long: number;
+  lat: number;
+  address?: string;
+  image: string;
+};
 
 export type NoteType = {
   name: string

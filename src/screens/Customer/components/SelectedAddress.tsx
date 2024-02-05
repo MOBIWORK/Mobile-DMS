@@ -18,6 +18,11 @@ import {ResponseGenerator} from '../../../saga/app-saga/saga';
 import {AppService} from '../../../services';
 import {ApiConstant, AppConstant} from '../../../const';
 import {IFilterType} from '../../../components/common/FilterListComponent';
+import {
+  ListCity,
+  ListDistrict,
+  ListWard,
+} from '../../../redux-store/app-reducer/type';
 const SelectedAddress: FC<SelectedAddressProps> = ({
   setScreen,
   data,
@@ -39,7 +44,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         : '';
     setData([
       ...data,
-      {type: type, value: item.label!.toString(), id: item.value!},
+      {type: type, value: item.label!.toString(), id: item.value},
     ]);
   };
 
@@ -111,70 +116,59 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
   };
 
   const getListCity = async () => {
-    // switch (data.length) {
-    //   case 0: {
-    //     const response: ResponseGenerator = await AppService.getListCity();
-    //     if (response.status === ApiConstant.STT_OK) {
-    //       const newCity: IFilterType[] = response.data.result.map(
-    //         (item: any) => {
-    //           return {
-    //             label: item.ten_tinh,
-    //             value: item.ma_tinh,
-    //             isSelected: false,
-    //           };
-    //         },
-    //       );
-    //       setListCity(newCity);
-    //     }
-    //     break;
-    //   }
-    //   case 1: {
-    //     const response: ResponseGenerator = await AppService.getListDistrict(
-    //       data[0].id,
-    //     );
-    //     if (response.status === ApiConstant.STT_OK) {
-    //       const newCity: IFilterType[] = response.data.result.map(
-    //         (item: any) => {
-    //           return {
-    //             label: item.ten_tinh,
-    //             value: item.ma_tinh,
-    //             isSelected: false,
-    //           };
-    //         },
-    //       );
-    //       setListCity(newCity);
-    //     }
-    //     break;
-    //   }
-    //   case 2: {
-    //     const response: ResponseGenerator = await AppService.getListWard(
-    //       data[1].value,
-    //     );
-    //     if (response.status === ApiConstant.STT_OK) {
-    //       const newCity: IFilterType[] = response.data.result.map(
-    //         (item: any) => {
-    //           return {
-    //             label: item.ten_tinh,
-    //             value: item.ma_tinh,
-    //             isSelected: false,
-    //           };
-    //         },
-    //       );
-    //       setListCity(newCity);
-    //     }
-    //     break;
-    //   }
-    // }
-    const response: ResponseGenerator = await AppService.getListCity();
-    if (response.status === ApiConstant.STT_OK) {
-      const newCity: IFilterType[] = response.data.result.map((item: any) => {
-        return {
-          label: item.ten_tinh,
-          value: item.ma_tinh,
-          isSelected: false,
-        };
-      });
-      setListCity(newCity);
+    switch (data.length) {
+      case 0: {
+        const response: ResponseGenerator = await AppService.getListCity();
+        if (response.status === ApiConstant.STT_OK) {
+          const newCity: IFilterType[] = response.data.result.map(
+            (item: ListCity) => {
+              return {
+                label: item.ten_tinh,
+                value: item.ma_tinh,
+                isSelected: false,
+              };
+            },
+          );
+          setListCity(newCity);
+        }
+        break;
+      }
+      case 1: {
+        const response: ResponseGenerator = await AppService.getListDistrict(
+          data[0].id,
+        );
+        if (response.status === ApiConstant.STT_OK) {
+          const newCity: IFilterType[] = response.data.result.map(
+            (item: ListDistrict) => {
+              return {
+                label: item.ten_huyen,
+                value: item.ma_huyen,
+                isSelected: false,
+              };
+            },
+          );
+          setListCity(newCity);
+        }
+        break;
+      }
+      case 2: {
+        const response: ResponseGenerator = await AppService.getListWard(
+          data[1].id,
+        );
+        if (response.status === ApiConstant.STT_OK) {
+          const newCity: IFilterType[] = response.data.result.map(
+            (item: ListWard) => {
+              return {
+                label: item.ten_xa,
+                value: item.ma_xa,
+                isSelected: false,
+              };
+            },
+          );
+          setListCity(newCity);
+        }
+        break;
+      }
     }
   };
 
