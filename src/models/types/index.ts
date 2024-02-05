@@ -466,7 +466,7 @@ export type ReportKPIType = {
 };
 type UinitProduct = {
   uom: string;
-  price: number;
+  price_list_rate: number;
   valid_from: string;
   currency: string;
 };
@@ -504,6 +504,7 @@ export type IProduct = {
   discount_percentage: discountProduct[];
   discount: number;
   price: number;
+  unit: DataUnit[]
   isSelected?: boolean;
 };
 
@@ -618,3 +619,35 @@ export type NoteType = {
   creation: string;
   custom_checkin_id: any;
 };
+
+export type CheckinOrderDetail = {
+  list_items: ListItem[]
+  customer: string
+  customer_name: string
+  address_display: string
+  delivery_date: number
+  set_warehouse: string
+  total: number
+  grand_total: number
+  taxes_and_charges: string
+  total_taxes_and_charges: number
+  apply_discount_on: string
+  additional_discount_percentage: number
+  discount_amount: number
+  contact_person: string
+  rounded_total: number
+  tax_amount: number
+  rate: number
+  account_head: string
+  charge_type: string
+}
+
+export interface ListItem {
+  name: string
+  item_name: string
+  item_code: string
+  qty: number
+  uom: string
+  amount: number
+  discount_percentage: number
+}

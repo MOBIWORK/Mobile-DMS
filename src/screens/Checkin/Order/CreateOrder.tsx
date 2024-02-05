@@ -116,7 +116,7 @@ const CreateOrder = () => {
                             source={ImageAssets.IconBill}
                             resizeMode="cover"
                         />
-                        <Text style={[styles.textDescNoDt]}>Chọn sản phẩm</Text>
+                        <Text style={[styles.textDescNoDt]}>{getLabel("selectProduct")}</Text>
                     </View>
                     <View style={[styles.flexSpace as any, { marginTop: 24 }]}>
                         <Button
@@ -132,7 +132,7 @@ const CreateOrder = () => {
                             onPress={() =>
                                 navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT)
                             }>
-                            Chọn sản phẩm
+                            {getLabel("selectProduct")}
                         </Button>
                         <Button
                             style={{ width: '48%', borderColor: colors.action }}
@@ -141,7 +141,7 @@ const CreateOrder = () => {
                             icon="barcode-scan"
                             mode="outlined"
                             onPress={() => console.log('Pressed')}>
-                            Quét mã
+                            {getLabel("scanCode")}
                         </Button>
                     </View>
                 </View>
@@ -499,7 +499,7 @@ const CreateOrder = () => {
                     "company": organization?.company_name || "",            // Lấy cty hiện tại
                     "doctype": "Sales Order",
                     "name": "new-sales-order-hnnkmtrehm",
-                    "transaction_date": "2024-01-27",
+                    "transaction_date": CommonUtils.convertDate(date),
                 }
                 const { data: res, status }: KeyAbleProps = await ProductService.getPromotionalProducts(objecData);
                 if (status === ApiConstant.STT_OK) {
@@ -843,7 +843,7 @@ const CreateOrder = () => {
                 snapPointsCustom={snapPointDetail}>
                 <View style={{ paddingHorizontal: 16 }}>
                     <AppHeader
-                        label={getLabel("totalPrice")}
+                        label={getLabel("product")}
                         backButtonIcon={
                             <AppIcons
                                 name="close-sharp"

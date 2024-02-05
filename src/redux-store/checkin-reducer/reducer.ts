@@ -8,6 +8,7 @@ const initState : TypeState = {
     dataNote : [],
     dataStaff : [],
     dataTypeNote : [],
+    orderDetail : null,
 }
 
 const checkinSlice = createSlice({
@@ -17,13 +18,16 @@ const checkinSlice = createSlice({
         setData : (state , action : PayloadAction<{typeData : string , data :any}>) => {
             switch (action.payload.typeData) {
                 case "note":
-                    state.dataNote = action.payload.data;
+                    void(state.dataNote = action.payload.data);
                     break;
                 case "staff":
-                    state.dataStaff = action.payload.data;
+                    void(state.dataStaff = action.payload.data);
                     break;
                 case "note_type":
-                    state.dataTypeNote = action.payload.data;
+                    void(state.dataTypeNote = action.payload.data);
+                    break;
+                case "detailOrder":
+                    state.orderDetail = action.payload.data;
                     break;
                 default:
                     break;
@@ -37,7 +41,7 @@ const checkinSlice = createSlice({
 
 const getListNoteCheckin = createAction(Actions.GET_NOTE_ACTIONS , (params :any) => ({payload : params}));
 const getListStaff = createAction(Actions.GET_STAFF_ACTIONS , (params :any) => ({payload : params}));
-const getListNoteType = createAction(Actions.GET_NOTETYPE_ACTIONS , () => ({payload : null}));
+const getListNoteType = createAction(Actions.GET_NOTE_TYPE_ACTIONS , () => ({payload : null}));
 
 export const checkinActions = {
     ...checkinSlice.actions,

@@ -72,6 +72,7 @@ export const POST_RETuRN_ORDER =
   URL_PREFIX + '.api.selling.order.create_return_order';
 export const GET_WAREHOUSES =
   URL_PREFIX + '.api.selling.product.list_warehouse';
+export const GET_DETAIL_CHECKIN_ORDER = URL_PREFIX + ".api.selling.order.get_sale_order_by_checkin_id"
 
 //Address
 export const GET_LIST_CITY = '/api/method/mbw_dms.api.location.list_province';

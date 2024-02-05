@@ -63,7 +63,7 @@ const ListProduct = () => {
   );
   
   const {data,totalItem} = useSelector(state => state.product);
-
+  const [page,setPage] = useState<number>(1)
   const [brand, setBrand] = useState<TypeFilter>();
   const [industry, setIndustry] = useState<TypeFilter>();
   const [groupItem, setGroupItem] = useState<TypeFilter>();
@@ -297,7 +297,9 @@ const ListProduct = () => {
       brand: filterBrand.toString(),
       industry: filterIndustry.toString(),
       item_group: filterGroup.toString(),
-      item_name: searchProduct
+      item_name: searchProduct,
+      page_size : 20,
+      page : page
     }))
   }
 
@@ -414,7 +416,7 @@ const ListProduct = () => {
 
   useEffect(() => {
     fetchProduct();
-  }, [filterBrand, filterIndustry, filterGroup, searchProduct])
+  }, [filterBrand, filterIndustry, filterGroup, searchProduct,page])
 
   useEffect(() => {
     setSearchProduct(searchProductValue);
@@ -456,6 +458,7 @@ const ListProduct = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1 }}
           style={{ height: '85%' }}
+          onScrollEndDrag={() => setPage(page + 1)}
           ListEmptyComponent={
             <View
               style={{
