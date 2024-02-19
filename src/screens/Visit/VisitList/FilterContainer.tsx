@@ -1,4 +1,4 @@
-import React, {FC, useLayoutEffect, useMemo, useState} from 'react';
+import React, {FC, useMemo, useState} from 'react';
 import {Pressable, View} from 'react-native';
 import {
   AppBottomSheet,
@@ -10,23 +10,29 @@ import {
 import {AppConstant, DataConstant} from '../../../const';
 import {TextInput} from 'react-native-paper';
 import {useTheme} from '@react-navigation/native';
-import FilterListComponent, {
-  IFilterType,
-} from '../../../components/common/FilterListComponent';
 import {useTranslation} from 'react-i18next';
 import {
   BottomSheetScrollView,
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {ListCustomerRoute, ListCustomerType} from '../../../models/types';
+import {IListVisitParams} from '../../../services/appService';
+import {listFilterType} from '../../Customer/components/data';
+import ListFilterItem from './ListFilterItem';
 
 const FilterContainer: FC<FilterContainerProps> = ({
   bottomSheetRef,
   filterRef,
+  filterValue,
+  setFilter,
+  channelData,
+  customerGroupData,
+  handleFilter,
 }) => {
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-  const {bottom, top} = useSafeAreaInsets();
+  const {bottom} = useSafeAreaInsets();
   const snapPoints = useMemo(() => ['100%'], []);
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
@@ -42,31 +48,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
     AppConstant.VisitFilterType.channel,
   );
 
-  const [channelLabel, setChannelLabel] = useState<string>('Tất cả');
-  const [visitStateLabel, setVisitStateLabel] = useState<string>('Tất cả');
-  const [distanceLabel, setDistanceLabel] = useState<string>('Gần nhất');
-  const [nameLabel, setNameLabel] = useState<string>('A -> Z');
-  const [birthdayLabel, setBirthdayLabel] = useState<string>('Tất cả');
-  const [customerGroupLabel, setCustomerGroupLabel] =
-    useState<string>('Tất cả');
-  const [customerTypeLabel, setCustomerTypeLabel] = useState<string>('Tất cả');
-
-  const [visitStateData, setVisitStateData] = useState<IFilterType[]>(
-    DataConstant.FilterStateData(getLabel),
-  );
-  const [distanceData, setDistanceData] = useState<IFilterType[]>(
-    DataConstant.FilterDistanceData(getLabel),
-  );
-  const [nameData, setNameData] = useState<IFilterType[]>(
-    DataConstant.FilterNameData(getLabel),
-  );
-  const [birthdayData, setBirthdayData] = useState<IFilterType[]>(
-    DataConstant.FilterBirthdayData(getLabel),
-  );
-
-  const [channelData, setChannelData] = useState<IFilterType[]>([]);
-  const [customerGroupData, setCustomerGroupData] = useState<IFilterType[]>([]);
-  const [customerTypeData, setCustomerTypeData] = useState<IFilterType[]>([]);
+  //redux store
 
   const Item: FC<ItemProps> = ({label, value, type}) => {
     return (
@@ -89,110 +71,24 @@ const FilterContainer: FC<FilterContainerProps> = ({
     );
   };
 
-  const _renderTitle = () => {
-    switch (filterType) {
-      case AppConstant.VisitFilterType.channel:
-        return getLabel('gland');
-      case AppConstant.VisitFilterType.state:
-        return getLabel('status');
-      case AppConstant.VisitFilterType.distance:
-        return getLabel('distance');
-      case AppConstant.VisitFilterType.name:
-        return getLabel('sortForName');
-      case AppConstant.VisitFilterType.birthday:
-        return getLabel('dob');
-      case AppConstant.VisitFilterType.customerGroup:
-        return getLabel('groupCustomer');
-      case AppConstant.VisitFilterType.customerType:
-        return getLabel('customerType');
-    }
-  };
-
   const _renderData = () => {
     switch (filterType) {
       case AppConstant.VisitFilterType.channel:
         return channelData;
       case AppConstant.VisitFilterType.state:
-        return visitStateData;
+        return DataConstant.FilterStateData(getLabel);
       case AppConstant.VisitFilterType.distance:
-        return distanceData;
+        return DataConstant.FilterDistanceData(getLabel);
       case AppConstant.VisitFilterType.name:
-        return nameData;
+        return DataConstant.FilterNameData(getLabel);
       case AppConstant.VisitFilterType.birthday:
-        return birthdayData;
+        return DataConstant.FilterBirthdayData(getLabel);
       case AppConstant.VisitFilterType.customerGroup:
         return customerGroupData;
       case AppConstant.VisitFilterType.customerType:
-        return customerTypeData;
+        return listFilterType;
     }
   };
-
-  const handleItemMethod = (
-    item: IFilterType,
-    data: IFilterType[],
-    setLabel: any,
-    setData: any,
-  ) => {
-    const newData = data.map(itemRes => {
-      if (item.label === itemRes.label) {
-        return {...itemRes, isSelected: true};
-      } else {
-        return {...itemRes, isSelected: false};
-      }
-    });
-    setLabel(item.label);
-    setData(newData);
-    filterRef.current && filterRef.current.close();
-  };
-
-  const handleItem = (item: IFilterType) => {
-    switch (filterType) {
-      case AppConstant.VisitFilterType.channel: {
-        handleItemMethod(item, channelData, setChannelLabel, setChannelData);
-        break;
-      }
-      case AppConstant.VisitFilterType.state: {
-        handleItemMethod(
-          item,
-          visitStateData,
-          setVisitStateLabel,
-          setVisitStateData,
-        );
-        break;
-      }
-      case AppConstant.VisitFilterType.distance:
-        handleItemMethod(item, distanceData, setDistanceLabel, setDistanceData);
-        break;
-      case AppConstant.VisitFilterType.name:
-        handleItemMethod(item, nameData, setNameLabel, setNameData);
-        break;
-      case AppConstant.VisitFilterType.birthday:
-        handleItemMethod(item, birthdayData, setBirthdayLabel, setBirthdayData);
-        break;
-      case AppConstant.VisitFilterType.customerGroup:
-        handleItemMethod(
-          item,
-          customerGroupData,
-          setCustomerGroupLabel,
-          setCustomerGroupData,
-        );
-        break;
-      case AppConstant.VisitFilterType.customerType:
-        handleItemMethod(
-          item,
-          customerTypeData,
-          setCustomerTypeLabel,
-          setCustomerTypeData,
-        );
-        break;
-    }
-  };
-
-  useLayoutEffect(() => {
-    setChannelData(FilterData);
-    setCustomerGroupData(FilterData);
-    setCustomerTypeData(FilterData);
-  }, []);
 
   return (
     <>
@@ -222,38 +118,40 @@ const FilterContainer: FC<FilterContainerProps> = ({
           }}>
           <Pressable style={{marginTop: 32, rowGap: 24}}>
             <Item
-              label={getLabel('gland')}
-              value={channelLabel}
+              label={'Tuyến'}
+              value={
+                filterValue?.route ? filterValue.route.channel_name : 'Tất cả'
+              }
               type={AppConstant.VisitFilterType.channel}
             />
             <Item
-              label={getLabel('visitStatus')}
-              value={visitStateLabel}
+              label={'Trạng thái viếng thăm'}
+              value={filterValue?.status ?? 'Tất cả'}
               type={AppConstant.VisitFilterType.state}
             />
             <Item
-              label={getLabel('sortByDistance')}
-              value={distanceLabel}
+              label={'Sắp xếp theo khoảng cách'}
+              value={filterValue?.distance ?? 'Gần nhất'}
               type={AppConstant.VisitFilterType.distance}
             />
             <Item
-              label={getLabel('sortByName')}
-              value={nameLabel}
+              label={'Sắp xếp theo tên'}
+              value={filterValue?.orderby ?? 'A -> Z'}
               type={AppConstant.VisitFilterType.name}
             />
             <Item
-              label={getLabel('customerBirthDay')}
-              value={birthdayLabel}
+              label={'Ngày sinh nhật'}
+              value={filterValue?.birthDay ?? 'Tất cả'}
               type={AppConstant.VisitFilterType.birthday}
             />
             <Item
-              label={getLabel('groupCustomer')}
-              value={customerGroupLabel}
+              label={'Nhóm khách hàng'}
+              value={filterValue?.customer_group ?? 'Tất cả'}
               type={AppConstant.VisitFilterType.customerGroup}
             />
             <Item
-              label={getLabel('customerType')}
-              value={customerTypeLabel}
+              label={'Loại khách hàng'}
+              value={filterValue?.customer_type ?? 'Tất cả'}
               type={AppConstant.VisitFilterType.customerType}
             />
           </Pressable>
@@ -269,14 +167,16 @@ const FilterContainer: FC<FilterContainerProps> = ({
           }}>
           <AppButton
             style={{width: '45%', backgroundColor: colors.bg_neutral}}
-            label={getLabel('reset')}
+            label={'Đặt lại'}
             styleLabel={{color: colors.text_secondary}}
-            onPress={() => console.log('bỏ qua')}
+            onPress={() => {
+              setFilter({});
+            }}
           />
           <AppButton
             style={{width: '45%'}}
             label={'Áp dụng'}
-            onPress={() => console.log('áp dụng')}
+            onPress={handleFilter}
           />
         </View>
       </AppBottomSheet>
@@ -289,11 +189,12 @@ const FilterContainer: FC<FilterContainerProps> = ({
         <BottomSheetScrollView
           style={{paddingBottom: bottom + 16}}
           onLayout={handleContentLayout}>
-          <FilterListComponent
-            title={_renderTitle() ?? ''}
-            data={_renderData() ?? []}
-            handleItem={handleItem}
-            onClose={() => filterRef.current && filterRef.current.close()}
+          <ListFilterItem
+            filterRef={filterRef}
+            type={filterType}
+            valueFilter={filterValue}
+            setValueFilter={setFilter}
+            data={_renderData()}
           />
         </BottomSheetScrollView>
       </AppBottomSheet>
@@ -303,6 +204,11 @@ const FilterContainer: FC<FilterContainerProps> = ({
 interface FilterContainerProps {
   bottomSheetRef: any;
   filterRef: any;
+  filterValue: IListVisitParams;
+  setFilter: (value: any) => void;
+  channelData: ListCustomerRoute[];
+  customerGroupData: ListCustomerType[];
+  handleFilter: () => void;
 }
 interface ItemProps {
   label: string;
@@ -310,13 +216,3 @@ interface ItemProps {
   type: string;
 }
 export default FilterContainer;
-const FilterData: IFilterType[] = [
-  {label: 'Tất cả', isSelected: true},
-  {label: 'Đồng hồ', isSelected: false},
-  {label: 'Máy tính', isSelected: false},
-  {label: 'Bàn phím', isSelected: false},
-  {label: 'Bàn phím', isSelected: false},
-  {label: 'Bàn phím', isSelected: false},
-  {label: 'Bàn phím', isSelected: false},
-  {label: 'Bàn phím', isSelected: false},
-];

@@ -1,10 +1,8 @@
-import axios from 'axios';
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY, API_URL} from '@env';
 import {client} from '../config/client';
 import {VisitListItemType} from '../models/types';
-import {GET_CUSTOMER_TERRITORY} from '../const/api.const';
 
 export type ILogin = {
   usr: string;
@@ -86,6 +84,21 @@ export type ICheckFakeGPS = {
   list_app: string;
 };
 
+export type IListVisitParams = {
+  view_mode?: 'list' | 'map';
+  page_size?: number;
+  page_number?: number;
+  route?: any;
+  distance?: string;
+  status?: 'active' | 'lock' | string;
+  orderby?: 'asc' | 'desc' | string;
+  birthDay?: string;
+  birthday_from?: number;
+  birthday_to?: number;
+  customer_group?: string;
+  customer_type?: string;
+};
+
 export const login = (data: ILogin, deleteHeader: boolean) =>
   createApi(deleteHeader).post(ApiConstant.POST_USER_LOGIN, data);
 
@@ -147,9 +160,9 @@ export const autocompleteGeoLocation = (autocompleteText: string) =>
       `https://api.ekgis.vn/v2/geocode/autocomplete?text=${autocompleteText}&api_key=${API_EK_KEY}`,
     )
     .then(res => res.data);
-export const getCustomerVisit = () =>
+export const getCustomerVisit = (data?: IListVisitParams) =>
   createApi()
-    .get(ApiConstant.GET_CUSTOMER_VISIT)
+    .get(ApiConstant.GET_CUSTOMER_VISIT, data)
     .then(res => res.data);
 
 export const getSystemConfig = () =>
