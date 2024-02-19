@@ -86,6 +86,12 @@ const AddingNewCustomer = () => {
   const mainContactAddress = useSelector(
     state => state.customer.mainContactAddress,
   );
+  const lisCustomerRoute = useSelector(
+    state => state.customer.listCustomerRoute,
+  );
+  const listCustomerTerritory = useSelector(
+    state => state.customer.listCustomerTerritory,
+  );
 
   const snapPoint = useMemo(() => ['40%'], []);
   const snapPointAdding = useMemo(
@@ -209,8 +215,12 @@ const AddingNewCustomer = () => {
   }, []);
 
   useLayoutEffect(() => {
-    getCustomerTerritory();
-    getCustomerRoute();
+    if (listCustomerTerritory.length === 0) {
+      getCustomerTerritory();
+    }
+    if (lisCustomerRoute.length === 0) {
+      getCustomerRoute();
+    }
   }, []);
 
   return (
