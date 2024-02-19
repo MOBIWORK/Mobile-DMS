@@ -1,14 +1,89 @@
 import { CheckinOrderDetail, NoteType, StaffType } from "../../models/types";
+import { Colors } from "../../layouts/theme";
+import { SvgIconTypes } from "../../assets/svgIcon";
 
 
 export const SLICE_NAME = "CHECKIN_SLICE";
 
-export type TypeState = {
-    dataNote : NoteType[],
-    dataStaff  : StaffType[],
-    dataTypeNote : any[],
-    orderDetail : CheckinOrderDetail | null
+export interface IItemCheckIn {
+    icon: SvgIconTypes;
+    name: string;
+    isRequire: boolean;
+    isDone: boolean;
+    screenName: any,
+    backgroundColor: keyof Colors
+    type?: string,
+    key : string
 }
+
+export type TypeState = {
+    dataNote: NoteType[],
+    dataStaff: StaffType[],
+    dataTypeNote: any[],
+    orderDetail: CheckinOrderDetail | null,
+    categoriesCheckin: any[]
+}
+
+export const categoriesCheckinList: IItemCheckIn[] = [
+    {
+        icon: 'OrangeBox',
+        isDone: false,
+        isRequire: true,
+        name: 'Kiểm tồn',
+        screenName: 'CHECKIN_INVENTORY',
+        backgroundColor: 'orangeBackground',
+        key : "inventory"
+    },
+    {
+        icon: 'CameraPurple',
+        isDone: false,
+        isRequire: false,
+        name: 'Chụp ảnh',
+        screenName: 'TAKE_PICTURE_VISIT',
+        backgroundColor: 'purpleBackground',
+        key : "camera"
+
+    },
+    {
+        icon: 'IconOrder',
+        isDone: false,
+        isRequire: true,
+        name: 'Đặt hàng',
+        screenName: 'CHECKIN_ORDER',
+        backgroundColor: 'blueBackground',
+        type: "ORDER",
+        key : "order"
+    },
+    {
+        icon: 'GreenEdit',
+        isDone: false,
+        isRequire: false,
+        name: 'Ghi chú',
+        screenName: 'CHECKIN_NOTE_VISIT',
+        backgroundColor: 'greenBackground',
+        key : "note"
+    },
+    {
+        icon: 'RedLocation',
+        isDone: false,
+        isRequire: false,
+        name: 'Vị trí',
+        screenName: 'CHECKIN_LOCATION',
+        backgroundColor: 'redBackground',
+        key : "location"
+    },
+    {
+        icon: 'BlueUndo',
+        isDone: false,
+        isRequire: false,
+        name: 'Trả hàng',
+        screenName: 'CHECKIN_ORDER',
+        backgroundColor: 'undoBackground',
+        type: "RETURN_ORDER",
+        key : "return_order"
+    },
+];
+
 
 export const GET_NOTE_ACTIONS = "GET_NOTE_ACTIONS";
 export const GET_STAFF_ACTIONS = "GET_STAFF_ACTIONS";

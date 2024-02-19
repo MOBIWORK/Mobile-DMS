@@ -20,6 +20,7 @@ import { dispatch } from '../../../utils/redux';
 import { productActions } from '../../../redux-store/product-reducer/reducer';
 import { CheckinService } from '../../../services';
 import FilterListComponent, { IFilterType } from '../../../components/common/FilterListComponent';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 
 const CheckinInventory = () => {
 
@@ -34,17 +35,18 @@ const CheckinInventory = () => {
     const [detailProduct, setDetailProduct] = useState<IProduct | any>();
     const products = useSelector(state => state.product.dataSelected);
     const dataCheckin = useSelector(state => state.app.dataCheckIn);
-    const [labelBottonSheet,setLabelBottonSheet] = useState<string>("");
-    const [dataBottomSheet,setDataBottomSheet] =useState<IFilterType[]>([])
-    const isDisabled = useMemo(()=> products.length > 0 ? false : true,[products]);
+    const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
+    const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
+    const [dataBottomSheet, setDataBottomSheet] = useState<IFilterType[]>([])
+    const isDisabled = useMemo(() => products.length > 0 ? false : true, [products]);
 
-    const onBackScreen = ()=>{
+    const onBackScreen = () => {
         dispatch(productActions.setProductSelected([]))
         navigation.goBack()
-    } 
+    }
 
     const updateProduct = () => {
-        if(detailProduct) {
+        if (detailProduct) {
             const newData = products.map(item => item.item_code === detailProduct.item_code ? detailProduct : item);
             dispatch(productActions.setProductSelected(newData))
         }
@@ -75,38 +77,41 @@ const CheckinInventory = () => {
         }
     }
 
-    const onChangeData = (item : IFilterType | any) =>{
+    const onChangeData = (item: IFilterType | any) => {
         switch (labelBottonSheet) {
-            case "unit":{
-                    if (detailProduct) {
-                        const newData = { ...detailProduct, stock_uom: item.label}
-                        setDetailProduct(newData);
-                    }
+            case "unit": {
+                if (detailProduct) {
+                    const newData = { ...detailProduct, stock_uom: item.label }
+                    setDetailProduct(newData);
                 }
+            }
                 break;
-        
+
             default:
                 break;
         }
         if (bottomSheetData.current) bottomSheetData.current.close()
     }
 
-    const onSubmit = async () => { 
-        const newItems = products.map(item => ({
-            item_code : item.item_code,
-            item_unit : item.stock_uom,
-            quantity : item.quantity,
-            exp_time : new Date(item.end_of_life).getTime() / 1000
-        }))
-        const objectData = {
-            "customer_code": dataCheckin.item.customer_code,//id khách hàng
-            "customer_id": dataCheckin.item.customer_name,//mã khách hàng
-            "customer_name": dataCheckin.item.name,//tên khách hàng
-            "customer_address":dataCheckin.item.customer_primary_address,
-            "inventory_items":newItems
+    const onSubmit = async () => {
+        if (products.length > 0) {
+            const newItems = products.map(item => ({
+                item_code: item.item_code,
+                item_unit: item.stock_uom,
+                quantity: item.quantity,
+                exp_time: new Date(item.end_of_life).getTime() / 1000
+            }))
+            const objectData = {
+                "customer_code": dataCheckin.item.customer_code,//id khách hàng
+                "customer_id": dataCheckin.item.customer_name,//mã khách hàng
+                "customer_name": dataCheckin.item.name,//tên khách hàng
+                "customer_address": dataCheckin.item.customer_primary_address,
+                "inventory_items": newItems
+            }
+            const { status, data } = await CheckinService.checkinInventory(objectData);
+            if (status === ApiConstant.STT_OK) onBackScreen();
         }
-        const {status ,data} = await CheckinService.checkinInventory(objectData);
-        if(status === ApiConstant.STT_OK) onBackScreen();
+        completeCheckin();
     }
 
     const removeItem = (id: string) => {
@@ -184,10 +189,10 @@ const CheckinInventory = () => {
                         label={getLabel("unit")}
                         value={detailProduct?.stock_uom || ""}
                         editable={false}
-                        onPress={()=>onOpenBottonSheetData('unit')}
+                        onPress={() => onOpenBottonSheetData('unit')}
                         rightIcon={
                             <TextInput.Icon
-                                onPress={()=>onOpenBottonSheetData('unit')}
+                                onPress={() => onOpenBottonSheetData('unit')}
                                 icon={'chevron-down'}
                                 style={{ width: 24, height: 24 }}
                                 color={colors.text_secondary}
@@ -198,7 +203,7 @@ const CheckinInventory = () => {
                         label={getLabel("quantity")}
                         value={detailProduct?.quantity?.toString() || ""}
                         hiddenRightIcon
-                        onChangeValue={(txt: string) => setDetailProduct({...detailProduct, quantity: txt == "" ? 0 : parseInt(txt) })}
+                        onChangeValue={(txt: string) => setDetailProduct({ ...detailProduct, quantity: txt == "" ? 0 : parseInt(txt) })}
                         inputProp={{
                             keyboardType: 'numeric'
                         }}
@@ -241,6 +246,12 @@ const CheckinInventory = () => {
             </View>
         );
     };
+
+    const completeCheckin = () => {
+        const newData = categoriesCheckin.map(item => item.key === "inventory" ? ({ ...item, isDone: true }) : item);
+        dispatch(checkinActions.setDataCategoriesCheckin(newData));
+        navigation.goBack();
+    }
 
     return (
         <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
@@ -316,11 +327,11 @@ const CheckinInventory = () => {
 
             </AppContainer>
 
-            <AppButton 
-                disabled={isDisabled} 
-                label={getLabel("completed")} 
-                style={{ width: "100%", marginBottom: 20 ,backgroundColor : isDisabled ? colors.bg_disable : colors.primary}} 
-                onPress={onSubmit} 
+            <AppButton
+                disabled={isDisabled}
+                label={getLabel("completed")}
+                style={{ width: "100%", marginBottom: 20, backgroundColor: isDisabled ? colors.bg_disable : colors.primary }}
+                onPress={onSubmit}
             />
             <AppBottomSheet bottomSheetRef={bottomSheetRefDetail} snapPointsCustom={snapPointsDetailPr}>
                 {renderUiBottomSheetDetailProduct()}

@@ -35,6 +35,7 @@ const CheckinOrder = () => {
     const type = router.params.type;
     const dataCheckin = useSelector(state => state.app.dataCheckIn);
     const orderDetail = useSelector(state => state.checkin.orderDetail)
+    const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
 
     const fetchDataOrder = async () => {
         if (type == "ORDER") {
@@ -67,7 +68,7 @@ const CheckinOrder = () => {
                         </View>
                     </View>
                 </AppContainer>
-                <AppButton label={getLabel("completed")} style={styles.footerBt} onPress={() => console.log("123")} />
+                <AppButton label={getLabel("completed")} style={styles.footerBt} onPress={() => completeCheckin()} />
             </View>
         )
     }
@@ -211,12 +212,19 @@ const CheckinOrder = () => {
                     <AppButton
                         label={getLabel("orderCreated")}
                         style={styles.button}
-                        onPress={() => console.log("oke")}
+                        onPress={() => completeCheckin()}
                     />
                 </View>
 
             </ErrorBoundary>
         )
+    }
+
+    const completeCheckin = () => {
+        const typ = type == "ORDER" ? "order" : "return_order"
+        const newData = categoriesCheckin.map(item => item.key === typ ? ({ ...item, isDone: true }) : item);
+        dispatch(checkinActions.setDataCategoriesCheckin(newData));
+        navigation.goBack();
     }
 
     useLayoutEffect(() => {

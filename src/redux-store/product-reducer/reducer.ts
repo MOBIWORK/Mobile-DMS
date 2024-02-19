@@ -2,7 +2,7 @@ import { PayloadAction, createAction, createSlice } from "@reduxjs/toolkit";
 import { DataType, StateType } from "./type";
 import * as Actions from "./type"
 import { PramsTypeProduct } from "../../services/productService";
-import { IProduct } from "../../models/types";
+import { IProduct, KeyAbleProps } from "../../models/types";
 
 const SLICE_NAME = "PRODUCT_SLICE";
 
@@ -28,6 +28,21 @@ function mergeArrays(arr1: any[], arr2: any[]) {
     return result;
 }
 
+function mergeArraysSelectProduct(arr1: IProduct[], arr2: IProduct[]) {
+    const newArr: IProduct[] = [];
+    for (let i = 0; i < arr2.length; i++) {
+        let e1 = arr2[i];
+        for (let j = 0; j < arr1.length; j++) {
+            let e2 = arr1[j];
+            if (e2.item_code === e1.item_code) {
+                e1 = { ...e1, quantity: e1.quantity + e2.quantity }
+            }
+        }
+        newArr.push(e1)
+    }
+    return newArr
+}
+
 const productSlice = createSlice({
     name: SLICE_NAME,
     initialState: initState,
@@ -38,7 +53,8 @@ const productSlice = createSlice({
             state.totalItem = action.payload.total
         },
         setProductSelected: (state, action: PayloadAction<IProduct[]>) => {
-            state.dataSelected = action.payload
+            const newData = mergeArraysSelectProduct(state.dataSelected,action.payload);
+            state.dataSelected = newData
         },
         setMessage: (state, action: PayloadAction<string>) => {
             state.message = action.payload

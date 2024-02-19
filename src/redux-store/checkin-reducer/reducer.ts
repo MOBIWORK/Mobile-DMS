@@ -1,5 +1,5 @@
 import { PayloadAction, createAction, createSlice } from "@reduxjs/toolkit";
-import { SLICE_NAME,TypeState } from "./type";
+import { SLICE_NAME,TypeState ,categoriesCheckinList} from "./type";
 import * as Actions from "./type"
 
 
@@ -9,6 +9,7 @@ const initState : TypeState = {
     dataStaff : [],
     dataTypeNote : [],
     orderDetail : null,
+    categoriesCheckin :categoriesCheckinList
 }
 
 const checkinSlice = createSlice({
@@ -34,7 +35,12 @@ const checkinSlice = createSlice({
             }
         },
         resetData : (state , action : PayloadAction)=>{
-            state = initState
+            state.categoriesCheckin = categoriesCheckinList;
+            state.dataNote = [];
+            state.orderDetail = null
+        },
+        setDataCategoriesCheckin : (state,action : PayloadAction<Actions.IItemCheckIn[]>) =>{
+            state.categoriesCheckin = action.payload
         }
     }
 });
