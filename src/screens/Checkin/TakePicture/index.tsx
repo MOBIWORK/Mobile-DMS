@@ -72,7 +72,7 @@ const TakePicture = () => {
 
       for (let index = 0; index < albumImageData.length; index++) {
         if (data?.current) {
-          data.current.album_id = albumImageData[index].id;
+          data.current.album_id = String(albumImageData[index].id);
           data.current.album_name = albumImageData[index].label;
         }
         const element = albumImageData[index].image;
@@ -96,7 +96,7 @@ const TakePicture = () => {
     }
   }, [albumImageData, data]);
 
-
+console.log(data.current,'dataCurrent')
 
 
   const handleCamera = async (item: IAlbumImage) => {
@@ -118,7 +118,7 @@ const TakePicture = () => {
 
         return updatedState;
       });
-    });
+    },200,200);
   };
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {

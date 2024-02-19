@@ -6,12 +6,16 @@ import {
 import RNFS from 'react-native-fs';
 export const openImagePickerCamera = async(
   callBack: (image: string | undefined, base64?: string) => void,
+  maxWidth?:number,
+  maxHeight?:number
 ) => {
+  maxWidth=2000,
+  maxHeight=2000;
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     includeBase64: true,
-    maxHeight: 200,
-    maxWidth:200,
+    maxHeight: maxHeight,
+    maxWidth:maxWidth,
     presentationStyle: 'fullScreen',
     quality:0.5
     
@@ -36,19 +40,26 @@ export const openImagePickerCamera = async(
   });
 };
 
-export const openImagePicker = (
-  callBack: (image: string | undefined) => void,
+export const openImagePicker = async (
+  callBack: (image: string | undefined,base64?:any) => void,
   isUri?: boolean,
+ maxWidth?:number,
+ maxHeight?:number
 ) => {
+  maxWidth=2000,
+  maxHeight=2000;
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     includeBase64: true,
-    maxHeight: 2000,
-    maxWidth: 2000,
+    maxHeight:maxWidth,
+    maxWidth: maxHeight,
     presentationStyle: 'fullScreen',
+    quality:0.5
   };
+  let base64Image: string;
 
-  launchImageLibrary(options, response => {
+
+ await launchImageLibrary(options, async (response) => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
     } else if (response.errorMessage) {
@@ -57,7 +68,10 @@ export const openImagePicker = (
       const selectedImage = isUri
         ? response.assets[0].base64
         : response.assets[0].uri;
-      callBack(selectedImage);
+        base64Image = await RNFS.readFile(selectedImage!, 'base64').then(res => {
+          return res;
+        });
+      callBack(selectedImage,base64Image);
     }
   });
 };

@@ -58,22 +58,26 @@ export type CheckinData = {
 };
 
 export interface DMSConfigMobile {
-  batbuoc_chupanh: number;
-  batbuoc_ghichu: number;
-  batbuoc_kiemton: number;
-  checkout_ngoaisaiso: number;
-  docstatus: number;
-  doctype: string;
-  idx: number;
-  kb_vitringoaisaiso: number;
-  name: string;
-  owner: string;
-  saiso_chophep_checkout_ngoaisaiso: number;
-  saiso_chophep_kb_vitringoaisaiso: number;
-  soluong_album: number;
-  soluong_anh: number;
-  tgcheckin_toithieu: number;
-  vt_ngoaituyen: number;
+  name: string
+  owner: string
+  modified: string
+  modified_by: string
+  docstatus: number
+  idx: string
+  config_name: string
+  vt_ngoaituyen: number
+  kb_vitringoaisaiso: number
+  saiso_chophep_kb_vitringoaisaiso: number
+  checkout_ngoaisaiso: number
+  saiso_chophep_checkout_ngoaisaiso: number
+  tgcheckin_toithieu: number
+  thoigian_toithieu: number
+  batbuoc_kiemton: number
+  batbuoc_chupanh: number
+  soluong_album: number
+  soluong_anh: number
+  batbuoc_ghichu: number
+  doctype: string
 }
 
 export type ICheckFakeGPS = {
