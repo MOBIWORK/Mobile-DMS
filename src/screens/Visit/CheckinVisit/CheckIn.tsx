@@ -1,26 +1,25 @@
-import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import React, { useCallback, useState, useEffect, useRef, useMemo } from 'react';
+import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import React, {useCallback, useState, useEffect, useRef,useMemo} from 'react';
 import {
   Block,
   AppText as Text,
   AppSwitch as Switch,
   SvgIcon,
 } from '../../../components/common/';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { NavigationProp, RouterProp } from '../../../navigation';
+import {  useRoute } from '@react-navigation/native';
+import {  RouterProp } from '../../../navigation';
 import { AppTheme, useTheme } from '../../../layouts/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Modal } from 'react-native-paper';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
-import { CheckinData } from '../../../services/appService';
-import { useSelector } from '../../../config/function';
-import { shallowEqual } from 'react-redux';
-import { dispatch } from '../../../utils/redux';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import {CheckinData, DMSConfigMobile} from '../../../services/appService';
+import {decimalMinutesToTime, useSelector} from '../../../config/function';
+import {shallowEqual} from 'react-redux';
+import {dispatch} from '../../../utils/redux/index';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const CheckIn = () => {
-  const { goBack } = useNavigation<NavigationProp>();
   const theme = useTheme();
   const styles = rootStyles(theme);
   const [show, setShow] = useState(false);
@@ -37,13 +36,20 @@ const CheckIn = () => {
       : params.checkin_trangthaicuahang,
   );
   const [elapsedTime, setElapsedTime] = useState(0);
-  const intervalId = useRef<any>()
-  useEffect(() => {
+  const intervalId = useRef<any>();
+  const systemConfig: DMSConfigMobile = useSelector(
+    state => state.app.systemConfig,
+    shallowEqual,
+  );
+  const timeCheckin = useRef(
+    decimalMinutesToTime(systemConfig.thoigian_toithieu),
+  );
 
+  useEffect(() => {
     // Start the interval when the component mounts
     const startInterval = () => {
       intervalId.current = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1);
+        setElapsedTime(prevTime => prevTime + 1);
       }, 1000); // Update every second (1000 milliseconds)
     };
 
@@ -68,22 +74,28 @@ const CheckIn = () => {
     if (title === 'Mở cửa') {
       setTitle('Đóng cửa');
       setStatus(false);
+      dispatch(appActions.setCheckInStoreStatus(false));
     } else {
       setTitle('Mở cửa');
+      dispatch(appActions.setCheckInStoreStatus(true));
       setStatus(true);
     }
   }, []);
+  const isCurrentTimeGreaterOrEqual = (minTime: any) => {
+    const currentTime = elapsedTime;
+    return currentTime >= timeToSeconds(minTime);
+  };
 
-  const onCancelCheckin = ()=>{
-      dispatch(checkinActions.resetData());
-      goBack()
-  }
+  const timeToSeconds = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const totalSeconds = hours * 3600 + minutes * 60;
+    return totalSeconds;
+  };
 
-  useEffect(() => {
-    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
-      // dispatch(appActions.setDataCheckIn((prev:CheckinData) =>({...prev,checkin_trangthaicuahang:status})))
-    }
-  }, [dataCheckIn, status])
+  const onCheckout =  useCallback(() =>{
+      dispatch(appActions.onCheckIn(dataCheckIn))
+      setShow(false)
+  },[dataCheckIn])
 
   const isCompleteCheckin = useMemo(()=>{
     const result = categoriesCheckin.find(item => item.isRequire == true && item.isDone == false);
@@ -169,30 +181,31 @@ const CheckIn = () => {
           })}
         </Block>
       </Block>
-      <TouchableOpacity
+      {isCurrentTimeGreaterOrEqual(timeCheckin.current) ? (
+        <TouchableOpacity style={styles.containContainerButton}>
+          <Block
+            // borderColor="primary"
+            marginLeft={16}
+            borderColor={theme.colors.primary}
+            marginRight={16}
+            colorTheme="bg_default"
+            // style={{borderColor:theme.colors.primary} as ViewStyle}
+            alignItems="center"
+            height={40}
+            justifyContent="center"
+            borderWidth={1}
+            borderRadius={20}>
+            <Text
+              colorTheme="primary"
+              fontSize={16}
+              lineHeight={21}
+              fontWeight="500">
+              Check out
+            </Text>
+          </Block>
+        </TouchableOpacity>
+      ) : null}
 
-        style={styles.containContainerButton}
-      >
-        <Block
-          marginLeft={16}
-          borderColor={theme.colors.primary}
-          marginRight={16}
-          colorTheme={isCompleteCheckin ? "primary" : "bg_default"}
-          alignItems="center"
-          height={40}
-          justifyContent="center"
-          borderWidth={1}
-          borderRadius={20}
-          >
-          <Text
-            colorTheme={isCompleteCheckin ? "bg_default" : "primary"}
-            fontSize={16}
-            lineHeight={21}
-            fontWeight="500">
-            Check out
-          </Text>
-        </Block>
-      </TouchableOpacity>
       <Modal
         visible={show}
         onDismiss={() => setShow(false)}
@@ -222,10 +235,7 @@ const CheckIn = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
-                setShow(false);
-                onCancelCheckin()
-              }}
+              onPress={onCheckout}
               style={styles.containButton('exit')}>
               <Text fontSize={14} colorTheme="white" fontWeight="700">
                 Thoát

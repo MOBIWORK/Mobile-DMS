@@ -326,6 +326,7 @@ const ListVisit = () => {
 
   useLayoutEffect(() => {
     // setLoading(true);
+  
 
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());

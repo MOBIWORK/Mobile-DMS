@@ -97,6 +97,9 @@ const appSlice = createSlice({
     setDataCheckIn: (state, action: PayloadAction<any>) => {
       state.dataCheckIn = action.payload;
     },
+    setCheckInStoreStatus: (state, action: PayloadAction<any>) => {
+      state.dataCheckIn.checkin_trangthaicuahang = action.payload;
+    },
     setListNote: (state, action: PayloadAction<any>) =>
       void (state.dataCheckIn.listNote = action.payload),
       setListImage:(state,action:PayloadAction<any>) =>{
