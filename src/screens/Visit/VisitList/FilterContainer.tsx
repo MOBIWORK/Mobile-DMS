@@ -92,19 +92,19 @@ const FilterContainer: FC<FilterContainerProps> = ({
   const _renderTitle = () => {
     switch (filterType) {
       case AppConstant.VisitFilterType.channel:
-        return 'Tuyến';
+        return getLabel('gland');
       case AppConstant.VisitFilterType.state:
-        return 'Trạng thái';
+        return getLabel('status');
       case AppConstant.VisitFilterType.distance:
-        return 'Khoảng cách';
+        return getLabel('distance');
       case AppConstant.VisitFilterType.name:
-        return 'Sắp xếp theo tên';
+        return getLabel('sortForName');
       case AppConstant.VisitFilterType.birthday:
-        return 'Sinh nhật';
+        return getLabel('dob');
       case AppConstant.VisitFilterType.customerGroup:
-        return 'Nhóm khách hàng';
+        return getLabel('groupCustomer');
       case AppConstant.VisitFilterType.customerType:
-        return 'Loại khách hàng';
+        return getLabel('customerType');
     }
   };
 
@@ -222,37 +222,37 @@ const FilterContainer: FC<FilterContainerProps> = ({
           }}>
           <Pressable style={{marginTop: 32, rowGap: 24}}>
             <Item
-              label={'Tuyến'}
+              label={getLabel('gland')}
               value={channelLabel}
               type={AppConstant.VisitFilterType.channel}
             />
             <Item
-              label={'Trạng thái viếng thăm'}
+              label={getLabel('visitStatus')}
               value={visitStateLabel}
               type={AppConstant.VisitFilterType.state}
             />
             <Item
-              label={'Sắp xếp theo khoảng cách'}
+              label={getLabel('sortByDistance')}
               value={distanceLabel}
               type={AppConstant.VisitFilterType.distance}
             />
             <Item
-              label={'Sắp xếp theo tên'}
+              label={getLabel('sortByName')}
               value={nameLabel}
               type={AppConstant.VisitFilterType.name}
             />
             <Item
-              label={'Ngày sinh nhật'}
+              label={getLabel('customerBirthDay')}
               value={birthdayLabel}
               type={AppConstant.VisitFilterType.birthday}
             />
             <Item
-              label={'Nhóm khách hàng'}
+              label={getLabel('groupCustomer')}
               value={customerGroupLabel}
               type={AppConstant.VisitFilterType.customerGroup}
             />
             <Item
-              label={'Loại khách hàng'}
+              label={getLabel('customerType')}
               value={customerTypeLabel}
               type={AppConstant.VisitFilterType.customerType}
             />
@@ -269,7 +269,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
           }}>
           <AppButton
             style={{width: '45%', backgroundColor: colors.bg_neutral}}
-            label={'Đặt lại'}
+            label={getLabel('reset')}
             styleLabel={{color: colors.text_secondary}}
             onPress={() => console.log('bỏ qua')}
           />

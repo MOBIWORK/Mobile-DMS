@@ -45,6 +45,8 @@ import {getCustomerVisit} from '../../../services/appService';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
+// @ts-ignore
+import StringFormat from 'string-format';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -153,7 +155,7 @@ const ListVisit = () => {
       <View style={{paddingHorizontal: 16}}>
         <AppHeader
           hiddenBackButton
-          label={'Viếng thăm'}
+          label={getLabel('visit')}
           labelStyle={{textAlign: 'left'}}
           rightButton={
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -227,8 +229,10 @@ const ListVisit = () => {
         {isShowListVisit ? (
           <View style={{marginTop: 16, paddingHorizontal: 16}}>
             <Text style={{color: colors.text_secondary}}>
-              Viếng thăm {customerCheckinCount}/{listCustomer?.length} khách
-              hàng
+              {StringFormat(getLabel('customerVisitedCount'), {
+                customerCheckinCount: customerCheckinCount,
+                allCustomer: listCustomer?.length,
+              })}
             </Text>
             {listCustomer && (
               <FlatList
@@ -251,7 +255,6 @@ const ListVisit = () => {
               logoEnabled={false}
               style={{flex: 1}}>
               <Mapbox.Camera
-                // ref={mapboxCameraRef}
                 centerCoordinate={[
                   location?.coords.longitude ?? 0,
                   location?.coords.latitude ?? 0,
