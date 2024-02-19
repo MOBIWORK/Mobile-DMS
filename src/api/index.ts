@@ -56,7 +56,7 @@ const handleErrorResponse = (
 };
 
 const createInstance = (deleteHeader?: boolean) => {
-  const api_key = CommonUtils.storage.getString(AppConstant.Api_key) ;
+  const api_key = CommonUtils.storage.getString(AppConstant.Api_key);
   const api_secret = CommonUtils.storage.getString(AppConstant.Api_secret);
   const header =
     api_key && api_secret ? CommonUtils.Auth_header(api_key, api_secret) : null;
@@ -71,10 +71,11 @@ const createInstance = (deleteHeader?: boolean) => {
   } else if (header) {
     Api.setHeaders({...header});
   }
-
   return Api;
 };
 
-Api.addResponseTransform(response => handleErrorResponse(response, true));
+Api.addResponseTransform(response => {
+  handleErrorResponse(response, true);
+});
 export const createApi = (deleteHeader?: boolean) =>
   createInstance(deleteHeader);

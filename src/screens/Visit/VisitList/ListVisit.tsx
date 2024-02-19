@@ -24,7 +24,11 @@ import {
 import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
-import {VisitListItemType} from '../../../models/types';
+import {
+  ListCustomerRoute,
+  ListCustomerType,
+  VisitListItemType,
+} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
@@ -39,12 +43,21 @@ import {useSelector} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import {
+  customerActions,
+  setListCustomerType,
+} from '../../../redux-store/customer-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
-import {getCustomerVisit} from '../../../services/appService';
+import {
+  getCustomerType,
+  getCustomerVisit,
+  IListVisitParams,
+} from '../../../services/appService';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
+import {CustomerService} from '../../../services';
+import {CommonUtils} from '../../../utils';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -62,6 +75,12 @@ const ListVisit = () => {
   const listCustomer: VisitListItemType[] = useSelector(
     state => state.customer.listCustomerVisit,
   );
+  const lisCustomerRoute = useSelector(
+    state => state.customer.listCustomerRoute,
+  );
+  const customerType: ListCustomerType[] = useSelector(
+    state => state.customer.listCustomerType,
+  );
 
   const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
     getLabel('nearest'),
@@ -69,6 +88,8 @@ const ListVisit = () => {
   const [distanceFilterData, setDistanceFilterData] = useState<IFilterType[]>(
     AppConstant.DistanceFilterData,
   );
+
+  const [filterParams, setFilterParams] = useState<IListVisitParams>({});
 
   const appLoading = useSelector(state => state.app.loadingApp);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
@@ -320,8 +341,8 @@ const ListVisit = () => {
     // setLoading(false);
   }, []);
 
-  const getCustomer = async () => {
-    await getCustomerVisit().then((res: any) => {
+  const getCustomer = async (params?: IListVisitParams) => {
+    await getCustomerVisit(params).then((res: any) => {
       if (Object.keys(res?.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
         const newData = data.filter(item => item.customer_location_primary);
@@ -330,9 +351,61 @@ const ListVisit = () => {
     });
   };
 
+  const getCustomerRoute = async () => {
+    if (lisCustomerRoute.length === 0) {
+      const response: any = await CustomerService.getCustomerRoute();
+      if (response?.result.length > 0) {
+        dispatch(customerActions.setListCustomerRoute(response.result));
+      }
+    }
+  };
+
+  const getDataGroup = async () => {
+    if (customerType.length === 0) {
+      const response: any = await getCustomerType();
+      if (response?.result?.length > 0) {
+        dispatch(setListCustomerType(response?.result));
+      }
+    }
+  };
+
+  const handleFilterData = async () => {
+    filterRef.current && filterRef.current.close();
+    if (Object.keys(filterParams).length > 0) {
+      const birthDayObj: any =
+        filterParams?.birthDay && filterParams.birthDay === 'Hôm nay'
+          ? CommonUtils.dateToDate('today')
+          : filterParams.birthDay === 'Tuần này'
+          ? CommonUtils.dateToDate('weekly')
+          : CommonUtils.dateToDate('weekly');
+      const params: IListVisitParams = {
+        route: filterParams?.route && [`${filterParams.route.name}`],
+        status:
+          filterParams?.status && filterParams.status === 'Đã viếng thăm'
+            ? 'active'
+            : 'lock',
+        orderby:
+          filterParams?.orderby && filterParams.orderby === 'A -> Z'
+            ? 'asc'
+            : 'desc',
+        birthday_from:
+          birthDayObj && new Date(birthDayObj.from_date).getTime() / 1000,
+        birthday_to:
+          birthDayObj && new Date(birthDayObj.to_date).getTime() / 1000,
+        customer_group:
+          filterParams?.customer_group && filterParams.customer_group,
+        customer_type:
+          filterParams?.customer_type && filterParams.customer_type,
+      };
+      await getCustomer(params);
+    }
+  };
+
   useEffect(() => {
     mounted.current = true;
     getCustomer();
+    getCustomerRoute();
+    getDataGroup();
     return () => {
       mounted.current = false;
     };
@@ -348,7 +421,15 @@ const ListVisit = () => {
       ) : (
         _renderContent()
       )}
-      <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
+      <FilterContainer
+        bottomSheetRef={bottomSheetRef}
+        filterRef={filterRef}
+        filterValue={filterParams}
+        setFilter={setFilterParams}
+        channelData={lisCustomerRoute}
+        customerGroupData={customerType}
+        handleFilter={handleFilterData}
+      />
       <AppBottomSheet bottomSheetRef={distanceRef}>
         <FilterListComponent
           title={getLabel('distance')}
