@@ -165,7 +165,8 @@ export const styleLoading = (theme: AppTheme) =>
       backgroundColor: theme.colors.bg_default,
     } as ViewStyle,
     root: {
-      // flex: 1,
+      flex: 1,
+      backgroundColor: theme.colors.white,
     } as ViewStyle,
     containTitle: {
       justifyContent: 'center',

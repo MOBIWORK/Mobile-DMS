@@ -50,7 +50,7 @@ export function* onLoadAppModeAndTheme() {
 export function* onCheckInData(action: PayloadAction) {
   if (appActions.onCheckIn.match(action)) {
     try {
-      // yield put(appActions.onLoadApp())
+      yield put(appActions.onLoadApp())
       
       const response: any = yield* call(postChecking, action.payload);
       console.log(response,'repsonse checkin')
@@ -61,7 +61,7 @@ export function* onCheckInData(action: PayloadAction) {
     } catch (err) {
       console.log(err, 'err');
     } finally {
-      // yield put(appActions.onLoadAppEnd())
+      yield put(appActions.onLoadAppEnd())
     }
   }
 }

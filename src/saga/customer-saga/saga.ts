@@ -1,6 +1,10 @@
-import {all, call, put} from 'typed-redux-saga';
 import {showSnack} from '../../components/common';
-import {customerActions, setCustomer, setCustomerVisit, setListCustomerType} from '../../redux-store/customer-reducer/reducer';
+import {
+  customerActions,
+  setCustomer,
+  setCustomerVisit,
+  setListCustomerType,
+} from '../../redux-store/customer-reducer/reducer';
 import {
   getCustomer,
   getCustomerType,
@@ -8,6 +12,7 @@ import {
 } from '../../services/appService';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
+import {put, call} from '../../utils/typed-redux-saga';
 
 export type ResponseGenerator = {
   config?: any;
@@ -24,29 +29,24 @@ export type ResponseGenerator = {
 export function* onGetCustomer(action: PayloadAction) {
   if (customerActions.onGetCustomer.match(action)) {
     try {
-      // yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(
-        getCustomer,
-        action.payload,
-      );
+      yield put(onLoadApp());
+      const response: ResponseGenerator = yield call(getCustomer);
+      console.log(response, 'response customer');
       if (response.message === 'ok') {
         yield put(setCustomer(response.result?.data));
       }
     } catch (err) {
     } finally {
-      // yield put(onLoadAppEnd());
+      yield put(onLoadAppEnd());
     }
   }
 }
 export function* onGetCustomerType(action: PayloadAction) {
   if (customerActions.getCustomerType.match(action)) {
     try {
-      // yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(
-        getCustomerType,
-        action.payload,
-      );
-      console.log(response,'response customer type')
+      yield put(onLoadApp());
+      const response: ResponseGenerator = yield call(getCustomerType);
+      console.log(response, 'response customer type');
       if (response.message === 'Thành công') {
         yield put(setListCustomerType(response.result));
       } else {
@@ -59,7 +59,7 @@ export function* onGetCustomerType(action: PayloadAction) {
     } catch (err) {
       console.error('err: ', err);
     } finally {
-      // yield put(onLoadAppEnd());
+      yield put(onLoadAppEnd());
     }
   }
 }

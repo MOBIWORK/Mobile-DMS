@@ -127,7 +127,7 @@ const TakePicture = () => {
 
         return updatedState;
       });
-    },200,200);
+    });
   };
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {

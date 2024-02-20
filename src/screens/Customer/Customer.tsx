@@ -49,6 +49,8 @@ import {getCustomer, getCustomerType} from '../../services/appService';
 import {dispatch} from '../../utils/redux';
 import {CommonUtils} from '../../utils';
 // import {dispatch} from '../../utils/redux';
+import { appActions } from '../../redux-store/app-reducer/reducer';
+import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
   customerType: string;
@@ -90,6 +92,8 @@ const Customer = () => {
     state => state.customer.listCustomerType,
     shallowEqual,
   );
+  const appLoading = useSelector(state => state.app.loadingApp,shallowEqual)
+
   const [customerData, setCustomerData] = React.useState<IDataCustomers[]>(
     listCustomer ? listCustomer : [],
   );
@@ -161,6 +165,7 @@ const Customer = () => {
   React.useEffect(() => {
     let mounted: boolean;
     mounted = true;
+    dispatch(appActions.onLoadApp())
     const getDataType = async () => {
       const response: any = await getCustomerType();
       if (response?.result?.length > 0) {
@@ -174,6 +179,7 @@ const Customer = () => {
       dispatch(customerActions.onGetCustomer());
     }
     mounted = false;
+    dispatch(appActions.onLoadAppEnd())
     return () => {
       mounted = false;
     };
@@ -344,7 +350,8 @@ const Customer = () => {
           <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
           {getLabel('customer')}
         </Text>
-        <ListCard data={customerData} />
+        {appLoading ? <SkeletonLoading  loading={appLoading!} /> : <ListCard data={customerData} /> }
+       
       </MainLayout>
 
       <AppBottomSheet

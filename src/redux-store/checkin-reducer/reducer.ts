@@ -45,15 +45,20 @@ const checkinSlice = createSlice({
     }
 });
 
-const getListNoteCheckin = createAction(Actions.GET_NOTE_ACTIONS , (params :any) => ({payload : params}));
-const getListStaff = createAction(Actions.GET_STAFF_ACTIONS , (params :any) => ({payload : params}));
-const getListNoteType = createAction(Actions.GET_NOTE_TYPE_ACTIONS , () => ({payload : null}));
+const getListNoteCheckin = createAction(
+  Actions.GET_NOTE_ACTIONS,
+  (customer_checkin_id: any) => ({payload: customer_checkin_id}),
+);
+const getListStaff = createAction(Actions.GET_STAFF_ACTIONS, (params: any) => ({
+  payload: params,
+}));
+const getListNoteType = createAction(Actions.GET_NOTE_TYPE_ACTIONS);
 
 export const checkinActions = {
-    ...checkinSlice.actions,
-    getListNoteCheckin,
-    getListStaff,
-    getListNoteType
-}
+  ...checkinSlice.actions,
+  getListNoteCheckin,
+  getListStaff,
+  getListNoteType,
+};
 
-export const checkinReducer =  checkinSlice.reducer;
+export const checkinReducer = checkinSlice.reducer;

@@ -1,9 +1,7 @@
-import { CheckinOrderDetail, NoteType, StaffType } from "../../models/types";
-import { Colors } from "../../layouts/theme";
-import { SvgIconTypes } from "../../assets/svgIcon";
+import { SvgIconTypes } from '../../assets/svgIcon';
+import { Colors } from '../../layouts/theme';
+import {CheckinOrderDetail, NoteType, StaffType} from '../../models/types';
 
-
-export const SLICE_NAME = "CHECKIN_SLICE";
 
 export interface IItemCheckIn {
     icon: SvgIconTypes;
@@ -84,7 +82,12 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     },
 ];
 
+export enum Action {
+  GET_NOTE = 'GET_NOTE_',
+  GET_STAFF = 'GET_STAFF_',
+  GET_NOTE_TYPE = 'GET_NOTE_TYPE_',
+}
 
-export const GET_NOTE_ACTIONS = "GET_NOTE_ACTIONS";
-export const GET_STAFF_ACTIONS = "GET_STAFF_ACTIONS";
-export const GET_NOTE_TYPE_ACTIONS = "GET_NOTE_TYPE_ACTIONS";
+export const GET_NOTE_ACTIONS = Action.GET_NOTE + 'GET_NOTE';
+export const GET_STAFF_ACTIONS = Action.GET_STAFF + 'GET_STAFF';
+export const GET_NOTE_TYPE_ACTIONS =Action.GET_NOTE_TYPE + 'GET_NOTE_TYPE';

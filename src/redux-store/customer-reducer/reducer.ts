@@ -44,24 +44,16 @@ const customerSlice = createSlice({
   },
 });
 
-const onGetCustomer = createAction(Actions.GET_CUSTOMER, (data?: any) => ({
-  payload: data,
-}));
+const onGetCustomer = createAction(Actions.GET_CUSTOMER);
 
-const onGetCustomerVisit = createAction(
-  Actions.GET_CUSTOMER_VISIT,
-  (data?: any) => ({payload: data}),
-);
+const onGetCustomerVisit = createAction(Actions.GET_CUSTOMER_VISIT);
 
 const onGetCustomerByName = createAction(
   Actions.GET_CUSTOMER_BY_NAME,
   (name: string) => ({payload: name}),
 );
 
-const getCustomerType = createAction(
-  Actions.GET_CUSTOMER_TYPE,
-  (data?: any) => ({payload: data}),
-);
+const getCustomerType = createAction(Actions.GET_CUSTOMER_TYPE);
 export const customerReducer = customerSlice.reducer;
 
 export const {
