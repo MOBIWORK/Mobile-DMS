@@ -13,7 +13,7 @@ import {
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {call, put} from 'typed-redux-saga';
-import {getCustomerRoute} from '../../services/customerService';
+
 
 export type ResponseGenerator = {
   config?: any;
