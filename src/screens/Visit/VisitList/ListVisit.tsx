@@ -24,11 +24,7 @@ import {
 import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
-import {
-  ListCustomerRoute,
-  ListCustomerType,
-  KeyAbleProps, VisitListItemType,
-} from '../../../models/types';
+import {ListCustomerType, VisitListItemType} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
@@ -409,55 +405,6 @@ const ListVisit = () => {
     }
   };
 
-  const getCustomerRoute = async () => {
-    if (lisCustomerRoute.length === 0) {
-      const response: any = await CustomerService.getCustomerRoute();
-      if (response?.result.length > 0) {
-        dispatch(customerActions.setListCustomerRoute(response.result));
-      }
-    }
-  };
-
-  const getDataGroup = async () => {
-    if (customerType.length === 0) {
-      const response: any = await getCustomerType();
-      if (response?.result?.length > 0) {
-        dispatch(setListCustomerType(response?.result));
-      }
-    }
-  };
-
-  const handleFilterData = async () => {
-    filterRef.current && filterRef.current.close();
-    if (Object.keys(filterParams).length > 0) {
-      const birthDayObj: any =
-        filterParams?.birthDay && filterParams.birthDay === 'Hôm nay'
-          ? CommonUtils.dateToDate('today')
-          : filterParams.birthDay === 'Tuần này'
-          ? CommonUtils.dateToDate('weekly')
-          : CommonUtils.dateToDate('weekly');
-      const params: IListVisitParams = {
-        route: filterParams?.route && [`${filterParams.route.name}`],
-        status:
-          filterParams?.status && filterParams.status === 'Đã viếng thăm'
-            ? 'active'
-            : 'lock',
-        orderby:
-          filterParams?.orderby && filterParams.orderby === 'A -> Z'
-            ? 'asc'
-            : 'desc',
-        birthday_from:
-          birthDayObj && new Date(birthDayObj.from_date).getTime() / 1000,
-        birthday_to:
-          birthDayObj && new Date(birthDayObj.to_date).getTime() / 1000,
-        customer_group:
-          filterParams?.customer_group && filterParams.customer_group,
-        customer_type:
-          filterParams?.customer_type && filterParams.customer_type,
-      };
-      await getCustomer(params);
-    }
-  };
 
   useEffect(() => {
     mounted.current = true;
@@ -473,12 +420,7 @@ const ListVisit = () => {
     <SafeAreaView
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
-      {/* <SkeletonLoading loading={true}  /> */}
-      {appLoading ? (
-        <SkeletonLoading loading={appLoading!} />
-      ) : (
-        _renderContent()
-      )}
+      {_renderContent()}
       <FilterContainer
         bottomSheetRef={bottomSheetRef}
         filterRef={filterRef}
