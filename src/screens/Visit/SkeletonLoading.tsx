@@ -8,6 +8,9 @@ type Props = {
 };
 
 const SkeletonLoading = (props: Props) => {
+  console.log('====================================');
+  console.log(props);
+  console.log('====================================');
   const theme = useTheme();
   const loadingAnimation = useRef(new Animated.Value(1)).current;
   const styles = styleLoading(theme);
@@ -58,7 +61,6 @@ const SkeletonLoading = (props: Props) => {
           <View style={styles.containTitleCard}>
             <Animated.View
               style={[styles.containTitle, {opacity: loadingAnimation}]}>
-              <SvgIcon source="IconUser" size={20} />
               <Animated.View
                 style={[styles.skeletonView, {opacity: loadingAnimation}]}
               />
@@ -77,7 +79,6 @@ const SkeletonLoading = (props: Props) => {
           </View>
           <Animated.View
             style={[styles.containContent, {opacity: loadingAnimation}]}>
-            <SvgIcon source="MapPin" size={20} />
             <Animated.View
               style={[
                 styles.skeletonView,
@@ -87,7 +88,6 @@ const SkeletonLoading = (props: Props) => {
           </Animated.View>
           <Animated.View
             style={[styles.containContent, {opacity: loadingAnimation}]}>
-            <SvgIcon source="Phone" size={20} />
             <Animated.View
               style={[styles.skeletonView, {opacity: loadingAnimation}]}
             />
@@ -117,6 +117,7 @@ const SkeletonLoading = (props: Props) => {
         keyExtractor={(item: any) => item.id.toString()}
         showsVerticalScrollIndicator={false}
         renderItem={renderScene}
+        contentContainerStyle={{rowGap : 20}}
       />
     </View>
   );
@@ -130,18 +131,14 @@ export const styleLoading = (theme: AppTheme) =>
       marginVertical: 8,
       padding: 16,
       borderRadius: 16,
-      backgroundColor: theme.colors.bg_default,
-      // rowGap: 8,
     } as ViewStyle,
     cardCourseContainer: {
-      // height: 133,
-      // flexDirection: 'row',
-      backgroundColor: theme.colors.bg_neutral,
-      marginHorizontal: 16,
-      // justifyContent: 'space-between',
+      backgroundColor: theme.colors.bg_default,
       borderRadius: 16,
+      overflow :"hidden",
       paddingVertical: 10,
-      marginVertical: 16,
+      borderColor : theme.colors.bg_neutral,
+      borderWidth:1
     } as ViewStyle,
     containLoading: {
       flex: 1,
@@ -154,8 +151,7 @@ export const styleLoading = (theme: AppTheme) =>
       height: 15,
       borderRadius: 10,
       paddingHorizontal: 10,
-      marginHorizontal: 10,
-      backgroundColor: theme.colors.bg_default,
+      backgroundColor: theme.colors.bg_neutral,
     } as ViewStyle,
     containContentLoading: {
       flex: 1,
@@ -166,28 +162,27 @@ export const styleLoading = (theme: AppTheme) =>
       width: 250,
       height: 40,
       borderRadius: 4,
-      backgroundColor: theme.colors.bg_neutral,
+      backgroundColor: theme.colors.bg_default,
     } as ViewStyle,
     root: {
       // flex: 1,
-      backgroundColor: theme.colors.white,
     } as ViewStyle,
     containTitle: {
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
     } as ViewStyle,
-    lines: {height: 1, marginVertical: 8, backgroundColor: theme.colors.black},
+    lines: {
+      height: 1,
+      marginVertical: 8, 
+      backgroundColor: theme.colors.border},
     containTitleCard: {
       flexDirection: 'row',
       backgroundColor: theme.colors.bg_neutral,
       marginHorizontal: 16,
       justifyContent: 'space-between',
-      // width:'90%'
     } as ViewStyle,
     containContent: {
-      // justifyContent: 'center',
-      // alignItems: 'center',
       flexDirection: 'row',
       marginHorizontal: 16,
     } as ViewStyle,
@@ -199,7 +194,7 @@ export const styleLoading = (theme: AppTheme) =>
     lastView: {
       width: 91,
       height: 37,
-      backgroundColor: theme.colors.bg_default,
+      backgroundColor: theme.colors.bg_neutral,
       borderRadius: 16,
     } as ViewStyle,
   });

@@ -12,6 +12,7 @@ export interface IItemCheckIn {
   backgroundColor:keyof Colors
   type?:string
 }
+
 export const item: IItemCheckIn[] = [
   {
     icon: 'OrangeBox',

@@ -33,6 +33,8 @@ import {CommonUtils} from '../../../utils';
 import {AppService, CheckinService} from '../../../services';
 import {IUpdateAddress} from '../../../services/checkInService';
 import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
+import { useSelector } from '../../../config/function';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -44,7 +46,7 @@ const CheckInLocation = () => {
   const {bottom} = useSafeAreaInsets();
   const styles = createStyle(theme);
   const {t: getLabel} = useTranslation();
-
+  const categoriesCheckin = useSelector(state =>state.checkin.categoriesCheckin)
   const customer_location: LocationProps =
     route.params?.data &&
     JSON.parse(route.params.data.item.customer_location_primary);
@@ -127,8 +129,15 @@ const CheckInLocation = () => {
     } else {
       navigation.goBack();
     }
+    completeCheckin();
     dispatch(setProcessingStatus(false));
   };
+
+  const completeCheckin = () => {
+    const newData = categoriesCheckin.map(item => item.key === "location" ? ({ ...item, isDone: true }) : item);
+    dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    navigation.goBack();
+}
 
   useLayoutEffect(() => {
     // BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})

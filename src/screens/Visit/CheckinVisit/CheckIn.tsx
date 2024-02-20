@@ -1,29 +1,26 @@
-import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {useCallback, useState,useEffect, useRef} from 'react';
+import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import React, { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import {
   Block,
   AppText as Text,
   AppSwitch as Switch,
   SvgIcon,
 } from '../../../components/common/';
-import moment from 'moment';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation';
-import {AppTheme, useTheme} from '../../../layouts/theme';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Modal} from 'react-native-paper';
-import {item} from './ultil';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, RouterProp } from '../../../navigation';
+import { AppTheme, useTheme } from '../../../layouts/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Modal } from 'react-native-paper';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
-import {CheckinData} from '../../../services/appService';
-import {useSelector} from '../../../config/function';
-import {shallowEqual} from 'react-redux';
+import { CheckinData } from '../../../services/appService';
+import { useSelector } from '../../../config/function';
+import { shallowEqual } from 'react-redux';
 import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-type Props = {};
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 
-const CheckIn = (props: Props) => {
-  const {goBack} = useNavigation<NavigationProp>();
+const CheckIn = () => {
+  const { goBack } = useNavigation<NavigationProp>();
   const theme = useTheme();
   const styles = rootStyles(theme);
   const [show, setShow] = useState(false);
@@ -32,7 +29,7 @@ const CheckIn = (props: Props) => {
     state => state.app.dataCheckIn,
     shallowEqual,
   );
-
+  const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const [status, setStatus] = useState(
     dataCheckIn?.checkin_trangthaicuahang
@@ -40,9 +37,8 @@ const CheckIn = (props: Props) => {
       : params.checkin_trangthaicuahang,
   );
   const [elapsedTime, setElapsedTime] = useState(0);
-   const intervalId = useRef<any>()
+  const intervalId = useRef<any>()
   useEffect(() => {
-
 
     // Start the interval when the component mounts
     const startInterval = () => {
@@ -58,12 +54,12 @@ const CheckIn = (props: Props) => {
   }, []); // The empty dependency array ensures that the effect runs only once
 
   // Format seconds into HH:mm:ss
-  const formatTime = (seconds:any) => {
+  const formatTime = (seconds: any) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
 
-    const pad = (num:number) => (num < 10 ? '0' + num : num);
+    const pad = (num: number) => (num < 10 ? '0' + num : num);
 
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
@@ -78,15 +74,21 @@ const CheckIn = (props: Props) => {
     }
   }, []);
 
-  useEffect(() =>{
-      if(dataCheckIn && Object.keys(dataCheckIn)?.length > 0){
-        // dispatch(appActions.setDataCheckIn((prev:CheckinData) =>({...prev,checkin_trangthaicuahang:status})))
-      }
-  },[dataCheckIn,status])
+  const onCancelCheckin = ()=>{
+      dispatch(checkinActions.resetData());
+      goBack()
+  }
 
-  
+  useEffect(() => {
+    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+      // dispatch(appActions.setDataCheckIn((prev:CheckinData) =>({...prev,checkin_trangthaicuahang:status})))
+    }
+  }, [dataCheckIn, status])
 
-
+  const isCompleteCheckin = useMemo(()=>{
+    const result = categoriesCheckin.find(item => item.isRequire == true && item.isDone == false);
+    return result ? false : true
+  },[categoriesCheckin])
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -162,26 +164,28 @@ const CheckIn = (props: Props) => {
           marginRight={16}
           colorTheme="white"
           borderRadius={16}>
-          {item.map((item, index) => {
+          {categoriesCheckin && categoriesCheckin.map((item, index) => {
             return <ItemCheckIn key={index} item={item} navData={params} />;
           })}
         </Block>
       </Block>
-      <TouchableOpacity style={styles.containContainerButton}>
+      <TouchableOpacity
+
+        style={styles.containContainerButton}
+      >
         <Block
-          // borderColor="primary"
           marginLeft={16}
           borderColor={theme.colors.primary}
           marginRight={16}
-          colorTheme="bg_default"
-          // style={{borderColor:theme.colors.primary} as ViewStyle}
+          colorTheme={isCompleteCheckin ? "primary" : "bg_default"}
           alignItems="center"
           height={40}
           justifyContent="center"
           borderWidth={1}
-          borderRadius={20}>
+          borderRadius={20}
+          >
           <Text
-            colorTheme="primary"
+            colorTheme={isCompleteCheckin ? "bg_default" : "primary"}
             fontSize={16}
             lineHeight={21}
             fontWeight="500">
@@ -220,7 +224,7 @@ const CheckIn = (props: Props) => {
             <TouchableOpacity
               onPress={() => {
                 setShow(false);
-                goBack();
+                onCancelCheckin()
               }}
               style={styles.containButton('exit')}>
               <Text fontSize={14} colorTheme="white" fontWeight="700">
@@ -251,17 +255,17 @@ const rootStyles = (theme: AppTheme) =>
       // marginVertical:16
     } as ViewStyle,
     containButton: (title: string) =>
-      ({
-        backgroundColor:
-          title === 'exit' ? theme.colors.primary : theme.colors.bg_neutral,
-        flex: 1,
-        marginHorizontal: 6,
-        marginVertical: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 8,
-        borderRadius: 20,
-      } as ViewStyle),
+    ({
+      backgroundColor:
+        title === 'exit' ? theme.colors.primary : theme.colors.bg_neutral,
+      flex: 1,
+      marginHorizontal: 6,
+      marginVertical: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 8,
+      borderRadius: 20,
+    } as ViewStyle),
     containContainerButton: {
       marginBottom: 20,
       backgroundColor: theme.colors.bg_neutral,

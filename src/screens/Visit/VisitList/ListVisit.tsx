@@ -24,11 +24,7 @@ import {
 import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
-import {
-  ListCustomerRoute,
-  ListCustomerType,
-  VisitListItemType,
-} from '../../../models/types';
+import {ListCustomerType, VisitListItemType} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
@@ -91,7 +87,7 @@ const ListVisit = () => {
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
 
-  const appLoading = useSelector(state => state.app.loadingApp);
+  const [loading ,setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
   const system = useSelector(state => state.app.systemConfig);
@@ -174,7 +170,7 @@ const ListVisit = () => {
       <View style={{paddingHorizontal: 16}}>
         <AppHeader
           hiddenBackButton
-          label={'Viếng thăm'}
+          label={getLabel("visit")}
           labelStyle={{textAlign: 'left'}}
           rightButton={
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -248,9 +244,13 @@ const ListVisit = () => {
         {isShowListVisit ? (
           <View style={{marginTop: 16, paddingHorizontal: 16}}>
             <Text style={{color: colors.text_secondary}}>
-              Viếng thăm {customerCheckinCount}/{listCustomer?.length} khách
-              hàng
+              {getLabel("visit")} {customerCheckinCount}/{listCustomer?.length} {getLabel("customer").toLocaleLowerCase()}
             </Text>
+            {loading && (
+              <View style={{marginTop : 16}}>
+                <SkeletonLoading loading={loading} />
+              </View>
+            )}
             {listCustomer && (
               <FlatList
                 style={{height: '90%'}}
@@ -342,13 +342,17 @@ const ListVisit = () => {
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
+    setLoading(true)
     await getCustomerVisit(params).then((res: any) => {
-      if (Object.keys(res?.result).length > 0) {
+      setLoading(false)
+      if (res.result.length > 0) {
         const data: VisitListItemType[] = res?.result.data;
         const newData = data.filter(item => item.customer_location_primary);
         dispatch(customerActions.setCustomerVisit(newData));
       }
     });
+    setLoading(false)
+
   };
 
   const getCustomerRoute = async () => {
@@ -401,6 +405,7 @@ const ListVisit = () => {
     }
   };
 
+
   useEffect(() => {
     mounted.current = true;
     getCustomer();
@@ -415,12 +420,7 @@ const ListVisit = () => {
     <SafeAreaView
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
-      {/* <SkeletonLoading loading={true}  /> */}
-      {appLoading ? (
-        <SkeletonLoading loading={appLoading!} />
-      ) : (
-        _renderContent()
-      )}
+      {_renderContent()}
       <FilterContainer
         bottomSheetRef={bottomSheetRef}
         filterRef={filterRef}

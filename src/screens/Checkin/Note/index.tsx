@@ -36,16 +36,22 @@ const CheckinNote = () => {
   const mounted = useRef<boolean>(true);
   const data = useSelector(state => state.checkin.dataNote);
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
-
+  const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
 
   useEffect(() => {
     mounted.current;
     dispatch(checkinActions.getListNoteCheckin({
-      custom_checkin_id : dataCheckin.checkin_id
+      custom_checkin_id: dataCheckin.checkin_id
     }));
     mounted.current = false;
     return () => { };
   }, []);
+
+  const completeCheckin = () => {
+    const newData = categoriesCheckin.map(item => item.key === "note" ? ({ ...item, isDone: true }) : item);
+    dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    navigation.goBack();
+  }
 
   const EmptyNote = () => {
     return (
@@ -109,19 +115,19 @@ const CheckinNote = () => {
     };
 
     return (
-      <View style={{marginTop :20}}>
+      <View style={{ marginTop: 20 }}>
         <View style={styles.flexSpace}>
           <Text>{getLabel("noteList")}</Text>
-            <IconButton
-              icon="plus"
-              iconColor={theme.colors.action}
-              size={12}
-              style={{
-                borderColor :theme.colors.action
-              }}
-              mode='outlined'
-              onPress={() => navigation.navigate(ScreenConstant.ADD_NOTE)}
-            />
+          <IconButton
+            icon="plus"
+            iconColor={theme.colors.action}
+            size={12}
+            style={{
+              borderColor: theme.colors.action
+            }}
+            mode='outlined'
+            onPress={() => navigation.navigate(ScreenConstant.ADD_NOTE)}
+          />
         </View>
         <FlatList
           style={{ width: '100%' }}
@@ -148,7 +154,7 @@ const CheckinNote = () => {
         <AppButton
           style={{ width: '100%' }}
           label={getLabel("completed")}
-          onPress={() => console.log('123')}
+          onPress={() => completeCheckin()}
         />
       </View>
     </MainLayout>
@@ -158,11 +164,11 @@ export default CheckinNote;
 
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
-    flexSpace :{
-      flexDirection :"row",
-      justifyContent:"space-between",
-      alignItems :"center",
-    }as ViewStyle,
+    flexSpace: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    } as ViewStyle,
     header: {
       flex: 0.5,
       alignItems: 'flex-start',
