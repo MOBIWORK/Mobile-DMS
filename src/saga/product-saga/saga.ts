@@ -7,10 +7,6 @@ import { ApiConstant } from "../../const";
 
 export function* getDataProducts(action:PayloadAction){
     if (productActions.onGetData.match(action)) {
-        yield put(productActions.setDataProduct({
-            data : [],
-            total : 0
-        }))
         try {
             const {status , data} = yield call(ProductService.get,action.payload);
             if(status === ApiConstant.STT_OK){
