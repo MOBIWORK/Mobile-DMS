@@ -119,17 +119,17 @@ const AddingNewCustomer = () => {
       address_title_cus: `${newListData.customer_name} address`,
       address_type_cus: address ? 'Billing' : '',
       detail_address_cus: address?.detailAddress,
-      ward_cus: address?.ward?.id ?? '',
-      district_cus: address?.district?.id ?? '',
-      province_cus: address?.city?.id ?? '',
+      ward_cus: String(address?.ward?.id) ?? '',
+      district_cus: String(address?.district?.id) ?? '',
+      province_cus: String(address?.city?.id) ?? '',
       is_primary_address: address.addressOrder,
       is_shipping_address: address.addressGet,
       phone: contact?.phoneNumber ?? '',
       adr_title_contact: `${newListData.customer_name} contact`,
       detail_adr_contact: contact?.addressContact ?? '',
-      ward_contact: contact?.ward?.id ?? '',
-      district_contact: contact?.district?.id ?? '',
-      province_contact: contact?.city?.id ?? '',
+      ward_contact: String(contact?.ward?.id) ?? '',
+      district_contact: String(contact?.district?.id) ?? '',
+      province_contact: String(contact?.city?.id) ?? '',
       first_name: contact?.nameContact ?? '',
       router_name: newListData.router_name[1] ?? '',
       website: newListData.website ?? '',
@@ -192,10 +192,11 @@ const AddingNewCustomer = () => {
   };
 
   const getCustomerRoute = async () => {
-    const response: any = await CustomerService.getCustomerRoute();
-    if (response?.result.length > 0) {
-      dispatch(customerActions.setListCustomerRoute(response.result));
-    }
+    // const response: any = await CustomerService.getCustomerRoute();
+    // if (response?.result.length > 0) {
+    //   dispatch(customerActions.setListCustomerRoute(response.result));
+    // }
+    dispatch(customerActions.onGetCustomerVisit())
   };
   //get Cur Location
   useEffect(() => {

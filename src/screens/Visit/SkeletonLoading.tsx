@@ -8,9 +8,6 @@ type Props = {
 };
 
 const SkeletonLoading = (props: Props) => {
-  console.log('====================================');
-  console.log(props);
-  console.log('====================================');
   const theme = useTheme();
   const loadingAnimation = useRef(new Animated.Value(1)).current;
   const styles = styleLoading(theme);
@@ -165,7 +162,8 @@ export const styleLoading = (theme: AppTheme) =>
       backgroundColor: theme.colors.bg_default,
     } as ViewStyle,
     root: {
-      // flex: 1,
+      flex: 1,
+      backgroundColor: theme.colors.white,
     } as ViewStyle,
     containTitle: {
       justifyContent: 'center',

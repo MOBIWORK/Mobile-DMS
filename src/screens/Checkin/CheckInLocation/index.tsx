@@ -35,6 +35,7 @@ import {IUpdateAddress} from '../../../services/checkInService';
 import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
 import { useSelector } from '../../../config/function';
 import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import { ResponseGenerator } from '../../../saga/app-saga/saga';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -120,7 +121,7 @@ const CheckInLocation = () => {
         city: split[3] ?? '',
         country: 'Việt Nam',
       };
-      const response: KeyAbleProps = await CheckinService.updateCustomerAddress(
+      const response:any = await CheckinService.updateCustomerAddress(
         params,
       );
       if (response?.status === ApiConstant.STT_OK) {

@@ -75,7 +75,7 @@ const TakePicture = () => {
 
       for (let index = 0; index < albumImageData.length; index++) {
         if (data?.current) {
-          data.current.album_id = albumImageData[index].id;
+          data.current.album_id = String(albumImageData[index].id);
           data.current.album_name = albumImageData[index].label;
         }
         const element = albumImageData[index].image;
@@ -332,7 +332,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
     } as ViewStyle,
   });
 
-const ListAlbumFake: IFilterType[] = [
+const ListAlbumFake: any[] = [
   {
     label: 'Album 91',
     value: 1,

@@ -22,6 +22,7 @@ import {AppConstant, ScreenConstant} from '../const';
 
 import {
   IDataCustomer,
+  IDataCustomers,
   IProduct,
   ItemNoteVisitDetail,
   NoteType,
@@ -331,7 +332,7 @@ export type RootStackParamList = {
   [ScreenConstant.CHECKIN_ORDER_CREATE]: {type: string};
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomer};
+  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomers};
   [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
