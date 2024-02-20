@@ -276,7 +276,7 @@ export interface IDataCustomer {
   detail_address_cus?: string;
   ward_cus?: string;
   district_cus?: string;
-  province_cus?: string;
+  province_cus?: string ;
   first_name?: string;
   phone?: string;
   adr_title_contact?: string;

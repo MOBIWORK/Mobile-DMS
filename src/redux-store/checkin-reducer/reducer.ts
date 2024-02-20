@@ -1,6 +1,7 @@
 import { PayloadAction, createAction, createSlice } from "@reduxjs/toolkit";
-import { SLICE_NAME,TypeState ,categoriesCheckinList} from "./type";
+import { TypeState ,categoriesCheckinList} from "./type";
 import * as Actions from "./type"
+import { SLICE_NAME } from "../app-reducer/type";
 
 
 
@@ -13,7 +14,7 @@ const initState : TypeState = {
 }
 
 const checkinSlice = createSlice({
-    name : SLICE_NAME,
+    name : SLICE_NAME.CHECKIN_SLICE,
     initialState : initState,
     reducers : {
         setData : (state , action : PayloadAction<{typeData : string , data :any}>) => {

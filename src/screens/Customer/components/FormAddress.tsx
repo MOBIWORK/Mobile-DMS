@@ -45,7 +45,7 @@ export const AddressType = {
 export type AddressSelected = {
   type: string;
   value: string;
-  id?: string;
+  id?: string | number;
 };
 
 const FormAddress = (props: Props) => {

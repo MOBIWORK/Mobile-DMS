@@ -43,13 +43,15 @@ import {
 } from '../../redux-store/customer-reducer/reducer';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {Location} from 'react-native-background-geolocation';
-import {IDataCustomer, IDataCustomers, ListCustomerType} from '../../models/types';
+import {
+  IDataCustomer,
+  IDataCustomers,
+  ListCustomerType,
+} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {getCustomer, getCustomerType} from '../../services/appService';
-import {dispatch} from '../../utils/redux';
-import {CommonUtils} from '../../utils';
-// import {dispatch} from '../../utils/redux';
-import { appActions } from '../../redux-store/app-reducer/reducer';
+
+import {appActions} from '../../redux-store/app-reducer/reducer';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
@@ -62,6 +64,7 @@ const Customer = () => {
   const {t: getLabel} = useTranslation();
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const dispatch = useDispatch()
   const [value, setValue] = React.useState({
     first: 'Gần nhất',
     second: '',
@@ -92,7 +95,7 @@ const Customer = () => {
     state => state.customer.listCustomerType,
     shallowEqual,
   );
-  const appLoading = useSelector(state => state.app.loadingApp,shallowEqual)
+  const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
 
   const [customerData, setCustomerData] = React.useState<IDataCustomers[]>(
     listCustomer ? listCustomer : [],
@@ -163,15 +166,18 @@ const Customer = () => {
   }, [listCustomer.length, value]);
 
   React.useEffect(() => {
+    console.log(listCustomer,'listCustomer')
     let mounted: boolean;
     mounted = true;
-    dispatch(appActions.onLoadApp())
+    dispatch(appActions.onLoadApp());
     const getDataType = async () => {
       const response: any = await getCustomerType();
       if (response?.result?.length > 0) {
         dispatch(setListCustomerType(response?.result));
       }
     };
+    console.log(dispatch(customerActions.onGetCustomer()), 'res 1');
+
     getDataType();
     if (listCustomer.length > 0) {
       setCustomerData(listCustomer);
@@ -179,7 +185,7 @@ const Customer = () => {
       dispatch(customerActions.onGetCustomer());
     }
     mounted = false;
-    dispatch(appActions.onLoadAppEnd())
+    dispatch(appActions.onLoadAppEnd());
     return () => {
       mounted = false;
     };
@@ -350,8 +356,11 @@ const Customer = () => {
           <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
           {getLabel('customer')}
         </Text>
-        {appLoading ? <SkeletonLoading  loading={appLoading!} /> : <ListCard data={customerData} /> }
-       
+        {appLoading ? (
+          <SkeletonLoading loading={appLoading!} />
+        ) : (
+          <ListCard data={customerData} />
+        )}
       </MainLayout>
 
       <AppBottomSheet

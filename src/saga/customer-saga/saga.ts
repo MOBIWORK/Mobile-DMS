@@ -11,8 +11,9 @@ import {
   getCustomerVisit,
 } from '../../services/appService';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
-import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
-import {put, call} from '../../utils/typed-redux-saga';
+import {PayloadAction} from '@reduxjs/toolkit';
+import {call, put} from 'typed-redux-saga';
+import {getCustomerRoute} from '../../services/customerService';
 
 export type ResponseGenerator = {
   config?: any;
@@ -27,9 +28,11 @@ export type ResponseGenerator = {
 };
 
 export function* onGetCustomer(action: PayloadAction) {
+  console.log('run 0');
   if (customerActions.onGetCustomer.match(action)) {
     try {
       yield put(onLoadApp());
+      console.log('run 1');
       const response: ResponseGenerator = yield call(getCustomer);
       console.log(response, 'response customer');
       if (response.message === 'ok') {
@@ -63,16 +66,17 @@ export function* onGetCustomerType(action: PayloadAction) {
     }
   }
 }
-export function* getCustomerVisitSaga() {
-  console.log('run');
-  try {
-    const response: ResponseGenerator = yield call(getCustomerVisit);
-    console.log(response, 'response');
-    if (Object.keys(response.result?.length > 0)) {
-      yield put(setCustomerVisit(response.result.data));
+export function* getCustomerVisitSaga(action: PayloadAction) {
+  if (customerActions.onGetCustomerVisit.match(action)) {
+    try {
+      const response: ResponseGenerator = yield call(getCustomerVisit);
+      console.log(response, 'response visit');
+      if (Object.keys(response.result?.length > 0)) {
+        yield put(setCustomerVisit(response.result.data));
+      }
+    } catch (err) {
+      console.error('error: ', err);
     }
-  } catch (err) {
-    console.error('error: ', err);
   }
 }
 

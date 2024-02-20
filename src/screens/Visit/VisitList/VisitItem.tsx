@@ -57,8 +57,8 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
     let distance = calculateDistance(
       currentLocation.coords.latitude,
       currentLocation.coords.longitude,
-      location.lat,
-      location.long,
+      location?.lat,
+      location?.long,
     );
     return {location, distance};
   }, [item, currentLocation]);
@@ -75,8 +75,8 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
           kh_ma: item.customer_code,
           kh_ten: item.customer_name,
           kh_diachi: item.customer_primary_address,
-          kh_long: distanceCal.location.long,
-          kh_lat: distanceCal.location.lat,
+          kh_long: distanceCal?.location?.long ?? '',
+          kh_lat: distanceCal?.location?.lat ?? '',
           checkin_giovao: moment(new Date()).format('HH:mm'),
           checkin_pinvao: location.battery.level > 0 ? location.battery.level * 100  : -location.battery.level * 100,
           checkin_khoangcach: distanceCal.distance,

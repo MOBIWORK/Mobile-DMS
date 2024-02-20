@@ -8,9 +8,6 @@ type Props = {
 };
 
 const SkeletonLoading = (props: Props) => {
-  console.log('====================================');
-  console.log(props);
-  console.log('====================================');
   const theme = useTheme();
   const loadingAnimation = useRef(new Animated.Value(1)).current;
   const styles = styleLoading(theme);

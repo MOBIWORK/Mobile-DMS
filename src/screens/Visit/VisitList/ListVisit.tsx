@@ -43,7 +43,7 @@ import {
   customerActions,
   setListCustomerType,
 } from '../../../redux-store/customer-reducer/reducer';
-import {dispatch} from '../../../utils/redux';
+
 import {
   getCustomerType,
   getCustomerVisit,
@@ -54,6 +54,7 @@ import FilterListComponent, {
 } from '../../../components/common/FilterListComponent';
 import {CustomerService} from '../../../services';
 import {CommonUtils} from '../../../utils';
+import {useDispatch} from 'react-redux';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -84,10 +85,11 @@ const ListVisit = () => {
   const [distanceFilterData, setDistanceFilterData] = useState<IFilterType[]>(
     AppConstant.DistanceFilterData,
   );
+  const dispatch = useDispatch();
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
 
-  const [loading ,setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
   const system = useSelector(state => state.app.systemConfig);
@@ -112,7 +114,7 @@ const ListVisit = () => {
   }, []);
 
   const customerCheckinCount = useMemo(() => {
-    if (listCustomer.length > 0) {
+    if ( listCustomer && listCustomer.length > 0) {
       return listCustomer.filter(item => item.is_checkin).length;
     } else {
       return '';
@@ -170,7 +172,7 @@ const ListVisit = () => {
       <View style={{paddingHorizontal: 16}}>
         <AppHeader
           hiddenBackButton
-          label={getLabel("visit")}
+          label={getLabel('visit')}
           labelStyle={{textAlign: 'left'}}
           rightButton={
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -244,10 +246,11 @@ const ListVisit = () => {
         {isShowListVisit ? (
           <View style={{marginTop: 16, paddingHorizontal: 16}}>
             <Text style={{color: colors.text_secondary}}>
-              {getLabel("visit")} {customerCheckinCount}/{listCustomer?.length} {getLabel("customer").toLocaleLowerCase()}
+              {getLabel('visit')} {customerCheckinCount}/{listCustomer?.length}{' '}
+              {getLabel('customer').toLocaleLowerCase()}
             </Text>
             {loading && (
-              <View style={{marginTop : 16}}>
+              <View style={{marginTop: 16}}>
                 <SkeletonLoading loading={loading} />
               </View>
             )}
@@ -326,7 +329,6 @@ const ListVisit = () => {
 
   useLayoutEffect(() => {
     // setLoading(true);
-  
 
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
@@ -343,26 +345,29 @@ const ListVisit = () => {
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
-    setLoading(true)
+    setLoading(true);
     await getCustomerVisit(params).then((res: any) => {
-      setLoading(false)
+      setLoading(false);
       if (res.result.length > 0) {
         const data: VisitListItemType[] = res?.result.data;
         const newData = data.filter(item => item.customer_location_primary);
         dispatch(customerActions.setCustomerVisit(newData));
       }
     });
-    setLoading(false)
-
+    setLoading(false);
   };
 
   const getCustomerRoute = async () => {
+    console.log('run');
     if (lisCustomerRoute.length === 0) {
+
       const response: any = await CustomerService.getCustomerRoute();
       if (response?.result.length > 0) {
         dispatch(customerActions.setListCustomerRoute(response.result));
       }
+      dispatch(customerActions.onGetCustomerVisit());
     }
+    
   };
 
   const getDataGroup = async () => {
@@ -406,18 +411,17 @@ const ListVisit = () => {
     }
   };
 
-
   useEffect(() => {
     mounted.current = true;
-    dispatch(appActions.onLoadApp())
+    dispatch(appActions.onLoadApp());
     getCustomer();
     getCustomerRoute();
     getDataGroup();
-    dispatch(appActions.onLoadAppEnd())
+    dispatch(appActions.onLoadAppEnd());
 
     return () => {
       mounted.current = false;
-      dispatch(appActions.onLoadAppEnd())
+      dispatch(appActions.onLoadAppEnd());
     };
   }, []);
 
