@@ -404,11 +404,15 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
+    dispatch(appActions.onLoadApp())
     getCustomer();
     getCustomerRoute();
     getDataGroup();
+    dispatch(appActions.onLoadAppEnd())
+
     return () => {
       mounted.current = false;
+      dispatch(appActions.onLoadAppEnd())
     };
   }, []);
 

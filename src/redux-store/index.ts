@@ -2,7 +2,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 
 import {allReducer} from './all-reducer';
-
+import {compose,applyMiddleware} from 'redux'
 import {persistStore, persistReducer} from 'redux-persist';
 import {reduxPersistStorage} from '../utils';
 import rootSaga from './root-saga';
@@ -27,7 +27,7 @@ const storeConfig = () => {
     reducer: persistedReducer,
     devTools: devMode,
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({thunk:false}).concat(middlewares),
+      getDefaultMiddleware({thunk:false,serializableCheck: false}).concat(middlewares),
     
     
   });

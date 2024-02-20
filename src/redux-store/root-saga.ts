@@ -11,7 +11,7 @@ function* rootSaga() {
     fork(customerSaga),
     fork(ordersSaga),
     fork(productSaga),
-    // fork(checkinSaga)
+    fork(checkinSaga)
   ]);
 }
 export default rootSaga

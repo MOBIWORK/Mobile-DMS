@@ -118,7 +118,7 @@ console.log(data.current,'dataCurrent')
 
         return updatedState;
       });
-    },200,200);
+    });
   };
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {

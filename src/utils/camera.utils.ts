@@ -3,55 +3,61 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-
-export const openImagePickerCamera = (callBack: () => void) => {
+import RNFS from 'react-native-fs';
+export const openImagePickerCamera = async (
+  callBack: (image: string | undefined, base64?: string) => void,
+) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     includeBase64: true,
-    maxHeight: 2000,
-    maxWidth: 2000,
+    quality: 0.5,
+    maxHeight: 300,
+    maxWidth: 300,
     presentationStyle: 'fullScreen',
   };
+  let base64Image: string;
 
-  launchCamera(options, response => {
+  await launchCamera(options, async response => {
     if (response.didCancel) {
       console.log('User cancelled camera picker');
-    } else {
-      // @ts-ignore
-      if (response.error) {
-        // @ts-ignore
-        console.log('camera picker error: ', response.error);
-      } else {
-        // @ts-ignore
-        callBack(response.uri || response.assets?.[0]?.base64);
-      }
+    } else if (response.errorMessage) {
+      console.log('Camera picker error: ', response.errorMessage);
+    } else if (
+      response?.assets?.[0].uri ||
+      (response.assets && response.assets.length > 0)
+    ) {
+      const selectedImage = response?.assets?.[0].uri;
+      base64Image = await RNFS.readFile(selectedImage!, 'base64').then(res => {
+        return res;
+      });
+      callBack(selectedImage, base64Image);
     }
-  }).finally();
+  });
 };
 
-export const openImagePicker = (callBack: () => void, isUri?: boolean) => {
+export const openImagePicker = (
+  callBack: (image: string | undefined) => void,
+  isBase64?: boolean,
+) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
-    includeBase64: true,
-    maxHeight: 2000,
-    maxWidth: 2000,
+    includeBase64: isBase64 ?? false,
+    quality: 0.5,
+    maxHeight: 300,
+    maxWidth: 300,
     presentationStyle: 'fullScreen',
   };
 
   launchImageLibrary(options, response => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
-    } else {
-      // @ts-ignore
-      if (response.error) {
-        // @ts-ignore
-        console.log('Image picker error: ', response.error);
-      } else {
-        callBack(
-          // @ts-ignore
-          isUri ? response.assets?.[0]?.base64 : response.assets?.[0]?.uri,
-        );
-      }
+    } else if (response.errorMessage) {
+      console.log('Image picker error: ', response.errorMessage);
+    } else if (response.assets && response.assets.length > 0) {
+      const selectedImage = isBase64
+        ? response.assets[0].base64
+        : response.assets[0].uri;
+      callBack(selectedImage);
     }
-  }).finally();
+  });
 };

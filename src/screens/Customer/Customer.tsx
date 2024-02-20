@@ -47,6 +47,8 @@ import {IDataCustomer, IDataCustomers, ListCustomerType} from '../../models/type
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {getCustomer, getCustomerType} from '../../services/appService';
 import {dispatch} from '../../utils/redux';
+import { appActions } from '../../redux-store/app-reducer/reducer';
+import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
   customerType: string;
@@ -88,6 +90,8 @@ const Customer = () => {
     state => state.customer.listCustomerType,
     shallowEqual,
   );
+  const appLoading = useSelector(state => state.app.loadingApp,shallowEqual)
+
   const [customerData, setCustomerData] = React.useState<IDataCustomers[]>(
     listCustomer ? listCustomer : [],
   );
@@ -159,6 +163,7 @@ const Customer = () => {
   React.useEffect(() => {
     let mounted: boolean;
     mounted = true;
+    dispatch(appActions.onLoadApp())
     const getDataType = async () => {
       const response: any = await getCustomerType();
       if (response?.result?.length > 0) {
@@ -168,17 +173,19 @@ const Customer = () => {
     getDataType();
     if (listCustomer.length > 0) {
       setCustomerData(listCustomer);
-      const getDataType = async () => {
-        const response: any = await getCustomerType();
-        if (response?.result?.length > 0) {
-          dispatch(setListCustomerType(response?.result));
-        }
-      };
-      getDataType();
+      // const getDataType = async () => {
+      //   const response: any = await getCustomerType();
+      //   if (response?.result?.length > 0) {
+      //     dispatch(setListCustomerType(response?.result));
+      //   }
+      // };
+      // getDataType();
+      dispatch(customerActions.onGetCustomer())
     } else {
       dispatch(customerActions.onGetCustomer());
     }
     mounted = false;
+    dispatch(appActions.onLoadAppEnd())
     return () => {
       mounted = false;
     };
@@ -349,7 +356,8 @@ const Customer = () => {
           <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
           {getLabel('customer')}
         </Text>
-        <ListCard data={customerData} />
+        {appLoading ? <SkeletonLoading  loading={appLoading!} /> : <ListCard data={customerData} /> }
+       
       </MainLayout>
 
       <AppBottomSheet
