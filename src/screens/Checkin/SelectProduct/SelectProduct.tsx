@@ -520,7 +520,7 @@ const SelectProducts = () => {
                         />
                     </View>
                 )}
-                
+
             </MainLayout>
             <AppBottomSheet bottomSheetRef={bottomSheetRef} snapPointsCustom={snapPoints}>
                 {bottomSheetFilter()}
