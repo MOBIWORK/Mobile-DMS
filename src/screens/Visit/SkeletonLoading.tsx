@@ -1,199 +1,58 @@
-import {StyleSheet, View, Animated, ViewStyle, FlatList} from 'react-native';
-import React, {useEffect, useRef, useCallback} from 'react';
-import {AppTheme, useTheme} from '../../layouts/theme';
-import {AppText, SvgIcon} from '../../components/common';
+import { StyleSheet, View, ViewStyle, FlatList } from 'react-native';
+import React from 'react';
+import { AppTheme, useTheme } from '../../layouts/theme';
+import { SkeletonLoading } from '../../components/common';
 
-type Props = {
-  loading: boolean;
-};
 
-const SkeletonLoading = (props: Props) => {
+const LoadingSkeleton = () => {
+
   const theme = useTheme();
-  const loadingAnimation = useRef(new Animated.Value(1)).current;
   const styles = styleLoading(theme);
-  const item = React.useRef([
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-    {
-      id: 6,
-    },
-  ]).current;
 
-  const animationFade = () => {
-    Animated.sequence([
-      Animated.timing(loadingAnimation, {
-        toValue: 0.4,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(loadingAnimation, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start(() => animationFade());
-  };
-
-  useEffect(() => {
-    animationFade();
-  }, []);
-
-  const renderScene = useCallback(() => {
+  const renderItem = () => {
     return (
-      <Animated.View style={[{opacity: loadingAnimation}]}>
-        <View style={styles.cardCourseContainer}>
-          <View style={styles.containTitleCard}>
-            <Animated.View
-              style={[styles.containTitle, {opacity: loadingAnimation}]}>
-              <Animated.View
-                style={[styles.skeletonView, {opacity: loadingAnimation}]}
-              />
-            </Animated.View>
-            <Animated.View
-              style={[styles.containTitle, {opacity: loadingAnimation}]}>
-              <Animated.View
-                style={[styles.skeletonView, {opacity: loadingAnimation}]}
-              />
-            </Animated.View>
+      <View style={styles.container}>
+          <View style={[styles.flexSpace,{paddingBottom :16 , borderColor :theme.colors.divider,borderBottomWidth :1}]}>
+            <SkeletonLoading width={100} height={25} borderRadius={8}/>
+            <SkeletonLoading width={140} height={30} borderRadius={8}/>
           </View>
-          <View style={{marginHorizontal: 16}}>
-            <Animated.View
-              style={[styles.lines, {opacity: loadingAnimation}]}
-            />
+          <View style={{rowGap :4}}>
+            <SkeletonLoading width={300} height={15} borderRadius={8}/>
+            <SkeletonLoading width={200} height={15} borderRadius={8}/>
           </View>
-          <Animated.View
-            style={[styles.containContent, {opacity: loadingAnimation}]}>
-            <Animated.View
-              style={[
-                styles.skeletonView,
-                {opacity: loadingAnimation, width: '90%'},
-              ]}
-            />
-          </Animated.View>
-          <Animated.View
-            style={[styles.containContent, {opacity: loadingAnimation}]}>
-            <Animated.View
-              style={[styles.skeletonView, {opacity: loadingAnimation}]}
-            />
-          </Animated.View>
-          <Animated.View
-            style={[
-              styles.containContent,
-              styles.addToContainContent,
-              {
-                opacity: loadingAnimation,
-              },
-            ]}>
-            <View style={styles.lastView} />
-            <Animated.View
-              style={[styles.skeletonView, {opacity: loadingAnimation}]}
-            />
-          </Animated.View>
-        </View>
-      </Animated.View>
-    );
-  }, [props.loading]);
+          <View style={[styles.flexSpace,{marginTop :20}]}>
+            <SkeletonLoading width={100} height={40} borderRadius={16}/>
+            <SkeletonLoading width={50} height={20} borderRadius={16}/>
+
+          </View>
+      </View>
+    )
+  }
 
   return (
-    <View style={styles.root}>
+    <View>
       <FlatList
-        data={item}
-        keyExtractor={(item: any) => item.id.toString()}
+        data={new Array(5)}
         showsVerticalScrollIndicator={false}
-        renderItem={renderScene}
-        contentContainerStyle={{rowGap : 20}}
+        renderItem={() => renderItem()}
+        contentContainerStyle={{ rowGap: 20 }}
       />
     </View>
   );
 };
 
-export default SkeletonLoading;
+export default LoadingSkeleton;
 
-export const styleLoading = (theme: AppTheme) =>
-  StyleSheet.create({
-    render: {
-      marginVertical: 8,
-      padding: 16,
-      borderRadius: 16,
-    } as ViewStyle,
-    cardCourseContainer: {
-      backgroundColor: theme.colors.bg_default,
-      borderRadius: 16,
-      overflow :"hidden",
-      paddingVertical: 10,
-      borderColor : theme.colors.bg_neutral,
-      borderWidth:1,
-      marginVertical:8
-    } as ViewStyle,
-    containLoading: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
-    } as ViewStyle,
-    skeletonView: {
-      width: 98,
-      height: 15,
-      borderRadius: 10,
-      paddingHorizontal: 10,
-      backgroundColor: theme.colors.bg_neutral,
-    } as ViewStyle,
-    containContentLoading: {
-      flex: 1,
-      paddingBottom: 4,
-    } as ViewStyle,
-    skeletonSecondView: {
-      marginTop: 10,
-      width: 250,
-      height: 40,
-      borderRadius: 4,
-      backgroundColor: theme.colors.bg_default,
-    } as ViewStyle,
-    root: {
-      flex: 1,
-      backgroundColor: theme.colors.white,
-    } as ViewStyle,
-    containTitle: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
-    } as ViewStyle,
-    lines: {
-      height: 1,
-      marginVertical: 8, 
-      backgroundColor: theme.colors.border},
-    containTitleCard: {
-      flexDirection: 'row',
-      backgroundColor: theme.colors.bg_neutral,
-      marginHorizontal: 16,
-      justifyContent: 'space-between',
-    } as ViewStyle,
-    containContent: {
-      flexDirection: 'row',
-      marginHorizontal: 16,
-    } as ViewStyle,
-    addToContainContent: {
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: 5,
-    } as ViewStyle,
-    lastView: {
-      width: 91,
-      height: 37,
-      backgroundColor: theme.colors.bg_neutral,
-      borderRadius: 16,
-    } as ViewStyle,
-  });
+const styleLoading = (theme: AppTheme) => StyleSheet.create({
+  container: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor :theme.colors.bg_default,
+    borderRadius : 16
+  } as ViewStyle,
+  flexSpace :{
+    flexDirection :"row",
+    alignItems :"center",
+    justifyContent :"space-between"
+  }as ViewStyle
+});
