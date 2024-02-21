@@ -21,6 +21,7 @@ import { ProductService } from '../../../services'
 import { useTranslation } from 'react-i18next'
 import { CommonUtils } from '../../../utils'
 import { AppTheme, useTheme } from '../../../layouts/theme'
+import ItemSkeleton from './ItemSkeleton'
 
 const initFilterValue = {
     label: "",
@@ -42,7 +43,7 @@ const SelectProducts = () => {
     const [dataIndustry, setDataIndustry] = useState<IFilterType[]>([]);
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(20);
-    const { totalItem, data: products } = useSelector(state => state.product);
+    const { totalItem, data: products, isLoading } = useSelector(state => state.product);
     const [data, setData] = useState<IProduct[]>([]);
     const [dataFilter, setDataFilter] = useState<IFilterType[]>([]);
     const [label, setLabel] = useState<string>('');
@@ -120,8 +121,8 @@ const SelectProducts = () => {
                         <View style={[styles.flex as any, styles.itemRowIf]}>
                             <Text style={[styles.labelIfPrd]}>{getLabel("unt")}</Text>
                             <TouchableOpacity activeOpacity={0.6} onPress={() => openBottomSheetDataFilter("unit", item)}>
-                                <View style={[styles.flex as any,styles.containerUnit]}>
-                                    <Text style={[styles.filter , {marginHorizontal: 20 }]}>{item.stock_uom}</Text>
+                                <View style={[styles.flex as any, styles.containerUnit]}>
+                                    <Text style={[styles.filter, { marginHorizontal: 20 }]}>{item.stock_uom}</Text>
                                     <AppIcons
                                         iconType={ICON_TYPE.Feather}
                                         name="chevron-down"
@@ -132,7 +133,7 @@ const SelectProducts = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={[styles.flex as any, styles.itemRowIf, {paddingVertical: 4 }]}>
+                        <View style={[styles.flex as any, styles.itemRowIf, { paddingVertical: 4 }]}>
                             <Text style={[styles.labelIfPrd]}>{getLabel("quantity")}</Text>
                             <View style={[styles.flex as any]}>
                                 <TouchableOpacity
@@ -173,11 +174,11 @@ const SelectProducts = () => {
                             <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_primary, marginLeft: 4 }]}>{CommonUtils.formatCash(item.price.toString())}</Text>
                         </View>
 
-                        <View style={[styles.flex as any, styles.itemRowIf, {borderBottomWidth: 0 }]}>
+                        <View style={[styles.flex as any, styles.itemRowIf, { borderBottomWidth: 0 }]}>
                             <Text style={[styles.labelIfPrd]}>{getLabel("expired")}</Text>
                             <TouchableOpacity activeOpacity={0.6}>
                                 <View style={[styles.flex as any, styles.calenderIcon]}>
-                                    <Text style={[styles.filter,{marginHorizontal: 5 }]}>
+                                    <Text style={[styles.filter, { marginHorizontal: 5 }]}>
                                         {CommonUtils.convertDate(item.end_of_life)}
                                     </Text>
                                     <AppIcons
@@ -433,12 +434,7 @@ const SelectProducts = () => {
     }, [])
 
     useEffect(() => {
-        const newDaata = products.map(item => {
-            let priceUom = item.details.find(item2 => item2.uom === item.stock_uom);
-            let neItem = { ...item, price: priceUom ? priceUom.price_list_rate : 0 }
-            return item.min_order_qty === 0 ? { ...neItem, quantity: 1, discount: 0 } : { ...neItem, quantity: item.min_order_qty, discount: 0 }
-        })
-        setData(newDaata)
+        setData(products)
     }, [products])
 
     useEffect(() => {
@@ -495,7 +491,7 @@ const SelectProducts = () => {
                     </View>
 
                 </View>
-                <View style={[styles.flex as any,styles.titleContent]}>
+                <View style={[styles.flex as any, styles.titleContent]}>
                     <TouchableOpacity onPress={() => onSelectAllProduct()}>
                         <Text style={[styles.action]}>
                             {isSelected ? getLabel("selectAll") : getLabel("deselectAll")}
@@ -505,15 +501,26 @@ const SelectProducts = () => {
                         {getLabel("product").toLowerCase()}
                     </Text>
                 </View>
-                <View style={{ paddingHorizontal: 16}}>
+
+                {isLoading ? (
                     <FlatList
-                        data={data}
-                        renderItem={({ item }) => <View>{renderUiItem(item)}</View> }
-                        onEndReached={() => setPage(page + 1)}
+                        data={new Array(3)}
+                        renderItem={() => <ItemSkeleton />}
                         contentContainerStyle={{ rowGap: 16 }}
                         showsVerticalScrollIndicator={false}
                     />
-                </View>
+                ) : (
+                    <View style={{ paddingHorizontal: 16 }}>
+                        <FlatList
+                            data={data}
+                            renderItem={({ item }) => <View>{renderUiItem(item)}</View>}
+                            onEndReached={() => setPage(page + 1)}
+                            contentContainerStyle={{ rowGap: 16 }}
+                            showsVerticalScrollIndicator={false}
+                        />
+                    </View>
+                )}
+                
             </MainLayout>
             <AppBottomSheet bottomSheetRef={bottomSheetRef} snapPointsCustom={snapPoints}>
                 {bottomSheetFilter()}
@@ -537,12 +544,12 @@ const SelectProducts = () => {
 
 export default SelectProducts;
 
-const createStyles = (theme : AppTheme)=> StyleSheet.create({
-    layout : {
+const createStyles = (theme: AppTheme) => StyleSheet.create({
+    layout: {
         backgroundColor: theme.colors.bg_neutral,
         paddingHorizontal: 0
-    }as ViewStyle,
-    container :{
+    } as ViewStyle,
+    container: {
         backgroundColor: theme.colors.bg_default,
         paddingHorizontal: 16,
         paddingBottom: 16
@@ -551,7 +558,7 @@ const createStyles = (theme : AppTheme)=> StyleSheet.create({
         fontSize: 16,
         lineHeight: 24,
         fontWeight: "500",
-        color : theme.colors.action
+        color: theme.colors.action
     } as TextStyle,
     flex: {
         flexDirection: "row",
@@ -561,19 +568,19 @@ const createStyles = (theme : AppTheme)=> StyleSheet.create({
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "400",
-        color : theme.colors.text_primary
+        color: theme.colors.text_primary
     } as TextStyle,
     action: {
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "500",
-        color : theme.colors.action
+        color: theme.colors.action
     } as TextStyle,
     labelIfPrd: {
         fontSize: 16,
         lineHeight: 24,
         fontWeight: "400",
-        color : theme.colors.text_disable
+        color: theme.colors.text_disable
     } as TextStyle,
     itemProduct: {
         paddingHorizontal: 16,
@@ -584,8 +591,8 @@ const createStyles = (theme : AppTheme)=> StyleSheet.create({
         paddingVertical: 12,
         justifyContent: "space-between",
         borderBottomWidth: 1,
-        borderColor : theme.colors.border
-    }as ViewStyle,
+        borderColor: theme.colors.border
+    } as ViewStyle,
     containerButton: {
         justifyContent: 'space-between',
         flexDirection: 'row',
@@ -595,29 +602,29 @@ const createStyles = (theme : AppTheme)=> StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
     } as ViewStyle,
-    titleContent :{
+    titleContent: {
         justifyContent: "space-between",
         marginTop: 24,
         paddingHorizontal: 16,
         marginBottom: 16
-    }as ViewStyle,
-    searchStyle :{
+    } as ViewStyle,
+    searchStyle: {
         backgroundColor: theme.colors.bg_neutral,
         borderRadius: 10,
         height: 50,
         flex: 1
-    }as ViewStyle,
-    calenderIcon : {
+    } as ViewStyle,
+    calenderIcon: {
         borderRadius: 8,
         borderWidth: 1,
         borderColor: theme.colors.border,
         paddingVertical: 8,
-        paddingHorizontal: 5 
-    }as ViewStyle,
-    containerUnit : {
+        paddingHorizontal: 5
+    } as ViewStyle,
+    containerUnit: {
         borderRadius: 8,
         borderWidth: 1,
         borderColor: theme.colors.border,
         paddingVertical: 8
-    }as ViewStyle
+    } as ViewStyle
 })

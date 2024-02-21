@@ -48,7 +48,12 @@ const productSlice = createSlice({
     initialState: initState,
     reducers: {
         setDataProduct: (state, action: PayloadAction<DataType>) => {
-            state.data = mergeArrays(state.data , action.payload.data);
+            const newDaata =  action.payload.data.map(item => {
+                let priceUom = item.details.find(item2 => item2.uom === item.stock_uom);
+                let neItem = { ...item, price: priceUom ? priceUom.price_list_rate : 0 }
+                return item.min_order_qty === 0 ? { ...neItem, quantity: 1, discount: 0 } : { ...neItem, quantity: item.min_order_qty, discount: 0 }
+            })
+            state.data = mergeArrays(state.data , newDaata);
             state.totalItem = action.payload.total
             state.isLoading = false;
         },
