@@ -226,7 +226,6 @@ export default React.memo(VisitItem,isEquals);
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
     viewContainer: {
-      marginVertical: 8,
       padding: 16,
       borderRadius: 16,
       backgroundColor: theme.colors.bg_default,
