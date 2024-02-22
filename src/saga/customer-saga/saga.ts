@@ -10,10 +10,16 @@ import {
   getCustomerType,
   getCustomerVisit,
 } from '../../services/appService';
-import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  onLoadApp,
+  onLoadAppEnd,
+} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {call, put} from 'typed-redux-saga';
-
+import {CustomerService} from '../../services';
+import {ApiConstant, ScreenConstant} from '../../const';
+import {navigate} from '../../navigation';
 
 export type ResponseGenerator = {
   config?: any;
@@ -28,7 +34,6 @@ export type ResponseGenerator = {
 };
 
 export function* onGetCustomer(action: PayloadAction) {
-  console.log('run 0');
   if (customerActions.onGetCustomer.match(action)) {
     try {
       yield put(onLoadApp());
@@ -76,6 +81,26 @@ export function* getCustomerVisitSaga(action: PayloadAction) {
       }
     } catch (err) {
       console.error('error: ', err);
+    }
+  }
+}
+
+export function* addingNewCustomer(action: PayloadAction) {
+  if (customerActions.addingCustomer.match(action)) {
+    try {
+      yield* put(appActions.onLoadApp());
+      const response: ResponseGenerator = yield* call(
+        CustomerService.addNewCustomer,
+        action.payload,
+      );
+      if (response?.status === ApiConstant.STT_OK) {
+        navigate(ScreenConstant.MAIN_TAB, {
+          screen: ScreenConstant.CUSTOMER,
+        });
+      }
+    } catch (err) {
+    } finally {
+      yield* put(appActions.onLoadAppEnd());
     }
   }
 }

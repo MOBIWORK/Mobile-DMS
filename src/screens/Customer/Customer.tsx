@@ -8,7 +8,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, {useRef, useMemo, useCallback} from 'react';
+import React, {useRef, useMemo, useCallback, useEffect} from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -43,15 +43,9 @@ import {
 } from '../../redux-store/customer-reducer/reducer';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {Location} from 'react-native-background-geolocation';
-import {
-  IDataCustomer,
-  IDataCustomers,
-  ListCustomerType,
-} from '../../models/types';
+import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
-import {getCustomer, getCustomerType} from '../../services/appService';
-
-import {appActions} from '../../redux-store/app-reducer/reducer';
+import {getCustomerType} from '../../services/appService';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
@@ -64,7 +58,7 @@ const Customer = () => {
   const {t: getLabel} = useTranslation();
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState({
     first: 'Gần nhất',
     second: '',
@@ -112,7 +106,8 @@ const Customer = () => {
     bottomRef2.current?.snapToIndex(0);
   };
 
-  useMemo(() => {
+  // console.log(listCustomer[0].contact,'listCustomer') 
+  useEffect(() => {
     handleBackgroundLocation();
     let newData: IDataCustomers[] = [...listCustomer];
     if (value.first === 'Gần nhất') {
@@ -166,17 +161,15 @@ const Customer = () => {
   }, [listCustomer.length, value]);
 
   React.useEffect(() => {
-    console.log(listCustomer,'listCustomer')
     let mounted: boolean;
     mounted = true;
-    dispatch(appActions.onLoadApp());
+
     const getDataType = async () => {
       const response: any = await getCustomerType();
       if (response?.result?.length > 0) {
         dispatch(setListCustomerType(response?.result));
       }
     };
-    console.log(dispatch(customerActions.onGetCustomer()), 'res 1');
 
     getDataType();
     if (listCustomer.length > 0) {
@@ -185,7 +178,7 @@ const Customer = () => {
       dispatch(customerActions.onGetCustomer());
     }
     mounted = false;
-    dispatch(appActions.onLoadAppEnd());
+
     return () => {
       mounted = false;
     };
@@ -356,11 +349,7 @@ const Customer = () => {
           <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
           {getLabel('customer')}
         </Text>
-        {appLoading ? (
-          <SkeletonLoading loading={appLoading!} />
-        ) : (
-          <ListCard data={customerData} />
-        )}
+        <ListCard data={customerData} appLoading={appLoading!} />
       </MainLayout>
 
       <AppBottomSheet

@@ -143,15 +143,16 @@ const AddingNewCustomer = () => {
     // console.log('newObj', updateListData);
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
-    await CommonUtils.CheckNetworkState();
-    const response: KeyAbleProps = await CustomerService.addNewCustomer(
-      updateListData,
-    );
-    if (response?.status === ApiConstant.STT_OK) {
-      navigation.navigate(ScreenConstant.MAIN_TAB, {
-        screen: ScreenConstant.CUSTOMER,
-      });
-    }
+    dispatch(customerActions.addingCustomer(updateListData));
+    // await CommonUtils.CheckNetworkState();
+    // const response: KeyAbleProps = await CustomerService.addNewCustomer(
+    //   updateListData,
+    // );
+    // if (response?.status === ApiConstant.STT_OK) {
+    //   navigation.navigate(ScreenConstant.MAIN_TAB, {
+    //     screen: ScreenConstant.CUSTOMER,
+    //   });
+    // }
     dispatch(setProcessingStatus(false));
   };
 
@@ -196,7 +197,7 @@ const AddingNewCustomer = () => {
     // if (response?.result.length > 0) {
     //   dispatch(customerActions.setListCustomerRoute(response.result));
     // }
-    dispatch(customerActions.onGetCustomerVisit())
+    dispatch(customerActions.onGetCustomerVisit());
   };
   //get Cur Location
   useEffect(() => {

@@ -3,13 +3,21 @@ import React from 'react';
 import CardView from './CardView';
 import {IDataCustomers} from '../../../models/types';
 import isEqual from 'react-fast-compare';
+import SkeletonLoading from '../../Visit/SkeletonLoading';
 
 type Props = {
   data: IDataCustomers[];
+  appLoading:boolean
 };
 
+
 const ListCard = (props: Props) => {
+  if(props.appLoading){
+    <SkeletonLoading loading={props.appLoading} />
+    
+  }
   return (
+    
     <FlatList
       data={props.data}
       decelerationRate={'fast'}

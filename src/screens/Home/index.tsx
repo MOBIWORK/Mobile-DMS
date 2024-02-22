@@ -6,7 +6,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {View, Text, Image, Linking, Platform, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Linking,
+  Platform,
+  Alert,
+  Pressable,
+} from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -322,28 +330,28 @@ const HomeScreen = () => {
 
   useEffect(() => {
     // setLoading(true);
-const getLocation = async () =>{
-    await BackgroundGeolocation.getCurrentPosition(
-      {
-        samples: 1,
-        timeout: 10,
-        maximumAge: 0,
-        desiredAccuracy: 10,
-      },
-      location => {
-        setLocation(location);
-        console.log(location,'location')
-        dispatch(appActions.onSetCurrentLocation(location));
-        mapboxCameraRef.current?.flyTo(
-          [location.coords.longitude, location.coords.latitude],
-          1000,
-        );
-      },
-      // err => backgroundErrorListener(err),
-    );
-    }
+    const getLocation = async () => {
+      await BackgroundGeolocation.getCurrentPosition(
+        {
+          samples: 1,
+          timeout: 10,
+          maximumAge: 0,
+          desiredAccuracy: 10,
+        },
+        location => {
+          setLocation(location);
+          console.log(location, 'location');
+          dispatch(appActions.onSetCurrentLocation(location));
+          mapboxCameraRef.current?.flyTo(
+            [location.coords.longitude, location.coords.latitude],
+            1000,
+          );
+        },
+        // err => backgroundErrorListener(err),
+      );
+    };
     // setLoading(false);
-   getLocation()
+    getLocation();
   }, []);
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
@@ -568,8 +576,8 @@ const getLocation = async () =>{
 
                   <View style={styles.map}>
                     <Mapbox.MapView
-                      // pitchEnabled={false}
-                      scrollEnabled={false}
+                      pitchEnabled={false}
+                      scrollEnabled={true}
                       attributionEnabled={false}
                       // scaleBarEnabled={false}
                       styleURL={Mapbox.StyleURL.Street}
@@ -583,7 +591,7 @@ const getLocation = async () =>{
                         ]}
                         animationMode={'flyTo'}
                         animationDuration={500}
-                        zoomLevel={12}
+                        zoomLevel={17}
                       />
                       <Mapbox.UserLocation
                         visible={true}

@@ -22,7 +22,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {useNavigation, useTheme} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {ListCustomerType, VisitListItemType} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
@@ -54,7 +54,8 @@ import FilterListComponent, {
 } from '../../../components/common/FilterListComponent';
 import {CustomerService} from '../../../services';
 import {CommonUtils} from '../../../utils';
-import {useDispatch} from 'react-redux';
+import {shallowEqual, useDispatch} from 'react-redux';
+import {AppTheme, useTheme} from '../../../layouts/theme';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -64,7 +65,7 @@ const ListVisit = () => {
   const {bottom} = useSafeAreaInsets();
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-
+  const styles = rootStyles(useTheme());
   const filterRef = useRef<BottomSheet>(null);
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -74,10 +75,12 @@ const ListVisit = () => {
   );
   const lisCustomerRoute = useSelector(
     state => state.customer.listCustomerRoute,
+    shallowEqual,
   );
   const customerType: ListCustomerType[] = useSelector(
     state => state.customer.listCustomerType,
   );
+  const appLoading = useSelector(state => state.app.loadingApp);
 
   const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
     getLabel('nearest'),
@@ -89,10 +92,8 @@ const ListVisit = () => {
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
 
-  const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
-  const system = useSelector(state => state.app.systemConfig);
   const [error, setError] = useState<string>('');
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
@@ -114,10 +115,17 @@ const ListVisit = () => {
   }, []);
 
   const customerCheckinCount = useMemo(() => {
-    if ( listCustomer && listCustomer.length > 0) {
-      return listCustomer.filter(item => item.is_checkin).length;
+    if (listCustomer && listCustomer.length > 0) {
+      return listCustomer.filter(item => item.is_checkin === true).length;
     } else {
       return '';
+    }
+  }, [listCustomer]);
+  const customerValid = useMemo(() => {
+    if (listCustomer && listCustomer.length > 0) {
+      return listCustomer.filter(
+        item => item.customer_location_primary != null,
+      );
     }
   }, [listCustomer]);
 
@@ -249,16 +257,11 @@ const ListVisit = () => {
               {getLabel('visit')} {customerCheckinCount}/{listCustomer?.length}{' '}
               {getLabel('customer').toLocaleLowerCase()}
             </Text>
-            {loading && (
-              <View style={{marginTop: 16}}>
-                <SkeletonLoading loading={loading} />
-              </View>
-            )}
             {listCustomer && (
               <FlatList
                 style={{height: '90%'}}
                 showsVerticalScrollIndicator={false}
-                data={listCustomer}
+                data={customerValid}
                 renderItem={({item}) => (
                   <VisitItem item={item} onPress={handleBackground} />
                 )}
@@ -344,30 +347,28 @@ const ListVisit = () => {
     // setLoading(false);
   }, []);
 
-  const getCustomer = async (params?: IListVisitParams) => {
-    setLoading(true);
-    await getCustomerVisit(params).then((res: any) => {
-      setLoading(false);
-      if (res.result.length > 0) {
-        const data: VisitListItemType[] = res?.result.data;
-        const newData = data.filter(item => item.customer_location_primary);
-        dispatch(customerActions.setCustomerVisit(newData));
-      }
-    });
-    setLoading(false);
-  };
+  // const getCustomer = async (params?: IListVisitParams) => {
+
+  //   await getCustomerVisit(params).then((res: any) => {
+
+  //     if (res.result.length > 0) {
+  //       const data: VisitListItemType[] = res?.result.data;
+  //       const newData = data.filter(item => item.customer_location_primary);
+  //       dispatch(customerActions.setCustomerVisit(newData));
+  //     }
+  //   });
+
+  // };
 
   const getCustomerRoute = async () => {
     console.log('run');
     if (lisCustomerRoute.length === 0) {
-
       const response: any = await CustomerService.getCustomerRoute();
       if (response?.result.length > 0) {
         dispatch(customerActions.setListCustomerRoute(response.result));
       }
       dispatch(customerActions.onGetCustomerVisit());
     }
-    
   };
 
   const getDataGroup = async () => {
@@ -407,14 +408,15 @@ const ListVisit = () => {
         customer_type:
           filterParams?.customer_type && filterParams.customer_type,
       };
-      await getCustomer(params);
+      await dispatch(customerActions.onGetCustomerVisit());
+      // await getCustomer(params);
     }
   };
 
   useEffect(() => {
     mounted.current = true;
     dispatch(appActions.onLoadApp());
-    getCustomer();
+    // getCustomer();
     getCustomerRoute();
     getDataGroup();
     dispatch(appActions.onLoadAppEnd());
@@ -430,6 +432,11 @@ const ListVisit = () => {
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
       {_renderContent()}
+      {appLoading && (
+        <View style={{marginTop: 16}}>
+          <SkeletonLoading loading={appLoading} />
+        </View>
+      )}
       <FilterContainer
         bottomSheetRef={bottomSheetRef}
         filterRef={filterRef}
@@ -456,10 +463,21 @@ interface MarkerItemProps {
 }
 export default ListVisit;
 
-const styles = StyleSheet.create({
-  map: {
-    overflow: 'hidden',
-    width: '100%',
-    height: AppConstant.HEIGHT * 0.8,
-  },
-});
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    map: {
+      overflow: 'hidden',
+      width: '100%',
+      height: AppConstant.HEIGHT * 0.8,
+    },
+    distanceButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: 8,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      maxWidth: 180,
+    },
+  });

@@ -135,7 +135,8 @@ export const styleLoading = (theme: AppTheme) =>
       overflow :"hidden",
       paddingVertical: 10,
       borderColor : theme.colors.bg_neutral,
-      borderWidth:1
+      borderWidth:1,
+      marginVertical:8
     } as ViewStyle,
     containLoading: {
       flex: 1,
