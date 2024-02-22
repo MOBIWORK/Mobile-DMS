@@ -60,6 +60,7 @@ const addingCustomer = createAction(
   Actions.ADDING_NEW_CUSTOMER,
   (data: IDataCustomer) => ({payload: data}),
 );
+const getCustomerTerritory = createAction(Actions.GET_CUSTOMER_TERRITORY)
 
 export const customerReducer = customerSlice.reducer;
 
@@ -77,5 +78,6 @@ export const customerActions = {
   onGetCustomerByName,
   getCustomerType,
   onGetCustomerVisit,
-  addingCustomer
+  addingCustomer,
+  getCustomerTerritory
 };

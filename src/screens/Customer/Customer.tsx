@@ -37,16 +37,12 @@ import {
   useSelector,
 } from '../../config/function';
 // import {dispatch} from '../../utils/redux';
-import {
-  customerActions,
-  setListCustomerType,
-} from '../../redux-store/customer-reducer/reducer';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {Location} from 'react-native-background-geolocation';
 import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
-import {getCustomerType} from '../../services/appService';
-import SkeletonLoading from '../Visit/SkeletonLoading';
+import { getState } from '../../utils/redux';
 
 export type IValueType = {
   customerType: string;
@@ -106,7 +102,7 @@ const Customer = () => {
     bottomRef2.current?.snapToIndex(0);
   };
 
-  // console.log(listCustomer[0].contact,'listCustomer') 
+  // console.log(listCustomer[0].contact,'listCustomer')
   useEffect(() => {
     handleBackgroundLocation();
     let newData: IDataCustomers[] = [...listCustomer];
@@ -164,16 +160,16 @@ const Customer = () => {
     let mounted: boolean;
     mounted = true;
 
-    const getDataType = async () => {
-      const response: any = await getCustomerType();
-      if (response?.result?.length > 0) {
-        dispatch(setListCustomerType(response?.result));
-      }
+    const getDataType = () => {
+      dispatch(customerActions.getCustomerType());
     };
 
     getDataType();
     if (listCustomer.length > 0) {
-      setCustomerData(listCustomer);
+      let newData = [...listCustomer];
+      setCustomerData(
+        newData.filter(item => item.customer_location_primary != null),
+      );
     } else {
       dispatch(customerActions.onGetCustomer());
     }

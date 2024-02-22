@@ -89,7 +89,7 @@ export function* addingNewCustomer(action: PayloadAction) {
   if (customerActions.addingCustomer.match(action)) {
     try {
       yield* put(appActions.onLoadApp());
-      const response: ResponseGenerator = yield* call(
+      const response: ResponseGenerator = yield call(
         CustomerService.addNewCustomer,
         action.payload,
       );
@@ -97,6 +97,24 @@ export function* addingNewCustomer(action: PayloadAction) {
         navigate(ScreenConstant.MAIN_TAB, {
           screen: ScreenConstant.CUSTOMER,
         });
+      }
+    } catch (err) {
+    } finally {
+      yield* put(appActions.onLoadAppEnd());
+    }
+  }
+}
+export function* getCustomerTerritorySaga(action: PayloadAction) {
+  if (customerActions.getCustomerTerritory.match(action)) {
+    try {
+      yield* put(appActions.onLoadApp());
+      const response: ResponseGenerator = yield call(
+        CustomerService.getCustomerTerritory,
+        action.payload
+      );
+          console.log(response.result,'customer territory')
+      if (response.result?.length > 0) {
+        yield* put(customerActions.setListCustomerTerritory(response.result));
       }
     } catch (err) {
     } finally {

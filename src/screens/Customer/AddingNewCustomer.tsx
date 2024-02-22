@@ -31,9 +31,9 @@ import {
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
-import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
+import {AppConstant} from '../../const';
 import {NavigationProp} from '../../navigation';
-import {IDataCustomer, KeyAbleProps} from '../../models/types';
+import {IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
@@ -45,14 +45,12 @@ import {
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
-import {CustomerService} from '../../services';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {useSelector} from '../../config/function';
 import {MainAddress, MainContactAddress} from './components/CardAddress';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
-import {CommonUtils} from '../../utils';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -185,18 +183,11 @@ const AddingNewCustomer = () => {
     [setOpenDate, setDate],
   );
 
-  const getCustomerTerritory = async () => {
-    const response: any = await CustomerService.getCustomerTerritory();
-    if (response?.result.length > 0) {
-      dispatch(customerActions.setListCustomerTerritory(response.result));
-    }
+  const getCustomerTerritory = () => {
+    dispatch(customerActions.getCustomerTerritory());
   };
 
-  const getCustomerRoute = async () => {
-    // const response: any = await CustomerService.getCustomerRoute();
-    // if (response?.result.length > 0) {
-    //   dispatch(customerActions.setListCustomerRoute(response.result));
-    // }
+  const getCustomerRoute = () => {
     dispatch(customerActions.onGetCustomerVisit());
   };
   //get Cur Location
