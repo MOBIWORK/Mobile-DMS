@@ -1,7 +1,6 @@
 import React, {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -13,7 +12,6 @@ import {
   Linking,
   Platform,
   Alert,
-  Pressable,
 } from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
@@ -45,7 +43,6 @@ import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
-import MarkerItem from '../../components/common/MarkerItem';
 import VisitItem from '../Visit/VisitList/VisitItem';
 import {rootStyles} from './styles';
 import ItemLoading from './components/ItemLoading';
@@ -57,6 +54,7 @@ import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
+import {shallowEqual} from 'react-redux';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -69,8 +67,6 @@ const HomeScreen = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
-  const showModal = useSelector(state => state.app.showModal);
-
   // const showModal = useSelector(AppSelector.getShowModal);
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);
@@ -79,6 +75,7 @@ const HomeScreen = () => {
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(false);
+
   // const syncWithCodePush = (status: number) => {
   //   console.log('Codepush sync status', status);
   // };
@@ -115,6 +112,14 @@ const HomeScreen = () => {
 
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
   const [passwordStore] = useMMKVString(AppConstant.passwordStore);
+
+  const customerVisit: VisitListItemType[] = useSelector(
+    state => state.customer.listCustomerVisit,
+    shallowEqual,
+  );
+  const dataCustomer = useRef(
+    customerVisit.filter(item => item.is_checkin === true),
+  );
 
   const getWidget = () => {
     if (!widgets) {
@@ -351,6 +356,7 @@ const HomeScreen = () => {
       );
     };
     // setLoading(false);
+    dispatch(appActions.onGetSystemConfig())
     getLocation();
   }, []);
 
@@ -555,10 +561,16 @@ const HomeScreen = () => {
                         shadowColor={colors.bg_disable}
                         bgColor={colors.bg_default}>
                         <View>
-                          <Text style={[styles.textProcess]}>3/50</Text>
+                          <Text style={[styles.textProcess]}>
+                            {dataCustomer.current.length}/{customerVisit.length}
+                          </Text>
                           <Text style={[styles.textProcessDesc]}>
                             {' '}
-                            {'(Đạt 6 %)'}{' '}
+                            (Đạt{' '}
+                            {(dataCustomer.current.length /
+                              customerVisit.length) *
+                              100}
+                            %)
                           </Text>
                         </View>
                       </ProgressCircle>

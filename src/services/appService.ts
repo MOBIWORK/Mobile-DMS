@@ -195,8 +195,8 @@ export const postNoteUser = (data: any) => {
     .post(ApiConstant.POST_NEW_NOTE_CHECKIN, data)
     .then(res => res.data);
 };
-export const getListNoteApi = (data: any) => {
-  createApi().get(ApiConstant.GET_LIST_NOTE_API, data);
+export const getListNoteApi = () => {
+  createApi().get(ApiConstant.GET_LIST_NOTE_API).then(res => res.data);
 };
 export const createImageCheckinApi = (data: any) => {
   createApi()

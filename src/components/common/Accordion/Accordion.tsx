@@ -1,5 +1,5 @@
 import {Pressable, StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import Animated, {
   useAnimatedRef,
   useSharedValue,
@@ -7,6 +7,7 @@ import Animated, {
   runOnUI,
   measure,
   withTiming,
+  runOnJS,
 } from 'react-native-reanimated';
 import Chevron from './AnimatedArrow';
 import {Block} from '../Block';
@@ -36,9 +37,11 @@ const Accordion = (props: Props) => {
   const [show, setShow] = useState(false);
   const theme = useTheme();
   const styles = rootStyle(theme);
+
   const heightAnimationStyle = useAnimatedStyle(() => ({
     height: heightValue.value,
   }));
+
 
   return props.type === 'regular' ? (
     <Block
@@ -57,11 +60,7 @@ const Accordion = (props: Props) => {
           setShow(!show);
         }}
         style={[styles.titleContainer('regular'), props.titleContainerStyle]}>
-        <Text
-
-          fontSize={14}
-          fontWeight="500"
-          colorTheme="text_primary">
+        <Text fontSize={14} fontWeight="500" colorTheme="text_primary">
           {props.title}
         </Text>
         <Chevron show={show} />
@@ -87,10 +86,7 @@ const Accordion = (props: Props) => {
           setShow(!show);
         }}
         style={styles.titleContainer('nested')}>
-        <Text
-          fontSize={14}
-          fontWeight="500"
-          colorTheme="text_secondary">
+        <Text fontSize={14} fontWeight="500" colorTheme="text_secondary">
           {props.title}
         </Text>
         <Chevron show={show} />
@@ -114,7 +110,7 @@ const rootStyle = (theme: AppTheme) =>
       borderRadius: 14,
       overflow: 'hidden',
     } as ViewStyle,
-   
+
     titleContainer: (type: 'nested' | 'regular') =>
       ({
         // padding: 20,
