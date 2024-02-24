@@ -154,25 +154,11 @@ export function* onGetListWard(action: PayloadAction) {
     }
   }
 }
-export function* onGetListNote(action: PayloadAction) {
-  if (appActions.getListNote.match(action)) {
-    try {
-      const response: ResponseGenerator = yield call(
-        getListNoteApi,
-        action.payload,
-      );
-      console.log('====================================');
-      console.log(response);
-      console.log('====================================');
-      if (response.result?.length > 0) {
-        yield put(appActions.setListNote(response.result));
-      }
-    } catch (err) {}
-  }
-}
+
 export function* createImageCheckIn(action: PayloadAction) {
   if (appActions.postImageCheckIn.match(action)) {
     try {
+      yield put(appActions.onLoadApp())
       const response: ResponseGenerator = yield call(
         createImageCheckinApi,
         action.payload,
@@ -187,5 +173,8 @@ export function* createImageCheckIn(action: PayloadAction) {
       } else {
       }
     } catch (err) {}
+    finally{
+      yield put(appActions.onLoadAppEnd())
+    }
   }
 }

@@ -716,3 +716,60 @@ export interface ListItem {
   amount: number
   discount_percentage: number
 }
+
+export interface CustomerRouter{
+  customer_id: string
+  customer_name: string
+  display_address: string
+  phone_number: string
+  customer: string
+  frequency: string
+}
+export interface CustomerRouterResponse {
+  name: string
+  owner: string
+  creation: string
+  modified: string
+  modified_by: string
+  docstatus: number
+  idx: number
+  customer: string
+  customer_id: string
+  customer_name: string
+  display_address: string
+  phone_number: string
+  frequency: string
+  longitude: number
+  parent: string
+  parentfield: string
+  parenttype: string
+  doctype: string
+  __unsaved: number
+}
+export interface UpdateRoutePayload{
+  channel_code: string
+  team_sale: string
+  channel_name: string
+  employee: string
+  travel_date: string
+  status: string
+  customers: CustomerRouter[]
+}
+export interface UpdateRouteResponse {
+  name: string
+  owner: string
+  creation: string
+  modified: string
+  modified_by: string
+  docstatus: number
+  idx: number
+  channel_code: string
+  team_sale: string
+  travel_date: string
+  channel_name: string
+  employee: string
+  status: string
+  is_deleted: number
+  doctype: string
+  customers: CustomerRouterResponse[]
+}
