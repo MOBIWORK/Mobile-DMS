@@ -92,7 +92,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
                   style={{
                     color: colors.text_primary,
                     fontSize: 16,
-                    fontWeight: item.isSelected ? '500' : '400',
+                    fontWeight: item.isSelected ? '600' : '400',
                   }}>
                   {getLabel(item.label)}
                 </Text>
@@ -133,6 +133,6 @@ export default FilterListComponent;
 
 export type IFilterType = {
   label: string;
-  value?: string;
+  value?: string | number;
   isSelected: boolean;
 };

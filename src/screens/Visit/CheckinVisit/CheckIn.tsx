@@ -1,12 +1,11 @@
 import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {useCallback, useState,useEffect, useRef} from 'react';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
   AppText as Text,
   AppSwitch as Switch,
   SvgIcon,
 } from '../../../components/common/';
-import moment from 'moment';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../../navigation';
 import {AppTheme, useTheme} from '../../../layouts/theme';
@@ -18,16 +17,16 @@ import AppImage from '../../../components/common/AppImage';
 import {CheckinData} from '../../../services/appService';
 import {useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
+import {useTranslation} from 'react-i18next';
 type Props = {};
 
 const CheckIn = (props: Props) => {
   const {goBack} = useNavigation<NavigationProp>();
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const {t: getLabel} = useTranslation();
   const [show, setShow] = useState(false);
-  const [title, setTitle] = useState('Mở cửa');
+  const [title, setTitle] = useState<string>(getLabel('openDoor'));
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -40,14 +39,12 @@ const CheckIn = (props: Props) => {
       : params.checkin_trangthaicuahang,
   );
   const [elapsedTime, setElapsedTime] = useState(0);
-   const intervalId = useRef<any>()
+  const intervalId = useRef<any>();
   useEffect(() => {
-
-
     // Start the interval when the component mounts
     const startInterval = () => {
       intervalId.current = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1);
+        setElapsedTime(prevTime => prevTime + 1);
       }, 1000); // Update every second (1000 milliseconds)
     };
 
@@ -58,35 +55,31 @@ const CheckIn = (props: Props) => {
   }, []); // The empty dependency array ensures that the effect runs only once
 
   // Format seconds into HH:mm:ss
-  const formatTime = (seconds:any) => {
+  const formatTime = (seconds: any) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
 
-    const pad = (num:number) => (num < 10 ? '0' + num : num);
+    const pad = (num: number) => (num < 10 ? '0' + num : num);
 
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
 
   const handleSwitch = useCallback(() => {
-    if (title === 'Mở cửa') {
-      setTitle('Đóng cửa');
+    if (title === getLabel('openDoor')) {
+      setTitle(getLabel('closeDoor'));
       setStatus(false);
     } else {
-      setTitle('Mở cửa');
+      setTitle(getLabel('openDoor'));
       setStatus(true);
     }
   }, []);
 
-  useEffect(() =>{
-      if(dataCheckIn && Object.keys(dataCheckIn)?.length > 0){
-        // dispatch(appActions.setDataCheckIn((prev:CheckinData) =>({...prev,checkin_trangthaicuahang:status})))
-      }
-  },[dataCheckIn,status])
-
-  
-
-
+  useEffect(() => {
+    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+      // dispatch(appActions.setDataCheckIn((prev:CheckinData) =>({...prev,checkin_trangthaicuahang:status})))
+    }
+  }, [dataCheckIn, status]);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -117,11 +110,7 @@ const CheckIn = (props: Props) => {
           <Switch type="text" status onSwitch={handleSwitch} title={title} />
         </Block>
         <Block colorTheme="white" paddingHorizontal={32}>
-          <Block
-            direction="row"
-            paddingTop={20}
-            // paddingLeft={32}
-            marginBottom={8}>
+          <Block direction="row" paddingTop={20} marginBottom={8}>
             <SvgIcon source="UserGroup" size={20} colorTheme="main" />
             <Text fontSize={16} fontWeight="500" colorTheme="text">
               {' '}
@@ -130,11 +119,7 @@ const CheckIn = (props: Props) => {
           </Block>
           <Block colorTheme="border" height={1} />
           <Block paddingTop={8}>
-            <Block
-              direction="row"
-              alignItems="center"
-              // marginLeft={32}
-              marginRight={32}>
+            <Block direction="row" alignItems="center" marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
               <Text numberOfLines={1}> {params.kh_diachi} </Text>
             </Block>
@@ -142,7 +127,6 @@ const CheckIn = (props: Props) => {
               direction="row"
               alignItems="center"
               marginTop={8}
-              // marginLeft={32}
               marginRight={32}
               paddingBottom={20}>
               <SvgIcon source="Phone" size={16} />
@@ -169,12 +153,10 @@ const CheckIn = (props: Props) => {
       </Block>
       <TouchableOpacity style={styles.containContainerButton}>
         <Block
-          // borderColor="primary"
           marginLeft={16}
           borderColor={theme.colors.primary}
           marginRight={16}
           colorTheme="bg_default"
-          // style={{borderColor:theme.colors.primary} as ViewStyle}
           alignItems="center"
           height={40}
           justifyContent="center"
@@ -201,7 +183,7 @@ const CheckIn = (props: Props) => {
           <AppImage source="ErrorApiIcon" size={40} />
           <Block marginTop={8} justifyContent="center" alignItems="center">
             <Text fontSize={16} fontWeight="500" colorTheme="text">
-              Bạn muốn thoát viếng thăm ?
+              {getLabel('outVisitMsg')}
             </Text>
           </Block>
           <Block
@@ -241,14 +223,11 @@ const rootStyles = (theme: AppTheme) =>
     root: {
       flex: 1,
       backgroundColor: theme.colors.bg_default,
-      // marginHorizontal:16
     } as ViewStyle,
     containerStyle: {
       backgroundColor: theme.colors.white,
-      // paddingTop: 20,
       marginHorizontal: 30,
       borderRadius: 16,
-      // marginVertical:16
     } as ViewStyle,
     containButton: (title: string) =>
       ({

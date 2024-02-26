@@ -3,7 +3,6 @@ import {ItemNoteVisitDetail, VisitListItemType} from '../../../models/types';
 import {
   FlatList,
   Image,
-  Pressable,
   StyleSheet,
   Text,
   TextStyle,
@@ -13,14 +12,15 @@ import {
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
-import {CommonUtils} from '../../../utils';
 import StatisticalItem from './StatisticalItem';
 import {NavigationProp} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
+import {useTranslation} from 'react-i18next';
 
 const Detail: FC<VisitItemProps> = ({item}) => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const {t: getLabel} = useTranslation();
 
   const styles = StyleSheet.create({
     viewContainer: {
@@ -79,7 +79,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
             : 'rgba(255, 171, 0, 0.08)',
         }}>
         <Text style={{color: status ? colors.success : colors.warning}}>
-          {status ? 'Đã viếng thăm' : 'Chưa viếng thăm'}
+          {status ? getLabel('visited') : getLabel('notVisited')}
         </Text>
       </View>
     );
@@ -98,7 +98,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
             tintColor={isLastOrder ? colors.action : colors.main}
           />
           <Text style={styles.infoText}>
-            {isLastOrder ? 'Đơn hàng lần cuối' : 'Viếng thăm lần cuối'}
+            {isLastOrder ? getLabel('lastOrder') : getLabel('lastVisit')}
           </Text>
         </View>
         <Text

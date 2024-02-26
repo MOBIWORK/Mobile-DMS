@@ -380,11 +380,11 @@ const ListVisit = () => {
           ? CommonUtils.dateToDate('today')
           : filterParams.birthDay === 'Tuần này'
           ? CommonUtils.dateToDate('weekly')
-          : CommonUtils.dateToDate('weekly');
+          : CommonUtils.dateToDate('monthly');
       const params: IListVisitParams = {
         route: filterParams?.route && [`${filterParams.route.name}`],
         status:
-          filterParams?.status && filterParams.status === 'Đã viếng thăm'
+          filterParams?.status && filterParams.status === getLabel('visited')
             ? 'active'
             : 'lock',
         orderby:
