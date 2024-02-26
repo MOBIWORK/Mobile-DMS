@@ -4,7 +4,6 @@ import { orderAction } from '../../redux-store/order-reducer/reducer';
 import { OrderService } from '../../services';
 import { KeyAbleProps } from '../../models/types';
 import { ApiConstant } from '../../const';
-import { PramsTypeOrder, get } from '../../services/orderService';
 
 export type ResponseGenerator = {
     config?: any;

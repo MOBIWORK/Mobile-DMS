@@ -185,6 +185,20 @@ const backgroundErrorListener = (errorCode: number) => {
   }
 };
 
+function decimalMinutesToTime(decimalMinutes:any) {
+  const hours = Math.floor(decimalMinutes / 60);
+  const minutes = Math.floor(decimalMinutes % 60);
+  const seconds = Math.floor((decimalMinutes * 60) % 60);
+
+  const formattedTime = `${String(hours).padStart(2, '0')}:${String(
+    minutes
+  ).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+  return formattedTime;
+}
+
+
+
 export {
   formatPhoneNumber,
   formatMoney,
@@ -199,4 +213,5 @@ export {
   useSelector,
   backgroundErrorListener,
   generateRandomObjectId,
+  decimalMinutesToTime
 };

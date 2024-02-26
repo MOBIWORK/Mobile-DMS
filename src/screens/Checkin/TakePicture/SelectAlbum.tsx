@@ -51,7 +51,6 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
     });
     setCurData(newData);
   };
-  
 
   const handleAlbum = (selectedItem: IFilterType[]) => {
     const selectedData = selectedItem
@@ -62,32 +61,30 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
         image: ['IconCamera'],
       }));
 
-      const albumImageDataCopy = [...albumImageData];
+    const albumImageDataCopy = [...albumImageData];
 
-      selectedData.forEach(selectedItem => {
-        const existingIndex = albumImageDataCopy.findIndex(
+    selectedData.forEach(selectedItem => {
+      const existingIndex = albumImageDataCopy.findIndex(
+        item => item.label === selectedItem.label,
+      );
+
+      if (existingIndex === -1 && !('isSelected' in selectedItem)) {
+        const indexToRemove = albumImageDataCopy.findIndex(
           item => item.label === selectedItem.label,
         );
-
-        if (existingIndex === -1 && !('isSelected' in selectedItem)) {
-          const indexToRemove = albumImageDataCopy.findIndex(
-            item => item.label === selectedItem.label,
-          );
-          if (indexToRemove !== -1) {
-            albumImageDataCopy.splice(indexToRemove, 1);
-          }
+        if (indexToRemove !== -1) {
+          albumImageDataCopy.splice(indexToRemove, 1);
         }
-      });
-
-      if (selectedData.length > 0) {
-        setAlbumImageData([
-          ...selectedData.map(item => ({...item, isSelected: true})),
-        ]);
       }
+    });
 
     if (selectedData.length > 0) {
       setAlbumImageData([
-        ...selectedData.map(item => ({...item, isSelected: true})),
+        ...selectedData.map(item => ({
+          id: item.id, // Adjust this based on your actual structure
+          label: item.label,
+          image: item.image.map(image => ({url: image})),
+        })),
       ]);
     } else {
       setAlbumImageData([]);

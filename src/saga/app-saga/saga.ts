@@ -17,7 +17,7 @@ import {
 } from '../../services/appService';
 import {all, call, put} from 'typed-redux-saga';
 import {showSnack} from '../../components/common';
-import {navigate} from '../../navigation';
+import {goBack, navigate} from '../../navigation';
 import {ScreenConstant} from '../../const';
 
 export const checkKeyInObject = (T: any, key: string) => {
@@ -50,16 +50,18 @@ export function* onLoadAppModeAndTheme() {
 export function* onCheckInData(action: PayloadAction) {
   if (appActions.onCheckIn.match(action)) {
     try {
-      // yield put(appActions.onLoadApp())
-      console.log(action.payload, 'payload saga');
+      yield put(appActions.onLoadApp())
+      
       const response: any = yield* call(postChecking, action.payload);
+      console.log(response,'repsonse checkin')
+      goBack()
       if (response?.result.length > 0) {
-        navigate(ScreenConstant.CHECKIN, {item: action.payload});
+        // navigate(ScreenConstant.CHECKIN, {item: action.payload});
       }
     } catch (err) {
       console.log(err, 'err');
     } finally {
-      // yield put(appActions.onLoadAppEnd())
+      yield put(appActions.onLoadAppEnd())
     }
   }
 }
@@ -181,7 +183,7 @@ export function* createImageCheckIn(action: PayloadAction) {
             response?.result.file_url,
           ]),
         );
-      }
+      }else{}
     } catch (err) {}
   }
 }

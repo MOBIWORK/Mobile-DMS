@@ -34,6 +34,8 @@ import {RouterProp} from '../../../navigation';
 import {CheckinData} from '../../../services/appService';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import { dispatch } from '../../../utils/redux';
+import { useSelector } from '../../../config/function';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 const TakePicture = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
@@ -45,6 +47,7 @@ const TakePicture = () => {
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
   const dataCheckIn = useRef<CheckinData>(params.data);
+  const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
   const [message,setMessage] = useState<string>('')
   const data = useRef<ImageCheckIn>({
     album_id: '',
@@ -72,7 +75,7 @@ const TakePicture = () => {
 
       for (let index = 0; index < albumImageData.length; index++) {
         if (data?.current) {
-          data.current.album_id = albumImageData[index].id;
+          data.current.album_id = String(albumImageData[index].id);
           data.current.album_name = albumImageData[index].label;
         }
         const element = albumImageData[index].image;
@@ -92,10 +95,16 @@ const TakePicture = () => {
     } finally {
       setLoading(false);
       setMessage(`Done processing ${totalItemsProcessed-1} items`)
-       console.log(`Done processing ${totalItemsProcessed-1} items`);
+      console.log(`Done processing ${totalItemsProcessed-1} items`);
     }
+    completeCheckin();
   }, [albumImageData, data]);
 
+  const completeCheckin = () => {
+    const newData = categoriesCheckin.map(item => item.key === "camera" ? ({ ...item, isDone: true }) : item);
+    dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    navigation.goBack();
+}
 
 
 
@@ -323,7 +332,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
     } as ViewStyle,
   });
 
-const ListAlbumFake: IFilterType[] = [
+const ListAlbumFake: any[] = [
   {
     label: 'Album 91',
     value: 1,

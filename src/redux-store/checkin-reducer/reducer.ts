@@ -1,6 +1,7 @@
 import { PayloadAction, createAction, createSlice } from "@reduxjs/toolkit";
-import { SLICE_NAME,TypeState } from "./type";
+import { TypeState ,categoriesCheckinList} from "./type";
 import * as Actions from "./type"
+import { SLICE_NAME } from "../app-reducer/type";
 
 
 
@@ -9,10 +10,11 @@ const initState : TypeState = {
     dataStaff : [],
     dataTypeNote : [],
     orderDetail : null,
+    categoriesCheckin :categoriesCheckinList
 }
 
 const checkinSlice = createSlice({
-    name : SLICE_NAME,
+    name : SLICE_NAME.CHECKIN_SLICE,
     initialState : initState,
     reducers : {
         setData : (state , action : PayloadAction<{typeData : string , data :any}>) => {
@@ -34,20 +36,30 @@ const checkinSlice = createSlice({
             }
         },
         resetData : (state , action : PayloadAction)=>{
-            state = initState
+            state.categoriesCheckin = categoriesCheckinList;
+            state.dataNote = [];
+            state.orderDetail = null
+        },
+        setDataCategoriesCheckin : (state,action : PayloadAction<Actions.IItemCheckIn[]>) =>{
+            state.categoriesCheckin = action.payload
         }
     }
 });
 
-const getListNoteCheckin = createAction(Actions.GET_NOTE_ACTIONS , (params :any) => ({payload : params}));
-const getListStaff = createAction(Actions.GET_STAFF_ACTIONS , (params :any) => ({payload : params}));
-const getListNoteType = createAction(Actions.GET_NOTE_TYPE_ACTIONS , () => ({payload : null}));
+const getListNoteCheckin = createAction(
+  Actions.GET_NOTE_ACTIONS,
+  (customer_checkin_id: any) => ({payload: customer_checkin_id}),
+);
+const getListStaff = createAction(Actions.GET_STAFF_ACTIONS, (params: any) => ({
+  payload: params,
+}));
+const getListNoteType = createAction(Actions.GET_NOTE_TYPE_ACTIONS);
 
 export const checkinActions = {
-    ...checkinSlice.actions,
-    getListNoteCheckin,
-    getListStaff,
-    getListNoteType
-}
+  ...checkinSlice.actions,
+  getListNoteCheckin,
+  getListStaff,
+  getListNoteType,
+};
 
-export const checkinReducer =  checkinSlice.reducer;
+export const checkinReducer = checkinSlice.reducer;
