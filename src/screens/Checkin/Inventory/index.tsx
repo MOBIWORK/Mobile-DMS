@@ -108,7 +108,7 @@ const CheckinInventory = () => {
                 "customer_address": dataCheckin.item.customer_primary_address,
                 "inventory_items": newItems
             }
-            const { status, data } = await CheckinService.checkinInventory(objectData);
+            const { status, data }:any = await CheckinService.checkinInventory(objectData);
             if (status === ApiConstant.STT_OK) onBackScreen();
         }
         completeCheckin();

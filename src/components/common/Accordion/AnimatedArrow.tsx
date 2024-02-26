@@ -1,14 +1,15 @@
-import {Image, StyleSheet} from 'react-native';
+import {Image, StyleProp, StyleSheet, ViewStyle} from 'react-native';
 import React from 'react';
 import Animated, {SharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import { SvgIcon } from '../AppSvgIcon';
 import { useMix, useRadian, useSharedTransition } from '../../../config/animatedHook';
 
 type Props = {
- show:boolean
+ show:boolean,
+ style?:StyleProp<ViewStyle>
 };
 
-const Chevron = ({show}: Props) => {
+const Chevron = ({show,style}: Props) => {
 
   const progress = useSharedTransition(show);
   
@@ -22,7 +23,7 @@ const Chevron = ({show}: Props) => {
 
 
   return (
-    <Animated.View style={arrowStyle}>
+    <Animated.View style={[arrowStyle,style]}>
       <SvgIcon source='ArrowDown'   size={24}  />
     </Animated.View>
   );

@@ -18,6 +18,7 @@ import {decimalMinutesToTime, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
+import { item } from './ultil';
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -30,6 +31,7 @@ const CheckIn = () => {
   );
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
+    shallowEqual,
   );
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const [status, setStatus] = useState(
@@ -106,10 +108,10 @@ const CheckIn = () => {
     return result ? false : true;
   }, [categoriesCheckin]);
 
-  const onConfirmCheckout = useCallback(() =>{
+  const onConfirmCheckout = useCallback(() => {
     dispatch(appActions.onCheckIn(dataCheckIn));
     setShow(false);
-  },[dataCheckIn])
+  }, [dataCheckIn]);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -186,7 +188,7 @@ const CheckIn = () => {
           colorTheme="white"
           borderRadius={16}>
           {categoriesCheckin &&
-            categoriesCheckin.map((item, index) => {
+            item.map((item, index) => {
               return <ItemCheckIn key={index} item={item} navData={params} />;
             })}
         </Block>

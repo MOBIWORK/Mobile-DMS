@@ -123,9 +123,10 @@ const ListVisit = () => {
   }, [listCustomer]);
   const customerValid = useMemo(() => {
     if (listCustomer && listCustomer.length > 0) {
-      return listCustomer.filter(
-        item => item.customer_location_primary != null,
-      );
+      return listCustomer
+      // .filter(
+      //   item => item.customer_location_primary != null,
+      // );
     }
   }, [listCustomer]);
 

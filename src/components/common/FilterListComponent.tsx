@@ -3,18 +3,20 @@ import {AppHeader, AppIcons} from './index';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {MainLayout} from '../../layouts';
 import {AppConstant} from '../../const';
-import {useTheme} from '@react-navigation/native';
 import {Searchbar} from 'react-native-paper';
 import {ImageAssets} from '../../assets';
 import {
   Image,
   NativeSyntheticEvent,
+  StyleSheet,
   Text,
   TextInputSubmitEditingEventData,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
+import { AppTheme, useTheme } from '../../layouts/theme';
 
 const FilterListComponent: FC<FilterListComponentProps> = ({
   title,
@@ -28,8 +30,9 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   screenName,
   isSearch = false,
 }) => {
-  const {colors} = useTheme();
+  const {colors} =useTheme() ;
   const {t: getLabel} = useTranslation();
+  const styles = rootStyles(useTheme())
   return (
     <MainLayout
       style={{
@@ -79,13 +82,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
           {data.map((item, index) => {
             return (
               <TouchableOpacity
-                style={{
-                  marginVertical: 5,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                }}
+                style={styles.touchableItem}
                 onPress={() => handleItem(item)}
                 key={index}>
                 <Text
@@ -130,6 +127,16 @@ interface FilterListComponentProps {
   ) => void;
 }
 export default FilterListComponent;
+
+const rootStyles = (theme:AppTheme) => StyleSheet.create({
+  touchableItem:{
+    marginVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  } as ViewStyle
+})
 
 export type IFilterType = {
   label: string;

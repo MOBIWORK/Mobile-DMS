@@ -158,12 +158,13 @@ export function* onGetListWard(action: PayloadAction) {
 export function* createImageCheckIn(action: PayloadAction) {
   if (appActions.postImageCheckIn.match(action)) {
     try {
-      yield put(appActions.onLoadApp())
+      yield put(appActions.onLoadApp());
       const response: ResponseGenerator = yield call(
         createImageCheckinApi,
         action.payload,
       );
       if (response.result?.status === true) {
+        console.log(response?.result, 'result post image checkin');
         yield put(
           appActions.setListImage((prev: any) => [
             ...prev,
@@ -171,10 +172,17 @@ export function* createImageCheckIn(action: PayloadAction) {
           ]),
         );
       } else {
+        console.log('error');
+        yield put(
+          appActions.setImageError((prev: any) => [
+            ...prev,
+            action.payload.image,
+          ]),
+        );
       }
-    } catch (err) {}
-    finally{
-      yield put(appActions.onLoadAppEnd())
+    } catch (err) {
+    } finally {
+      yield put(appActions.onLoadAppEnd());
     }
   }
 }

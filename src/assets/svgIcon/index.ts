@@ -67,8 +67,10 @@ import NotVisit from './notVisit.svg';
 import Folder from './folder.svg';
 import UserGroup2 from './userGroup.svg';
 import LocationCheckIn from './locationCheckin.svg';
+import MarkPicture from './MarkPicture.svg'
 export const SvgComponent = {
   MoneyIcon,
+  MarkPicture,
   NewCustomerIcon,
   ReportCustomerDebtIcon,
   ReportLine,

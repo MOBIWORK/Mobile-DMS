@@ -3,6 +3,7 @@ import * as Actions from './type';
 import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
 import {CheckinData} from '../../services/appService';
+import { ImageCheckIn } from '../../models/types';
 
 const initialAppState: IAppRedux = {
   error: undefined,
@@ -102,11 +103,13 @@ const appSlice = createSlice({
     },
     setListNote: (state, action: PayloadAction<any>) =>
       void (state.dataCheckIn.listNote = action.payload),
-      setListImage:(state,action:PayloadAction<any>) =>{
-        state.dataCheckIn.listImage = action.payload
-      }
+    setListImage: (state, action: PayloadAction<any>) => {
+      state.dataCheckIn.listImage = action.payload;
+    },
+    setImageError:(state,action:PayloadAction<any>) =>{
+      state.dataCheckIn.imageError = [...action.payload]
+    }
   },
-
 });
 
 const onCheckIn = createAction(Actions.CHECKIN, (data: CheckinData) => ({
@@ -137,8 +140,10 @@ const onGetListWard = createAction(
 const getListNote = createAction(Actions.GET_LIST_NOTE, (data?: any) => ({
   payload: data,
 }));
-const  postImageCheckIn = createAction(Actions.PUT_IMAGE_CHECKIN,(data:any) => ({payload:data}))
-
+const postImageCheckIn = createAction(
+  Actions.PUT_IMAGE_CHECKIN,
+  (data: ImageCheckIn) => ({payload: data}),
+);
 
 export const appActions = {
   ...appSlice.actions,
@@ -149,12 +154,8 @@ export const appActions = {
   onGetListDistrict,
   onGetListWard,
   getListNote,
-  postImageCheckIn
+  postImageCheckIn,
 };
-
-
-
-
 
 export const appReducer = appSlice.reducer;
 export const {

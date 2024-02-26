@@ -85,6 +85,7 @@ import {PortalHost} from '../components/common/portal';
 import {shallowEqual} from 'react-redux';
 import {CheckinData} from '../services/appService';
 import {AppState, AppStateStatus} from 'react-native';
+import TakePictureScore from '../screens/Checkin/TakePictureScore';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -292,6 +293,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_COMMON_SCREEN}
           component={SearchSreen}
         />
+        <Stack.Screen  name={ScreenConstant.TAKE_PICTURE_SCORE} component={TakePictureScore}  />
       </Stack.Navigator>
       {children}
       <RXStore />
@@ -357,6 +359,7 @@ export type RootStackParamList = {
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;
   [ScreenConstant.SEARCH_COMMON_SCREEN]: {type: string};
+  [ScreenConstant.TAKE_PICTURE_SCORE]:undefined
 };
 
 // Define prop type for useNavigation and useRoute
