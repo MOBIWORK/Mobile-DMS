@@ -14,6 +14,7 @@ import {
   ListCustomerType,
 } from '../../../models/types';
 import {useSelector} from '../../../config/function';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   type: string;
@@ -28,6 +29,8 @@ const ListFilterAdding = (props: Props) => {
   const {type, filterRef, setValueFilter, valueFilter, setData, data} = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const {t: getLabel} = useTranslation();
+
   const customerType: ListCustomerType[] = useSelector(
     state => state.customer.listCustomerType,
   );
@@ -81,7 +84,9 @@ const ListFilterAdding = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>Ngày sinh nhật </Text>
+            <Text style={styles.titleHeaderText}>
+              {getLabel('customerBirthDay')}{' '}
+            </Text>
             <Text style={styles.titleHeaderText} />
           </Block>
           {listBirthDayType.map((item: any) => {
@@ -130,7 +135,9 @@ const ListFilterAdding = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>Loại khách hàng</Text>
+            <Text style={styles.titleHeaderText}>
+              {getLabel('customerType')}
+            </Text>
             <Text style={styles.titleHeaderText} />
           </Block>
           {listFilterType.map((item: any) => {
@@ -141,18 +148,22 @@ const ListFilterAdding = (props: Props) => {
                 onPress={() => {
                   setValueFilter(prev => ({
                     ...prev,
-                    customerGroupType: item.title,
+                    customerGroupType: getLabel(item.title),
                   }));
                   setData(prev => ({
                     ...prev,
-                    customer_type: item.title,
+                    customer_type: getLabel(item.title),
                   }));
                   filterRef?.current?.close();
                 }}>
-                <Text style={styles.itemText(item.title, data.customer_type)}>
-                  {item.title}
+                <Text
+                  style={styles.itemText(
+                    getLabel(item.title),
+                    data.customer_type,
+                  )}>
+                  {getLabel(item.title)}
                 </Text>
-                {item.title === data.customer_type && (
+                {getLabel(item.title) === data.customer_type && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
@@ -179,7 +190,9 @@ const ListFilterAdding = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>Nhóm khách hàng</Text>
+            <Text style={styles.titleHeaderText}>
+              {getLabel('groupCustomer')}
+            </Text>
             <Text style={styles.titleHeaderText} />
           </Block>
           {customerType &&
@@ -234,7 +247,7 @@ const ListFilterAdding = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>Khu vực</Text>
+            <Text style={styles.titleHeaderText}>{getLabel('area')}</Text>
             <Text style={styles.titleHeaderText} />
           </Block>
           {listTerritory &&
@@ -285,7 +298,7 @@ const ListFilterAdding = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>Tuyến</Text>
+            <Text style={styles.titleHeaderText}>{getLabel('gland')}</Text>
             <Text style={styles.titleHeaderText} />
           </Block>
           {listRoute &&
@@ -339,7 +352,7 @@ const ListFilterAdding = (props: Props) => {
                 color={theme.colors.text_primary}
               />
             </TouchableOpacity>
-            <Text style={styles.titleHeaderText}>Tần suất</Text>
+            <Text style={styles.titleHeaderText}>{getLabel('frequency')}</Text>
             <Text
               onPress={() => filterRef.current?.close()}
               style={[styles.titleHeaderText, {color: theme.colors.primary}]}>
@@ -378,9 +391,6 @@ const rootStyles = (theme: AppTheme) =>
       fontSize: 18,
       fontWeight: '500',
       lineHeight: 24,
-      // flex: 1,
-      // marginLeft: 8,
-      // textAlign: 'center',
       color: theme.colors.text_primary,
     } as TextStyle,
     headerBottomSheet: {

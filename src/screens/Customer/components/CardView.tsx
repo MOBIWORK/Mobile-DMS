@@ -6,7 +6,6 @@ import {
   ImageStyle,
 } from 'react-native';
 import React from 'react';
-import {ICustomer} from './data';
 import {Colors} from '../../../assets';
 import {Platform} from 'react-native';
 import AppImage from '../../../components/common/AppImage';
@@ -15,7 +14,7 @@ import {useTheme, AppTheme} from '../../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp, navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
-import {IDataCustomer, IDataCustomers, IDataItem} from '../../../models/types';
+import {IDataCustomers} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 
@@ -47,7 +46,7 @@ const CardView = (props: IDataCustomers) => {
                   data: props,
                 })
               }>
-              <Text style={styles.textOrder}>Đặt hàng</Text>
+              <Text style={styles.textOrder}>{translate('putOrder')}</Text>
             </TouchableOpacity>
           </View>
         </Block>
@@ -60,7 +59,11 @@ const CardView = (props: IDataCustomers) => {
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconPhone'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props?.contact?.[0]?.phoneNumber ?  props?.contact?.[0]?.phoneNumber : '---' }</Text>
+          <Text style={styles.contentText}>
+            {props?.contact?.[0]?.phoneNumber
+              ? props?.contact?.[0]?.phoneNumber
+              : '---'}
+          </Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconType'} style={styles.iconStyle} />
@@ -85,9 +88,6 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
       marginTop: 4,
       shadowColor: Colors.darker,
-      // flexDirection: 'row',
-      // justifyContent: 'space-around',
-      // alignItems: 'center',
       ...Platform.select({
         android: {
           elevation: 2,
@@ -107,7 +107,6 @@ const rootStyles = (theme: AppTheme) =>
     } as ViewStyle,
     contentContainLayout: {
       flexDirection: 'row',
-      // justifyContent: 'center',
       alignItems: 'center',
       paddingVertical: 4,
       paddingRight: 16,
@@ -127,7 +126,6 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 16,
       paddingVertical: 12,
       flex: 1,
-      // backgroundColor:'red'
     } as ViewStyle,
     textName: {
       fontSize: 16,
@@ -138,14 +136,12 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     containButton: {
       justifyContent: 'center',
-      // backgroundColor: 'red',
       alignItems: 'center',
       flex: 1,
     } as ViewStyle,
     containButtonBuy: {
       borderRadius: 16,
       borderColor: theme.colors.action,
-      // width:100,
       height: 37,
       backgroundColor: Colors.white,
       alignItems: 'center',

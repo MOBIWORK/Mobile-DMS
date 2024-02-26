@@ -53,11 +53,13 @@ import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
 import {CommonUtils} from '../../utils';
+import {useTranslation} from 'react-i18next';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const styles = rootStyles(theme);
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const [valueFilter, setValueFilter] = React.useState<IValueType>({
     customerType: 'Cá nhân',
@@ -115,7 +117,9 @@ const AddingNewCustomer = () => {
       ...newListData,
       frequency: newListData.frequency.toString(),
       customer_type:
-        newListData.customer_type === 'Cá nhân' ? 'Individual' : 'Company',
+        newListData.customer_type === getLabel('individual')
+          ? 'Individual'
+          : 'Company',
       address_title_cus: `${newListData.customer_name} address`,
       address_type_cus: address ? 'Billing' : '',
       detail_address_cus: address?.detailAddress,
@@ -140,7 +144,6 @@ const AddingNewCustomer = () => {
         : new Date().getTime() / 1000,
     };
 
-    // console.log('newObj', updateListData);
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
@@ -196,7 +199,7 @@ const AddingNewCustomer = () => {
     // if (response?.result.length > 0) {
     //   dispatch(customerActions.setListCustomerRoute(response.result));
     // }
-    dispatch(customerActions.onGetCustomerVisit())
+    dispatch(customerActions.onGetCustomerVisit());
   };
   //get Cur Location
   useEffect(() => {
@@ -207,7 +210,7 @@ const AddingNewCustomer = () => {
         })
         .catch(() => {
           showSnack({
-            msg: 'Không lấy được GPS',
+            msg: getLabel('GPSErr'),
             interval: 2000,
             type: 'error',
           });
@@ -227,7 +230,7 @@ const AddingNewCustomer = () => {
   return (
     <MainLayout>
       <AppHeader
-        label="Khách hàng"
+        label={getLabel('customer')}
         onBack={() => navigation.goBack()}
         backButtonIcon={
           <AppIcons
@@ -274,7 +277,7 @@ const AddingNewCustomer = () => {
         locale="vi"
         mode="single"
         visible={openDate}
-        label="Chọn sinh nhật"
+        label={getLabel('chooseBirthday')}
         onDismiss={onDismissSingle}
         date={date}
         onConfirm={onConfirmSingle}
@@ -295,7 +298,7 @@ const AddingNewCustomer = () => {
         <MainLayout style={styles.mainLayout}>
           <View>
             <AppHeader
-              label="Chọn ảnh"
+              label={getLabel('chooseImage')}
               onBack={() => {}}
               backButtonIcon={
                 <AppIcons
@@ -315,7 +318,7 @@ const AddingNewCustomer = () => {
               <View style={styles.containIconView}>
                 <SvgIcon source="IconCamera" size={24} />
                 <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                  {'  '}Chụp ảnh
+                  {'  '} {getLabel('takePicture')}
                 </AppText>
               </View>
 
@@ -328,7 +331,7 @@ const AddingNewCustomer = () => {
               <View style={styles.containIconView}>
                 <SvgIcon source="IconImage" size={24} />
                 <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                  {'  '}Chọn từ thư viện
+                  {'  '} {getLabel('chooseFromLibrary')}
                 </AppText>
               </View>
               <SvgIcon source="arrowRight" size={20} />
