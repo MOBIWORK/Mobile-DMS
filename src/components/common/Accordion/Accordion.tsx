@@ -1,5 +1,5 @@
 import {Pressable, StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import Animated, {
   useAnimatedRef,
   useSharedValue,
@@ -40,6 +40,20 @@ const Accordion = (props: Props) => {
     height: heightValue.value,
   }));
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (heightValue.value === 0) {
+        runOnUI(() => {
+          'worklet';
+          heightValue.value = withTiming(measure(listRef)!.height);
+        })();
+      } else {
+        heightValue.value = withTiming(0);
+      }
+      setShow(!show);
+    }, 500);
+  }, []);
+
   return props.type === 'regular' ? (
     <Block
       style={[styles.container, props.containerStyle]}
@@ -57,11 +71,7 @@ const Accordion = (props: Props) => {
           setShow(!show);
         }}
         style={[styles.titleContainer('regular'), props.titleContainerStyle]}>
-        <Text
-
-          fontSize={14}
-          fontWeight="500"
-          colorTheme="text_primary">
+        <Text fontSize={14} fontWeight="500" colorTheme="text_primary">
           {props.title}
         </Text>
         <Chevron show={show} />
@@ -87,10 +97,7 @@ const Accordion = (props: Props) => {
           setShow(!show);
         }}
         style={styles.titleContainer('nested')}>
-        <Text
-          fontSize={14}
-          fontWeight="500"
-          colorTheme="text_secondary">
+        <Text fontSize={14} fontWeight="500" colorTheme="text_secondary">
           {props.title}
         </Text>
         <Chevron show={show} />
@@ -114,7 +121,7 @@ const rootStyle = (theme: AppTheme) =>
       borderRadius: 14,
       overflow: 'hidden',
     } as ViewStyle,
-   
+
     titleContainer: (type: 'nested' | 'regular') =>
       ({
         // padding: 20,

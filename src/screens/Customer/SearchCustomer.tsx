@@ -8,7 +8,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useMMKVString} from 'react-native-mmkv';
-import { dispatch } from '../../utils/redux';
+import {dispatch} from '../../utils/redux';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {NavigationProp} from '../../navigation';
 import {AppConstant} from '../../const';
@@ -16,13 +16,15 @@ import {AppText as Text, Block, SvgIcon} from '../../components/common';
 import {MainLayout} from '../../layouts';
 import {Searchbar} from 'react-native-paper';
 import {ImageAssets} from '../../assets';
-import { appActions } from '../../redux-store/app-reducer/reducer';
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import {useTranslation} from 'react-i18next';
 
 type Props = {};
 
 const SearchCustomer = (props: Props) => {
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const {t: getLabel} = useTranslation();
   const [listCustomerNearly, setListCustomerNearly] = useMMKVString(
     AppConstant.ListSearchCustomerNearly,
   );
@@ -41,7 +43,7 @@ const SearchCustomer = (props: Props) => {
     return (
       <Block marginTop={20}>
         <Text colorTheme="text_primary" fontWeight="500">
-          Tìm kiếm gần đây
+          {getLabel('recentSearches')}
         </Text>
         <Block marginTop={16}>
           {listCustomerNearly &&
@@ -102,7 +104,7 @@ const SearchCustomer = (props: Props) => {
           <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
         </TouchableOpacity>
         <Searchbar
-          placeholder="Tìm kiếm khách hàng..."
+          placeholder={getLabel('pSearchCustomer')}
           value={searchValue}
           onChangeText={setSearchValue}
           onSubmitEditing={onSubmitEnditing}
@@ -112,7 +114,7 @@ const SearchCustomer = (props: Props) => {
           style={styles(theme).searchBar}
         />
       </Block>
-      <SearchNearly/>
+      <SearchNearly />
     </MainLayout>
   );
 };

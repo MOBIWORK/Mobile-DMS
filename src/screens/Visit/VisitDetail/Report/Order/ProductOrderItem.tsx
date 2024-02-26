@@ -15,6 +15,7 @@ import {ImageAssets} from '../../../../../assets';
 import {CommonUtils} from '../../../../../utils';
 import {Accordion, Block} from '../../../../../components/common';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 
 const ProductOrderItem: FC<ProductOrderItemProps> = ({
   productData,
@@ -22,6 +23,7 @@ const ProductOrderItem: FC<ProductOrderItemProps> = ({
 }) => {
   const {colors} = useTheme();
   const styles = createSheetStyles(useTheme());
+  const {t: getLabel} = useTranslation();
 
   const [isPromotional, setIsPromotional] = useState<boolean>(false);
 
@@ -73,7 +75,7 @@ const ProductOrderItem: FC<ProductOrderItemProps> = ({
               fontWeight: '500',
               fontSize: 16,
             }}>
-            {`Sản phẩm(${productData.length})`}
+            {`${getLabel('product')}(${productData.length})`}
           </Text>
         ) : (
           <View
@@ -99,7 +101,7 @@ const ProductOrderItem: FC<ProductOrderItemProps> = ({
                     : colors.text_secondary,
                   fontWeight: '500',
                 }}>
-                {`Sản phẩm(${productData.length})`}
+                {`${getLabel('product')}(${productData.length})`}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -117,7 +119,9 @@ const ProductOrderItem: FC<ProductOrderItemProps> = ({
                   color: isPromotional ? colors.primary : colors.text_secondary,
                   fontWeight: '500',
                 }}>
-                {`Sản phẩm KM(${promotionalData.length})`}
+                {`${getLabel('promotionalProducts')}(${
+                  promotionalData.length
+                })`}
               </Text>
             </TouchableOpacity>
           </View>
@@ -138,24 +142,27 @@ const ProductOrderItem: FC<ProductOrderItemProps> = ({
           label={item.label}
         />
         <View style={styles.productRowItem}>
-          <RowItem title={'Đơn vị tính'} label={item.unit} />
-          <RowItem title={'Số lượng'} label={item.count.toString()} />
-          <RowItem title={'Đơn giá'} label={item.price.toString()} />
+          <RowItem title={getLabel('unit')} label={item.unit} />
+          <RowItem title={getLabel('quantity')} label={item.count.toString()} />
+          <RowItem
+            title={getLabel('unitPrice')}
+            label={item.price.toString()}
+          />
           {item.discount_percent && item.discount_VND && (
             <>
               <RowItem
-                title={'Chiết khấu(%)'}
+                title={`${getLabel('discount')}(%)`}
                 label={item.discount_percent.toString()}
               />
               <RowItem
-                title={'Chiết khấu(VND)'}
+                title={`${getLabel('discount')}(VND)`}
                 label={item.discount_VND.toString()}
               />
             </>
           )}
         </View>
         <RowItem
-          title={'Thành tiền'}
+          title={getLabel('intoMoney')}
           label={CommonUtils.convertNumber(7000000).toString()}
           titleStyle={{fontWeight: '500'}}
           labelStyle={{fontWeight: '500', fontSize: 16}}
@@ -164,9 +171,16 @@ const ProductOrderItem: FC<ProductOrderItemProps> = ({
     );
   };
   return (
-    <Accordion type='nested' title={'Sản phẩm'}  containerStyle={{marginBottom:0}}>
-      <Block colorTheme='white' style={{rowGap: 10}}   paddingVertical={10} borderRadius={16}>
-        {/* {renderHeader()} */}
+    <Accordion
+      type="nested"
+      title={getLabel('product')}
+      containerStyle={{marginBottom: 0}}>
+      <Block
+        colorTheme="white"
+        style={{rowGap: 10}}
+        paddingVertical={10}
+        borderRadius={16}>
+        {renderHeader()}
         <FlatList
           contentContainerStyle={{rowGap: 30}}
           data={isPromotional ? promotionalData : productData}
@@ -213,7 +227,7 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       borderRadius: 16,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      marginHorizontal:16,
+      marginHorizontal: 16,
       // marginBottom:10
     } as ViewStyle,
     productRowItem: {

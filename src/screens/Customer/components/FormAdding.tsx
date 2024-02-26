@@ -68,7 +68,6 @@ const FormAdding = (props: Props) => {
     state => state.customer.mainContactAddress,
   );
 
-  // const [location, setLocation] = useState<Location | null>(null);
   const [value, setValue] = useState<string>('');
   const mapboxCameraRef = useRef<CameraRef>(null);
 
@@ -148,7 +147,7 @@ const FormAdding = (props: Props) => {
       style={styles.root}
       showsVerticalScrollIndicator={false}
       decelerationRate={'fast'}>
-      <Text style={styles.titleText}>Thông tin chung </Text>
+      <Text style={styles.titleText}>{translate('generalInformation')} </Text>
       <TouchableOpacity
         style={styles.containContainImage}
         onPress={() => props.cameraBottomRef.current?.snapToIndex(0)}>
@@ -165,7 +164,7 @@ const FormAdding = (props: Props) => {
         </View>
       </TouchableOpacity>
       <AppInput
-        label="Tên khách hàng"
+        label={translate('customerName')}
         value={valueFilter.customer_name}
         editable={true}
         hiddenRightIcon={true}
@@ -177,7 +176,7 @@ const FormAdding = (props: Props) => {
         }}
       />
       <AppInput
-        label="Mã khách hàng"
+        label={translate('customerCode')}
         value={valueFilter.customer_code}
         editable={true}
         hiddenRightIcon={true}
@@ -249,7 +248,6 @@ const FormAdding = (props: Props) => {
         label={translate('dob')}
         value={valueDate}
         editable={false}
-        // isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
@@ -328,7 +326,7 @@ const FormAdding = (props: Props) => {
       />
       <Pressable>
         <View style={styles.contentLabelAddingStyle}>
-          <Text style={styles.titleText}>Địa chỉ</Text>
+          <Text style={styles.titleText}>{translate('address')}</Text>
           {Object.keys(mainAddress).length > 0 && (
             <SvgIcon
               size={20}
@@ -355,14 +353,14 @@ const FormAdding = (props: Props) => {
                   color={theme.colors.action}
                 />
               </View>
-              <Text style={styles.textButton}>Thêm địa chỉ</Text>
+              <Text style={styles.textButton}>{translate('addAddress')}</Text>
             </TouchableOpacity>
           </View>
         )}
       </Pressable>
       <View>
         <View style={styles.contentLabelAddingStyle}>
-          <Text style={styles.titleText}>Người liên hệ</Text>
+          <Text style={styles.titleText}>{translate('contactName')}</Text>
           {Object.keys(mainContactAddress).length > 0 && (
             <SvgIcon
               size={20}
@@ -391,14 +389,14 @@ const FormAdding = (props: Props) => {
                   color={theme.colors.action}
                 />
               </View>
-              <Text style={styles.textButton}>Thêm người liên hệ</Text>
+              <Text style={styles.textButton}>{translate('addContact')}</Text>
             </TouchableOpacity>
           </View>
         )}
       </View>
 
       <Pressable>
-        <Text style={styles.titleText}>Vị trí</Text>
+        <Text style={styles.titleText}>{translate('location')}</Text>
         <View style={[styles.contentView, {height: 320}]}>
           {location && (
             <View

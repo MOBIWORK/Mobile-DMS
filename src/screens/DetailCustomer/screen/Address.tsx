@@ -1,39 +1,27 @@
-import {
-  StyleSheet,
-
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, ViewStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {MainLayout} from '../../../layouts';
-import { AppIcons, AppText} from '../../../components/common';
+import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
-
-// import {AppSelector} from '../../../redux-store';
-import CardAddress, {MainAddress} from '../../Customer/components/CardAddress';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-
+import {useTranslation} from 'react-i18next';
 
 type Props = {
-
-  onPressAdding:() =>void
+  onPressAdding: () => void;
 };
 
 const Address = (props: Props) => {
-  const {onPressAdding} = props
+  const {onPressAdding} = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
-  // const mainAddress: MainAddress[] = useSelector(AppSelector.getMainAddress);
-  
+  const {t: getLabel} = useTranslation();
 
   return (
     <>
       <MainLayout style={styles.root}>
         <View style={styles.containLabel}>
           <AppText fontSize={14} fontWeight="400" colorTheme="text_secondary">
-            Danh sách địa chỉ
+            {getLabel('listAddress')}
           </AppText>
           <TouchableOpacity
             style={styles.containButton}
@@ -46,16 +34,6 @@ const Address = (props: Props) => {
             />
           </TouchableOpacity>
         </View>
-        {/* {mainAddress?.map((item, index) => {
-          return (
-            <CardAddress
-              key={index.toString()}
-              type="address"
-              mainAddress={item}
-            />
-          );
-        })} */}
-       
       </MainLayout>
     </>
   );

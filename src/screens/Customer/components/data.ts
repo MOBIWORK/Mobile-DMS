@@ -70,11 +70,11 @@ export const listFilter = [
 export const listFilterType: any = [
   {
     id: 1,
-    title: 'Cá nhân',
+    title: 'individual',
   },
   {
     id: 2,
-    title: 'Công ty',
+    title: 'Company',
   },
 ];
 export const listBirthDayType: any = [

@@ -15,12 +15,14 @@ import {NavigationProp} from '../../../navigation';
 import {useMMKVString} from 'react-native-mmkv';
 import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {useTranslation} from 'react-i18next';
 
 const SearchVisit = () => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const {t: getLabel} = useTranslation();
 
   const [listVisitNearly, setListVisitNearly] = useMMKVString(
     AppConstant.ListSearchVisitNearly,
@@ -122,7 +124,7 @@ const SearchVisit = () => {
             width: '90%',
             marginLeft: 12,
           }}
-          placeholder={'Tìm kiếm viếng thăm...'}
+          placeholder={getLabel('pSearchVisit')}
           placeholderTextColor={colors.text_disable}
           icon={ImageAssets.SearchIcon}
           value={searchValue}

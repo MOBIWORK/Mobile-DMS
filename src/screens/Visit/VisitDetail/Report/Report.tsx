@@ -14,7 +14,7 @@ import Inventory from './Inventory';
 import Debt from './Debt';
 import SelectedDateFilter from './SelectedDateFilter';
 
-const Report: FC<ReportProps> = ({onOpenReportFilter}) => {
+const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel}) => {
   const navigation = useNavigation<NavigationProp>();
   const [segData, setSegData] = useState<AppSegmentedButtonsType[]>([]);
   const [indexPage, setIndexPage] = useState<number>(1);
@@ -37,7 +37,10 @@ const Report: FC<ReportProps> = ({onOpenReportFilter}) => {
 
   return (
     <>
-      <SelectedDateFilter onOpenReportFilter={onOpenReportFilter} />
+      <SelectedDateFilter
+        onOpenReportFilter={onOpenReportFilter}
+        timeLabel={timeLabel}
+      />
       {segData && (
         <AppSegmentedButtons data={segData} onChange={changeReportIndex} />
       )}
@@ -62,21 +65,22 @@ const Report: FC<ReportProps> = ({onOpenReportFilter}) => {
 };
 interface ReportProps {
   onOpenReportFilter: () => void;
+  timeLabel?: string;
 }
 export default Report;
 const dataSeg: AppSegmentedButtonsType[] = [
   {
-    title: 'Đơn hàng',
+    title: 'order',
     value: 1,
     isSelected: true,
   },
   {
-    title: 'Tồn kho',
+    title: 'inventory',
     value: 2,
     isSelected: false,
   },
   {
-    title: 'Công nợ',
+    title: 'debt',
     value: 3,
     isSelected: false,
   },

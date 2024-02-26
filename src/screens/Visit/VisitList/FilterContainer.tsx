@@ -97,7 +97,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
         snapPointsCustom={snapPoints}>
         <AppHeader
           style={{marginTop: 32, marginHorizontal: 16}}
-          label={'Bộ lọc'}
+          label={getLabel('filter')}
           onBack={() =>
             bottomSheetRef.current && bottomSheetRef.current.close()
           }
@@ -118,40 +118,42 @@ const FilterContainer: FC<FilterContainerProps> = ({
           }}>
           <Pressable style={{marginTop: 32, rowGap: 24}}>
             <Item
-              label={'Tuyến'}
+              label={getLabel('gland')}
               value={
-                filterValue?.route ? filterValue.route.channel_name : 'Tất cả'
+                filterValue?.route
+                  ? filterValue.route.channel_name
+                  : getLabel('all')
               }
               type={AppConstant.VisitFilterType.channel}
             />
             <Item
-              label={'Trạng thái viếng thăm'}
-              value={filterValue?.status ?? 'Tất cả'}
+              label={getLabel('visitStatus')}
+              value={filterValue?.status ?? getLabel('all')}
               type={AppConstant.VisitFilterType.state}
             />
             <Item
-              label={'Sắp xếp theo khoảng cách'}
-              value={filterValue?.distance ?? 'Gần nhất'}
+              label={getLabel('sortByDistance')}
+              value={filterValue?.distance ?? getLabel('nearest')}
               type={AppConstant.VisitFilterType.distance}
             />
             <Item
-              label={'Sắp xếp theo tên'}
+              label={getLabel('sortByName')}
               value={filterValue?.orderby ?? 'A -> Z'}
               type={AppConstant.VisitFilterType.name}
             />
             <Item
-              label={'Ngày sinh nhật'}
-              value={filterValue?.birthDay ?? 'Tất cả'}
+              label={getLabel('customerBirthDay')}
+              value={filterValue?.birthDay ?? getLabel('all')}
               type={AppConstant.VisitFilterType.birthday}
             />
             <Item
-              label={'Nhóm khách hàng'}
-              value={filterValue?.customer_group ?? 'Tất cả'}
+              label={getLabel('groupCustomer')}
+              value={filterValue?.customer_group ?? getLabel('all')}
               type={AppConstant.VisitFilterType.customerGroup}
             />
             <Item
-              label={'Loại khách hàng'}
-              value={filterValue?.customer_type ?? 'Tất cả'}
+              label={getLabel('customerType')}
+              value={filterValue?.customer_type ?? getLabel('all')}
               type={AppConstant.VisitFilterType.customerType}
             />
           </Pressable>
@@ -167,7 +169,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
           }}>
           <AppButton
             style={{width: '45%', backgroundColor: colors.bg_neutral}}
-            label={'Đặt lại'}
+            label={getLabel('reset')}
             styleLabel={{color: colors.text_secondary}}
             onPress={() => {
               setFilter({});
@@ -175,7 +177,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
           />
           <AppButton
             style={{width: '45%'}}
-            label={'Áp dụng'}
+            label={getLabel('apply')}
             onPress={handleFilter}
           />
         </View>

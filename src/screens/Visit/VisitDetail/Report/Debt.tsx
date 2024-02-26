@@ -4,10 +4,12 @@ import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {CommonUtils} from '../../../../utils';
 import {ImageAssets} from '../../../../assets';
 import {ReportDebtListType, ReportDebtType} from '../../../../models/types';
+import {useTranslation} from 'react-i18next';
 
 const Debt: FC<DebtProps> = ({debtData}) => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
+  const {t: getLabel} = useTranslation();
 
   const renderDebtItem = (item: ReportDebtListType, index: number) => {
     return (
@@ -42,7 +44,9 @@ const Debt: FC<DebtProps> = ({debtData}) => {
   return (
     <View style={{marginTop: 32}}>
       <View style={styles.headerContainer as any}>
-        <Text style={{color: theme.colors.text_primary}}>Tổng tiền nợ</Text>
+        <Text style={{color: theme.colors.text_primary}}>
+          {getLabel('totalDebt')}
+        </Text>
         <Text style={styles.titleText as any}>
           {CommonUtils.convertNumber(7000000).toString()}
         </Text>

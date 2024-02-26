@@ -110,15 +110,15 @@ export const FilterStateData = (getLabel: any) => {
   return [
     {
       id: 1,
-      title: 'Tất cả',
+      title: getLabel('all'),
     },
     {
       id: 2,
-      title: 'Đã viếng thăm',
+      title: getLabel('visited'),
     },
     {
       id: 3,
-      title: 'Chưa viếng thăm',
+      title: getLabel('notVisited'),
     },
   ] as any;
 };
