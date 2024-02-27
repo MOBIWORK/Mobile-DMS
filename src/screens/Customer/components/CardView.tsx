@@ -6,7 +6,6 @@ import {
   ImageStyle,
 } from 'react-native';
 import React from 'react';
-import {ICustomer} from './data';
 import {Colors} from '../../../assets';
 import {Platform} from 'react-native';
 import AppImage from '../../../components/common/AppImage';
@@ -15,20 +14,20 @@ import {useTheme, AppTheme} from '../../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp, navigate} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
-import {IDataCustomer, IDataItem} from '../../../models/types';
+import {IDataCustomers} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
-const CardView = (props: IDataCustomer) => {
+const CardView = (props: IDataCustomers) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
-  const {t:translate} = useTranslation()
-  // console.log(props);
-  console.log(props)
+  const {t: translate} = useTranslation();
 
   return (
-    <TouchableOpacity style={styles.card} onPress={() => navigate(ScreenConstant.DETAIL_CUSTOMER,{data:props})}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigate(ScreenConstant.DETAIL_CUSTOMER, {data: props})}>
       <View style={styles.containContentView}>
         <Block
           direction="row"
@@ -47,24 +46,30 @@ const CardView = (props: IDataCustomer) => {
                   data: props,
                 })
               }>
-              <Text style={styles.textOrder}>Đặt hàng</Text>
+              <Text style={styles.textOrder}>{translate('putOrder')}</Text>
             </TouchableOpacity>
           </View>
         </Block>
-          <Block height={1} colorTheme='border' marginTop={4} marginBottom={4}  />
+        <Block height={1} colorTheme="border" marginTop={4} marginBottom={4} />
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconAddress'} style={styles.iconStyle} />
           <Text numberOfLines={1} style={styles.contentText}>
-            {props?.address?.address}
+            {props?.address?.[0]?.address ? props.address[0]?.address : '---'}
           </Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconPhone'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{props?.contact?.phone}</Text>
+          <Text style={styles.contentText}>
+            {props?.contact?.[0]?.phoneNumber
+              ? props?.contact?.[0]?.phoneNumber
+              : '---'}
+          </Text>
         </View>
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconType'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>{translate(props?.customer_type)}</Text>
+          <Text style={styles.contentText}>
+            {translate(props?.customer_type)}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -77,19 +82,15 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     card: {
       backgroundColor: theme.colors.bg_default,
-      paddingVertical:8,
+      paddingVertical: 8,
       marginBottom: 16,
       marginHorizontal: 2,
       borderRadius: 16,
       marginTop: 4,
       shadowColor: Colors.darker,
-      // flexDirection: 'row',
-      // justifyContent: 'space-around',
-      // alignItems: 'center',
       ...Platform.select({
         android: {
           elevation: 2,
-          borderTopWidth: 2,
           shadowColor: Colors.darker,
         },
         ios: {
@@ -106,10 +107,9 @@ const rootStyles = (theme: AppTheme) =>
     } as ViewStyle,
     contentContainLayout: {
       flexDirection: 'row',
-      // justifyContent: 'center',
       alignItems: 'center',
       paddingVertical: 4,
-      paddingRight:16
+      paddingRight: 16,
     } as ViewStyle,
     iconStyle: {
       width: 16,
@@ -126,7 +126,6 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 16,
       paddingVertical: 12,
       flex: 1,
-      // backgroundColor:'red'
     } as ViewStyle,
     textName: {
       fontSize: 16,
@@ -137,14 +136,12 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     containButton: {
       justifyContent: 'center',
-      // backgroundColor: 'red',
       alignItems: 'center',
       flex: 1,
     } as ViewStyle,
     containButtonBuy: {
       borderRadius: 16,
       borderColor: theme.colors.action,
-      // width:100,
       height: 37,
       backgroundColor: Colors.white,
       alignItems: 'center',

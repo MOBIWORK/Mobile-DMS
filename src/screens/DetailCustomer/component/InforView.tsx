@@ -6,7 +6,7 @@ import {AppText, Block, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
 import Mapbox, {Location} from '@rnmapbox/maps';
 import BackgroundGeolocation from 'react-native-background-geolocation';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   data: IDataCustomer;
@@ -16,8 +16,8 @@ const InforBlock = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const ref = useRef<Mapbox.Camera>(null);
-  const {t:translate} = useTranslation()
-  console.log(props)
+  const {t: translate} = useTranslation();
+  console.log(props);
 
   const [location, setLocation] = useState<Location | any>({
     coords: {
@@ -34,9 +34,6 @@ const InforBlock = (props: Props) => {
       })
       .catch(err => console.log(err));
   }, []);
-
-
-
 
   return (
     <Block style={styles.root}>
@@ -59,14 +56,14 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Tên khách hàng
+            {translate('customerName')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_name != '' ? props.data.customer_name : ` ---`}
+            {props.data.customer_name != '' ? props.data.customer_name : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -76,35 +73,20 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Mã khách hàng
+            {translate('customerCode')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_code != null ? props.data.customer_code : '---'}
+            {props.data.customer_code != null
+              ? props.data.customer_code
+              : '---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
-        {/* <Block>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            Mã khách hàng
-          </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            KH-12345
-          </AppText>
-          <Block style={styles.divider} />
-        </Block> */}
-         <Block>
+        <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
@@ -117,7 +99,9 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_group != '' ? props.data.customer_group : ` ---`}
+            {props.data.customer_group != ''
+              ? props.data.customer_group
+              : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -127,49 +111,34 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Nhóm khách hàng
+            {translate('groupCustomer')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_type != '' ? translate(props.data.customer_type) : ` ---`}
+            {props.data.customer_type != ''
+              ? translate(props.data.customer_type)
+              : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
-       
+
         <Block>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Khu vực
+            {translate('area')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.territory != null ? props.data.territory : ` ---`}
-          </AppText>
-          <Block style={styles.divider} />
-        </Block>
-        <Block>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            Ngày sinh nhật
-          </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            {props.data.customer_birthday != null ? props.data.customer_birthday : ` ---`}
+            {props.data.territory != null ? props.data.territory : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -179,14 +148,16 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Tuyến
+            {translate('customerBirthDay')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.router_name != null ? props.data.router_name : ` ---`}
+            {props.data.customer_birthday != null
+              ? props.data.customer_birthday
+              : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -196,14 +167,14 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Tần suất
+            {translate('gland')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.frequency && props.data.frequency?.length > 0 ? props.data.frequency.join(',') : '---'}
+            {props.data.router_name != null ? props.data.router_name : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -213,14 +184,16 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Hạn mức công nợ
+            {translate('frequency')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.credit_limid && props.data.credit_limid.length > 0 ? props.data.credit_limid.join(',') : ` ---`}
+            {props.data.frequency && props.data.frequency?.length > 0
+              ? props.data.frequency.join(',')
+              : '---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -230,14 +203,35 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Mô tả
+            {translate('debtLimit')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data?.description && props.data?.description != '' ? props.data.description : ` ---`}
+            {props.data.credit_limid && props.data.credit_limid.length > 0
+              ? props.data.credit_limid.join(',')
+              : ' ---'}
+          </AppText>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_secondary"
+            lineHeight={24}>
+            {translate('describe')}
+          </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            {props.data?.description && props.data?.description != ''
+              ? props.data.description
+              : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -254,7 +248,9 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data?.website && props.data?.website != '' ? props.data.website : ` ---`}
+            {props.data?.website && props.data?.website != ''
+              ? props.data.website
+              : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -264,7 +260,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Vị trí
+            {translate('location')}
           </AppText>
           <Mapbox.MapView
             pitchEnabled={false}
@@ -331,6 +327,6 @@ const rootStyles = (theme: AppTheme) =>
     mapBlock: {
       width: '100%',
       height: 381,
-      marginTop:8
+      marginTop: 8,
     } as ViewStyle,
   });

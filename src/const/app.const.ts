@@ -79,7 +79,7 @@ export enum CustomerFilterType {
   nguoi_lien_he = 'nguoi_lien_he',
   khu_vuc = 'khu_vuc',
   tuyen = 'tuyen',
-  tan_suat='tan_suat'
+  tan_suat = 'tan_suat',
 }
 const DURATION_HIDE = 1000;
 const DURATION_ANIMATED = 500;
@@ -108,12 +108,12 @@ export const SelectedDateFilterData: IFilterType[] = [
   },
   {
     label: 'thisMonth',
-    value: 2,
+    value: 3,
     isSelected: false,
   },
   {
-    label: 'custom',
-    value: 2,
+    label: 'selectDate',
+    value: 4,
     isSelected: false,
   },
 ];
@@ -155,6 +155,20 @@ export const ReportFilterKPIData: IFilterType[] = [
   {
     label: 'lastMonth',
     value: 'lastMonth',
+    isSelected: false,
+  },
+];
+
+export const DistanceFilterData: IFilterType[] = [
+  {
+    label: 'nearest',
+    value: 0,
+    isSelected: true,
+  },
+
+  {
+    label: 'furthest',
+    value: 1,
     isSelected: false,
   },
 ];

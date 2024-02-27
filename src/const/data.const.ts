@@ -7,7 +7,7 @@ export const DataWidget: IWidget[] = [
     id: 1,
     name: 'Hồ sơ',
     icon: 'iconUser',
-    navigate:ScreenConstant.PROFILE,
+    navigate: ScreenConstant.PROFILE,
   },
   {
     id: 2,
@@ -53,7 +53,7 @@ export const DataWidget: IWidget[] = [
   },
 ];
 
-export const newArrayWid:IWidget[] = [
+export const newArrayWid: IWidget[] = [
   {
     id: 5,
     name: 'Nhắc nhở',
@@ -83,63 +83,63 @@ export const newArrayWid:IWidget[] = [
 export const FilterDistanceData = (getLabel: any) => {
   return [
     {
-      label: 'Gần nhất',
-      isSelected: true,
+      id: 1,
+      title: 'Gần nhất',
     },
     {
-      label: 'Xa nhất',
-      isSelected: false,
+      id: 2,
+      title: 'Xa nhất',
     },
-  ] as IFilterType[];
+  ] as any;
 };
 
 export const FilterNameData = (getLabel: any) => {
   return [
     {
-      label: 'A -> Z',
-      isSelected: true,
+      id: 1,
+      title: 'A -> Z',
     },
     {
-      label: 'Z -> A',
-      isSelected: false,
+      id: 2,
+      title: 'Z -> A',
     },
-  ] as IFilterType[];
+  ] as any;
 };
 
 export const FilterStateData = (getLabel: any) => {
   return [
     {
-      label: 'Tất cả',
-      isSelected: true,
+      id: 1,
+      title: getLabel('all'),
     },
     {
-      label: 'Đã viếng thăm',
-      isSelected: false,
+      id: 2,
+      title: getLabel('visited'),
     },
     {
-      label: 'Chưa viếng thăm',
-      isSelected: false,
+      id: 3,
+      title: getLabel('notVisited'),
     },
-  ] as IFilterType[];
+  ] as any;
 };
 
 export const FilterBirthdayData = (getLabel: any) => {
   return [
     {
-      label: 'Tất cả',
-      isSelected: true,
+      id: 1,
+      title: 'Tất cả',
     },
     {
-      label: 'Hôm nay',
-      isSelected: false,
+      id: 2,
+      title: 'Hôm nay',
     },
     {
-      label: 'Tuần này',
-      isSelected: false,
+      id: 3,
+      title: 'Tuần này',
     },
     {
-      label: 'Tháng này',
-      isSelected: false,
+      id: 4,
+      title: 'Tháng này',
     },
-  ] as IFilterType[];
+  ] as any;
 };

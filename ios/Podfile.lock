@@ -10,13 +10,13 @@ PODS:
     - AppCenter/Crashes (~> 5.0)
     - AppCenterReactNativeShared (~> 5.0)
     - React-Core
-  - AppCenter/Analytics (5.0.3):
+  - AppCenter/Analytics (5.0.4):
     - AppCenter/Core
-  - AppCenter/Core (5.0.3)
-  - AppCenter/Crashes (5.0.3):
+  - AppCenter/Core (5.0.4)
+  - AppCenter/Crashes (5.0.4):
     - AppCenter/Core
-  - AppCenterReactNativeShared (5.0.0):
-    - AppCenter/Core (= 5.0.3)
+  - AppCenterReactNativeShared (5.0.1):
+    - AppCenter/Core (= 5.0.4)
   - Base64 (1.1.2)
   - boost (1.76.0)
   - BVLinearGradient (2.8.3):
@@ -25,7 +25,7 @@ PODS:
   - CocoaLumberjack (3.7.4):
     - CocoaLumberjack/Core (= 3.7.4)
   - CocoaLumberjack/Core (3.7.4)
-  - CodePush (8.1.1):
+  - CodePush (8.2.1):
     - Base64 (~> 1.1)
     - JWT (~> 3.0.0-beta.12)
     - React-Core
@@ -41,17 +41,13 @@ PODS:
     - ExpoModulesCore
   - EXLocation (16.1.0):
     - ExpoModulesCore
-  - Expo (49.0.21):
-    - ExpoModulesCore
-  - ExpoBlur (12.6.0):
-    - ExpoModulesCore
-  - ExpoHaptics (12.6.0):
+  - Expo (49.0.22):
     - ExpoModulesCore
   - ExpoKeepAwake (12.3.0):
     - ExpoModulesCore
   - ExpoLocalAuthentication (13.4.1):
     - ExpoModulesCore
-  - ExpoModulesCore (1.5.12):
+  - ExpoModulesCore (1.5.13):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-NativeModulesApple
@@ -131,18 +127,18 @@ PODS:
   - JWT (3.0.0-beta.14):
     - Base64 (~> 1.1.2)
   - libevent (2.1.12)
-  - MapboxCommon (23.8.5)
-  - MapboxCoreMaps (10.16.3):
+  - MapboxCommon (23.8.6)
+  - MapboxCoreMaps (10.16.4):
     - MapboxCommon (~> 23.8)
-  - MapboxMaps (10.16.3):
-    - MapboxCommon (= 23.8.5)
-    - MapboxCoreMaps (= 10.16.3)
+  - MapboxMaps (10.16.4):
+    - MapboxCommon (= 23.8.6)
+    - MapboxCoreMaps (= 10.16.4)
     - MapboxMobileEvents (= 1.0.10)
     - Turf (~> 2.0)
   - MapboxMobileEvents (1.0.10)
-  - MMKV (1.3.2):
-    - MMKVCore (~> 1.3.2)
-  - MMKVCore (1.3.2)
+  - MMKV (1.3.3):
+    - MMKVCore (~> 1.3.3)
+  - MMKVCore (1.3.3)
   - OpenSSL-Universal (1.1.1100)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -570,24 +566,26 @@ PODS:
     - React-jsi (= 0.72.6)
     - React-logger (= 0.72.6)
     - React-perflogger (= 0.72.6)
-  - RNBackgroundFetch (4.2.1):
+  - RNBackgroundFetch (4.2.2):
     - React-Core
-  - RNBackgroundGeolocation (4.14.5):
+  - RNBackgroundGeolocation (4.14.6):
     - CocoaLumberjack (~> 3.7.2)
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
-  - RNGestureHandler (2.14.0):
+  - RNFS (2.20.0):
+    - React-Core
+  - RNGestureHandler (2.14.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - rnmapbox-maps (10.1.3):
-    - MapboxMaps (~> 10.16.2)
+  - rnmapbox-maps (10.1.9):
+    - MapboxMaps (~> 10.16.4)
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.1.3)
+    - rnmapbox-maps/DynamicLibrary (= 10.1.9)
     - Turf
-  - rnmapbox-maps/DynamicLibrary (10.1.3):
-    - MapboxMaps (~> 10.16.2)
+  - rnmapbox-maps/DynamicLibrary (10.1.9):
+    - MapboxMaps (~> 10.16.4)
     - React
     - React-Core
     - Turf
@@ -627,7 +625,7 @@ PODS:
     - React-Core
   - SocketRocket (0.6.1)
   - SSZipArchive (2.2.3)
-  - Turf (2.7.0)
+  - Turf (2.8.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -646,8 +644,6 @@ DEPENDENCIES:
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXLocation (from `../node_modules/expo-location/ios`)
   - Expo (from `../node_modules/expo`)
-  - ExpoBlur (from `../node_modules/expo-blur/ios`)
-  - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLocalAuthentication (from `../node_modules/expo-local-authentication/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
@@ -676,7 +672,6 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
-  - MMKV
   - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -722,6 +717,7 @@ DEPENDENCIES:
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -786,10 +782,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-location/ios"
   Expo:
     :path: "../node_modules/expo"
-  ExpoBlur:
-    :path: "../node_modules/expo-blur/ios"
-  ExpoHaptics:
-    :path: "../node_modules/expo-haptics/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoLocalAuthentication:
@@ -889,6 +881,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-geolocation"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   rnmapbox-maps:
@@ -903,29 +897,27 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AppCenter: a4070ec3d4418b5539067a51f57155012e486ebd
+  AppCenter: 85c92db0759d2792a65eb61d6842d2e86611a49a
   appcenter-analytics: fbeef54afe6fa91d3803dfd31499817baa81fec0
   appcenter-core: e192ea8b373bebd3e44998882b43311078bd7dda
   appcenter-crashes: 266063788bcebd553e621344a54286395a8e2010
-  AppCenterReactNativeShared: 01df23849b1c3c6eb8c4049f54322635650e98f0
+  AppCenterReactNativeShared: 22aea9046e80c449137f4e574ae1f229616e2358
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   BVLinearGradient: 880f91a7854faff2df62518f0281afb1c60d49a3
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
-  CodePush: c3fdecab0dba1f760a1c6d1a562b9b88ce311fe1
+  CodePush: 84c9a5792cb3c8e311197d595610c803f0b01739
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   EXApplication: 042aa2e3f05258a16962ea1a9914bf288db9c9a1
   EXConstants: ce5bbea779da8031ac818c36bea41b10e14d04e1
   EXFileSystem: f8b838a880254de42a5a7da20ed5ce12e2697c1b
   EXFont: 738c44c390953ebcbab075a4848bfbef025fd9ee
   EXLocation: a425ace19c0445e7ea9702982fc6b9a402791510
-  Expo: 61a8e1aa94311557c137c0a4dfd4fe78281cfbb4
-  ExpoBlur: 9e6da7c2bd4a0c5de7e57124694d0a380d7962f7
-  ExpoHaptics: 604aca02e942d1d43c139cae7cf397b26f85476f
+  Expo: 9060b49fecf07bebf1dd967730d079aa5e750ebe
   ExpoKeepAwake: be4cbd52d9b177cde0fd66daa1913afa3161fc1d
   ExpoLocalAuthentication: bd9d9037a96a11ccc456e327ddb404df02da10ca
-  ExpoModulesCore: c480fd4e3c7c8e81f0a6ba3a7c56869f25fe016d
+  ExpoModulesCore: cf14fc49a3d5df3ed3cf2a38fc758d073bfd1c13
   FBLazyVector: 748c0ef74f2bf4b36cfcccf37916806940a64c32
   FBReactNativeSpec: 966f29e4e697de53a3b366355e8f57375c856ad9
   Flipper: 6edb735e6c3e332975d1b17956bcc584eccf5818
@@ -941,12 +933,12 @@ SPEC CHECKSUMS:
   hermes-engine: 8057e75cfc1437b178ac86c8654b24e7fead7f60
   JWT: ef71dfb03e1f842081e64dc42eef0e164f35d251
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  MapboxCommon: 677dd4449e9f7d863a4712cf271c198ed1753494
-  MapboxCoreMaps: 304d4ff1de0b5873e4ce359a7ed107fe65f89bd6
-  MapboxMaps: 89322569ce8b0e98ed2a84c3289e6bc402df6073
+  MapboxCommon: 90f76693dc02438acbb5ea9a5b266a4c0eb1c875
+  MapboxCoreMaps: 7b07d1ca8c454a4381daf09df901b9d6bf90bce0
+  MapboxMaps: cbb38845a9bf49b124f0e937975d560a4e01894e
   MapboxMobileEvents: de50b3a4de180dd129c326e09cd12c8adaaa46d6
-  MMKV: f21593c0af4b3f2a0ceb8f820f28bb639ea22bb7
-  MMKVCore: 31b4cb83f8266467eef20a35b6d78e409a11060d
+  MMKV: f902fb6719da13c2ab0965233d8963a59416f911
+  MMKVCore: d26e4d3edd5cb8588c2569222cbd8be4231374e9
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 28469809442eb4eb5528462705f7d852948c8a74
@@ -987,20 +979,21 @@ SPEC CHECKSUMS:
   React-runtimescheduler: f23e337008403341177fc52ee4ca94e442c17ede
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
-  RNBackgroundFetch: 501c34ad6e880818ba17e7840b23f20a2d112923
-  RNBackgroundGeolocation: bf3b45667c4d3c999501f5f8cb16dc35fc01e759
+  RNBackgroundFetch: 35c7183f6eeff69396d42c4b206e1ae2a21e9327
+  RNBackgroundGeolocation: 7dde6957120db41209f0d11427c425f368416afa
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
-  rnmapbox-maps: c5a6bcd941aef23d9a14af7bbae5042e097687b6
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
+  RNGestureHandler: fe2be3be5598dc74329b211c58c9f2d231461769
+  rnmapbox-maps: 3b948182ee265800c9b9cf200de1a934a4f260b0
   RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
-  Turf: 13d1a92d969ca0311bbc26e8356cca178ce95da2
+  Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
   Yoga: b76f1acfda8212aa16b7e26bcce3983230c82603
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 6506c0e95312ad30f8433c0f6476a4ad4c153e26
+PODFILE CHECKSUM: 55481f900c6d49e09e773a79b6b2a109003941b2
 
 COCOAPODS: 1.14.3

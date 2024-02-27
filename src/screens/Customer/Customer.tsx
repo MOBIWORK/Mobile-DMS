@@ -8,7 +8,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, {useRef, useMemo, useEffect} from 'react';
+import React, {useRef, useMemo, useCallback} from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -31,10 +31,28 @@ import ListFilter from './components/ListFilter';
 import {NavigationProp} from '../../navigation';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
-import {useSelector} from '../../config/function';
-import { dispatch } from '../../utils/redux';
-import { customerActions } from '../../redux-store/customer-reducer/reducer';
+import {
+  calculateDistance,
+  handleBackgroundLocation,
+  useSelector,
+} from '../../config/function';
+// import {dispatch} from '../../utils/redux';
+import {
+  customerActions,
+  setListCustomerType,
+} from '../../redux-store/customer-reducer/reducer';
+import {shallowEqual, useDispatch} from 'react-redux';
+import {Location} from 'react-native-background-geolocation';
+import {
+  IDataCustomer,
+  IDataCustomers,
+  ListCustomerType,
+} from '../../models/types';
+import {LocationProps} from '../Visit/VisitList/VisitItem';
+import {getCustomer, getCustomerType} from '../../services/appService';
 
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
   customerType: string;
@@ -46,19 +64,21 @@ const Customer = () => {
   const {t: getLabel} = useTranslation();
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState({
-    first: 'Gần nhất',
+    first: getLabel('nearest'),
     second: '',
   });
   const [show, setShow] = React.useState({
     firstModal: false,
     secondModal: false,
   });
-  const [valueFilter, setValueFilter] = React.useState<IValueType | any>({
-    customerType: 'Cá nhân',
-    customerGroupType: 'Tất cả',
-    customerBirthday: 'Tất cả',
+  const [valueFilter, setValueFilter] = React.useState<IValueType>({
+    customerType: getLabel('all'),
+    customerGroupType: getLabel('all'),
+    customerBirthday: getLabel('all'),
   });
+
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
@@ -67,31 +87,165 @@ const Customer = () => {
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
   const snapPoints = useMemo(() => ['100%'], []);
- const listCustomer = useSelector(state => state.customer.listCustomer)
- console.log(listCustomer,'abbbb')
+  const listCustomer: IDataCustomers[] = useSelector(
+    state => state.customer.listCustomer,
+    shallowEqual,
+  );
+  const customerType: ListCustomerType[] = useSelector(
+    state => state.customer.listCustomerType,
+    shallowEqual,
+  );
+  const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
+
+  const [customerData, setCustomerData] = React.useState<IDataCustomers[]>(
+    listCustomer ? listCustomer : [],
+  );
+  const location: Location = useSelector(
+    state => state.app.currentLocation,
+    shallowEqual,
+  );
 
   const onPressType1 = () => {
     bottomRef.current?.snapToIndex(0);
-    // dispatch(appActions.setShowModal(true))
-
   };
   const onPressType2 = () => {
     bottomRef2.current?.snapToIndex(0);
-    // dispatch(appActions.setShowModal(true))
-
   };
-  // const customer = useSelector(state => state.app.newCustomer);
 
-  useEffect(() =>{
-    dispatch(customerActions.onGetCustomer())
-  },[])
+  useMemo(() => {
+    handleBackgroundLocation();
+    let newData: IDataCustomers[] = [...listCustomer];
+    if (value.first === getLabel('nearest')) {
+      // console.log(newData,'data')
+      const sortData = newData.sort((a, b) => {
+        const locationA: LocationProps = JSON.parse(
+          a.customer_location_primary,
+        );
+        const locationB: LocationProps = JSON.parse(
+          b.customer_location_primary,
+        );
+        const distance1 = calculateDistance(
+          location.coords.latitude,
+          location.coords.longitude,
+          locationA != null ? locationA.lat : 0,
+          locationA != null ? locationA.long : 0,
+        );
+        const distance2 = calculateDistance(
+          location.coords.latitude,
+          location.coords.longitude,
+          locationB != null ? locationB.lat : 0,
+          locationB != null ? locationB.long : 0,
+        );
+        return distance1 - distance2;
+      });
+      setCustomerData(sortData);
+    } else {
+      const sortData = newData.sort((a, b) => {
+        const locationA: LocationProps = JSON.parse(
+          a.customer_location_primary,
+        );
+        const locationB: LocationProps = JSON.parse(
+          b.customer_location_primary,
+        );
+        const distance1 = calculateDistance(
+          location.coords.latitude,
+          location.coords.longitude,
+          locationA != null ? locationA.lat : 0,
+          locationA != null ? locationA.long : 0,
+        );
+        const distance2 = calculateDistance(
+          location.coords.latitude,
+          location.coords.longitude,
+          locationB != null ? locationB.lat : 0,
+          locationB != null ? locationB.long : 0,
+        );
+        return distance2 - distance1;
+      });
+      setCustomerData(sortData);
+    }
+  }, [listCustomer.length, value]);
 
+  React.useEffect(() => {
+    let mounted: boolean;
+    mounted = true;
+    dispatch(appActions.onLoadApp());
+    const getDataType = async () => {
+      const response: any = await getCustomerType();
+      if (response?.result?.length > 0) {
+        dispatch(setListCustomerType(response?.result));
+      }
+    };
+
+    getDataType();
+    if (listCustomer.length > 0) {
+      setCustomerData(listCustomer);
+    } else {
+      dispatch(customerActions.onGetCustomer());
+    }
+    mounted = false;
+    dispatch(appActions.onLoadAppEnd());
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const handleApplyFilter = useCallback(() => {
+    if (
+      valueFilter.customerType === getLabel('all') &&
+      valueFilter.customerGroupType === getLabel('all') &&
+      valueFilter.customerBirthday === getLabel('all')
+    ) {
+      bottomRef2.current?.close();
+    } else if (
+      valueFilter.customerType !== getLabel('all') &&
+      valueFilter.customerType === getLabel('all') &&
+      valueFilter.customerBirthday === getLabel('all')
+    ) {
+      const newData = listCustomer.filter(
+        item => item.customer_type === valueFilter.customerType,
+      );
+      console.log(newData, 'customerType');
+      setCustomerData(newData);
+      bottomRef2.current?.close();
+    } else if (
+      valueFilter.customerGroupType !== getLabel('all') &&
+      valueFilter.customerType !== getLabel('all') &&
+      valueFilter.customerBirthday === getLabel('all')
+    ) {
+      const newData = listCustomer.filter(
+        item =>
+          item.customer_group === valueFilter.customerGroupType &&
+          item.customer_type === valueFilter.customerType,
+      );
+      setCustomerData(newData);
+    } else if (
+      valueFilter.customerGroupType !== getLabel('all') &&
+      valueFilter.customerType === getLabel('all') &&
+      valueFilter.customerBirthday === getLabel('all')
+    ) {
+      const newData = listCustomer.filter(
+        item => item.customer_group === valueFilter.customerGroupType,
+      );
+      setCustomerData(newData);
+      bottomRef2.current?.close();
+    } else {
+      console.log('fuck ?');
+    }
+  }, [valueFilter, listCustomer]);
+  const handleCancel = () => {
+    bottomRef2.current && bottomRef2.current.close();
+    setValueFilter({
+      customerType: getLabel('all'),
+      customerBirthday: getLabel('all'),
+      customerGroupType: getLabel('all'),
+    });
+  };
 
   const renderBottomView = () => {
     return (
       <MainLayout>
         <AppHeader
-          label={'Khách hàng'}
+          label={getLabel('customer')}
           onBack={() => bottomRef2.current && bottomRef2.current.close()}
           backButtonIcon={
             <AppIcons
@@ -156,11 +310,18 @@ const Customer = () => {
         </View>
         <View style={styles.containButtonBottom}>
           <View style={styles.containContentButton}>
-            <TouchableOpacity style={styles.buttonRestart}>
-              <Text style={styles.restartText}>Đặt lại</Text>
+            <TouchableOpacity
+              style={styles.buttonRestart}
+              onPress={handleCancel}>
+              <Text style={styles.restartText}>{getLabel('reset')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonApply}>
-              <Text style={styles.applyText}>Áp dụng</Text>
+            <TouchableOpacity
+              style={styles.buttonApply}
+              onPress={() => {
+                handleApplyFilter();
+                bottomRef2.current?.close();
+              }}>
+              <Text style={styles.applyText}>{getLabel('apply')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -192,23 +353,26 @@ const Customer = () => {
           <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
           {getLabel('customer')}
         </Text>
-        <ListCard data={listCustomer} />
+        {appLoading ? (
+          <SkeletonLoading loading={appLoading!} />
+        ) : (
+          <ListCard data={customerData} />
+        )}
       </MainLayout>
-    
+
       <AppBottomSheet
         bottomSheetRef={bottomRef}
         useBottomSheetView={show.firstModal}
-        // onClose={() => dispatch(appActions.setShowModal(false))}
-        onAnimated={(index,toIndex) =>{
-          if((index != undefined && toIndex!= undefined )){
-              let cal = index -toIndex
-              if(cal > 0){
-                setShow(prev => ({...prev,firstModal: false}))
+        onAnimated={(index, toIndex) => {
+          if (index != undefined && toIndex != undefined) {
+            let cal = index - toIndex;
+            if (cal > 0) {
+              setShow(prev => ({...prev, firstModal: false}));
               //  dispatch(appActions.setShowModal(false))
-              }else{
-               setShow(prev => ({...prev, firstModal: true}))
+            } else {
+              setShow(prev => ({...prev, firstModal: true}));
               //  dispatch(appActions.setShowModal(true))
-              }
+            }
           }
         }}
         enablePanDownToClose={true}>
@@ -249,21 +413,18 @@ const Customer = () => {
         useBottomSheetView={show.secondModal}
         snapPointsCustom={snapPoints}
         // onClose={() => dispatch(appActions.setShowModal(false)) }
-        onAnimated={(index,toIndex) =>{
-          if((index != undefined && toIndex!= undefined )){
-              let cal = index -toIndex
-              if(cal > 0){
-                setShow(prev => ({...prev, secondModal: false}))
+        onAnimated={(index, toIndex) => {
+          if (index != undefined && toIndex != undefined) {
+            let cal = index - toIndex;
+            if (cal > 0) {
+              setShow(prev => ({...prev, secondModal: false}));
               //  dispatch(appActions.setShowModal(false))
-
-              
-              }else{
-               setShow(prev => ({...prev, secondModal: true}))
+            } else {
+              setShow(prev => ({...prev, secondModal: true}));
               //  dispatch(appActions.setShowModal(true))
-              }
+            }
           }
         }}
-       
         enablePanDownToClose={true}>
         {renderBottomView()}
       </AppBottomSheet>
@@ -274,11 +435,12 @@ const Customer = () => {
         <ListFilter
           type={typeFilter}
           filterRef={filterRef}
+          customerType={customerType}
           setValueFilter={setValueFilter}
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-    
+
       <AppFAB
         icon="plus"
         style={styles.fab}

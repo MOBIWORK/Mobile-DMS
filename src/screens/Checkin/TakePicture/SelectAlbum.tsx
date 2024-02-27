@@ -18,8 +18,15 @@ import {AppBottomSheet} from '../../../components/common';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ImageAssets} from '../../../assets';
 import {Button} from 'react-native-paper';
+import {IAlbumImage} from '../../../models/types';
 
-const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData}) => {
+const SelectAlbum: FC<SelectAlbumProps> = ({
+  bottomSheetRef,
+  data,
+  setData,
+  setAlbumImageData,
+  albumImageData,
+}) => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const {bottom} = useSafeAreaInsets();
@@ -45,9 +52,53 @@ const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData}) => {
     setCurData(newData);
   };
 
+  const handleAlbum = (selectedItem: IFilterType[]) => {
+    const selectedData = selectedItem
+      .filter(item => item.isSelected)
+      .map((selected, selectedIdx) => ({
+        id: selectedIdx,
+        label: selected.label,
+        image: ['IconCamera'],
+      }));
+
+    const albumImageDataCopy = [...albumImageData];
+
+    selectedData.forEach(selectedItem => {
+      const existingIndex = albumImageDataCopy.findIndex(
+        item => item.label === selectedItem.label,
+      );
+
+      if (existingIndex === -1 && !('isSelected' in selectedItem)) {
+        const indexToRemove = albumImageDataCopy.findIndex(
+          item => item.label === selectedItem.label,
+        );
+        if (indexToRemove !== -1) {
+          albumImageDataCopy.splice(indexToRemove, 1);
+        }
+      }
+    });
+
+    if (selectedData.length > 0) {
+      setAlbumImageData([
+        ...selectedData.map(item => ({
+          id: item.id, // Adjust this based on your actual structure
+          label: item.label,
+          image: item.image.map(image => ({url: image})),
+        })),
+      ]);
+    } else {
+      setAlbumImageData([]);
+    }
+    return selectedData;
+  };
+
   const ItemAlbum: FC<ItemAlbumProps> = ({item}) => {
     return (
-      <Pressable style={styles.row} onPress={() => handleItem(item)}>
+      <Pressable
+        style={styles.row}
+        onPress={() => {
+          handleItem(item);
+        }}>
         <Text
           style={[
             styles.itemText,
@@ -85,7 +136,9 @@ const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData}) => {
             return (
               <Button
                 key={index}
-                onPress={() => handleItem(item)}
+                onPress={() => {
+                  handleItem(item);
+                }}
                 style={{backgroundColor: theme.colors.bg_neutral}}
                 contentStyle={{flexDirection: 'row-reverse'}}
                 mode={'contained-tonal'}
@@ -118,7 +171,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData}) => {
             <View style={styles.row}>
               <Text
                 onPress={() => {
-                  setCurData(data);
+                  setCurData([]);
                   bottomSheetRef.current?.close();
                 }}
                 style={styles.cancelTxt}>
@@ -128,6 +181,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({bottomSheetRef, data, setData}) => {
               <Text
                 onPress={() => {
                   setData(curData);
+                  handleAlbum(curData);
                   bottomSheetRef.current?.close();
                 }}
                 style={styles.confirmTxt}>
@@ -148,6 +202,8 @@ interface SelectAlbumProps {
   bottomSheetRef: any;
   data: IFilterType[];
   setData: (data: IFilterType[]) => void;
+  setAlbumImageData: React.Dispatch<React.SetStateAction<IAlbumImage[]>>;
+  albumImageData: IAlbumImage[];
 }
 interface ItemAlbumProps {
   item: IFilterType;

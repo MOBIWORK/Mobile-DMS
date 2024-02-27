@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useEffect, useState } from 'react';
 import { IProduct, IProductOverview } from '../../../models/types';
 import { useTranslation } from 'react-i18next';
 import { useNavigation, useTheme } from '@react-navigation/native';
@@ -13,10 +13,11 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
   const { t: getLabel } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const [price,setPrice] = useState<number>(0);
 
   const _renderImg = () => {
     return (
-      <View style={{ marginTop: 16 }}>
+      <View style={{ marginTop: 16  , marginBottom : 20}}>
         <View
           style={{
             flexDirection: 'row',
@@ -134,9 +135,7 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
               {getLabel('standPrice')}
             </Text>
             <Text style={[styles.text, { color: colors.text_primary }]}>
-              {overviewData.detail?.price_list_rate
-                ? CommonUtils.convertNumber(overviewData.detail.price_list_rate)
-                : '---'}
+              {CommonUtils.formatCash(price?.toString() || "")}
             </Text>
           </View>
           <View style={[styles.element, { borderColor: colors.border }]}>
@@ -179,6 +178,19 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
     );
   };
 
+  const getPriceProduct = ()=>{
+    for (let i = 0; i < overviewData.details.length; i++) {
+      const element = overviewData.details[i];
+      if (element.uom === overviewData.stock_uom) {
+        setPrice(element.price_list_rate)
+      }
+    }
+  }
+
+  useEffect(()=>{
+    getPriceProduct()
+  },[overviewData])
+  
   return (
     <>
       {_renderInfo()}

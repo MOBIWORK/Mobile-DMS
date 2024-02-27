@@ -12,6 +12,7 @@ export interface IItemCheckIn {
   backgroundColor:keyof Colors
   type?:string
 }
+
 export const item: IItemCheckIn[] = [
   {
     icon: 'OrangeBox',
@@ -44,7 +45,7 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Ghi chú',
-    screenName:'ADD_NOTE',
+    screenName:'CHECKIN_NOTE_VISIT',
     backgroundColor:'greenBackground'
   },
   {

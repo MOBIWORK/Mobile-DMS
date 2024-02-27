@@ -34,8 +34,10 @@ const handleErrorResponse = (
     } else if (throwErrorIfFailed || response.data?.message) {
       dispatch(
         setError({
-          title: response.data?.title,
-          message: response.data?.message || response.data,
+          // @ts-ignore
+          title: response?.data ? response.data?.title : response.exc_type,
+          // @ts-ignore
+          message: response?.data ? response.data?.message : response.exception,
           viewOnly: true,
           status: response.status,
         }),
@@ -54,27 +56,26 @@ const handleErrorResponse = (
 };
 
 const createInstance = (deleteHeader?: boolean) => {
-  const api_key =
-    CommonUtils.storage.getString(AppConstant.Api_key) ?? 'd58272b345f5754';
-  const api_secret =
-    CommonUtils.storage.getString(AppConstant.Api_secret) ?? '4b872a205a170c9';
+  const api_key = CommonUtils.storage.getString(AppConstant.Api_key);
+  const api_secret = CommonUtils.storage.getString(AppConstant.Api_secret);
   const header =
     api_key && api_secret ? CommonUtils.Auth_header(api_key, api_secret) : null;
 
   let organization = CommonUtils.storage.getString(AppConstant.Organization);
   // if (organization) {
   //   const organizationObj = JSON.parse(organization);
-  //   // Api.setBaseURL(organizationObj.erpnext_url);
+  //   Api.setBaseURL(organizationObj.erpnext_url);
   // }
   if (deleteHeader) {
     Api.deleteHeader('Authorization');
   } else if (header) {
     Api.setHeaders({...header});
   }
-
   return Api;
 };
 
-Api.addResponseTransform(response => handleErrorResponse(response, true));
+Api.addResponseTransform(response => {
+  handleErrorResponse(response, true);
+});
 export const createApi = (deleteHeader?: boolean) =>
   createInstance(deleteHeader);

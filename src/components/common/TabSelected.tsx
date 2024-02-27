@@ -2,10 +2,12 @@ import React, {FC} from 'react';
 import {Pressable, StyleSheet, Text, View, ViewStyle} from 'react-native';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {AppSegmentedButtonsType} from './AppSegmentedButtons';
+import {useTranslation} from 'react-i18next';
 
 const TabSelected: FC<TabSelectedProps> = ({style, data, onChange}) => {
   const theme = useTheme();
   const styles = createStyle(theme);
+  const {t: getLabel} = useTranslation();
   return (
     <View style={[styles.container, {...style}]}>
       {data.map((item, index) => {
@@ -29,7 +31,7 @@ const TabSelected: FC<TabSelectedProps> = ({style, data, onChange}) => {
                   : theme.colors.text_secondary,
                 fontWeight: '500',
               }}>
-              {item.title}
+              {getLabel(item.title)}
             </Text>
           </Pressable>
         );

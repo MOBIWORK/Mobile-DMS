@@ -6,10 +6,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Searchbar, TextInput} from 'react-native-paper';
-import debounce from 'debounce';
+import {TextInput} from 'react-native-paper';
 import {
   AppHeader,
   AppIcons,
@@ -28,66 +27,94 @@ import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {RootEkMapResponse} from '../../../models/types';
 import {dispatch} from '../../../utils/redux';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {ImageAssets} from '../../../assets';
-import {useSelector} from '../../../config/function';
+import SelectedAddress from './SelectedAddress';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import {MainAddress, MainContactAddress} from './CardAddress';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
 };
 
+export const AddressType = {
+  city: 'city',
+  ward: 'ward',
+  district: 'district',
+};
+
+export type AddressSelected = {
+  type: string;
+  value: string;
+  id?: string | number;
+};
+
 const FormAddress = (props: Props) => {
   const {onPressClose, typeFilter} = props;
   const theme = useTheme();
-  const styles = rootStyles(theme);
+  const {t: getLabel} = useTranslation();
+  const styles = rootStyles(theme, getLabel);
   const [screen, setScreen] = useState('');
-  const listAddress = useSelector(state => state.app.listDataCity);
-  const [listCity, setListAddress] = useState({
-    city: listAddress.city,
-    ward: '',
-    district: '',
-  });
+  const [addressSelectedData, setAddressSelectedData] = useState<
+    AddressSelected[]
+  >([]);
 
-  const [addressValue, setAddressValue] = useState({
-    city: 'Tỉnh/Thành phố',
-    district: 'Quận/Huyện',
-    ward: 'Phường/xã',
-    detailAddress: 'Địa chỉ chi tiết',
+  const [contactSelectedData, setContactSelectedData] = useState<
+    AddressSelected[]
+  >([]);
+
+  const [addressValue, setAddressValue] = useState<MainAddress>({
+    detailAddress: '',
     addressOrder: false,
     addressGet: false,
   });
-  const [contactValue, setContactValue] = useState({
-    nameContact: 'Người liên hệ',
-    phoneNumber: 'Số điện thoại',
-    addressContact: 'Địa chỉ',
-    city: 'Tỉnh/Thành phố',
-    district: 'Quận/Huyện',
-    ward: 'Phường/xã',
-    isMainAddress: addressValue.addressGet ? true : false,
+  const [contactValue, setContactValue] = useState<MainContactAddress>({
+    nameContact: '',
+    phoneNumber: '',
+    addressContact: '',
+    isMainAddress: true,
   });
+
+  const [txtAddressDetail, setTxtAddressDetail] = useState<string>('');
+  const [txtContactDetail, setTxtContactDetail] = useState<string>('');
+
   const listCheckBox = useRef([
     {
       id: '1',
-      label: 'Đặt làm địa chỉ giao hàng',
+      label: getLabel('setDeliveryAddress'),
     },
     {
       id: '2',
-      label: 'Đặt làm địa chỉ đặt hàng',
+      label: getLabel('setOrderAddress'),
     },
   ]);
 
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
-    console.log(data, 'data');
-    if (data.status === 'OK') {
+    if (data.status === 'OK' && data.results.length > 0) {
       setAddressValue(prev => ({
         ...prev,
         detailAddress: data.results[0].formatted_address,
       }));
+      const addressSplit = data.results[0].formatted_address.split(',', 4);
+      const newData: AddressSelected[] = [
+        {
+          type: AddressType.city,
+          value: addressSplit[3] ?? '',
+        },
+        {
+          type: AddressType.ward,
+          value: addressSplit[2] ?? '',
+        },
+        {
+          type: AddressType.district,
+          value: addressSplit[1] ?? '',
+        },
+      ];
+      setAddressSelectedData(newData);
     } else {
       showSnack({
-        msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+        msg: getLabel('error:haveError'),
         type: 'error',
         interval: 1000,
       });
@@ -100,7 +127,7 @@ const FormAddress = (props: Props) => {
         fetchData(res?.coords?.latitude, res?.coords?.longitude);
 
         showSnack({
-          msg: 'Thành công',
+          msg: getLabel('success'),
           type: 'success',
           interval: 1000,
         });
@@ -108,84 +135,78 @@ const FormAddress = (props: Props) => {
       .catch(err => console.log(err));
   };
 
-  const onChange = React.useCallback(
-    (text: string) => {
-      console.log('text');
+  useEffect(() => {
+    if (addressSelectedData.length === 3) {
       setAddressValue(prev => ({
         ...prev,
-        detailAddress: text,
+        city: addressSelectedData[0],
+        district: addressSelectedData[1],
+        ward: addressSelectedData[2],
       }));
-    },
-    [addressValue],
-  );
+    } else if (addressSelectedData.length === 2) {
+      setAddressValue(prev => ({
+        ...prev,
+        city: addressSelectedData[0],
+        district: addressSelectedData[1],
+      }));
+    } else if (addressSelectedData.length === 1) {
+      setAddressValue(prev => ({
+        ...prev,
+        city: addressSelectedData[0],
+      }));
+    } else {
+      setAddressValue(prev => ({
+        ...prev,
+      }));
+    }
+  }, [addressSelectedData]);
 
-  const handleItem = (item: any) => {
-    const newData =
-      listCity && listCity.city.filter((res: any) => res.label !== item.label);
-    setListAddress(prev => ({
-      ...prev,
-      city: newData,
-    }));
-  };
-
-  const SearchNearly = () => {
-    return (
-      <Block marginTop={20}>
-        <AppText colorTheme="text_primary" fontWeight="500">
-          Tìm kiếm gần đây
-        </AppText>
-        <Block marginTop={16}>
-          {listCity &&
-            listCity?.city.map((item: any, index: number) => {
-              return (
-                <Block
-                  key={index}
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  marginVertical={6}>
-                  <AppText colorTheme="text_primary" style={{width: '80%'}}>
-                    {item.label}
-                  </AppText>
-                  <SvgIcon
-                    source="Close"
-                    color={theme.colors.text_secondary}
-                    size={24}
-                    onPress={() => handleItem(item)}
-                  />
-                </Block>
-              );
-            })}
-        </Block>
-      </Block>
-    );
-  };
+  useEffect(() => {
+    if (contactSelectedData.length === 3) {
+      setContactValue(prev => ({
+        ...prev,
+        city: contactSelectedData[0],
+        district: contactSelectedData[1],
+        ward: contactSelectedData[2],
+      }));
+    } else if (contactSelectedData.length === 2) {
+      setContactValue(prev => ({
+        ...prev,
+        city: contactSelectedData[0],
+        district: contactSelectedData[1],
+      }));
+    } else if (contactSelectedData.length === 1) {
+      setContactValue(prev => ({
+        ...prev,
+        city: contactSelectedData[0],
+      }));
+    } else {
+      setContactValue(prev => ({
+        ...prev,
+      }));
+    }
+  }, [contactSelectedData]);
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
-      {screen === 'Adding' || screen === 'AddingContact' ? (
-        <MainLayout>
-          <Block
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            width={'100%'}>
-            <TouchableOpacity onPress={() => console.log('run bitch')}>
-              <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
-            </TouchableOpacity>
-            <Searchbar
-              placeholder={'Tìm kiếm'}
-              value={''}
-              onChangeText={text => console.log(text)}
-              onSubmitEditing={e => console.log(e.nativeEvent.text)}
-              icon={ImageAssets.SearchIcon}
-              placeholderTextColor={theme.colors.text_disable}
-              inputStyle={{color: theme.colors.text_primary}}
-              style={styles.searchBar}
-            />
-            <SearchNearly />
-          </Block>
-        </MainLayout>
+      {(screen === 'Adding' || screen === 'AddingContact') &&
+      ((typeFilter === AppConstant.CustomerFilterType.dia_chi &&
+        addressSelectedData.length !== 3) ||
+        (typeFilter === AppConstant.CustomerFilterType.nguoi_lien_he &&
+          contactSelectedData.length !== 3)) ? (
+        <SelectedAddress
+          setScreen={setScreen}
+          data={
+            typeFilter === AppConstant.CustomerFilterType.dia_chi
+              ? addressSelectedData
+              : contactSelectedData
+          }
+          setData={
+            typeFilter === AppConstant.CustomerFilterType.dia_chi
+              ? setAddressSelectedData
+              : setContactSelectedData
+          }
+        />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
         <>
           <View style={styles.headerContentView('Địa chỉ chính')}>
@@ -221,15 +242,16 @@ const FormAddress = (props: Props) => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <MainLayout>
               <AppInput
-                label={'Tỉnh/Thành phố'}
+                label={`${getLabel('province')}/${getLabel('city')}`}
                 contentStyle={styles.contentStyle(
-                  addressValue.city,
-                  'Tỉnh/Thành phố',
+                  addressValue?.city?.value ?? '',
+                  '',
                 )}
                 onPress={() => {
                   setScreen('Adding');
+                  setAddressSelectedData([]);
                 }}
-                value={addressValue.city}
+                value={addressValue?.city?.value ?? ''}
                 editable={false}
                 hiddenRightIcon={false}
                 styles={styles.marginInputView}
@@ -242,15 +264,19 @@ const FormAddress = (props: Props) => {
                 }
               />
               <AppInput
-                label={'Quận/Huyện'}
-                value={addressValue.district}
+                label={getLabel('district')}
+                value={addressValue?.district?.value ?? ''}
                 editable={false}
                 onPress={() => {
                   setScreen('Adding');
+                  const newData = addressSelectedData.filter(
+                    item => item.type === AddressType.city,
+                  );
+                  setAddressSelectedData(newData);
                 }}
                 contentStyle={styles.contentStyle(
-                  addressValue.district,
-                  'Quận/Huyện',
+                  addressValue?.district?.value ?? '',
+                  '',
                 )}
                 styles={styles.marginInputView}
                 rightIcon={
@@ -262,15 +288,19 @@ const FormAddress = (props: Props) => {
                 }
               />
               <AppInput
-                label={'Phường/xã'}
-                value={addressValue.ward}
+                label={getLabel('ward')}
+                value={addressValue?.ward?.value ?? ''}
                 editable={false}
                 contentStyle={styles.contentStyle(
-                  addressValue.ward,
-                  'Phường/xã',
+                  addressValue?.ward?.value ?? '',
+                  '',
                 )}
                 onPress={() => {
                   setScreen('Adding');
+                  const newData = addressSelectedData.filter(
+                    item => item.type !== AddressType.district,
+                  );
+                  setAddressSelectedData(newData);
                 }}
                 styles={styles.marginInputView}
                 rightIcon={
@@ -282,30 +312,28 @@ const FormAddress = (props: Props) => {
                 }
               />
               <AppInput
-                label={'Địa chỉ'}
-                value={addressValue.detailAddress}
+                label={getLabel('address')}
+                value={txtAddressDetail}
                 editable={true}
                 contentStyle={styles.contentStyle(
-                  addressValue.detailAddress,
-                  'Địa chỉ chi tiết',
+                  addressValue.detailAddress ?? '',
+                  '',
                 )}
                 styles={
-                  addressValue.detailAddress === 'Địa chỉ chi tiết'
+                  addressValue.detailAddress === getLabel('addressDetail')
                     ? styles.marginInputView
                     : styles.containInput
                 }
                 hiddenRightIcon={true}
-                onChangeValue={text => {
-                  console.log(text), debounce(() => onChange(text), 100);
-                }}
+                onChangeValue={setTxtAddressDetail}
               />
               <View style={styles.checkBoxRootView}>
-                {listCheckBox.current.map((item, index) => {
+                {listCheckBox.current.map(item => {
                   return (
                     <View key={item.id}>
                       <TouchableOpacity
                         onPress={() => {
-                          item.id == '1'
+                          item.id === '1'
                             ? setAddressValue(prev => ({
                                 ...prev,
                                 addressGet: !addressValue.addressGet,
@@ -347,25 +375,34 @@ const FormAddress = (props: Props) => {
             <View style={styles.containContentButton}>
               <TouchableOpacity
                 style={styles.buttonRestart}
-                onPress={onPressClose}>
+                onPress={() => {
+                  setAddressSelectedData([]);
+                  setScreen('');
+                  onPressClose();
+                }}>
                 <AppText style={styles.restartText}>Hủy</AppText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonApply}
                 onPress={() => {
-                  dispatch(appActions.setMainAddress(addressValue));
+                  dispatch(
+                    customerActions.setMainAddress({
+                      ...addressValue,
+                      detailAddress: txtAddressDetail,
+                    }),
+                  );
                   onPressClose();
                 }}>
-                <AppText style={styles.applyText}>Lưu</AppText>
+                <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </View>
           </View>
         </>
       ) : (
         <>
-          <View style={styles.headerContentView('Địa chỉ chính')}>
+          <View style={styles.headerContentView(getLabel('mainContact'))}>
             <AppHeader
-              label="Người liên hệ chính"
+              label={getLabel('mainContact')}
               onBack={() => {}}
               backButtonIcon={
                 <AppIcons
@@ -380,12 +417,12 @@ const FormAddress = (props: Props) => {
           </View>
           <MainLayout style={{paddingTop: 0}}>
             <AppInput
-              label={'Người liên hệ'}
+              label={getLabel('contactName')}
               value={contactValue.nameContact}
               editable={true}
               contentStyle={styles.contentStyle(
                 contactValue.nameContact,
-                'Người liên hệ',
+                getLabel('contactName'),
               )}
               hiddenRightIcon={true}
               styles={styles.marginInputView}
@@ -394,12 +431,12 @@ const FormAddress = (props: Props) => {
               }
             />
             <AppInput
-              label={'Số điện thoại'}
+              label={getLabel('phoneNumber')}
               value={contactValue.phoneNumber}
               editable={true}
               contentStyle={styles.contentStyle(
                 contactValue.phoneNumber,
-                'Số điện thoại',
+                getLabel('phoneNumber'),
               )}
               styles={styles.marginInputView}
               onChangeValue={text =>
@@ -416,15 +453,15 @@ const FormAddress = (props: Props) => {
               </AppText>
             </Block>
             <AppInput
-              label={'Tỉnh/Thành phố'}
+              label={`${getLabel('province')}/${getLabel('city')}`}
               contentStyle={styles.contentStyle(
-                addressValue.city,
-                'Tỉnh/Thành phố',
+                contactValue?.city?.value ?? '',
+                '',
               )}
               onPress={() => {
                 setScreen('AddingContact');
               }}
-              value={addressValue.city}
+              value={contactValue?.city?.value ?? ''}
               editable={false}
               hiddenRightIcon={false}
               styles={styles.marginInputView}
@@ -437,15 +474,15 @@ const FormAddress = (props: Props) => {
               }
             />
             <AppInput
-              label={'Quận/Huyện'}
-              value={addressValue.district}
+              label={getLabel('district')}
+              value={contactValue?.district?.value ?? ''}
               editable={false}
               onPress={() => {
                 setScreen('AddingContact');
               }}
               contentStyle={styles.contentStyle(
-                addressValue.district,
-                'Quận/Huyện',
+                contactValue?.district?.value ?? '',
+                '',
               )}
               styles={styles.marginInputView}
               rightIcon={
@@ -457,10 +494,13 @@ const FormAddress = (props: Props) => {
               }
             />
             <AppInput
-              label={'Phường/xã'}
-              value={addressValue.ward}
+              label={getLabel('ward')}
+              value={contactValue?.ward?.value ?? ''}
               editable={false}
-              contentStyle={styles.contentStyle(addressValue.ward, 'Phường/xã')}
+              contentStyle={styles.contentStyle(
+                contactValue?.ward?.value ?? '',
+                '',
+              )}
               onPress={() => {
                 setScreen('AddingContact');
               }}
@@ -474,45 +514,41 @@ const FormAddress = (props: Props) => {
               }
             />
             <AppInput
-              label={'Địa chỉ chi tiết'}
-              value={contactValue.addressContact}
+              label={getLabel('addressDetail')}
+              value={txtContactDetail}
               editable={true}
               contentStyle={styles.contentStyle(
-                contactValue.addressContact,
-                'Địa chỉ',
+                contactValue?.addressContact ?? '',
+                '',
               )}
               styles={styles.marginInputView}
-              onChangeValue={text =>
-                setContactValue(prev => ({...prev, addressContact: text}))
-              }
+              onChangeValue={setTxtContactDetail}
               hiddenRightIcon={true}
             />
             <View style={styles.containButtonBottom}>
               <View style={styles.containContentButton}>
                 <TouchableOpacity
                   style={styles.buttonRestart}
-                  onPress={onPressClose}>
+                  onPress={() => {
+                    setContactSelectedData([]);
+                    setScreen('');
+                    onPressClose();
+                  }}>
                   <AppText style={styles.restartText}>Hủy</AppText>
                 </TouchableOpacity>
-                {contactValue.addressContact === 'Địa chỉ' ||
-                contactValue.nameContact === 'Người liên hệ' ||
-                contactValue.phoneNumber === 'Số điện thoại' ? null : (
-                  <TouchableOpacity
-                    style={styles.buttonApply}
-                    disabled={
-                      contactValue.addressContact === 'Địa chỉ' ||
-                      contactValue.nameContact === 'Người liên hệ' ||
-                      contactValue.phoneNumber === 'Số điện thoại'
-                        ? true
-                        : false
-                    }
-                    onPress={() => {
-                      dispatch(appActions.setMainContactAddress(contactValue));
-                      onPressClose();
-                    }}>
-                    <AppText style={styles.applyText}>Lưu</AppText>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                  style={styles.buttonApply}
+                  onPress={() => {
+                    dispatch(
+                      customerActions.setMainContactAddress({
+                        ...contactValue,
+                        addressContact: txtContactDetail,
+                      }),
+                    );
+                    onPressClose();
+                  }}>
+                  <AppText style={styles.applyText}>Lưu</AppText>
+                </TouchableOpacity>
               </View>
             </View>
           </MainLayout>
@@ -524,11 +560,10 @@ const FormAddress = (props: Props) => {
 
 export default React.memo(FormAddress);
 
-const rootStyles = (theme: AppTheme) =>
+const rootStyles = (theme: AppTheme, getLabel: any) =>
   StyleSheet.create({
     root: {
       flex: 1,
-      // marginTop: 20,
     } as ViewStyle,
     buttonStyle: {
       backgroundColor: theme.colors.bg_neutral,
@@ -547,20 +582,14 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     marginInputView: {
       marginBottom: 20,
-
-      // backgroundColor: 'red'
     } as ViewStyle,
-    buttonView: {
-      // marginBottom: 20,
-    } as ViewStyle,
+    buttonView: {} as ViewStyle,
     headerContentView: (label: string) =>
       ({
         marginHorizontal: 16,
-        //  backgroundColor: 'red',
         marginBottom: 20,
-        marginTop: label === 'Địa chỉ chính' ? 20 : 0,
-        // paddingBottom: 10,
-        top: label === 'Địa chỉ chính' ? 0 : -10,
+        marginTop: label === getLabel('mainAddress') ? 20 : 0,
+        top: label === getLabel('mainAddress') ? 0 : -10,
       } as ViewStyle),
     containInput: {
       paddingBottom: 24,
@@ -590,8 +619,7 @@ const rootStyles = (theme: AppTheme) =>
         borderWidth: !addressGo ? 1 : 0,
         borderColor: theme.colors.text_secondary,
         marginBottom: 20,
-        backgroundColor:
-          addressGo === true ? theme.colors.primary : 'transparent',
+        backgroundColor: addressGo ? theme.colors.primary : 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
       } as ViewStyle),
@@ -603,14 +631,12 @@ const rootStyles = (theme: AppTheme) =>
         borderWidth: !addressOrder ? 1 : 0,
         borderColor: theme.colors.text_secondary,
         marginBottom: 20,
-        backgroundColor:
-          addressOrder === true ? theme.colors.primary : 'transparent',
+        backgroundColor: addressOrder ? theme.colors.primary : 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
       } as ViewStyle),
     checkBoxView: {
       flexDirection: 'row',
-      // backgroundColor:'red'
     } as ViewStyle,
     containButtonBottom: {
       flex: 1,
@@ -655,10 +681,4 @@ const rootStyles = (theme: AppTheme) =>
       lineHeight: 24,
       color: Colors.white,
     } as TextStyle,
-    searchBar: {
-      backgroundColor: theme.colors.bg_neutral,
-      borderRadius: 10,
-      width: '90%',
-      marginLeft: 12,
-    } as ViewStyle,
   });

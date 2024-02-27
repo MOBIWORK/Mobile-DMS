@@ -17,8 +17,6 @@ export function* getDataProducts(action:PayloadAction){
             }
         } catch (error) {
             yield put(productActions.setMessage("Lỗi không lấy được dữ liệu sản phảm"))
-        } finally {
-            yield put(productActions.setLoading())
         }
     }
 }

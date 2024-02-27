@@ -26,7 +26,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   onClose,
   onSubmitEditing,
   screenName,
-  isSearch = true,
+  isSearch = false,
 }) => {
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
@@ -40,6 +40,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
         style={{marginTop: 0}}
         label={title}
         labelStyle={{fontSize: 18}}
+        hiddenBackButton={!onClose}
         onBack={onClose}
         backButtonIcon={
           <AppIcons
@@ -87,7 +88,12 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
                 }}
                 onPress={() => handleItem(item)}
                 key={index}>
-                <Text style={{color: colors.text_primary}}>
+                <Text
+                  style={{
+                    color: colors.text_primary,
+                    fontSize: 16,
+                    fontWeight: item.isSelected ? '600' : '400',
+                  }}>
                   {getLabel(item.label)}
                 </Text>
                 <Image
@@ -112,11 +118,11 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
 interface FilterListComponentProps {
   title: string;
   searchPlaceholder?: string;
-  data: IFilterType[];
+  data: IFilterType[] | any[];
   handleItem: (item: IFilterType) => void;
   searchValue?: string;
   onChangeSearch?: (text: string) => void;
-  onClose: () => void;
+  onClose?: () => void;
   isSearch?: boolean;
   screenName?: string;
   onSubmitEditing?: (

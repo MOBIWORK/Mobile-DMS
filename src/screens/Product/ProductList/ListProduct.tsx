@@ -34,6 +34,7 @@ import { STT_OK } from '../../../const/api.const';
 import { useSelector } from '../../../config/function';
 import { dispatch } from '../../../utils/redux';
 import { productActions } from '../../../redux-store/product-reducer/reducer';
+import ItemSekeleton from '../ItemSekeleton';
 
 
 const ListProduct = () => {
@@ -62,8 +63,8 @@ const ListProduct = () => {
     AppConstant.ProductFilterType.nhom_sp,
   );
   
-  const {data,totalItem} = useSelector(state => state.product);
-
+  const {data,totalItem,isLoading} = useSelector(state => state.product);
+  const [page,setPage] = useState<number>(1)
   const [brand, setBrand] = useState<TypeFilter>();
   const [industry, setIndustry] = useState<TypeFilter>();
   const [groupItem, setGroupItem] = useState<TypeFilter>();
@@ -135,22 +136,27 @@ const ListProduct = () => {
   };
 
   const _renderItemProduct = (item: IProduct) => {
+    let image = {
+      uri : item.image
+    }
+    if(!item.image){
+      image = ImageAssets.NoDataImage
+    }
+
     return (
       <TouchableOpacity onPress={() => navigation.navigate(ScreenConstant.PRODUCT_DETAIL, { item })}>
         <View
           style={{
             borderRadius: 16,
-            marginVertical: 8,
             backgroundColor: colors.bg_default,
-            padding: 16,
+            paddingHorizontal: 16,
+            paddingVertical:12,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'flex-start',
           }}>
           <Image
-            source={{
-              uri : item.image
-            }}
+            source={image}
             style={{ width: 64, height: 82 }}
             resizeMode={'cover'}
           />
@@ -179,7 +185,6 @@ const ListProduct = () => {
       </TouchableOpacity>
     );
   };
-
 
   const submitFilter = () => {
     setFilterBrand(brand?.value || "");
@@ -292,9 +297,12 @@ const ListProduct = () => {
       brand: filterBrand.toString(),
       industry: filterIndustry.toString(),
       item_group: filterGroup.toString(),
-      item_name: searchProduct
+      item_name: searchProduct,
+      page_size : 20,
+      page : page
     }))
   }
+
 
   const fetchBrandProduct = async () => {
     const { status, data }: KeyAbleProps = await ProductService.getBrand();
@@ -409,7 +417,7 @@ const ListProduct = () => {
 
   useEffect(() => {
     fetchProduct();
-  }, [filterBrand, filterIndustry, filterGroup, searchProduct])
+  }, [filterBrand, filterIndustry, filterGroup, searchProduct,page])
 
   useEffect(() => {
     setSearchProduct(searchProductValue);
@@ -440,35 +448,32 @@ const ListProduct = () => {
       />
       <View style={{ marginTop: 24 }}>
         <Text
-          style={{ color: colors.text_primary, fontWeight: '500', fontSize: 16 }}>
+          style={{ color: colors.text_primary, fontWeight: '500', fontSize: 16 ,marginBottom : 6}}>
           {totalItem}
           {'  '}
           <Text style={{ fontWeight: '400', fontSize: 14 }}>{getLabel("product").toLocaleLowerCase()}</Text>
         </Text>
-        <FlatList
+
+        {isLoading ? (
+          <FlatList
+            key={"2"}
+            data={new Array(8)}
+            renderItem={({ }) => <ItemSekeleton/>}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ rowGap: 16 }}
+          />
+        ) : (
+          <FlatList
           data={data}
+          key={5}
           renderItem={({ item }) => _renderItemProduct(item)}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ rowGap: 16 }}
           style={{ height: '85%' }}
-          ListEmptyComponent={
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: '500',
-                  color: colors.text_primary,
-                }}>
-                No Data
-              </Text>
-            </View>
-          }
+          onEndReached={() => setPage(page + 1)}
         />
+        )}
+        
       </View>
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}

@@ -1,26 +1,27 @@
-import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
-import React from 'react'
-import { AppTheme, useTheme } from '../../../layouts/theme'
+import {StyleSheet, TouchableOpacity, View, ViewStyle} from 'react-native';
+import React from 'react';
+import {AppTheme, useTheme} from '../../../layouts/theme';
 
-import CardAddress, { MainContactAddress } from '../../Customer/components/CardAddress'
-import { MainLayout } from '../../../layouts'
-import { AppIcons, AppText } from '../../../components/common'
-import { AppConstant } from '../../../const'
+import {MainLayout} from '../../../layouts';
+import {AppIcons, AppText} from '../../../components/common';
+import {AppConstant} from '../../../const';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
-  onPressAdding:() =>void
-}
+  onPressAdding: () => void;
+};
 
 const Contact = (props: Props) => {
-  const {onPressAdding} = props
+  const {onPressAdding} = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
-  // const mainAddress: MainContactAddress[] = useSelector(AppSelector.getMainContactAddress);
+  const {t: getLabel} = useTranslation();
+
   return (
     <MainLayout style={styles.root}>
       <View style={styles.containLabel}>
         <AppText fontSize={14} fontWeight="400" colorTheme="text_secondary">
-          Danh sách địa chỉ
+          {getLabel('listAddress')}
         </AppText>
         <TouchableOpacity style={styles.containButton} onPress={onPressAdding}>
           <AppIcons
@@ -31,20 +32,11 @@ const Contact = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {/* {mainAddress?.map((item, index) => {
-        return (
-          <CardAddress
-            key={index.toString()}
-            type="contact"
-            mainContactAddress={item}
-          />
-        );
-      })} */}
     </MainLayout>
-  )
-}
+  );
+};
 
-export default Contact
+export default Contact;
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -63,7 +55,7 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 30,
       borderWidth: 1,
       borderColor: theme.colors.action,
-        justifyContent:'center',
-      alignItems:'center'
+      justifyContent: 'center',
+      alignItems: 'center',
     } as ViewStyle,
   });

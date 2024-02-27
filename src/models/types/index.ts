@@ -120,17 +120,12 @@ export type VisitListItemType = {
   name: string;
   customer_primary_address: string;
   customer_code: string;
-  customer_location_primary: string | null;
+  customer_location_primary: any;
   mobile_no: string | null;
   customer_name: string;
   birthday: string | null;
   is_checkin: boolean;
 };
-
-
-
-
-
 
 export interface RootObjectGeoDecoding {
   plus_code: PlusCode;
@@ -266,31 +261,127 @@ export type ReportDebtType = {
   total: number;
   listDebt: ReportDebtListType[];
 };
-export type IDataCustomer = {
+export type IDataCustomer {
   customer_code: string;
   customer_name: string;
   customer_type: string;
   customer_group: string;
-  territory?: string;
-  customer_birthday?: string | any;
-  router_name?: string;
-  frequency?: any[];
-  credit_limid?:  any;
-  customer_details: string;
-  website: string;
-  address?: {
-    address: string;
-    isSetAddressGet: boolean;
-    isSetAddressTake: boolean;
-  };
-  contact?: {
-    name: string;
-    address_line1: string;
-    phone: string;
-  };
-  image: string;
-  description?:string
-};
+  territory: string;
+  customer_details?: string;
+  custom_birthday?: number;
+  company?: string;
+  credit_limit?: string;
+  address_title_cus?: string;
+  address_type_cus?: string;
+  detail_address_cus?: string;
+  ward_cus?: string;
+  district_cus?: string;
+  province_cus?: string ;
+  first_name?: string;
+  phone?: string;
+  adr_title_contact?: string;
+  adr_type_contact?: string;
+  detail_adr_contact?: string;
+  ward_contact?: string;
+  district_contact?: string;
+  province_contact?: string;
+  is_shipping_address?: boolean;
+  is_primary_address?: boolean;
+  router_name?: any;
+  frequency?: any;
+  website?: string;
+  longitude?: number;
+  latitude?: number;
+  name_image?: '';
+  faceimage?: string;
+}
+export interface IDataCustomers {
+  name: string
+  customer_name: string
+  customer_id: string
+  customer_type: string
+  customer_group: string
+  territory: string
+  industry: any
+  image: any
+  website: string
+  customer_primary_contact: string
+  customer_primary_address: string
+  custom_birthday: number
+  customer_location_primary: any
+  customer_details: any
+  contact: Contact[]
+  address: Address[]
+  cre_limid: CreLimid[]
+}
+
+export interface ContactCustomer {
+  first_name: string
+  phone: string
+  is_primary_contact: number
+  is_billing_contact: number
+}
+
+export interface AddressCustomer {
+  name: string
+  address_line1: string
+  address_line2: any
+  city: string
+  state: any
+  is_primary_address: number
+  is_shipping_address: number
+  county?: string
+}
+
+export interface CreLimid {
+  credit_limit: number
+}
+//
+// export interface ContactCustomer {
+//   first_name: string;
+//   phone: string;
+//   is_primary_contact: number;
+//   is_billing_contact: number;
+// }
+//
+// export interface AddressCustomer {
+//   name: string;
+//   address_line1: string;
+//   address_line2: any;
+//   city: string;
+//   state: any;
+//   is_primary_address: number;
+//   is_shipping_address: number;
+//   county?: string;
+// }
+//
+// export interface CreLimitCustomer {
+//   credit_limit: number;
+// }
+
+
+//
+// export interface ContactCustomer {
+//   first_name: string;
+//   phone: string;
+//   is_primary_contact: number;
+//   is_billing_contact: number;
+// }
+//
+// export interface AddressCustomer {
+//   name: string;
+//   address_line1: string;
+//   address_line2: any;
+//   city: string;
+//   state: any;
+//   is_primary_address: number;
+//   is_shipping_address: number;
+//   county?: string;
+// }
+//
+// export interface CreLimitCustomer {
+//   credit_limit: number;
+// }
 
 export interface RootEkMapResponse {
   results: ResultEkMapResponse[];
@@ -364,9 +455,12 @@ export interface IDataItem {
 }
 
 export type IAlbumImage = {
-  id: number | string;
+  id: number | string | any;
   label: string;
-  image: string[];
+  image: {
+    url: string;
+    base64?: string;
+  }[];
 };
 
 export type IStaff = {
@@ -452,6 +546,10 @@ export type StockProduct = {
   qty: number;
 };
 
+export type discountProduct = {
+  priority: string;
+  discount_percentage: number;
+};
 export type IProduct = {
   name: string;
   item_code: string;
@@ -464,9 +562,15 @@ export type IProduct = {
   country_of_origin: string;
   image: string;
   custom_industry: string;
-  detail: UinitProduct;
-  unit: DataUnit[];
+  end_of_life: string;
+  details: UinitProduct[];
   stock: StockProduct[];
+  quantity?: number;
+  discount_percentage: discountProduct[];
+  discount: number;
+  price: number;
+  unit: DataUnit[]
+  isSelected?: boolean;
 };
 
 export type IOrderList = {
@@ -515,12 +619,100 @@ export type IOrderDetail = {
 };
 
 export type BrandProduct = {
-  name : string,
-  brand :string,
-  description : string | null
-}
+  name: string;
+  brand: string;
+  description: string | null;
+};
 
 export type ListCustomerType = {
-    name:string,
-    customer_group_name:string
+  name: string;
+  customer_group_name: string;
+};
+
+export type ListCustomerTerritory = {
+  name: string;
+  territory_name: string;
+};
+
+export type ListCustomerRoute = {
+  name: string;
+  channel_name: string;
+};
+
+export type IProductPromotion = {
+  item_code: string;
+  qty: number;
+  pricing_rules: string;
+  rate: number;
+  price_list_rate: number;
+  is_free_item: number;
+  item_name: string;
+  description: string;
+  stock_uom: string;
+  uom: string;
+  conversion_factor: number;
+  delivery_date: string;
+  parent_item?: string;
+};
+
+export type StaffType = {
+  name: string;
+  first_name: string;
+  image: any;
+  user_id: string;
+  designation: any;
+  isCheck?: boolean;
+};
+
+export type ImageCheckIn = {
+  customer_name: string;
+  album_id: string;
+  album_name: string;
+  checkin_id: string;
+  customer_id: string;
+  customer_code: string;
+  long: number;
+  lat: number;
+  address?: string;
+  image: string;
+};
+
+export type NoteType = {
+  name: string;
+  title: string;
+  content: string;
+  creation: string;
+  custom_checkin_id: any;
+};
+
+export type CheckinOrderDetail = {
+  list_items: ListItem[]
+  customer: string
+  customer_name: string
+  address_display: string
+  delivery_date: number
+  set_warehouse: string
+  total: number
+  grand_total: number
+  taxes_and_charges: string
+  total_taxes_and_charges: number
+  apply_discount_on: string
+  additional_discount_percentage: number
+  discount_amount: number
+  contact_person: string
+  rounded_total: number
+  tax_amount: number
+  rate: number
+  account_head: string
+  charge_type: string
+}
+
+export interface ListItem {
+  name: string
+  item_name: string
+  item_code: string
+  qty: number
+  uom: string
+  amount: number
+  discount_percentage: number
 }

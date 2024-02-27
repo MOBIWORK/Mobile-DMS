@@ -5,6 +5,9 @@
 
 import Foundation
 
+import MMKV
+
+
 class MMKVStorage {
   func getMMKVbyKey(_ keyId: String?, _ cryptKey: String?) -> MMKV {
     if !(keyId ?? "").isEmpty && !(cryptKey ?? "").isEmpty {

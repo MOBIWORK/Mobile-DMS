@@ -19,7 +19,6 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
-// import {AppActions} from '../../redux-store';
 import {CommonUtils} from '../../utils';
 import {ImageAssets} from '../../assets';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -32,8 +31,8 @@ import {
 import {AppService} from '../../services';
 
 import {useTranslation} from 'react-i18next';
-import { appActions } from '../../redux-store/app-reducer/reducer';
-import { dispatch } from '../../utils/redux';
+import {setProcessingStatus} from '../../redux-store/app-reducer/reducer';
+import {dispatch} from '../../utils/redux';
 
 const SignIn = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -72,7 +71,7 @@ const SignIn = () => {
 
   const handleLogin = async () => {
     //TODO: call API
-    dispatch(appActions.setProcessingStatus(true));
+    dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
     const response: KeyAbleProps = await AppService.login(
       {
@@ -96,11 +95,10 @@ const SignIn = () => {
 
       await CommonUtils.dismissKeyboard(() => {
         navigation.navigate(ScreenConstant.MAIN_TAB);
-        // console.log('go Maintab');
       });
     }
 
-    dispatch(appActions.setProcessingStatus(false));
+    dispatch(setProcessingStatus(false));
   };
 
   const Authenticate = async () => {
@@ -111,8 +109,7 @@ const SignIn = () => {
           enable: true,
           type: biometricType,
         });
-        // navigation.navigate(ScreenConstant.MAIN_TAB);
-        console.log('go Maintab');
+        navigation.navigate(ScreenConstant.MAIN_TAB);
       }
     } catch (e) {
       console.log('biometric Error', e);
@@ -121,15 +118,13 @@ const SignIn = () => {
 
   //auto Login
   useEffect(() => {
-    if (CommonUtils.storage.contains(AppConstant.isLogOut)) {
-      if (!isLogOut) {
-        if (biometricObject?.enable) {
-          Authenticate();
-        } else if (userNameStore && passwordStore) {
-          // navigation.navigate(ScreenConstant.MAIN_TAB);
-          console.log('go Maintab');
+    if (!isLogOut) {
+      if (biometricObject?.enable) {
+        Authenticate()
         }
-      }
+      // } else if (userNameStore && passwordStore) {
+      //   navigation.navigate(ScreenConstant.MAIN_TAB);
+      // }
     }
   }, []);
 

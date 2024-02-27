@@ -3,10 +3,15 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
-import {AppHeader, Block, FilterView} from '../../../components/common';
+import {
+  AppBottomSheet,
+  AppHeader,
+  FilterView,
+} from '../../../components/common';
 import {
   FlatList,
   Image,
@@ -19,8 +24,8 @@ import {
 import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
-import {VisitListItemType} from '../../../models/types';
-import VisitItem from './VisitItem';
+import {ListCustomerType, VisitListItemType} from '../../../models/types';
+import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
@@ -31,24 +36,62 @@ import BackgroundGeolocation, {
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {useSelector} from '../../../config/function';
+import {useTranslation} from 'react-i18next';
 
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-import {dispatch} from '../../../utils/redux';
-import {getCustomerVisit} from '../../../services/appService';
+import {
+  customerActions,
+  setListCustomerType,
+} from '../../../redux-store/customer-reducer/reducer';
+
+import {
+  getCustomerType,
+  getCustomerVisit,
+  IListVisitParams,
+} from '../../../services/appService';
+import FilterListComponent, {
+  IFilterType,
+} from '../../../components/common/FilterListComponent';
+import {CustomerService} from '../../../services';
+import {CommonUtils} from '../../../utils';
+import {useDispatch} from 'react-redux';
+// @ts-ignore
+import StringFormat from 'string-format';
+
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const ListVisit = () => {
   const {colors} = useTheme();
   const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
 
   const filterRef = useRef<BottomSheet>(null);
+  const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
-  const listCustomer = useSelector(state => state.customer.listCustomerVisit);
-  const appLoading = useSelector(state => state.app.loadingApp);
+  const listCustomer: VisitListItemType[] = useSelector(
+    state => state.customer.listCustomerVisit,
+  );
+  const lisCustomerRoute = useSelector(
+    state => state.customer.listCustomerRoute,
+  );
+  const customerType: ListCustomerType[] = useSelector(
+    state => state.customer.listCustomerType,
+  );
+
+  const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
+    getLabel('nearest'),
+  );
+  const [distanceFilterData, setDistanceFilterData] = useState<IFilterType[]>(
+    AppConstant.DistanceFilterData,
+  );
+  const dispatch = useDispatch();
+
+  const [filterParams, setFilterParams] = useState<IListVisitParams>({});
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
   const system = useSelector(state => state.app.systemConfig);
@@ -56,7 +99,6 @@ const ListVisit = () => {
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
-
   const backgroundErrorListener = useCallback((errorCode: number) => {
     // Handle background location errors
     switch (errorCode) {
@@ -73,6 +115,14 @@ const ListVisit = () => {
     }
   }, []);
 
+  const customerCheckinCount = useMemo(() => {
+    if (listCustomer && listCustomer.length > 0) {
+      return listCustomer.filter(item => item.is_checkin).length;
+    } else {
+      return '';
+    }
+  }, [listCustomer]);
+
   const handleBackground = () => {
     BackgroundGeolocation.getCurrentPosition(
       {samples: 1, timeout: 3},
@@ -81,6 +131,18 @@ const ListVisit = () => {
       },
       backgroundErrorListener,
     );
+  };
+
+  const handleItemDistanceFilter = (itemData: IFilterType) => {
+    setDistanceFilterValue(getLabel(itemData.label));
+    const newData = distanceFilterData.map(item => {
+      if (itemData.value === item.value) {
+        return {...item, isSelected: true};
+      } else {
+        return {...item, isSelected: false};
+      }
+    });
+    setDistanceFilterData(newData);
   };
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
@@ -107,13 +169,12 @@ const ListVisit = () => {
     );
   };
 
-  // console.log(listCustomer,'a')
   const _renderHeader = () => {
     return (
       <View style={{paddingHorizontal: 16}}>
         <AppHeader
           hiddenBackButton
-          label={'Viếng thăm'}
+          label={getLabel('visit')}
           labelStyle={{textAlign: 'left'}}
           rightButton={
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -149,7 +210,10 @@ const ListVisit = () => {
             justifyContent: 'flex-start',
             marginTop: 16,
           }}>
-          <View
+          <TouchableOpacity
+            onPress={() =>
+              distanceRef.current && distanceRef.current.snapToIndex(0)
+            }
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -160,11 +224,13 @@ const ListVisit = () => {
               borderColor: colors.border,
               maxWidth: 180,
             }}>
-            <Text style={{color: colors.text_secondary}}>Khoảng cách:</Text>
-            <Text style={{color: colors.text_primary, marginLeft: 8}}>
-              Gần nhất
+            <Text style={{color: colors.text_secondary}}>
+              {getLabel('distance')}:
             </Text>
-          </View>
+            <Text style={{color: colors.text_primary, marginLeft: 8}}>
+              {distanceFilterValue}
+            </Text>
+          </TouchableOpacity>
           <FilterView
             style={{marginLeft: 12}}
             onPress={() =>
@@ -182,14 +248,24 @@ const ListVisit = () => {
         {isShowListVisit ? (
           <View style={{marginTop: 16, paddingHorizontal: 16}}>
             <Text style={{color: colors.text_secondary}}>
-              Viếng thăm 3/10 khách hàng
+              {StringFormat(getLabel('customerVisitedCount'), {
+                customerCheckinCount: customerCheckinCount,
+                allCustomer: listCustomer?.length,
+              })}
             </Text>
-            <FlatList
-              style={{height: '90%'}}
-              showsVerticalScrollIndicator={false}
-              data={listCustomer}
-              renderItem={({item}) => <VisitItem item={item} onPress={handleBackground}/>}
-            />
+            {loading ? (
+              <SkeletonLoading />
+            ) : (
+              <FlatList
+                style={{height: '90%'}}
+                showsVerticalScrollIndicator={false}
+                data={listCustomer}
+                contentContainerStyle={{rowGap: 16}}
+                renderItem={({item}) => (
+                  <VisitItem item={item} onPress={handleBackground} />
+                )}
+              />
+            )}
           </View>
         ) : (
           <View style={styles.map as ViewStyle}>
@@ -201,7 +277,6 @@ const ListVisit = () => {
               logoEnabled={false}
               style={{flex: 1}}>
               <Mapbox.Camera
-                // ref={mapboxCameraRef}
                 centerCoordinate={[
                   location?.coords.longitude ?? 0,
                   location?.coords.latitude ?? 0,
@@ -210,20 +285,22 @@ const ListVisit = () => {
                 animationDuration={500}
                 zoomLevel={12}
               />
-              {listCustomer?.map((item, index) => {
-                return (
-                  <Block key={index}>
-                    <Text>
-
-                    </Text>
-                  </Block>
-                  // <Mapbox.MarkerView
-                  //   key={index}
-                  //   coordinate={[Number(item.customer_location_primary?.long!), Number(item.lat)]}>
-                  //   <MarkerItem item={item} index={index} />
-                  // </Mapbox.MarkerView>
-                );
-              })}
+              {listCustomer &&
+                listCustomer.map((item, index) => {
+                  const location: LocationProps = JSON.parse(
+                    item.customer_location_primary!,
+                  );
+                  return (
+                    <Mapbox.MarkerView
+                      key={index}
+                      coordinate={[
+                        Number(location.long),
+                        Number(location.lat),
+                      ]}>
+                      <MarkerItem item={item} index={index} />
+                    </Mapbox.MarkerView>
+                  );
+                })}
               <Mapbox.UserLocation
                 visible={true}
                 animated
@@ -234,7 +311,7 @@ const ListVisit = () => {
                 <View
                   style={{
                     position: 'absolute',
-                    bottom: bottom + 16,
+                    bottom: bottom + 70,
                     left: 24,
                     right: 24,
                   }}>
@@ -254,30 +331,95 @@ const ListVisit = () => {
   useLayoutEffect(() => {
     // setLoading(true);
 
-    if (Object.keys(systemConfig).length > 0) return;
-    else {
+    if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
     dispatch(customerActions.onGetCustomerVisit());
-
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
+    BackgroundGeolocation.getCurrentPosition({
+      samples: 1,
+      timeout: 3,
+    })
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
 
     // setLoading(false);
   }, []);
-  const getCustomer = async () => {
-    await getCustomerVisit().then((res: any) => {
-      if (Object.keys(res?.result).length > 0) {
-        dispatch(customerActions.setCustomerVisit(res.result.data));
+
+  const getCustomer = async (params?: IListVisitParams) => {
+    setLoading(true);
+    await getCustomerVisit(params).then((res: any) => {
+      setLoading(false);
+      if (res.result.length > 0) {
+        const data: VisitListItemType[] = res?.result.data;
+        const newData = data.filter(item => item.customer_location_primary);
+        dispatch(customerActions.setCustomerVisit(newData));
       }
     });
+    setLoading(false);
   };
+
+  const getCustomerRoute = async () => {
+    if (lisCustomerRoute.length === 0) {
+      const response: any = await CustomerService.getCustomerRoute();
+      if (response?.result.length > 0) {
+        dispatch(customerActions.setListCustomerRoute(response.result));
+      }
+      dispatch(customerActions.onGetCustomerVisit());
+    }
+  };
+
+  const getDataGroup = async () => {
+    if (customerType.length === 0) {
+      const response: any = await getCustomerType();
+      if (response?.result?.length > 0) {
+        dispatch(setListCustomerType(response?.result));
+      }
+    }
+  };
+
+  const handleFilterData = async () => {
+    filterRef.current && filterRef.current.close();
+    if (Object.keys(filterParams).length > 0) {
+      const birthDayObj: any =
+        filterParams?.birthDay && filterParams.birthDay === 'Hôm nay'
+          ? CommonUtils.dateToDate('today')
+          : filterParams.birthDay === 'Tuần này'
+          ? CommonUtils.dateToDate('weekly')
+          : CommonUtils.dateToDate('monthly');
+      const params: IListVisitParams = {
+        route: filterParams?.route && [`${filterParams.route.name}`],
+        status:
+          filterParams?.status && filterParams.status === getLabel('visited')
+            ? 'active'
+            : 'lock',
+        orderby:
+          filterParams?.orderby && filterParams.orderby === 'A -> Z'
+            ? 'asc'
+            : 'desc',
+        birthday_from:
+          birthDayObj && new Date(birthDayObj.from_date).getTime() / 1000,
+        birthday_to:
+          birthDayObj && new Date(birthDayObj.to_date).getTime() / 1000,
+        customer_group:
+          filterParams?.customer_group && filterParams.customer_group,
+        customer_type:
+          filterParams?.customer_type && filterParams.customer_type,
+      };
+      await getCustomer(params);
+    }
+  };
+
   useEffect(() => {
     mounted.current = true;
+    dispatch(appActions.onLoadApp());
     getCustomer();
+    getCustomerRoute();
+    getDataGroup();
+    dispatch(appActions.onLoadAppEnd());
+
     return () => {
       mounted.current = false;
+      dispatch(appActions.onLoadAppEnd());
     };
   }, []);
 
@@ -285,14 +427,23 @@ const ListVisit = () => {
     <SafeAreaView
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
-      {/* <SkeletonLoading loading={true}  /> */}
-      {appLoading ? (
-        <SkeletonLoading loading={appLoading!} />
-      ) : (
-        _renderContent()
-      )}
-
-      <FilterContainer bottomSheetRef={bottomSheetRef} filterRef={filterRef} />
+      {_renderContent()}
+      <FilterContainer
+        bottomSheetRef={bottomSheetRef}
+        filterRef={filterRef}
+        filterValue={filterParams}
+        setFilter={setFilterParams}
+        channelData={lisCustomerRoute}
+        customerGroupData={customerType}
+        handleFilter={handleFilterData}
+      />
+      <AppBottomSheet bottomSheetRef={distanceRef}>
+        <FilterListComponent
+          title={getLabel('distance')}
+          data={distanceFilterData}
+          handleItem={handleItemDistanceFilter}
+        />
+      </AppBottomSheet>
     </SafeAreaView>
   );
 };
@@ -310,49 +461,3 @@ const styles = StyleSheet.create({
     height: AppConstant.HEIGHT * 0.8,
   },
 });
-
-// export const VisitListData: VisitListItemType[] = [
-//   {
-//     label: 'Nintendo',
-//     useName: 'Chu Quýnh Anh',
-//     status: true,
-//     address: '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-//     phone_number: '+84 667 435 265',
-//     lat: 37.785839,
-//     long: -122.4267,
-//     distance: 1,
-//   },
-//   {
-//     label: "McDonald's",
-//     useName: 'Chu Quýnh Anh',
-//     status: false,
-//     address:
-//       'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-//     phone_number: '+84 234 234 456',
-//     lat: 37.784839,
-//     long: -122.4467,
-//     distance: 1.5,
-//   },
-//   {
-//     label: 'General Electric',
-//     useName: 'Chu Quýnh Anh',
-//     status: false,
-//     address:
-//       '495A Cách Mạng Tháng Tám, Phường 13, Quận 10, Thành phố Hồ Chí Minh',
-//     phone_number: '+84 234 234 456',
-//     lat: 37.785839,
-//     long: -122.4667,
-//     distance: 2,
-//   },
-//   {
-//     customer_name: "McDonald's",
-//     useName: 'Chu Quýnh Anh',
-//     status: false,
-//     address:
-//       'Lô A, Khu Dân Cư Cityland, 99 Nguyễn Thị Thập, Tân Phú, Quận 7, Thành phố Hồ Chí Minh, Việt Nam',
-//     phone_number: '+84 234 234 456',
-//     lat: 37.789839,
-//     long: -122.4667,
-//     distance: 1.5,
-//   },
-// ];

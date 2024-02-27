@@ -14,17 +14,18 @@ import {useTheme,AppTheme} from '../../layouts/theme'
 type Props = {
   onSwitch: () => void;
   title?: string;
-  type:'text' | 'none'
+  type:'text' | 'none',
+  status:boolean
 };
 
 const AppSwitch = (props: Props) => {
   const theme = useTheme()
   const styles = rootStyles(theme)
-  const {onSwitch} = props;
+  const {onSwitch,status=true} = props;
   // ()
   const switchTranslate = useSharedValue(0);
   // state for activate Switch
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(status);
   // Progress Value
   const progress = useDerivedValue(() => {
     return withTiming(active ? 22 : 0);

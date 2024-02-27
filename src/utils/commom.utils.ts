@@ -27,7 +27,7 @@ export const padTo2Digits = (num: number) => {
 };
 
 //format dateTime to hh:pp dd//mm//yyyy
-export const convertDateToString = (dateTime: number) => {
+export const convertDateToString = (dateTime: number | string) => {
   const date = new Date(dateTime);
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -126,7 +126,7 @@ export function convertHoursMinutes(gioPhutGiay: string) {
   return `${gio}:${phut}`;
 }
 //format dateTime to dd//mm//yyyy
-export const convertDate = (time: number) => {
+export const convertDate = (time: number | string) => {
   const date = new Date(time);
   return `${padTo2Digits(date.getDate())}/${padTo2Digits(
     date.getMonth() + 1,

@@ -1,25 +1,19 @@
 import {ThemeType} from '../../layouts/theme';
 
-interface ListCustomerType {
-  name: string;
-  customer_group_name: string;
+export interface ListCity {
+  ma_tinh: string;
+  ten_tinh: string;
 }
 
-
-interface ListCity {
-  ma_tinh:string,
-  ten_tinh:string
+export interface ListDistrict {
+  ma_huyen: string;
+  ten_huyen: string;
+  ma_tinh_thanh: string;
 }
-
-interface ListDistrict {
-  ma_huyen:string,
-  ten_huyen:string,
-  ma_tinh_thanh:string
-}
-interface ListWard {
-  ma_xa:string,
-  ten_xa:string,
-  ma_quan_huyen:string
+export interface ListWard {
+  ma_xa: string;
+  ten_xa: string;
+  ma_quan_huyen: string;
 }
 
 export interface IAppRedux {
@@ -35,17 +29,16 @@ export interface IAppRedux {
   searchVisitValue: string;
   searchCustomerValue: string;
   theme: ThemeType;
-  mainAddress: any[];
-  mainContactAddress: any[];
   newCustomer: any[];
   loadingApp?: boolean;
   systemConfig?: any;
   currentLocation?: any;
-  listDataCity:{
-    city:ListCity[],
-    district:ListDistrict[],
-    ward:ListWard[]
-  }
+  listDataCity: {
+    city: ListCity[];
+    district: ListDistrict[];
+    ward: ListWard[];
+  };
+  dataCheckIn: any;
 }
 
 export enum SLICE_NAME {
@@ -68,6 +61,11 @@ export enum SLICE_NAME {
   GET_LIST_WARD = 'GET_LIST_WARD_',
   GET_LIST_ROUTE = 'GET_LIST_ROUTE_',
   POST_NEW_ROUTE = 'POST_NEW_ROUTE_',
+  POST_NEW_NOTE_CHECKIN = 'POST_NEW_NOTE_CHECK_',
+  GET_NOTE_USER_RECEIVED = 'GET_NOTE_USER_RECEIVED_',
+  PUT_IMAGE_CHECKIN = 'PUT_IMAGE_CHECKIN_',
+  GET_LIST_NOTE = 'GET_LIST_NOTE_',
+  CHECKIN_SLICE = "CHECKIN_SLICE_",
 }
 
 export const RESET_APP = 'RESET_APP_RESET_APP';
@@ -105,3 +103,10 @@ export const GET_LIST_CITY = SLICE_NAME.GET_LIST_CITY + 'GET_LIST_CITY';
 export const GET_LIST_WARD = SLICE_NAME.GET_LIST_WARD + 'GET_LIST_WARD';
 export const GET_LIST_ROUTE = SLICE_NAME.GET_LIST_ROUTE + 'GET_LIST_ROUTE';
 export const POST_NEW_ROUTE = SLICE_NAME.POST_NEW_ROUTE + 'POST_NEW_ROUTE';
+export const POST_NEW_NOTE_CHECK_IN =
+  SLICE_NAME.POST_NEW_NOTE_CHECKIN + 'POST_NEW_NOTE_CHECK_IN';
+export const GET_NOTE_USER_RECEIVED =
+  SLICE_NAME.GET_NOTE_USER_RECEIVED + 'GET_NOTE_USER_RECEIVED';
+export const PUT_IMAGE_CHECKIN =
+  SLICE_NAME.PUT_IMAGE_CHECKIN + 'PUT_IMAGE_CHECKIN';
+export const GET_LIST_NOTE = SLICE_NAME.GET_LIST_NOTE + 'GET_LIST_NOTE';

@@ -5,13 +5,12 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import React,{useCallback} from 'react';
+import React, {useCallback} from 'react';
 import {ProfileContent} from '../ultil/config';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import {useTheme} from '../../../layouts/theme';
 import {AppSwitch, AppText, SvgIcon} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { AppSelector } from '../../../redux-store';
+import {useSelector} from '../../../config/function';
 
 type Props = {
   item: ProfileContent;
@@ -21,32 +20,36 @@ type Props = {
 const ContentItemView = (props: Props) => {
   const {item, onSwitch} = props;
   const theme = useTheme();
-  const styles = rootStyles(theme);
-  const appTheme = useSelector(AppSelector.getTheme)
-  const {t: translate, i18n} = useTranslation();
+  const appTheme = useSelector(state => state.app.theme);
+  const {t: getLabel, i18n} = useTranslation();
 
-  const handleOnPress = useCallback((name:string) =>{
-        switch (name) {
-          case 'language':
-              i18n.language === 'vi' ? i18n.changeLanguage('en') : i18n.changeLanguage('vi')
-            break;
-          case 'theme': onSwitch()
+  const handleOnPress = useCallback(
+    (name: string) => {
+      switch (name) {
+        case 'language':
+          i18n.language === 'vi'
+            ? i18n.changeLanguage('en')
+            : i18n.changeLanguage('vi');
           break;
-          default:
-            break;
-        }
+        case 'theme':
+          onSwitch();
+          break;
+        default:
+          break;
+      }
+    },
+    [i18n.language, appTheme],
+  );
 
-
-  },[i18n.language,appTheme])
-
-
-
-  // console.log(i18n.language,'translate')
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.containLabel} onPress={() => item.rightSide ? handleOnPress(item.name) : item.onPress()}>
+      <TouchableOpacity
+        style={styles.containLabel}
+        onPress={() =>
+          item.rightSide ? handleOnPress(item.name) : item.onPress()
+        }>
         <SvgIcon source={item.icon} size={24} color={theme.colors.bg_neutral} />
-        <AppText colorTheme='text_primary'> {translate(item.name)}</AppText>
+        <AppText colorTheme="text_primary"> {getLabel(item.name)}</AppText>
       </TouchableOpacity>
       <TouchableOpacity>
         {item.rightSide && item.name === 'language' ? (
@@ -67,7 +70,7 @@ const ContentItemView = (props: Props) => {
           </TouchableOpacity>
         ) : item.rightSide && item.name === 'theme' ? (
           <View>
-            <AppSwitch  type='none' onSwitch={onSwitch} />
+            <AppSwitch type="none" onSwitch={onSwitch} />
           </View>
         ) : null}
       </TouchableOpacity>
@@ -77,28 +80,27 @@ const ContentItemView = (props: Props) => {
 
 export default ContentItemView;
 
-const rootStyles = (theme: AppTheme) =>
-  StyleSheet.create({
-    container: {
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      flexDirection: 'row',
-      alignItems: 'center',
-    } as ViewStyle,
-    containLabel: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      flex: 1,
-    } as ViewStyle,
-    containTouchable: {
-      //   flex: 1,
-      // backgroundColor:'red',
-      paddingHorizontal: 8,
-      flexDirection: 'row',
-      paddingVertical: 4,
-      borderRadius: 8,
-      borderWidth: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    } as ViewStyle,
-  });
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  } as ViewStyle,
+  containLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  } as ViewStyle,
+  containTouchable: {
+    //   flex: 1,
+    // backgroundColor:'red',
+    paddingHorizontal: 8,
+    flexDirection: 'row',
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  } as ViewStyle,
+});

@@ -1,12 +1,24 @@
 import React, {FC} from 'react';
-import {FlatList, Image, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../../../assets';
 import {ReportOrderItemType} from '../../../../../models/types';
 import StatisticalItem from '../../StatisticalItem';
+import {useTranslation} from 'react-i18next';
 const Order: FC<OrderProps> = ({orderData, handleItem}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
+  const {t: getLabel} = useTranslation();
+
   const OrderItem = (item: ReportOrderItemType, index: number) => {
     return (
       <Pressable
@@ -17,7 +29,7 @@ const Order: FC<OrderProps> = ({orderData, handleItem}) => {
         ]}>
         <View style={{rowGap: 5}}>
           <Text style={styles.text as TextStyle}>DH-22344</Text>
-          <View style={styles.itemTitle as any} >
+          <View style={styles.itemTitle as any}>
             <Image
               source={ImageAssets.CalenderIcon}
               style={{width: 16, height: 16}}
@@ -37,7 +49,9 @@ const Order: FC<OrderProps> = ({orderData, handleItem}) => {
     <View style={{marginTop: 32}}>
       <StatisticalItem orderCount={15} payment={10000000} />
       <View style={styles.listProduct as ViewStyle}>
-        <Text style={{color: colors.text_secondary}}>Danh sách đơn</Text>
+        <Text style={{color: colors.text_secondary}}>
+          {getLabel('listOrder')}
+        </Text>
         <FlatList
           style={{marginTop: 16}}
           showsVerticalScrollIndicator={false}

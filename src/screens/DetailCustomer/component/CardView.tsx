@@ -1,16 +1,10 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import {StyleSheet, View, Platform, ViewStyle, TextStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {IDataCustomer} from '../../../models/types';
 import {AppText, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   data: IDataCustomer;
@@ -19,7 +13,7 @@ type Props = {
 const CardContactOverview = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  console.log(props.data.address,'address')
+  const {t: getLabel} = useTranslation();
   return (
     <View style={styles.card}>
       <View style={styles.rootLayout}>
@@ -32,13 +26,20 @@ const CardContactOverview = (props: Props) => {
         </AppText>
         <View style={styles.labelView}>
           <SvgIcon source="MapPin" size={18} />
-          <AppText numberOfLines={1} style={{maxWidth:'90%'}}> {props.data?.address?.address ? props.data?.address?.address : '---'}</AppText>
+          <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
+            {' '}
+            {props.data?.address?.address
+              ? props.data?.address?.address
+              : '---'}
+          </AppText>
         </View>
         <View style={styles.labelView}>
           <SvgIcon source="Phone" size={18} />
           <AppText numberOfLines={1}>
             {' '}
-            {props.data?.contact?.phone ? formatPhoneNumber(props.data?.contact?.phone) : '---'}
+            {props.data?.contact?.phone
+              ? formatPhoneNumber(props.data?.contact?.phone)
+              : '---'}
           </AppText>
         </View>
       </View>
@@ -46,7 +47,7 @@ const CardContactOverview = (props: Props) => {
       <View style={styles.containAddress}>
         <View style={styles.mainContact}>
           <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-            Liên hệ chính
+            {getLabel('mainContact')}
           </AppText>
         </View>
       </View>
@@ -90,7 +91,6 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'flex-start',
       marginVertical: 8,
       marginHorizontal: 10,
-     
     } as ViewStyle,
     mainContact: {
       marginRight: 8,

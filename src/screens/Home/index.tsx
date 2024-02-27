@@ -47,7 +47,7 @@ import UpdateScreen from '../UpdateScreen/UpdateScreen';
 
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
-import { useSelector } from '../../config/function';
+import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 
 const HomeScreen = () => {
@@ -320,33 +320,31 @@ const HomeScreen = () => {
       .catch(err => console.log('err', err));
   };
 
-  useLayoutEffect(() => {
-    setLoading(true);
-
-    BackgroundGeolocation.getCurrentPosition(
+  useEffect(() => {
+    // setLoading(true);
+const getLocation = async () =>{
+    await BackgroundGeolocation.getCurrentPosition(
       {
         samples: 1,
-        timeout: 30,
+        timeout: 10,
         maximumAge: 0,
-        persist: false,
         desiredAccuracy: 10,
       },
       location => {
         setLocation(location);
+        console.log(location,'location')
         dispatch(appActions.onSetCurrentLocation(location));
         mapboxCameraRef.current?.flyTo(
           [location.coords.longitude, location.coords.latitude],
           1000,
         );
       },
-      err => backgroundErrorListener(err),
+      // err => backgroundErrorListener(err),
     );
-
-    setLoading(false);
-    return () => {};
+    }
+    // setLoading(false);
+   getLocation()
   }, []);
-
-
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
     console.log(
@@ -436,10 +434,9 @@ const HomeScreen = () => {
     // syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
-  if(error != ''){
-      Alert.alert(error)
+  if (error != '') {
+    Alert.alert(error);
   }
-
 
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>
@@ -588,19 +585,6 @@ const HomeScreen = () => {
                         animationDuration={500}
                         zoomLevel={12}
                       />
-                      {/* {VisitListData.map((item, index) => {
-                        return (
-                          <Mapbox.MarkerView
-                            key={index}
-                            coordinate={[Number(item.long), Number(item.lat)]}>
-                            <MarkerItem
-                              item={item}
-                              index={index}
-                              onPress={() => setVisitItemSelected(item)}
-                            />
-                          </Mapbox.MarkerView>
-                        );
-                      })} */}
                       <Mapbox.UserLocation
                         visible={true}
                         animated

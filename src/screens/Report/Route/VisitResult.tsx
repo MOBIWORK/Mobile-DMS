@@ -292,12 +292,12 @@ const createStyle = (theme: ExtendedTheme) =>
   });
 const dataSeg: AppSegmentedButtonsType[] = [
   {
-    title: 'Đã viếng thăm',
+    title: 'visited',
     value: 1,
     isSelected: true,
   },
   {
-    title: 'Chưa viếng thăm',
+    title: 'notVisited',
     value: 2,
     isSelected: false,
   },

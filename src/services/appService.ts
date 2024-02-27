@@ -1,8 +1,9 @@
-import axios from 'axios';
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY, API_URL} from '@env';
 import {client} from '../config/client';
+import {VisitListItemType} from '../models/types';
+import {GET_CUSTOMER_TERRITORY} from '../const/api.const';
 
 export type ILogin = {
   usr: string;
@@ -29,19 +30,20 @@ export type CustomerParams = {
 };
 
 export type CheckinData = {
+  checkin_id: string;
   kh_ma: string;
   kh_ten: string;
   kh_diachi: string;
   kh_long?: number;
   kh_lat?: number;
   checkin_giovao: string;
-  checkin_giora: string;
-  checkin_pinvao: string;
-  checkin_pinra?: string;
+  checkin_giora?: string;
+  checkin_pinvao: number;
+  checkin_pinra?: number;
   checkin_khoangcach?: number;
   checkin_trangthaicuahang?: boolean;
   checkin_donhang?: string;
-  checkin_hinhanh: any[];
+  checkin_hinhanh?: any[];
   checkin_long?: number;
   checkin_lat?: number;
   checkin_timegps?: string;
@@ -52,6 +54,54 @@ export type CheckinData = {
   createdDate: number;
   createdByEmail?: string;
   createByName?: string;
+  item: VisitListItemType;
+};
+
+export interface DMSConfigMobile {
+  name: string
+  owner: string
+  modified: string
+  modified_by: string
+  docstatus: number
+  idx: string
+  config_name: string
+  vt_ngoaituyen: number
+  kb_vitringoaisaiso: number
+  saiso_chophep_kb_vitringoaisaiso: number
+  checkout_ngoaisaiso: number
+  saiso_chophep_checkout_ngoaisaiso: number
+  tgcheckin_toithieu: number
+  thoigian_toithieu: number
+  batbuoc_kiemton: number
+  batbuoc_chupanh: number
+  soluong_album: number
+  soluong_anh: number
+  batbuoc_ghichu: number
+  doctype: string
+}
+
+export type ICheckFakeGPS = {
+  datetime_fake: number;
+  location_fake: {
+    long: number;
+    lat: number;
+  };
+  list_app: string;
+};
+
+export type IListVisitParams = {
+  view_mode?: 'list' | 'map';
+  page_size?: number;
+  page_number?: number;
+  route?: any;
+  distance?: string;
+  status?: 'active' | 'lock' | string;
+  orderby?: 'asc' | 'desc' | string;
+  birthDay?: string;
+  birthday_from?: number;
+  birthday_to?: number;
+  customer_group?: string;
+  customer_type?: string;
 };
 
 export const login = (data: ILogin, deleteHeader: boolean) =>
@@ -109,9 +159,15 @@ export const getDetailLocation = (lat?: number, lon?: number) =>
     )
     .then(res => res.data);
 
-export const getCustomerVisit = () =>
+export const autocompleteGeoLocation = (autocompleteText: string) =>
+  client
+    .get(
+      `https://api.ekgis.vn/v2/geocode/autocomplete?text=${autocompleteText}&api_key=${API_EK_KEY}`,
+    )
+    .then(res => res.data);
+export const getCustomerVisit = (data?: IListVisitParams) =>
   createApi()
-    .get(ApiConstant.GET_CUSTOMER_VISIT)
+    .get(ApiConstant.GET_CUSTOMER_VISIT, data)
     .then(res => res.data);
 
 export const getSystemConfig = () =>
@@ -119,17 +175,31 @@ export const getSystemConfig = () =>
     .get(ApiConstant.GET_SYSTEM_CONFIG)
     .then(res => res.data);
 
-export const getListCity = () => {
-  createApi()
-    .get(ApiConstant.GET_LIST_CITY)
-    .then(res => res.data);
-};
+export const getListCity = () => createApi().get(ApiConstant.GET_LIST_CITY);
 export const getListDistrict = (ma_tinh_thanh: any) =>
-  createApi()
-    .get(ApiConstant.GET_LIST_DISTRICT + `${ma_tinh_thanh}`)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_LIST_DISTRICT + `${ma_tinh_thanh}`);
 
 export const getListWard = (ma_quan_huyen: any) =>
+  createApi().get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`);
+
+export const addFakeGPS = (data: ICheckFakeGPS) =>
+  createApi().post(ApiConstant.CHECK_FAKE_GPS, data);
+
+export const getUserNoteReceived = () => {
   createApi()
-    .get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`)
+    .get(ApiConstant.GET_NOTE_USER_RECEIVED)
     .then(res => res.data);
+};
+export const postNoteUser = (data: any) => {
+  createApi()
+    .post(ApiConstant.POST_NEW_NOTE_CHECKIN, data)
+    .then(res => res.data);
+};
+export const getListNoteApi = (data: any) => {
+  createApi().get(ApiConstant.GET_LIST_NOTE_API, data);
+};
+export const createImageCheckinApi = (data: any) => {
+  createApi()
+    .post(ApiConstant.CREATE_IMAGE_CHECKIN, data)
+    .then(res => res.data);
+};

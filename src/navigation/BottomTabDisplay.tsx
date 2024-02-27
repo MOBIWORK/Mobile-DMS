@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ImageStyle,
 } from 'react-native';
-import React, {createRef, useLayoutEffect} from 'react';
+import React, {createRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {NavigationContainerRef} from '@react-navigation/native';
@@ -17,9 +17,7 @@ import {RootStackParamList} from '.';
 import {ScreenConstant} from '../const';
 
 import {AppTheme, useTheme} from '../layouts/theme';
-import { SvgIcon } from '../components/common';
-import { useSelector } from '../config/function';
-
+import {SvgIcon} from '../components/common';
 
 const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {state, navigation} = props;
@@ -27,7 +25,6 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {t: getLabel} = useTranslation();
   const styles = bottomStyles(theme);
   const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
-  const showModal = useSelector(state => state.app.showModal);
   const pressNavigator = React.useCallback(
     (curTab: any) => {
       const previousRouteName = navigationRef?.current?.getCurrentRoute()?.name;
@@ -51,81 +48,52 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
     [navigation, state],
   );
 
-    // useLayoutEffect(() =>{
-    //   dispatch(AppActions.setShowModal(true));
-
-    // },[])
-
   return (
-    <SafeAreaView
-      edges={['right', 'left', 'bottom']}
-      style={showModal === false ? styles.container : {}}>
-      {!showModal && (
-        <>
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => pressNavigator(0)}>
-            <View pointerEvents="none">
-              {state.index === 0 ? (
-                <SvgIcon source="IconHomeActive" size={29} />
-              ) : (
-                <SvgIcon source="IconHome" size={29} />
-              )}
-            </View>
-            <Text style={styles.txtItem(state.index, 0)}>
-              {getLabel('home')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => pressNavigator(1)}>
-            <View pointerEvents="none">
-              {state.index === 1 ? (
-                <SvgIcon source="IconVisitActive" size={29} />
-              ) : (
-                <SvgIcon source="IconVisit" size={29} />
-              )}
-            </View>
-            <Text style={styles.txtItem(state.index, 1)}>
-              {getLabel('visit')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => pressNavigator(2)}>
-            <View pointerEvents="none">
-              {state.index === 2 ? (
-                <SvgIcon
-                  source="IconCustomerActive"
-                  size={29}
-                />
-              ) : (
-                <SvgIcon source="IconCustomer" size={29} />
-              )}
-            </View>
-            <Text style={styles.txtItem(state.index, 2)}>
-              {getLabel('customer')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => pressNavigator(3)}>
-            <View pointerEvents="none">
-              {state.index === 3 ? (
-                <SvgIcon
-                  source="IconLookingMoreActive"
-                  size={29}
-                />
-              ) : (
-                <SvgIcon source="IconLookingMore" size={29} />
-              )}
-            </View>
-            <Text style={styles.txtItem(state.index, 3)}>
-              {getLabel('lookingMore')}
-            </Text>
-          </TouchableOpacity>
-        </>
-      )}
+    <SafeAreaView edges={['right', 'left', 'bottom']} style={styles.container}>
+      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(0)}>
+        <View pointerEvents="none">
+          {state.index === 0 ? (
+            <SvgIcon source="IconHomeActive" size={29} />
+          ) : (
+            <SvgIcon source="IconHome" size={29} />
+          )}
+        </View>
+        <Text style={styles.txtItem(state.index, 0)}>{getLabel('home')}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(1)}>
+        <View pointerEvents="none">
+          {state.index === 1 ? (
+            <SvgIcon source="IconVisitActive" size={29} />
+          ) : (
+            <SvgIcon source="IconVisit" size={29} />
+          )}
+        </View>
+        <Text style={styles.txtItem(state.index, 1)}>{getLabel('visit')}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(2)}>
+        <View pointerEvents="none">
+          {state.index === 2 ? (
+            <SvgIcon source="IconCustomerActive" size={29} />
+          ) : (
+            <SvgIcon source="IconCustomer" size={29} />
+          )}
+        </View>
+        <Text style={styles.txtItem(state.index, 2)}>
+          {getLabel('customer')}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={() => pressNavigator(3)}>
+        <View pointerEvents="none">
+          {state.index === 3 ? (
+            <SvgIcon source="IconLookingMoreActive" size={29} />
+          ) : (
+            <SvgIcon source="IconLookingMore" size={29} />
+          )}
+        </View>
+        <Text style={styles.txtItem(state.index, 3)}>
+          {getLabel('lookingMore')}
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -135,7 +103,7 @@ export default BottomTabDisplay;
 const bottomStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.bg_default,
       flexDirection: 'row',
       alignItems: 'flex-end',
       justifyContent: 'space-around',

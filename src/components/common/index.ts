@@ -23,12 +23,11 @@ import AppSwitch from './AppSwitch';
 import {Block} from './Block';
 import BottomSheet from './CustomBottomSheet/index';
 import Accordion from './Accordion/Accordion';
-import { ProgressLinear } from './Progress/index';
+import {ProgressLinear} from './Progress/index';
 import AppImage from './AppImage';
-
 import AppSelectedDate from './AppSelectedDate';
 import TabSelected from './TabSelected';
-
+import SkeletonLoading from './SkeletonLoading';
 export {
   AppBottomSheet,
   AppDialog,
@@ -58,4 +57,5 @@ export {
   AppImage,
   AppSelectedDate,
   TabSelected,
+  SkeletonLoading
 };
