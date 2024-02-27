@@ -255,4 +255,13 @@ const AlbumImageFake: IAlbumScore[] = [
       ImageAssets.ImgAppWatch,
     ],
   },
+  {
+    id: 4,
+    image: [
+      ImageAssets.ImgAppWatch,
+      ImageAssets.ImgAppWatch,
+      ImageAssets.ImgAppWatch,
+      ImageAssets.ImgAppWatch,
+    ],
+  },
 ];
