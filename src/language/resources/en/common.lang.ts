@@ -219,4 +219,8 @@ export default {
   takePicture: 'Take picture',
   chooseFromLibrary: 'Choose form library',
   pSearchCustomer: 'Search customer...',
+  listAddress: 'List address',
+  customerInfo: 'Customer information',
+  contact: 'Contact',
+  customerDetail: 'Customer detail',
 };
