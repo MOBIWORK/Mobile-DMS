@@ -76,9 +76,9 @@ const HomeScreen = () => {
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(false);
 
-  // const syncWithCodePush = (status: number) => {
-  //   console.log('Codepush sync status', status);
-  // };
+  const syncWithCodePush = (status: number) => {
+    console.log('Codepush sync status', status);
+  };
 
   const [notifiCations, setNotifications] = useState([
     {
@@ -398,7 +398,7 @@ const HomeScreen = () => {
         break;
       }
       case codePush.SyncStatus.UP_TO_DATE: {
-        // codePush.notifyAppReady();
+        codePush.notifyAppReady();
         // setTimeout(() => {
         VersionCheck.needUpdate({}).then(res => {
           if (res.isNeeded != undefined) {
@@ -445,7 +445,7 @@ const HomeScreen = () => {
       onSyncStatusChanged,
       onDownloadProgress,
     );
-    // syncWithCodePush;
+    syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
   if (error != '') {

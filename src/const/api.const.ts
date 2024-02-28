@@ -61,7 +61,6 @@ export const GET_CUSTOMER_ROUTE =
   '/api/method/mbw_dms.api.router.get_all_router';
 export const POST_ADD_NEW_CUSTOMER =
   '/api/method/mbw_dms.api.selling.customer.create_customer';
-
 // Order
 export const GET_ORDER = URL_PREFIX + '.api.selling.order.get_list_sales_order';
 export const GET_ORDER_DETAIL =
@@ -72,7 +71,8 @@ export const POST_RETuRN_ORDER =
   URL_PREFIX + '.api.selling.order.create_return_order';
 export const GET_WAREHOUSES =
   URL_PREFIX + '.api.selling.product.list_warehouse';
-export const GET_DETAIL_CHECKIN_ORDER = URL_PREFIX + ".api.selling.order.get_sale_order_by_checkin_id"
+export const GET_DETAIL_CHECKIN_ORDER =
+  URL_PREFIX + '.api.selling.order.get_sale_order_by_checkin_id';
 
 //Address
 export const GET_LIST_CITY = '/api/method/mbw_dms.api.location.list_province';

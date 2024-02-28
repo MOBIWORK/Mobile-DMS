@@ -28,6 +28,9 @@ const handleErrorResponse = (
   throwErrorIfFailed: any,
 ) => {
   if (response.status) {
+    console.log(response.config?.baseURL,'baseURl api')
+    console.log(response.config?.auth,'headers api')
+
     const isSuccessRequest = /^2\d{2}/g.test(response.status?.toString());
     if (isSuccessRequest && response.data?.result) {
       return;
@@ -60,8 +63,9 @@ const createInstance = (deleteHeader?: boolean) => {
   const api_secret = CommonUtils.storage.getString(AppConstant.Api_secret);
   const header =
     api_key && api_secret ? CommonUtils.Auth_header(api_key, api_secret) : null;
-
+console.log(header,'header ')
   let organization = CommonUtils.storage.getString(AppConstant.Organization);
+  console.log(organization,'organization')
   // if (organization) {
   //   const organizationObj = JSON.parse(organization);
   //   Api.setBaseURL(organizationObj.erpnext_url);

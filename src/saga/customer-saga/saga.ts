@@ -9,6 +9,7 @@ import {
   getCustomer,
   getCustomerType,
   getCustomerVisit,
+  getPageCustomer,
 } from '../../services/appService';
 import {
   appActions,
@@ -41,7 +42,7 @@ export function* onGetCustomer(action: PayloadAction) {
       const response: ResponseGenerator = yield call(getCustomer);
       console.log(response, 'response customer');
       if (response.message === 'ok') {
-        yield put(setCustomer(response.result?.data));
+        yield put(setCustomer(response.result));
       }
     } catch (err) {
     } finally {
@@ -110,15 +111,42 @@ export function* getCustomerTerritorySaga(action: PayloadAction) {
       yield* put(appActions.onLoadApp());
       const response: ResponseGenerator = yield call(
         CustomerService.getCustomerTerritory,
-        action.payload
+        action.payload,
       );
-          console.log(response.result,'customer territory')
+      console.log(response.result, 'customer territory');
       if (response.result?.length > 0) {
         yield* put(customerActions.setListCustomerTerritory(response.result));
       }
     } catch (err) {
     } finally {
       yield* put(appActions.onLoadAppEnd());
+    }
+  }
+}
+export function* getMoreDataCustomer(action: PayloadAction) {
+  if (customerActions.getCustomerNewPage.match(action)) {
+    try {
+      yield put(appActions.onLoadApp());
+      const response: ResponseGenerator = yield call(
+        getPageCustomer,
+        action.payload,
+      );
+      console.log(response,'response new page')
+      if (response.message === 'ok') {
+        console.log('dafuck')
+        yield put(customerActions.addingListCustomer(response.result?.data));
+        yield put(customerActions.setPage(response.result?.page_number))
+      } else {
+        showSnack({
+          msg: 'Có lỗi xảy ra, vui lòng thử lại sau',
+          interval: 2000,
+          type: 'error',
+        });
+      }
+    } catch (err) {
+      console.log(err,'error')
+    } finally {
+      yield put(appActions.onLoadAppEnd());
     }
   }
 }

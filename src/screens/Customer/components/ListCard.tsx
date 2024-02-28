@@ -7,21 +7,23 @@ import SkeletonLoading from '../../Visit/SkeletonLoading';
 
 type Props = {
   data: IDataCustomers[];
-  appLoading:boolean
+  appLoading: boolean;
+  onLoadData?:() => void;
+  listFooter:React.ReactElement
 };
 
-
 const ListCard = (props: Props) => {
-  if(props.appLoading){
-    <SkeletonLoading loading={props.appLoading} />
-    
+  if (props.appLoading) {
+    return  <SkeletonLoading />;
   }
   return (
-    
     <FlatList
       data={props.data}
       decelerationRate={'fast'}
+      onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}
+      onEndReachedThreshold={2}
+      ListFooterComponent={props.listFooter}
       keyExtractor={(item, index) => index.toString()}
       renderItem={({item, index}) => {
         return <CardView {...item} key={index} />;

@@ -120,16 +120,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   const ListAlbumSelected = () => {
     return (
       <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          rowGap: 8,
-          columnGap: 16,
-          flexWrap: 'wrap',
-          marginTop: 24,
-          marginBottom: 16,
-        }}>
+        style={styles.listAlbumStyle}>
         {curData
           .filter(item => item.isSelected)
           .map((item, index) => {
@@ -236,4 +227,16 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       fontSize: 16,
       fontWeight: '500',
     } as TextStyle,
+    listAlbumStyle:{
+      
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        rowGap: 8,
+        columnGap: 16,
+        flexWrap: 'wrap',
+        marginTop: 24,
+        marginBottom: 16,
+      
+    } as ViewStyle
   });

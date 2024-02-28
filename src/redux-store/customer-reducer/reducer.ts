@@ -5,7 +5,12 @@ import * as Actions from '../app-reducer/type';
 import {IDataCustomer} from '../../models/types';
 
 const initialState: IProduct = {
-  listCustomer: [],
+  listCustomer: {
+    data: [],
+    page_number: 1,
+    page_size: 20,
+    total: 10,
+  },
   listCustomerVisit: [],
   newCustomer: [],
   listCustomerType: [],
@@ -42,6 +47,12 @@ const customerSlice = createSlice({
     setMainAddress: (state, action: PayloadAction<any>) => {
       state.mainAddress = action.payload;
     },
+    addingListCustomer: (state, action: PayloadAction<any>) => {
+      state.listCustomer.data = [...state.listCustomer.data, ...action.payload];
+    },
+    setPage: (state, action: PayloadAction<any>) => {
+      state.listCustomer.page_number = action.payload;
+    },
   },
 });
 
@@ -60,7 +71,11 @@ const addingCustomer = createAction(
   Actions.ADDING_NEW_CUSTOMER,
   (data: IDataCustomer) => ({payload: data}),
 );
-const getCustomerTerritory = createAction(Actions.GET_CUSTOMER_TERRITORY)
+const getCustomerTerritory = createAction(Actions.GET_CUSTOMER_TERRITORY);
+const getCustomerNewPage = createAction(
+  Actions.GET_CUSTOMER_PAGE,
+  (page: number) => ({payload: page}),
+);
 
 export const customerReducer = customerSlice.reducer;
 
@@ -79,5 +94,6 @@ export const customerActions = {
   getCustomerType,
   onGetCustomerVisit,
   addingCustomer,
-  getCustomerTerritory
+  getCustomerTerritory,
+  getCustomerNewPage,
 };

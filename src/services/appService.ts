@@ -58,26 +58,26 @@ export type CheckinData = {
 };
 
 export interface DMSConfigMobile {
-  name: string
-  owner: string
-  modified: string
-  modified_by: string
-  docstatus: number
-  idx: string
-  config_name: string
-  vt_ngoaituyen: number
-  kb_vitringoaisaiso: number
-  saiso_chophep_kb_vitringoaisaiso: number
-  checkout_ngoaisaiso: number
-  saiso_chophep_checkout_ngoaisaiso: number
-  tgcheckin_toithieu: number
-  thoigian_toithieu: number
-  batbuoc_kiemton: number
-  batbuoc_chupanh: number
-  soluong_album: number
-  soluong_anh: number
-  batbuoc_ghichu: number
-  doctype: string
+  name: string;
+  owner: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: string;
+  config_name: string;
+  vt_ngoaituyen: number;
+  kb_vitringoaisaiso: number;
+  saiso_chophep_kb_vitringoaisaiso: number;
+  checkout_ngoaisaiso: number;
+  saiso_chophep_checkout_ngoaisaiso: number;
+  tgcheckin_toithieu: number;
+  thoigian_toithieu: number;
+  batbuoc_kiemton: number;
+  batbuoc_chupanh: number;
+  soluong_album: number;
+  soluong_anh: number;
+  batbuoc_ghichu: number;
+  doctype: string;
 }
 
 export type ICheckFakeGPS = {
@@ -136,6 +136,9 @@ export const getCustomer = () =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER)
     .then(res => res.data);
+
+export const getPageCustomer = (page: number) =>
+  createApi().get(ApiConstant.GET_CUSTOMER + `?page=${page}`).then(res => res.data);
 
 export const getCustomerByName = (name: string) =>
   createApi()
@@ -196,7 +199,9 @@ export const postNoteUser = (data: any) => {
     .then(res => res.data);
 };
 export const getListNoteApi = () => {
-  createApi().get(ApiConstant.GET_LIST_NOTE_API).then(res => res.data);
+  createApi()
+    .get(ApiConstant.GET_LIST_NOTE_API)
+    .then(res => res.data);
 };
 export const createImageCheckinApi = (data: any) => {
   createApi()

@@ -107,7 +107,7 @@ const appSlice = createSlice({
       state.dataCheckIn.listImage = action.payload;
     },
     setImageError:(state,action:PayloadAction<any>) =>{
-      state.dataCheckIn.imageError = [...action.payload]
+      state.dataCheckIn.imageError = [...state.dataCheckIn.imageError,action.payload]
     }
   },
 });

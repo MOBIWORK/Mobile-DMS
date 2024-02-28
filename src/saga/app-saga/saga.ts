@@ -75,6 +75,8 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         getSystemConfig,
         action.payload,
       );
+      console.log(response,'system config')
+
       if (response.message === 'Thành công') {
         yield put(appActions.setSystemConfig(response.result));
       } else {
