@@ -72,7 +72,8 @@ export const POST_RETuRN_ORDER =
   URL_PREFIX + '.api.selling.order.create_return_order';
 export const GET_WAREHOUSES =
   URL_PREFIX + '.api.selling.product.list_warehouse';
-export const GET_DETAIL_CHECKIN_ORDER = URL_PREFIX + ".api.selling.order.get_sale_order_by_checkin_id"
+export const GET_DETAIL_CHECKIN_ORDER =
+  URL_PREFIX + '.api.selling.order.get_sale_order_by_checkin_id';
 
 //Address
 export const GET_LIST_CITY = '/api/method/mbw_dms.api.location.list_province';
@@ -96,3 +97,6 @@ export const PUT_IMAGE_CHECKIN = '/mbw_dms.api.checkin.add_checkin_image';
 export const POST_NOTE_CHECKIN = URL_PREFIX + '.api.note.create_note';
 export const GET_LIST_STAFF = URL_PREFIX + '.api.note.list_email';
 export const CREATE_IMAGE_CHECKIN = '/mbw_dms.api.checkin.create_checkin_image';
+
+// REPORT
+export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';

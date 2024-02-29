@@ -77,8 +77,6 @@ const FilterContainer: FC<FilterContainerProps> = ({
         return channelData;
       case AppConstant.VisitFilterType.state:
         return DataConstant.FilterStateData(getLabel);
-      case AppConstant.VisitFilterType.distance:
-        return DataConstant.FilterDistanceData(getLabel);
       case AppConstant.VisitFilterType.name:
         return DataConstant.FilterNameData(getLabel);
       case AppConstant.VisitFilterType.birthday:
@@ -132,11 +130,6 @@ const FilterContainer: FC<FilterContainerProps> = ({
               type={AppConstant.VisitFilterType.state}
             />
             <Item
-              label={getLabel('sortByDistance')}
-              value={filterValue?.distance ?? getLabel('nearest')}
-              type={AppConstant.VisitFilterType.distance}
-            />
-            <Item
               label={getLabel('sortByName')}
               value={filterValue?.orderby ?? 'A -> Z'}
               type={AppConstant.VisitFilterType.name}
@@ -173,6 +166,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
             styleLabel={{color: colors.text_secondary}}
             onPress={() => {
               setFilter({});
+              bottomSheetRef.current?.close();
             }}
           />
           <AppButton

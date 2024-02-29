@@ -223,4 +223,9 @@ export default {
   customerInfo: 'Customer information',
   contact: 'Contact',
   customerDetail: 'Customer detail',
+  utilities: 'Utilities',
+  revenue: 'Revenue',
+  sales: 'Sales',
+  statistical: 'Statistical',
+  newCustomer: 'New customer',
 };

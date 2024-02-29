@@ -14,7 +14,6 @@ import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {call, put} from 'typed-redux-saga';
 
-
 export type ResponseGenerator = {
   config?: any;
   data?: any;
@@ -28,13 +27,10 @@ export type ResponseGenerator = {
 };
 
 export function* onGetCustomer(action: PayloadAction) {
-  console.log('run 0');
   if (customerActions.onGetCustomer.match(action)) {
     try {
       yield put(onLoadApp());
-      console.log('run 1');
       const response: ResponseGenerator = yield call(getCustomer);
-      console.log(response, 'response customer');
       if (response.message === 'ok') {
         yield put(setCustomer(response.result?.data));
       }
@@ -49,7 +45,6 @@ export function* onGetCustomerType(action: PayloadAction) {
     try {
       yield put(onLoadApp());
       const response: ResponseGenerator = yield call(getCustomerType);
-      console.log(response, 'response customer type');
       if (response.message === 'Thành công') {
         yield put(setListCustomerType(response.result));
       } else {
@@ -70,7 +65,6 @@ export function* getCustomerVisitSaga(action: PayloadAction) {
   if (customerActions.onGetCustomerVisit.match(action)) {
     try {
       const response: ResponseGenerator = yield call(getCustomerVisit);
-      console.log(response, 'response visit');
       if (Object.keys(response.result?.length > 0)) {
         yield put(setCustomerVisit(response.result.data));
       }

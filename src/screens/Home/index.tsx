@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {View, Text, Image, Linking, Platform, Alert} from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
@@ -29,7 +22,12 @@ import {
 
 import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
-import {IResOrganization, IWidget, VisitListItemType} from '../../models/types';
+import {
+  IKpi,
+  IResOrganization,
+  IWidget,
+  VisitListItemType,
+} from '../../models/types';
 import ItemWidget from '../../components/Widget/ItemWidget';
 import {NavigationProp} from '../../navigation';
 import NotificationScreen from './Notification';
@@ -37,7 +35,6 @@ import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
-import MarkerItem from '../../components/common/MarkerItem';
 import VisitItem from '../Visit/VisitList/VisitItem';
 import {rootStyles} from './styles';
 import ItemLoading from './components/ItemLoading';
@@ -49,6 +46,8 @@ import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
+import {ReportService} from '../../services';
+import {useTranslation} from 'react-i18next';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -56,6 +55,8 @@ const HomeScreen = () => {
   const bottomSheetNotification = useRef<BottomSheet>(null);
   const snapPoint = useMemo(() => ['100%'], []);
   const navigation = useNavigation<NavigationProp>();
+  const {t: getLabel} = useTranslation();
+
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
@@ -98,6 +99,7 @@ const HomeScreen = () => {
     },
   ]);
 
+  const [KpiValue, setKpiValue] = useState<IKpi | null>(null);
   const [widgets, setWidgets] = useMMKVString(AppConstant.Widget);
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
 
@@ -120,13 +122,13 @@ const HomeScreen = () => {
     return (
       <View>
         <View style={styles.widgetView}>
-          <Text style={[styles.tilteSection]}>Tiện ích</Text>
+          <Text style={[styles.tilteSection]}>{getLabel('utilities')}</Text>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate(ScreenConstant.WIDGET_FVR_SCREEN)
             }>
             <Text style={[styles.tilteSection, {color: colors.action}]}>
-              Tuỳ chỉnh
+              {getLabel('custom')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -176,7 +178,7 @@ const HomeScreen = () => {
     return (
       <View>
         <View style={[styles.flexSpace]}>
-          <Text style={[styles.tilteSection]}>Thống kê</Text>
+          <Text style={[styles.tilteSection]}>{getLabel('statistical')}</Text>
         </View>
         <View style={styles.containProgressView}>
           <View
@@ -184,10 +186,10 @@ const HomeScreen = () => {
               styles.itemWorkSheet,
               {width: (AppConstant.WIDTH - 64) / 3},
             ]}>
-            <Text style={[styles.worksheetLb]}>Doanh thu</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('revenue')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={18}
+                percent={KpiValue ? KpiValue.doanh_thu : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.action}
@@ -195,7 +197,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.action}]}>
-                15 %
+                {KpiValue ? `${KpiValue.doanh_thu}` : 0} %
               </Text>
             </View>
           </View>
@@ -205,10 +207,10 @@ const HomeScreen = () => {
               styles.itemWorkSheet,
               {width: (AppConstant.WIDTH - 64) / 3, marginHorizontal: 15},
             ]}>
-            <Text style={[styles.worksheetLb]}>Doanh số</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('sales')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={18}
+                percent={KpiValue ? KpiValue.doanh_so : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.success}
@@ -216,7 +218,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.success}]}>
-                15 %
+                {KpiValue ? `${KpiValue.doanh_so}` : 0} %
               </Text>
             </View>
           </View>
@@ -226,10 +228,10 @@ const HomeScreen = () => {
               styles.itemWorkSheet,
               {width: (AppConstant.WIDTH - 64) / 3},
             ]}>
-            <Text style={[styles.worksheetLb]}>Đơn hàng</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('order')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={65}
+                percent={KpiValue ? KpiValue.don_hang : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.info}
@@ -237,7 +239,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.info}]}>
-                65 %
+                {KpiValue ? `${KpiValue.don_hang}` : 0} %
               </Text>
             </View>
           </View>
@@ -251,10 +253,10 @@ const HomeScreen = () => {
                 marginBottom: 0,
               },
             ]}>
-            <Text style={[styles.worksheetLb]}>Viếng thăm</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('visit')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={18}
+                percent={KpiValue ? KpiValue.vieng_tham : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.primary}
@@ -262,7 +264,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.primary}]}>
-                15 %
+                {KpiValue ? `${KpiValue.vieng_tham}` : 0} %
               </Text>
             </View>
           </View>
@@ -272,10 +274,10 @@ const HomeScreen = () => {
               styles.itemWorkSheet,
               {width: (AppConstant.WIDTH - 48) / 2, marginBottom: 0},
             ]}>
-            <Text style={[styles.worksheetLb]}>Khách hàng mới</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('newCustomer')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={18}
+                percent={KpiValue ? KpiValue.kh_moi : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.secondary}
@@ -283,7 +285,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.secondary}]}>
-                15 %
+                {KpiValue ? `${KpiValue.kh_moi}` : 0} %
               </Text>
             </View>
           </View>
@@ -308,7 +310,6 @@ const HomeScreen = () => {
   const openAppStore = () => {
     let link = '';
     if (Platform.OS === 'ios') {
-      console.log('run this shit');
       link = 'itms-apps://apps.apple.com/id/app/MBW ESS/id6473134079?l=id';
     } else {
       link = 'https://play.google.com/store/apps/details?id=mbw.next.ess';
@@ -320,30 +321,37 @@ const HomeScreen = () => {
       .catch(err => console.log('err', err));
   };
 
+  const getReportKPI = async () => {
+    const response: any = await ReportService.getKpi();
+    if (Object.keys(response?.result).length > 0) {
+      setKpiValue(response.result);
+    }
+  };
+
   useEffect(() => {
     // setLoading(true);
-const getLocation = async () =>{
-    await BackgroundGeolocation.getCurrentPosition(
-      {
-        samples: 1,
-        timeout: 10,
-        maximumAge: 0,
-        desiredAccuracy: 10,
-      },
-      location => {
-        setLocation(location);
-        console.log(location,'location')
-        dispatch(appActions.onSetCurrentLocation(location));
-        mapboxCameraRef.current?.flyTo(
-          [location.coords.longitude, location.coords.latitude],
-          1000,
-        );
-      },
-      // err => backgroundErrorListener(err),
-    );
-    }
+    const getLocation = async () => {
+      await BackgroundGeolocation.getCurrentPosition(
+        {
+          samples: 1,
+          timeout: 10,
+          maximumAge: 0,
+          desiredAccuracy: 10,
+        },
+        location => {
+          setLocation(location);
+          dispatch(appActions.onSetCurrentLocation(location));
+          mapboxCameraRef.current?.flyTo(
+            [location.coords.longitude, location.coords.latitude],
+            1000,
+          );
+        },
+        // err => backgroundErrorListener(err),
+      );
+    };
     // setLoading(false);
-   getLocation()
+    getLocation();
+    getReportKPI();
   }, []);
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
@@ -466,7 +474,7 @@ const getLocation = async () =>{
                 />
               </View>
             </View>
-            <AppContainer>
+            <AppContainer style={{marginBottom: 100}}>
               <View style={styles.mainLayout}>
                 <View style={[styles.shadow, styles.containerTimekeep]}>
                   <View>

@@ -29,21 +29,27 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import moment from 'moment';
 import BackgroundGeolocation from 'react-native-background-geolocation';
-import isEquals from 'react-fast-compare'
-
-
+import isEquals from 'react-fast-compare';
 
 export interface LocationProps {
   long: number;
   lat: number;
 }
 
-const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
+const VisitItem: FC<VisitItemProps> = ({
+  item,
+  handleOpenMap,
+  handleClose,
+  onPress,
+}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
-  const currentCustomerCheckin = useSelector(state => state.app.dataCheckIn,shallowEqual)
+  const currentCustomerCheckin = useSelector(
+    state => state.app.dataCheckIn,
+    shallowEqual,
+  );
   const currentLocation = useSelector(
     state => state.app.currentLocation,
     shallowEqual,
@@ -67,18 +73,25 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
     handleBackground(item);
   };
 
-  const handleBackground = async (item:VisitListItemType) => {
+  const handleBackground = async (item: VisitListItemType) => {
     await BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 30})
       .then(location => {
         let data: CheckinData = {
-          checkin_id: currentCustomerCheckin && currentCustomerCheckin.kh_ma === item.customer_code ?  currentCustomerCheckin.checkin_id :   generateRandomObjectId(),
+          checkin_id:
+            currentCustomerCheckin &&
+            currentCustomerCheckin.kh_ma === item.customer_code
+              ? currentCustomerCheckin.checkin_id
+              : generateRandomObjectId(),
           kh_ma: item.customer_code,
           kh_ten: item.customer_name,
           kh_diachi: item.customer_primary_address,
           kh_long: distanceCal?.location?.long ?? '',
           kh_lat: distanceCal?.location?.lat ?? '',
           checkin_giovao: moment(new Date()).format('HH:mm'),
-          checkin_pinvao: location.battery.level > 0 ? location.battery.level * 100  : -location.battery.level * 100,
+          checkin_pinvao:
+            location.battery.level > 0
+              ? location.battery.level * 100
+              : -location.battery.level * 100,
           checkin_khoangcach: distanceCal.distance,
           createdDate: moment(new Date()).valueOf(),
           checkin_timegps: location.timestamp,
@@ -88,22 +101,22 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
           checkinvalidate_khoangcachcheckout:
             systemConfig.saiso_chophep_checkout_ngoaisaiso,
           checkin_trangthaicuahang: true,
-          checkin_donhang:'',
-          checkin_giora:'',
-          checkin_hinhanh:[],
-          checkin_lat:location.coords.latitude,
-          checkin_long:location.coords.longitude,
-          checkin_pinra:0,
-          checkout_khoangcach:0,
-          createByName:'',
-          createdByEmail:'',
-          item:item
+          checkin_donhang: '',
+          checkin_giora: '',
+          checkin_hinhanh: [],
+          checkin_lat: location.coords.latitude,
+          checkin_long: location.coords.longitude,
+          checkin_pinra: 0,
+          checkout_khoangcach: 0,
+          createByName: '',
+          createdByEmail: '',
+          item: item,
         };
-    navigate(ScreenConstant.CHECKIN,{item:data})  
+        navigate(ScreenConstant.CHECKIN, {item: data});
         dispatch(appActions.setDataCheckIn(data));
       })
       .catch(err => {
-        console.log(err,'err');
+        console.log(err, 'err');
         backgroundErrorListener(err);
       });
   };
@@ -185,7 +198,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
               }}
             />
             <TouchableOpacity
-              onPress={() => console.log('handle Map')}
+              onPress={() => handleOpenMap && handleOpenMap(item)}
               style={styles.content}>
               <Image
                 source={ImageAssets.SendIcon}
@@ -217,11 +230,12 @@ const VisitItem: FC<VisitItemProps> = ({item, handleClose, onPress}) => {
 };
 interface VisitItemProps {
   item: VisitListItemType;
+  handleOpenMap?: (item: VisitListItemType) => void;
   handleClose?: () => void;
   onPress?: () => void;
 }
 
-export default React.memo(VisitItem,isEquals);
+export default React.memo(VisitItem, isEquals);
 
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
@@ -267,5 +281,3 @@ const createStyleSheet = (theme: ExtendedTheme) =>
         justifyContent: 'center',
       } as ViewStyle),
   });
-
-

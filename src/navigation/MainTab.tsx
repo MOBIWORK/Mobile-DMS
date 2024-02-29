@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ScreenConstant} from '../const';
 import {Customer, Home, Visits, WidgetScreen} from '../screens';
@@ -14,8 +14,6 @@ export type TabParamList = {
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
- 
-
   return (
     <Tab.Navigator
       screenOptions={{

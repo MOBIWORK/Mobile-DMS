@@ -261,7 +261,7 @@ export type ReportDebtType = {
   total: number;
   listDebt: ReportDebtListType[];
 };
-export type IDataCustomer {
+export type IDataCustomer = {
   customer_code: string;
   customer_name: string;
   customer_type: string;
@@ -276,7 +276,7 @@ export type IDataCustomer {
   detail_address_cus?: string;
   ward_cus?: string;
   district_cus?: string;
-  province_cus?: string ;
+  province_cus?: string;
   first_name?: string;
   phone?: string;
   adr_title_contact?: string;
@@ -294,47 +294,47 @@ export type IDataCustomer {
   latitude?: number;
   name_image?: '';
   faceimage?: string;
-}
+};
 export interface IDataCustomers {
-  name: string
-  customer_name: string
-  customer_id: string
-  customer_type: string
-  customer_group: string
-  territory: string
-  industry: any
-  image: any
-  website: string
-  customer_primary_contact: string
-  customer_primary_address: string
-  custom_birthday: number
-  customer_location_primary: any
-  customer_details: any
-  contact: Contact[]
-  address: Address[]
-  cre_limid: CreLimid[]
+  name: string;
+  customer_name: string;
+  customer_id: string;
+  customer_type: string;
+  customer_group: string;
+  territory: string;
+  industry: any;
+  image: any;
+  website: string;
+  customer_primary_contact: string;
+  customer_primary_address: string;
+  custom_birthday: number;
+  customer_location_primary: any;
+  customer_details: any;
+  contact: Contact[];
+  address: Address[];
+  cre_limid: CreLimid[];
 }
 
 export interface ContactCustomer {
-  first_name: string
-  phone: string
-  is_primary_contact: number
-  is_billing_contact: number
+  first_name: string;
+  phone: string;
+  is_primary_contact: number;
+  is_billing_contact: number;
 }
 
 export interface AddressCustomer {
-  name: string
-  address_line1: string
-  address_line2: any
-  city: string
-  state: any
-  is_primary_address: number
-  is_shipping_address: number
-  county?: string
+  name: string;
+  address_line1: string;
+  address_line2: any;
+  city: string;
+  state: any;
+  is_primary_address: number;
+  is_shipping_address: number;
+  county?: string;
 }
 
 export interface CreLimid {
-  credit_limit: number
+  credit_limit: number;
 }
 //
 // export interface ContactCustomer {
@@ -358,7 +358,6 @@ export interface CreLimid {
 // export interface CreLimitCustomer {
 //   credit_limit: number;
 // }
-
 
 //
 // export interface ContactCustomer {
@@ -569,7 +568,7 @@ export type IProduct = {
   discount_percentage: discountProduct[];
   discount: number;
   price: number;
-  unit: DataUnit[]
+  unit: DataUnit[];
   isSelected?: boolean;
 };
 
@@ -686,33 +685,41 @@ export type NoteType = {
 };
 
 export type CheckinOrderDetail = {
-  list_items: ListItem[]
-  customer: string
-  customer_name: string
-  address_display: string
-  delivery_date: number
-  set_warehouse: string
-  total: number
-  grand_total: number
-  taxes_and_charges: string
-  total_taxes_and_charges: number
-  apply_discount_on: string
-  additional_discount_percentage: number
-  discount_amount: number
-  contact_person: string
-  rounded_total: number
-  tax_amount: number
-  rate: number
-  account_head: string
-  charge_type: string
-}
+  list_items: ListItem[];
+  customer: string;
+  customer_name: string;
+  address_display: string;
+  delivery_date: number;
+  set_warehouse: string;
+  total: number;
+  grand_total: number;
+  taxes_and_charges: string;
+  total_taxes_and_charges: number;
+  apply_discount_on: string;
+  additional_discount_percentage: number;
+  discount_amount: number;
+  contact_person: string;
+  rounded_total: number;
+  tax_amount: number;
+  rate: number;
+  account_head: string;
+  charge_type: string;
+};
 
 export interface ListItem {
-  name: string
-  item_name: string
-  item_code: string
-  qty: number
-  uom: string
-  amount: number
-  discount_percentage: number
+  name: string;
+  item_name: string;
+  item_code: string;
+  qty: number;
+  uom: string;
+  amount: number;
+  discount_percentage: number;
 }
+
+export type IKpi = {
+  doanh_thu: number;
+  doanh_so: number;
+  don_hang: number;
+  vieng_tham: number;
+  kh_moi: number;
+};

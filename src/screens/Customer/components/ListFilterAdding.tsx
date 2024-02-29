@@ -318,11 +318,11 @@ const ListFilterAdding = (props: Props) => {
                   <Text
                     style={styles.itemText(
                       item.channel_name,
-                      data.router_name!,
+                      data.router_name?.[0] ?? '',
                     )}>
                     {item.channel_name}
                   </Text>
-                  {item.channel_name === data.router_name && (
+                  {item.channel_name === data.router_name?.[0] && (
                     <AppIcons
                       iconType={AppConstant.ICON_TYPE.Feather}
                       name="check"
