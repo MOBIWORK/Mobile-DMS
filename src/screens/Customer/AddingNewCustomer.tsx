@@ -31,9 +31,9 @@ import {
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
-import {AppConstant} from '../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation';
-import {IDataCustomer} from '../../models/types';
+import {IDataCustomer, KeyAbleProps} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
@@ -45,17 +45,21 @@ import {
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {CustomerService} from '../../services';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {useSelector} from '../../config/function';
 import {MainAddress, MainContactAddress} from './components/CardAddress';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
+import {CommonUtils} from '../../utils';
+import {useTranslation} from 'react-i18next';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const styles = rootStyles(theme);
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const [valueFilter, setValueFilter] = React.useState<IValueType>({
     customerType: 'Cá nhân',
@@ -113,21 +117,43 @@ const AddingNewCustomer = () => {
       ...newListData,
       frequency: newListData.frequency.toString(),
       customer_type:
-        newListData.customer_type === 'Cá nhân' ? 'Individual' : 'Company',
-      address_title_cus: `${newListData.customer_name} address`,
-      address_type_cus: address ? 'Billing' : '',
-      detail_address_cus: address?.detailAddress,
-      ward_cus: String(address?.ward?.id) ?? '',
-      district_cus: String(address?.district?.id) ?? '',
-      province_cus: String(address?.city?.id) ?? '',
-      is_primary_address: address.addressOrder,
-      is_shipping_address: address.addressGet,
+        newListData.customer_type === getLabel('individual')
+          ? 'Individual'
+          : 'Company',
+      address_title_cus:
+        Object.keys(address).length > 0
+          ? `${newListData.customer_name} address`
+          : '',
+      address_type_cus: Object.keys(address).length > 0 ? 'Billing' : '',
+      detail_address_cus:
+        Object.keys(address).length > 0
+          ? `${address.ward?.value}/${address.district?.value}/${address.city?.value}`
+          : '',
+      ward_cus:
+        Object.keys(address).length > 0 ? String(address?.ward?.id) : '',
+      district_cus:
+        Object.keys(address).length > 0 ? String(address?.district?.id) : '',
+      province_cus:
+        Object.keys(address).length > 0 ? String(address?.city?.id) : '',
+      is_primary_address:
+        Object.keys(address).length > 0 ? address.addressOrder : false,
+      is_shipping_address:
+        Object.keys(address).length > 0 ? address.addressGet : false,
       phone: contact?.phoneNumber ?? '',
-      adr_title_contact: `${newListData.customer_name} contact`,
-      detail_adr_contact: contact?.addressContact ?? '',
-      ward_contact: String(contact?.ward?.id) ?? '',
-      district_contact: String(contact?.district?.id) ?? '',
-      province_contact: String(contact?.city?.id) ?? '',
+      adr_title_contact:
+        Object.keys(contact).length > 0
+          ? `${newListData.customer_name} contact`
+          : '',
+      detail_adr_contact:
+        Object.keys(contact).length > 0
+          ? `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`
+          : '',
+      ward_contact:
+        Object.keys(contact).length > 0 ? String(contact?.ward?.id) : '',
+      district_contact:
+        Object.keys(contact).length > 0 ? String(contact?.district?.id) : '',
+      province_contact:
+        Object.keys(contact).length > 0 ? String(contact?.city?.id) : '',
       first_name: contact?.nameContact ?? '',
       router_name: newListData.router_name[1] ?? '',
       website: newListData.website ?? '',
@@ -138,19 +164,17 @@ const AddingNewCustomer = () => {
         : new Date().getTime() / 1000,
     };
 
-    // console.log('newObj', updateListData);
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
-    dispatch(customerActions.addingCustomer(updateListData));
-    // await CommonUtils.CheckNetworkState();
-    // const response: KeyAbleProps = await CustomerService.addNewCustomer(
-    //   updateListData,
-    // );
-    // if (response?.status === ApiConstant.STT_OK) {
-    //   navigation.navigate(ScreenConstant.MAIN_TAB, {
-    //     screen: ScreenConstant.CUSTOMER,
-    //   });
-    // }
+    await CommonUtils.CheckNetworkState();
+    const response: KeyAbleProps = await CustomerService.addNewCustomer(
+      updateListData,
+    );
+    if (response?.status === ApiConstant.STT_CREATED) {
+      navigation.navigate(ScreenConstant.MAIN_TAB, {
+        screen: ScreenConstant.CUSTOMER,
+      });
+    }
     dispatch(setProcessingStatus(false));
   };
 
@@ -159,11 +183,11 @@ const AddingNewCustomer = () => {
   }, [setOpenDate]);
 
   const handleImagePicker = () => {
-    openImagePicker(selectedImage => {
+    openImagePicker((selectedImage, base64) => {
       // Handle the selected image, e.g., set it to state
       cameraBottomRef.current?.close();
-      setImageSource(selectedImage);
-      setListData(prevState => ({...prevState, faceimage: selectedImage}));
+      setImageSource(base64);
+      setListData(prevState => ({...prevState, faceimage: base64}));
     }, true);
   };
 
@@ -183,11 +207,18 @@ const AddingNewCustomer = () => {
     [setOpenDate, setDate],
   );
 
-  const getCustomerTerritory = () => {
-    dispatch(customerActions.getCustomerTerritory());
+  const getCustomerTerritory = async () => {
+    const response: any = await CustomerService.getCustomerTerritory();
+    if (response?.result.length > 0) {
+      dispatch(customerActions.setListCustomerTerritory(response.result));
+    }
   };
 
-  const getCustomerRoute = () => {
+  const getCustomerRoute = async () => {
+    // const response: any = await CustomerService.getCustomerRoute();
+    // if (response?.result.length > 0) {
+    //   dispatch(customerActions.setListCustomerRoute(response.result));
+    // }
     dispatch(customerActions.onGetCustomerVisit());
   };
   //get Cur Location
@@ -199,7 +230,7 @@ const AddingNewCustomer = () => {
         })
         .catch(() => {
           showSnack({
-            msg: 'Không lấy được GPS',
+            msg: getLabel('GPSErr'),
             interval: 2000,
             type: 'error',
           });
@@ -219,7 +250,7 @@ const AddingNewCustomer = () => {
   return (
     <MainLayout>
       <AppHeader
-        label="Khách hàng"
+        label={getLabel('customer')}
         onBack={() => navigation.goBack()}
         backButtonIcon={
           <AppIcons
@@ -266,7 +297,7 @@ const AddingNewCustomer = () => {
         locale="vi"
         mode="single"
         visible={openDate}
-        label="Chọn sinh nhật"
+        label={getLabel('chooseBirthday')}
         onDismiss={onDismissSingle}
         date={date}
         onConfirm={onConfirmSingle}
@@ -287,7 +318,7 @@ const AddingNewCustomer = () => {
         <MainLayout style={styles.mainLayout}>
           <View>
             <AppHeader
-              label="Chọn ảnh"
+              label={getLabel('chooseImage')}
               onBack={() => {}}
               backButtonIcon={
                 <AppIcons
@@ -307,7 +338,7 @@ const AddingNewCustomer = () => {
               <View style={styles.containIconView}>
                 <SvgIcon source="IconCamera" size={24} />
                 <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                  {'  '}Chụp ảnh
+                  {'  '} {getLabel('takePicture')}
                 </AppText>
               </View>
 
@@ -320,7 +351,7 @@ const AddingNewCustomer = () => {
               <View style={styles.containIconView}>
                 <SvgIcon source="IconImage" size={24} />
                 <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                  {'  '}Chọn từ thư viện
+                  {'  '} {getLabel('chooseFromLibrary')}
                 </AppText>
               </View>
               <SvgIcon source="arrowRight" size={20} />

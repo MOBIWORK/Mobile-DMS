@@ -72,7 +72,7 @@ const TakePictureScore = () => {
   const EmptyAlbum = () => {
     return (
       <Block middle justifyContent="center">
-        <SvgIcon source={'TakePicture'} size={90} />
+        <SvgIcon source={'CameraIcon'} size={90} />
         <Text style={{color: theme.colors.text_secondary}}>
           Thêm album để chụp ảnh
         </Text>

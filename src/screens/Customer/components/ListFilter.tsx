@@ -12,10 +12,11 @@ import {AppConstant} from '../../../const';
 
 import {listBirthDayType, listFilterType} from './data';
 import {IValueType} from '../Customer';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import {useTheme} from '../../../layouts/theme';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {ListCustomerType} from '../../../models/types';
 import {FlatList} from 'react-native-gesture-handler';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   type: string;
@@ -28,7 +29,8 @@ type Props = {
 const ListFilter = (props: Props) => {
   const {type, filterRef, setValueFilter, valueFilter, customerType} = props;
   const theme = useTheme();
-  const styles = rootStyles(theme);
+  const styles = rootStyles();
+  const {t: getLabel} = useTranslation();
 
   return (
     <View>
@@ -44,9 +46,11 @@ const ListFilter = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>Ngày sinh nhật </Text>
+            <Text style={styles.titleHeaderText}>
+              {getLabel('customerBirthDay')}{' '}
+            </Text>
           </View>
-          {listBirthDayType.map((item: any, index: number) => {
+          {listBirthDayType.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
@@ -89,9 +93,11 @@ const ListFilter = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>Loại khách hàng</Text>
+            <Text style={styles.titleHeaderText}>
+              {getLabel('customerType')}
+            </Text>
           </View>
-          {listFilterType.map((item: any, index: number) => {
+          {listFilterType.map((item: any) => {
             return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
@@ -99,15 +105,18 @@ const ListFilter = (props: Props) => {
                 onPress={() => {
                   setValueFilter(prev => ({
                     ...prev,
-                    customerType: item.title,
+                    customerType: getLabel(item.title),
                   }));
                   filterRef?.current?.close();
                 }}>
                 <Text
-                  style={styles.itemText(item.title, valueFilter.customerType)}>
-                  {item.title}
+                  style={styles.itemText(
+                    getLabel(item.title),
+                    valueFilter.customerType,
+                  )}>
+                  {getLabel(item.title)}
                 </Text>
-                {item.title === valueFilter.customerType && (
+                {getLabel(item.title) === valueFilter.customerType && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"
@@ -131,7 +140,9 @@ const ListFilter = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>Nhóm khách hàng</Text>
+            <Text style={styles.titleHeaderText}>
+              {getLabel('groupCustomer')}
+            </Text>
           </View>
           <FlatList
             data={customerType}
@@ -179,23 +190,20 @@ const ListFilter = (props: Props) => {
 
 export default React.memo(ListFilter);
 
-const rootStyles = (theme: AppTheme) =>
+const rootStyles = () =>
   StyleSheet.create({
     titleHeaderText: {
-      // alignSelf:'center',
       fontSize: 18,
       fontWeight: '500',
       lineHeight: 24,
       flex: 1,
       marginLeft: 8,
-      // backgroundColor:'blue',
       textAlign: 'center',
     } as TextStyle,
     headerBottomSheet: {
       marginHorizontal: 16,
       marginBottom: 16,
       flexDirection: 'row',
-      // justifyContent:'space-around',
       alignItems: 'center',
     } as ViewStyle,
     itemText: (text: string, value: string) =>

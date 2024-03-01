@@ -23,6 +23,7 @@ import {
   ListDistrict,
   ListWard,
 } from '../../../redux-store/app-reducer/type';
+import {useTranslation} from 'react-i18next';
 const SelectedAddress: FC<SelectedAddressProps> = ({
   setScreen,
   data,
@@ -30,7 +31,9 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
 }) => {
   const theme = useTheme();
   const styles = createStyle(theme);
+  const {t: getLabel} = useTranslation();
 
+  const [searchValue, setSearch] = useState<string>('');
   const [listCity, setListCity] = useState<IFilterType[]>([]);
 
   const handleItem = (item: IFilterType) => {
@@ -62,10 +65,10 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         }}>
         <Text style={{color: theme.colors.text_primary}}>
           {item.type === AddressType.city
-            ? 'Tỉnh/Thành phố'
+            ? `${getLabel('province')}/${getLabel('city')}`
             : item.type === AddressType.ward
-            ? 'Quận/huyện'
-            : 'Phường/Xã'}
+            ? getLabel('district')
+            : getLabel('ward')}
         </Text>
         <Text
           style={{
@@ -88,11 +91,11 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         }}>
         <Text style={{color: theme.colors.text_primary}}>
           {data.length === 0
-            ? 'Tỉnh/Thành phố'
+            ? `${getLabel('province')}/${getLabel('city')}`
             : data.length === 1
-            ? 'Quận/huyện'
+            ? getLabel('district')
             : data.length === 2
-            ? 'Phường/Xã'
+            ? getLabel('ward')
             : ''}
         </Text>
         {listCity.length > 0 && (
@@ -188,9 +191,9 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
           <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
         </TouchableOpacity>
         <Searchbar
-          placeholder={'Tìm kiếm'}
-          value={''}
-          onChangeText={text => console.log(text)}
+          placeholder={getLabel('search')}
+          value={searchValue}
+          onChangeText={setSearch}
           onSubmitEditing={e => console.log(e.nativeEvent.text)}
           icon={ImageAssets.SearchIcon}
           placeholderTextColor={theme.colors.text_disable}

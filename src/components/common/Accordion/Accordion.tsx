@@ -7,7 +7,6 @@ import Animated, {
   runOnUI,
   measure,
   withTiming,
-  runOnJS,
 } from 'react-native-reanimated';
 import Chevron from './AnimatedArrow';
 import {Block} from '../Block';
@@ -45,6 +44,19 @@ const Accordion = (props: Props) => {
     height: heightValue.value,
   }));
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (heightValue.value === 0) {
+        runOnUI(() => {
+          'worklet';
+          heightValue.value = withTiming(measure(listRef)!.height);
+        })();
+      } else {
+        heightValue.value = withTiming(0);
+      }
+      setShow(!show);
+    }, 500);
+  }, []);
 
   return props.type === 'regular' ? (
     <Block
@@ -117,7 +129,7 @@ const rootStyle = (theme: AppTheme) =>
     titleContainer: (type: 'nested' | 'regular') =>
       ({
         // padding: 20,
-        paddingHorizontal: type === 'nested' ? 16 : 16,
+        paddingHorizontal: type === 'nested' ? 0 : 16,
         paddingTop: type === 'nested' ? 10 : 16,
         marginBottom: 10,
         flexDirection: 'row',

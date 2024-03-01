@@ -110,15 +110,15 @@ export const FilterStateData = (getLabel: any) => {
   return [
     {
       id: 1,
-      title: 'Tất cả',
+      title: getLabel('all'),
     },
     {
       id: 2,
-      title: 'Đã viếng thăm',
+      title: getLabel('visited'),
     },
     {
       id: 3,
-      title: 'Chưa viếng thăm',
+      title: getLabel('notVisited'),
     },
   ] as any;
 };
@@ -127,19 +127,19 @@ export const FilterBirthdayData = (getLabel: any) => {
   return [
     {
       id: 1,
-      title: 'Tất cả',
+      title: getLabel('all'),
     },
     {
       id: 2,
-      title: 'Hôm nay',
+      title: getLabel('today'),
     },
     {
       id: 3,
-      title: 'Tuần này',
+      title: getLabel('thisWeek'),
     },
     {
       id: 4,
-      title: 'Tháng này',
+      title: getLabel('thisMonth'),
     },
   ] as any;
 };

@@ -56,7 +56,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Tên khách hàng
+            {translate('customerName')}
           </AppText>
           <AppText
             fontSize={16}
@@ -73,7 +73,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Mã khách hàng
+            {translate('customerCode')}
           </AppText>
           <AppText
             fontSize={16}
@@ -86,23 +86,6 @@ const InforBlock = (props: Props) => {
           </AppText>
           <Block style={styles.divider} />
         </Block>
-        {/* <Block>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            Mã khách hàng
-          </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            KH-12345
-          </AppText>
-          <Block style={styles.divider} />
-        </Block> */}
         <Block>
           <AppText
             fontSize={16}
@@ -128,7 +111,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Nhóm khách hàng
+            {translate('groupCustomer')}
           </AppText>
           <AppText
             fontSize={16}
@@ -148,7 +131,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Khu vực
+            {translate('area')}
           </AppText>
           <AppText
             fontSize={16}
@@ -165,7 +148,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Ngày sinh nhật
+            {translate('customerBirthDay')}
           </AppText>
           <AppText
             fontSize={16}
@@ -184,7 +167,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Tuyến
+            {translate('gland')}
           </AppText>
           <AppText
             fontSize={16}
@@ -201,7 +184,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Tần suất
+            {translate('frequency')}
           </AppText>
           <AppText
             fontSize={16}
@@ -220,7 +203,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Hạn mức công nợ
+            {translate('debtLimit')}
           </AppText>
           <AppText
             fontSize={16}
@@ -239,7 +222,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Mô tả
+            {translate('describe')}
           </AppText>
           <AppText
             fontSize={16}
@@ -277,7 +260,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Vị trí
+            {translate('location')}
           </AppText>
           <Mapbox.MapView
             pitchEnabled={false}

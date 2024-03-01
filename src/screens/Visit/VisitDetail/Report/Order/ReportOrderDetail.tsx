@@ -28,7 +28,6 @@ import {CommonUtils} from '../../../../../utils';
 import {ReportProductOrderType} from '../../../../../models/types';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ProductOrderItem from './ProductOrderItem';
-import {ScreenConstant} from '../../../../../const';
 
 const ReportOrderDetail = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -38,9 +37,6 @@ const ReportOrderDetail = () => {
   const styles = createSheetStyles(useTheme());
   const {t: getLabel} = useTranslation();
   const item = route.params.item;
-
-  // const [productData, setProductData] = useState<ReportProductOrderType[]>([]);
-  // const [promotionalData, setPromotionalData] = useState<ReportProductOrderType[]>([]);
 
   const RowItem: FC<RowItemProps> = ({
     style,
@@ -84,7 +80,7 @@ const ReportOrderDetail = () => {
     return (
       <View style={{marginTop: 16}}>
         <Text style={{color: colors.text_secondary, fontWeight: '500'}}>
-          Khách hàng
+          {getLabel('customer')}
         </Text>
         <View style={styles.customerContainer}>
           <View style={styles.customerTitle}>
@@ -122,7 +118,7 @@ const ReportOrderDetail = () => {
           paddingHorizontal={16}>
           <RowItem
             style={{paddingBottom: 8}}
-            title={'Ngày giao'}
+            title={getLabel('deliveryDate')}
             label={'28/11/2023'}
           />
           <RowItem
@@ -131,14 +127,14 @@ const ReportOrderDetail = () => {
               borderTopWidth: 1,
               borderColor: colors.border,
             }}
-            title={'Kho xuất'}
+            title={getLabel('eXwarehouse')}
             label={'Kho HN'}
           />
         </Block>
       );
     };
     return (
-      <Accordion type="nested" title={'Thông tin đơn'}>
+      <Accordion type="nested" title={getLabel('orderInfor')}>
         <OrderInfoItem />
       </Accordion>
     );
@@ -152,7 +148,7 @@ const ReportOrderDetail = () => {
           style={{rowGap: 8}}
           padding={4}
           borderRadius={16}>
-          <RowItem title={'Biểu mẫu VAT'} label={'Biểu mẫu A'} />
+          <RowItem title={getLabel('formVat')} label={'Biểu mẫu A'} />
           <RowItem title={'VAT(%)'} label={'5'} />
           <RowItem
             title={'VAT(VND)'}
@@ -165,16 +161,19 @@ const ReportOrderDetail = () => {
 
   const _renderDiscount = () => {
     return (
-      <Accordion type="nested" title={'Chiết khấu'}>
+      <Accordion type="nested" title={getLabel('discount')}>
         <Block
           style={{rowGap: 6}}
           colorTheme="white"
           borderRadius={16}
           padding={4}>
-          <RowItem title={'Loại chiết khấu'} label={'Tổng tiền có VAT'} />
+          <RowItem
+            title={getLabel('typeDiscount')}
+            label={'Tổng tiền có VAT'}
+          />
           <RowItem title={'Chiết khấu(%)'} label={'5'} />
           <RowItem
-            title={'Chiết khấu(VND)'}
+            title={`${getLabel('discount')}(VND)`}
             label={CommonUtils.convertNumber(100000).toString()}
           />
         </Block>
@@ -209,16 +208,16 @@ const ReportOrderDetail = () => {
       );
     };
     return (
-      <Accordion type="nested" title={'Chi tiết thanh toán'}>
+      <Accordion type="nested" title={getLabel('detailPay')}>
         <Block
           colorTheme="white"
           style={{rowGap: 10}}
           borderRadius={16}
           padding={16}>
-          <PayItem label={'Thành tiền'} price={5000000} />
-          <PayItem label={'Chiết khấu'} price={1000000} />
+          <PayItem label={getLabel('intoMoney')} price={5000000} />
+          <PayItem label={getLabel('discount')} price={1000000} />
           <PayItem label={'VAT'} price={100000} />
-          <PayItem label={'Tổng tiền'} price={4100000} isTotal />
+          <PayItem label={getLabel('totalPrice')} price={4100000} isTotal />
         </Block>
       </Accordion>
     );

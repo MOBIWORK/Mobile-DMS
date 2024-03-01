@@ -78,7 +78,7 @@ const Customer = () => {
     shallowEqual,
   );
   const [value, setValue] = React.useState({
-    first: 'Gần nhất',
+    first: getLabel('nearest'),
     second: '',
   });
   const [show, setShow] = React.useState({
@@ -86,9 +86,9 @@ const Customer = () => {
     secondModal: false,
   });
   const [valueFilter, setValueFilter] = React.useState<IValueType>({
-    customerType: 'Tất cả',
-    customerGroupType: 'Tất cả',
-    customerBirthday: 'Tất cả',
+    customerType: getLabel('all'),
+    customerGroupType: getLabel('all'),
+    customerBirthday: getLabel('all'),
   });
 
   const [typeFilter, setTypeFilter] = React.useState<string>(
@@ -114,22 +114,20 @@ const Customer = () => {
   const onPressType2 = () => {
     bottomRef2.current?.snapToIndex(0);
   };
-  // console.log(page,'result')
 
-  // console.log(listCustomer[0].contact,'listCustomer')
   useEffect(() => {
     handleBackgroundLocation();
     let newData: IDataCustomers[] =
       listCustomer?.length > 0 ? [...listCustomer] : [];
-    if (value.first === 'Gần nhất' ) {
+    if (value.first === getLabel('nearest') ) {
       // console.log(newData,'data')
-    
+
       const sortData = newData?.sort((a, b) => {
         const locationA: LocationProps = JSON.parse(
-           a.customer_location_primary != null && a?.customer_location_primary,
+           a.customer_location_primary !== null && a?.customer_location_primary,
         );
         const locationB: LocationProps = JSON.parse(
-          b.customer_location_primary != null && b?.customer_location_primary,
+          b.customer_location_primary !== null && b?.customer_location_primary,
         );
         const distance1 = calculateDistance(
           location.coords.latitude,
@@ -199,15 +197,15 @@ const Customer = () => {
 
   const handleApplyFilter = useCallback(() => {
     if (
-      valueFilter.customerType === 'Tất cả' &&
-      valueFilter.customerGroupType === 'Tất cả' &&
-      valueFilter.customerBirthday === 'Tất cả'
+      valueFilter.customerType === getLabel('all') &&
+      valueFilter.customerGroupType === getLabel('all') &&
+      valueFilter.customerBirthday === getLabel('all')
     ) {
       bottomRef2.current?.close();
     } else if (
-      valueFilter.customerType !== 'Tất cả' &&
-      valueFilter.customerType === 'Tất cả' &&
-      valueFilter.customerBirthday === 'Tất cả'
+      valueFilter.customerType !== getLabel('all') &&
+      valueFilter.customerType === getLabel('all') &&
+      valueFilter.customerBirthday === getLabel('all')
     ) {
       const newData = listCustomer?.filter(
         item => item.customer_type === valueFilter.customerType,
@@ -216,9 +214,9 @@ const Customer = () => {
       setCustomerData(newData);
       bottomRef2.current?.close();
     } else if (
-      valueFilter.customerGroupType !== 'Tất cả' &&
-      valueFilter.customerType !== 'Tất cả' &&
-      valueFilter.customerBirthday === 'Tất cả'
+      valueFilter.customerGroupType !== getLabel('all') &&
+      valueFilter.customerType !== getLabel('all') &&
+      valueFilter.customerBirthday === getLabel('all')
     ) {
       const newData = listCustomer?.filter(
         item =>
@@ -227,14 +225,13 @@ const Customer = () => {
       );
       setCustomerData(newData);
     } else if (
-      valueFilter.customerGroupType !== 'Tất cả' &&
-      valueFilter.customerType === 'Tất cả' &&
-      valueFilter.customerBirthday === 'Tất cả'
+      valueFilter.customerGroupType !== getLabel('all') &&
+      valueFilter.customerType === getLabel('all') &&
+      valueFilter.customerBirthday === getLabel('all')
     ) {
       const newData = listCustomer?.filter(
         item => item.customer_group === valueFilter.customerGroupType,
       );
-      console.log(newData, 'customerGroupType');
       setCustomerData(newData);
       bottomRef2.current?.close();
     } else {
@@ -244,9 +241,9 @@ const Customer = () => {
   const handleCancel = () => {
     bottomRef2.current && bottomRef2.current.close();
     setValueFilter({
-      customerType: 'Tất cả',
-      customerBirthday: 'Tất cả',
-      customerGroupType: 'Tất cả',
+      customerType: getLabel('all'),
+      customerBirthday: getLabel('all'),
+      customerGroupType: getLabel('all'),
     });
   };
 
@@ -273,7 +270,7 @@ const Customer = () => {
     return (
       <MainLayout>
         <AppHeader
-          label={'Khách hàng'}
+          label={getLabel('customer')}
           onBack={() => bottomRef2.current && bottomRef2.current.close()}
           backButtonIcon={
             <AppIcons
@@ -341,7 +338,7 @@ const Customer = () => {
             <TouchableOpacity
               style={styles.buttonRestart}
               onPress={handleCancel}>
-              <Text style={styles.restartText}>Đặt lại</Text>
+              <Text style={styles.restartText}>{getLabel('reset')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonApply}
@@ -349,7 +346,7 @@ const Customer = () => {
                 handleApplyFilter();
                 bottomRef2.current?.close();
               }}>
-              <Text style={styles.applyText}>Áp dụng</Text>
+              <Text style={styles.applyText}>{getLabel('apply')}</Text>
             </TouchableOpacity>
           </View>
         </View>

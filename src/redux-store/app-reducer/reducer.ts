@@ -23,6 +23,7 @@ const initialAppState: IAppRedux = {
     ward: [],
   },
   dataCheckIn: {},
+  userProfile: {},
 };
 
 const appSlice = createSlice({
@@ -108,7 +109,10 @@ const appSlice = createSlice({
     },
     setImageError:(state,action:PayloadAction<any>) =>{
       state.dataCheckIn.imageError = [...state.dataCheckIn.imageError,action.payload]
-    }
+    },
+    setUserProfile: (state, action: PayloadAction<any>) => {
+      state.userProfile = action.payload;
+    },
   },
 });
 

@@ -122,6 +122,16 @@ export const verifyOrganization = (data: object) =>
 export const verifyOrganizations = (data: object) =>
   client.get(ApiConstant.POST_USER_ORGANIZATION, data);
 
+export const getUserProfile = () =>
+  createApi()
+    .get(ApiConstant.GET_USER_PROFILE)
+    .then(res => res.data);
+
+export const getCurrentShit = () =>
+  createApi()
+    .get(ApiConstant.GET_CURRENT_SHIT)
+    .then(res => res.data);
+
 export const updateProfile = (data: IProfile) =>
   createApi().put(ApiConstant.PUT_USER_PROFILE, data);
 

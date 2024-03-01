@@ -16,6 +16,7 @@ import AppImage from '../../../components/common/AppImage';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {decimalMinutesToTime, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import { item } from './ultil';
@@ -23,8 +24,9 @@ import { item } from './ultil';
 const CheckIn = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const {t: getLabel} = useTranslation();
   const [show, setShow] = useState(false);
-  const [title, setTitle] = useState('Mở cửa');
+  const [title, setTitle] = useState<string>(getLabel('openDoor'));
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -53,7 +55,7 @@ const CheckIn = () => {
     // Start the interval when the component mounts
     const startInterval = () => {
       intervalId.current = setInterval(() => {
-        setElapsedTime(prevTime => prevTime + 1);
+        setElapsedTime((prevTime) => prevTime + 1);
       }, 1000); // Update every second (1000 milliseconds)
     };
 
@@ -75,14 +77,14 @@ const CheckIn = () => {
   };
 
   const handleSwitch = useCallback(() => {
-    if (title === 'Mở cửa') {
-      setTitle('Đóng cửa');
+    if (title === getLabel('openDoor')) {
+      setTitle(getLabel('closeDoor'));
       setStatus(false);
       dispatch(appActions.setCheckInStoreStatus(false));
     } else {
-      setTitle('Mở cửa');
-      dispatch(appActions.setCheckInStoreStatus(true));
+      setTitle(getLabel('openDoor'));
       setStatus(true);
+      dispatch(appActions.setCheckInStoreStatus(true));
     }
   }, []);
   const isCurrentTimeGreaterOrEqual = (minTime: any) => {
@@ -112,7 +114,7 @@ const CheckIn = () => {
     // dispatch(appActions.onCheckIn(dataCheckIn));
     goBack()
     setShow(false);
-    
+
   }, [dataCheckIn]);
 
   return (
@@ -144,11 +146,7 @@ const CheckIn = () => {
           <Switch type="text" status onSwitch={handleSwitch} title={title} />
         </Block>
         <Block colorTheme="white" paddingHorizontal={32}>
-          <Block
-            direction="row"
-            paddingTop={20}
-            // paddingLeft={32}
-            marginBottom={8}>
+          <Block direction="row" paddingTop={20} marginBottom={8}>
             <SvgIcon source="UserGroup" size={20} colorTheme="main" />
             <Text fontSize={16} fontWeight="500" colorTheme="text">
               {' '}
@@ -157,11 +155,7 @@ const CheckIn = () => {
           </Block>
           <Block colorTheme="border" height={1} />
           <Block paddingTop={8}>
-            <Block
-              direction="row"
-              alignItems="center"
-              // marginLeft={32}
-              marginRight={32}>
+            <Block direction="row" alignItems="center" marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
               <Text numberOfLines={1}> {params.kh_diachi} </Text>
             </Block>
@@ -169,7 +163,6 @@ const CheckIn = () => {
               direction="row"
               alignItems="center"
               marginTop={8}
-              // marginLeft={32}
               marginRight={32}
               paddingBottom={20}>
               <SvgIcon source="Phone" size={16} />
@@ -234,7 +227,7 @@ const CheckIn = () => {
           <AppImage source="ErrorApiIcon" size={40} />
           <Block marginTop={8} justifyContent="center" alignItems="center">
             <Text fontSize={16} fontWeight="500" colorTheme="text">
-              Bạn muốn thoát viếng thăm ?
+              {getLabel('outVisitMsg')}
             </Text>
           </Block>
           <Block
@@ -271,14 +264,11 @@ const rootStyles = (theme: AppTheme) =>
     root: {
       flex: 1,
       backgroundColor: theme.colors.bg_default,
-      // marginHorizontal:16
     } as ViewStyle,
     containerStyle: {
       backgroundColor: theme.colors.white,
-      // paddingTop: 20,
       marginHorizontal: 30,
       borderRadius: 16,
-      // marginVertical:16
     } as ViewStyle,
     containButton: (title: string) =>
       ({

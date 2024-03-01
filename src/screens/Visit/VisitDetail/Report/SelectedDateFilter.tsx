@@ -1,12 +1,11 @@
 import React, {FC} from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import {useTheme} from '@react-navigation/native';
-import {AppIcons, SvgIcon} from '../../../../components/common';
-import {AppConstant} from '../../../../const';
-import moment from 'moment';
+import {SvgIcon} from '../../../../components/common';
 
 const SelectedDateFilter: FC<SelectedDateFilterProps> = ({
   onOpenReportFilter,
+  timeLabel,
 }) => {
   const {colors} = useTheme();
 
@@ -21,19 +20,15 @@ const SelectedDateFilter: FC<SelectedDateFilterProps> = ({
           marginBottom: 16,
         }}>
         <Text style={{color: colors.text_primary, marginRight: 8}}>
-          Hôm nay, {moment(new Date()).format('DD/MM/YYYY')}
+          {timeLabel}
         </Text>
-          <SvgIcon
-          source='ChevronDown'
-          size={16}
-          color={colors.text_secondary}
-          
-          />
+        <SvgIcon source="ChevronDown" size={16} color={colors.text_secondary} />
       </TouchableOpacity>
     </>
   );
 };
 interface SelectedDateFilterProps {
   onOpenReportFilter: () => void;
+  timeLabel?: string;
 }
 export default SelectedDateFilter;

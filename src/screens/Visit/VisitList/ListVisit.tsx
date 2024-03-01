@@ -22,23 +22,23 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {ListCustomerType, VisitListItemType} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
-import { AppConstant, ScreenConstant } from '../../../const';
+import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
-import { useSelector } from '../../../config/function';
-import { useTranslation } from 'react-i18next';
+import {useSelector} from '../../../config/function';
+import {useTranslation} from 'react-i18next';
 
-import { appActions } from '../../../redux-store/app-reducer/reducer';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {
   customerActions,
   setListCustomerType,
@@ -56,16 +56,22 @@ import {CustomerService} from '../../../services';
 import {CommonUtils} from '../../../utils';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {AppTheme, useTheme} from '../../../layouts/theme';
+import {useDispatch} from 'react-redux';
+// @ts-ignore
+import StringFormat from 'string-format';
+import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const ListVisit = () => {
-  const { colors } = useTheme();
-  const { bottom } = useSafeAreaInsets();
-  const { t: getLabel } = useTranslation();
+  const {colors} = useTheme();
+  const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
+
+  const mapboxCameraRef = useRef<CameraRef>(null);
   const filterRef = useRef<BottomSheet>(null);
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -91,7 +97,7 @@ const ListVisit = () => {
   const dispatch = useDispatch();
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
-
+  const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string>('');
@@ -116,23 +122,15 @@ const ListVisit = () => {
 
   const customerCheckinCount = useMemo(() => {
     if (listCustomer && listCustomer.length > 0) {
-      return listCustomer.filter(item => item.is_checkin === true).length;
+      return listCustomer.filter(item => item.is_checkin).length;
     } else {
       return '';
-    }
-  }, [listCustomer]);
-  const customerValid = useMemo(() => {
-    if (listCustomer && listCustomer.length > 0) {
-      return listCustomer
-      // .filter(
-      //   item => item.customer_location_primary != null,
-      // );
     }
   }, [listCustomer]);
 
   const handleBackground = () => {
     BackgroundGeolocation.getCurrentPosition(
-      { samples: 1, timeout: 3 },
+      {samples: 1, timeout: 3},
       location => {
         console.log('location: ', location);
       },
@@ -144,31 +142,42 @@ const ListVisit = () => {
     setDistanceFilterValue(getLabel(itemData.label));
     const newData = distanceFilterData.map(item => {
       if (itemData.value === item.value) {
-        return { ...item, isSelected: true };
+        return {...item, isSelected: true};
       } else {
-        return { ...item, isSelected: false };
+        return {...item, isSelected: false};
       }
     });
     setDistanceFilterData(newData);
   };
 
-  const MarkerItem: FC<MarkerItemProps> = ({ item, index }) => {
+  const presentMap = (item: VisitListItemType) => {
+    const item_location: any = JSON.parse(item.customer_location_primary);
+    mapboxCameraRef.current &&
+      mapboxCameraRef.current.moveTo(
+        [item_location.long, item_location.lat],
+        1000,
+      );
+    setShowListVisit(false);
+    setVisitItemSelected(item);
+  };
+
+  const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
     return (
       <TouchableOpacity
-        style={{ alignItems: 'center', justifyContent: 'center' }}
+        style={{alignItems: 'center', justifyContent: 'center'}}
         onPress={() => setVisitItemSelected(item)}>
         <Image
           source={ImageAssets.TooltipIcon}
-          style={{ width: 20, height: 20, marginBottom: -5 }}
+          style={{width: 20, height: 20, marginBottom: -5}}
           resizeMode={'contain'}
           tintColor={colors.text_primary}
         />
-        <Text style={{ color: colors.bg_default, position: 'absolute', top: 0 }}>
+        <Text style={{color: colors.bg_default, position: 'absolute', top: 0}}>
           {index + 1}
         </Text>
         <Image
           source={ImageAssets.MapPinFillIcon}
-          style={{ width: 32, height: 32 }}
+          style={{width: 32, height: 32}}
           tintColor={item.is_checkin ? colors.success : colors.warning}
           resizeMode={'cover'}
         />
@@ -178,20 +187,20 @@ const ListVisit = () => {
 
   const _renderHeader = () => {
     return (
-      <View style={{ paddingHorizontal: 16 }}>
+      <View style={{paddingHorizontal: 16}}>
         <AppHeader
           hiddenBackButton
           label={getLabel('visit')}
-          labelStyle={{ textAlign: 'left' }}
+          labelStyle={{textAlign: 'left'}}
           rightButton={
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => setShowListVisit(!isShowListVisit)}>
                 <Image
                   source={
                     isShowListVisit ? ImageAssets.MapIcon : ImageAssets.ListIcon
                   }
-                  style={{ width: 28, height: 28 }}
+                  style={{width: 28, height: 28}}
                   tintColor={colors.text_secondary}
                   resizeMode={'cover'}
                 />
@@ -202,7 +211,7 @@ const ListVisit = () => {
                 }>
                 <Image
                   source={ImageAssets.SearchIcon}
-                  style={{ width: 28, height: 28, marginLeft: 16 }}
+                  style={{width: 28, height: 28, marginLeft: 16}}
                   tintColor={colors.text_secondary}
                   resizeMode={'cover'}
                 />
@@ -231,15 +240,15 @@ const ListVisit = () => {
               borderColor: colors.border,
               maxWidth: 180,
             }}>
-            <Text style={{ color: colors.text_secondary }}>
+            <Text style={{color: colors.text_secondary}}>
               {getLabel('distance')}:
             </Text>
-            <Text style={{ color: colors.text_primary, marginLeft: 8 }}>
+            <Text style={{color: colors.text_primary, marginLeft: 8}}>
               {distanceFilterValue}
             </Text>
           </TouchableOpacity>
           <FilterView
-            style={{ marginLeft: 12 }}
+            style={{marginLeft: 12}}
             onPress={() =>
               bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
             }
@@ -251,20 +260,29 @@ const ListVisit = () => {
 
   const _renderContent = () => {
     return (
-      <View style={{ marginTop: 8 }}>
+      <View style={{marginTop: 8}}>
         {isShowListVisit ? (
-          <View style={{ marginTop: 16, paddingHorizontal: 16}}>
-            <Text style={{ color: colors.text_secondary ,marginBottom :16}}>
-              {getLabel('visit')} {customerCheckinCount}/{listCustomer?.length}{' '}
-              {getLabel('customer').toLocaleLowerCase()}
+          <View style={{marginTop: 16, paddingHorizontal: 16}}>
+            <Text style={{color: colors.text_secondary}}>
+              {StringFormat(getLabel('customerVisitedCount'), {
+                customerCheckinCount: customerCheckinCount,
+                allCustomer: listCustomer?.length,
+              })}
             </Text>
-            {listCustomer && (
+            {loading ? (
+              <SkeletonLoading />
+            ) : (
               <FlatList
-                style={{ height: '90%' }}
+                style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
-                data={customerValid}
+                data={listCustomer}
+                contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
-                  <VisitItem item={item} onPress={handleBackground} />
+                  <VisitItem
+                    item={item}
+                    handleOpenMap={() => presentMap(item)}
+                    onPress={handleBackground}
+                  />
                 )}
               />
             )}
@@ -277,9 +295,8 @@ const ListVisit = () => {
               scaleBarEnabled={false}
               styleURL={Mapbox.StyleURL.Street}
               logoEnabled={false}
-              style={{ flex: 1 }}>
+              style={{flex: 1}}>
               <Mapbox.Camera
-                // ref={mapboxCameraRef}
                 centerCoordinate={[
                   location?.coords.longitude ?? 0,
                   location?.coords.latitude ?? 0,
@@ -337,7 +354,6 @@ const ListVisit = () => {
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
-    dispatch(customerActions.onGetCustomerVisit());
     BackgroundGeolocation.getCurrentPosition({
       samples: 1,
       timeout: 3,
@@ -348,27 +364,24 @@ const ListVisit = () => {
     // setLoading(false);
   }, []);
 
-  // const getCustomer = async (params?: IListVisitParams) => {
-
-  //   await getCustomerVisit(params).then((res: any) => {
-
-  //     if (res.result.length > 0) {
-  //       const data: VisitListItemType[] = res?.result.data;
-  //       const newData = data.filter(item => item.customer_location_primary);
-  //       dispatch(customerActions.setCustomerVisit(newData));
-  //     }
-  //   });
-
-  // };
+  const getCustomer = async (params?: IListVisitParams) => {
+    setLoading(true);
+    await getCustomerVisit(params).then((res: any) => {
+      if (Object.keys(res.result).length > 0) {
+        const data: VisitListItemType[] = res?.result.data;
+        const newData = data.filter(item => item.customer_location_primary);
+        dispatch(customerActions.setCustomerVisit(newData));
+      }
+    });
+    setLoading(false);
+  };
 
   const getCustomerRoute = async () => {
-    console.log('run');
     if (lisCustomerRoute.length === 0) {
       const response: any = await CustomerService.getCustomerRoute();
       if (response?.result.length > 0) {
         dispatch(customerActions.setListCustomerRoute(response.result));
       }
-      dispatch(customerActions.onGetCustomerVisit());
     }
   };
 
@@ -382,18 +395,20 @@ const ListVisit = () => {
   };
 
   const handleFilterData = async () => {
-    filterRef.current && filterRef.current.close();
+    bottomSheetRef.current && bottomSheetRef.current.close();
     if (Object.keys(filterParams).length > 0) {
       const birthDayObj: any =
-        filterParams?.birthDay && filterParams.birthDay === 'Hôm nay'
+        filterParams?.birthDay && filterParams.birthDay === getLabel('today')
           ? CommonUtils.dateToDate('today')
-          : filterParams.birthDay === 'Tuần này'
-            ? CommonUtils.dateToDate('weekly')
-            : CommonUtils.dateToDate('weekly');
+          : filterParams.birthDay === getLabel('thisWeek')
+          ? CommonUtils.dateToDate('weekly')
+          : filterParams.birthDay === getLabel('thisMonth')
+          ? CommonUtils.dateToDate('monthly')
+          : undefined;
       const params: IListVisitParams = {
         route: filterParams?.route && [`${filterParams.route.name}`],
         status:
-          filterParams?.status && filterParams.status === 'Đã viếng thăm'
+          filterParams?.status && filterParams.status === getLabel('visited')
             ? 'active'
             : 'lock',
         orderby:
@@ -409,15 +424,14 @@ const ListVisit = () => {
         customer_type:
           filterParams?.customer_type && filterParams.customer_type,
       };
-      await dispatch(customerActions.onGetCustomerVisit());
-      // await getCustomer(params);
+      await getCustomer(params);
     }
   };
 
   useEffect(() => {
     mounted.current = true;
     dispatch(appActions.onLoadApp());
-    // getCustomer();
+    getCustomer();
     getCustomerRoute();
     getDataGroup();
     dispatch(appActions.onLoadAppEnd());
@@ -430,14 +444,9 @@ const ListVisit = () => {
 
   return (
     <SafeAreaView
-      style={{ backgroundColor: colors.bg_neutral, paddingHorizontal: 0 }}>
+      style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
       {_renderContent()}
-      {appLoading && (
-        <View style={{marginTop: 16}}>
-          <SkeletonLoading/>
-        </View>
-      )}
       <FilterContainer
         bottomSheetRef={bottomSheetRef}
         filterRef={filterRef}

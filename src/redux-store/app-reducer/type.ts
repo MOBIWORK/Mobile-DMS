@@ -1,4 +1,5 @@
 import {ThemeType} from '../../layouts/theme';
+import {IUser} from '../../models/types';
 
 export interface ListCity {
   ma_tinh: string;
@@ -39,6 +40,7 @@ export interface IAppRedux {
     ward: ListWard[];
   };
   dataCheckIn: any;
+  userProfile: any;
 }
 
 export enum SLICE_NAME {

@@ -1,18 +1,5 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  Linking,
-  Platform,
-  Alert,
-} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {View, Text, Image, Linking, Platform, Alert} from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -35,7 +22,13 @@ import {
 
 import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
-import {IResOrganization, IWidget, VisitListItemType} from '../../models/types';
+import {
+  IKpi,
+  IResOrganization,
+  IUser,
+  IWidget,
+  VisitListItemType,
+} from '../../models/types';
 import ItemWidget from '../../components/Widget/ItemWidget';
 import {NavigationProp} from '../../navigation';
 import NotificationScreen from './Notification';
@@ -54,6 +47,8 @@ import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
+import {AppService, ReportService} from '../../services';
+import {useTranslation} from 'react-i18next';
 import {shallowEqual} from 'react-redux';
 
 const HomeScreen = () => {
@@ -62,12 +57,17 @@ const HomeScreen = () => {
   const bottomSheetNotification = useRef<BottomSheet>(null);
   const snapPoint = useMemo(() => ['100%'], []);
   const navigation = useNavigation<NavigationProp>();
+  const {t: getLabel} = useTranslation();
+
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
-  // const showModal = useSelector(AppSelector.getShowModal);
+
+  // const showModal = useSelector(state => state.app.showModal);
+  const userProfile: IUser = useSelector(state => state.app.userProfile);
+
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
@@ -79,6 +79,8 @@ const HomeScreen = () => {
   const syncWithCodePush = (status: number) => {
     console.log('Codepush sync status', status);
   };
+
+  const [currentShit, setCurrentShit] = useState<any>(null);
 
   const [notifiCations, setNotifications] = useState([
     {
@@ -103,6 +105,7 @@ const HomeScreen = () => {
     },
   ]);
 
+  const [KpiValue, setKpiValue] = useState<IKpi | null>(null);
   const [widgets, setWidgets] = useMMKVString(AppConstant.Widget);
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
 
@@ -133,13 +136,13 @@ const HomeScreen = () => {
     return (
       <View>
         <View style={styles.widgetView}>
-          <Text style={[styles.tilteSection]}>Tiện ích</Text>
+          <Text style={[styles.tilteSection]}>{getLabel('utilities')}</Text>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate(ScreenConstant.WIDGET_FVR_SCREEN)
             }>
             <Text style={[styles.tilteSection, {color: colors.action}]}>
-              Tuỳ chỉnh
+              {getLabel('custom')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -189,7 +192,7 @@ const HomeScreen = () => {
     return (
       <View>
         <View style={[styles.flexSpace]}>
-          <Text style={[styles.tilteSection]}>Thống kê</Text>
+          <Text style={[styles.tilteSection]}>{getLabel('statistical')}</Text>
         </View>
         <View style={styles.containProgressView}>
           <View
@@ -197,10 +200,10 @@ const HomeScreen = () => {
               styles.itemWorkSheet,
               {width: (AppConstant.WIDTH - 64) / 3},
             ]}>
-            <Text style={[styles.worksheetLb]}>Doanh thu</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('revenue')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={18}
+                percent={KpiValue ? KpiValue.doanh_thu : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.action}
@@ -208,7 +211,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.action}]}>
-                15 %
+                {KpiValue ? `${KpiValue.doanh_thu}` : 0} %
               </Text>
             </View>
           </View>
@@ -218,10 +221,10 @@ const HomeScreen = () => {
               styles.itemWorkSheet,
               {width: (AppConstant.WIDTH - 64) / 3, marginHorizontal: 15},
             ]}>
-            <Text style={[styles.worksheetLb]}>Doanh số</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('sales')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={18}
+                percent={KpiValue ? KpiValue.doanh_so : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.success}
@@ -229,7 +232,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.success}]}>
-                15 %
+                {KpiValue ? `${KpiValue.doanh_so}` : 0} %
               </Text>
             </View>
           </View>
@@ -239,10 +242,10 @@ const HomeScreen = () => {
               styles.itemWorkSheet,
               {width: (AppConstant.WIDTH - 64) / 3},
             ]}>
-            <Text style={[styles.worksheetLb]}>Đơn hàng</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('order')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={65}
+                percent={KpiValue ? KpiValue.don_hang : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.info}
@@ -250,7 +253,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.info}]}>
-                65 %
+                {KpiValue ? `${KpiValue.don_hang}` : 0} %
               </Text>
             </View>
           </View>
@@ -264,10 +267,10 @@ const HomeScreen = () => {
                 marginBottom: 0,
               },
             ]}>
-            <Text style={[styles.worksheetLb]}>Viếng thăm</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('visit')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={18}
+                percent={KpiValue ? KpiValue.vieng_tham : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.primary}
@@ -275,7 +278,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.primary}]}>
-                15 %
+                {KpiValue ? `${KpiValue.vieng_tham}` : 0} %
               </Text>
             </View>
           </View>
@@ -285,10 +288,10 @@ const HomeScreen = () => {
               styles.itemWorkSheet,
               {width: (AppConstant.WIDTH - 48) / 2, marginBottom: 0},
             ]}>
-            <Text style={[styles.worksheetLb]}>Khách hàng mới</Text>
+            <Text style={[styles.worksheetLb]}>{getLabel('newCustomer')}</Text>
             <View style={[styles.worksheetBar]}>
               <ProgressCircle
-                percent={18}
+                percent={KpiValue ? KpiValue.kh_moi : 0}
                 radius={16}
                 borderWidth={5}
                 color={colors.secondary}
@@ -296,7 +299,7 @@ const HomeScreen = () => {
                 bgColor={colors.bg_default}
               />
               <Text style={[styles.worksheetDt, {color: colors.secondary}]}>
-                15 %
+                {KpiValue ? `${KpiValue.kh_moi}` : 0} %
               </Text>
             </View>
           </View>
@@ -321,7 +324,6 @@ const HomeScreen = () => {
   const openAppStore = () => {
     let link = '';
     if (Platform.OS === 'ios') {
-      console.log('run this shit');
       link = 'itms-apps://apps.apple.com/id/app/MBW ESS/id6473134079?l=id';
     } else {
       link = 'https://play.google.com/store/apps/details?id=mbw.next.ess';
@@ -331,6 +333,27 @@ const HomeScreen = () => {
         supported && Linking.openURL(link);
       })
       .catch(err => console.log('err', err));
+  };
+
+  const getProfile = async () => {
+    const response: any = await AppService.getUserProfile();
+    if (Object.keys(response?.result).length > 0) {
+      dispatch(appActions.setUserProfile(response.result));
+    }
+  };
+
+  const getCurrentShit = async () => {
+    const response: any = await AppService.getCurrentShit();
+    if (Object.keys(response?.result).length > 0) {
+      setCurrentShit(response.result);
+    }
+  };
+
+  const getReportKPI = async () => {
+    const response: any = await ReportService.getKpi();
+    if (Object.keys(response?.result).length > 0) {
+      setKpiValue(response.result);
+    }
   };
 
   useEffect(() => {
@@ -356,7 +379,11 @@ const HomeScreen = () => {
       );
     };
     // setLoading(false);
-    dispatch(appActions.onGetSystemConfig())
+    dispatch(appActions.onGetSystemConfig());
+    getLocation();
+    getProfile();
+    getCurrentShit();
+    getReportKPI();
     getLocation();
   }, []);
 
@@ -459,10 +486,16 @@ const HomeScreen = () => {
           <>
             <View style={[styles.shadow, styles.header]}>
               <View style={{flexDirection: 'row'}}>
-                <AppAvatar name="Long" size={48} />
+                {userProfile?.image ? (
+                  <AppAvatar url={userProfile.image} size={48} />
+                ) : (
+                  <AppAvatar name={userProfile.employee_name} size={48} />
+                )}
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}> Xin chào ,</Text>
-                  <Text style={[styles.userName]}>Trái Thanh Long</Text>
+                  <Text style={[styles.userName]}>
+                    {userProfile ? userProfile.employee_name : ''}
+                  </Text>
                 </View>
               </View>
               <View>
@@ -480,11 +513,16 @@ const HomeScreen = () => {
                 />
               </View>
             </View>
-            <AppContainer>
+            <AppContainer style={{marginBottom: 100}}>
               <View style={styles.mainLayout}>
                 <View style={[styles.shadow, styles.containerTimekeep]}>
                   <View>
-                    <Text style={[styles.userName]}>Chấm công vào</Text>
+                    <Text style={[styles.userName]}>
+                      {currentShit?.shift_status ||
+                      currentShit?.shift_status === 'Vào'
+                        ? getLabel('timeKeepOut')
+                        : getLabel('timeKeepIn')}
+                    </Text>
                     <View style={[styles.flex, {marginTop: 8}]}>
                       <AppIcons
                         iconType="AntIcon"
@@ -498,12 +536,23 @@ const HomeScreen = () => {
                           fontSize: 16,
                           color: colors.text_secondary,
                         }}>
-                        08:00 - 12:00
+                        {currentShit
+                          ? `${currentShit.shift_type_now.start_time} - ${currentShit.shift_type_now.end_time}`
+                          : ''}
                       </Text>
                     </View>
                   </View>
                   <TouchableOpacity
-                    style={styles.btnTimekeep}
+                    style={[
+                      styles.btnTimekeep,
+                      {
+                        backgroundColor:
+                          currentShit?.shift_status ||
+                          currentShit?.shift_status === 'Vào'
+                            ? colors.error
+                            : colors.success,
+                      },
+                    ]}
                     onPress={openToDeeplink}>
                     <Image
                       source={ImageAssets.Usercheckin}

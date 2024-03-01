@@ -1,9 +1,11 @@
 import React, {FC} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {useTheme} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 
 const AppSegmentedButtons: FC<AppSegmentedButtonProps> = ({data, onChange}) => {
   const {colors} = useTheme();
+  const {t: getLabel} = useTranslation();
 
   const styles = StyleSheet.create({
     container: {
@@ -38,7 +40,7 @@ const AppSegmentedButtons: FC<AppSegmentedButtonProps> = ({data, onChange}) => {
                 color: item.isSelected ? colors.primary : colors.text_secondary,
                 fontWeight: '500',
               }}>
-              {item.title}
+              {getLabel(item.title)}
             </Text>
           </Pressable>
         );

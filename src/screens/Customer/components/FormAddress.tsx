@@ -30,6 +30,7 @@ import {dispatch} from '../../../utils/redux';
 import SelectedAddress from './SelectedAddress';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import {MainAddress, MainContactAddress} from './CardAddress';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   onPressClose: () => void;
@@ -51,7 +52,8 @@ export type AddressSelected = {
 const FormAddress = (props: Props) => {
   const {onPressClose, typeFilter} = props;
   const theme = useTheme();
-  const styles = rootStyles(theme);
+  const {t: getLabel} = useTranslation();
+  const styles = rootStyles(theme, getLabel);
   const [screen, setScreen] = useState('');
   const [addressSelectedData, setAddressSelectedData] = useState<
     AddressSelected[]
@@ -79,11 +81,11 @@ const FormAddress = (props: Props) => {
   const listCheckBox = useRef([
     {
       id: '1',
-      label: 'Đặt làm địa chỉ giao hàng',
+      label: getLabel('setDeliveryAddress'),
     },
     {
       id: '2',
-      label: 'Đặt làm địa chỉ đặt hàng',
+      label: getLabel('setOrderAddress'),
     },
   ]);
 
@@ -112,7 +114,7 @@ const FormAddress = (props: Props) => {
       setAddressSelectedData(newData);
     } else {
       showSnack({
-        msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+        msg: getLabel('error:haveError'),
         type: 'error',
         interval: 1000,
       });
@@ -125,7 +127,7 @@ const FormAddress = (props: Props) => {
         fetchData(res?.coords?.latitude, res?.coords?.longitude);
 
         showSnack({
-          msg: 'Thành công',
+          msg: getLabel('success'),
           type: 'success',
           interval: 1000,
         });
@@ -240,7 +242,7 @@ const FormAddress = (props: Props) => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <MainLayout>
               <AppInput
-                label={'Tỉnh/Thành phố'}
+                label={`${getLabel('province')}/${getLabel('city')}`}
                 contentStyle={styles.contentStyle(
                   addressValue?.city?.value ?? '',
                   '',
@@ -262,7 +264,7 @@ const FormAddress = (props: Props) => {
                 }
               />
               <AppInput
-                label={'Quận/Huyện'}
+                label={getLabel('district')}
                 value={addressValue?.district?.value ?? ''}
                 editable={false}
                 onPress={() => {
@@ -286,7 +288,7 @@ const FormAddress = (props: Props) => {
                 }
               />
               <AppInput
-                label={'Phường/xã'}
+                label={getLabel('ward')}
                 value={addressValue?.ward?.value ?? ''}
                 editable={false}
                 contentStyle={styles.contentStyle(
@@ -310,7 +312,7 @@ const FormAddress = (props: Props) => {
                 }
               />
               <AppInput
-                label={'Địa chỉ'}
+                label={getLabel('address')}
                 value={txtAddressDetail}
                 editable={true}
                 contentStyle={styles.contentStyle(
@@ -318,7 +320,7 @@ const FormAddress = (props: Props) => {
                   '',
                 )}
                 styles={
-                  addressValue.detailAddress === 'Địa chỉ chi tiết'
+                  addressValue.detailAddress === getLabel('addressDetail')
                     ? styles.marginInputView
                     : styles.containInput
                 }
@@ -391,16 +393,16 @@ const FormAddress = (props: Props) => {
                   );
                   onPressClose();
                 }}>
-                <AppText style={styles.applyText}>Lưu</AppText>
+                <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </View>
           </View>
         </>
       ) : (
         <>
-          <View style={styles.headerContentView('Địa chỉ chính')}>
+          <View style={styles.headerContentView(getLabel('mainContact'))}>
             <AppHeader
-              label="Người liên hệ chính"
+              label={getLabel('mainContact')}
               onBack={() => {}}
               backButtonIcon={
                 <AppIcons
@@ -415,12 +417,12 @@ const FormAddress = (props: Props) => {
           </View>
           <MainLayout style={{paddingTop: 0}}>
             <AppInput
-              label={'Người liên hệ'}
+              label={getLabel('contactName')}
               value={contactValue.nameContact}
               editable={true}
               contentStyle={styles.contentStyle(
                 contactValue.nameContact,
-                'Người liên hệ',
+                getLabel('contactName'),
               )}
               hiddenRightIcon={true}
               styles={styles.marginInputView}
@@ -429,12 +431,12 @@ const FormAddress = (props: Props) => {
               }
             />
             <AppInput
-              label={'Số điện thoại'}
+              label={getLabel('phoneNumber')}
               value={contactValue.phoneNumber}
               editable={true}
               contentStyle={styles.contentStyle(
                 contactValue.phoneNumber,
-                'Số điện thoại',
+                getLabel('phoneNumber'),
               )}
               styles={styles.marginInputView}
               onChangeValue={text =>
@@ -451,7 +453,7 @@ const FormAddress = (props: Props) => {
               </AppText>
             </Block>
             <AppInput
-              label={'Tỉnh/Thành phố'}
+              label={`${getLabel('province')}/${getLabel('city')}`}
               contentStyle={styles.contentStyle(
                 contactValue?.city?.value ?? '',
                 '',
@@ -472,7 +474,7 @@ const FormAddress = (props: Props) => {
               }
             />
             <AppInput
-              label={'Quận/Huyện'}
+              label={getLabel('district')}
               value={contactValue?.district?.value ?? ''}
               editable={false}
               onPress={() => {
@@ -492,7 +494,7 @@ const FormAddress = (props: Props) => {
               }
             />
             <AppInput
-              label={'Phường/xã'}
+              label={getLabel('ward')}
               value={contactValue?.ward?.value ?? ''}
               editable={false}
               contentStyle={styles.contentStyle(
@@ -512,7 +514,7 @@ const FormAddress = (props: Props) => {
               }
             />
             <AppInput
-              label={'Địa chỉ chi tiết'}
+              label={getLabel('addressDetail')}
               value={txtContactDetail}
               editable={true}
               contentStyle={styles.contentStyle(
@@ -558,11 +560,10 @@ const FormAddress = (props: Props) => {
 
 export default React.memo(FormAddress);
 
-const rootStyles = (theme: AppTheme) =>
+const rootStyles = (theme: AppTheme, getLabel: any) =>
   StyleSheet.create({
     root: {
       flex: 1,
-      // marginTop: 20,
     } as ViewStyle,
     buttonStyle: {
       backgroundColor: theme.colors.bg_neutral,
@@ -581,20 +582,14 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     marginInputView: {
       marginBottom: 20,
-
-      // backgroundColor: 'red'
     } as ViewStyle,
-    buttonView: {
-      // marginBottom: 20,
-    } as ViewStyle,
+    buttonView: {} as ViewStyle,
     headerContentView: (label: string) =>
       ({
         marginHorizontal: 16,
-        //  backgroundColor: 'red',
         marginBottom: 20,
-        marginTop: label === 'Địa chỉ chính' ? 20 : 0,
-        // paddingBottom: 10,
-        top: label === 'Địa chỉ chính' ? 0 : -10,
+        marginTop: label === getLabel('mainAddress') ? 20 : 0,
+        top: label === getLabel('mainAddress') ? 0 : -10,
       } as ViewStyle),
     containInput: {
       paddingBottom: 24,
@@ -642,7 +637,6 @@ const rootStyles = (theme: AppTheme) =>
       } as ViewStyle),
     checkBoxView: {
       flexDirection: 'row',
-      // backgroundColor:'red'
     } as ViewStyle,
     containButtonBottom: {
       flex: 1,

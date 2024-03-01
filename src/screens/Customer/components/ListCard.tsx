@@ -19,6 +19,7 @@ const ListCard = (props: Props) => {
   return (
     <FlatList
       data={props.data}
+      style={{marginBottom: 100}}
       decelerationRate={'fast'}
       onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}

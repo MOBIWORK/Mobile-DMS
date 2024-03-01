@@ -18,6 +18,7 @@ import {
 } from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {call, put} from 'typed-redux-saga';
+
 import {CustomerService} from '../../services';
 import {ApiConstant, ScreenConstant} from '../../const';
 import {navigate} from '../../navigation';
@@ -38,11 +39,9 @@ export function* onGetCustomer(action: PayloadAction) {
   if (customerActions.onGetCustomer.match(action)) {
     try {
       yield put(onLoadApp());
-      console.log('run 1');
       const response: ResponseGenerator = yield call(getCustomer);
-      console.log(response, 'response customer');
       if (response.message === 'ok') {
-        yield put(setCustomer(response.result));
+        yield put(setCustomer(response.result?.data));
       }
     } catch (err) {
     } finally {
@@ -55,7 +54,6 @@ export function* onGetCustomerType(action: PayloadAction) {
     try {
       yield put(onLoadApp());
       const response: ResponseGenerator = yield call(getCustomerType);
-      console.log(response, 'response customer type');
       if (response.message === 'Thành công') {
         yield put(setListCustomerType(response.result));
       } else {
@@ -76,7 +74,6 @@ export function* getCustomerVisitSaga(action: PayloadAction) {
   if (customerActions.onGetCustomerVisit.match(action)) {
     try {
       const response: ResponseGenerator = yield call(getCustomerVisit);
-      console.log(response, 'response visit');
       if (Object.keys(response.result?.length > 0)) {
         yield put(setCustomerVisit(response.result.data));
       }

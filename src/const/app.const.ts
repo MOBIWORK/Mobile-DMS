@@ -108,12 +108,12 @@ export const SelectedDateFilterData: IFilterType[] = [
   },
   {
     label: 'thisMonth',
-    value: 2,
+    value: 3,
     isSelected: false,
   },
   {
-    label: 'custom',
-    value: 2,
+    label: 'selectDate',
+    value: 4,
     isSelected: false,
   },
 ];
