@@ -22,7 +22,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {useNavigation, useTheme} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {ListCustomerType, VisitListItemType} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
@@ -55,8 +55,6 @@ import FilterListComponent, {
 import {CustomerService} from '../../../services';
 import {CommonUtils} from '../../../utils';
 import {shallowEqual, useDispatch} from 'react-redux';
-import {AppTheme, useTheme} from '../../../layouts/theme';
-import {useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
@@ -473,7 +471,7 @@ interface MarkerItemProps {
 }
 export default ListVisit;
 
-const rootStyles = (theme: AppTheme) =>
+const rootStyles = (theme: ExtendedTheme) =>
   StyleSheet.create({
     map: {
       overflow: 'hidden',

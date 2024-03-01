@@ -75,16 +75,10 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         getSystemConfig,
         action.payload,
       );
-      console.log(response,'system config')
-
       if (response.message === 'Thành công') {
         yield put(appActions.setSystemConfig(response.result));
       } else {
-        showSnack({
-          msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
-          interval: 2000,
-          type: 'error',
-        });
+        console.log('app System err');
       }
     } catch (err) {
       console.error('err: ', err);

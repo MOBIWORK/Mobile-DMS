@@ -41,7 +41,7 @@ export function* onGetCustomer(action: PayloadAction) {
       yield put(onLoadApp());
       const response: ResponseGenerator = yield call(getCustomer);
       if (response.message === 'ok') {
-        yield put(setCustomer(response.result?.data));
+        yield put(setCustomer(response.result));
       }
     } catch (err) {
     } finally {
@@ -128,11 +128,11 @@ export function* getMoreDataCustomer(action: PayloadAction) {
         getPageCustomer,
         action.payload,
       );
-      console.log(response,'response new page')
+      console.log(response, 'response new page');
       if (response.message === 'ok') {
-        console.log('dafuck')
+        console.log('dafuck');
         yield put(customerActions.addingListCustomer(response.result?.data));
-        yield put(customerActions.setPage(response.result?.page_number))
+        yield put(customerActions.setPage(response.result?.page_number));
       } else {
         showSnack({
           msg: 'Có lỗi xảy ra, vui lòng thử lại sau',
@@ -141,7 +141,7 @@ export function* getMoreDataCustomer(action: PayloadAction) {
         });
       }
     } catch (err) {
-      console.log(err,'error')
+      console.log(err, 'error');
     } finally {
       yield put(appActions.onLoadAppEnd());
     }
