@@ -166,53 +166,6 @@ const ListFilterItem: FC<ListFilterItemProps> = ({
             })}
           </View>
         );
-      case AppConstant.VisitFilterType.distance:
-        return (
-          <View>
-            <View style={styles.headerBottomSheet}>
-              <TouchableOpacity onPress={() => filterRef.current?.close()}>
-                <AppIcons
-                  iconType={AppConstant.ICON_TYPE.IonIcon}
-                  name={'close'}
-                  size={24}
-                  color={theme.colors.text_primary}
-                />
-              </TouchableOpacity>
-
-              <Text style={styles.titleHeaderText}>Khoảng cách</Text>
-            </View>
-            {data.map((item: any, index) => {
-              return (
-                <TouchableOpacity
-                  style={styles.containItemBottomView}
-                  key={index}
-                  onPress={() => {
-                    setValueFilter((prev: IListVisitParams) => ({
-                      ...prev,
-                      distance: item.title,
-                    }));
-                    filterRef?.current?.close();
-                  }}>
-                  <Text
-                    style={styles.itemText(
-                      item.title,
-                      valueFilter.distance ?? '',
-                    )}>
-                    {item.title}
-                  </Text>
-                  {item.title === valueFilter.distance && (
-                    <AppIcons
-                      iconType={AppConstant.ICON_TYPE.Feather}
-                      name="check"
-                      size={24}
-                      color={theme.colors.primary}
-                    />
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        );
       case AppConstant.VisitFilterType.name:
         return (
           <View>

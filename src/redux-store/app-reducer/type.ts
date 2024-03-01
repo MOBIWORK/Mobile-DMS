@@ -1,4 +1,5 @@
 import {ThemeType} from '../../layouts/theme';
+import {IUser} from '../../models/types';
 
 export interface ListCity {
   ma_tinh: string;
@@ -39,6 +40,7 @@ export interface IAppRedux {
     ward: ListWard[];
   };
   dataCheckIn: any;
+  userProfile: any;
 }
 
 export enum SLICE_NAME {
@@ -65,7 +67,7 @@ export enum SLICE_NAME {
   GET_NOTE_USER_RECEIVED = 'GET_NOTE_USER_RECEIVED_',
   PUT_IMAGE_CHECKIN = 'PUT_IMAGE_CHECKIN_',
   GET_LIST_NOTE = 'GET_LIST_NOTE_',
-  CHECKIN_SLICE = "CHECKIN_SLICE_",
+  CHECKIN_SLICE = 'CHECKIN_SLICE_',
 }
 
 export const RESET_APP = 'RESET_APP_RESET_APP';

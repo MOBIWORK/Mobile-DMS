@@ -96,7 +96,6 @@ export const rootStyles = (theme: AppTheme) =>
     btnTimekeep: {
       width: 48,
       height: 48,
-      backgroundColor: theme.colors.success,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 12,

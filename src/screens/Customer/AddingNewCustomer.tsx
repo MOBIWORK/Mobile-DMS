@@ -120,20 +120,40 @@ const AddingNewCustomer = () => {
         newListData.customer_type === getLabel('individual')
           ? 'Individual'
           : 'Company',
-      address_title_cus: `${newListData.customer_name} address`,
-      address_type_cus: address ? 'Billing' : '',
-      detail_address_cus: address?.detailAddress,
-      ward_cus: String(address?.ward?.id) ?? '',
-      district_cus: String(address?.district?.id) ?? '',
-      province_cus: String(address?.city?.id) ?? '',
-      is_primary_address: address.addressOrder,
-      is_shipping_address: address.addressGet,
+      address_title_cus:
+        Object.keys(address).length > 0
+          ? `${newListData.customer_name} address`
+          : '',
+      address_type_cus: Object.keys(address).length > 0 ? 'Billing' : '',
+      detail_address_cus:
+        Object.keys(address).length > 0
+          ? `${address.ward?.value}/${address.district?.value}/${address.city?.value}`
+          : '',
+      ward_cus:
+        Object.keys(address).length > 0 ? String(address?.ward?.id) : '',
+      district_cus:
+        Object.keys(address).length > 0 ? String(address?.district?.id) : '',
+      province_cus:
+        Object.keys(address).length > 0 ? String(address?.city?.id) : '',
+      is_primary_address:
+        Object.keys(address).length > 0 ? address.addressOrder : false,
+      is_shipping_address:
+        Object.keys(address).length > 0 ? address.addressGet : false,
       phone: contact?.phoneNumber ?? '',
-      adr_title_contact: `${newListData.customer_name} contact`,
-      detail_adr_contact: contact?.addressContact ?? '',
-      ward_contact: String(contact?.ward?.id) ?? '',
-      district_contact: String(contact?.district?.id) ?? '',
-      province_contact: String(contact?.city?.id) ?? '',
+      adr_title_contact:
+        Object.keys(contact).length > 0
+          ? `${newListData.customer_name} contact`
+          : '',
+      detail_adr_contact:
+        Object.keys(contact).length > 0
+          ? `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`
+          : '',
+      ward_contact:
+        Object.keys(contact).length > 0 ? String(contact?.ward?.id) : '',
+      district_contact:
+        Object.keys(contact).length > 0 ? String(contact?.district?.id) : '',
+      province_contact:
+        Object.keys(contact).length > 0 ? String(contact?.city?.id) : '',
       first_name: contact?.nameContact ?? '',
       router_name: newListData.router_name[1] ?? '',
       website: newListData.website ?? '',
@@ -150,7 +170,7 @@ const AddingNewCustomer = () => {
     const response: KeyAbleProps = await CustomerService.addNewCustomer(
       updateListData,
     );
-    if (response?.status === ApiConstant.STT_OK) {
+    if (response?.status === ApiConstant.STT_CREATED) {
       navigation.navigate(ScreenConstant.MAIN_TAB, {
         screen: ScreenConstant.CUSTOMER,
       });
@@ -163,11 +183,11 @@ const AddingNewCustomer = () => {
   }, [setOpenDate]);
 
   const handleImagePicker = () => {
-    openImagePicker(selectedImage => {
+    openImagePicker((selectedImage, base64) => {
       // Handle the selected image, e.g., set it to state
       cameraBottomRef.current?.close();
-      setImageSource(selectedImage);
-      setListData(prevState => ({...prevState, faceimage: selectedImage}));
+      setImageSource(base64);
+      setListData(prevState => ({...prevState, faceimage: base64}));
     }, true);
   };
 

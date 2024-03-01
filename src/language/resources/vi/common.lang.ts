@@ -228,4 +228,11 @@ export default {
   customerInfo: 'Thông tin khách hàng',
   contact: 'Liên hệ',
   customerDetail: 'Chi tiết khách hàng',
+  utilities: 'Tiện ích',
+  revenue: 'Doanh thu',
+  sales: 'Doanh số',
+  statistical: 'Thống kê',
+  newCustomer: 'Khách hàng mới',
+  timeKeepIn: 'Chấm công vào',
+  timeKeepOut: 'Chấm công ra',
 };

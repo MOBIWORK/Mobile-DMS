@@ -20,11 +20,15 @@ const URL = '/api/method';
 // const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
 
 // Authentication
+export const GET_USER_PROFILE =
+  '/api/method/mbw_account_service.api.user.get_employee_info';
 export const POST_USER_LOGIN = '/api/method/mbw_service_v2.api.auth.login';
 export const POST_USER_LOGOUT = '/api/method/mbw_service_v2.api.auth.logout';
 export const POST_USER_ORGANIZATION =
   '/api/method/mbw_ess_registration.api.ess.organization.get_info_organization';
 export const POST_RESET_PASSWORD = URL_PREFIX + '.auth.reset_password';
+export const GET_CURRENT_SHIT =
+  '/api/method/mbw_service_v2.api.ess.checkin.get_shift_now';
 
 // Profile
 export const PUT_USER_PROFILE = URL_PREFIX + '.user.update_profile';
@@ -72,7 +76,8 @@ export const POST_RETuRN_ORDER =
   URL_PREFIX + '.api.selling.order.create_return_order';
 export const GET_WAREHOUSES =
   URL_PREFIX + '.api.selling.product.list_warehouse';
-export const GET_DETAIL_CHECKIN_ORDER = URL_PREFIX + ".api.selling.order.get_sale_order_by_checkin_id"
+export const GET_DETAIL_CHECKIN_ORDER =
+  URL_PREFIX + '.api.selling.order.get_sale_order_by_checkin_id';
 
 //Address
 export const GET_LIST_CITY = '/api/method/mbw_dms.api.location.list_province';
@@ -96,3 +101,6 @@ export const PUT_IMAGE_CHECKIN = '/mbw_dms.api.checkin.add_checkin_image';
 export const POST_NOTE_CHECKIN = URL_PREFIX + '.api.note.create_note';
 export const GET_LIST_STAFF = URL_PREFIX + '.api.note.list_email';
 export const CREATE_IMAGE_CHECKIN = '/mbw_dms.api.checkin.create_checkin_image';
+
+// REPORT
+export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';

@@ -57,6 +57,7 @@ import {CommonUtils} from '../../../utils';
 import {useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
+import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -67,6 +68,7 @@ const ListVisit = () => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
 
+  const mapboxCameraRef = useRef<CameraRef>(null);
   const filterRef = useRef<BottomSheet>(null);
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -143,6 +145,17 @@ const ListVisit = () => {
       }
     });
     setDistanceFilterData(newData);
+  };
+
+  const presentMap = (item: VisitListItemType) => {
+    const item_location: any = JSON.parse(item.customer_location_primary);
+    mapboxCameraRef.current &&
+      mapboxCameraRef.current.moveTo(
+        [item_location.long, item_location.lat],
+        1000,
+      );
+    setShowListVisit(false);
+    setVisitItemSelected(item);
   };
 
   const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
@@ -257,12 +270,16 @@ const ListVisit = () => {
               <SkeletonLoading />
             ) : (
               <FlatList
-                style={{height: '90%'}}
+                style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
                 data={listCustomer}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
-                  <VisitItem item={item} onPress={handleBackground} />
+                  <VisitItem
+                    item={item}
+                    handleOpenMap={() => presentMap(item)}
+                    onPress={handleBackground}
+                  />
                 )}
               />
             )}
@@ -334,7 +351,6 @@ const ListVisit = () => {
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
-    dispatch(customerActions.onGetCustomerVisit());
     BackgroundGeolocation.getCurrentPosition({
       samples: 1,
       timeout: 3,
@@ -348,8 +364,7 @@ const ListVisit = () => {
   const getCustomer = async (params?: IListVisitParams) => {
     setLoading(true);
     await getCustomerVisit(params).then((res: any) => {
-      setLoading(false);
-      if (res.result.length > 0) {
+      if (Object.keys(res.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
         const newData = data.filter(item => item.customer_location_primary);
         dispatch(customerActions.setCustomerVisit(newData));
@@ -364,7 +379,6 @@ const ListVisit = () => {
       if (response?.result.length > 0) {
         dispatch(customerActions.setListCustomerRoute(response.result));
       }
-      dispatch(customerActions.onGetCustomerVisit());
     }
   };
 
@@ -378,14 +392,16 @@ const ListVisit = () => {
   };
 
   const handleFilterData = async () => {
-    filterRef.current && filterRef.current.close();
+    bottomSheetRef.current && bottomSheetRef.current.close();
     if (Object.keys(filterParams).length > 0) {
       const birthDayObj: any =
-        filterParams?.birthDay && filterParams.birthDay === 'Hôm nay'
+        filterParams?.birthDay && filterParams.birthDay === getLabel('today')
           ? CommonUtils.dateToDate('today')
-          : filterParams.birthDay === 'Tuần này'
+          : filterParams.birthDay === getLabel('thisWeek')
           ? CommonUtils.dateToDate('weekly')
-          : CommonUtils.dateToDate('monthly');
+          : filterParams.birthDay === getLabel('thisMonth')
+          ? CommonUtils.dateToDate('monthly')
+          : undefined;
       const params: IListVisitParams = {
         route: filterParams?.route && [`${filterParams.route.name}`],
         status:
