@@ -20,11 +20,15 @@ const URL = '/api/method';
 // const URL_DECODE = `latlng=${37.785834},${-122.406417}&key=${API_KEY}`
 
 // Authentication
+export const GET_USER_PROFILE =
+  '/api/method/mbw_account_service.api.user.get_employee_info';
 export const POST_USER_LOGIN = '/api/method/mbw_service_v2.api.auth.login';
 export const POST_USER_LOGOUT = '/api/method/mbw_service_v2.api.auth.logout';
 export const POST_USER_ORGANIZATION =
   '/api/method/mbw_ess_registration.api.ess.organization.get_info_organization';
 export const POST_RESET_PASSWORD = URL_PREFIX + '.auth.reset_password';
+export const GET_CURRENT_SHIT =
+  '/api/method/mbw_service_v2.api.ess.checkin.get_shift_now';
 
 // Profile
 export const PUT_USER_PROFILE = URL_PREFIX + '.user.update_profile';

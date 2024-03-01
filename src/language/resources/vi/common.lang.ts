@@ -233,4 +233,6 @@ export default {
   sales: 'Doanh số',
   statistical: 'Thống kê',
   newCustomer: 'Khách hàng mới',
+  timeKeepIn: 'Chấm công vào',
+  timeKeepOut: 'Chấm công ra',
 };

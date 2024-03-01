@@ -228,4 +228,6 @@ export default {
   sales: 'Sales',
   statistical: 'Statistical',
   newCustomer: 'New customer',
+  timeKeepIn: 'Timekeeping In',
+  timeKeepOut: 'Timekeeping Out',
 };

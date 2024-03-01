@@ -25,6 +25,7 @@ import {DataConstant} from '../../const';
 import {
   IKpi,
   IResOrganization,
+  IUser,
   IWidget,
   VisitListItemType,
 } from '../../models/types';
@@ -46,7 +47,7 @@ import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
-import {ReportService} from '../../services';
+import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
 
 const HomeScreen = () => {
@@ -62,9 +63,10 @@ const HomeScreen = () => {
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
-  const showModal = useSelector(state => state.app.showModal);
 
-  // const showModal = useSelector(AppSelector.getShowModal);
+  const showModal = useSelector(state => state.app.showModal);
+  const userProfile: IUser = useSelector(state => state.app.userProfile);
+
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
@@ -72,9 +74,8 @@ const HomeScreen = () => {
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(false);
-  // const syncWithCodePush = (status: number) => {
-  //   console.log('Codepush sync status', status);
-  // };
+
+  const [currentShit, setCurrentShit] = useState<any>(null);
 
   const [notifiCations, setNotifications] = useState([
     {
@@ -321,6 +322,20 @@ const HomeScreen = () => {
       .catch(err => console.log('err', err));
   };
 
+  const getProfile = async () => {
+    const response: any = await AppService.getUserProfile();
+    if (Object.keys(response?.result).length > 0) {
+      dispatch(appActions.setUserProfile(response.result));
+    }
+  };
+
+  const getCurrentShit = async () => {
+    const response: any = await AppService.getCurrentShit();
+    if (Object.keys(response?.result).length > 0) {
+      setCurrentShit(response.result);
+    }
+  };
+
   const getReportKPI = async () => {
     const response: any = await ReportService.getKpi();
     if (Object.keys(response?.result).length > 0) {
@@ -351,6 +366,8 @@ const HomeScreen = () => {
     };
     // setLoading(false);
     getLocation();
+    getProfile();
+    getCurrentShit();
     getReportKPI();
   }, []);
 
@@ -453,10 +470,16 @@ const HomeScreen = () => {
           <>
             <View style={[styles.shadow, styles.header]}>
               <View style={{flexDirection: 'row'}}>
-                <AppAvatar name="Long" size={48} />
+                {userProfile?.image ? (
+                  <AppAvatar url={userProfile.image} size={48} />
+                ) : (
+                  <AppAvatar name={userProfile.employee_name} size={48} />
+                )}
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}> Xin chào ,</Text>
-                  <Text style={[styles.userName]}>Trái Thanh Long</Text>
+                  <Text style={[styles.userName]}>
+                    {userProfile ? userProfile.employee_name : ''}
+                  </Text>
                 </View>
               </View>
               <View>
@@ -478,7 +501,12 @@ const HomeScreen = () => {
               <View style={styles.mainLayout}>
                 <View style={[styles.shadow, styles.containerTimekeep]}>
                   <View>
-                    <Text style={[styles.userName]}>Chấm công vào</Text>
+                    <Text style={[styles.userName]}>
+                      {currentShit?.shift_status ||
+                      currentShit?.shift_status === 'Vào'
+                        ? getLabel('timeKeepOut')
+                        : getLabel('timeKeepIn')}
+                    </Text>
                     <View style={[styles.flex, {marginTop: 8}]}>
                       <AppIcons
                         iconType="AntIcon"
@@ -492,12 +520,23 @@ const HomeScreen = () => {
                           fontSize: 16,
                           color: colors.text_secondary,
                         }}>
-                        08:00 - 12:00
+                        {currentShit
+                          ? `${currentShit.shift_type_now.start_time} - ${currentShit.shift_type_now.end_time}`
+                          : ''}
                       </Text>
                     </View>
                   </View>
                   <TouchableOpacity
-                    style={styles.btnTimekeep}
+                    style={[
+                      styles.btnTimekeep,
+                      {
+                        backgroundColor:
+                          currentShit?.shift_status ||
+                          currentShit?.shift_status === 'Vào'
+                            ? colors.error
+                            : colors.success,
+                      },
+                    ]}
                     onPress={openToDeeplink}>
                     <Image
                       source={ImageAssets.Usercheckin}

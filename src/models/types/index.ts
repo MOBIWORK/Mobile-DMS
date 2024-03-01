@@ -723,3 +723,18 @@ export type IKpi = {
   vieng_tham: number;
   kh_moi: number;
 };
+
+export type IUser = {
+  employee: string;
+  employee_name: string;
+  gender: string;
+  date_of_birth: string;
+  date_of_joining: string;
+  salutation: string | null;
+  image: string | null;
+  user_id: string;
+  department: string;
+  designation: string;
+  cell_number: string | null;
+  current_address: string;
+};

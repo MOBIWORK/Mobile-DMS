@@ -58,26 +58,26 @@ export type CheckinData = {
 };
 
 export interface DMSConfigMobile {
-  name: string
-  owner: string
-  modified: string
-  modified_by: string
-  docstatus: number
-  idx: string
-  config_name: string
-  vt_ngoaituyen: number
-  kb_vitringoaisaiso: number
-  saiso_chophep_kb_vitringoaisaiso: number
-  checkout_ngoaisaiso: number
-  saiso_chophep_checkout_ngoaisaiso: number
-  tgcheckin_toithieu: number
-  thoigian_toithieu: number
-  batbuoc_kiemton: number
-  batbuoc_chupanh: number
-  soluong_album: number
-  soluong_anh: number
-  batbuoc_ghichu: number
-  doctype: string
+  name: string;
+  owner: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: string;
+  config_name: string;
+  vt_ngoaituyen: number;
+  kb_vitringoaisaiso: number;
+  saiso_chophep_kb_vitringoaisaiso: number;
+  checkout_ngoaisaiso: number;
+  saiso_chophep_checkout_ngoaisaiso: number;
+  tgcheckin_toithieu: number;
+  thoigian_toithieu: number;
+  batbuoc_kiemton: number;
+  batbuoc_chupanh: number;
+  soluong_album: number;
+  soluong_anh: number;
+  batbuoc_ghichu: number;
+  doctype: string;
 }
 
 export type ICheckFakeGPS = {
@@ -121,6 +121,16 @@ export const verifyOrganization = (data: object) =>
   });
 export const verifyOrganizations = (data: object) =>
   client.get(ApiConstant.POST_USER_ORGANIZATION, data);
+
+export const getUserProfile = () =>
+  createApi()
+    .get(ApiConstant.GET_USER_PROFILE)
+    .then(res => res.data);
+
+export const getCurrentShit = () =>
+  createApi()
+    .get(ApiConstant.GET_CURRENT_SHIT)
+    .then(res => res.data);
 
 export const updateProfile = (data: IProfile) =>
   createApi().put(ApiConstant.PUT_USER_PROFILE, data);
