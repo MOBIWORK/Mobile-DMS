@@ -13,4 +13,4 @@ export const getCustomerRoute = () =>
     .then(res => res.data);
 
 export const addNewCustomer = (data: IDataCustomer) =>
-  createApi().post(ApiConstant.POST_ADD_NEW_CUSTOMER, data);
+  createApi().post(ApiConstant.POST_ADD_NEW_CUSTOMER, data).then(res => res.data);

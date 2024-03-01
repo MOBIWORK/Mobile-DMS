@@ -22,10 +22,7 @@ import {CameraUtils} from '../../../utils';
 import {ImageAssets} from '../../../assets';
 import {AppConstant} from '../../../const';
 import {goBack} from '../../../navigation';
-
-
-
-
+import {IAlbumScore, fakeData} from './ultl';
 
 const TakePictureScore = () => {
   const theme = useTheme();
@@ -72,11 +69,13 @@ const TakePictureScore = () => {
   const EmptyAlbum = () => {
     return (
       <Block middle justifyContent="center">
-        <SvgIcon source={'CameraIcon'} size={90} />
+        <SvgIcon source={'TakePicture'} size={90} />
         <Text style={{color: theme.colors.text_secondary}}>
           Thêm album để chụp ảnh
         </Text>
-        <TouchableOpacity style={styles.emptyAlbumAdding} onPress={() => handleCameraPicture()}>
+        <TouchableOpacity
+          style={styles.emptyAlbumAdding}
+          onPress={() => handleCameraPicture()}>
           <Text fontSize={14} colorTheme="action">
             {' '}
             + Thêm ảnh chụp

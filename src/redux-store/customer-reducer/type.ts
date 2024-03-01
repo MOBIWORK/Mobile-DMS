@@ -1,6 +1,11 @@
 export type IProduct = {
   listCustomerVisit: any[];
-  listCustomer: any[];
+  listCustomer: {
+    data: any[];
+    page_number: number;
+    page_size: number;
+    total: number;
+  };
   newCustomer: any[];
   listCustomerType: any[];
   mainAddress: any;

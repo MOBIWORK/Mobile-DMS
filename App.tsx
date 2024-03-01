@@ -109,21 +109,21 @@ function App(): JSX.Element {
       },
     );
     //
-    // const onMotionChange: Subscription = BackgroundGeolocation.onMotionChange(
-    //   (event) => {
-    //     console.log("[onMotionChange]", event);
-    //   }
-    // );
-    //
-    // const onActivityChange: Subscription =
-    //   BackgroundGeolocation.onActivityChange((event) => {
-    //     console.log("[onActivityChange]", event);
-    //   });
-    //
-    // const onProviderChange: Subscription =
-    //   BackgroundGeolocation.onProviderChange((event) => {
-    //     console.log("[onProviderChange]", event);
-    //   });
+    const onMotionChange: Subscription = BackgroundGeolocation.onMotionChange(
+      (event) => {
+        console.log("[onMotionChange]", event);
+      }
+    );
+    
+    const onActivityChange: Subscription =
+      BackgroundGeolocation.onActivityChange((event) => {
+        console.log("[onActivityChange]", event);
+      });
+    
+    const onProviderChange: Subscription =
+      BackgroundGeolocation.onProviderChange((event) => {
+        console.log("[onProviderChange]", event);
+      });
 
     const onHttp: Subscription = BackgroundGeolocation.onHttp(httpEvent => {
       console.log(httpEvent.responseText);
@@ -143,7 +143,7 @@ function App(): JSX.Element {
       stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
       startOnBoot: true, // <-- Auto start tracking when device is powered-up.
       // HTTP / SQLite config
-      url: 'https://api.ekgis.vn/tracking/locationHistory/position/64dae1bf20309bc61366a2b1?api_key=dCceCixTANM4zeayfXslpTNTcbONf9aBsDCFWxIs',
+      // url: 'https://api.ekgis.vn/tracking/locationHistory/position/64dae1bf20309bc61366a2b1?api_key=dCceCixTANM4zeayfXslpTNTcbONf9aBsDCFWxIs',
       batchSync: true, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
       autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
       autoSyncThreshold: 5,

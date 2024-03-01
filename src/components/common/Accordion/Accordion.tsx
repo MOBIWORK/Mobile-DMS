@@ -19,6 +19,7 @@ type Regular = {
   type: 'regular';
   containerStyle?: ViewStyle;
   titleContainerStyle?: ViewStyle;
+  contentStyle?:ViewStyle
 };
 type Nested = {
   children: ReactElement | ReactElement[];
@@ -26,6 +27,8 @@ type Nested = {
   title: string;
   containerStyle?: ViewStyle;
   titleContainerStyle?: ViewStyle;
+  contentStyle?:ViewStyle
+
 };
 
 type Props = Regular | Nested;
@@ -36,6 +39,7 @@ const Accordion = (props: Props) => {
   const [show, setShow] = useState(false);
   const theme = useTheme();
   const styles = rootStyle(theme);
+
   const heightAnimationStyle = useAnimatedStyle(() => ({
     height: heightValue.value,
   }));
@@ -103,7 +107,7 @@ const Accordion = (props: Props) => {
         <Chevron show={show} />
       </Pressable>
       <Animated.View style={[heightAnimationStyle]}>
-        <Animated.View style={[styles.contentContainer]} ref={listRef}>
+        <Animated.View style={[styles.contentContainer,props.contentStyle]} ref={listRef}>
           {props.children}
         </Animated.View>
       </Animated.View>

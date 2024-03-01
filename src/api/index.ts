@@ -60,7 +60,6 @@ const createInstance = (deleteHeader?: boolean) => {
   const api_secret = CommonUtils.storage.getString(AppConstant.Api_secret);
   const header =
     api_key && api_secret ? CommonUtils.Auth_header(api_key, api_secret) : null;
-
   let organization = CommonUtils.storage.getString(AppConstant.Organization);
   // if (organization) {
   //   const organizationObj = JSON.parse(organization);

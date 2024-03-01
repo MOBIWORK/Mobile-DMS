@@ -3,6 +3,7 @@ import * as Actions from './type';
 import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
 import {CheckinData} from '../../services/appService';
+import { ImageCheckIn } from '../../models/types';
 
 const initialAppState: IAppRedux = {
   error: undefined,
@@ -106,6 +107,9 @@ const appSlice = createSlice({
     setListImage: (state, action: PayloadAction<any>) => {
       state.dataCheckIn.listImage = action.payload;
     },
+    setImageError:(state,action:PayloadAction<any>) =>{
+      state.dataCheckIn.imageError = [...state.dataCheckIn.imageError,action.payload]
+    },
     setUserProfile: (state, action: PayloadAction<any>) => {
       state.userProfile = action.payload;
     },
@@ -142,7 +146,7 @@ const getListNote = createAction(Actions.GET_LIST_NOTE, (data?: any) => ({
 }));
 const postImageCheckIn = createAction(
   Actions.PUT_IMAGE_CHECKIN,
-  (data: any) => ({payload: data}),
+  (data: ImageCheckIn) => ({payload: data}),
 );
 
 export const appActions = {

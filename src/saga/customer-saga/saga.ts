@@ -9,10 +9,19 @@ import {
   getCustomer,
   getCustomerType,
   getCustomerVisit,
+  getPageCustomer,
 } from '../../services/appService';
-import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  onLoadApp,
+  onLoadAppEnd,
+} from '../../redux-store/app-reducer/reducer';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {call, put} from 'typed-redux-saga';
+
+import {CustomerService} from '../../services';
+import {ApiConstant, ScreenConstant} from '../../const';
+import {navigate} from '../../navigation';
 
 export type ResponseGenerator = {
   config?: any;
@@ -32,7 +41,7 @@ export function* onGetCustomer(action: PayloadAction) {
       yield put(onLoadApp());
       const response: ResponseGenerator = yield call(getCustomer);
       if (response.message === 'ok') {
-        yield put(setCustomer(response.result?.data));
+        yield put(setCustomer(response.result));
       }
     } catch (err) {
     } finally {
@@ -70,6 +79,71 @@ export function* getCustomerVisitSaga(action: PayloadAction) {
       }
     } catch (err) {
       console.error('error: ', err);
+    }
+  }
+}
+
+export function* addingNewCustomer(action: PayloadAction) {
+  if (customerActions.addingCustomer.match(action)) {
+    try {
+      yield* put(appActions.onLoadApp());
+      const response: ResponseGenerator = yield call(
+        CustomerService.addNewCustomer,
+        action.payload,
+      );
+      if (response?.status === ApiConstant.STT_OK) {
+        navigate(ScreenConstant.MAIN_TAB, {
+          screen: ScreenConstant.CUSTOMER,
+        });
+      }
+    } catch (err) {
+    } finally {
+      yield* put(appActions.onLoadAppEnd());
+    }
+  }
+}
+export function* getCustomerTerritorySaga(action: PayloadAction) {
+  if (customerActions.getCustomerTerritory.match(action)) {
+    try {
+      yield* put(appActions.onLoadApp());
+      const response: ResponseGenerator = yield call(
+        CustomerService.getCustomerTerritory,
+        action.payload,
+      );
+      console.log(response.result, 'customer territory');
+      if (response.result?.length > 0) {
+        yield* put(customerActions.setListCustomerTerritory(response.result));
+      }
+    } catch (err) {
+    } finally {
+      yield* put(appActions.onLoadAppEnd());
+    }
+  }
+}
+export function* getMoreDataCustomer(action: PayloadAction) {
+  if (customerActions.getCustomerNewPage.match(action)) {
+    try {
+      yield put(appActions.onLoadApp());
+      const response: ResponseGenerator = yield call(
+        getPageCustomer,
+        action.payload,
+      );
+      console.log(response, 'response new page');
+      if (response.message === 'ok') {
+        console.log('dafuck');
+        yield put(customerActions.addingListCustomer(response.result?.data));
+        yield put(customerActions.setPage(response.result?.page_number));
+      } else {
+        showSnack({
+          msg: 'Có lỗi xảy ra, vui lòng thử lại sau',
+          interval: 2000,
+          type: 'error',
+        });
+      }
+    } catch (err) {
+      console.log(err, 'error');
+    } finally {
+      yield put(appActions.onLoadAppEnd());
     }
   }
 }

@@ -22,7 +22,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {useNavigation, useTheme} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation';
 import {ListCustomerType, VisitListItemType} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
@@ -54,7 +54,7 @@ import FilterListComponent, {
 } from '../../../components/common/FilterListComponent';
 import {CustomerService} from '../../../services';
 import {CommonUtils} from '../../../utils';
-import {useDispatch} from 'react-redux';
+import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
@@ -67,6 +67,7 @@ const ListVisit = () => {
   const {bottom} = useSafeAreaInsets();
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
+  const styles = rootStyles(useTheme());
 
   const mapboxCameraRef = useRef<CameraRef>(null);
   const filterRef = useRef<BottomSheet>(null);
@@ -78,10 +79,12 @@ const ListVisit = () => {
   );
   const lisCustomerRoute = useSelector(
     state => state.customer.listCustomerRoute,
+    shallowEqual,
   );
   const customerType: ListCustomerType[] = useSelector(
     state => state.customer.listCustomerType,
   );
+  const appLoading = useSelector(state => state.app.loadingApp);
 
   const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
     getLabel('nearest'),
@@ -92,11 +95,9 @@ const ListVisit = () => {
   const dispatch = useDispatch();
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
-
   const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<Location | null>(null);
-  const system = useSelector(state => state.app.systemConfig);
   const [error, setError] = useState<string>('');
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
@@ -470,10 +471,21 @@ interface MarkerItemProps {
 }
 export default ListVisit;
 
-const styles = StyleSheet.create({
-  map: {
-    overflow: 'hidden',
-    width: '100%',
-    height: AppConstant.HEIGHT * 0.8,
-  },
-});
+const rootStyles = (theme: ExtendedTheme) =>
+  StyleSheet.create({
+    map: {
+      overflow: 'hidden',
+      width: '100%',
+      height: AppConstant.HEIGHT * 0.8,
+    },
+    distanceButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: 8,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      maxWidth: 180,
+    },
+  });

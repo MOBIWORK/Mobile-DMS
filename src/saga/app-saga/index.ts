@@ -24,7 +24,6 @@ export function* appSaga() {
     appActions.onGetListWard.type.toString(),
     Saga.onGetListWard,
   );
-  yield* takeLatest(appActions.getListNote.type.toString(), Saga.onGetListNote);
   yield* takeLatest(
     appActions.postImageCheckIn.type.toString(),
     Saga.createImageCheckIn,

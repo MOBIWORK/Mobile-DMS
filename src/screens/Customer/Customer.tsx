@@ -6,9 +6,10 @@ import {
   ViewStyle,
   TextStyle,
   ImageStyle,
+  ActivityIndicator,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, {useRef, useMemo, useCallback} from 'react';
+import React, {useRef, useMemo, useCallback, useEffect} from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -37,21 +38,12 @@ import {
   useSelector,
 } from '../../config/function';
 // import {dispatch} from '../../utils/redux';
-import {
-  customerActions,
-  setListCustomerType,
-} from '../../redux-store/customer-reducer/reducer';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {Location} from 'react-native-background-geolocation';
-import {
-  IDataCustomer,
-  IDataCustomers,
-  ListCustomerType,
-} from '../../models/types';
+import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
-import {getCustomer, getCustomerType} from '../../services/appService';
-
-import {appActions} from '../../redux-store/app-reducer/reducer';
+import {getCustomerType} from '../../services/appService';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
@@ -65,6 +57,26 @@ const Customer = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const dispatch = useDispatch();
+  const listCustomer: IDataCustomers[] = useSelector(
+    state => state.customer.listCustomer?.data,
+    shallowEqual,
+  );
+  const listCustomerResult = useSelector(
+    state => state.customer.listCustomer,
+    shallowEqual,
+  );
+  const customerType: ListCustomerType[] = useSelector(
+    state => state.customer.listCustomerType,
+    shallowEqual,
+  );
+  const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
+  const page = useSelector(state => state.customer.listCustomer.page_number,shallowEqual)
+
+
+  const location: Location = useSelector(
+    state => state.app.currentLocation,
+    shallowEqual,
+  );
   const [value, setValue] = React.useState({
     first: getLabel('nearest'),
     second: '',
@@ -82,27 +94,18 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
+  const [customerData, setCustomerData] = React.useState<IDataCustomers[]>(
+    listCustomer ? listCustomer : [],
+  );
+
   const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
-  const snapPoints = useMemo(() => ['100%'], []);
-  const listCustomer: IDataCustomers[] = useSelector(
-    state => state.customer.listCustomer,
-    shallowEqual,
-  );
-  const customerType: ListCustomerType[] = useSelector(
-    state => state.customer.listCustomerType,
-    shallowEqual,
-  );
-  const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
 
-  const [customerData, setCustomerData] = React.useState<IDataCustomers[]>(
-    listCustomer ? listCustomer : [],
-  );
-  const location: Location = useSelector(
-    state => state.app.currentLocation,
-    shallowEqual,
+  const snapPoints = useMemo(() => ['100%'], []);
+  const totalPage = useRef<number>(
+    Math.ceil(listCustomerResult.total / listCustomerResult.page_size),
   );
 
   const onPressType1 = () => {
@@ -112,17 +115,19 @@ const Customer = () => {
     bottomRef2.current?.snapToIndex(0);
   };
 
-  useMemo(() => {
+  useEffect(() => {
     handleBackgroundLocation();
-    let newData: IDataCustomers[] = [...listCustomer];
-    if (value.first === getLabel('nearest')) {
+    let newData: IDataCustomers[] =
+      listCustomer?.length > 0 ? [...listCustomer] : [];
+    if (value.first === getLabel('nearest') ) {
       // console.log(newData,'data')
-      const sortData = newData.sort((a, b) => {
+
+      const sortData = newData?.sort((a, b) => {
         const locationA: LocationProps = JSON.parse(
-          a.customer_location_primary,
+           a.customer_location_primary !== null && a?.customer_location_primary,
         );
         const locationB: LocationProps = JSON.parse(
-          b.customer_location_primary,
+          b.customer_location_primary !== null && b?.customer_location_primary,
         );
         const distance1 = calculateDistance(
           location.coords.latitude,
@@ -140,7 +145,7 @@ const Customer = () => {
       });
       setCustomerData(sortData);
     } else {
-      const sortData = newData.sort((a, b) => {
+      const sortData = newData?.sort((a, b) => {
         const locationA: LocationProps = JSON.parse(
           a.customer_location_primary,
         );
@@ -163,27 +168,28 @@ const Customer = () => {
       });
       setCustomerData(sortData);
     }
-  }, [listCustomer.length, value]);
+  }, [listCustomer?.length, value]);
 
   React.useEffect(() => {
     let mounted: boolean;
     mounted = true;
-    dispatch(appActions.onLoadApp());
-    const getDataType = async () => {
-      const response: any = await getCustomerType();
-      if (response?.result?.length > 0) {
-        dispatch(setListCustomerType(response?.result));
-      }
+
+    const getDataType = () => {
+      dispatch(customerActions.getCustomerType());
     };
 
     getDataType();
-    if (listCustomer.length > 0) {
-      setCustomerData(listCustomer);
+    if (listCustomer?.length > 0) {
+      let newData =
+        listCustomer && listCustomer.length > 0 ? [...listCustomer] : [];
+      setCustomerData(
+        newData?.filter(item => item.customer_location_primary != null),
+      );
     } else {
       dispatch(customerActions.onGetCustomer());
     }
     mounted = false;
-    dispatch(appActions.onLoadAppEnd());
+
     return () => {
       mounted = false;
     };
@@ -201,7 +207,7 @@ const Customer = () => {
       valueFilter.customerType === getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      const newData = listCustomer.filter(
+      const newData = listCustomer?.filter(
         item => item.customer_type === valueFilter.customerType,
       );
       console.log(newData, 'customerType');
@@ -212,7 +218,7 @@ const Customer = () => {
       valueFilter.customerType !== getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      const newData = listCustomer.filter(
+      const newData = listCustomer?.filter(
         item =>
           item.customer_group === valueFilter.customerGroupType &&
           item.customer_type === valueFilter.customerType,
@@ -223,7 +229,7 @@ const Customer = () => {
       valueFilter.customerType === getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      const newData = listCustomer.filter(
+      const newData = listCustomer?.filter(
         item => item.customer_group === valueFilter.customerGroupType,
       );
       setCustomerData(newData);
@@ -240,6 +246,25 @@ const Customer = () => {
       customerGroupType: getLabel('all'),
     });
   };
+
+  const listFooter = useMemo(() => {
+    return (
+      <Block justifyContent="center" alignItems="center" marginTop={8} marginBottom={8}>
+        <ActivityIndicator size={'small'} color={theme.colors.primary} />
+      </Block>
+    );
+  }, []);
+
+  const onEndReachedThreshold = useCallback(() => {
+    if (page <= totalPage.current) {
+      dispatch(customerActions.getCustomerNewPage(page + 1));
+      console.log('runnnnnnn')
+    }else{
+      return null
+    }
+    // dispatch(customerActions.getCustomerNewPage(1));
+
+  }, [listCustomerResult]);
 
   const renderBottomView = () => {
     return (
@@ -353,11 +378,12 @@ const Customer = () => {
           <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
           {getLabel('customer')}
         </Text>
-        {appLoading ? (
-          <SkeletonLoading />
-        ) : (
-          <ListCard data={customerData} />
-        )}
+        <ListCard
+          data={customerData}
+          appLoading={appLoading!}
+          listFooter={listFooter}
+          onLoadData={onEndReachedThreshold}
+        />
       </MainLayout>
 
       <AppBottomSheet

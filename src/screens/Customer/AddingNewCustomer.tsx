@@ -167,9 +167,7 @@ const AddingNewCustomer = () => {
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
-    const response: KeyAbleProps = await CustomerService.addNewCustomer(
-      updateListData,
-    );
+    const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
       navigation.navigate(ScreenConstant.MAIN_TAB, {
         screen: ScreenConstant.CUSTOMER,
@@ -188,7 +186,7 @@ const AddingNewCustomer = () => {
       cameraBottomRef.current?.close();
       setImageSource(base64);
       setListData(prevState => ({...prevState, faceimage: base64}));
-    }, true);
+    });
   };
 
   const handleCameraPicker = () => {

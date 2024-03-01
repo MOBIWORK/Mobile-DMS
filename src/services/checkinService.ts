@@ -39,6 +39,6 @@ export const checkinInventory = (data: POST_DATA) => createApi().post(ApiConstan
 export const updateCustomerAddress = (data: IUpdateAddress) =>createApi().patch(ApiConstant.UPDATE_CUSTOMER_ADDRESS, data).then(res => res.data);
 
 export const createNote = (data: POST_NOTE_CHECKIN) => createApi().post(ApiConstant.POST_NOTE_CHECKIN, data).then(res => res.data);
-export const getListStaff = (data? :any) => createApi().get(ApiConstant.GET_LIST_STAFF,data).then(res => res.data);
-export const getNoteCheckin = (customer_checkin_id :any) => createApi().get(ApiConstant.GET_LIST_NOTE_API,customer_checkin_id).then(res => res.data);
+export const getListStaff = () => createApi().get(ApiConstant.GET_LIST_STAFF).then(res => res.data);
+export const getNoteCheckin = () => createApi().get(ApiConstant.GET_LIST_NOTE_API).then(res => res.data);
 export const getNoteType = () => createApi().get(ApiConstant.GET_NOTE_TYPE).then(res => res.data);

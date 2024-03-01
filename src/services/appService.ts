@@ -147,6 +147,9 @@ export const getCustomer = () =>
     .get(ApiConstant.GET_CUSTOMER)
     .then(res => res.data);
 
+export const getPageCustomer = (page: number) =>
+  createApi().get(ApiConstant.GET_CUSTOMER + `?page=${page}`).then(res => res.data);
+
 export const getCustomerByName = (name: string) =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER + `?customer_name=${name}`)
@@ -205,8 +208,10 @@ export const postNoteUser = (data: any) => {
     .post(ApiConstant.POST_NEW_NOTE_CHECKIN, data)
     .then(res => res.data);
 };
-export const getListNoteApi = (data: any) => {
-  createApi().get(ApiConstant.GET_LIST_NOTE_API, data);
+export const getListNoteApi = () => {
+  createApi()
+    .get(ApiConstant.GET_LIST_NOTE_API)
+    .then(res => res.data);
 };
 export const createImageCheckinApi = (data: any) => {
   createApi()

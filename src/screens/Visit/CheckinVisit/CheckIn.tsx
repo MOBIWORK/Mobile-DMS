@@ -6,11 +6,11 @@ import {
   AppSwitch as Switch,
   SvgIcon,
 } from '../../../components/common/';
-import {  useRoute } from '@react-navigation/native';
-import {  RouterProp } from '../../../navigation';
-import { AppTheme, useTheme } from '../../../layouts/theme';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Modal } from 'react-native-paper';
+import {useRoute} from '@react-navigation/native';
+import {RouterProp, goBack} from '../../../navigation';
+import {AppTheme, useTheme} from '../../../layouts/theme';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {Modal} from 'react-native-paper';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
@@ -19,7 +19,7 @@ import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-type Props = {};
+import { item } from './ultil';
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -31,7 +31,10 @@ const CheckIn = () => {
     state => state.app.dataCheckIn,
     shallowEqual,
   );
-  const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
+  const categoriesCheckin = useSelector(
+    state => state.checkin.categoriesCheckin,
+    shallowEqual,
+  );
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const [status, setStatus] = useState(
     dataCheckIn?.checkin_trangthaicuahang
@@ -49,8 +52,6 @@ const CheckIn = () => {
   );
 
   useEffect(() => {
-
-
     // Start the interval when the component mounts
     const startInterval = () => {
       intervalId.current = setInterval(() => {
@@ -97,15 +98,24 @@ const CheckIn = () => {
     return totalSeconds;
   };
 
-  const onCheckout =  useCallback(() =>{
-      dispatch(appActions.onCheckIn(dataCheckIn))
-      setShow(false)
-  },[dataCheckIn])
+  const onCheckout = useCallback(() => {
+    dispatch(appActions.onCheckIn(dataCheckIn));
+    setShow(false);
+  }, [dataCheckIn]);
 
-  const isCompleteCheckin = useMemo(()=>{
-    const result = categoriesCheckin.find(item => item.isRequire == true && item.isDone == false);
-    return result ? false : true
-  },[categoriesCheckin])
+  const isCompleteCheckin = useMemo(() => {
+    const result = categoriesCheckin.find(
+      item => item.isRequire == true && item.isDone == false,
+    );
+    return result ? false : true;
+  }, [categoriesCheckin]);
+
+  const onConfirmCheckout = useCallback(() => {
+    // dispatch(appActions.onCheckIn(dataCheckIn));
+    goBack()
+    setShow(false);
+
+  }, [dataCheckIn]);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -172,13 +182,16 @@ const CheckIn = () => {
           marginRight={16}
           colorTheme="white"
           borderRadius={16}>
-          {categoriesCheckin && categoriesCheckin.map((item, index) => {
-            return <ItemCheckIn key={index} item={item} navData={params} />;
-          })}
+          {categoriesCheckin &&
+            categoriesCheckin.map((item, index) => {
+              return <ItemCheckIn key={index} item={item} navData={params} />;
+            })}
         </Block>
       </Block>
       {isCurrentTimeGreaterOrEqual(timeCheckin.current) ? (
-        <TouchableOpacity style={styles.containContainerButton}>
+        <TouchableOpacity
+          style={styles.containContainerButton}
+          onPress={onCheckout}>
           <Block
             // borderColor="primary"
             marginLeft={16}
@@ -231,7 +244,7 @@ const CheckIn = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={onCheckout}
+              onPress={onConfirmCheckout}
               style={styles.containButton('exit')}>
               <Text fontSize={14} colorTheme="white" fontWeight="700">
                 Thoát
@@ -258,17 +271,17 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
     } as ViewStyle,
     containButton: (title: string) =>
-    ({
-      backgroundColor:
-        title === 'exit' ? theme.colors.primary : theme.colors.bg_neutral,
-      flex: 1,
-      marginHorizontal: 6,
-      marginVertical: 8,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 8,
-      borderRadius: 20,
-    } as ViewStyle),
+      ({
+        backgroundColor:
+          title === 'exit' ? theme.colors.primary : theme.colors.bg_neutral,
+        flex: 1,
+        marginHorizontal: 6,
+        marginVertical: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 8,
+        borderRadius: 20,
+      } as ViewStyle),
     containContainerButton: {
       marginBottom: 20,
       backgroundColor: theme.colors.bg_neutral,

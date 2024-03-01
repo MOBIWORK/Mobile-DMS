@@ -49,6 +49,7 @@ import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
+import {shallowEqual} from 'react-redux';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -64,7 +65,7 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const {bottom} = useSafeAreaInsets();
 
-  const showModal = useSelector(state => state.app.showModal);
+  // const showModal = useSelector(state => state.app.showModal);
   const userProfile: IUser = useSelector(state => state.app.userProfile);
 
   const [updateMessage, setUpdateMessage] = React.useState('');
@@ -74,6 +75,10 @@ const HomeScreen = () => {
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(false);
+
+  const syncWithCodePush = (status: number) => {
+    console.log('Codepush sync status', status);
+  };
 
   const [currentShit, setCurrentShit] = useState<any>(null);
 
@@ -110,6 +115,14 @@ const HomeScreen = () => {
 
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
   const [passwordStore] = useMMKVString(AppConstant.passwordStore);
+
+  const customerVisit: VisitListItemType[] = useSelector(
+    state => state.customer.listCustomerVisit,
+    shallowEqual,
+  );
+  const dataCustomer = useRef(
+    customerVisit.filter(item => item.is_checkin === true),
+  );
 
   const getWidget = () => {
     if (!widgets) {
@@ -355,6 +368,7 @@ const HomeScreen = () => {
         },
         location => {
           setLocation(location);
+          console.log(location, 'location');
           dispatch(appActions.onSetCurrentLocation(location));
           mapboxCameraRef.current?.flyTo(
             [location.coords.longitude, location.coords.latitude],
@@ -365,10 +379,12 @@ const HomeScreen = () => {
       );
     };
     // setLoading(false);
+    dispatch(appActions.onGetSystemConfig());
     getLocation();
     getProfile();
     getCurrentShit();
     getReportKPI();
+    getLocation();
   }, []);
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
@@ -409,7 +425,7 @@ const HomeScreen = () => {
         break;
       }
       case codePush.SyncStatus.UP_TO_DATE: {
-        // codePush.notifyAppReady();
+        codePush.notifyAppReady();
         // setTimeout(() => {
         VersionCheck.needUpdate({}).then(res => {
           if (res.isNeeded != undefined) {
@@ -456,7 +472,7 @@ const HomeScreen = () => {
       onSyncStatusChanged,
       onDownloadProgress,
     );
-    // syncWithCodePush;
+    syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
   if (error != '') {
@@ -594,10 +610,16 @@ const HomeScreen = () => {
                         shadowColor={colors.bg_disable}
                         bgColor={colors.bg_default}>
                         <View>
-                          <Text style={[styles.textProcess]}>3/50</Text>
+                          <Text style={[styles.textProcess]}>
+                            {dataCustomer.current.length}/{customerVisit.length}
+                          </Text>
                           <Text style={[styles.textProcessDesc]}>
                             {' '}
-                            {'(Đạt 6 %)'}{' '}
+                            (Đạt{' '}
+                            {(dataCustomer.current.length /
+                              customerVisit.length) *
+                              100}
+                            %)
                           </Text>
                         </View>
                       </ProgressCircle>
@@ -615,8 +637,8 @@ const HomeScreen = () => {
 
                   <View style={styles.map}>
                     <Mapbox.MapView
-                      // pitchEnabled={false}
-                      scrollEnabled={false}
+                      pitchEnabled={false}
+                      scrollEnabled={true}
                       attributionEnabled={false}
                       // scaleBarEnabled={false}
                       styleURL={Mapbox.StyleURL.Street}
@@ -630,7 +652,7 @@ const HomeScreen = () => {
                         ]}
                         animationMode={'flyTo'}
                         animationDuration={500}
-                        zoomLevel={12}
+                        zoomLevel={17}
                       />
                       <Mapbox.UserLocation
                         visible={true}
