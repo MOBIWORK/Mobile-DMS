@@ -7,7 +7,7 @@ import {
   SvgIcon,
 } from '../../../components/common/';
 import {useRoute} from '@react-navigation/native';
-import {RouterProp} from '../../../navigation';
+import {RouterProp, goBack} from '../../../navigation';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Modal} from 'react-native-paper';
@@ -109,8 +109,10 @@ const CheckIn = () => {
   }, [categoriesCheckin]);
 
   const onConfirmCheckout = useCallback(() => {
-    dispatch(appActions.onCheckIn(dataCheckIn));
+    // dispatch(appActions.onCheckIn(dataCheckIn));
+    goBack()
     setShow(false);
+    
   }, [dataCheckIn]);
 
   return (
@@ -188,7 +190,7 @@ const CheckIn = () => {
           colorTheme="white"
           borderRadius={16}>
           {categoriesCheckin &&
-            item.map((item, index) => {
+            categoriesCheckin.map((item, index) => {
               return <ItemCheckIn key={index} item={item} navData={params} />;
             })}
         </Block>

@@ -24,16 +24,24 @@ import {AppConstant} from '../../../const';
 import {goBack} from '../../../navigation';
 import {IAlbumScore, fakeData} from './ultl';
 
-type Props = {};
+
+
 
 const TakePictureScore = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const [albumImage, setAlbumImage] = React.useState<any>([]);
   const [albumImages, setAlbumImageData] =
     React.useState<IAlbumScore[]>(AlbumImageFake);
 
+  const handleCameraPicture = async () => {
+    await CameraUtils.openImagePickerCamera((img, base64) => {
+      setAlbumImage((prev: any) => [...prev, base64]);
+    });
+  };
+
   const handleCamera = async (item: IAlbumScore) => {
-    await CameraUtils.openImagePicker((img, base64) => {
+    await CameraUtils.openImagePickerCamera((img, base64) => {
       const newListImage = [
         ...item.image,
         {url: img || '', base64: base64 || ''},
@@ -60,6 +68,22 @@ const TakePictureScore = () => {
       ...prevState.filter(itemPre => itemPre.id !== newItem.id),
       newItem,
     ]);
+  };
+  const EmptyAlbum = () => {
+    return (
+      <Block middle justifyContent="center">
+        <SvgIcon source={'TakePicture'} size={90} />
+        <Text style={{color: theme.colors.text_secondary}}>
+          Thêm album để chụp ảnh
+        </Text>
+        <TouchableOpacity style={styles.emptyAlbumAdding} onPress={() => handleCameraPicture()}>
+          <Text fontSize={14} colorTheme="action">
+            {' '}
+            + Thêm ảnh chụp
+          </Text>
+        </TouchableOpacity>
+      </Block>
+    );
   };
 
   const AlbumItem = React.useCallback(
@@ -129,42 +153,22 @@ const TakePictureScore = () => {
         label={'Chấm điểm trưng bày'}
         onBack={() => goBack()}
       />
-      <Block direction="row" alignItems="center" justifyContent="space-between">
-        <Text style={{color: theme.colors.text_secondary}}>
-          Số chương trình: 4
-        </Text>
-      </Block>
-      <Block marginTop={8} block>
-        {fakeData.map((item, index) => {
+      {albumImage && albumImage.length > 0 ? (
+        albumImage.map((item: any, index: number) => {
           return (
-            <Accordion
-              key={item.id}
-              title={item.title}
-              type="nested"
-              titleContainerStyle={{
-                paddingHorizontal: 16,
-                marginHorizontal: 16,
-              }}
-              containerStyle={{backgroundColor: 'white'}}>
-              <Block block>
-                <AlbumItem
-                  id={item.id}
-                  label=""
-                  image={albumImages[index]?.image}
-                  key={index}
-                />
-              </Block>
-            </Accordion>
+            <Block
+              key={index}
+              direction="row"
+              flexWrap="wrap"
+              padding={5}
+              style={{rowGap: 8} as ViewStyle}>
+              <Image source={{uri: item}} />
+            </Block>
           );
-        })}
-      </Block>
-      <Block>
-        <TouchableOpacity style={styles.containButton}>
-          <Text colorTheme="white" fontSize={12} fontWeight="bold">
-            Tải ảnh
-          </Text>
-        </TouchableOpacity>
-      </Block>
+        })
+      ) : (
+        <EmptyAlbum />
+      )}
     </SafeAreaView>
   );
 };
@@ -177,6 +181,18 @@ const rootStyles = (theme: AppTheme) =>
       // flex: 1,
       marginBottom: 12,
       alignItems: 'flex-start',
+    } as ViewStyle,
+    emptyAlbumAdding: {
+      borderWidth: 1,
+      borderColor: theme.colors.action,
+      borderRadius: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+      // height:30,
+      paddingHorizontal: 16,
+      marginTop: 8,
+      paddingVertical: 8,
+      // marginHorizontal:16
     } as ViewStyle,
     cameraImg: {
       width: AppConstant.WIDTH * 0.25,

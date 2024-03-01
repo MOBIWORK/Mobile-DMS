@@ -84,9 +84,10 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Chấm điểm trưng bày',
-    screenName: ScreenConstant.TAKE_PICTURE_SCORE,
+    screenName: 'TAKE_PICTURE_SCORE',
     backgroundColor: 'undoBackground',
-    key: 'mark_picture',
+    type:'take_picture_score',
+    key:'take_picture_score',
   },
 ];
 

@@ -71,5 +71,6 @@ export const item: IItemCheckIn[] = [
     name: 'Chấm điểm trưng bày',
     screenName: 'TAKE_PICTURE_SCORE',
     backgroundColor: 'undoBackground',
+    type:''
   },
 ];
