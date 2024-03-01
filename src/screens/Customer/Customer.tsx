@@ -354,7 +354,7 @@ const Customer = () => {
           {getLabel('customer')}
         </Text>
         {appLoading ? (
-          <SkeletonLoading loading={appLoading!} />
+          <SkeletonLoading />
         ) : (
           <ListCard data={customerData} />
         )}
