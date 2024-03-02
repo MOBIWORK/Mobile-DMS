@@ -109,4 +109,4 @@ export const POST_IMAGE_SCORE = 'api/method/mbw_audit.api.api.upload_file'
 export const GET_REPORT_VISIT = '/api/method/mbw_dms.api.kpi.visit_report';
 
 // IMAGE_SCORE
-export const POST_IMAGE_SCORE = 'api/method/mbw_audit.api.api.upload_file'
+
