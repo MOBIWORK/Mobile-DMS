@@ -24,6 +24,7 @@ import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
 import {
   IKpi,
+  IReportVisit,
   IResOrganization,
   IUser,
   IWidget,
@@ -106,6 +107,7 @@ const HomeScreen = () => {
   ]);
 
   const [KpiValue, setKpiValue] = useState<IKpi | null>(null);
+  const [visitValue, setVisitValue] = useState<IReportVisit | null>(null);
   const [widgets, setWidgets] = useMMKVString(AppConstant.Widget);
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
 
@@ -115,14 +117,6 @@ const HomeScreen = () => {
 
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
   const [passwordStore] = useMMKVString(AppConstant.passwordStore);
-
-  const customerVisit: VisitListItemType[] = useSelector(
-    state => state.customer.listCustomerVisit,
-    shallowEqual,
-  );
-  const dataCustomer = useRef(
-    customerVisit.filter(item => item.is_checkin === true),
-  );
 
   const getWidget = () => {
     if (!widgets) {
@@ -356,6 +350,13 @@ const HomeScreen = () => {
     }
   };
 
+  const getReportVisit = async () => {
+    const response: any = await ReportService.getReportVisit();
+    if (Object.keys(response?.result).length > 0) {
+      setVisitValue(response.result);
+    }
+  };
+
   useEffect(() => {
     // setLoading(true);
     const getLocation = async () => {
@@ -384,7 +385,7 @@ const HomeScreen = () => {
     getProfile();
     getCurrentShit();
     getReportKPI();
-    getLocation();
+    getReportVisit();
   }, []);
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
@@ -568,7 +569,9 @@ const HomeScreen = () => {
 
                 <View>
                   <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>Doanh số</Text>
+                    <Text style={[styles.tilteSection]}>
+                      {getLabel('sales')}
+                    </Text>
                   </View>
                   <View>
                     {loading ? (
@@ -583,7 +586,9 @@ const HomeScreen = () => {
 
                 <View>
                   <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>Doanh thu</Text>
+                    <Text style={[styles.tilteSection]}>
+                      {getLabel('revenue')}
+                    </Text>
                   </View>
                   <View>
                     {loading ? (
@@ -596,14 +601,18 @@ const HomeScreen = () => {
 
                 <View>
                   <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>Viếng thăm</Text>
+                    <Text style={[styles.tilteSection]}>
+                      {getLabel('visit')}
+                    </Text>
                   </View>
                   {loading ? (
                     <CardLoading />
                   ) : (
                     <View style={[styles.containerCheckin]}>
                       <ProgressCircle
-                        percent={18}
+                        percent={
+                          visitValue ? visitValue.phan_tram_thuc_hien : 0
+                        }
                         radius={80}
                         borderWidth={30}
                         color={colors.action}
@@ -611,20 +620,17 @@ const HomeScreen = () => {
                         bgColor={colors.bg_default}>
                         <View>
                           <Text style={[styles.textProcess]}>
-                            {dataCustomer.current.length}/{customerVisit.length}
+                            {visitValue?.dat_duoc}/{visitValue?.chi_tieu}
                           </Text>
                           <Text style={[styles.textProcessDesc]}>
                             {' '}
-                            (Đạt{' '}
-                            {(dataCustomer.current.length /
-                              customerVisit.length) *
-                              100}
+                            (Đạt {visitValue?.phan_tram_thuc_hien}
                             %)
                           </Text>
                         </View>
                       </ProgressCircle>
                       <Text style={[styles.checkinDesc]}>
-                        Số lượt viếng thăm khách hàng/tháng
+                        {getLabel('visitPerMonth')}
                       </Text>
                     </View>
                   )}
@@ -632,7 +638,9 @@ const HomeScreen = () => {
 
                 <View>
                   <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>Bản đồ viếng thăm</Text>
+                    <Text style={[styles.tilteSection]}>
+                      {getLabel('visitMap')}
+                    </Text>
                   </View>
 
                   <View style={styles.map}>

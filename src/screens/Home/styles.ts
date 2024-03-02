@@ -113,6 +113,7 @@ export const rootStyles = (theme: AppTheme) =>
       minHeight: 360,
     } as ViewStyle,
     textProcess: {
+      alignSelf: 'center',
       fontSize: 24,
       lineHeight: 28,
       fontWeight: '700',
