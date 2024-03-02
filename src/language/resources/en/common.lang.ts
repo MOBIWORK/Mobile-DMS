@@ -230,4 +230,6 @@ export default {
   newCustomer: 'New customer',
   timeKeepIn: 'Timekeeping In',
   timeKeepOut: 'Timekeeping Out',
+  visitPerMonth: 'Number of customer visits per month',
+  visitMap: 'Visit map',
 };
