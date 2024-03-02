@@ -486,15 +486,15 @@ const HomeScreen = () => {
           <>
             <View style={[styles.shadow, styles.header]}>
               <View style={{flexDirection: 'row'}}>
-                {userProfile?.image ? (
+                {Object.keys(userProfile).length > 0 && userProfile?.image ? (
                   <AppAvatar url={userProfile.image} size={48} />
                 ) : (
-                  <AppAvatar name={userProfile.employee_name} size={48} />
+                  <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
                 )}
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}> Xin chào ,</Text>
                   <Text style={[styles.userName]}>
-                    {userProfile ? userProfile.employee_name : ''}
+                    {Object.keys(userProfile) && Object.keys(userProfile!)?.length > 0 ? userProfile?.employee_name : ''}
                   </Text>
                 </View>
               </View>

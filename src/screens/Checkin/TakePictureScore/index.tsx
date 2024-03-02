@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  ImageStyle,
   Pressable,
   StyleSheet,
   TouchableOpacity,
@@ -10,7 +11,6 @@ import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {
-  Accordion,
   AppHeader,
   Block,
   SvgIcon,
@@ -23,52 +23,44 @@ import {ImageAssets} from '../../../assets';
 import {AppConstant} from '../../../const';
 import {goBack} from '../../../navigation';
 import {IAlbumScore, fakeData} from './ultl';
+import isEqual from 'react-fast-compare';
 
 const TakePictureScore = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const [albumImage, setAlbumImage] = React.useState<any>([]);
-  const [albumImages, setAlbumImageData] =
-    React.useState<IAlbumScore[]>(AlbumImageFake);
+  const [albumImage, setAlbumImage] = React.useState<any[]>(['IconCamera']);
+ 
+    const [selectedImages,setSelectedImages] = React.useState<string[]>([''])
 
   const handleCameraPicture = async () => {
     await CameraUtils.openImagePickerCamera((img, base64) => {
-      setAlbumImage((prev: any) => [...prev, base64]);
-    });
-  };
-
-  const handleCamera = async (item: IAlbumScore) => {
-    await CameraUtils.openImagePickerCamera((img, base64) => {
-      const newListImage = [
-        ...item.image,
-        {url: img || '', base64: base64 || ''},
-      ];
-      const newItem: IAlbumScore = {
-        ...item,
-        image: newListImage,
-      };
-
-      setAlbumImageData(prevState => {
-        const updatedState = [
-          ...prevState.filter(itemPre => itemPre.id !== newItem.id),
-          newItem,
+      setAlbumImage(prevImages => {
+        const updatedImages = [
+          ...prevImages.slice(0, -1),
+          img,
+          prevImages[prevImages.length - 1],
         ];
-
-        return updatedState;
+        return updatedImages;
       });
     });
   };
-  const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
-    const newListImage = itemSelected.image.filter(item => item.url !== img);
-    const newItem: IAlbumImage = {...itemSelected, image: newListImage};
-    setAlbumImageData(prevState => [
-      ...prevState.filter(itemPre => itemPre.id !== newItem.id),
-      newItem,
-    ]);
-  };
-  const EmptyAlbum = () => {
+  console.log(albumImage, 'album image');
+
+  const handleSelectImage = React.useCallback((image: string) => {
+    if (selectedImages.includes(image)) {
+      // If the image is already selected, remove it from the selectedImages array
+      setSelectedImages(prevSelectedImages =>
+        prevSelectedImages.filter(selectedImage => selectedImage !== image)
+      );
+    } else {
+      // If the image is not selected, add it to the selectedImages array
+      setSelectedImages(prevSelectedImages => [...prevSelectedImages, image]);
+    }
+  },[albumImage]);
+
+  const EmptyAlbum = React.useCallback(() => {
     return (
-      <Block middle justifyContent="center">
+      <Block middle block justifyContent="center">
         <SvgIcon source={'TakePicture'} size={90} />
         <Text style={{color: theme.colors.text_secondary}}>
           Thêm album để chụp ảnh
@@ -83,66 +75,14 @@ const TakePictureScore = () => {
         </TouchableOpacity>
       </Block>
     );
-  };
+  },[]);
 
-  const AlbumItem = React.useCallback(
-    (itemAlbum: IAlbumImage) => {
-      return (
-        <Block style={styles.album}>
-          <Block style={styles.imgContainer}>
-            <FlatList
-              numColumns={3}
-              data={itemAlbum.image}
-              renderItem={({item, index}) => {
-                return (
-                  <>
-                    {index === 0 ? (
-                      <Block style={{padding: 5, marginHorizontal: 4}}>
-                        <Pressable
-                          onPress={() => handleCamera(itemAlbum)}
-                          style={styles.cameraImg}>
-                          <SvgIcon source={'IconCamera'} size={24} />
-                        </Pressable>
-                      </Block>
-                    ) : (
-                      <Block
-                        style={{padding: 5, rowGap: 8, marginHorizontal: 4}}>
-                        <Block style={styles.img}>
-                          <Image
-                            // @ts-ignore
-                            source={{uri: item.url}}
-                            style={{width: '100%', height: '100%'}}
-                            resizeMode={'contain'}
-                          />
-                        </Block>
-                        <TouchableOpacity
-                          onPress={() =>
-                            onDeleteImageOfAlbum(itemAlbum, item.url)
-                          }
-                          style={{position: 'absolute', top: 0, right: 8}}>
-                          <Image
-                            source={ImageAssets.CloseFameIcon}
-                            style={{width: 20, height: 20}}
-                            resizeMode={'contain'}
-                          />
-                        </TouchableOpacity>
-                      </Block>
-                    )}
-                  </>
-                );
-              }}
-            />
-          </Block>
-        </Block>
-      );
-    },
-    [handleCamera],
-  );
+
 
   return (
     <SafeAreaView
       style={{
-        backgroundColor: theme.colors.bg_neutral,
+        backgroundColor: theme.colors.white,
         paddingHorizontal: 16,
         flex: 1,
       }}
@@ -152,27 +92,51 @@ const TakePictureScore = () => {
         label={'Chấm điểm trưng bày'}
         onBack={() => goBack()}
       />
-      {albumImage && albumImage.length > 0 ? (
-        albumImage.map((item: any, index: number) => {
-          return (
-            <Block
-              key={index}
-              direction="row"
-              flexWrap="wrap"
-              padding={5}
-              style={{rowGap: 8} as ViewStyle}>
-              <Image source={{uri: item}} />
-            </Block>
-          );
-        })
-      ) : (
+
+      
+      {albumImage.length === 1 ? (
         <EmptyAlbum />
+      ) : (
+        <FlatList
+          numColumns={3}
+          data={albumImage}
+          keyExtractor={(item, index) => index.toString()}
+          decelerationRate={'fast'}
+          renderItem={({item, index}) => {
+            return (
+              <Block padding={5} alignItems="center">
+                {index === albumImage.length - 1 ? (
+                  <Block marginRight={4}>
+                    <Pressable
+                      style={styles.cameraImg}
+                      onPress={() => handleCameraPicture()}>
+                      <SvgIcon source={'IconCamera'} size={24} />
+                    </Pressable>
+                  </Block>
+                ) : (
+                  <TouchableOpacity onPress={() => handleSelectImage(item)}>
+                    <Image
+                      source={{uri: item}}
+                      style={styles.cameraImg as ImageStyle}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                )}
+              </Block>
+            );
+          }}
+        />
       )}
+      <Block>
+        <TouchableOpacity>
+
+        </TouchableOpacity>
+      </Block>
     </SafeAreaView>
   );
 };
 
-export default TakePictureScore;
+export default React.memo(TakePictureScore,isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -193,9 +157,13 @@ const rootStyles = (theme: AppTheme) =>
       paddingVertical: 8,
       // marginHorizontal:16
     } as ViewStyle,
-    cameraImg: {
+    imageStyle: {
       width: AppConstant.WIDTH * 0.25,
       height: AppConstant.WIDTH * 0.25,
+    },
+    cameraImg: {
+      width: AppConstant.WIDTH * 0.28,
+      height: AppConstant.WIDTH * 0.28,
       borderRadius: 12,
       backgroundColor: theme.colors.bg_neutral,
       borderWidth: 1,
@@ -204,8 +172,8 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'center',
     } as ViewStyle,
     img: {
-      width: AppConstant.WIDTH * 0.25,
-      height: AppConstant.WIDTH * 0.25,
+      width: AppConstant.WIDTH * 0.28,
+      height: AppConstant.WIDTH * 0.28,
       borderRadius: 12,
       backgroundColor: theme.colors.bg_default,
       borderWidth: 1,
@@ -241,42 +209,8 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
       height: 36,
     } as ViewStyle,
+    buttonPicture:{
+
+    } as ViewStyle
   });
-const AlbumImageFake: IAlbumScore[] = [
-  {
-    id: 1,
-    image: [
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-    ],
-  },
-  {
-    id: 2,
-    image: [
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-    ],
-  },
-  {
-    id: 3,
-    image: [
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-    ],
-  },
-  {
-    id: 4,
-    image: [
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-    ],
-  },
-];
+

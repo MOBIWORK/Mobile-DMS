@@ -61,10 +61,10 @@ const createInstance = (deleteHeader?: boolean) => {
   const header =
     api_key && api_secret ? CommonUtils.Auth_header(api_key, api_secret) : null;
   let organization = CommonUtils.storage.getString(AppConstant.Organization);
-  // if (organization) {
-  //   const organizationObj = JSON.parse(organization);
-  //   Api.setBaseURL(organizationObj.erpnext_url);
-  // }
+  if (organization) {
+    const organizationObj = JSON.parse(organization);
+    Api.setBaseURL(organizationObj.erpnext_url);
+  }
   if (deleteHeader) {
     Api.deleteHeader('Authorization');
   } else if (header) {

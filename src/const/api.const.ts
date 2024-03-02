@@ -103,3 +103,6 @@ export const CREATE_IMAGE_CHECKIN = '/mbw_dms.api.checkin.create_checkin_image';
 
 // REPORT
 export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';
+
+// IMAGE_SCORE
+export const POST_IMAGE_SCORE = 'api/method/mbw_audit.api.api.upload_file'

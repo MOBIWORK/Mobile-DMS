@@ -160,7 +160,6 @@ export function* createImageCheckIn(action: PayloadAction) {
         action.payload,
       );
       if (response.result?.status === true) {
-        console.log(response?.result, 'result post image checkin');
         yield put(
           appActions.setListImage((prev: any) => [
             ...prev,

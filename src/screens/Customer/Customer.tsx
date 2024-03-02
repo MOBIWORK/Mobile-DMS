@@ -37,14 +37,12 @@ import {
   handleBackgroundLocation,
   useSelector,
 } from '../../config/function';
-// import {dispatch} from '../../utils/redux';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {Location} from 'react-native-background-geolocation';
 import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
-import {getCustomerType} from '../../services/appService';
-import SkeletonLoading from '../Visit/SkeletonLoading';
+
 
 export type IValueType = {
   customerType: string;

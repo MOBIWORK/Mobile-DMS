@@ -12,7 +12,8 @@
     "reset:cache": "npx react-native start --reset-cache",
     "apk:android33-": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "codePush:android": "appcenter codepush release-react -a Mobiwork/DMS-Android  -d Production -t '*'",
-    "build:android":"cd android && ./gradlew assembleRelease && cd .."
+    "build:android":"cd android && ./gradlew assembleRelease && cd ..",
+    "clean:android":"cd android && ./gradlew clean && cd .."
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "4.4.7",

@@ -18,7 +18,8 @@ const AppInput: FC<AppInputProps> = ({
   onPress,
   isRequire=false,
   labelStyle,
-  contentStyle
+  contentStyle,
+
 }) => {
   const {colors} = useTheme();
   const [isFocus, setFocus] = useState<boolean>(false);
