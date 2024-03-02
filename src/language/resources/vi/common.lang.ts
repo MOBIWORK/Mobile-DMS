@@ -235,4 +235,6 @@ export default {
   newCustomer: 'Khách hàng mới',
   timeKeepIn: 'Chấm công vào',
   timeKeepOut: 'Chấm công ra',
+  visitPerMonth: 'Số lượt viếng thăm khách hàng/tháng',
+  visitMap: 'Bản đồ viếng thăm',
 };
