@@ -18,12 +18,12 @@ const AppButton: FC<AppButtonProps> = ({
   onPress,
 }) => {
   const {colors} = useTheme();
+  
   return (
     <TouchableOpacity
       style={[
         styles.buttonContainer,
-        disabled && [styles.bgDisable],
-        {backgroundColor: colors.primary},
+        {backgroundColor: !disabled ? colors.primary : '#C4CDD5'},
         style,
       ]}
       disabled={disabled}
@@ -46,7 +46,7 @@ export interface AppButtonProps {
   children?: JSX.Element;
 }
 
-export default memo(AppButton);
+export default AppButton;
 
 const styles = StyleSheet.create({
   label: {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   bgDisable: {
     backgroundColor: '#C4CDD5',
     borderWidth: 0,
-  },
+  }as ViewStyle,
   buttonContainer: {
     paddingHorizontal: 24,
     paddingVertical: 8,
