@@ -300,7 +300,7 @@ const CheckinOrder = () => {
                     {getLabel('totalPrice')}{' '}
                   </Text>
                   <Text style={[styles.totalPrice]}>
-                    {CommonUtils.formatCash(data.grand_total.toString())}
+                    {CommonUtils.formatCash(data.grand_total?.toString())}
                   </Text>
                 </View>
               </View>

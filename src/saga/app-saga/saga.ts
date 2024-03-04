@@ -15,7 +15,7 @@ import {
   getSystemConfig,
   postChecking,
 } from '../../services/appService';
-import {all, call, put} from 'typed-redux-saga';
+import {all, call, fork, put} from 'typed-redux-saga';
 import {showSnack} from '../../components/common';
 import {navigate} from '../../navigation';
 import {ScreenConstant} from '../../const';
@@ -75,7 +75,7 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         getSystemConfig,
         action.payload,
       );
-      console.log(response,'response systemconfig')
+      console.log(response, 'response systemconfig');
       if (response.message === 'Thành công') {
         yield put(appActions.setSystemConfig(response.result));
       } else {
@@ -160,23 +160,15 @@ export function* createImageCheckIn(action: PayloadAction) {
         createImageCheckinApi,
         action.payload,
       );
-      if (response.result?.status === true) {
-        yield put(
-          appActions.setListImage((prev: any) => [
-            ...prev,
-            response?.result.file_url,
-          ]),
-        );
+      console.log(response,'response')
+      if (response.result?.status === true || response?.message === "") {
+        yield put(appActions.setListImage([response?.result.file_url]));
       } else {
         console.log('error');
-        yield put(
-          appActions.setImageError((prev: any) => [
-            ...prev,
-            action.payload.image,
-          ]),
-        );
+        yield put(appActions.setImageError([action.payload.image]));
       }
     } catch (err) {
+      console.log(err, 'err sagâ');
     } finally {
       yield put(appActions.onLoadAppEnd());
     }

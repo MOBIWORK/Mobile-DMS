@@ -1,4 +1,4 @@
-import {takeLatest} from 'typed-redux-saga';
+import {takeEvery, takeLatest, takeLeading} from 'typed-redux-saga';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 
 import * as Saga from './saga';
@@ -24,7 +24,7 @@ export function* appSaga() {
     appActions.onGetListWard.type.toString(),
     Saga.onGetListWard,
   );
-  yield* takeLatest(
+  yield takeEvery(
     appActions.postImageCheckIn.type.toString(),
     Saga.createImageCheckIn,
   );

@@ -22,7 +22,7 @@ import {AppConstant} from '../../../const';
 import {RootStackParamList, goBack} from '../../../navigation';
 import isEqual from 'react-fast-compare';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {useSelector} from '../../../config/function';
+import {useDisableBackHandler, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 
 const TakePictureScore = () => {
@@ -33,7 +33,7 @@ const TakePictureScore = () => {
   const itemParams =
     useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>().params.data;
   const userInfor = useSelector(state => state.app.userProfile, shallowEqual);
-
+  useDisableBackHandler(true);
   const handleCameraPicture = async () => {
     await CameraUtils.openImagePickerCamera((img, base64) => {
       setAlbumImage(prevImages => {
@@ -61,6 +61,7 @@ const TakePictureScore = () => {
     },
     [albumImage],
   );
+  console.log(itemParams);
 
   const EmptyAlbum = React.useCallback(() => {
     return (

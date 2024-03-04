@@ -105,10 +105,10 @@ const appSlice = createSlice({
     setListNote: (state, action: PayloadAction<any>) =>
       void (state.dataCheckIn.listNote = action.payload),
     setListImage: (state, action: PayloadAction<any>) => {
-      state.dataCheckIn.listImage = action.payload;
+      state.dataCheckIn.listImage = [...state.dataCheckIn.listImage,...action.payload];
     },
     setImageError:(state,action:PayloadAction<any>) =>{
-      state.dataCheckIn.imageError = [...state.dataCheckIn.imageError,action.payload]
+      state.dataCheckIn.imageError = [...state.dataCheckIn.imageError,...action.payload]
     },
     setUserProfile: (state, action: PayloadAction<any>) => {
       state.userProfile = action.payload;

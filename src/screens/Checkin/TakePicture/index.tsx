@@ -33,9 +33,10 @@ import {CameraUtils} from '../../../utils';
 import {RouterProp} from '../../../navigation';
 import {CheckinData} from '../../../services/appService';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-import { dispatch } from '../../../utils/redux';
-import { useSelector } from '../../../config/function';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import {dispatch} from '../../../utils/redux';
+import {useSelector} from '../../../config/function';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import {shallowEqual} from 'react-redux';
 const TakePicture = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
@@ -47,8 +48,12 @@ const TakePicture = () => {
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
   const dataCheckIn = useRef<CheckinData>(params.data);
-  const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
-  const [message,setMessage] = useState<string>('')
+  const categoriesCheckin = useSelector(
+    state => state.checkin.categoriesCheckin,
+  );
+  const [show, setShow] = useState<boolean>(false);
+
+  const [message, setMessage] = useState<string>('');
   const data = useRef<ImageCheckIn>({
     album_id: '',
     album_name: '',
@@ -68,45 +73,44 @@ const TakePicture = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handlePushImageData = useCallback(async () => {
+  const handlePushImageData = async () => {
     let totalItemsProcessed = 0;
     try {
       setLoading(true);
 
       for (let index = 0; index < albumImageData.length; index++) {
         if (data?.current) {
-          data.current.album_id = String(albumImageData[index].id);
+          data.current.album_id = String(albumImageData[index].id + 1);
           data.current.album_name = albumImageData[index].label;
         }
         const element = albumImageData[index].image;
         for (let i = 0; i < element.length; i++) {
           let image = element[i];
           if (data?.current) {
-            data.current.image = image.base64!;
-            dispatch(appActions.postImageCheckIn(data?.current));
+            data.current.image = image?.base64!;
+            await dispatch(appActions.postImageCheckIn(data.current));
             totalItemsProcessed++;
           }
         }
       }
-
-     
     } catch (error) {
       console.error('Error during image processing', error);
     } finally {
       setLoading(false);
-      setMessage(`Done processing ${totalItemsProcessed-1} items`)
-      console.log(`Done processing ${totalItemsProcessed-1} items`);
+      setMessage(`Done processing ${totalItemsProcessed - 1} items`);
+      console.log(`Done processing ${totalItemsProcessed - 1} items`);
     }
+
     completeCheckin();
-  }, [albumImageData, data]);
+  };
 
   const completeCheckin = () => {
-    const newData = categoriesCheckin.map(item => item.key === "camera" ? ({ ...item, isDone: true }) : item);
+    const newData = categoriesCheckin.map(item =>
+      item.key === 'camera' ? {...item, isDone: true} : item,
+    );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    navigation.goBack();
-}
-
-
+    // navigation.goBack();
+  };
 
   const handleCamera = async (item: IAlbumImage) => {
     await CameraUtils.openImagePickerCamera((img, base64) => {
@@ -400,5 +404,4 @@ const AlbumImageFake: IAlbumImage[] = [
       ImageAssets.ImgAppWatch,
     ],
   },
-  
 ];
