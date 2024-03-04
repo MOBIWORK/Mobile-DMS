@@ -20,6 +20,7 @@ import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import { item } from './ultil';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -111,8 +112,8 @@ const CheckIn = () => {
   }, [categoriesCheckin]);
 
   const onConfirmCheckout = useCallback(() => {
-    // dispatch(appActions.onCheckIn(dataCheckIn));
-    goBack()
+    dispatch(checkinActions.resetData())
+    goBack();
     setShow(false);
 
   }, [dataCheckIn]);

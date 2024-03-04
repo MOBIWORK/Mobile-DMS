@@ -24,6 +24,7 @@ import { TouchableOpacity } from 'react-native'
 import { ICON_TYPE } from '../../../const/app.const'
 import { Pressable } from 'react-native'
 import ItemProduct from './components/ItemProduct'
+import { orderAction } from '../../../redux-store/order-reducer/reducer'
 
 const CheckinOrder = () => {
 
@@ -34,8 +35,8 @@ const CheckinOrder = () => {
     const router = useRoute<RouterProp<"CHECKIN_ORDER">>();
     const type = router.params.type;
     const dataCheckin = useSelector(state => state.app.dataCheckIn);
-    const orderDetail = useSelector(state => state.checkin.orderDetail)
-    const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
+    const orderDetail = useSelector(state => state.checkin.orderDetail);
+    const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin);
 
     const fetchDataOrder = async () => {
         if (type == "ORDER") {
@@ -210,7 +211,7 @@ const CheckinOrder = () => {
                         </Text>
                     </View>
                     <AppButton
-                        label={getLabel("orderCreated")}
+                        label={getLabel("completed")}
                         style={styles.button}
                         onPress={() => completeCheckin()}
                     />

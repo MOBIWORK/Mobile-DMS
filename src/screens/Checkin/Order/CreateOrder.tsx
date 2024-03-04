@@ -465,8 +465,6 @@ const CreateOrder = () => {
 
     const fetchDataVat = async () => {
         const { status, data }: KeyAbleProps = await OrderService.getListVat();
-        console.log(status);
-
         if (status === ApiConstant.STT_OK) {
             const result = data.result;
             const newData: any[] = [];
@@ -560,6 +558,14 @@ const CreateOrder = () => {
         setDiscountAmout(dsc);
     };
 
+    const isDisabled = useMemo(()=> {
+        if(!warehouse || warehouse?.value ==="" || vat.label === "") {
+            return true
+        } else {
+            return false
+        }
+    },[warehouse,vat])
+
     const onCreatedOrder = async () => {
         let status :any = 0
         const arrItems = products.map(item => ({ item_code: item.item_code, qty: item.quantity, rate: item.price, uom: item.stock_uom, discount_percentage: item.discount }))
@@ -593,7 +599,7 @@ const CreateOrder = () => {
             default:
                 break;
         }
-        if(status === ApiConstant.STT_OK) onBackScreen();
+        if(status === ApiConstant.STT_CREATED) onBackScreen();
     };
 
     useEffect(() => {
@@ -832,6 +838,7 @@ const CreateOrder = () => {
                     <AppButton
                         label={getLabel("orderCreated")}
                         style={styles.button}
+                        disabled={isDisabled}
                         onPress={() => onCreatedOrder()}
                     />
                 </View>
