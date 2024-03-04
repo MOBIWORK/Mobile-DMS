@@ -15,4 +15,8 @@ export function* checkinSaga() {
     checkinActions.getListNoteType.type.toString(),
     Saga.getDataNoteType,
   );
+  yield* takeLatest(
+    checkinActions.getListProgram.toString(),
+    Saga.getListProgramData,
+  );
 }

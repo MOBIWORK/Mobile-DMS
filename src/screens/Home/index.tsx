@@ -44,7 +44,7 @@ import CardLoading from './components/CardLoading';
 import ItemNotiLoading from './components/ItemNotiLoading';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
 
-import {dispatch} from '../../utils/redux';
+import {dispatch, getState} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
@@ -380,13 +380,21 @@ const HomeScreen = () => {
       );
     };
     // setLoading(false);
-    dispatch(appActions.onGetSystemConfig());
+    getSystemConfig();
     getLocation();
     getProfile();
     getCurrentShit();
     getReportKPI();
     getReportVisit();
   }, []);
+  const getSystemConfig = () => {
+    const {systemConfig} = getState('app');
+    if (Object.keys(systemConfig).length > 0) {
+      return;
+    } else {
+      dispatch(appActions.onGetSystemConfig());
+    }
+  };
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
     console.log(
@@ -495,7 +503,10 @@ const HomeScreen = () => {
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}> Xin chào ,</Text>
                   <Text style={[styles.userName]}>
-                    {Object.keys(userProfile) && Object.keys(userProfile!)?.length > 0 ? userProfile?.employee_name : ''}
+                    {Object.keys(userProfile) &&
+                    Object.keys(userProfile!)?.length > 0
+                      ? userProfile?.employee_name
+                      : ''}
                   </Text>
                 </View>
               </View>

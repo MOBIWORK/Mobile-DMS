@@ -1,10 +1,5 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react';
-import {
-  ExtendedTheme,
-  useNavigation,
-  useRoute,
-  useTheme,
-} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useRoute} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
   FlatList,
@@ -20,9 +15,11 @@ import {
   AppButton,
   AppContainer,
   AppHeader,
+  AppText,
+  Block,
   SvgIcon,
 } from '../../../components/common';
-import {Button} from 'react-native-paper';
+import {ActivityIndicator, Button, Modal} from 'react-native-paper';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import BottomSheet from '@gorhom/bottom-sheet';
 import SelectAlbum from './SelectAlbum';
@@ -37,6 +34,8 @@ import {dispatch} from '../../../utils/redux';
 import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {shallowEqual} from 'react-redux';
+import {useTheme} from '../../../layouts/theme';
+import ProgressCircle from 'react-native-progress-circle';
 const TakePicture = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
@@ -50,10 +49,14 @@ const TakePicture = () => {
   const dataCheckIn = useRef<CheckinData>(params.data);
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
+    shallowEqual,
   );
-  const [show, setShow] = useState<boolean>(false);
+  const listImage = useSelector(
+    state => state.app.dataCheckIn?.listImage,
+    shallowEqual,
+  );
 
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<number>(0);
   const data = useRef<ImageCheckIn>({
     album_id: '',
     album_name: '',
@@ -77,7 +80,6 @@ const TakePicture = () => {
     let totalItemsProcessed = 0;
     try {
       setLoading(true);
-
       for (let index = 0; index < albumImageData.length; index++) {
         if (data?.current) {
           data.current.album_id = String(albumImageData[index].id + 1);
@@ -88,8 +90,13 @@ const TakePicture = () => {
           let image = element[i];
           if (data?.current) {
             data.current.image = image?.base64!;
-            await dispatch(appActions.postImageCheckIn(data.current));
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise<void>((resolve) => {
+              dispatch(appActions.postImageCheckIn(data.current));
+              resolve(); 
+            });
             totalItemsProcessed++;
+            setMessage(totalItemsProcessed);
           }
         }
       }
@@ -97,19 +104,17 @@ const TakePicture = () => {
       console.error('Error during image processing', error);
     } finally {
       setLoading(false);
-      setMessage(`Done processing ${totalItemsProcessed - 1} items`);
-      console.log(`Done processing ${totalItemsProcessed - 1} items`);
+      console.log(`Done processing ${totalItemsProcessed} items`);
+      completeCheckin();
     }
-
-    completeCheckin();
   };
+  
 
   const completeCheckin = () => {
     const newData = categoriesCheckin.map(item =>
       item.key === 'camera' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    // navigation.goBack();
   };
 
   const handleCamera = async (item: IAlbumImage) => {
@@ -277,12 +282,43 @@ const TakePicture = () => {
         albumImageData={albumImageData}
         setAlbumImageData={setAlbumImageData}
       />
+
+      <Modal visible={loading} style={styles.modal}>
+        <Block
+          justifyContent="center"
+          alignItems="center"
+          colorTheme="white"
+          width={350}
+          marginTop={20}
+          marginBottom={20}
+          borderRadius={16}>
+          <Block marginTop={16}>
+            <AppText color="black">Đang cập nhật</AppText>
+          </Block>
+          <Block marginTop={16} marginBottom={16}>
+            <ProgressCircle
+              percent={30}
+              radius={50}
+              borderWidth={12}
+              color={theme.colors.success}
+              shadowColor={theme.colors.bg_disable}
+              bgColor="#fff">
+              <Text>{message}/4</Text>
+            </ProgressCircle>
+          </Block>
+        </Block>
+      </Modal>
     </MainLayout>
   );
 };
 export default TakePicture;
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
+    modal: {
+      justifyContent: 'center',
+      borderRadius: 16,
+      alignItems: 'center',
+    } as ViewStyle,
     header: {
       flex: 0.5,
       alignItems: 'flex-start',

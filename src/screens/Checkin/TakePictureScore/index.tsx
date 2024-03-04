@@ -33,6 +33,7 @@ const TakePictureScore = () => {
   const itemParams =
     useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>().params.data;
   const userInfor = useSelector(state => state.app.userProfile, shallowEqual);
+
   useDisableBackHandler(true);
   const handleCameraPicture = async () => {
     await CameraUtils.openImagePickerCamera((img, base64) => {
@@ -61,7 +62,6 @@ const TakePictureScore = () => {
     },
     [albumImage],
   );
-  console.log(itemParams);
 
   const EmptyAlbum = React.useCallback(() => {
     return (
@@ -94,6 +94,11 @@ const TakePictureScore = () => {
         style={styles.header}
         label={'Chấm điểm trưng bày'}
         onBack={() => goBack()}
+        rightButton={
+          <TouchableOpacity>
+            <Text>+ Tùy chọn</Text>
+          </TouchableOpacity>
+        }
       />
 
       {albumImage.length === 1 ? (

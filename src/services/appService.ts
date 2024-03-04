@@ -218,5 +218,4 @@ export const getListNoteApi = () => {
 export const createImageCheckinApi = (data: any) =>
   createApi()
     .post(ApiConstant.CREATE_IMAGE_CHECKIN, data)
-    .then(res => res.data)
-   
+    .then(res => res.data);

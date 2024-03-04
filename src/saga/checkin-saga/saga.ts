@@ -4,6 +4,8 @@ import {call, put} from 'typed-redux-saga';
 import {CheckinService} from '../../services';
 import {ApiConstant} from '../../const';
 import {KeyAbleProps} from '../../models/types';
+import {ResponseGenerator} from '../app-saga/saga';
+import {appActions, setError} from '../../redux-store/app-reducer/reducer';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
@@ -38,6 +40,30 @@ export function* getDataNoteType(action: PayloadAction) {
       yield put(
         checkinActions.setData({typeData: 'note_type', data: data.result}),
       );
+    }
+  }
+}
+export function* getListProgramData(action: PayloadAction) {
+  if (checkinActions.getListProgram.match(action)) {
+    try {
+      yield put(appActions.onLoadApp())
+      const response: ResponseGenerator = yield call(
+        CheckinService.getListProgram,
+        action.payload,
+      );
+      if (response?.message?.length > 0) {
+        yield put(checkinActions.setDataListProgram(response.message));
+      } else {
+        setError({
+          title: null,
+          message: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+          viewOnly: true,
+        });
+      }
+    } catch (err) {
+      console.log('err: ', err);
+    }finally{
+      yield put(appActions.onLoadAppEnd())
     }
   }
 }

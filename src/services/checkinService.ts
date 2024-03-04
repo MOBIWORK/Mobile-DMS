@@ -65,3 +65,13 @@ export const postImagePictureScore = (data: any) =>
       headers: {'Content-Type': 'multipart/form-data'},
     })
     .then(res => res.data);
+export const getListProgram = ({
+  customer_name,
+  e_code,
+}: {
+  customer_name: string;
+  e_code: string;
+}) =>
+  createApi()
+    .post(ApiConstant.GET_CAMPAIGN_PROGRAM, {customer_name, e_code})
+    .then(res => res.data);

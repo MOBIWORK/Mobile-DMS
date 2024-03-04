@@ -119,21 +119,22 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
       console.log(nextAppState, 'app state');
+      setAppState(nextAppState);
     }
-    setAppState(nextAppState);
+   
   };
 
   useEffect(() => {
-    const appState = AppState.addEventListener('change', handleAppStateChange);
-    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+    const appStateEvent = AppState.addEventListener('change', handleAppStateChange);
+    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0 && AppState.currentState === 'background') {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
     } else {
       return;
     }
     return () => {
-      appState.remove();
+      appStateEvent.remove();
     };
-  }, [dataCheckIn]);
+  }, [dataCheckIn,appState]);
 
   return (
     <NavigationContainer
