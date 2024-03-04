@@ -459,21 +459,21 @@ const HomeScreen = () => {
     [],
   );
   useEffect(() => {
-    codePush.sync(
-      {
-        updateDialog: {
-          appendReleaseDescription: true,
-          descriptionPrefix: 'Release',
-          title: 'Update Available',
-          optionalUpdateMessage: updateMessage,
-        },
-        installMode: codePush.InstallMode.ON_NEXT_RESTART,
-        mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
-      },
-      onSyncStatusChanged,
-      onDownloadProgress,
-    );
-    syncWithCodePush;
+    // codePush.sync(
+    //   {
+    //     updateDialog: {
+    //       appendReleaseDescription: true,
+    //       descriptionPrefix: 'Release',
+    //       title: 'Update Available',
+    //       optionalUpdateMessage: updateMessage,
+    //     },
+    //     installMode: codePush.InstallMode.ON_NEXT_RESTART,
+    //     mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+    //   },
+    //   onSyncStatusChanged,
+    //   onDownloadProgress,
+    // );
+    // syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
   if (error != '') {

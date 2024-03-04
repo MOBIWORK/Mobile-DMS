@@ -23,7 +23,7 @@ const CardView = (props: IDataCustomers) => {
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const {t: translate} = useTranslation();
-
+  console.log(props,'customer')
   return (
     <TouchableOpacity
       style={styles.card}
@@ -35,7 +35,7 @@ const CardView = (props: IDataCustomers) => {
           alignItems="center">
           <Block block>
             <Text style={styles.textName}>{props.customer_name}</Text>
-            <Text style={styles.textName}>{props.customer_id}</Text>
+            <Text style={styles.textName}>{props.customer_code}</Text>
           </Block>
 
           <View style={styles.containButton}>

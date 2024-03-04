@@ -359,7 +359,9 @@ export type RootStackParamList = {
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;
   [ScreenConstant.SEARCH_COMMON_SCREEN]: {type: string};
-  [ScreenConstant.TAKE_PICTURE_SCORE]:undefined
+  [ScreenConstant.TAKE_PICTURE_SCORE]:{
+    data:any
+  }
 };
 
 // Define prop type for useNavigation and useRoute

@@ -298,7 +298,7 @@ export type IDataCustomer = {
 export interface IDataCustomers {
   name: string;
   customer_name: string;
-  customer_id: string;
+  customer_code: string;
   customer_type: string;
   customer_group: string;
   territory: string;

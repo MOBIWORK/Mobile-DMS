@@ -1,5 +1,5 @@
 import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
+import React, {useCallback, useState, useEffect, useRef, useMemo, useLayoutEffect} from 'react';
 import {
   Block,
   AppText as Text,
@@ -53,6 +53,7 @@ const CheckIn = () => {
 
   useEffect(() => {
     // Start the interval when the component mounts
+    
     const startInterval = () => {
       intervalId.current = setInterval(() => {
         setElapsedTime((prevTime) => prevTime + 1);
@@ -65,6 +66,9 @@ const CheckIn = () => {
     return () => clearInterval(intervalId.current);
   }, []); // The empty dependency array ensures that the effect runs only once
 
+  useLayoutEffect(() =>{
+    dispatch(appActions.onGetSystemConfig())
+  },[])
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
     const hours = Math.floor(seconds / 3600);
@@ -116,6 +120,8 @@ const CheckIn = () => {
     setShow(false);
 
   }, [dataCheckIn]);
+
+
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>

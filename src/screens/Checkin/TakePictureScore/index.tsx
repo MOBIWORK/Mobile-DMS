@@ -17,20 +17,22 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {IAlbumImage} from '../../../models/types';
 import {CameraUtils} from '../../../utils';
-import {ImageAssets} from '../../../assets';
 import {AppConstant} from '../../../const';
-import {goBack} from '../../../navigation';
-import {IAlbumScore, fakeData} from './ultl';
+import {RootStackParamList, goBack} from '../../../navigation';
 import isEqual from 'react-fast-compare';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {useSelector} from '../../../config/function';
+import {shallowEqual} from 'react-redux';
 
 const TakePictureScore = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const [albumImage, setAlbumImage] = React.useState<any[]>(['IconCamera']);
- 
-    const [selectedImages,setSelectedImages] = React.useState<string[]>([''])
+  const [selectedImages, setSelectedImages] = React.useState<string[]>(['']);
+  const itemParams =
+    useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>().params.data;
+  const userInfor = useSelector(state => state.app.userProfile, shallowEqual);
 
   const handleCameraPicture = async () => {
     await CameraUtils.openImagePickerCamera((img, base64) => {
@@ -44,19 +46,21 @@ const TakePictureScore = () => {
       });
     });
   };
-  console.log(albumImage, 'album image');
 
-  const handleSelectImage = React.useCallback((image: string) => {
-    if (selectedImages.includes(image)) {
-      // If the image is already selected, remove it from the selectedImages array
-      setSelectedImages(prevSelectedImages =>
-        prevSelectedImages.filter(selectedImage => selectedImage !== image)
-      );
-    } else {
-      // If the image is not selected, add it to the selectedImages array
-      setSelectedImages(prevSelectedImages => [...prevSelectedImages, image]);
-    }
-  },[albumImage]);
+  const handleSelectImage = React.useCallback(
+    (image: string) => {
+      if (selectedImages.includes(image)) {
+        // If the image is already selected, remove it from the selectedImages array
+        setSelectedImages(prevSelectedImages =>
+          prevSelectedImages.filter(selectedImage => selectedImage !== image),
+        );
+      } else {
+        // If the image is not selected, add it to the selectedImages array
+        setSelectedImages(prevSelectedImages => [...prevSelectedImages, image]);
+      }
+    },
+    [albumImage],
+  );
 
   const EmptyAlbum = React.useCallback(() => {
     return (
@@ -75,9 +79,7 @@ const TakePictureScore = () => {
         </TouchableOpacity>
       </Block>
     );
-  },[]);
-
-
+  }, []);
 
   return (
     <SafeAreaView
@@ -93,7 +95,6 @@ const TakePictureScore = () => {
         onBack={() => goBack()}
       />
 
-      
       {albumImage.length === 1 ? (
         <EmptyAlbum />
       ) : (
@@ -127,16 +128,18 @@ const TakePictureScore = () => {
           }}
         />
       )}
-      <Block>
-        <TouchableOpacity>
-
-        </TouchableOpacity>
-      </Block>
+      {albumImage.length > 1 && (
+        <Block>
+          <TouchableOpacity>
+            <Text>Tiếp tục</Text>
+          </TouchableOpacity>
+        </Block>
+      )}
     </SafeAreaView>
   );
 };
 
-export default React.memo(TakePictureScore,isEqual);
+export default React.memo(TakePictureScore, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -209,8 +212,5 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
       height: 36,
     } as ViewStyle,
-    buttonPicture:{
-
-    } as ViewStyle
+    buttonPicture: {} as ViewStyle,
   });
-

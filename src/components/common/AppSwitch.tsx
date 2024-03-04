@@ -46,9 +46,13 @@ const AppSwitch = (props: Props) => {
 
     if (active) {
       if (isText === true) {
-        switchTranslate.value = 68;
-        textValue.value = 8;
-      } else if (props.title === undefined) {
+        if (props.type === 'none') {
+          switchTranslate.value = 22;
+        } else {
+          switchTranslate.value = 68;
+          textValue.value = 8;
+        }
+      } else if (props.title === '' || props.title === undefined) {
         switchTranslate.value = 22;
         // textValue.value = 60;
       } else {
