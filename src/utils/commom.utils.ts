@@ -26,6 +26,15 @@ export const padTo2Digits = (num: number) => {
   return num.toString().padStart(2, '0');
 };
 
+// converdate yyyy-mm-dd
+export function taskDate(dateMilli : string | number) {
+  var d = (new Date(dateMilli) + '').split(' ');
+  d[2] = d[2] + ',';
+
+  return [d[0], d[1], d[2], d[3]].join(' ');
+}
+
+
 //format dateTime to hh:pp dd//mm//yyyy
 export const convertDateToString = (dateTime: number | string) => {
   const date = new Date(dateTime);

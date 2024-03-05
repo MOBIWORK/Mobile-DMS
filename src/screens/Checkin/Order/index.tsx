@@ -36,13 +36,26 @@ const CheckinOrder = () => {
     const type = router.params.type;
     const dataCheckin = useSelector(state => state.app.dataCheckIn);
     const orderDetail = useSelector(state => state.checkin.orderDetail);
+    const returnOrderDetail = useSelector(state => state.checkin.returnOrderDetail);
     const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin);
 
     const fetchDataOrder = async () => {
         if (type == "ORDER") {
-            const { status, data }: KeyAbleProps = await OrderService.getDetailCheckinOrder(dataCheckin.checkin_id);
+            const { status, data }: KeyAbleProps = await OrderService.getDetailCheckinOrder({
+                checkin_id :dataCheckin.checkin_id,
+                doctype :"Sales Order"
+            });
             if (status === ApiConstant.STT_OK) {
                 dispatch(checkinActions.setData({ typeData: "detailOrder", data: data.result }))
+            }
+        }
+        if (type == "RETURN_ORDER") {
+            const { status, data }: KeyAbleProps = await OrderService.getDetailCheckinOrder({
+                checkin_id :dataCheckin.checkin_id,
+                doctype : "Sales Invoice"
+            });
+            if (status === ApiConstant.STT_OK) {
+                dispatch(checkinActions.setData({ typeData: "returnOrder", data: data.result }))
             }
         }
     }
@@ -85,10 +98,12 @@ const CheckinOrder = () => {
 
                                 <View style={[styles.containerIfOd]}>
 
-                                    <View style={[styles.orderInforE, styles.flexSpace]}>
-                                        <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
-                                        <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data.delivery_date * 1000)}</Text>
-                                    </View>
+                                    {type == "ORDER" && (
+                                        <View style={[styles.orderInforE, styles.flexSpace]}>
+                                            <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
+                                            <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data.delivery_date * 1000)}</Text>
+                                        </View>
+                                    )}
 
                                     <View style={[styles.orderInforE, styles.flexSpace, { borderColor: colors.bg_default }]}>
                                         <Text style={[styles.labelDetail]}>{getLabel("eXwarehouse")}</Text>
@@ -238,7 +253,7 @@ const CheckinOrder = () => {
                 onBack={() => navigation.goBack()}
                 style={{ paddingHorizontal: 16 }}
             />
-            {orderDetail && type== "ORDER" ? renderDetailOrder(orderDetail) : renderNoDataUi()}
+            {type== "ORDER" && orderDetail ? renderDetailOrder(orderDetail) : type== "RETURN_ORDER" && returnOrderDetail ? renderDetailOrder(returnOrderDetail) : renderNoDataUi()}
         </MainLayout>
     )
 }

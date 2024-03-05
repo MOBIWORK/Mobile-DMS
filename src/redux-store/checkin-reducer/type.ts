@@ -19,6 +19,7 @@ export type TypeState = {
   dataStaff: StaffType[];
   dataTypeNote: any[];
   orderDetail: CheckinOrderDetail | null;
+  returnOrderDetail : CheckinOrderDetail | null,
   categoriesCheckin: any[];
 };
 

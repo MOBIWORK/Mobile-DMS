@@ -15,7 +15,6 @@ export type PramsTypeProduct = {
 interface GET_PRODUCT_PROMOTION {
     items: Item[];
     customer: string;
-    customer_group: string;
     territory: string;
     currency: string;
     price_list: string;
@@ -23,6 +22,8 @@ interface GET_PRODUCT_PROMOTION {
     company: string;
     doctype: string;
     name: string;
+    transaction_date: string
+
 }
 interface Item {
     doctype: string;

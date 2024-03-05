@@ -10,6 +10,7 @@ const initState : TypeState = {
     dataStaff : [],
     dataTypeNote : [],
     orderDetail : null,
+    returnOrderDetail : null,
     categoriesCheckin :categoriesCheckinList
 }
 
@@ -30,6 +31,9 @@ const checkinSlice = createSlice({
                     break;
                 case "detailOrder":
                     state.orderDetail = action.payload.data;
+                    break;
+                case "returnOrder":
+                    state.returnOrderDetail = action.payload.data;
                     break;
                 default:
                     break;
