@@ -26,11 +26,18 @@ export const padTo2Digits = (num: number) => {
 };
 
 // converdate yyyy-mm-dd
-export function taskDate(dateMilli : string | number) {
-  var d = (new Date(dateMilli) + '').split(' ');
-  d[2] = d[2] + ',';
+export function taskDate(date : string | number) {
+  var d = new Date(date),
+  month = '' + (d.getMonth() + 1),
+  day = '' + d.getDate(),
+  year = d.getFullYear();
 
-  return [d[0], d[1], d[2], d[3]].join(' ');
+if (month.length < 2) 
+  month = '0' + month;
+if (day.length < 2) 
+  day = '0' + day;
+
+return [year, month, day].join('-');
 }
 
 
