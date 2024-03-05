@@ -209,7 +209,7 @@ const CheckinOrder = () => {
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("totalPrice")} </Text>
-                                    <Text style={[styles.totalPrice]}>{CommonUtils.formatCash(data.grand_total.toString())}</Text>
+                                    <Text style={[styles.totalPrice]}>{CommonUtils.formatCash(data.grand_total?.toString())}</Text>
                                 </View>
                             </View>
                         </View>
