@@ -455,7 +455,7 @@ const CreateOrder = () => {
                 const element = result[i];
                 newData.push({
                     value: element.name,
-                    label: element.warehouse_name,
+                    label: element.name,
                     isSelected: false,
                 });
             }
@@ -489,7 +489,6 @@ const CreateOrder = () => {
                 const objecData = {
                     "items": newItems,
                     "customer": dataCheckin.item.name,        // Khách hàng
-                    "customer_group": "Commercial",    // Nhóm khách hàng
                     "territory": "Vietnam",
                     "currency": "VND",
                     "price_list": "Standard Selling",
@@ -497,7 +496,7 @@ const CreateOrder = () => {
                     "company": organization?.company_name || "",            // Lấy cty hiện tại
                     "doctype": "Sales Order",
                     "name": "new-sales-order-hnnkmtrehm",
-                    "transaction_date": CommonUtils.convertDate(date),
+                    "transaction_date": CommonUtils.taskDate(date),
                 }
                 const { data: res, status }: KeyAbleProps = await ProductService.getPromotionalProducts(objecData);
                 if (status === ApiConstant.STT_OK) {
@@ -591,8 +590,6 @@ const CreateOrder = () => {
                 status = (await OrderService.createdOrder(objectData)).status;
                 break;
             case "RETURN_ORDER":
-                objectData["is_return"] = 1;
-                objectData["update_billed_amount_in_delivery_note"] = 1;
                 objectData["grand_total"] = grandTotalPrice - (grandTotalPrice * 2);
                 status = (await OrderService.createdReturnOrder(objectData)).status;
                 break

@@ -32,10 +32,15 @@ export interface Item {
     discount_percentage: number
 }
 
+type GetDetailOrder = {
+    checkin_id : string,
+    doctype : "Sales Order" | "Sales Invoice"
+}
+
 
 export const get = (params?: PramsTypeOrder) => createApi().get(ApiConstant.GET_ORDER, params);
 export const getDetail = (name: string) => createApi().get(ApiConstant.GET_ORDER_DETAIL, { name });
 export const getListVat = () => createApi().get(ApiConstant.GET_VATS);
 export const createdOrder = (data: POST_DATA) => createApi().post(ApiConstant.POST_ORDER, data);
 export const createdReturnOrder = (data: POST_DATA) => createApi().post(ApiConstant.POST_RETuRN_ORDER, data);
-export const getDetailCheckinOrder = (checkin_id : string) => createApi().get(ApiConstant.GET_DETAIL_CHECKIN_ORDER,{checkin_id});
+export const getDetailCheckinOrder = (params  :GetDetailOrder) => createApi().get(ApiConstant.GET_DETAIL_CHECKIN_ORDER,params);
