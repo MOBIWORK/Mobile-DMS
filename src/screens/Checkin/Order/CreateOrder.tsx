@@ -490,7 +490,7 @@ const CreateOrder = () => {
                 const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
                 const objecData = {
                     "items": newItems,
-                    "customer": dataCheckin.item.customer_code,        // Khách hàng
+                    "customer": dataCheckin.item.name,        // Khách hàng
                     "territory": "Vietnam",
                     "currency": "VND",
                     "price_list": "Standard Selling",
