@@ -46,7 +46,9 @@ const CheckinOrder = () => {
                 doctype :"Sales Order"
             });
             if (status === ApiConstant.STT_OK) {
-                dispatch(checkinActions.setData({ typeData: "detailOrder", data: data.result }))
+                if (data.result.constructor !== "Array"  && Object.keys(data.result).length > 0) {
+                    dispatch(checkinActions.setData({ typeData: "detailOrder", data: data.result }))
+                }
             }
         }
         if (type == "RETURN_ORDER") {
@@ -55,7 +57,9 @@ const CheckinOrder = () => {
                 doctype : "Sales Invoice"
             });
             if (status === ApiConstant.STT_OK) {
-                dispatch(checkinActions.setData({ typeData: "returnOrder", data: data.result }))
+                if (data.result.constructor !== "Array"  && Object.keys(data.result).length > 0) {
+                    dispatch(checkinActions.setData({ typeData: "returnOrder", data: data.result }))
+                }
             }
         }
     }
@@ -128,11 +132,12 @@ const CheckinOrder = () => {
                                     >
                                         <ItemProduct
                                             dvt={item.uom}
-                                            name={item.item_code}
+                                            name={item.item_name}
+                                            code={item.item_code}
                                             quantity={item.qty}
                                             price={item.amount}
                                             percentage_discount={item.discount_percentage}
-                                            discount={(item.amount * (item.discount_percentage / 100)).toString()}
+                                            discount={(item.amount * (item.discount_percentage / 100))?.toString()}
                                         />
                                     </Pressable>
                                 ))}
@@ -222,7 +227,7 @@ const CheckinOrder = () => {
                     <View style={[styles.flexSpace, { alignItems: 'flex-end' }]}>
                         <Text style={styles.tTotalPrice}>{getLabel("totalPrice")}</Text>
                         <Text style={styles.totalPrice}>
-                            {CommonUtils.formatCash(data.grand_total.toString())}
+                            {CommonUtils.formatCash(data.grand_total?.toString())}
                         </Text>
                     </View>
                     <AppButton
@@ -249,11 +254,8 @@ const CheckinOrder = () => {
 
     return (
         <MainLayout style={styles.layout} >
-            <AppHeader label={type === "ORDER" ? getLabel("putOrder") : getLabel("returnOrder")}
-                onBack={() => navigation.goBack()}
-                style={{ paddingHorizontal: 16 }}
-            />
-            {type== "ORDER" && orderDetail ? renderDetailOrder(orderDetail) : type== "RETURN_ORDER" && returnOrderDetail ? renderDetailOrder(returnOrderDetail) : renderNoDataUi()}
+            <AppHeader label={type === "ORDER" ? getLabel("putOrder") : getLabel("returnOrder")} onBack={() => navigation.goBack()} style={{ paddingHorizontal: 16 }}/>
+            {(type == "ORDER" && orderDetail) ? renderDetailOrder(orderDetail) : (type == "RETURN_ORDER" && returnOrderDetail) ? renderDetailOrder(returnOrderDetail) : renderNoDataUi()}
         </MainLayout>
     )
 }

@@ -6,7 +6,7 @@ import {
   AppIcons,
 } from '../../components/common';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { FlatList, Image, Text, TextStyle, View, ViewStyle, StyleSheet, ImageStyle } from 'react-native';
+import { FlatList, Image, Text, TextStyle, View, ViewStyle, StyleSheet, ImageStyle, Pressable } from 'react-native';
 import { ImageAssets } from '../../assets';
 import { useNavigation } from '@react-navigation/native';
 import ButtonFilter from '../../components/common/ButtonFilter';
@@ -349,19 +349,20 @@ const OrderList = () => {
           )}
 
         </Text>
-        <View>
+        <View style={{flex :1}}>
           <FlatList
             data={orders}
             onEndReached={() => setPage(page + 1)}
             initialNumToRender={pageSize}
+            showsVerticalScrollIndicator={false}
+            style={{flex :1}}
             renderItem={({ item }) =>
-              <TouchableOpacity
-                activeOpacity={0.7}
+              <Pressable
                 onPress={() =>
                   navigation.navigate(ScreenConstant.ORDER_DETAIL_SCREEN, { name: item.name })
                 }>
                 {renderUiItem(item)}
-              </TouchableOpacity>}
+              </Pressable>}
           />
         </View>
       </MainLayout>

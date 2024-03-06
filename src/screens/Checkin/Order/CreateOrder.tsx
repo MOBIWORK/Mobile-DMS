@@ -219,7 +219,8 @@ const CreateOrder = () => {
                             <Pressable key={i} onPress={() => showDetailProdcut(item)}>
                                 <ItemProduct
                                     onRemove={(id) => handlerRemoveItemProduct(id)}
-                                    name={item.item_code}
+                                    name={item.item_name}
+                                    code={item.item_code}
                                     dvt={item.stock_uom}
                                     quantity={item.quantity ? item.quantity : 0}
                                     percentage_discount={item.discount}
@@ -237,7 +238,8 @@ const CreateOrder = () => {
                         {productsPromotion.map((item, i) => (
                             <Pressable key={i}>
                                 <ItemProduct
-                                    name={item.item_code}
+                                    name={item.item_name}
+                                    code={item.item_code}
                                     dvt={item.stock_uom}
                                     quantity={item.qty}
                                 />
@@ -488,7 +490,7 @@ const CreateOrder = () => {
                 const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
                 const objecData = {
                     "items": newItems,
-                    "customer": dataCheckin.item.name,        // Khách hàng
+                    "customer": dataCheckin.item.customer_code,        // Khách hàng
                     "territory": "Vietnam",
                     "currency": "VND",
                     "price_list": "Standard Selling",
