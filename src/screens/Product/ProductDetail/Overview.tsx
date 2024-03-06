@@ -16,6 +16,8 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
   const [price,setPrice] = useState<number>(0);
 
   const _renderImg = () => {
+    if(overviewData.custom_images_item.length >0){
+
     return (
       <View style={{ marginTop: 16  , marginBottom : 20}}>
         <View
@@ -40,7 +42,7 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
             }}
             onPress={() =>
               navigation.navigate(ScreenConstant.IMAGE_VIEW, {
-                data: overviewData.image,
+                data: overviewData.custom_images_item,
               })
             }>
             {getLabel('seeMore')}
@@ -51,35 +53,21 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
             marginTop: 8,
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-evenly',
+            columnGap:4
           }}>
-          <View
-            style={[styles.imgContainer as any, { backgroundColor: colors.bg_default }]}>
-            <Image
-              source={ImageAssets.ImgAppWatch}
-              style={styles.img}
-              resizeMode="cover"
-            />
-          </View>
-          <View
-            style={[styles.imgContainer as any, { backgroundColor: colors.bg_default }]}>
-            <Image
-              source={ImageAssets.ImgAppWatch}
-              style={styles.img}
-              resizeMode="cover"
-            />
-          </View>
-          <View
-            style={[styles.imgContainer as any, { backgroundColor: colors.bg_default }]}>
-            <Image
-              source={ImageAssets.ImgAppWatch}
-              style={styles.img}
-              resizeMode="cover"
-            />
-          </View>
+            {overviewData.custom_images_item.map((item,i)=>(
+              <View key={i} style={[styles.imgContainer as any, { backgroundColor: colors.bg_default }]}>
+                  <Image source={{  uri : item.link_image }} style={styles.img} resizeMode="cover" />
+              </View>
+            ))}
+
         </View>
       </View>
     );
+    }
+    return <></>
+    
+
   };
 
   const _renderInfo = () => {
