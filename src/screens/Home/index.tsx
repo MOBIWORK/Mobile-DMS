@@ -1,8 +1,15 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {View, Text, Image, Linking, Platform, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Linking,
+  Platform,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import ProgressCircle from 'react-native-progress-circle';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';

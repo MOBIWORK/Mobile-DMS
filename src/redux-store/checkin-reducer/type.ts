@@ -1,5 +1,5 @@
 import {SvgIconTypes} from '../../assets/svgIcon';
-import { ScreenConstant } from '../../const';
+import {ScreenConstant} from '../../const';
 import {Colors} from '../../layouts/theme';
 import {CheckinOrderDetail, NoteType, StaffType} from '../../models/types';
 
@@ -19,13 +19,13 @@ export type TypeState = {
   dataStaff: StaffType[];
   dataTypeNote: any[];
   orderDetail: CheckinOrderDetail | null;
-  returnOrderDetail : CheckinOrderDetail | null,
+  returnOrderDetail: CheckinOrderDetail | null;
   categoriesCheckin: any[];
-  listProgramCampaign:any,
-  selectedProgram:any,
-  listImageSelect:any,
-  imageToMark:any,
-  listProgramImage:any
+  listProgramCampaign: any;
+  selectedProgram: any;
+  listImageSelect: any;
+  imageToMark: any;
+  listProgramImage: any;
 };
 
 export const categoriesCheckinList: IItemCheckIn[] = [
@@ -92,8 +92,8 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     name: 'Chấm điểm trưng bày',
     screenName: 'TAKE_PICTURE_SCORE',
     backgroundColor: 'undoBackground',
-    type:'take_picture_score',
-    key:'take_picture_score',
+    type: 'take_picture_score',
+    key: 'take_picture_score',
   },
 ];
 
@@ -102,11 +102,12 @@ export enum Action {
   GET_STAFF = 'GET_STAFF_',
   GET_NOTE_TYPE = 'GET_NOTE_TYPE_',
   GET_LIST_PROGRAM_CAMPAIGN = 'GET_LIST_PROGRAM_CAMPAIGN_',
-  POST_IMAGE_SCORE = 'POST_IMAGE_SCORE_'
+  POST_IMAGE_SCORE = 'POST_IMAGE_SCORE_',
 }
 
 export const GET_NOTE_ACTIONS = Action.GET_NOTE + 'GET_NOTE';
 export const GET_STAFF_ACTIONS = Action.GET_STAFF + 'GET_STAFF';
 export const GET_NOTE_TYPE_ACTIONS = Action.GET_NOTE_TYPE + 'GET_NOTE_TYPE';
-export const GET_LIST_PROGRAM_CAMPAIGN = Action.GET_LIST_PROGRAM_CAMPAIGN + 'GET_LIST_PROGRAM_CAMPAIGN'
-export const POST_IMAGE_SCORE  = Action.POST_IMAGE_SCORE + 'POST_IMAGE_SCORE';
+export const GET_LIST_PROGRAM_CAMPAIGN =
+  Action.GET_LIST_PROGRAM_CAMPAIGN + 'GET_LIST_PROGRAM_CAMPAIGN';
+export const POST_IMAGE_SCORE = Action.POST_IMAGE_SCORE + 'POST_IMAGE_SCORE';

@@ -9,7 +9,7 @@ const initState: TypeState = {
   dataTypeNote: [],
   orderDetail: null,
   categoriesCheckin: categoriesCheckinList,
-    returnOrderDetail : null,
+  returnOrderDetail: {},
   listProgramCampaign: {},
   selectedProgram: {},
   listImageSelect: [],
@@ -18,51 +18,66 @@ const initState: TypeState = {
 };
 
 const checkinSlice = createSlice({
-    name : SLICE_NAME.CHECKIN_SLICE,
-    initialState : initState,
-    reducers : {
-        setData : (state , action : PayloadAction<{typeData : string , data :any}>) => {
-            switch (action.payload.typeData) {
-                case "note":
-                    void(state.dataNote = action.payload.data);
-                    break;
-                case "staff":
-                    void(state.dataStaff = action.payload.data);
-                    break;
-                case "note_type":
-                    void(state.dataTypeNote = action.payload.data);
-                    break;
-                case "detailOrder":
-                    state.orderDetail = action.payload.data;
-                    break;
-                case "returnOrder":
-                    state.returnOrderDetail = action.payload.data;
-                    break;
-                default:
-                    break;
-            }
-        },
-        resetData : (state , action : PayloadAction)=>{
-            state.categoriesCheckin = categoriesCheckinList;
-            state.dataNote = [];
-            state.orderDetail = null
-        },
-        setDataCategoriesCheckin : (state,action : PayloadAction<Actions.IItemCheckIn[]>) =>{
-            state.categoriesCheckin = action.payload
+  name: SLICE_NAME.CHECKIN_SLICE,
+  initialState: initState,
+  reducers: {
+    setData: (state, action: PayloadAction<{typeData: string; data: any}>) => {
+      switch (action.payload.typeData) {
+        case 'note':
+          void (state.dataNote = action.payload.data);
+          break;
+        case 'staff':
+          void (state.dataStaff = action.payload.data);
+          break;
+        case 'note_type':
+          void (state.dataTypeNote = action.payload.data);
+          break;
+        case 'detailOrder':
+          state.orderDetail = action.payload.data;
+          break;
+        case 'returnOrder':
+          state.returnOrderDetail = action.payload.data;
+          break;
+        default:
+          break;
+      }
+    },
+    resetData: state => {
+      state.categoriesCheckin = categoriesCheckinList;
+      state.dataNote = [];
+      state.orderDetail = null;
+    },
+    setDataCategoriesCheckin: (
+      state,
+      action: PayloadAction<Actions.IItemCheckIn[]>,
+    ) => {
+      state.categoriesCheckin = action.payload;
+    },
+
+    setDataListProgram: (state, action: PayloadAction<any>) => {
+      void (state.listProgramCampaign = action.payload);
+    },
+    setSelectedProgram: (state, action: PayloadAction<any>) => {
+      state.selectedProgram = [];
+      const newPrograms = action.payload;
+      const existingProgramNames = state.selectedProgram.map(
+        (program: any) => program.campaign_name,
+      );
+
+      // @ts-ignore
+      const updatedPrograms = newPrograms.map((newProgram: any) => {
+        const index = existingProgramNames.indexOf(newProgram.campaign_name);
+        if (index !== -1) {
+          // Update existing program if name matches
+          return newProgram;
+        } else {
+          // Add new program if name doesn't exist
+          // @ts-ignore
+          return newProgram;
         }
       });
 
       // Filter out existing programs that are being updated
-      const filteredExistingPrograms = state.selectedProgram.filter(
-        (program: any) => {
-          return (
-            updatedPrograms.findIndex(
-              (updatedProgram: any) =>
-                updatedProgram.campaign_name === program.campaign_name,
-            ) === -1
-          );
-        },
-      );
 
       // Merge updated programs with existing ones
       state.selectedProgram = [...state.selectedProgram, ...updatedPrograms];
