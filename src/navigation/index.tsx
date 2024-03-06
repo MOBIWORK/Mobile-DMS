@@ -295,7 +295,9 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
         <Stack.Screen
           name={ScreenConstant.LIST_ALBUM_SCORE}
           component={ListAlbumScore}
-          options={{headerShown:false}}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
           name={ScreenConstant.USER_INFO_SCREEN}
           component={UserInfoScreen}
         />
