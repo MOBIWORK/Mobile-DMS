@@ -155,11 +155,7 @@ const ListProduct = () => {
             alignItems: 'center',
             justifyContent: 'flex-start',
           }}>
-          <Image
-            source={image}
-            style={{ width: 64, height: 82,borderRadius :4 }}
-            resizeMode={'cover'}
-          />
+          <Image source={image} style={{ width: 64, height: 82,borderRadius :4 }} resizeMode={'cover'}/>
           <View style={{ marginLeft: 16, rowGap: 5 }}>
             <Text
               style={{

@@ -253,7 +253,7 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.itemDesc as any, { marginLeft: 6 }]}>
-              {CommonUtils.convertDateToString(item.po_date * 1000)}
+              {CommonUtils.convertDateToString(item.creation * 1000)}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -267,7 +267,7 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.itemDesc as any, { marginLeft: 6 }]}>
-              {CommonUtils.convertDate(item.delivery_date * 1000)}
+              {item.delivery_date ? CommonUtils.convertDate(item.delivery_date * 1000): "- - - "}
             </Text>
           </View>
         </View>
