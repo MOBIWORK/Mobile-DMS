@@ -194,7 +194,7 @@ const TabOverview = ({ data }: PropsType) => {
 
                                     <View style={[styles.orderInforE, styles.flexSpace]}>
                                         <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
-                                        <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data?.delivery_date)}</Text>
+                                        <Text style={[styles.textInforO]}>{data.delivery_date ? CommonUtils.convertDate(data.delivery_date * 1000) : "- - -"}</Text>
                                     </View>
 
                                     <View style={[styles.orderInforE, styles.flexSpace, { borderColor: colors.bg_default }]}>
