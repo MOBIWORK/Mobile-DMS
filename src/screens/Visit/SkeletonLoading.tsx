@@ -2,13 +2,14 @@ import { StyleSheet, View, ViewStyle, FlatList } from 'react-native';
 import React from 'react';
 import { AppTheme, useTheme } from '../../layouts/theme';
 import { SkeletonLoading } from '../../components/common';
+import isEqual from 'react-fast-compare';
 
 
 const LoadingSkeleton = () => {
 
   const theme = useTheme();
   const styles = styleLoading(theme);
-
+  const data = React.useRef<any[]>(new Array(5))
   const renderItem = () => {
     return (
       <View style={styles.container}>
@@ -32,8 +33,10 @@ const LoadingSkeleton = () => {
   return (
     <View>
       <FlatList
-        data={new Array(5)}
+        data={data.current}
         showsVerticalScrollIndicator={false}
+        keyExtractor={(item,index) => index.toString()}
+        decelerationRate={'normal'}
         renderItem={() => renderItem()}
         contentContainerStyle={{ rowGap: 20 }}
       />
@@ -41,7 +44,7 @@ const LoadingSkeleton = () => {
   );
 };
 
-export default LoadingSkeleton;
+export default React.memo(LoadingSkeleton,isEqual);
 
 const styleLoading = (theme: AppTheme) => StyleSheet.create({
   container: {

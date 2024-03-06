@@ -1,4 +1,4 @@
-import {takeLatest} from 'typed-redux-saga';
+import {takeEvery, takeLatest, takeLeading} from 'typed-redux-saga';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 
 import * as Saga from './saga';

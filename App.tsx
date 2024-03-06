@@ -34,7 +34,7 @@ import {AppService} from './src/services';
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_START,
-  installMode: codePush.InstallMode.IMMEDIATE,
+  installMode: codePush.InstallMode.ON_NEXT_RESTART,
 };
 
 if (!isIos) {
@@ -206,4 +206,4 @@ function App(): JSX.Element {
   // )
 }
 
-export default codePush(codePushOptions)(App);
+export default App;

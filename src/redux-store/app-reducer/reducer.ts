@@ -3,7 +3,7 @@ import * as Actions from './type';
 import {IAppRedux, SLICE_NAME} from './type';
 import {ThemeType} from '../../layouts/theme';
 import {CheckinData} from '../../services/appService';
-import { ImageCheckIn } from '../../models/types';
+import {ImageCheckIn} from '../../models/types';
 
 const initialAppState: IAppRedux = {
   error: undefined,
@@ -105,14 +105,23 @@ const appSlice = createSlice({
     setListNote: (state, action: PayloadAction<any>) =>
       void (state.dataCheckIn.listNote = action.payload),
     setListImage: (state, action: PayloadAction<any>) => {
-      state.dataCheckIn.listImage = action.payload;
+      if (!state.dataCheckIn.listImage) {
+        state.dataCheckIn.listImage = [];
+      }
+      state.dataCheckIn.listImage.push(...action.payload);
     },
-    setImageError:(state,action:PayloadAction<any>) =>{
-      state.dataCheckIn.imageError = [...state.dataCheckIn.imageError,action.payload]
+    setImageError: (state, action: PayloadAction<any>) => {
+      if (!state.dataCheckIn.imageError) {
+        state.dataCheckIn.imageError = [];
+      }
+      state.dataCheckIn.imageError.push(...action.payload);
     },
     setUserProfile: (state, action: PayloadAction<any>) => {
       state.userProfile = action.payload;
     },
+    deleteList:(state) =>{
+      void(state.dataCheckIn.listImage = [])
+    }
   },
 });
 

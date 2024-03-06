@@ -1,18 +1,21 @@
-import { PayloadAction, createAction, createSlice } from "@reduxjs/toolkit";
-import { TypeState ,categoriesCheckinList} from "./type";
-import * as Actions from "./type"
-import { SLICE_NAME } from "../app-reducer/type";
+import {PayloadAction, createAction, createSlice} from '@reduxjs/toolkit';
+import {TypeState, categoriesCheckinList} from './type';
+import * as Actions from './type';
+import {SLICE_NAME} from '../app-reducer/type';
 
-
-
-const initState : TypeState = {
-    dataNote : [],
-    dataStaff : [],
-    dataTypeNote : [],
-    orderDetail : null,
+const initState: TypeState = {
+  dataNote: [],
+  dataStaff: [],
+  dataTypeNote: [],
+  orderDetail: null,
+  categoriesCheckin: categoriesCheckinList,
     returnOrderDetail : null,
-    categoriesCheckin :categoriesCheckinList
-}
+  listProgramCampaign: {},
+  selectedProgram: {},
+  listImageSelect: [],
+  imageToMark: [],
+  listProgramImage: [],
+};
 
 const checkinSlice = createSlice({
     name : SLICE_NAME.CHECKIN_SLICE,
@@ -47,7 +50,36 @@ const checkinSlice = createSlice({
         setDataCategoriesCheckin : (state,action : PayloadAction<Actions.IItemCheckIn[]>) =>{
             state.categoriesCheckin = action.payload
         }
-    }
+      });
+
+      // Filter out existing programs that are being updated
+      const filteredExistingPrograms = state.selectedProgram.filter(
+        (program: any) => {
+          return (
+            updatedPrograms.findIndex(
+              (updatedProgram: any) =>
+                updatedProgram.campaign_name === program.campaign_name,
+            ) === -1
+          );
+        },
+      );
+
+      // Merge updated programs with existing ones
+      state.selectedProgram = [...state.selectedProgram, ...updatedPrograms];
+    },
+
+    setListImageSelect: (state, action: PayloadAction<any>) => {
+      // state.listImageSelect = [];
+      state.listImageSelect = [...state.listImageSelect, ...action.payload];
+    },
+    setImageResponse: (state, action: PayloadAction<any>) => {
+      // state.imageToMark = []
+      state.imageToMark = [...state.imageToMark, action.payload];
+    },
+    setListImageProgram: (state, action: PayloadAction<any>) => {
+      state.listImageSelect = [...state.listImageSelect, action.payload];
+    },
+  },
 });
 
 const getListNoteCheckin = createAction(
@@ -59,11 +91,22 @@ const getListStaff = createAction(Actions.GET_STAFF_ACTIONS, (params: any) => ({
 }));
 const getListNoteType = createAction(Actions.GET_NOTE_TYPE_ACTIONS);
 
+const getListProgram = createAction(
+  Actions.GET_LIST_PROGRAM_CAMPAIGN,
+  ({customer_code, e_name}: {customer_code: string; e_name: string}) => ({
+    payload: {customer_code, e_name},
+  }),
+);
+const postImageScore = createAction(Actions.POST_IMAGE_SCORE, (data: any) => ({
+  payload: data,
+}));
 export const checkinActions = {
   ...checkinSlice.actions,
   getListNoteCheckin,
   getListStaff,
   getListNoteType,
+  getListProgram,
+  postImageScore,
 };
 
 export const checkinReducer = checkinSlice.reducer;

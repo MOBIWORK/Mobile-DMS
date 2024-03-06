@@ -23,7 +23,7 @@ const CardView = (props: IDataCustomers) => {
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const {t: translate} = useTranslation();
-
+  console.log(props,'customer')
   return (
     <TouchableOpacity
       style={styles.card}

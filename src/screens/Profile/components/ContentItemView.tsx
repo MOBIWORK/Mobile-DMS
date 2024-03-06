@@ -51,7 +51,7 @@ const ContentItemView = (props: Props) => {
         <SvgIcon source={item.icon} size={24} color={theme.colors.bg_neutral} />
         <AppText colorTheme="text_primary"> {getLabel(item.name)}</AppText>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onSwitch}>
         {item.rightSide && item.name === 'language' ? (
           <TouchableOpacity
             style={styles.containTouchable}

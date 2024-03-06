@@ -19,7 +19,7 @@ export default async function base64File(url: string) {
 }
 
 export const openImagePickerCamera = async (
-  callBack: (image: string | undefined, base64?: string) => void,
+  callBack: (image: string | undefined, base64?: string,timeStamp?:any) => void,
 ) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
@@ -40,15 +40,16 @@ export const openImagePickerCamera = async (
       response?.assets?.[0].uri ||
       (response.assets && response.assets.length > 0)
     ) {
+      console.log(response.assets[0].fileSize,'fizesize')
       const selectedImage = response?.assets?.[0].uri;
-      base64Image = (await base64File(response.assets[0].uri!)) as any;
-      callBack(selectedImage, base64Image);
+      base64Image = response.assets[0].base64 as string;
+      callBack(selectedImage, base64Image,response.assets[0].timestamp);
     }
   });
 };
 
 export const openImagePicker = async (
-  callBack: (image: string | undefined, base64?: any) => void,
+  callBack: (image: string | undefined, base64?: any,timeStamp?:any) => void,
   maxWidth?: number,
   maxHeight?: number,
 ) => {
@@ -70,11 +71,12 @@ export const openImagePicker = async (
       console.log('Image picker error: ', response.errorMessage);
     } else if (response.assets && response.assets.length > 0) {
       const selectedImage = response.assets[0].uri;
+      
       // base64Image = await RNFS.readFile(selectedImage!, 'base64').then(res => {
       //   return res;
       // });
       base64Image = (await base64File(response.assets[0].uri!)) as any;
-      callBack(selectedImage, base64Image);
+      callBack(selectedImage, base64Image,response.assets[0].timestamp);
     }
   });
 };

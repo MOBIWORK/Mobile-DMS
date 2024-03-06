@@ -201,22 +201,21 @@ export const addFakeGPS = (data: ICheckFakeGPS) =>
   createApi().post(ApiConstant.CHECK_FAKE_GPS, data);
 
 export const getUserNoteReceived = () => {
-  createApi()
+  return createApi()
     .get(ApiConstant.GET_NOTE_USER_RECEIVED)
     .then(res => res.data);
 };
 export const postNoteUser = (data: any) => {
-  createApi()
+  return createApi()
     .post(ApiConstant.POST_NEW_NOTE_CHECKIN, data)
     .then(res => res.data);
 };
 export const getListNoteApi = () => {
-  createApi()
+  return createApi()
     .get(ApiConstant.GET_LIST_NOTE_API)
     .then(res => res.data);
 };
-export const createImageCheckinApi = (data: any) => {
+export const createImageCheckinApi = (data: any) =>
   createApi()
     .post(ApiConstant.CREATE_IMAGE_CHECKIN, data)
     .then(res => res.data);
-};

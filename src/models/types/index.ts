@@ -298,7 +298,7 @@ export type IDataCustomer = {
 export interface IDataCustomers {
   name: string;
   customer_name: string;
-  customer_id: string;
+  customer_code: string;
   customer_type: string;
   customer_group: string;
   territory: string;
@@ -780,6 +780,12 @@ export type IKpi = {
   kh_moi: number;
 };
 
+export type IReportVisit = {
+  chi_tieu: number;
+  dat_duoc: number;
+  phan_tram_thuc_hien: number;
+};
+
 export type IReportSales = {
   Kpi: {
     dat_duoc: number;
@@ -804,12 +810,6 @@ export type IReportRevenue = {
       doanh_thu: number;
     },
   ];
-};
-
-export type IReportVisit = {
-  chi_tieu: number;
-  dat_duoc: number;
-  phan_tram_thuc_hien: number;
 };
 
 export type IUser = {

@@ -1,10 +1,5 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react';
-import {
-  ExtendedTheme,
-  useNavigation,
-  useRoute,
-  useTheme,
-} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useRoute} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
   FlatList,
@@ -20,9 +15,11 @@ import {
   AppButton,
   AppContainer,
   AppHeader,
+  AppText,
+  Block,
   SvgIcon,
 } from '../../../components/common';
-import {Button} from 'react-native-paper';
+import {ActivityIndicator, Button, Modal} from 'react-native-paper';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import BottomSheet from '@gorhom/bottom-sheet';
 import SelectAlbum from './SelectAlbum';
@@ -33,9 +30,12 @@ import {CameraUtils} from '../../../utils';
 import {RouterProp} from '../../../navigation';
 import {CheckinData} from '../../../services/appService';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-import { dispatch } from '../../../utils/redux';
-import { useSelector } from '../../../config/function';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import {dispatch} from '../../../utils/redux';
+import {useSelector} from '../../../config/function';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import {shallowEqual} from 'react-redux';
+import {useTheme} from '../../../layouts/theme';
+import ProgressCircle from 'react-native-progress-circle';
 const TakePicture = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
@@ -47,8 +47,17 @@ const TakePicture = () => {
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
   const dataCheckIn = useRef<CheckinData>(params.data);
-  const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
-  const [message,setMessage] = useState<string>('')
+  const categoriesCheckin = useSelector(
+    state => state.checkin.categoriesCheckin,
+    shallowEqual,
+  );
+  const listImage = useSelector(
+    state => state.app.dataCheckIn?.listImage,
+    shallowEqual,
+  );
+  console.log(listImage)
+
+  const [message, setMessage] = useState<number>(0);
   const data = useRef<ImageCheckIn>({
     album_id: '',
     album_name: '',
@@ -68,45 +77,45 @@ const TakePicture = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handlePushImageData = useCallback(async () => {
+  const handlePushImageData = async () => {
     let totalItemsProcessed = 0;
     try {
       setLoading(true);
-
       for (let index = 0; index < albumImageData.length; index++) {
         if (data?.current) {
-          data.current.album_id = String(albumImageData[index].id);
+          data.current.album_id = String(albumImageData[index].id + 1);
           data.current.album_name = albumImageData[index].label;
         }
         const element = albumImageData[index].image;
         for (let i = 0; i < element.length; i++) {
           let image = element[i];
           if (data?.current) {
-            data.current.image = image.base64!;
-            dispatch(appActions.postImageCheckIn(data?.current));
+            data.current.image = image?.base64!;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise<void>(resolve => {
+              dispatch(appActions.postImageCheckIn(data.current));
+              resolve();
+            });
             totalItemsProcessed++;
+            setMessage(totalItemsProcessed);
           }
         }
       }
-
-     
     } catch (error) {
       console.error('Error during image processing', error);
     } finally {
+      console.log(`Done processing ${totalItemsProcessed} items`);
+      completeCheckin();
       setLoading(false);
-      setMessage(`Done processing ${totalItemsProcessed-1} items`)
-      console.log(`Done processing ${totalItemsProcessed-1} items`);
     }
-    completeCheckin();
-  }, [albumImageData, data]);
+  };
 
   const completeCheckin = () => {
-    const newData = categoriesCheckin.map(item => item.key === "camera" ? ({ ...item, isDone: true }) : item);
+    const newData = categoriesCheckin.map(item =>
+      item.key === 'camera' ? {...item, isDone: true} : item,
+    );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    navigation.goBack();
-}
-
-
+  };
 
   const handleCamera = async (item: IAlbumImage) => {
     await CameraUtils.openImagePickerCamera((img, base64) => {
@@ -178,13 +187,13 @@ const TakePicture = () => {
                 return (
                   <>
                     {index === 0 ? (
-                      <View style={{padding: 5, marginHorizontal: 4}}>
+                      <Block padding={5}  marginRight={4} marginLeft={4}  >
                         <Pressable
                           onPress={() => handleCamera(itemAlbum)}
                           style={styles.cameraImg}>
                           <SvgIcon source={'IconCamera'} size={24} />
                         </Pressable>
-                      </View>
+                      </Block>
                     ) : (
                       <View
                         style={{padding: 5, rowGap: 8, marginHorizontal: 4}}>
@@ -273,12 +282,43 @@ const TakePicture = () => {
         albumImageData={albumImageData}
         setAlbumImageData={setAlbumImageData}
       />
+
+      <Modal visible={loading} style={styles.modal}>
+        <Block
+          justifyContent="center"
+          alignItems="center"
+          colorTheme="white"
+          width={350}
+          marginTop={20}
+          marginBottom={20}
+          borderRadius={16}>
+          <Block marginTop={16}>
+            <AppText color="black">Đang cập nhật</AppText>
+          </Block>
+          <Block marginTop={16} marginBottom={16}>
+            <ProgressCircle
+              percent={30}
+              radius={50}
+              borderWidth={12}
+              color={theme.colors.success}
+              shadowColor={theme.colors.bg_disable}
+              bgColor="#fff">
+              <Text>{message}</Text>
+            </ProgressCircle>
+          </Block>
+        </Block>
+      </Modal>
     </MainLayout>
   );
 };
 export default TakePicture;
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
+    modal: {
+      justifyContent: 'center',
+      borderRadius: 16,
+      alignItems: 'center',
+    } as ViewStyle,
     header: {
       flex: 0.5,
       alignItems: 'flex-start',
@@ -400,5 +440,4 @@ const AlbumImageFake: IAlbumImage[] = [
       ImageAssets.ImgAppWatch,
     ],
   },
-  
 ];

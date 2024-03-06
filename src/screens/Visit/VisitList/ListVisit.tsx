@@ -275,6 +275,10 @@ const ListVisit = () => {
                 style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
                 data={listCustomer}
+                keyExtractor={(item,index) => item.customer_code}
+                decelerationRate={'fast'}
+                bounces={false}
+                initialNumToRender={5}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
                   <VisitItem

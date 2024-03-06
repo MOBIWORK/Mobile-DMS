@@ -21,6 +21,11 @@ export type TypeState = {
   orderDetail: CheckinOrderDetail | null;
   returnOrderDetail : CheckinOrderDetail | null,
   categoriesCheckin: any[];
+  listProgramCampaign:any,
+  selectedProgram:any,
+  listImageSelect:any,
+  imageToMark:any,
+  listProgramImage:any
 };
 
 export const categoriesCheckinList: IItemCheckIn[] = [
@@ -96,8 +101,12 @@ export enum Action {
   GET_NOTE = 'GET_NOTE_',
   GET_STAFF = 'GET_STAFF_',
   GET_NOTE_TYPE = 'GET_NOTE_TYPE_',
+  GET_LIST_PROGRAM_CAMPAIGN = 'GET_LIST_PROGRAM_CAMPAIGN_',
+  POST_IMAGE_SCORE = 'POST_IMAGE_SCORE_'
 }
 
 export const GET_NOTE_ACTIONS = Action.GET_NOTE + 'GET_NOTE';
 export const GET_STAFF_ACTIONS = Action.GET_STAFF + 'GET_STAFF';
 export const GET_NOTE_TYPE_ACTIONS = Action.GET_NOTE_TYPE + 'GET_NOTE_TYPE';
+export const GET_LIST_PROGRAM_CAMPAIGN = Action.GET_LIST_PROGRAM_CAMPAIGN + 'GET_LIST_PROGRAM_CAMPAIGN'
+export const POST_IMAGE_SCORE  = Action.POST_IMAGE_SCORE + 'POST_IMAGE_SCORE';

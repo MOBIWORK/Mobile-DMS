@@ -24,9 +24,9 @@ import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
 import {
   IKpi,
+  IReportVisit,
   IReportRevenue,
   IReportSales,
-  IReportVisit,
   IResOrganization,
   IUser,
   IWidget,
@@ -44,7 +44,7 @@ import CardLoading from './components/CardLoading';
 import ItemNotiLoading from './components/ItemNotiLoading';
 import UpdateScreen from '../UpdateScreen/UpdateScreen';
 
-import {dispatch} from '../../utils/redux';
+import {dispatch, getState} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
@@ -406,7 +406,7 @@ const HomeScreen = () => {
     };
     // setLoading(false);
     getLocation();
-    dispatch(appActions.onGetSystemConfig());
+    getSystemConfig();
     getWidget();
     getProfile();
     getCurrentShit();
@@ -415,6 +415,15 @@ const HomeScreen = () => {
     getReportRevenue();
     getReportVisit();
   }, []);
+
+  const getSystemConfig = () => {
+    const {systemConfig} = getState('app');
+    if (Object.keys(systemConfig).length > 0) {
+      return;
+    } else {
+      dispatch(appActions.onGetSystemConfig());
+    }
+  };
 
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
     console.log(
@@ -487,21 +496,21 @@ const HomeScreen = () => {
     [],
   );
   useEffect(() => {
-    codePush.sync(
-      {
-        updateDialog: {
-          appendReleaseDescription: true,
-          descriptionPrefix: 'Release',
-          title: 'Update Available',
-          optionalUpdateMessage: updateMessage,
-        },
-        installMode: codePush.InstallMode.ON_NEXT_RESTART,
-        mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
-      },
-      onSyncStatusChanged,
-      onDownloadProgress,
-    );
-    syncWithCodePush;
+    // codePush.sync(
+    //   {
+    //     updateDialog: {
+    //       appendReleaseDescription: true,
+    //       descriptionPrefix: 'Release',
+    //       title: 'Update Available',
+    //       optionalUpdateMessage: updateMessage,
+    //     },
+    //     installMode: codePush.InstallMode.ON_NEXT_RESTART,
+    //     mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+    //   },
+    //   onSyncStatusChanged,
+    //   onDownloadProgress,
+    // );
+    // syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
   if (error !== '') {
@@ -515,15 +524,18 @@ const HomeScreen = () => {
           <>
             <View style={[styles.shadow, styles.header]}>
               <View style={{flexDirection: 'row'}}>
-                {userProfile?.image ? (
+                {Object.keys(userProfile).length > 0 && userProfile?.image ? (
                   <AppAvatar url={userProfile.image} size={48} />
                 ) : (
-                  <AppAvatar name={userProfile?.employee_name} size={48} />
+                  <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
                 )}
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}> Xin chào ,</Text>
                   <Text style={[styles.userName]}>
-                    {userProfile ? userProfile.employee_name : ''}
+                    {Object.keys(userProfile) &&
+                    Object.keys(userProfile!)?.length > 0
+                      ? userProfile?.employee_name
+                      : ''}
                   </Text>
                 </View>
               </View>
