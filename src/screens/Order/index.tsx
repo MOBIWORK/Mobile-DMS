@@ -28,6 +28,7 @@ import { dispatch } from '../../utils/redux';
 import { useSelector } from '../../config/function';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from '../../layouts/ErrorBoundary';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 
 const OrderList = () => {
 
@@ -296,7 +297,7 @@ const OrderList = () => {
   };
 
 
-  const fetchData = () => {
+  const fetchData = async () => {
     dispatch(orderAction.onGetData({
       from_date: fromDate > 0 ? fromDate / 1000 : undefined,
       to_date: toDate > 0 ? toDate / 1000 : undefined,
