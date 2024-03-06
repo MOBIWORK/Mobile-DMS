@@ -9,6 +9,7 @@ const initState: TypeState = {
   dataTypeNote: [],
   orderDetail: null,
   categoriesCheckin: categoriesCheckinList,
+  returnOrderDetail: {},
   listProgramCampaign: {},
   selectedProgram: {},
   listImageSelect: [],
@@ -33,6 +34,9 @@ const checkinSlice = createSlice({
           break;
         case 'detailOrder':
           state.orderDetail = action.payload.data;
+          break;
+        case 'returnOrder':
+          state.returnOrderDetail = action.payload.data;
           break;
         default:
           break;
@@ -59,6 +63,7 @@ const checkinSlice = createSlice({
         (program: any) => program.campaign_name,
       );
 
+      // @ts-ignore
       const updatedPrograms = newPrograms.map((newProgram: any) => {
         const index = existingProgramNames.indexOf(newProgram.campaign_name);
         if (index !== -1) {

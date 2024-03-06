@@ -19,8 +19,8 @@ export type TypeState = {
   dataNote: NoteType[];
   dataStaff: StaffType[];
   dataTypeNote: any[];
-  orderDetail: CheckinOrderDetail | null;
-  returnOrderDetail : CheckinOrderDetail | null,
+  orderDetail: CheckinOrderDetail | null | any;
+  returnOrderDetail: CheckinOrderDetail | null | any;
   categoriesCheckin: any[];
   listProgramCampaign: any;
   selectedProgram: any;

@@ -119,9 +119,6 @@ const appSlice = createSlice({
     setUserProfile: (state, action: PayloadAction<any>) => {
       state.userProfile = action.payload;
     },
-    deleteList:(state) =>{
-      void(state.dataCheckIn.listImage = [])
-    }
   },
 });
 

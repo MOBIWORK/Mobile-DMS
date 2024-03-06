@@ -368,10 +368,10 @@ export type RootStackParamList = {
   [ScreenConstant.SEARCH_COMMON_SCREEN]: {type: string};
   [ScreenConstant.TAKE_PICTURE_SCORE]: {
     data: any;
-    screen:any
+    screen: any;
   };
-  [ScreenConstant.LIST_ALBUM_SCORE]:{
-    data:any
+  [ScreenConstant.LIST_ALBUM_SCORE]: {
+    data: any;
   };
   [ScreenConstant.USER_INFO_SCREEN]: undefined;
   [ScreenConstant.EDIT_ACCOUNT]: {title: string; content: string};
