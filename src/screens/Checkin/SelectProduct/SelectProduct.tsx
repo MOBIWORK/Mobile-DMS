@@ -3,11 +3,9 @@ import { MainLayout } from '../../../layouts'
 import { AppBottomSheet, AppButton, AppCheckBox, AppHeader, AppIcons, AppInput } from '../../../components/common'
 import { ApiConstant, AppConstant } from '../../../const'
 import { useNavigation } from '@react-navigation/native'
-import { Text, TextInput as Input, TextStyle, View, ViewStyle, TouchableOpacity, FlatList } from 'react-native'
-import { TextInput } from 'react-native-paper'
-
+import { Text, TextInput as Input, TextStyle, View, ViewStyle, TouchableOpacity, FlatList, Pressable } from 'react-native'
 import { StyleSheet } from 'react-native'
-import { Searchbar } from 'react-native-paper'
+import { Searchbar ,TextInput} from 'react-native-paper'
 import { ImageAssets } from '../../../assets'
 import { ICON_TYPE } from '../../../const/app.const'
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet'
@@ -115,6 +113,13 @@ const SelectProducts = () => {
                                     color={colors.text_primary}
                                 />
                                 <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_primary, marginLeft: 4 }]}>{item.item_code}</Text>
+                            </View>
+                        </View>
+
+                        <View style={[styles.flex as any, styles.itemRowIf]}>
+                            <Text style={[styles.labelIfPrd]}>{getLabel("productName")}</Text>
+                            <View style={[styles.flex as any]}>
+                                <Text style={[styles.labelIfPrd as TextStyle, { color: colors.text_primary, marginLeft: 4 }]}>{item.item_name}</Text>
                             </View>
                         </View>
 
@@ -510,13 +515,14 @@ const SelectProducts = () => {
                         showsVerticalScrollIndicator={false}
                     />
                 ) : (
-                    <View style={{ paddingHorizontal: 16 }}>
+                    <View style={{ paddingHorizontal: 16, flex: 1}}>
                         <FlatList
                             data={data}
-                            renderItem={({ item }) => <View>{renderUiItem(item)}</View>}
+                            renderItem={({ item }) => <Pressable>{renderUiItem(item)}</Pressable>}
                             onEndReached={() => setPage(page + 1)}
                             contentContainerStyle={{ rowGap: 16 }}
                             showsVerticalScrollIndicator={false}
+                            style={{flex :1}}
                         />
                     </View>
                 )}
