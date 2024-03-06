@@ -79,6 +79,7 @@ import {CommonUtils} from '../utils';
 import {PortalHost} from '../components/common/portal';
 import {CheckinData} from '../services/appService';
 import {AppState, AppStateStatus} from 'react-native';
+import { shallowEqual } from 'react-redux';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
