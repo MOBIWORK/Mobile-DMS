@@ -589,6 +589,7 @@ export type IOrderList = {
   grand_total: number;
   rounding_adjustment: number;
   rounded_total: number;
+  creation: number
 };
 
 export type ItemProductOrder = {
