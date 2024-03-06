@@ -47,6 +47,8 @@ import KPI from './Report/Sale/KPI';
 import SearchSreen from "./Search"
 import ListAlbumScore from './Checkin/ListAlbumScore/index';
 import TakePictureScore from './Checkin/TakePictureScore';
+import UserInfoScreen from './Profile/UserInfoScreen';
+import EditAccount from './Profile/EditAccount';
 
 export {
   SelectOrganization,
@@ -97,5 +99,7 @@ export {
   UpdateScreen,
   SearchSreen,
   ListAlbumScore,
-  TakePictureScore
+  TakePictureScore,
+  UserInfoScreen,
+  EditAccount,
 };

@@ -1,5 +1,4 @@
 import React, {useLayoutEffect, useRef, useState} from 'react';
-import {MainLayout} from '../../../layouts';
 import {AppButton, AppHeader, SvgIcon} from '../../../components/common';
 import {
   ExtendedTheme,
@@ -15,6 +14,7 @@ import BackgroundGeolocation, {
 import {ApiConstant, AppConstant} from '../../../const';
 import {
   Image,
+  Keyboard,
   StyleSheet,
   Text,
   TextInput,
@@ -25,7 +25,7 @@ import {
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {LocationProps} from '../../Visit/VisitList/VisitItem';
 import {KeyAbleProps} from '../../../models/types';
@@ -33,9 +33,8 @@ import {CommonUtils} from '../../../utils';
 import {AppService, CheckinService} from '../../../services';
 import {IUpdateAddress} from '../../../services/checkInService';
 import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
-import { useSelector } from '../../../config/function';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
-
+import {useSelector} from '../../../config/function';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -47,7 +46,9 @@ const CheckInLocation = () => {
   const {bottom} = useSafeAreaInsets();
   const styles = createStyle(theme);
   const {t: getLabel} = useTranslation();
-  const categoriesCheckin = useSelector(state =>state.checkin.categoriesCheckin)
+  const categoriesCheckin = useSelector(
+    state => state.checkin.categoriesCheckin,
+  );
   const customer_location: LocationProps =
     route.params?.data &&
     JSON.parse(route.params.data.item.customer_location_primary);
@@ -58,17 +59,21 @@ const CheckInLocation = () => {
   );
   const mapboxCameraRef = useRef<CameraRef>(null);
 
-  const handleRegainLocation = () => {
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-      .then(location => {
-        mapboxCameraRef.current &&
-          mapboxCameraRef.current.moveTo(
-            [location.coords.longitude, location.coords.latitude],
-            1000,
-          );
-        setLocation(location);
-      })
-      .catch(e => console.log('err', e));
+  const handleRegainLocation = async () => {
+    const newLocation = await BackgroundGeolocation.getCurrentPosition({
+      samples: 1,
+      timeout: 3,
+    });
+    mapboxCameraRef.current &&
+      mapboxCameraRef.current.moveTo(
+        [newLocation.coords.longitude, newLocation.coords.latitude],
+        1000,
+      );
+    setLocation(location);
+    await handleMarkerMap(
+      newLocation?.coords.latitude,
+      newLocation?.coords.longitude,
+    );
   };
 
   const handleSearchText = async (text: string) => {
@@ -92,6 +97,7 @@ const CheckInLocation = () => {
   };
 
   const handleMarkerMap = async (lat: number, lng: number) => {
+    Keyboard.dismiss();
     setLocation({
       // @ts-ignore
       coords: {
@@ -110,7 +116,6 @@ const CheckInLocation = () => {
       dispatch(setProcessingStatus(true));
       await CommonUtils.CheckNetworkState();
       const split = value.split(',', 4);
-      // console.log('split', split[5] ?? '---');
       const params: IUpdateAddress = {
         customer: route.params.data.item.name,
         long: location?.coords.longitude ?? 0,
@@ -121,9 +126,7 @@ const CheckInLocation = () => {
         city: split[3] ?? '',
         country: 'Việt Nam',
       };
-      const response:any = await CheckinService.updateCustomerAddress(
-        params,
-      );
+      const response: any = await CheckinService.updateCustomerAddress(params);
       if (response?.status === ApiConstant.STT_OK) {
         navigation.goBack();
       }
@@ -135,17 +138,14 @@ const CheckInLocation = () => {
   };
 
   const completeCheckin = () => {
-    const newData = categoriesCheckin.map(item => item.key === "location" ? ({ ...item, isDone: true }) : item);
+    const newData = categoriesCheckin.map(item =>
+      item.key === 'location' ? {...item, isDone: true} : item,
+    );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
     navigation.goBack();
-}
+  };
 
   useLayoutEffect(() => {
-    // BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-    //   .then(location => {
-    //     setLocation(location);
-    //   })
-    //   .catch(e => console.log('err', e));
     setLocation({
       // @ts-ignore
       coords: {
@@ -156,18 +156,18 @@ const CheckInLocation = () => {
   }, []);
 
   return (
-    <MainLayout
-      style={{backgroundColor: theme.colors.bg_neutral, paddingHorizontal: 0}}>
+    <SafeAreaView
+      style={{backgroundColor: theme.colors.bg_default, paddingHorizontal: 0}}>
       <AppHeader
-        style={{paddingHorizontal: 16, flex: 0.5}}
+        style={{paddingHorizontal: 16}}
         onBack={() => navigation.goBack()}
-        label={'Vị trí'}
+        label={getLabel('location')}
       />
       <View
         style={{
           overflow: 'hidden',
           width: '100%',
-          flex: 9,
+          height: AppConstant.HEIGHT,
         }}>
         <Mapbox.MapView
           pitchEnabled={false}
@@ -175,7 +175,7 @@ const CheckInLocation = () => {
           scaleBarEnabled={false}
           styleURL={Mapbox.StyleURL.Street}
           logoEnabled={false}
-          style={{flex: 1}}
+          style={{flex: 1, zIndex: 10, position: 'absolute'}}
           onPress={feature =>
             handleMarkerMap(
               // @ts-ignore
@@ -184,6 +184,15 @@ const CheckInLocation = () => {
               feature.geometry.coordinates[0],
             )
           }>
+          <Mapbox.RasterSource
+            id="adminmap"
+            tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+            <Mapbox.RasterLayer
+              id={'adminmap'}
+              sourceID={'admin'}
+              style={{visibility: 'visible'}}
+            />
+          </Mapbox.RasterSource>
           <Mapbox.Camera
             ref={mapboxCameraRef}
             centerCoordinate={[
@@ -203,40 +212,40 @@ const CheckInLocation = () => {
               <SvgIcon source={'LocationCheckIn'} size={40} />
             </Mapbox.MarkerView>
           )}
-          <View style={styles.searchContainer}>
-            <Image
-              source={ImageAssets.MapPinFillIcon}
-              style={{width: 24, height: 24}}
-              resizeMode={'cover'}
-              tintColor={theme.colors.text_secondary}
-            />
-            <TextInput
-              style={styles.textInput}
-              value={value}
-              onChangeText={setValue}
-              onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}
-              onBlur={() => handleSearchText(value)}
-            />
-          </View>
-          <TouchableOpacity
-            onPress={handleRegainLocation}
-            style={styles.regainPosition}>
-            <Image
-              source={ImageAssets.MapIcon}
-              style={{width: 16, height: 16}}
-              resizeMode={'cover'}
-              tintColor={theme.colors.bg_default}
-            />
-            <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
-              {getLabel('currentPosition')}
-            </Text>
-          </TouchableOpacity>
-          <View style={[styles.buttonFooter, {bottom: bottom}]}>
-            <AppButton label={getLabel('completed')} onPress={handleComplete} />
-          </View>
         </Mapbox.MapView>
+        <View style={styles.searchContainer}>
+          <Image
+            source={ImageAssets.MapPinFillIcon}
+            style={{width: 24, height: 24}}
+            resizeMode={'cover'}
+            tintColor={theme.colors.text_secondary}
+          />
+          <TextInput
+            style={styles.textInput}
+            value={value}
+            onChangeText={setValue}
+            onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}
+            onBlur={() => handleSearchText(value)}
+          />
+        </View>
+        <TouchableOpacity
+          onPress={handleRegainLocation}
+          style={styles.regainPosition}>
+          <Image
+            source={ImageAssets.MapIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+            tintColor={theme.colors.bg_default}
+          />
+          <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
+            {getLabel('currentPosition')}
+          </Text>
+        </TouchableOpacity>
+        <View style={[styles.buttonFooter, {bottom: bottom + 80}]}>
+          <AppButton label={getLabel('completed')} onPress={handleComplete} />
+        </View>
       </View>
-    </MainLayout>
+    </SafeAreaView>
   );
 };
 export default CheckInLocation;
@@ -251,8 +260,10 @@ const createStyle = (theme: ExtendedTheme) =>
       backgroundColor: theme.colors.bg_default,
       alignItems: 'center',
       justifyContent: 'flex-start',
-      padding: 16,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
       top: 20,
+      position: 'absolute',
     } as ViewStyle,
     textInput: {
       color: theme.colors.text_primary,
@@ -263,14 +274,15 @@ const createStyle = (theme: ExtendedTheme) =>
       paddingHorizontal: 16,
       paddingVertical: 8,
       backgroundColor: theme.colors.action,
-      marginTop: 32,
-      maxWidth: '50%',
       alignSelf: 'flex-end',
       marginRight: 24,
       borderRadius: 10,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 100,
+      right: 0,
     } as ViewStyle,
     buttonFooter: {
       position: 'absolute',

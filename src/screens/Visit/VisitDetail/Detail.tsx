@@ -1,5 +1,9 @@
 import React, {FC} from 'react';
-import {ItemNoteVisitDetail, VisitListItemType} from '../../../models/types';
+import {
+  ItemNoteVisitDetail,
+  IVisitRouteDetail,
+  VisitListItemType,
+} from '../../../models/types';
 import {
   FlatList,
   Image,
@@ -16,8 +20,9 @@ import StatisticalItem from './StatisticalItem';
 import {NavigationProp} from '../../../navigation';
 import {ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
+import {CommonUtils} from '../../../utils';
 
-const Detail: FC<VisitItemProps> = ({item}) => {
+const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
@@ -167,8 +172,22 @@ const Detail: FC<VisitItemProps> = ({item}) => {
   const _renderInfo = () => {
     return (
       <View style={styles.viewContainer}>
-        {infoItem(true, 'Phương Huyền - 17/11/2023, 11:00')}
-        {infoItem(false, 'Phương Huyền - 17/11/2023, 11:00')}
+        {infoItem(
+          true,
+          otherInfo?.don_hang_cuoi
+            ? `${otherInfo.nv_dat_hang} - ${CommonUtils.convertDate(
+                otherInfo.don_hang_cuoi,
+              )}, ${CommonUtils.formatTime2(otherInfo.don_hang_cuoi)}`
+            : getLabel('noOrder'),
+        )}
+        {infoItem(
+          false,
+          otherInfo?.vieng_tham_cuoi
+            ? `${otherInfo.nv_vieng_tham} - ${CommonUtils.convertDate(
+                otherInfo.vieng_tham_cuoi,
+              )}, ${CommonUtils.formatTime2(otherInfo.vieng_tham_cuoi)}`
+            : getLabel('noVisit'),
+        )}
       </View>
     );
   };
@@ -212,7 +231,10 @@ const Detail: FC<VisitItemProps> = ({item}) => {
   return (
     <>
       {item.is_checkin && (
-        <StatisticalItem orderCount={15} payment={10000000} />
+        <StatisticalItem
+          orderCount={otherInfo?.so_don_trong_thang ?? 0}
+          payment={otherInfo?.doanh_thu_thang ?? 0}
+        />
       )}
       {_renderCustomer()}
       {_renderInfo()}
@@ -245,6 +267,7 @@ const Detail: FC<VisitItemProps> = ({item}) => {
 };
 interface VisitItemProps {
   item: VisitListItemType;
+  otherInfo: IVisitRouteDetail | undefined;
 }
 
 export default Detail;

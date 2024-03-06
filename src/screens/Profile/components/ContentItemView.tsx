@@ -68,9 +68,13 @@ const ContentItemView = (props: Props) => {
             <Text>{''}</Text>
             <SvgIcon source="ArrowDown" size={16} />
           </TouchableOpacity>
-        ) : item.rightSide && item.name === 'theme' ? (
+        ) : item.rightSide && item.name === 'darkMode' ? (
           <View>
-            <AppSwitch type="none" onSwitch={onSwitch}  status={appTheme === 'dark' ? false : true} />
+            <AppSwitch
+              type="none"
+              onSwitch={onSwitch}
+              status={appTheme === 'dark'}
+            />
           </View>
         ) : null}
       </TouchableOpacity>

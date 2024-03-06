@@ -63,8 +63,8 @@ import {
   Inventory,
   RouteResult,
   CheckinSelectProdct,
-  TakePictureScore,
-  ListAlbumScore,
+  UserInfoScreen,
+  EditAccount,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -76,7 +76,6 @@ import {useSelector} from '../config/function';
 import {RXStore} from '../utils/redux';
 import {CommonUtils} from '../utils';
 import {PortalHost} from '../components/common/portal';
-import {shallowEqual} from 'react-redux';
 import {CheckinData} from '../services/appService';
 import {AppState, AppStateStatus} from 'react-native';
 
@@ -85,13 +84,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const theme = useSelector(state => state.app.theme);
-  const dataCheckIn: CheckinData = useSelector(
-    state => state.app.dataCheckIn,
-    shallowEqual,
-  );
-  const [appState, setAppState] = useState<AppStateStatus>(
-    AppState.currentState,
-  );
+
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
 
   // const [organiztion] = useMMKVObject<IResOrganization>(
@@ -301,6 +294,12 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.LIST_ALBUM_SCORE}
           component={ListAlbumScore}
           options={{headerShown:false}}
+          name={ScreenConstant.USER_INFO_SCREEN}
+          component={UserInfoScreen}
+        />
+        <Stack.Screen
+          name={ScreenConstant.EDIT_ACCOUNT}
+          component={EditAccount}
         />
       </Stack.Navigator>
       {children}
@@ -374,6 +373,8 @@ export type RootStackParamList = {
   [ScreenConstant.LIST_ALBUM_SCORE]:{
     data:any
   };
+  [ScreenConstant.USER_INFO_SCREEN]: undefined;
+  [ScreenConstant.EDIT_ACCOUNT]: {title: string; content: string};
 };
 
 // Define prop type for useNavigation and useRoute

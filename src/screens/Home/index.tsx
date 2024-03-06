@@ -4,7 +4,7 @@ import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
 
 import ProgressCircle from 'react-native-progress-circle';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {useNavigation} from '@react-navigation/native';
@@ -24,11 +24,12 @@ import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
 import {
   IKpi,
+  IReportRevenue,
+  IReportSales,
   IReportVisit,
   IResOrganization,
   IUser,
   IWidget,
-  VisitListItemType,
 } from '../../models/types';
 import ItemWidget from '../../components/Widget/ItemWidget';
 import {NavigationProp} from '../../navigation';
@@ -37,7 +38,6 @@ import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation';
-import VisitItem from '../Visit/VisitList/VisitItem';
 import {rootStyles} from './styles';
 import ItemLoading from './components/ItemLoading';
 import CardLoading from './components/CardLoading';
@@ -50,7 +50,6 @@ import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
-import {shallowEqual} from 'react-redux';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -60,11 +59,8 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
 
-  const [visitItemSelected, setVisitItemSelected] =
-    useState<VisitListItemType | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const {bottom} = useSafeAreaInsets();
 
   // const showModal = useSelector(state => state.app.showModal);
   const userProfile: IUser = useSelector(state => state.app.userProfile);
@@ -107,7 +103,9 @@ const HomeScreen = () => {
   ]);
 
   const [KpiValue, setKpiValue] = useState<IKpi | null>(null);
-  const [visitValue, setVisitValue] = useState<IReportVisit | null>(null);
+  const [salesValue, setSaleValue] = useState<IReportSales | null>(null);
+  const [revenueValue, setRevenueValue] = useState<IReportRevenue | null>(null);
+  const [visitValue, setVisitValue] = useState<IReportVisit>();
   const [widgets, setWidgets] = useMMKVString(AppConstant.Widget);
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
 
@@ -124,7 +122,6 @@ const HomeScreen = () => {
       setWidgets(JSON.stringify(arrWg));
     }
   };
-  getWidget();
 
   const renderUiWidget = () => {
     return (
@@ -350,11 +347,40 @@ const HomeScreen = () => {
     }
   };
 
+  const getReportSales = async () => {
+    const response: any = await ReportService.getReportSales();
+    if (Object.keys(response?.result).length > 0) {
+      const data: IReportSales = response.result;
+      setSaleValue(data);
+    }
+  };
+
+  const getReportRevenue = async () => {
+    const response: any = await ReportService.getReportRevenue();
+    if (Object.keys(response?.result).length > 0) {
+      const data: IReportRevenue = response.result;
+      setRevenueValue(data);
+    }
+  };
+
   const getReportVisit = async () => {
     const response: any = await ReportService.getReportVisit();
     if (Object.keys(response?.result).length > 0) {
       setVisitValue(response.result);
     }
+  };
+
+  const handleRegainLocation = async () => {
+    const newLocation = await BackgroundGeolocation.getCurrentPosition({
+      samples: 1,
+      timeout: 3,
+    });
+    mapboxCameraRef.current &&
+      mapboxCameraRef.current.moveTo(
+        [newLocation.coords.longitude, newLocation.coords.latitude],
+        1000,
+      );
+    setLocation(location);
   };
 
   useEffect(() => {
@@ -369,7 +395,6 @@ const HomeScreen = () => {
         },
         location => {
           setLocation(location);
-          console.log(location, 'location');
           dispatch(appActions.onSetCurrentLocation(location));
           mapboxCameraRef.current?.flyTo(
             [location.coords.longitude, location.coords.latitude],
@@ -382,9 +407,13 @@ const HomeScreen = () => {
     // setLoading(false);
     getSystemConfig();
     getLocation();
+    dispatch(appActions.onGetSystemConfig());
+    getWidget();
     getProfile();
     getCurrentShit();
     getReportKPI();
+    getReportSales();
+    getReportRevenue();
     getReportVisit();
   }, []);
   const getSystemConfig = () => {
@@ -484,7 +513,7 @@ const HomeScreen = () => {
     // syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
-  if (error != '') {
+  if (error !== '') {
     Alert.alert(error);
   }
 
@@ -537,20 +566,34 @@ const HomeScreen = () => {
                     </Text>
                     <View style={[styles.flex, {marginTop: 8}]}>
                       <AppIcons
-                        iconType="AntIcon"
-                        name="clockcircleo"
-                        size={12}
-                        color={colors.text_secondary}
+                        iconType={
+                          currentShit?.shift_type_now
+                            ? AppConstant.ICON_TYPE.AntIcon
+                            : AppConstant.ICON_TYPE.MateriallIcon
+                        }
+                        name={
+                          currentShit?.shift_type_now
+                            ? 'clockcircleo'
+                            : 'report-problem'
+                        }
+                        size={16}
+                        color={
+                          currentShit?.shift_type_now
+                            ? colors.text_secondary
+                            : colors.error
+                        }
                       />
                       <Text
                         style={{
                           marginLeft: 5,
                           fontSize: 16,
-                          color: colors.text_secondary,
+                          color: currentShit?.shift_type_now
+                            ? colors.text_secondary
+                            : colors.error,
                         }}>
-                        {currentShit
+                        {currentShit?.shift_type_now
                           ? `${currentShit.shift_type_now.start_time} - ${currentShit.shift_type_now.end_time}`
-                          : ''}
+                          : getLabel('noShirtNow')}
                       </Text>
                     </View>
                   </View>
@@ -558,14 +601,16 @@ const HomeScreen = () => {
                     style={[
                       styles.btnTimekeep,
                       {
-                        backgroundColor:
-                          currentShit?.shift_status ||
-                          currentShit?.shift_status === 'Vào'
-                            ? colors.error
-                            : colors.success,
+                        backgroundColor: !currentShit?.shift_type_now
+                          ? colors.bg_disable
+                          : currentShit?.shift_status ||
+                            currentShit?.shift_status === 'Vào'
+                          ? colors.error
+                          : colors.success,
                       },
                     ]}
-                    onPress={openToDeeplink}>
+                    onPress={openToDeeplink}
+                    disabled={!currentShit?.shift_type_now}>
                     <Image
                       source={ImageAssets.Usercheckin}
                       resizeMode={'cover'}
@@ -588,10 +633,12 @@ const HomeScreen = () => {
                     {loading ? (
                       <CardLoading />
                     ) : (
-                      <BarChartStatistical color={colors.action} />
+                      <BarChartStatistical
+                        color={colors.action}
+                        isSales
+                        data={salesValue}
+                      />
                     )}
-
-                    {/* <BarChartStatistical color={colors.action} /> */}
                   </View>
                 </View>
 
@@ -605,7 +652,11 @@ const HomeScreen = () => {
                     {loading ? (
                       <CardLoading />
                     ) : (
-                      <BarChartStatistical color={colors.main} />
+                      <BarChartStatistical
+                        isSales={false}
+                        color={colors.main}
+                        data={revenueValue}
+                      />
                     )}
                   </View>
                 </View>
@@ -647,67 +698,66 @@ const HomeScreen = () => {
                   )}
                 </View>
 
-                <View>
-                  <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>
-                      {getLabel('visitMap')}
-                    </Text>
-                  </View>
-
-                  <View style={styles.map}>
-                    <Mapbox.MapView
-                      pitchEnabled={false}
-                      // pointerEvents='none'
-                      scrollEnabled={true}
-                      attributionEnabled={false}
-                      gestureSettings={{
-                        doubleTapToZoomInEnabled: true,
-                      }}
-                      // scaleBarEnabled={false}
-                      styleURL={Mapbox.StyleURL.Street}
-                      logoEnabled={false}
-                      style={{
-                        width: '98%',
-                        height: 360,
-                        borderRadius: 16,
-                        zIndex: 100,
-                      }}>
-                      <Mapbox.Camera
-                        ref={mapboxCameraRef}
-                        centerCoordinate={[
-                          location?.coords.longitude ?? 0,
-                          location?.coords.latitude ?? 0,
-                        ]}
-                        animationMode={'flyTo'}
-                        animationDuration={500}
-                        zoomLevel={17}
-                      />
-                      <Mapbox.UserLocation
-                        visible={true}
-                        animated
-                        androidRenderMode="gps"
-                        showsUserHeadingIndicator={true}
-                      />
-
-                      {visitItemSelected && (
-                        <View
-                          style={{
-                            position: 'absolute',
-                            bottom: bottom + 16,
-                            left: 24,
-                            zIndex: 999,
-                            right: 24,
-                          }}>
-                          <VisitItem
-                            item={visitItemSelected}
-                            handleClose={() => setVisitItemSelected(null)}
-                          />
-                        </View>
-                      )}
-                    </Mapbox.MapView>
-                  </View>
+                <View style={[styles.flexSpace]}>
+                  <Text style={[styles.tilteSection]}>
+                    {getLabel('visitMap')}
+                  </Text>
                 </View>
 
+                <View style={styles.map}>
+                  <Mapbox.MapView
+                    pitchEnabled={false}
+                    attributionEnabled={false}
+                    scaleBarEnabled={false}
+                    zoomEnabled={false}
+                    logoEnabled={false}
+                    styleURL={Mapbox.StyleURL.Street}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      zIndex: 10,
+                      position: 'absolute',
+                    }}>
+                    <Mapbox.RasterSource
+                      id="adminmap"
+                      tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                      <Mapbox.RasterLayer
+                        id={'adminmap'}
+                        sourceID={'admin'}
+                        style={{visibility: 'visible'}}
+                      />
+                    </Mapbox.RasterSource>
+                    <Mapbox.Camera
+                      ref={mapboxCameraRef}
+                      centerCoordinate={[
+                        location?.coords.longitude ?? 0,
+                        location?.coords.latitude ?? 0,
+                      ]}
+                      animationMode={'flyTo'}
+                      animationDuration={500}
+                      zoomLevel={12}
+                    />
+                    <Mapbox.UserLocation
+                      visible={true}
+                      animated
+                      androidRenderMode="gps"
+                      showsUserHeadingIndicator={true}
+                    />
+                  </Mapbox.MapView>
+                  <TouchableOpacity
+                    onPress={handleRegainLocation}
+                    style={styles.regainPosition}>
+                    <Image
+                      source={ImageAssets.MapIcon}
+                      style={{width: 16, height: 16}}
+                      resizeMode={'cover'}
+                      tintColor={colors.bg_default}
+                    />
+                    <Text style={{color: colors.bg_default, marginLeft: 4}}>
+                      {getLabel('currentPosition')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
                 <View>
                   <View style={[styles.flexSpace]}>
                     <Text style={[styles.tilteSection]}>Thông báo nội bộ</Text>
@@ -717,7 +767,7 @@ const HomeScreen = () => {
                       }>
                       <Text
                         style={[styles.tilteSection, {color: colors.action}]}>
-                        Tất cả
+                        {getLabel('all')}
                       </Text>
                     </TouchableOpacity>
                   </View>
