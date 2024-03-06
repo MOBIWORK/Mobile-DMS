@@ -154,8 +154,6 @@ export const rootStyles = (theme: AppTheme) =>
       width: '100%',
       height: 360,
       borderRadius: 16,
-      alignContent: 'center',
-      alignItems: 'center',
       overflow: 'hidden',
     } as ViewStyle,
     editView: {
@@ -176,5 +174,20 @@ export const rootStyles = (theme: AppTheme) =>
     containProgressView: {
       flexDirection: 'row',
       flexWrap: 'wrap',
+    } as ViewStyle,
+    regainPosition: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.action,
+      alignSelf: 'flex-end',
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 16,
+      right: 0,
+      zIndex: 99999999,
     } as ViewStyle,
   });

@@ -21,7 +21,7 @@ type Props = {
 const AppSwitch = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const {onSwitch, status = true} = props;
+  const {onSwitch, status = false} = props;
   // ()
   const switchTranslate = useSharedValue(0);
   // state for activate Switch
@@ -32,23 +32,27 @@ const AppSwitch = (props: Props) => {
   });
   const textValue = useSharedValue(0);
   const [isText, setIsText] = useState<boolean>(
-    props.title !== '' || props.title !== undefined ? true : false,
+    props.title !== '' || props.title !== undefined,
   );
 
   // const progress = useSharedValue(() =>{return withTiming(active ? 22 :0)})
 
   useEffect(() => {
-    if (props.title != '' && props.title != undefined) {
+    if (props.title !== '' && props.title !== undefined) {
       setIsText(true);
     } else {
       setIsText(false);
     }
 
     if (active) {
-      if (isText === true) {
-        switchTranslate.value = 68;
-        textValue.value = 8;
-      } else if (props.title === undefined) {
+      if (isText) {
+        if (props.type === 'none') {
+          switchTranslate.value = 22;
+        } else {
+          switchTranslate.value = 68;
+          textValue.value = 8;
+        }
+      } else if (props.title === '' || props.title === undefined) {
         switchTranslate.value = 22;
         // textValue.value = 60;
       } else {
@@ -61,7 +65,8 @@ const AppSwitch = (props: Props) => {
 
       // setText(false);
     }
-  }, [active, switchTranslate, onSwitch, props.title, textValue]);
+  }, [active, switchTranslate, onSwitch, props.title, textValue, status]);
+
   const customSpringStyles = useAnimatedStyle(() => {
     return {
       transform: [
@@ -128,8 +133,7 @@ const AppSwitch = (props: Props) => {
           <Animated.View
             style={[styles.circle(props.title), customSpringStyles]}
           />
-          <Animated.Text
-            style={[styles.positionText(active), textSpringStyles]}>
+          <Animated.Text style={[styles.positionText, textSpringStyles]}>
             {props.title}
           </Animated.Text>
         </Animated.View>
@@ -139,8 +143,7 @@ const AppSwitch = (props: Props) => {
           <Animated.View
             style={[styles.circle(props.title), customSpringStyles]}
           />
-          <Animated.Text
-            style={[styles.positionText(active), textSpringStyles]}>
+          <Animated.Text style={[styles.positionText, textSpringStyles]}>
             {props.title}
           </Animated.Text>
         </Animated.View>
@@ -155,7 +158,7 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: (text: string | undefined) =>
       ({
-        width: text != undefined ? 90 : 50,
+        width: text !== undefined ? 90 : 50,
         height: 28,
         borderRadius: 30,
         justifyContent: 'center',
@@ -163,8 +166,8 @@ const rootStyles = (theme: AppTheme) =>
       } as ViewStyle),
     circle: (text: string | undefined) =>
       ({
-        width: text != undefined ? 18 : 24,
-        height: text != undefined ? 18 : 24,
+        width: text !== undefined ? 18 : 24,
+        height: text !== undefined ? 18 : 24,
         borderRadius: 30,
         backgroundColor: 'white',
         shadowColor: 'black',
@@ -176,16 +179,15 @@ const rootStyles = (theme: AppTheme) =>
         shadowRadius: 2.5,
         elevation: 4,
       } as ViewStyle),
-    positionText: (isText: boolean) =>
-      ({
-        position: 'absolute',
-        left: 2,
-        top: 6,
-        bottom: 0,
-        right: 0,
-        zIndex: 1000,
-        fontSize: 12,
-        fontWeight: '400',
-        color: theme.colors.white,
-      } as TextStyle),
+    positionText: {
+      position: 'absolute',
+      left: 2,
+      top: 6,
+      bottom: 0,
+      right: 0,
+      zIndex: 1000,
+      fontSize: 12,
+      fontWeight: '400',
+      color: theme.colors.white,
+    } as TextStyle,
   });

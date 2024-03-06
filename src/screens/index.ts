@@ -44,7 +44,9 @@ import VisitResult from './Report/Route/VisitResult';
 import NewCustomer from './Report/Sale/NewCustomer';
 import ReportDebt from './Report/Debt/ReportDebt';
 import KPI from './Report/Sale/KPI';
-import SearchSreen from "./Search"
+import SearchSreen from './Search';
+import UserInfoScreen from './Profile/UserInfoScreen';
+import EditAccount from './Profile/EditAccount';
 
 export {
   SelectOrganization,
@@ -93,5 +95,7 @@ export {
   ReportDebt,
   KPI,
   UpdateScreen,
-  SearchSreen
+  SearchSreen,
+  UserInfoScreen,
+  EditAccount,
 };

@@ -52,8 +52,10 @@ const IconFilter = require('./iconFilter.png');
 const IconBill = require('./ic-solar_bill.png');
 const IconOrder = require('./icfile.png');
 const IconKebab = require('./kebab.png');
-const LogoMBW  = require('./logoMBW.png')
-const NoDataImage = require('./noImage.jpg')
+const LogoMBW = require('./logoMBW.png');
+const NoDataImage = require('./noImage.jpg');
+const CameraSelect = require('./cameraSelect.png');
+const ImageLibrary = require('./imageLibrary.png');
 
 export {
   IconBill,
@@ -110,5 +112,7 @@ export {
   ChevronUpIcon,
   CalenderIcon,
   IconKebab,
-  NoDataImage
+  NoDataImage,
+  CameraSelect,
+  ImageLibrary,
 };

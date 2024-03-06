@@ -70,8 +70,10 @@ const Customer = () => {
     shallowEqual,
   );
   const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
-  const page = useSelector(state => state.customer.listCustomer.page_number,shallowEqual)
-
+  const page = useSelector(
+    state => state.customer.listCustomer.page_number,
+    shallowEqual,
+  );
 
   const location: Location = useSelector(
     state => state.app.currentLocation,
@@ -119,12 +121,12 @@ const Customer = () => {
     handleBackgroundLocation();
     let newData: IDataCustomers[] =
       listCustomer?.length > 0 ? [...listCustomer] : [];
-    if (value.first === getLabel('nearest') ) {
+    if (value.first === getLabel('nearest')) {
       // console.log(newData,'data')
 
       const sortData = newData?.sort((a, b) => {
         const locationA: LocationProps = JSON.parse(
-           a.customer_location_primary !== null && a?.customer_location_primary,
+          a.customer_location_primary !== null && a?.customer_location_primary,
         );
         const locationB: LocationProps = JSON.parse(
           b.customer_location_primary !== null && b?.customer_location_primary,
@@ -210,7 +212,6 @@ const Customer = () => {
       const newData = listCustomer?.filter(
         item => item.customer_type === valueFilter.customerType,
       );
-      console.log(newData, 'customerType');
       setCustomerData(newData);
       bottomRef2.current?.close();
     } else if (
@@ -249,7 +250,11 @@ const Customer = () => {
 
   const listFooter = useMemo(() => {
     return (
-      <Block justifyContent="center" alignItems="center" marginTop={8} marginBottom={8}>
+      <Block
+        justifyContent="center"
+        alignItems="center"
+        marginTop={8}
+        marginBottom={8}>
         <ActivityIndicator size={'small'} color={theme.colors.primary} />
       </Block>
     );
@@ -258,12 +263,10 @@ const Customer = () => {
   const onEndReachedThreshold = useCallback(() => {
     if (page <= totalPage.current) {
       dispatch(customerActions.getCustomerNewPage(page + 1));
-      console.log('runnnnnnn')
-    }else{
-      return null
+    } else {
+      return null;
     }
     // dispatch(customerActions.getCustomerNewPage(1));
-
   }, [listCustomerResult]);
 
   const renderBottomView = () => {

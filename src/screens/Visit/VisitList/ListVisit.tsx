@@ -1,5 +1,6 @@
 import React, {
   FC,
+  memo,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -294,6 +295,15 @@ const ListVisit = () => {
               styleURL={Mapbox.StyleURL.Street}
               logoEnabled={false}
               style={{flex: 1}}>
+              <Mapbox.RasterSource
+                id="adminmap"
+                tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                <Mapbox.RasterLayer
+                  id={'adminmap'}
+                  sourceID={'admin'}
+                  style={{visibility: 'visible'}}
+                />
+              </Mapbox.RasterSource>
               <Mapbox.Camera
                 centerCoordinate={[
                   location?.coords.longitude ?? 0,
@@ -325,21 +335,21 @@ const ListVisit = () => {
                 androidRenderMode="gps"
                 showsUserHeadingIndicator={true}
               />
-              {visitItemSelected && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    bottom: bottom + 70,
-                    left: 24,
-                    right: 24,
-                  }}>
-                  <VisitItem
-                    item={visitItemSelected}
-                    handleClose={() => setVisitItemSelected(null)}
-                  />
-                </View>
-              )}
             </Mapbox.MapView>
+            {visitItemSelected && (
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: bottom + 70,
+                  left: 24,
+                  right: 24,
+                }}>
+                <VisitItem
+                  item={visitItemSelected}
+                  handleClose={() => setVisitItemSelected(null)}
+                />
+              </View>
+            )}
           </View>
         )}
       </View>
@@ -469,7 +479,7 @@ interface MarkerItemProps {
   item: VisitListItemType;
   index: number;
 }
-export default ListVisit;
+export default memo(ListVisit);
 
 const rootStyles = (theme: ExtendedTheme) =>
   StyleSheet.create({

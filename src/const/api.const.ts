@@ -31,7 +31,8 @@ export const GET_CURRENT_SHIT =
   '/api/method/mbw_service_v2.api.ess.checkin.get_shift_now';
 
 // Profile
-export const PUT_USER_PROFILE = URL_PREFIX + '.user.update_profile';
+export const PUT_USER_PROFILE =
+  '/api/method/mbw_service_v2.api.user.update_profile';
 export const POST_CHECKIN = '/api/method/mbw_dms.api.checkin.create_checkin';
 
 // Product
@@ -104,3 +105,9 @@ export const CREATE_IMAGE_CHECKIN = '/mbw_dms.api.checkin.create_checkin_image';
 // REPORT
 export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';
 export const GET_REPORT_VISIT = '/api/method/mbw_dms.api.kpi.visit_report';
+export const GET_REPORT_SALES = '/api/method/mbw_dms.api.kpi.sales_report';
+export const GET_REPORT_REVENUE = '/api/method/mbw_dms.api.kpi.invoices_report';
+
+//VISIT
+export const GET_VISIT_ROUTE_DETAIL =
+  '/api/method/mbw_dms.api.kpi.report_visit_orders_invoices';

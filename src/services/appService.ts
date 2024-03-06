@@ -148,7 +148,9 @@ export const getCustomer = () =>
     .then(res => res.data);
 
 export const getPageCustomer = (page: number) =>
-  createApi().get(ApiConstant.GET_CUSTOMER + `?page=${page}`).then(res => res.data);
+  createApi()
+    .get(ApiConstant.GET_CUSTOMER + `?page=${page}`)
+    .then(res => res.data);
 
 export const getCustomerByName = (name: string) =>
   createApi()

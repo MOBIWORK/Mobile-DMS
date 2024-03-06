@@ -109,21 +109,21 @@ function App(): JSX.Element {
       },
     );
     //
-    const onMotionChange: Subscription = BackgroundGeolocation.onMotionChange(
-      (event) => {
-        console.log("[onMotionChange]", event);
-      }
-    );
-    
-    const onActivityChange: Subscription =
-      BackgroundGeolocation.onActivityChange((event) => {
-        console.log("[onActivityChange]", event);
-      });
-    
-    const onProviderChange: Subscription =
-      BackgroundGeolocation.onProviderChange((event) => {
-        console.log("[onProviderChange]", event);
-      });
+    // const onMotionChange: Subscription = BackgroundGeolocation.onMotionChange(
+    //   (event) => {
+    //     console.log("[onMotionChange]", event);
+    //   }
+    // );
+    //
+    // const onActivityChange: Subscription =
+    //   BackgroundGeolocation.onActivityChange((event) => {
+    //     console.log("[onActivityChange]", event);
+    //   });
+    //
+    // const onProviderChange: Subscription =
+    //   BackgroundGeolocation.onProviderChange((event) => {
+    //     console.log("[onProviderChange]", event);
+    //   });
 
     const onHttp: Subscription = BackgroundGeolocation.onHttp(httpEvent => {
       console.log(httpEvent.responseText);

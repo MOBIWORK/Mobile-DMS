@@ -71,6 +71,8 @@ import {
   Inventory,
   RouteResult,
   CheckinSelectProdct,
+  UserInfoScreen,
+  EditAccount,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -82,23 +84,16 @@ import {useSelector} from '../config/function';
 import {RXStore} from '../utils/redux';
 import {CommonUtils} from '../utils';
 import {PortalHost} from '../components/common/portal';
-import {shallowEqual} from 'react-redux';
 import {CheckinData} from '../services/appService';
-import {AppState, AppStateStatus} from 'react-native';
 import TakePictureScore from '../screens/Checkin/TakePictureScore';
+import {EDIT_ACCOUNT, USER_INFO_SCREEN} from '../const/screen.const';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
 }) => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const theme = useSelector(state => state.app.theme);
-  const dataCheckIn: CheckinData = useSelector(
-    state => state.app.dataCheckIn,
-    shallowEqual,
-  );
-  const [appState, setAppState] = useState<AppStateStatus>(
-    AppState.currentState,
-  );
+
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
 
   // const [organiztion] = useMMKVObject<IResOrganization>(
@@ -116,24 +111,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   //     },
   //   });
   // }, []);
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log(nextAppState, 'app state');
-    }
-    setAppState(nextAppState);
-  };
-
-  useEffect(() => {
-    const appState = AppState.addEventListener('change', handleAppStateChange);
-    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
-      navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
-    } else {
-      return;
-    }
-    return () => {
-      appState.remove();
-    };
-  }, [dataCheckIn]);
 
   return (
     <NavigationContainer
@@ -293,7 +270,18 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_COMMON_SCREEN}
           component={SearchSreen}
         />
-        <Stack.Screen  name={ScreenConstant.TAKE_PICTURE_SCORE} component={TakePictureScore}  />
+        <Stack.Screen
+          name={ScreenConstant.TAKE_PICTURE_SCORE}
+          component={TakePictureScore}
+        />
+        <Stack.Screen
+          name={ScreenConstant.USER_INFO_SCREEN}
+          component={UserInfoScreen}
+        />
+        <Stack.Screen
+          name={ScreenConstant.EDIT_ACCOUNT}
+          component={EditAccount}
+        />
       </Stack.Navigator>
       {children}
       <RXStore />
@@ -359,7 +347,9 @@ export type RootStackParamList = {
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;
   [ScreenConstant.SEARCH_COMMON_SCREEN]: {type: string};
-  [ScreenConstant.TAKE_PICTURE_SCORE]:undefined
+  [ScreenConstant.TAKE_PICTURE_SCORE]: undefined;
+  [ScreenConstant.USER_INFO_SCREEN]: undefined;
+  [ScreenConstant.EDIT_ACCOUNT]: {title: string; content: string};
 };
 
 // Define prop type for useNavigation and useRoute

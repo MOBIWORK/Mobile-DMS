@@ -780,6 +780,32 @@ export type IKpi = {
   kh_moi: number;
 };
 
+export type IReportSales = {
+  Kpi: {
+    dat_duoc: number;
+    phan_tram_thuc_hien: number;
+  };
+  sales_invoice: [
+    {
+      ngay: string;
+      doanh_so: number;
+    },
+  ];
+};
+
+export type IReportRevenue = {
+  Kpi: {
+    dat_duoc: number;
+    phan_tram_thuc_hien: number;
+  };
+  sales_invoice: [
+    {
+      ngay: string;
+      doanh_thu: number;
+    },
+  ];
+};
+
 export type IReportVisit = {
   chi_tieu: number;
   dat_duoc: number;
@@ -792,11 +818,31 @@ export type IUser = {
   gender: string;
   date_of_birth: string;
   date_of_joining: string;
-  salutation: string | null;
-  image: string | null;
+  salutation: string;
+  image: string;
   user_id: string;
   department: string;
   designation: string;
-  cell_number: string | null;
+  cell_number: string;
   current_address: string;
+};
+
+export type EditAccountInfo = {
+  avatar: string;
+  name: string;
+  email: string;
+  gender: string;
+  phone: string;
+  bornDate: string;
+  address: string;
+};
+
+export type IVisitRouteDetail = {
+  ngay: string;
+  so_don_trong_thang: number;
+  doanh_thu_thang: number;
+  nv_vieng_tham: string;
+  vieng_tham_cuoi: string;
+  nv_dat_hang: string;
+  don_hang_cuoi: string;
 };

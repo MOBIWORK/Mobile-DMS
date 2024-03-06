@@ -1,5 +1,4 @@
 import {Dimensions} from 'react-native';
-import {ScreenConstant} from './index';
 import {IFilterType} from '../components/common/FilterListComponent';
 
 export const WIDTH = Dimensions.get('window').width;
@@ -8,6 +7,11 @@ export const HEIGHT = Dimensions.get('window').height;
 //MapBox
 export const MAPBOX_TOKEN =
   'pk.eyJ1IjoibWFwYm94bmdvY3NvbjEiLCJhIjoiY2xneWlsbDVuMDl0dTNocWM5aWM2ODF6dyJ9.tQx_q1DbVfxsaSVQutF1JQ';
+
+export const MAP_TITLE_URL = {
+  adminMap:
+    'https://api.ekgis.vn/v1/maps/adminmap/{z}/{x}/{y}.png?api_key=oR8BDxoEoVUhPVfUP5fFGZkB5veGbADBwMYeJNYY',
+};
 
 //notification
 export const CHANNEL_ID = 'ngocson_DMS';
