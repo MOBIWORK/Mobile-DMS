@@ -24,6 +24,7 @@ import { TouchableOpacity } from 'react-native'
 import { ICON_TYPE } from '../../../const/app.const'
 import { Pressable } from 'react-native'
 import ItemProduct from './components/ItemProduct'
+import { orderAction } from '../../../redux-store/order-reducer/reducer'
 
 const CheckinOrder = () => {
 
@@ -34,14 +35,31 @@ const CheckinOrder = () => {
     const router = useRoute<RouterProp<"CHECKIN_ORDER">>();
     const type = router.params.type;
     const dataCheckin = useSelector(state => state.app.dataCheckIn);
-    const orderDetail = useSelector(state => state.checkin.orderDetail)
-    const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
+    const orderDetail = useSelector(state => state.checkin.orderDetail);
+    const returnOrderDetail = useSelector(state => state.checkin.returnOrderDetail);
+    const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin);
 
     const fetchDataOrder = async () => {
         if (type == "ORDER") {
-            const { status, data }: KeyAbleProps = await OrderService.getDetailCheckinOrder(dataCheckin.checkin_id);
+            const { status, data }: KeyAbleProps = await OrderService.getDetailCheckinOrder({
+                checkin_id :dataCheckin.checkin_id,
+                doctype :"Sales Order"
+            });
             if (status === ApiConstant.STT_OK) {
-                dispatch(checkinActions.setData({ typeData: "detailOrder", data: data.result }))
+                if (data.result.constructor !== "Array"  && Object.keys(data.result).length > 0) {
+                    dispatch(checkinActions.setData({ typeData: "detailOrder", data: data.result }))
+                }
+            }
+        }
+        if (type == "RETURN_ORDER") {
+            const { status, data }: KeyAbleProps = await OrderService.getDetailCheckinOrder({
+                checkin_id :dataCheckin.checkin_id,
+                doctype : "Sales Invoice"
+            });
+            if (status === ApiConstant.STT_OK) {
+                if (data.result.constructor !== "Array"  && Object.keys(data.result).length > 0) {
+                    dispatch(checkinActions.setData({ typeData: "returnOrder", data: data.result }))
+                }
             }
         }
     }
@@ -84,10 +102,12 @@ const CheckinOrder = () => {
 
                                 <View style={[styles.containerIfOd]}>
 
-                                    <View style={[styles.orderInforE, styles.flexSpace]}>
-                                        <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
-                                        <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data.delivery_date * 1000)}</Text>
-                                    </View>
+                                    {type == "ORDER" && (
+                                        <View style={[styles.orderInforE, styles.flexSpace]}>
+                                            <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
+                                            <Text style={[styles.textInforO]}>{CommonUtils.convertDate(data.delivery_date * 1000)}</Text>
+                                        </View>
+                                    )}
 
                                     <View style={[styles.orderInforE, styles.flexSpace, { borderColor: colors.bg_default }]}>
                                         <Text style={[styles.labelDetail]}>{getLabel("eXwarehouse")}</Text>
@@ -112,11 +132,12 @@ const CheckinOrder = () => {
                                     >
                                         <ItemProduct
                                             dvt={item.uom}
-                                            name={item.item_code}
+                                            name={item.item_name}
+                                            code={item.item_code}
                                             quantity={item.qty}
                                             price={item.amount}
                                             percentage_discount={item.discount_percentage}
-                                            discount={(item.amount * (item.discount_percentage / 100)).toString()}
+                                            discount={(item.amount * (item.discount_percentage / 100))?.toString()}
                                         />
                                     </Pressable>
                                 ))}
@@ -193,7 +214,7 @@ const CheckinOrder = () => {
                                 </View>
                                 <View style={[styles.flexSpace]}>
                                     <Text style={[styles.labelDetail]}>{getLabel("totalPrice")} </Text>
-                                    <Text style={[styles.totalPrice]}>{CommonUtils.formatCash(data.grand_total.toString())}</Text>
+                                    <Text style={[styles.totalPrice]}>{CommonUtils.formatCash(data.grand_total?.toString())}</Text>
                                 </View>
                             </View>
                         </View>
@@ -206,11 +227,11 @@ const CheckinOrder = () => {
                     <View style={[styles.flexSpace, { alignItems: 'flex-end' }]}>
                         <Text style={styles.tTotalPrice}>{getLabel("totalPrice")}</Text>
                         <Text style={styles.totalPrice}>
-                            {CommonUtils.formatCash(data.grand_total.toString())}
+                            {CommonUtils.formatCash(data.grand_total?.toString())}
                         </Text>
                     </View>
                     <AppButton
-                        label={getLabel("orderCreated")}
+                        label={getLabel("completed")}
                         style={styles.button}
                         onPress={() => completeCheckin()}
                     />
@@ -233,11 +254,8 @@ const CheckinOrder = () => {
 
     return (
         <MainLayout style={styles.layout} >
-            <AppHeader label={type === "ORDER" ? getLabel("putOrder") : getLabel("returnOrder")}
-                onBack={() => navigation.goBack()}
-                style={{ paddingHorizontal: 16 }}
-            />
-            {orderDetail && type== "ORDER" ? renderDetailOrder(orderDetail) : renderNoDataUi()}
+            <AppHeader label={type === "ORDER" ? getLabel("putOrder") : getLabel("returnOrder")} onBack={() => navigation.goBack()} style={{ paddingHorizontal: 16 }}/>
+            {(type == "ORDER" && orderDetail) ? renderDetailOrder(orderDetail) : (type == "RETURN_ORDER" && returnOrderDetail) ? renderDetailOrder(returnOrderDetail) : renderNoDataUi()}
         </MainLayout>
     )
 }

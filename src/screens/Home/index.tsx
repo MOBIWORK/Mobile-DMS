@@ -518,7 +518,7 @@ const HomeScreen = () => {
                 {userProfile?.image ? (
                   <AppAvatar url={userProfile.image} size={48} />
                 ) : (
-                  <AppAvatar name={userProfile.employee_name} size={48} />
+                  <AppAvatar name={userProfile?.employee_name} size={48} />
                 )}
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}> Xin chào ,</Text>

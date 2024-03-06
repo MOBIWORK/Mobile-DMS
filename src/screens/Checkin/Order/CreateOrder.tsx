@@ -219,7 +219,8 @@ const CreateOrder = () => {
                             <Pressable key={i} onPress={() => showDetailProdcut(item)}>
                                 <ItemProduct
                                     onRemove={(id) => handlerRemoveItemProduct(id)}
-                                    name={item.item_code}
+                                    name={item.item_name}
+                                    code={item.item_code}
                                     dvt={item.stock_uom}
                                     quantity={item.quantity ? item.quantity : 0}
                                     percentage_discount={item.discount}
@@ -237,7 +238,8 @@ const CreateOrder = () => {
                         {productsPromotion.map((item, i) => (
                             <Pressable key={i}>
                                 <ItemProduct
-                                    name={item.item_code}
+                                    name={item.item_name}
+                                    code={item.item_code}
                                     dvt={item.stock_uom}
                                     quantity={item.qty}
                                 />
@@ -455,7 +457,7 @@ const CreateOrder = () => {
                 const element = result[i];
                 newData.push({
                     value: element.name,
-                    label: element.warehouse_name,
+                    label: element.name,
                     isSelected: false,
                 });
             }
@@ -465,8 +467,6 @@ const CreateOrder = () => {
 
     const fetchDataVat = async () => {
         const { status, data }: KeyAbleProps = await OrderService.getListVat();
-        console.log(status);
-
         if (status === ApiConstant.STT_OK) {
             const result = data.result;
             const newData: any[] = [];
@@ -490,8 +490,7 @@ const CreateOrder = () => {
                 const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
                 const objecData = {
                     "items": newItems,
-                    "customer": dataCheckin.item.name,        // Khách hàng
-                    "customer_group": "Commercial",    // Nhóm khách hàng
+                    "customer": dataCheckin.item.customer_code,        // Khách hàng
                     "territory": "Vietnam",
                     "currency": "VND",
                     "price_list": "Standard Selling",
@@ -499,7 +498,7 @@ const CreateOrder = () => {
                     "company": organization?.company_name || "",            // Lấy cty hiện tại
                     "doctype": "Sales Order",
                     "name": "new-sales-order-hnnkmtrehm",
-                    "transaction_date": CommonUtils.convertDate(date),
+                    "transaction_date": CommonUtils.taskDate(date),
                 }
                 const { data: res, status }: KeyAbleProps = await ProductService.getPromotionalProducts(objecData);
                 if (status === ApiConstant.STT_OK) {
@@ -560,6 +559,14 @@ const CreateOrder = () => {
         setDiscountAmout(dsc);
     };
 
+    const isDisabled = useMemo(()=> {
+        if(!warehouse || warehouse?.value ==="" || vat.label === "") {
+            return true
+        } else {
+            return false
+        }
+    },[warehouse,vat])
+
     const onCreatedOrder = async () => {
         let status :any = 0
         const arrItems = products.map(item => ({ item_code: item.item_code, qty: item.quantity, rate: item.price, uom: item.stock_uom, discount_percentage: item.discount }))
@@ -585,15 +592,13 @@ const CreateOrder = () => {
                 status = (await OrderService.createdOrder(objectData)).status;
                 break;
             case "RETURN_ORDER":
-                objectData["is_return"] = 1;
-                objectData["update_billed_amount_in_delivery_note"] = 1;
                 objectData["grand_total"] = grandTotalPrice - (grandTotalPrice * 2);
                 status = (await OrderService.createdReturnOrder(objectData)).status;
                 break
             default:
                 break;
         }
-        if(status === ApiConstant.STT_OK) onBackScreen();
+        if(status === ApiConstant.STT_CREATED) onBackScreen();
     };
 
     useEffect(() => {
@@ -832,6 +837,7 @@ const CreateOrder = () => {
                     <AppButton
                         label={getLabel("orderCreated")}
                         style={styles.button}
+                        disabled={isDisabled}
                         onPress={() => onCreatedOrder()}
                     />
                 </View>

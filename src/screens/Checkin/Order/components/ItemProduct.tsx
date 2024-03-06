@@ -8,7 +8,7 @@ import { CommonUtils } from '../../../../utils';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native';
 
-const ItemProduct = ({ name, dvt, quantity, price, percentage_discount, onRemove }: ProductProps) => {
+const ItemProduct = ({ name,code, dvt, quantity, price, percentage_discount, onRemove }: ProductProps) => {
 
     const { t: getLabel } = useTranslation();
     const { colors } = useTheme();
@@ -23,18 +23,23 @@ const ItemProduct = ({ name, dvt, quantity, price, percentage_discount, onRemove
     return (
         <View style={styles.container}>
             <View style={[styles.flexSpace]}>
-                <View style={styles.flex}>
-                    <AppIcons iconType={ICON_TYPE.IonIcon} name='barcode-outline' size={24} />
+                <View>
+                    <View style={styles.flex} >
+                        <AppIcons iconType={ICON_TYPE.IonIcon} name='barcode-outline' size={24} color={colors.text_secondary} />
+                        <Text style={[styles.code, { marginLeft: 4 }]}>{code}</Text>
+                    </View>
                     <Text style={[styles.name, { marginLeft: 4 }]}>{name}</Text>
+
                 </View>
                 <View>
                     {onRemove && (
-                        <TouchableOpacity onPress={() => onRemove && onRemove(name)}>
+                        <TouchableOpacity onPress={() => onRemove && onRemove(name)} style={{paddingTop :3}}>
                             <AppIcons iconType={ICON_TYPE.IonIcon} name='trash-outline' size={18} color={colors.error} />
                         </TouchableOpacity>
                     )}
                 </View>
             </View>
+
             <View style={styles.contaienrIf}>
                 <View style={[styles.flexSpace, { paddingVertical: 4 }]}>
                     <Text style={styles.textIf(colors.text_secondary)}>{getLabel("unit")}</Text>
@@ -76,6 +81,7 @@ const ItemProduct = ({ name, dvt, quantity, price, percentage_discount, onRemove
 }
 
 interface ProductProps {
+    code : string
     name: string,
     dvt: string,
     quantity: number,
@@ -88,6 +94,12 @@ interface ProductProps {
 export default ItemProduct;
 
 const createSheetStyle = (theme: AppTheme) => StyleSheet.create({
+    code :{
+        fontSize: 14,
+        lineHeight: 21,
+        fontWeight: "400",
+        color: theme.colors.text_secondary
+    }as TextStyle,
     flex: {
         flexDirection: "row",
         alignItems: "center",
@@ -95,7 +107,6 @@ const createSheetStyle = (theme: AppTheme) => StyleSheet.create({
     flexSpace: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
     } as ViewStyle,
     name: {
         fontSize: 16,
