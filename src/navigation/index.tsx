@@ -88,7 +88,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
 
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
   const [appState,setAppState] = useState<any>(AppState.currentState)
-  const dataCheckin = useSelector(state => state.app.dataCheckIn)
+  const dataCheckIn = useSelector(state => state.app.dataCheckIn)
   // const [organiztion] = useMMKVObject<IResOrganization>(
   //   AppConstant.Organization,
   // );
