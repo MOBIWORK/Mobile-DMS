@@ -63,7 +63,10 @@ react {
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
 def enableProguardInReleaseBuilds = true
-
+ project.ext.react = [
+    entryFile: "index.js",
+    enableHermes: true  // clean and rebuild if changing
+  ]
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *

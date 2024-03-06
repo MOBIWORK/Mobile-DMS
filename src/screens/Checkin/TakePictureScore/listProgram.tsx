@@ -33,7 +33,7 @@ const ListProgram = (props: Props) => {
       setListSelect(prevSelected => [...prevSelected, item]);
     }
   };
-  const selectedProgram = useSelector(
+  const selectedProgram:any[] = useSelector(
     state => state.checkin.selectedProgram,
     shallowEqual,
   );
@@ -63,24 +63,26 @@ const ListProgram = (props: Props) => {
   }, [listSelect]);
 
   const handleConfirmSelect = () => {
-    const existingProgramNames = selectedProgram.map(
-      (program: any) => program.campaign_name,
-    );
-
+    const existingProgramNames = selectedProgram && selectedProgram.length > 0
+      ? selectedProgram.map((program: any) => program.campaign_name)
+      : [];
+  
     // Filter out programs from props.data that are already in selectedProgram
-    const newProgramsToAdd = props.data.filter(
-      (item: any) =>
-        listSelect.includes(item.campaign_name) &&
-        !existingProgramNames.includes(item.campaign_name),
+    const newProgramsToAdd = props.data.filter((item: any) =>
+      listSelect.includes(item.campaign_name) && !existingProgramNames.includes(item.campaign_name)
     );
-
+  
     // Merge existing selected programs with new ones
-    const updatedSelectedProgram = [...selectedProgram, ...newProgramsToAdd];
-
+    const updatedSelectedProgram = Array.isArray(selectedProgram)
+    ? [...selectedProgram, ...newProgramsToAdd]
+    : [...newProgramsToAdd];
+  
     console.log(updatedSelectedProgram, 'updated selected program');
     dispatch(checkinActions.setSelectedProgram(updatedSelectedProgram));
     props.onPressConfirm(listSelect);
   };
+  
+  
   return (
     <Block>
       <Block
