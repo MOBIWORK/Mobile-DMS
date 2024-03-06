@@ -45,6 +45,8 @@ import NewCustomer from './Report/Sale/NewCustomer';
 import ReportDebt from './Report/Debt/ReportDebt';
 import KPI from './Report/Sale/KPI';
 import SearchSreen from "./Search"
+import ListAlbumScore from './Checkin/ListAlbumScore/index';
+import TakePictureScore from './Checkin/TakePictureScore';
 
 export {
   SelectOrganization,
@@ -93,5 +95,7 @@ export {
   ReportDebt,
   KPI,
   UpdateScreen,
-  SearchSreen
+  SearchSreen,
+  ListAlbumScore,
+  TakePictureScore
 };

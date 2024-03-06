@@ -1,10 +1,4 @@
-import React, {
-  createRef,
-  FC,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import React, {createRef, FC, useEffect, useState} from 'react';
 import type {
   NavigationAction,
   NavigationContainerRef,
@@ -21,10 +15,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {AppConstant, ScreenConstant} from '../const';
 
 import {
-  IDataCustomer,
   IDataCustomers,
   IProduct,
-  ItemNoteVisitDetail,
   NoteType,
   ReportOrderItemType,
   VisitListItemType,
@@ -71,6 +63,8 @@ import {
   Inventory,
   RouteResult,
   CheckinSelectProdct,
+  TakePictureScore,
+  ListAlbumScore,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -85,7 +79,6 @@ import {PortalHost} from '../components/common/portal';
 import {shallowEqual} from 'react-redux';
 import {CheckinData} from '../services/appService';
 import {AppState, AppStateStatus} from 'react-native';
-import TakePictureScore from '../screens/Checkin/TakePictureScore';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -121,12 +114,18 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
       console.log(nextAppState, 'app state');
       setAppState(nextAppState);
     }
-   
   };
 
   useEffect(() => {
-    const appStateEvent = AppState.addEventListener('change', handleAppStateChange);
-    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0 && AppState.currentState === 'background') {
+    const appStateEvent = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+    if (
+      dataCheckIn &&
+      Object.keys(dataCheckIn)?.length > 0 &&
+      AppState.currentState === 'background'
+    ) {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
     } else {
       return;
@@ -134,7 +133,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
     return () => {
       appStateEvent.remove();
     };
-  }, [dataCheckIn,appState]);
+  }, [dataCheckIn, appState]);
 
   return (
     <NavigationContainer
@@ -294,7 +293,15 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.SEARCH_COMMON_SCREEN}
           component={SearchSreen}
         />
-        <Stack.Screen  name={ScreenConstant.TAKE_PICTURE_SCORE} component={TakePictureScore}  />
+        <Stack.Screen
+          name={ScreenConstant.TAKE_PICTURE_SCORE}
+          component={TakePictureScore}
+        />
+        <Stack.Screen
+          name={ScreenConstant.LIST_ALBUM_SCORE}
+          component={ListAlbumScore}
+          options={{headerShown:false}}
+        />
       </Stack.Navigator>
       {children}
       <RXStore />
@@ -360,9 +367,13 @@ export type RootStackParamList = {
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;
   [ScreenConstant.SEARCH_COMMON_SCREEN]: {type: string};
-  [ScreenConstant.TAKE_PICTURE_SCORE]:{
+  [ScreenConstant.TAKE_PICTURE_SCORE]: {
+    data: any;
+    screen:any
+  };
+  [ScreenConstant.LIST_ALBUM_SCORE]:{
     data:any
-  }
+  };
 };
 
 // Define prop type for useNavigation and useRoute

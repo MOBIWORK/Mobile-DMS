@@ -19,4 +19,8 @@ export function* checkinSaga() {
     checkinActions.getListProgram.toString(),
     Saga.getListProgramData,
   );
+  yield* takeLatest(
+    checkinActions.postImageScore.type.toString(),
+    Saga.postImageScore,
+  );
 }

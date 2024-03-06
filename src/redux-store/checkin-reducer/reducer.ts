@@ -10,6 +10,10 @@ const initState: TypeState = {
   orderDetail: null,
   categoriesCheckin: categoriesCheckinList,
   listProgramCampaign: {},
+  selectedProgram: {},
+  listImageSelect: [],
+  imageToMark: [],
+  listProgramImage: [],
 };
 
 const checkinSlice = createSlice({
@@ -34,10 +38,10 @@ const checkinSlice = createSlice({
           break;
       }
     },
-    resetData: (state, action: PayloadAction) => {
-      state.categoriesCheckin = categoriesCheckinList;
-      state.dataNote = [];
-      state.orderDetail = null;
+    resetData: state => {
+      void (state.categoriesCheckin = categoriesCheckinList);
+      void (state.dataNote = []);
+      void (state.orderDetail = null);
     },
     setDataCategoriesCheckin: (
       state,
@@ -47,6 +51,51 @@ const checkinSlice = createSlice({
     },
     setDataListProgram: (state, action: PayloadAction<any>) => {
       void (state.listProgramCampaign = action.payload);
+    },
+    setSelectedProgram: (state, action: PayloadAction<any>) => {
+      state.selectedProgram = []
+      const newPrograms = action.payload;
+      const existingProgramNames = state.selectedProgram.map(
+        (program: any) => program.campaign_name,
+      );
+
+      const updatedPrograms = newPrograms.map((newProgram: any) => {
+        const index = existingProgramNames.indexOf(newProgram.campaign_name);
+        if (index !== -1) {
+          // Update existing program if name matches
+          return newProgram;
+        } else {
+          // Add new program if name doesn't exist
+          return newProgram;
+        }
+      });
+
+      // Filter out existing programs that are being updated
+      const filteredExistingPrograms = state.selectedProgram.filter(
+        (program: any) => {
+          return (
+            updatedPrograms.findIndex(
+              (updatedProgram: any) =>
+                updatedProgram.campaign_name === program.campaign_name,
+            ) === -1
+          );
+        },
+      );
+
+      // Merge updated programs with existing ones
+      state.selectedProgram = [...state.selectedProgram, ...updatedPrograms];
+    },
+
+    setListImageSelect: (state, action: PayloadAction<any>) => {
+      // state.listImageSelect = [];
+      state.listImageSelect = [...state.listImageSelect, ...action.payload];
+    },
+    setImageResponse: (state, action: PayloadAction<any>) => {
+      // state.imageToMark = []
+      state.imageToMark = [...state.imageToMark, action.payload];
+    },
+    setListImageProgram: (state, action: PayloadAction<any>) => {
+      state.listImageSelect = [...state.listImageSelect, action.payload];
     },
   },
 });
@@ -59,19 +108,23 @@ const getListStaff = createAction(Actions.GET_STAFF_ACTIONS, (params: any) => ({
   payload: params,
 }));
 const getListNoteType = createAction(Actions.GET_NOTE_TYPE_ACTIONS);
+
 const getListProgram = createAction(
   Actions.GET_LIST_PROGRAM_CAMPAIGN,
-  ({customer_name, e_code}: {customer_name: string; e_code: string}) => ({
-    payload: {customer_name, e_code},
+  ({customer_code, e_name}: {customer_code: string; e_name: string}) => ({
+    payload: {customer_code, e_name},
   }),
 );
-
+const postImageScore = createAction(Actions.POST_IMAGE_SCORE, (data: any) => ({
+  payload: data,
+}));
 export const checkinActions = {
   ...checkinSlice.actions,
   getListNoteCheckin,
   getListStaff,
   getListNoteType,
   getListProgram,
+  postImageScore,
 };
 
 export const checkinReducer = checkinSlice.reducer;

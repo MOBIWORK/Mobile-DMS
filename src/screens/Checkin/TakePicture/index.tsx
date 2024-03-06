@@ -55,6 +55,7 @@ const TakePicture = () => {
     state => state.app.dataCheckIn?.listImage,
     shallowEqual,
   );
+  console.log(listImage)
 
   const [message, setMessage] = useState<number>(0);
   const data = useRef<ImageCheckIn>({
@@ -91,9 +92,9 @@ const TakePicture = () => {
           if (data?.current) {
             data.current.image = image?.base64!;
             await new Promise(resolve => setTimeout(resolve, 1000));
-            await new Promise<void>((resolve) => {
+            await new Promise<void>(resolve => {
               dispatch(appActions.postImageCheckIn(data.current));
-              resolve(); 
+              resolve();
             });
             totalItemsProcessed++;
             setMessage(totalItemsProcessed);
@@ -103,12 +104,11 @@ const TakePicture = () => {
     } catch (error) {
       console.error('Error during image processing', error);
     } finally {
-      setLoading(false);
       console.log(`Done processing ${totalItemsProcessed} items`);
       completeCheckin();
+      setLoading(false);
     }
   };
-  
 
   const completeCheckin = () => {
     const newData = categoriesCheckin.map(item =>
@@ -187,13 +187,13 @@ const TakePicture = () => {
                 return (
                   <>
                     {index === 0 ? (
-                      <View style={{padding: 5, marginHorizontal: 4}}>
+                      <Block padding={5}  marginRight={4} marginLeft={4}  >
                         <Pressable
                           onPress={() => handleCamera(itemAlbum)}
                           style={styles.cameraImg}>
                           <SvgIcon source={'IconCamera'} size={24} />
                         </Pressable>
-                      </View>
+                      </Block>
                     ) : (
                       <View
                         style={{padding: 5, rowGap: 8, marginHorizontal: 4}}>
@@ -303,7 +303,7 @@ const TakePicture = () => {
               color={theme.colors.success}
               shadowColor={theme.colors.bg_disable}
               bgColor="#fff">
-              <Text>{message}/4</Text>
+              <Text>{message}</Text>
             </ProgressCircle>
           </Block>
         </Block>

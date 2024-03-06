@@ -51,8 +51,8 @@ export function* getListProgramData(action: PayloadAction) {
         CheckinService.getListProgram,
         action.payload,
       );
-      if (response?.message?.length > 0) {
-        yield put(checkinActions.setDataListProgram(response.message));
+      if (response?.message === 'ok') {
+        yield put(checkinActions.setDataListProgram(response.result?.data));
       } else {
         setError({
           title: null,
@@ -64,6 +64,24 @@ export function* getListProgramData(action: PayloadAction) {
       console.log('err: ', err);
     }finally{
       yield put(appActions.onLoadAppEnd())
+    }
+  }
+}
+export function* postImageScore(action:PayloadAction){
+  if(checkinActions.postImageScore.match(action)){
+    try{
+      console.log(action.payload,'payload send')
+      const response:ResponseGenerator = yield call(CheckinService.postImagePictureScore,action.payload as any)
+      if(response.message === 'ok' && Object.keys(response.result).length > 0){
+        yield put(checkinActions.setImageResponse(response.result.file_url))
+      
+      }else{
+        // yield put(checkinActions.setImageError([action.payload]))
+      }
+    }catch(err){
+      console.log('err:',err)
+    }finally{
+
     }
   }
 }

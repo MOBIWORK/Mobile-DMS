@@ -376,6 +376,12 @@ export const Auth_header = (api_key: string, api_secret: string) => {
     'content-type': 'application/json',
   };
 };
+export const FormData_header = (api_key: string, api_secret: string) => {
+  return {
+    Authorization: `Basic ${Base64.btoa(api_key + ':' + api_secret)}`,
+    'content-type': 'multipart/form-data',
+  };
+};
 
 export const handleOpenSettings = async () => {
   if (Platform.OS === 'ios') {

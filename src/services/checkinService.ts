@@ -1,4 +1,5 @@
 import {createApi} from '../api';
+import {createFormData} from '../api/formData';
 import {ApiConstant} from '../const';
 
 export type IUpdateAddress = {
@@ -59,19 +60,21 @@ export const getNoteType = () =>
   createApi()
     .get(ApiConstant.GET_NOTE_TYPE)
     .then(res => res.data);
-export const postImagePictureScore = (data: any) =>
-  createApi()
-    .post(ApiConstant.POST_IMAGE_SCORE, data, {
-      headers: {'Content-Type': 'multipart/form-data'},
-    })
+export const postImagePictureScore = (data: typeof FormData) =>
+  createFormData()
+    .post(
+      ApiConstant.POST_IMAGE_SCORE,
+      data,
+      // data:data
+    )
     .then(res => res.data);
 export const getListProgram = ({
-  customer_name,
-  e_code,
+  customer_code,
+  e_name,
 }: {
-  customer_name: string;
-  e_code: string;
+  customer_code: string;
+  e_name: string;
 }) =>
   createApi()
-    .post(ApiConstant.GET_CAMPAIGN_PROGRAM, {customer_name, e_code})
+    .post(ApiConstant.GET_CAMPAIGN_PROGRAM, {customer_code, e_name})
     .then(res => res.data);
