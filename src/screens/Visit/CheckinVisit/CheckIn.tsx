@@ -1,4 +1,4 @@
-import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React, {
   useCallback,
   useState,
@@ -32,6 +32,31 @@ import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import isEqual from 'react-fast-compare';
 
+
+
+function useTimer() {
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const requestRef = useRef<number>(0);
+  const previousTimeRef = useRef<number>(0);
+
+  const animate = (time:any) => {
+    if (previousTimeRef.current !== undefined) {
+      const deltaTime = time - previousTimeRef.current;
+      setElapsedTime(prevTime => prevTime + deltaTime);
+    }
+    previousTimeRef.current = time;
+    requestRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, []);
+
+  return elapsedTime;
+}
+
+
 const CheckIn = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
@@ -53,8 +78,12 @@ const CheckIn = () => {
       : params.checkin_trangthaicuahang,
   );
   const [elapsedTime, setElapsedTime] = useState(0);
+  // const elapsedTime = useTimer()
   const intervalId = useRef<any>();
-  const listImage = useSelector(state => state.app.dataCheckIn?.listImage, shallowEqual);
+  const listImage = useSelector(
+    state => state.app.dataCheckIn?.listImage,
+    shallowEqual,
+  );
   const systemConfig: DMSConfigMobile = useSelector(
     state => state.app.systemConfig,
     shallowEqual,
@@ -63,23 +92,20 @@ const CheckIn = () => {
     decimalMinutesToTime(systemConfig.thoigian_toithieu),
   );
   useDisableBackHandler(true);
-  console.log(listImage,'listImage')
+  // console.log(elapsedTime, 'listImage');
   // console.log()
-  // useEffect(() => {
-  //   // Start the interval when the component mounts
-
-  //   const startInterval = () => {
-  //     intervalId.current = setInterval(() => {
-  //       setElapsedTime(prevTime => prevTime + 1);
-  //     }, 1000); // Update every second (1000 milliseconds)
-  //   };
-
-  //   startInterval();
-
-  //   // Clear the interval when the component unmounts
-  //   return () => clearInterval(intervalId.current);
-  // }, []); // The empty dependency array ensures that the effect runs only once
-
+  useEffect(() => {
+    const startInterval = () => {
+      intervalId.current = setInterval(
+        () => {
+          setElapsedTime(prevTime => prevTime + 1);
+        },
+        1000,
+      ); // Update every 1 seconds
+    };
+    startInterval();
+    return () => clearInterval(intervalId.current);
+  }, []);
 
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
@@ -272,7 +298,7 @@ const CheckIn = () => {
   );
 };
 
-export default React.memo(CheckIn,isEqual);
+export default React.memo(CheckIn, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

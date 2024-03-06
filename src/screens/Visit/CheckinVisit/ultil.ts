@@ -2,6 +2,7 @@ import {SvgIconTypes} from '../../../assets/svgIcon';
 import {ScreenConstant} from '../../../const';
 import {ColorDefault} from '../../../layouts/ColorTheme';
 import {Colors, MyAppTheme} from '../../../layouts/theme';
+import { getState } from '../../../utils/redux';
 
 export interface IItemCheckIn {
   icon: SvgIconTypes;
@@ -13,6 +14,7 @@ export interface IItemCheckIn {
   type?: string;
 }
 
+const {selectedProgram} = getState('checkin')
 export const item: IItemCheckIn[] = [
   {
     icon: 'OrangeBox',
@@ -69,7 +71,7 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Chấm điểm trưng bày',
-    screenName: 'TAKE_PICTURE_SCORE',
+    screenName:  selectedProgram && selectedProgram.length > 0 ? 'LIST_ALBUM_SCORE' :  'TAKE_PICTURE_SCORE',
     backgroundColor: 'undoBackground',
     type:''
   },

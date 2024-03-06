@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {View, Text, Image, Linking, Platform, Alert} from 'react-native';
+import { View, Text, Image, Linking, Platform, Alert, TouchableOpacity } from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+
 import ProgressCircle from 'react-native-progress-circle';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
@@ -376,7 +376,7 @@ const HomeScreen = () => {
             1000,
           );
         },
-        // err => backgroundErrorListener(err),
+        err => backgroundErrorListener(err),
       );
     };
     // setLoading(false);
@@ -657,12 +657,21 @@ const HomeScreen = () => {
                   <View style={styles.map}>
                     <Mapbox.MapView
                       pitchEnabled={false}
+                      // pointerEvents='none'
                       scrollEnabled={true}
                       attributionEnabled={false}
+                      gestureSettings={{
+                        doubleTapToZoomInEnabled: true,
+                      }}
                       // scaleBarEnabled={false}
                       styleURL={Mapbox.StyleURL.Street}
                       logoEnabled={false}
-                      style={{width: '98%', height: 360, borderRadius: 16}}>
+                      style={{
+                        width: '98%',
+                        height: 360,
+                        borderRadius: 16,
+                        zIndex: 100,
+                      }}>
                       <Mapbox.Camera
                         ref={mapboxCameraRef}
                         centerCoordinate={[
@@ -679,12 +688,14 @@ const HomeScreen = () => {
                         androidRenderMode="gps"
                         showsUserHeadingIndicator={true}
                       />
+
                       {visitItemSelected && (
                         <View
                           style={{
                             position: 'absolute',
                             bottom: bottom + 16,
                             left: 24,
+                            zIndex: 999,
                             right: 24,
                           }}>
                           <VisitItem

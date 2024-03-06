@@ -53,7 +53,7 @@ const checkinSlice = createSlice({
       void (state.listProgramCampaign = action.payload);
     },
     setSelectedProgram: (state, action: PayloadAction<any>) => {
-      state.selectedProgram = []
+      state.selectedProgram = [];
       const newPrograms = action.payload;
       const existingProgramNames = state.selectedProgram.map(
         (program: any) => program.campaign_name,
@@ -71,16 +71,6 @@ const checkinSlice = createSlice({
       });
 
       // Filter out existing programs that are being updated
-      const filteredExistingPrograms = state.selectedProgram.filter(
-        (program: any) => {
-          return (
-            updatedPrograms.findIndex(
-              (updatedProgram: any) =>
-                updatedProgram.campaign_name === program.campaign_name,
-            ) === -1
-          );
-        },
-      );
 
       // Merge updated programs with existing ones
       state.selectedProgram = [...state.selectedProgram, ...updatedPrograms];
@@ -91,7 +81,7 @@ const checkinSlice = createSlice({
       state.listImageSelect = [...state.listImageSelect, ...action.payload];
     },
     setImageResponse: (state, action: PayloadAction<any>) => {
-      // state.imageToMark = []
+      state.imageToMark = [];
       state.imageToMark = [...state.imageToMark, action.payload];
     },
     setListImageProgram: (state, action: PayloadAction<any>) => {

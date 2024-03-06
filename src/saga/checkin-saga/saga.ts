@@ -6,6 +6,7 @@ import {ApiConstant} from '../../const';
 import {KeyAbleProps} from '../../models/types';
 import {ResponseGenerator} from '../app-saga/saga';
 import {appActions, setError} from '../../redux-store/app-reducer/reducer';
+import { Platform } from 'react-native';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
@@ -72,6 +73,7 @@ export function* postImageScore(action:PayloadAction){
     try{
       console.log(action.payload,'payload send')
       const response:ResponseGenerator = yield call(CheckinService.postImagePictureScore,action.payload as any)
+      console.log(response,Platform.OS === 'android' ? 'log android' : 'log ios')
       if(response.message === 'ok' && Object.keys(response.result).length > 0){
         yield put(checkinActions.setImageResponse(response.result.file_url))
       
@@ -80,6 +82,7 @@ export function* postImageScore(action:PayloadAction){
       }
     }catch(err){
       console.log('err:',err)
+      console.log('run here ?')
     }finally{
 
     }

@@ -157,6 +157,7 @@ export const rootStyles = (theme: AppTheme) =>
       alignContent: 'center',
       alignItems: 'center',
       overflow: 'hidden',
+      position:'relative'
     } as ViewStyle,
     editView: {
       backgroundColor: theme.colors.bg_default,

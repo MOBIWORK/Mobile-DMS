@@ -1,8 +1,4 @@
-import {
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {FlatList, Image, TouchableOpacity} from 'react-native';
 import React, {useMemo} from 'react';
 import {
   Accordion,
@@ -11,43 +7,51 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import {useTheme} from '../../../layouts/theme';
-import { RootStackParamList, navigate, pop} from '../../../navigation';
+import {RootStackParamList, navigate, pop} from '../../../navigation';
 import {useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {rootStyles} from './style';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { ScreenConstant } from '../../../const';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import {ScreenConstant} from '../../../const';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import isEqual from 'react-fast-compare';
+import { dispatch } from '../../../utils/redux';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import { newCategoriesCheckinList } from '../../../redux-store/checkin-reducer/type';
 type Props = {};
 
 const ListAlbumScore = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const itemParams =
-  useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.data;
+    useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.data;
   const listProgramSelected = useSelector(
-    state => state.checkin.selectedProgram,
+    state => state.checkin?.selectedProgram,
     shallowEqual,
   );
   const listImageResponse = useSelector(
-    state => state.checkin.imageToMark,
+    state => state.checkin?.imageToMark,
     shallowEqual,
   );
-  // const listProgram = useSelector(state => state.checkin.listProgramCampaign)
+  console.log(listProgramSelected, 'b');
+  const listProgram = useSelector(state => state.checkin.listProgramCampaign)
   const newArray = React.useMemo(() => {
     const result = listProgramSelected?.map((campaign: any) => {
       return {
-        title: campaign.campaign_name,
+        title: campaign?.campaign_name,
         image: listImageResponse,
       };
     });
 
-    return result.filter((item: any) => item.image.length > 0);
+    return result?.filter((item: any) => item?.image?.length > 0);
   }, []);
 
+ const confirmUploadImage = () =>{
+  dispatch(checkinActions.setDataCategoriesCheckin(newCategoriesCheckinList))
+ }
   const listHeaderComponent = useMemo(() => {
     return (
-      <Block colorTheme='bg_neutral'>
+      <Block colorTheme="bg_neutral">
         <AppHeader
           style={styles.header}
           label="Chấm điểm trưng bày"
@@ -62,7 +66,13 @@ const ListAlbumScore = (props: Props) => {
           <Text fontSize={14} colorTheme="text_secondary" fontWeight="600">
             Số chương trình: {listProgramSelected?.length}
           </Text>
-          <TouchableOpacity onPress={() => navigate(ScreenConstant.TAKE_PICTURE_SCORE,{data:itemParams,screen:'ListAlbum'})}>
+          <TouchableOpacity
+            onPress={() =>
+              navigate(ScreenConstant.TAKE_PICTURE_SCORE, {
+                data: itemParams,
+                screen: 'ListAlbum',
+              })
+            }>
             <Text fontSize={14} fontWeight="600" colorTheme="action">
               <Text fontSize={20}>+</Text> Thêm ảnh chụp
             </Text>
@@ -73,7 +83,7 @@ const ListAlbumScore = (props: Props) => {
   }, []);
   return (
     <SafeAreaView style={styles.root} edges={['bottom', 'top']}>
-      <Block block >
+      <Block block>
         <FlatList
           data={newArray}
           keyExtractor={(item, index) => index.toString()}
@@ -103,14 +113,15 @@ const ListAlbumScore = (props: Props) => {
           }}
         />
       </Block>
-      <Block  color='transparent' paddingHorizontal={16}>
-        <TouchableOpacity
-          style={styles.buttonEnd}>
-          <Text fontSize={14} colorTheme='white' fontWeight='bold'>Hoàn thành</Text>
+      <Block color="transparent" paddingHorizontal={16}>
+        <TouchableOpacity style={styles.buttonEnd} onPress={confirmUploadImage}>
+          <Text fontSize={14} colorTheme="white" fontWeight="bold">
+            Hoàn thành
+          </Text>
         </TouchableOpacity>
       </Block>
     </SafeAreaView>
   );
 };
 
-export default ListAlbumScore;
+export default React.memo(ListAlbumScore, isEqual);
