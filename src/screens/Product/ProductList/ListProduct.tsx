@@ -157,7 +157,7 @@ const ListProduct = () => {
           }}>
           <Image
             source={image}
-            style={{ width: 64, height: 82 }}
+            style={{ width: 64, height: 82,borderRadius :4 }}
             resizeMode={'cover'}
           />
           <View style={{ marginLeft: 16, rowGap: 5 }}>
