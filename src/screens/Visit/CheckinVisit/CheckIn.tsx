@@ -33,24 +33,16 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import isEqual from 'react-fast-compare';
 
 
-
-function useTimer() {
+const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
-  const requestRef = useRef<number>(0);
-  const previousTimeRef = useRef<number>(0);
-
-  const animate = (time:any) => {
-    if (previousTimeRef.current !== undefined) {
-      const deltaTime = time - previousTimeRef.current;
-      setElapsedTime(prevTime => prevTime + deltaTime);
-    }
-    previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(animate);
-  };
+  const intervalIdRef = useRef<any>(0);
 
   useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
+    intervalIdRef.current = setInterval(() => {
+      setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+    }, 1000); // Update every 1 second
+
+    return () => clearInterval(intervalIdRef.current);
   }, []);
 
   return elapsedTime;
@@ -77,8 +69,8 @@ const CheckIn = () => {
       ? dataCheckIn?.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
-  const [elapsedTime, setElapsedTime] = useState(0);
-  // const elapsedTime = useTimer()
+  // const [elapsedTime, setElapsedTime] = useState(0);
+  const elapsedTime = useTimer()
   const intervalId = useRef<any>();
   const listImage = useSelector(
     state => state.app.dataCheckIn?.listImage,
@@ -94,18 +86,18 @@ const CheckIn = () => {
   useDisableBackHandler(true);
   // console.log(elapsedTime, 'listImage');
   // console.log()
-  useEffect(() => {
-    const startInterval = () => {
-      intervalId.current = setInterval(
-        () => {
-          setElapsedTime(prevTime => prevTime + 1);
-        },
-        1000,
-      ); // Update every 1 seconds
-    };
-    startInterval();
-    return () => clearInterval(intervalId.current);
-  }, []);
+  // useEffect(() => {
+  //   const startInterval = () => {
+  //     intervalId.current = setInterval(
+  //       () => {
+  //         setElapsedTime(prevTime => prevTime + 1);
+  //       },
+  //       1000,
+  //     ); // Update every 1 seconds
+  //   };
+  //   startInterval();
+  //   return () => clearInterval(intervalId.current);
+  // }, []);
 
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
