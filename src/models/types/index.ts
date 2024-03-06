@@ -510,6 +510,11 @@ export type discountProduct = {
   priority: string;
   discount_percentage: number;
 };
+
+type ImageProduct ={
+  link_image :string
+}
+
 export type IProduct = {
   name: string;
   item_code: string;
@@ -522,6 +527,7 @@ export type IProduct = {
   country_of_origin: string;
   image: string;
   custom_industry: string;
+  custom_images_item: ImageProduct[];
   end_of_life: string;
   details: UinitProduct[];
   stock: StockProduct[];

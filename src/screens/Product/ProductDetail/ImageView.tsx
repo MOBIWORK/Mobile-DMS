@@ -17,11 +17,7 @@ const ImageView = () => {
   const [image, setImage] = useState<any>('');
 
   return (
-    <MainLayout
-      style={{
-        backgroundColor: displayImage ? 'black' : colors.bg_neutral,
-        paddingHorizontal: 0,
-      }}>
+    <MainLayout style={{ backgroundColor: displayImage ? 'black' : colors.bg_neutral, paddingHorizontal: 0}}>
       <AppHeader
         style={{marginHorizontal: 16}}
         label={displayImage ? undefined : getLabel("image")}
@@ -47,16 +43,9 @@ const ImageView = () => {
           data={route.params.data}
           renderItem={({item}) => {
             return (
-              <Pressable
-                onPress={() => {
-                  setImage(item);
-                  setDisplayImage(true);
-                }}
-                style={[
-                  styles.imgContainer,
-                  {backgroundColor: colors.bg_default},
-                ]}>
-                <Image source={item} style={styles.img} resizeMode="cover" />
+              <Pressable onPress={() => { setImage(item); setDisplayImage(true)}}
+                style={[styles.imgContainer,{backgroundColor: colors.bg_default}]}>
+                <Image source={{ uri :item.link_image }} style={styles.img} resizeMode="cover" />
               </Pressable>
             );
           }}
