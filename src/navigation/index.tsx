@@ -66,6 +66,7 @@ import {
   UserInfoScreen,
   EditAccount,
   TakePictureScore,
+  ListAlbumScore,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
