@@ -28,7 +28,7 @@ export type TypeState = {
   imageToMark: any;
   listProgramImage: any;
 };
-const {selectedProgram} = getState('checkin');
+
 
 export const newCategoriesCheckinList: IItemCheckIn[] = [
   {

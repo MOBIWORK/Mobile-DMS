@@ -2,6 +2,7 @@ import {PayloadAction, createAction, createSlice} from '@reduxjs/toolkit';
 import {TypeState, categoriesCheckinList} from './type';
 import * as Actions from './type';
 import {SLICE_NAME} from '../app-reducer/type';
+import {Platform} from 'react-native';
 
 const initState: TypeState = {
   dataNote: [],
@@ -86,7 +87,10 @@ const checkinSlice = createSlice({
       state.listImageSelect = [...state.listImageSelect, ...action.payload];
     },
     setImageResponse: (state, action: PayloadAction<any>) => {
-      state.imageToMark = [];
+      if (Platform.OS === 'android') {
+        state.imageToMark = [];
+      }
+      console.log(state.imageToMark)
       state.imageToMark = [...state.imageToMark, action.payload];
     },
     setListImageProgram: (state, action: PayloadAction<any>) => {

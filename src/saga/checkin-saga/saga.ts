@@ -75,7 +75,7 @@ export function* postImageScore(action:PayloadAction){
       const response:ResponseGenerator = yield call(CheckinService.postImagePictureScore,action.payload as any)
       console.log(response,Platform.OS === 'android' ? 'log android' : 'log ios')
       if(response.message === 'ok' && Object.keys(response.result).length > 0){
-        yield put(checkinActions.setImageResponse(response.result.file_url))
+        yield put(checkinActions.setImageResponse(response.result))
       
       }else{
         // yield put(checkinActions.setImageError([action.payload]))

@@ -1,5 +1,5 @@
 import {FlatList, Image, TouchableOpacity} from 'react-native';
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {
   Accordion,
   AppHeader,
@@ -15,9 +15,9 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScreenConstant} from '../../../const';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import isEqual from 'react-fast-compare';
-import { dispatch } from '../../../utils/redux';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
-import { newCategoriesCheckinList } from '../../../redux-store/checkin-reducer/type';
+import {dispatch} from '../../../utils/redux';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import {newCategoriesCheckinList} from '../../../redux-store/checkin-reducer/type';
 type Props = {};
 
 const ListAlbumScore = (props: Props) => {
@@ -33,22 +33,18 @@ const ListAlbumScore = (props: Props) => {
     state => state.checkin?.imageToMark,
     shallowEqual,
   );
-  console.log(listProgramSelected, 'b');
-  const listProgram = useSelector(state => state.checkin.listProgramCampaign)
-  const newArray = React.useMemo(() => {
-    const result = listProgramSelected?.map((campaign: any) => {
-      return {
-        title: campaign?.campaign_name,
-        image: listImageResponse,
-      };
-    });
 
-    return result?.filter((item: any) => item?.image?.length > 0);
-  }, []);
+  const resultData = listProgramSelected?.map((campaign: any) => {
+    return {
+      title: campaign?.campaign_name,
+      image: listImageResponse,
+    };
+  });
 
- const confirmUploadImage = () =>{
-  dispatch(checkinActions.setDataCategoriesCheckin(newCategoriesCheckinList))
- }
+  console.log(resultData[0],'fuck this shit im out')
+  const confirmUploadImage = () => {
+    dispatch(checkinActions.setDataCategoriesCheckin(newCategoriesCheckinList));
+  };
   const listHeaderComponent = useMemo(() => {
     return (
       <Block colorTheme="bg_neutral">
@@ -85,7 +81,7 @@ const ListAlbumScore = (props: Props) => {
     <SafeAreaView style={styles.root} edges={['bottom', 'top']}>
       <Block block>
         <FlatList
-          data={newArray}
+          data={resultData}
           keyExtractor={(item, index) => index.toString()}
           bounces={false}
           showsVerticalScrollIndicator={false}
@@ -103,7 +99,7 @@ const ListAlbumScore = (props: Props) => {
                   renderItem={({item, index}) => {
                     return (
                       <Block padding={5} alignItems="center">
-                        <Image style={styles.cameraImg} source={{uri: item}} />
+                        <Image style={styles.cameraImg} source={{uri: item.file_url}} />
                       </Block>
                     );
                   }}
