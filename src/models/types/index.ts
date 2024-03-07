@@ -780,6 +780,32 @@ export type IKpi = {
   kh_moi: number;
 };
 
+export type IReportSales = {
+  Kpi: {
+    dat_duoc: number;
+    phan_tram_thuc_hien: number;
+  };
+  sales_invoice: [
+    {
+      ngay: string;
+      doanh_so: number;
+    },
+  ];
+};
+
+export type IReportRevenue = {
+  Kpi: {
+    dat_duoc: number;
+    phan_tram_thuc_hien: number;
+  };
+  sales_invoice: [
+    {
+      ngay: string;
+      doanh_thu: number;
+    },
+  ];
+};
+
 export type IReportVisit = {
   chi_tieu: number;
   dat_duoc: number;

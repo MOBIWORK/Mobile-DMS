@@ -155,6 +155,7 @@ export const rootStyles = (theme: AppTheme) =>
       height: 360,
       borderRadius: 16,
       overflow: 'hidden',
+      position:'relative'
     } as ViewStyle,
     editView: {
       backgroundColor: theme.colors.bg_default,

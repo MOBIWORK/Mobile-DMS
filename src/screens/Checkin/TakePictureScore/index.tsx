@@ -25,7 +25,7 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {useDisableBackHandler, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {IUser} from '../../../models/types';
-import {dispatch} from '../../../utils/redux';
+import {dispatch, getState} from '../../../utils/redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import ListAlbum from './listAlbum';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -63,6 +63,7 @@ const TakePictureScore = () => {
     state => state.checkin.listImageSelect,
     shallowEqual,
   );
+
   
   useDisableBackHandler(true);
 

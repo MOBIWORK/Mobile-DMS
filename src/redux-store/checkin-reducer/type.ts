@@ -2,6 +2,7 @@ import {SvgIconTypes} from '../../assets/svgIcon';
 import {ScreenConstant} from '../../const';
 import {Colors} from '../../layouts/theme';
 import {CheckinOrderDetail, NoteType, StaffType} from '../../models/types';
+import {getState} from '../../utils/redux';
 
 export interface IItemCheckIn {
   icon: SvgIconTypes;
@@ -18,8 +19,8 @@ export type TypeState = {
   dataNote: NoteType[];
   dataStaff: StaffType[];
   dataTypeNote: any[];
-  orderDetail: CheckinOrderDetail | null;
-  returnOrderDetail: CheckinOrderDetail | null;
+  orderDetail: CheckinOrderDetail | null | any;
+  returnOrderDetail: CheckinOrderDetail | null | any;
   categoriesCheckin: any[];
   listProgramCampaign: any;
   selectedProgram: any;
@@ -27,7 +28,76 @@ export type TypeState = {
   imageToMark: any;
   listProgramImage: any;
 };
+const {selectedProgram} = getState('checkin');
 
+export const newCategoriesCheckinList: IItemCheckIn[] = [
+  {
+    icon: 'OrangeBox',
+    isDone: false,
+    isRequire: true,
+    name: 'Kiểm tồn',
+    screenName: 'CHECKIN_INVENTORY',
+    backgroundColor: 'orangeBackground',
+    key: 'inventory',
+  },
+  {
+    icon: 'CameraPurple',
+    isDone: false,
+    isRequire: false,
+    name: 'Chụp ảnh',
+    screenName: 'TAKE_PICTURE_VISIT',
+    backgroundColor: 'purpleBackground',
+    key: 'camera',
+  },
+  {
+    icon: 'IconOrder',
+    isDone: false,
+    isRequire: true,
+    name: 'Đặt hàng',
+    screenName: 'CHECKIN_ORDER',
+    backgroundColor: 'blueBackground',
+    type: 'ORDER',
+    key: 'order',
+  },
+  {
+    icon: 'GreenEdit',
+    isDone: false,
+    isRequire: false,
+    name: 'Ghi chú',
+    screenName: 'CHECKIN_NOTE_VISIT',
+    backgroundColor: 'greenBackground',
+    key: 'note',
+  },
+  {
+    icon: 'RedLocation',
+    isDone: false,
+    isRequire: false,
+    name: 'Vị trí',
+    screenName: 'CHECKIN_LOCATION',
+    backgroundColor: 'redBackground',
+    key: 'location',
+  },
+  {
+    icon: 'BlueUndo',
+    isDone: false,
+    isRequire: false,
+    name: 'Trả hàng',
+    screenName: 'CHECKIN_ORDER',
+    backgroundColor: 'undoBackground',
+    type: 'RETURN_ORDER',
+    key: 'return_order',
+  },
+  {
+    icon: 'MarkPicture',
+    isDone: false,
+    isRequire: false,
+    name: 'Chấm điểm trưng bày',
+    screenName: ScreenConstant.LIST_ALBUM_SCORE,
+    backgroundColor: 'undoBackground',
+    type: 'take_picture_score',
+    key: 'take_picture_score',
+  },
+];
 export const categoriesCheckinList: IItemCheckIn[] = [
   {
     icon: 'OrangeBox',

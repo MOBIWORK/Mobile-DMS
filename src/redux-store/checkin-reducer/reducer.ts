@@ -88,7 +88,7 @@ const checkinSlice = createSlice({
       state.listImageSelect = [...state.listImageSelect, ...action.payload];
     },
     setImageResponse: (state, action: PayloadAction<any>) => {
-      // state.imageToMark = []
+      state.imageToMark = [];
       state.imageToMark = [...state.imageToMark, action.payload];
     },
     setListImageProgram: (state, action: PayloadAction<any>) => {
