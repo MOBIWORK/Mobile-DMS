@@ -90,7 +90,7 @@ const checkinSlice = createSlice({
       if (Platform.OS === 'android') {
         state.imageToMark = [];
       }
-      console.log(state.imageToMark)
+     
       state.imageToMark = [...state.imageToMark, action.payload];
     },
     setListImageProgram: (state, action: PayloadAction<any>) => {
@@ -117,6 +117,12 @@ const getListProgram = createAction(
 const postImageScore = createAction(Actions.POST_IMAGE_SCORE, (data: any) => ({
   payload: data,
 }));
+
+const createReportMarkScore = createAction(
+  Actions.CREATE_REPORT_MARK_SCORE,
+  (data: Actions.DataSendMarkScore) => ({payload: data}),
+);
+
 export const checkinActions = {
   ...checkinSlice.actions,
   getListNoteCheckin,
@@ -124,6 +130,7 @@ export const checkinActions = {
   getListNoteType,
   getListProgram,
   postImageScore,
+  createReportMarkScore,
 };
 
 export const checkinReducer = checkinSlice.reducer;
