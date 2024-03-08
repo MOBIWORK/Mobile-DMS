@@ -84,7 +84,7 @@ const ListAlbumScore = (props: Props) => {
       const newData: any = itemCheckin.map(item =>
         item.key === 'take_picture_score'
           ? {...item, isDone: true, screenName: ScreenConstant.LIST_ALBUM_SCORE}
-          : null,
+          : item,
       );
 
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
@@ -157,7 +157,7 @@ const ListAlbumScore = (props: Props) => {
                   renderItem={({item, index}) => {
                     return (
                       <Block padding={5} alignItems="center">
-                        <Image style={styles.cameraImg} source={{uri: item.file_url}} />
+                        <Image style={styles.cameraImg} source={{uri: item}} />
                       </Block>
                     );
                   }}
