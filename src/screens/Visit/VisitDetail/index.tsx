@@ -136,6 +136,7 @@ const Index = () => {
           bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
         }
         timeLabel={filterTime}
+        itemData={route.params.data}
       />
     </View>
   );

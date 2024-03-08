@@ -1,4 +1,11 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -37,6 +44,7 @@ import {
   IResOrganization,
   IUser,
   IWidget,
+  VisitListItemType,
 } from '../../models/types';
 import ItemWidget from '../../components/Widget/ItemWidget';
 import {NavigationProp} from '../../navigation';
@@ -57,6 +65,10 @@ import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
+import {getCustomerVisit, IListVisitParams} from '../../services/appService';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {LocationProps} from '../Visit/VisitList/VisitItem';
+import MarkerItem from '../../components/common/MarkerItem';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -71,6 +83,9 @@ const HomeScreen = () => {
 
   // const showModal = useSelector(state => state.app.showModal);
   const userProfile: IUser = useSelector(state => state.app.userProfile);
+  const listCustomerVisit: VisitListItemType[] = useSelector(
+    state => state.customer.listCustomerVisit,
+  );
 
   const [updateMessage, setUpdateMessage] = React.useState('');
   const [updateStatus, setUpdateStatus] = React.useState(-1);
@@ -310,11 +325,12 @@ const HomeScreen = () => {
     const link = `mbwess://sign_in/${userNameStore?.toLocaleLowerCase()}/${passwordStore}/${organiztion?.company_name?.toLocaleLowerCase()}`;
     Linking.canOpenURL(link)
       .then(supported => {
-        if (supported) {
-          Linking.openURL(link);
-        } else {
-          return openAppStore();
-        }
+        // if (supported) {
+        //   Linking.openURL(link);
+        // } else {
+        //   return openAppStore();
+        // }
+        console.log('not sup', supported);
       })
       .catch(() => openAppStore());
   };
@@ -377,6 +393,16 @@ const HomeScreen = () => {
     }
   };
 
+  const getCustomer = async () => {
+    await getCustomerVisit().then((res: any) => {
+      if (Object.keys(res.result).length > 0) {
+        const data: VisitListItemType[] = res?.result.data;
+        const newData = data.filter(item => item.customer_location_primary);
+        dispatch(customerActions.setCustomerVisit(newData));
+      }
+    });
+  };
+
   const handleRegainLocation = async () => {
     const newLocation = await BackgroundGeolocation.getCurrentPosition({
       samples: 1,
@@ -414,7 +440,7 @@ const HomeScreen = () => {
     // setLoading(false);
     getSystemConfig();
     getLocation();
-    dispatch(appActions.onGetSystemConfig());
+    // dispatch(appActions.onGetSystemConfig());
     getWidget();
     getProfile();
     getCurrentShit();
@@ -617,7 +643,7 @@ const HomeScreen = () => {
                       },
                     ]}
                     onPress={openToDeeplink}
-                    disabled={!currentShit?.shift_type_now}>
+                    disabled={currentShit?.shift_type_now}>
                     <Image
                       source={ImageAssets.Usercheckin}
                       resizeMode={'cover'}
@@ -725,15 +751,15 @@ const HomeScreen = () => {
                       zIndex: 10,
                       position: 'absolute',
                     }}>
-                    <Mapbox.RasterSource
-                      id="adminmap"
-                      tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-                      <Mapbox.RasterLayer
-                        id={'adminmap'}
-                        sourceID={'admin'}
-                        style={{visibility: 'visible'}}
-                      />
-                    </Mapbox.RasterSource>
+                    {/*<Mapbox.RasterSource*/}
+                    {/*  id="adminmap"*/}
+                    {/*  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>*/}
+                    {/*  <Mapbox.RasterLayer*/}
+                    {/*    id={'adminmap'}*/}
+                    {/*    sourceID={'admin'}*/}
+                    {/*    style={{visibility: 'visible'}}*/}
+                    {/*  />*/}
+                    {/*</Mapbox.RasterSource>*/}
                     <Mapbox.Camera
                       ref={mapboxCameraRef}
                       centerCoordinate={[
@@ -744,6 +770,22 @@ const HomeScreen = () => {
                       animationDuration={500}
                       zoomLevel={12}
                     />
+                    {listCustomerVisit &&
+                      listCustomerVisit.map((item, index) => {
+                        const newLocation: LocationProps = JSON.parse(
+                          item.customer_location_primary!,
+                        );
+                        return (
+                          <Mapbox.MarkerView
+                            key={index}
+                            coordinate={[
+                              Number(newLocation.long),
+                              Number(newLocation.lat),
+                            ]}>
+                            <MarkerItem item={item} index={index} />
+                          </Mapbox.MarkerView>
+                        );
+                      })}
                     <Mapbox.UserLocation
                       visible={true}
                       animated

@@ -3,9 +3,11 @@ import {AppSegmentedButtons} from '../../../../components/common';
 import {AppSegmentedButtonsType} from '../../../../components/common/AppSegmentedButtons';
 import Order from './Order/Order';
 import {
+  IReportVisitDetail,
   ReportDebtType,
   ReportInventoryType,
   ReportOrderItemType,
+  VisitListItemType,
 } from '../../../../models/types';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../../navigation';
@@ -13,11 +15,14 @@ import {ScreenConstant} from '../../../../const';
 import Inventory from './Inventory';
 import Debt from './Debt';
 import SelectedDateFilter from './SelectedDateFilter';
+import {CustomerService} from '../../../../services';
 
-const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel}) => {
+const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
   const navigation = useNavigation<NavigationProp>();
   const [segData, setSegData] = useState<AppSegmentedButtonsType[]>([]);
   const [indexPage, setIndexPage] = useState<number>(1);
+
+  const [reportData, setReportData] = useState<IReportVisitDetail>();
 
   const changeReportIndex = (value: string | number) => {
     setIndexPage(Number(value));
@@ -31,8 +36,18 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel}) => {
     setSegData(newSegData);
   };
 
+  const getData = async () => {
+    const response: any = await CustomerService.getReportOrder({
+      customer_name: itemData.customer_name,
+    });
+    if (Object.keys(response?.result).length > 0) {
+      setReportData(response.result);
+    }
+  };
+
   useEffect(() => {
     setSegData(dataSeg);
+    getData().then();
   }, []);
 
   return (
@@ -45,20 +60,22 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel}) => {
         <AppSegmentedButtons data={segData} onChange={changeReportIndex} />
       )}
       <>
-        {indexPage === 1 ? (
+        {indexPage === 1 && reportData?.don_hang ? (
           <Order
-            orderData={ReportOrderData}
+            orderData={reportData.don_hang.danh_sach_don}
+            orderCount={reportData.don_hang?.so_don_trong_thang ?? 0}
+            payment={reportData.don_hang?.so_tien_phai_tra ?? 0}
             handleItem={item =>
               navigation.navigate(ScreenConstant.REPORT_ORDER_DETAIL, {
                 item: item,
               })
             }
           />
-        ) : indexPage === 2 ? (
-          <Inventory inventoryData={ReportInventoryData} />
-        ) : (
+        ) : indexPage === 2 && reportData?.ton_kho ? (
+          <Inventory inventoryData={reportData.ton_kho} />
+        ) : indexPage === 3 ? (
           <Debt debtData={ReportDebtData} />
-        )}
+        ) : null}
       </>
     </>
   );
@@ -66,6 +83,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel}) => {
 interface ReportProps {
   onOpenReportFilter: () => void;
   timeLabel?: string;
+  itemData: VisitListItemType;
 }
 export default Report;
 const dataSeg: AppSegmentedButtonsType[] = [
@@ -85,126 +103,7 @@ const dataSeg: AppSegmentedButtonsType[] = [
     isSelected: false,
   },
 ];
-const ReportOrderData: ReportOrderItemType[] = [
-  {
-    id: 1,
-    label: 'DH-22344',
-    date: '20/11/2023',
-    time: '8:00',
-    price: 6000000,
-  },
-  {
-    id: 2,
-    label: 'DH-22344',
-    date: '20/11/2023',
-    time: '8:00',
-    price: 6000000,
-  },
-  {
-    id: 3,
-    label: 'DH-22344',
-    date: '20/11/2023',
-    time: '8:00',
-    price: 6000000,
-  },
-  {
-    id: 4,
-    label: 'DH-22344',
-    date: '20/11/2023',
-    time: '8:00',
-    price: 6000000,
-  },
-  {
-    id: 5,
-    label: 'DH-22344',
-    date: '20/11/2023',
-    time: '8:00',
-    price: 6000000,
-  },
-  {
-    id: 6,
-    label: 'DH-22344',
-    date: '20/11/2023',
-    time: '8:00',
-    price: 6000000,
-  },
-  {
-    id: 7,
-    label: 'DH-22344',
-    date: '20/11/2023',
-    time: '8:00',
-    price: 6000000,
-  },
-  {
-    id: 8,
-    label: 'DH-22344',
-    date: '20/11/2023',
-    time: '8:00',
-    price: 6000000,
-  },
-];
-const ReportInventoryData: ReportInventoryType[] = [
-  {
-    dateTime: '28/11/2023',
-    listProduct: [
-      {
-        productName: 'Brand New Bike, Local buyer only',
-        count: 1,
-        unit: 'Cái',
-      },
-      {
-        productName: 'Macbook Pro 16 inch (2020 ) For Sale',
-        count: 1,
-        unit: 'Cái',
-      },
-      {
-        productName: 'Coach Tabby 26 for sale',
-        count: 1,
-        unit: 'Cái',
-      },
-    ],
-  },
-  {
-    dateTime: '27/11/2023',
-    listProduct: [
-      {
-        productName: 'Brand New Bike, Local buyer only',
-        count: 1,
-        unit: 'Cái',
-      },
-      {
-        productName: 'Macbook Pro 16 inch (2020 ) For Sale',
-        count: 1,
-        unit: 'Cái',
-      },
-      {
-        productName: 'Coach Tabby 26 for sale',
-        count: 1,
-        unit: 'Cái',
-      },
-    ],
-  },
-  {
-    dateTime: '26/11/2023',
-    listProduct: [
-      {
-        productName: 'Brand New Bike, Local buyer only',
-        count: 1,
-        unit: 'Cái',
-      },
-      {
-        productName: 'Macbook Pro 16 inch (2020 ) For Sale',
-        count: 1,
-        unit: 'Cái',
-      },
-      {
-        productName: 'Coach Tabby 26 for sale',
-        count: 1,
-        unit: 'Cái',
-      },
-    ],
-  },
-];
+
 const ReportDebtData: ReportDebtType = {
   total: 7000000,
   listDebt: [

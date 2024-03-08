@@ -222,11 +222,10 @@ export interface Southwest {
 }
 
 export type ReportOrderItemType = {
-  id: string | number;
-  label: string;
-  date: string;
-  time: string;
-  price: number;
+  name: string;
+  transaction_date: string;
+  time?: string;
+  grand_total: number;
 };
 
 export type ReportProductOrderType = {
@@ -241,14 +240,21 @@ export type ReportProductOrderType = {
 };
 
 export type ReportProductInventoryType = {
-  productName: string;
-  count: number;
-  unit: string;
+  item_code: string;
+  item_name: string;
+  item_unit: string;
+  item_price: number;
+  quanity: number;
+  exp_time: string;
+  update_at: string;
+  update_byname: string;
+  update_bycode: string;
 };
 
 export type ReportInventoryType = {
-  dateTime: number | string;
-  listProduct: ReportProductInventoryType[];
+  name: string;
+  creation: string;
+  items: ReportProductInventoryType[];
 };
 
 export type ReportDebtListType = {
@@ -336,51 +342,6 @@ export interface AddressCustomer {
 export interface CreLimid {
   credit_limit: number;
 }
-//
-// export interface ContactCustomer {
-//   first_name: string;
-//   phone: string;
-//   is_primary_contact: number;
-//   is_billing_contact: number;
-// }
-//
-// export interface AddressCustomer {
-//   name: string;
-//   address_line1: string;
-//   address_line2: any;
-//   city: string;
-//   state: any;
-//   is_primary_address: number;
-//   is_shipping_address: number;
-//   county?: string;
-// }
-//
-// export interface CreLimitCustomer {
-//   credit_limit: number;
-// }
-
-//
-// export interface ContactCustomer {
-//   first_name: string;
-//   phone: string;
-//   is_primary_contact: number;
-//   is_billing_contact: number;
-// }
-//
-// export interface AddressCustomer {
-//   name: string;
-//   address_line1: string;
-//   address_line2: any;
-//   city: string;
-//   state: any;
-//   is_primary_address: number;
-//   is_shipping_address: number;
-//   county?: string;
-// }
-//
-// export interface CreLimitCustomer {
-//   credit_limit: number;
-// }
 
 export interface RootEkMapResponse {
   results: ResultEkMapResponse[];
@@ -845,4 +806,49 @@ export type IVisitRouteDetail = {
   vieng_tham_cuoi: string;
   nv_dat_hang: string;
   don_hang_cuoi: string;
+};
+
+export type OrderDetailItemType = {
+  name: string;
+  transaction_date: string;
+  grand_total: number;
+};
+
+export type IReportVisitDetail = {
+  don_hang: {
+    so_don_trong_thang: number;
+    so_tien_phai_tra: number;
+    danh_sach_don: OrderDetailItemType[];
+  };
+  ton_kho: ReportInventoryType[];
+};
+
+export type ListItemOrder = {
+  name: string;
+  item_name: string;
+  item_code: string;
+  qty: number;
+  uom: string;
+  amount: string;
+  discount_amount: string;
+  discount_percentage: string;
+  is_free_item: number;
+};
+
+export type IOrderDetailItem = {
+  list_items: ListItemOrder[];
+  customer: string;
+  customer_name: string;
+  address_display: string;
+  delivery_date: number;
+  set_warehouse: string;
+  total: number;
+  grand_total: number;
+  taxes_and_charges: string;
+  total_taxes_and_charges: number;
+  apply_discount_on: string;
+  additional_discount_percentage: number;
+  discount_amount: number;
+  contact_person: string;
+  rounded_total: number;
 };

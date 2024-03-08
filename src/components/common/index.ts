@@ -57,5 +57,5 @@ export {
   AppImage,
   AppSelectedDate,
   TabSelected,
-  SkeletonLoading
+  SkeletonLoading,
 };

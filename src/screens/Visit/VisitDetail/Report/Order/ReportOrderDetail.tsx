@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {MainLayout} from '../../../../../layouts';
 import {
   AppContainer,
@@ -25,9 +25,14 @@ import {
   ViewStyle,
 } from 'react-native';
 import {CommonUtils} from '../../../../../utils';
-import {ReportProductOrderType} from '../../../../../models/types';
+import {
+  IOrderDetailItem,
+  ReportProductOrderType,
+} from '../../../../../models/types';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ProductOrderItem from './ProductOrderItem';
+import {OrderService} from '../../../../../services';
+import {ApiConstant} from '../../../../../const';
 
 const ReportOrderDetail = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -37,6 +42,19 @@ const ReportOrderDetail = () => {
   const styles = createSheetStyles(useTheme());
   const {t: getLabel} = useTranslation();
   const item = route.params.item;
+
+  const [data, setData] = useState<IOrderDetailItem>();
+
+  const getData = async () => {
+    const res: any = await OrderService.getDetail(item.name);
+    if (res?.status === ApiConstant.STT_OK) {
+      setData(res.data.result);
+    }
+  };
+
+  useEffect(() => {
+    getData().then();
+  }, [item]);
 
   const RowItem: FC<RowItemProps> = ({
     style,
@@ -119,7 +137,11 @@ const ReportOrderDetail = () => {
           <RowItem
             style={{paddingBottom: 8}}
             title={getLabel('deliveryDate')}
-            label={'28/11/2023'}
+            label={
+              data?.delivery_date
+                ? CommonUtils.convertDate(data.delivery_date * 1000)
+                : ''
+            }
           />
           <RowItem
             style={{
@@ -128,7 +150,7 @@ const ReportOrderDetail = () => {
               borderColor: colors.border,
             }}
             title={getLabel('eXwarehouse')}
-            label={'Kho HN'}
+            label={data?.set_warehouse ?? 'Không'}
           />
         </Block>
       );
@@ -148,8 +170,14 @@ const ReportOrderDetail = () => {
           style={{rowGap: 8}}
           padding={4}
           borderRadius={16}>
-          <RowItem title={getLabel('formVat')} label={'Biểu mẫu A'} />
-          <RowItem title={'VAT(%)'} label={'5'} />
+          <RowItem
+            title={getLabel('formVat')}
+            label={data?.taxes_and_charges ?? 'Không'}
+          />
+          <RowItem
+            title={'VAT(%)'}
+            label={data?.total_taxes_and_charges.toString() ?? '0'}
+          />
           <RowItem
             title={'VAT(VND)'}
             label={CommonUtils.convertNumber(100000).toString()}
@@ -169,12 +197,17 @@ const ReportOrderDetail = () => {
           padding={4}>
           <RowItem
             title={getLabel('typeDiscount')}
-            label={'Tổng tiền có VAT'}
+            label={data?.apply_discount_on ?? 'Không'}
           />
-          <RowItem title={'Chiết khấu(%)'} label={'5'} />
+          <RowItem
+            title={'Chiết khấu(%)'}
+            label={data?.additional_discount_percentage.toString() ?? '0'}
+          />
           <RowItem
             title={`${getLabel('discount')}(VND)`}
-            label={CommonUtils.convertNumber(100000).toString()}
+            label={CommonUtils.convertNumber(
+              data?.discount_amount ?? 0,
+            ).toString()}
           />
         </Block>
       </Accordion>
@@ -214,10 +247,20 @@ const ReportOrderDetail = () => {
           style={{rowGap: 10}}
           borderRadius={16}
           padding={16}>
-          <PayItem label={getLabel('intoMoney')} price={5000000} />
-          <PayItem label={getLabel('discount')} price={1000000} />
+          <PayItem
+            label={getLabel('intoMoney')}
+            price={data?.rounded_total ?? 0}
+          />
+          <PayItem
+            label={getLabel('discount')}
+            price={data?.discount_amount ?? 0}
+          />
           <PayItem label={'VAT'} price={100000} />
-          <PayItem label={getLabel('totalPrice')} price={4100000} isTotal />
+          <PayItem
+            label={getLabel('totalPrice')}
+            price={data?.grand_total ?? 0}
+            isTotal
+          />
         </Block>
       </Accordion>
     );
@@ -228,9 +271,9 @@ const ReportOrderDetail = () => {
       <AppCustomHeader
         styles={{flex: 1.5, paddingHorizontal: 16, marginBottom: 12}}
         onBack={() => navigation.goBack()}
-        title={item.label}
+        title={item.name}
         icon={ImageAssets.CalenderIcon}
-        description={`${item.time}, ${item.date}`}
+        description={CommonUtils.convertDate(item.transaction_date)}
       />
       <Block flex={9} style={{backgroundColor: colors.bg_neutral}}>
         <AppContainer style={{marginBottom: bottom}}>
