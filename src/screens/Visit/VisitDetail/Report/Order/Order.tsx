@@ -14,7 +14,13 @@ import {ImageAssets} from '../../../../../assets';
 import {ReportOrderItemType} from '../../../../../models/types';
 import StatisticalItem from '../../StatisticalItem';
 import {useTranslation} from 'react-i18next';
-const Order: FC<OrderProps> = ({orderData, handleItem}) => {
+import {CommonUtils} from '../../../../../utils';
+const Order: FC<OrderProps> = ({
+  orderData,
+  handleItem,
+  orderCount,
+  payment,
+}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const {t: getLabel} = useTranslation();
@@ -28,7 +34,7 @@ const Order: FC<OrderProps> = ({orderData, handleItem}) => {
           {borderBottomWidth: index === orderData.length - 1 ? 0 : 1},
         ]}>
         <View style={{rowGap: 5}}>
-          <Text style={styles.text as TextStyle}>DH-22344</Text>
+          <Text style={styles.text as TextStyle}>{item.name}</Text>
           <View style={styles.itemTitle as any}>
             <Image
               source={ImageAssets.CalenderIcon}
@@ -36,18 +42,20 @@ const Order: FC<OrderProps> = ({orderData, handleItem}) => {
               resizeMode={'cover'}
             />
             <Text style={{color: colors.text_secondary, marginLeft: 4}}>
-              20/11/2023
+              {CommonUtils.convertDate(item.transaction_date)}
             </Text>
           </View>
         </View>
-        <Text style={styles.text as TextStyle}>6.000.000</Text>
+        <Text style={styles.text as TextStyle}>
+          {item?.grand_total ? CommonUtils.convertNumber(item.grand_total) : 0}
+        </Text>
       </Pressable>
     );
   };
 
   return (
     <View style={{marginTop: 32}}>
-      <StatisticalItem orderCount={15} payment={10000000} />
+      <StatisticalItem orderCount={orderCount} payment={payment} />
       <View style={styles.listProduct as ViewStyle}>
         <Text style={{color: colors.text_secondary}}>
           {getLabel('listOrder')}
@@ -57,12 +65,21 @@ const Order: FC<OrderProps> = ({orderData, handleItem}) => {
           showsVerticalScrollIndicator={false}
           data={orderData}
           renderItem={({item, index}) => OrderItem(item, index)}
+          ListEmptyComponent={
+            <View>
+              <Text style={{color: colors.text_primary}}>
+                {getLabel('noOrder')}
+              </Text>
+            </View>
+          }
         />
       </View>
     </View>
   );
 };
 interface OrderProps {
+  orderCount: number;
+  payment: number;
   orderData: ReportOrderItemType[];
   handleItem: (item: ReportOrderItemType) => void;
 }

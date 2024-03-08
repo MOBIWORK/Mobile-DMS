@@ -59,6 +59,7 @@ import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
+import MarkerItem from '../../../components/common/MarkerItem';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -85,7 +86,6 @@ const ListVisit = () => {
   const customerType: ListCustomerType[] = useSelector(
     state => state.customer.listCustomerType,
   );
-  const appLoading = useSelector(state => state.app.loadingApp);
 
   const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
     getLabel('nearest'),
@@ -158,30 +158,6 @@ const ListVisit = () => {
       );
     setShowListVisit(false);
     setVisitItemSelected(item);
-  };
-
-  const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
-    return (
-      <TouchableOpacity
-        style={{alignItems: 'center', justifyContent: 'center'}}
-        onPress={() => setVisitItemSelected(item)}>
-        <Image
-          source={ImageAssets.TooltipIcon}
-          style={{width: 20, height: 20, marginBottom: -5}}
-          resizeMode={'contain'}
-          tintColor={colors.text_primary}
-        />
-        <Text style={{color: colors.bg_default, position: 'absolute', top: 0}}>
-          {index + 1}
-        </Text>
-        <Image
-          source={ImageAssets.MapPinFillIcon}
-          style={{width: 32, height: 32}}
-          tintColor={item.is_checkin ? colors.success : colors.warning}
-          resizeMode={'cover'}
-        />
-      </TouchableOpacity>
-    );
   };
 
   const _renderHeader = () => {
@@ -275,7 +251,7 @@ const ListVisit = () => {
                 style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
                 data={listCustomer}
-                keyExtractor={(item,index) => item.customer_code}
+                keyExtractor={(item, index) => item.customer_code}
                 decelerationRate={'fast'}
                 bounces={false}
                 initialNumToRender={5}
@@ -329,7 +305,11 @@ const ListVisit = () => {
                         Number(location.long),
                         Number(location.lat),
                       ]}>
-                      <MarkerItem item={item} index={index} />
+                      <MarkerItem
+                        item={item}
+                        index={index}
+                        onPress={item => setVisitItemSelected(item)}
+                      />
                     </Mapbox.MarkerView>
                   );
                 })}
@@ -361,8 +341,6 @@ const ListVisit = () => {
   };
 
   useLayoutEffect(() => {
-    // setLoading(true);
-
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
@@ -372,12 +350,9 @@ const ListVisit = () => {
     })
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
-
-    // setLoading(false);
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
-    setLoading(true);
     await getCustomerVisit(params).then((res: any) => {
       if (Object.keys(res.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
@@ -385,7 +360,6 @@ const ListVisit = () => {
         dispatch(customerActions.setCustomerVisit(newData));
       }
     });
-    setLoading(false);
   };
 
   const getCustomerRoute = async () => {
@@ -404,6 +378,13 @@ const ListVisit = () => {
         dispatch(setListCustomerType(response?.result));
       }
     }
+  };
+
+  const getData = async () => {
+    setLoading(true);
+    await getCustomerRoute();
+    await getDataGroup();
+    setLoading(false);
   };
 
   const handleFilterData = async () => {
@@ -442,15 +423,9 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-    dispatch(appActions.onLoadApp());
-    getCustomer();
-    getCustomerRoute();
-    getDataGroup();
-    dispatch(appActions.onLoadAppEnd());
-
+    getData().then();
     return () => {
       mounted.current = false;
-      dispatch(appActions.onLoadAppEnd());
     };
   }, []);
 
@@ -478,11 +453,6 @@ const ListVisit = () => {
     </SafeAreaView>
   );
 };
-
-interface MarkerItemProps {
-  item: VisitListItemType;
-  index: number;
-}
 export default memo(ListVisit);
 
 const rootStyles = (theme: ExtendedTheme) =>
