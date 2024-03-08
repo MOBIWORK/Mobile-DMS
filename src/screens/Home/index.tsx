@@ -440,14 +440,14 @@ const HomeScreen = () => {
     setLoading(false);
     getLocation();
     getCustomer();
-    // getSystemConfig();
-    // getWidget();
-    // getProfile();
-    // getCurrentShit();
-    // getReportKPI();
-    // getReportSales();
-    // getReportRevenue();
-    // getReportVisit();
+    getSystemConfig();
+    getWidget();
+    getProfile();
+    getCurrentShit();
+    getReportKPI();
+    getReportSales();
+    getReportRevenue();
+    getReportVisit();
   }, []);
 
   const getSystemConfig = () => {
@@ -752,15 +752,15 @@ const HomeScreen = () => {
                       zIndex: 10,
                       position: 'absolute',
                     }}>
-                    {/*<Mapbox.RasterSource*/}
-                    {/*  id="adminmap"*/}
-                    {/*  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>*/}
-                    {/*  <Mapbox.RasterLayer*/}
-                    {/*    id={'adminmap'}*/}
-                    {/*    sourceID={'admin'}*/}
-                    {/*    style={{visibility: 'visible'}}*/}
-                    {/*  />*/}
-                    {/*</Mapbox.RasterSource>*/}
+                    <Mapbox.RasterSource
+                      id="adminmap"
+                      tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                      <Mapbox.RasterLayer
+                        id={'adminmap'}
+                        sourceID={'admin'}
+                        style={{visibility: 'visible'}}
+                      />
+                    </Mapbox.RasterSource>
                     <Mapbox.Camera
                       ref={mapboxCameraRef}
                       centerCoordinate={[
