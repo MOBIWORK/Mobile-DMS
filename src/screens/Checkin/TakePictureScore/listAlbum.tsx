@@ -13,11 +13,16 @@ import {AppTheme} from '../../../layouts/theme';
 import {AppConstant} from '../../../const';
 import isEqual from 'react-fast-compare';
 
+interface ImageSelect {
+  uri: string;
+  timeStamp: number;
+}
+
 type Props = {
   albumImage: any[];
   selectedImages: any[];
   handleCameraPicture: () => void;
-  handleSelectImage: (item: string) => void;
+  handleSelectImage: (item: ImageSelect) => void;
   theme: AppTheme;
   onPressAdding: () => void;
   listImageResponse: any[];
@@ -74,9 +79,10 @@ const listAlbum = (props: Props) => {
                 <TouchableOpacity
                   onPress={() => {
                     props.handleSelectImage(item);
+                    console.log(props.selectedImages.includes(item))
                     // console.log(item,props.listImageResponse[index+1],'select')
                   }}>
-                  {props.selectedImages.includes(item)&& (
+                  {props.selectedImages.includes(item) && (
                     <Block
                       position="absolute"
                       zIndex={1000}
@@ -108,12 +114,12 @@ const listAlbum = (props: Props) => {
                           fontWeight="bold"
                           textAlign="center"
                           colorTheme="white">
-                          {props.selectedImages.indexOf(item) + 1}
+                          {props.selectedImages.indexOf(item)+1}
                         </Text>
                       </Block>
                     </Block>
                   )}
-                  {props.listImageResponse.includes(item)&& (
+                  {props.listImageResponse.includes(item) && (
                     <Block
                       position="absolute"
                       zIndex={1000}
@@ -121,11 +127,15 @@ const listAlbum = (props: Props) => {
                       alignItems="center"
                       bottom={2}
                       left={2}>
-                      <SvgIcon source="checkCircle" size={30}  color={'transparent'}/>
+                      <SvgIcon
+                        source="checkCircle"
+                        size={30}
+                        color={'transparent'}
+                      />
                     </Block>
                   )}
                   <Image
-                    source={{uri: item}}
+                    source={{uri: item.uri}}
                     style={styles.cameraImg as ImageStyle}
                     resizeMode="cover"
                   />

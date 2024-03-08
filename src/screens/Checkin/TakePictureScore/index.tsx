@@ -33,18 +33,26 @@ import ListProgram from './listProgram';
 import {Modal} from 'react-native-paper';
 import {ScreenConstant} from '../../../const';
 import {ImageAssets} from '../../../assets';
+import moment from 'moment';
+
+interface ImageSelect {
+  uri: string;
+  timeStamp: number;
+}
 
 const TakePictureScore = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const [albumImage, setAlbumImage] = React.useState<any[]>([]);
-  const [selectedImages, setSelectedImages] = React.useState<string[]>([]);
+  const [selectedImages, setSelectedImages] = React.useState<ImageSelect[]>([]);
 
   const [loading, setLoading] = React.useState<boolean>(false);
   const [showModal, setShowModal] = React.useState(false);
   const itemParams =
     useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>().params.data;
-    const screen=    useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>().params.screen
+  const screen =
+    useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>().params
+      .screen;
   const snapPoints = React.useMemo(() => ['45%'], []);
   const bottomSheetRef = React.useRef<BottomSheetMethods>();
   const userInfor: IUser = useSelector(
@@ -64,39 +72,49 @@ const TakePictureScore = () => {
     shallowEqual,
   );
 
-  
   useDisableBackHandler(true);
 
   const onPressConfirm = useCallback(
     async (listProgram: any[]) => {
       await dispatch(checkinActions.setListImageSelect(selectedImages));
       bottomSheetRef?.current?.close();
-      const newArray = listProgram.map((item:any,index:number) =>({
-        title:item,
-        image:selectedImages[index] ? selectedImages[index] : []
-      }))
-       dispatch(checkinActions.setListImageProgram(newArray))
-       console.log(newArray,'bbbb')
+      const newArray = listProgram.map((item: any, index) => ({
+        item,
+        image: selectedImages,
+      }));
+      // console.log(newArray, 'bb');
+      dispatch(checkinActions.setListImageProgram(newArray));
+
       try {
         setLoading(true);
 
+        // Loop over each image in selectedImages
         for (let i = 0; i < selectedImages.length; i++) {
           const formData = new FormData(); // Create a new FormData object for each image
           formData.append('folder', 'Home');
           formData.append('is_private', 0);
-          let parts = selectedImages[i].split('/');
+
+          // Extract file name from URI
+          let parts = selectedImages[i].uri.split('/');
           const trimmedURI =
             Platform.OS === 'android'
-              ? selectedImages[i]
-              : selectedImages[i].replace('file://', '');
+              ? selectedImages[i].uri
+              : selectedImages[i].uri.replace('file://', '');
+
+          // Prepare file data
           const fileData = {
             uri: trimmedURI,
             type: 'image/jpeg',
             name: parts[parts.length - 1],
           };
+
+          // Append file data to form data
           formData.append('file', fileData);
-          console.log(formData, 'formData');
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Delay if needed
+
+          // Delay if needed
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Dispatch action to post image score
           await dispatch(checkinActions.postImageScore(formData));
         }
       } catch (err) {
@@ -109,43 +127,77 @@ const TakePictureScore = () => {
     [selectedImages],
   );
 
+  // const handleCameraPicture = React.useCallback(async () => {
+  //   await CameraUtils.openImagePicker((img, base64,timeStamp) => {
+  //     setAlbumImage(prevImages => {
+  //       if (prevImages.length === 0) {
+  //         // If no images exist, add the new image as the initial picture
+  //         return ['IconCamera', ...prevImages.slice(1), img];
+  //       } else {
+  //         // If images exist, keep the initial picture at index 0 and add the new image at the end
+  //         return [prevImages[0], ...prevImages.slice(1), img];
+  //       }
+  //     });
+  //   });
+  // }, [selectedImages]);
   const handleCameraPicture = React.useCallback(async () => {
     await CameraUtils.openImagePicker((img, base64) => {
       setAlbumImage(prevImages => {
         if (prevImages.length === 0) {
           // If no images exist, add the new image as the initial picture
-          return ['IconCamera', ...prevImages.slice(1), img];
+          return [
+            'IconCamera',
+            {uri: img, timeStamp: moment(new Date()).unix()},
+            ...prevImages.slice(1),
+          ];
         } else {
           // If images exist, keep the initial picture at index 0 and add the new image at the end
-          return [prevImages[0], ...prevImages.slice(1), img];
+          return [
+            prevImages[0],
+            ...prevImages.slice(1),
+            {uri: img, timeStamp: moment(new Date()).unix()},
+          ];
         }
       });
     });
   }, [selectedImages]);
 
   const handleSelectImage = useCallback(
-    (image: string) => {
-      if (selectedImages.includes(image)) {
+    (image: ImageSelect) => {
+      const imageUri = typeof image === 'string' ? image : image.uri;
+      if (
+        selectedImages.find(selectedImage => selectedImage.uri === imageUri)
+      ) {
         // If the image is already selected, remove it from the selectedImages array
-        setSelectedImages(prevSelectedImages =>
-          prevSelectedImages.filter(selectedImage => selectedImage !== image),
+        setSelectedImages(
+          prevSelectedImages =>
+            prevSelectedImages.filter(
+              selectedImage => selectedImage.uri !== imageUri,
+            ) as ImageSelect[],
         );
       } else {
         // If the image is not selected, add it to the selectedImages array
-        setSelectedImages(prevSelectedImages => [...prevSelectedImages, image]);
+        setSelectedImages(prevSelectedImages => [
+          ...prevSelectedImages,
+          typeof image === 'string' ? {uri: image, timeStamp: 0} : image,
+        ]);
+
+        // Update the order of selected images array
       }
 
       // Update the order of selected images array
     },
     [selectedImages, setSelectedImages],
   );
+
   const onPressMarkProgram = () => {
     if (listProgramSelected < listProgram) {
       setShowModal(true);
     } else {
-      navigate(ScreenConstant.LIST_ALBUM_SCORE,{
-        data:itemParams
+      navigate(ScreenConstant.LIST_ALBUM_SCORE, {
+        data: itemParams,
       });
+      setShowModal(false);
     }
   };
 
@@ -263,14 +315,17 @@ const TakePictureScore = () => {
             marginTop={16}
             paddingHorizontal={16}>
             <Text textAlign="center" fontSize={16}>
-              Còn {listProgram.length - listProgramSelected.length} chương trình chưa chấm điểm, bạn có muốn tiếp tục?
+              Còn {listProgram.length - listProgramSelected.length} chương trình
+              chưa chấm điểm, bạn có muốn tiếp tục?
             </Text>
             <Block
               direction="row"
               justifyContent="space-between"
               alignItems="center"
               marginTop={30}>
-              <TouchableOpacity style={styles.buttonCancel} onPress={() => setShowModal(false)}>
+              <TouchableOpacity
+                style={styles.buttonCancel}
+                onPress={() => setShowModal(false)}>
                 <Text
                   fontSize={14}
                   lineHeight={24}
@@ -279,7 +334,12 @@ const TakePictureScore = () => {
                   Hủy
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonContinue} onPress={() => navigate(ScreenConstant.LIST_ALBUM_SCORE,{data:itemParams})}>
+              <TouchableOpacity
+                style={styles.buttonContinue}
+                onPress={() => {
+                  navigate(ScreenConstant.LIST_ALBUM_SCORE, {data: itemParams});
+                  setShowModal(false);
+                }}>
                 <Text
                   fontSize={14}
                   lineHeight={24}

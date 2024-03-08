@@ -1,4 +1,5 @@
 export const HEADER_DEFAULT = {
+
   'Content-Type': 'application/json',
 };
 export const TIMEOUT = 50000;
@@ -117,7 +118,7 @@ export const GET_CAMPAIGN_PROGRAM =
   '/api/method/mbw_audit.api.api.get_campaign_info';
 export const GET_REPORT_SALES = '/api/method/mbw_dms.api.kpi.sales_report';
 export const GET_REPORT_REVENUE = '/api/method/mbw_dms.api.kpi.invoices_report';
-
+export const CREATE_REPORT_MARK_API = '/api/method/mbw_audit.api.api.record_report_data'
 //VISIT
 export const GET_VISIT_ROUTE_DETAIL =
   '/api/method/mbw_dms.api.kpi.report_visit_orders_invoices';

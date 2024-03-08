@@ -487,7 +487,7 @@ const CreateOrder = () => {
     const fetchProductPromotion = async () => {
         if (type === "ORDER") {
             if (data.length > 0) {
-                const newItems = data.map(item => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
+                const newItems = data.map((item:any) => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
                 const objecData = {
                     "items": newItems,
                     "customer": dataCheckin.item.customer_code,        // Khách hàng

@@ -1,5 +1,10 @@
-import {FlatList, Image, TouchableOpacity} from 'react-native';
-import React, {useMemo} from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import React, { useMemo,  useState} from 'react';
 import {
   Accordion,
   AppHeader,
@@ -15,17 +20,27 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScreenConstant} from '../../../const';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import isEqual from 'react-fast-compare';
-import { dispatch } from '../../../utils/redux';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
-import { newCategoriesCheckinList } from '../../../redux-store/checkin-reducer/type';
+import {dispatch} from '../../../utils/redux';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import {
+  DataSendMarkScore,
+  IItemCheckIn,
+} from '../../../redux-store/checkin-reducer/type';
+import {ListCampaignScore, ParamsList} from './type';
+import {IUser} from '../../../models/types';
+import {Modal} from 'react-native-paper';
 type Props = {};
+interface DataResultAlbum extends DataSendMarkScore {
+  title: string;
+  image: [];
+}
 
 const ListAlbumScore = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const itemParams =
+  const itemParams: ParamsList =
     useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.data;
-  const listProgramSelected = useSelector(
+  const listProgramSelected: ListCampaignScore[] = useSelector(
     state => state.checkin?.selectedProgram,
     shallowEqual,
   );
@@ -33,22 +48,61 @@ const ListAlbumScore = (props: Props) => {
     state => state.checkin?.imageToMark,
     shallowEqual,
   );
-  console.log(listProgramSelected, 'b');
-  const listProgram = useSelector(state => state.checkin.listProgramCampaign)
-  const newArray = React.useMemo(() => {
-    const result = listProgramSelected?.map((campaign: any) => {
-      return {
-        title: campaign?.campaign_name,
-        image: listImageResponse,
-      };
-    });
+  const itemCheckin: IItemCheckIn[] = useSelector(
+    state => state.checkin.categoriesCheckin,
+    shallowEqual,
+  );
 
-    return result?.filter((item: any) => item?.image?.length > 0);
-  }, []);
+  const userInfor: IUser = useSelector(
+    state => state.app.userProfile,
+    shallowEqual,
+  );
+  const [appLoading, setAppLoading] = useState<boolean>();
 
- const confirmUploadImage = () =>{
-  dispatch(checkinActions.setDataCategoriesCheckin(newCategoriesCheckinList))
- }
+  const resultData: DataResultAlbum[] = listProgramSelected?.map(campaign => {
+    return {
+      title: campaign?.campaign_name,
+      image: listImageResponse.map((item: any) => item.file_url),
+      e_name: userInfor.employee,
+      campaign_code: campaign.name,
+      category: campaign.categories,
+      customer_code: itemParams.kh_ma,
+      images: JSON.stringify(
+        listImageResponse.map((item: any) => item.file_url),
+      ),
+      images_time: parseFloat(
+        listImageResponse.map((item: any) => item.date_time)[
+          listImageResponse.map((item: any) => item.date_time).length - 1
+        ],
+      ),
+      setting_score_audit: campaign.setting_score_audit,
+    };
+  });
+  const confirmUploadImage = async () => {
+    try {
+      setAppLoading(true);
+      const newData: any = itemCheckin.map(item =>
+        item.key === 'take_picture_score'
+          ? {...item, isDone: true, screenName: ScreenConstant.LIST_ALBUM_SCORE}
+          : item,
+      );
+
+      dispatch(checkinActions.setDataCategoriesCheckin(newData));
+      for (let index = 0; index < resultData.length; index++) {
+        const element = resultData[index];
+        let {title, image, ...rest} = element;
+        dispatch(checkinActions.createReportMarkScore(rest));
+      }
+      // let data:DataSendMarkScore ={
+    } catch (err) {
+      console.log(`[err: ]`, err);
+    } finally {
+      setAppLoading(false);
+    }
+    //   customer_code:itemParams.kh_ten,
+    //   campaign_code:li
+    // }
+  };
   const listHeaderComponent = useMemo(() => {
     return (
       <Block colorTheme="bg_neutral">
@@ -85,7 +139,7 @@ const ListAlbumScore = (props: Props) => {
     <SafeAreaView style={styles.root} edges={['bottom', 'top']}>
       <Block block>
         <FlatList
-          data={newArray}
+          data={resultData}
           keyExtractor={(item, index) => index.toString()}
           bounces={false}
           showsVerticalScrollIndicator={false}
@@ -120,6 +174,18 @@ const ListAlbumScore = (props: Props) => {
           </Text>
         </TouchableOpacity>
       </Block>
+
+      <Modal visible={appLoading!} style={styles.modal}>
+        <Block
+          borderRadius={16}
+          justifyContent="center"
+          alignItems="center"
+          colorTheme="white"
+          padding={80}>
+          <ActivityIndicator size="large" color={theme.colors.action} />
+          <Text>Đang tải ảnh, từ từ</Text>
+        </Block>
+      </Modal>
     </SafeAreaView>
   );
 };

@@ -23,4 +23,8 @@ export function* checkinSaga() {
     checkinActions.postImageScore.type.toString(),
     Saga.postImageScore,
   );
+  yield* takeLatest(
+    checkinActions.createReportMarkScore.type.toString(),
+    Saga.createReportMarkScoreSaga,
+  );
 }

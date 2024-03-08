@@ -1,6 +1,7 @@
 import {createApi} from '../api';
 import {createFormData} from '../api/formData';
 import {ApiConstant} from '../const';
+import {DataSendMarkScore} from '../redux-store/checkin-reducer/type';
 
 export type IUpdateAddress = {
   customer: string;
@@ -77,4 +78,9 @@ export const getListProgram = ({
 }) =>
   createApi()
     .post(ApiConstant.GET_CAMPAIGN_PROGRAM, {customer_code, e_name})
+    .then(res => res.data);
+
+export const createReportMarkingApi = (data: DataSendMarkScore) =>
+  createApi()
+    .post(ApiConstant.CREATE_REPORT_MARK_API, data)
     .then(res => res.data);

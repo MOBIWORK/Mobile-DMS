@@ -71,7 +71,6 @@ export const openImagePicker = async (
       console.log('Image picker error: ', response.errorMessage);
     } else if (response.assets && response.assets.length > 0) {
       const selectedImage = response.assets[0].uri;
-      
       // base64Image = await RNFS.readFile(selectedImage!, 'base64').then(res => {
       //   return res;
       // });

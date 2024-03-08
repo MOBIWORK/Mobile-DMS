@@ -139,12 +139,12 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn]);
 
-  const isCompleteCheckin = useMemo(() => {
-    const result = categoriesCheckin.find(
-      item => item.isRequire == true && item.isDone == false,
-    );
-    return result ? false : true;
-  }, [categoriesCheckin]);
+  // const isCompleteCheckin = useMemo(() => {
+  //   const result = categoriesCheckin.find(
+  //     item => item.isRequire == true && item.isDone == false,
+  //   );
+  //   return result ? false : true;
+  // }, [categoriesCheckin]);
 
   const onConfirmCheckout = useCallback(() => {
     dispatch(checkinActions.resetData())
