@@ -43,7 +43,6 @@ import {Location} from 'react-native-background-geolocation';
 import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 
-
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -467,7 +466,9 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-      <TouchableOpacity onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)} style={[styles.fab]}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
+        style={[styles.fab]}>
         <AppIcons
           iconType="IonIcon"
           name="add-outline"
@@ -475,7 +476,7 @@ const Customer = () => {
           color={theme.colors.white}
         />
       </TouchableOpacity>
-    </View>
+    </Block>
   );
 };
 
@@ -622,8 +623,8 @@ const rootStyles = (theme: AppTheme) =>
       textAlign: 'center',
     } as TextStyle,
     fab: {
-      width :60,
-      height :60,
+      width: 60,
+      height: 60,
       flex: 1,
       zIndex: 99,
       right: 20,
@@ -632,9 +633,9 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.primary,
       borderWidth: 2,
       borderColor: Colors.white,
-      position: "absolute",
-      justifyContent:"center",
-      alignItems :"center"
+      position: 'absolute',
+      justifyContent: 'center',
+      alignItems: 'center',
     } as ViewStyle,
     backgroundRoot: {
       backgroundColor: theme.colors.bg_neutral,
