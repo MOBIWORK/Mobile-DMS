@@ -104,3 +104,4 @@ export const CREATE_IMAGE_CHECKIN = '/mbw_dms.api.checkin.create_checkin_image';
 // REPORT
 export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';
 export const GET_REPORT_VISIT = '/api/method/mbw_dms.api.kpi.visit_report';
+export const GET_TRAVEL_LOG_REPORT = '/api/method/mbw_dms.api.ekgis.history_checkin.get_history_checkin';

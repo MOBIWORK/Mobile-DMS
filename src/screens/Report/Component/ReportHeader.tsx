@@ -54,6 +54,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      marginTop :8
     } as ViewStyle,
     title: {
       flexDirection: 'row',
