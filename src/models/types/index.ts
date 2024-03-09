@@ -229,14 +229,16 @@ export type ReportOrderItemType = {
 };
 
 export type ReportProductOrderType = {
-  id: string | number;
-  label: string;
-  count: number;
-  unit: string;
-  price: number;
-  discount_percent: number | null;
-  discount_VND: number | null;
-  total: number;
+  name: string;
+  item_name: string; // Tên item
+  item_code: string; // mã item
+  rate: number; // đơn giá
+  qty: number; // Số lượng
+  uom: string; // đơn vị tính
+  amount: number; // Thành tiền
+  discount_amount: number; // chiết khấu (VND)
+  discount_percentage: number; // chiết khấu (%)
+  is_free_item: number; // check sp KM
 };
 
 export type ReportProductInventoryType = {
@@ -511,9 +513,9 @@ export type discountProduct = {
   discount_percentage: number;
 };
 
-type ImageProduct ={
-  link_image :string
-}
+type ImageProduct = {
+  link_image: string;
+};
 
 export type IProduct = {
   name: string;
@@ -550,7 +552,7 @@ export type IOrderList = {
   grand_total: number;
   rounding_adjustment: number;
   rounded_total: number;
-  creation: number
+  creation: number;
 };
 
 export type ItemProductOrder = {
@@ -830,32 +832,25 @@ export type IReportVisitDetail = {
   ton_kho: ReportInventoryType[];
 };
 
-export type ListItemOrder = {
-  name: string;
-  item_name: string;
-  item_code: string;
-  qty: number;
-  uom: string;
-  amount: string;
-  discount_amount: string;
-  discount_percentage: string;
-  is_free_item: number;
-};
-
 export type IOrderDetailItem = {
-  list_items: ListItemOrder[];
+  list_items: ReportProductOrderType[];
   customer: string;
   customer_name: string;
+  customer_code: string;
   address_display: string;
   delivery_date: number;
   set_warehouse: string;
   total: number;
   grand_total: number;
   taxes_and_charges: string;
+  rate_tax: number;
+  tax_amount: number;
   total_taxes_and_charges: number;
   apply_discount_on: string;
   additional_discount_percentage: number;
   discount_amount: number;
   contact_person: string;
-  rounded_total: number;
+  employee_name: string;
+  cell_number: string;
+  current_address: string;
 };

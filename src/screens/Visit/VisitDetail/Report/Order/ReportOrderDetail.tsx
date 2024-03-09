@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useMemo, useState} from 'react';
 import {MainLayout} from '../../../../../layouts';
 import {
   AppContainer,
@@ -25,10 +25,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {CommonUtils} from '../../../../../utils';
-import {
-  IOrderDetailItem,
-  ReportProductOrderType,
-} from '../../../../../models/types';
+import {IOrderDetailItem} from '../../../../../models/types';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ProductOrderItem from './ProductOrderItem';
 import {OrderService} from '../../../../../services';
@@ -44,6 +41,22 @@ const ReportOrderDetail = () => {
   const item = route.params.item;
 
   const [data, setData] = useState<IOrderDetailItem>();
+
+  const productData = useMemo(() => {
+    if (data?.list_items && data.list_items.length > 0) {
+      return data.list_items.map(itemData => itemData.is_free_item === 0);
+    } else {
+      return [];
+    }
+  }, [data?.list_items]);
+
+  const promotionalData = useMemo(() => {
+    if (data?.list_items && data.list_items.length > 0) {
+      return data.list_items.map(itemData => itemData.is_free_item === 1);
+    } else {
+      return [];
+    }
+  }, [data?.list_items]);
 
   const getData = async () => {
     const res: any = await OrderService.getDetail(item.name);
@@ -102,23 +115,25 @@ const ReportOrderDetail = () => {
         </Text>
         <View style={styles.customerContainer}>
           <View style={styles.customerTitle}>
-            <Text style={styles.label as ViewStyle}>Vinamilk - KH1234</Text>
+            <Text style={styles.label as ViewStyle}>{`${
+              data?.customer_name ?? ''
+            } - ${data?.customer_code ?? ''}`}</Text>
           </View>
           <View style={{marginTop: 16, rowGap: 10}}>
             <RowItem
               style={{justifyContent: 'flex-start'}}
               icon={ImageAssets.UserCircle}
-              label={'Chu quỳnh Anh'}
+              label={data?.employee_name ?? ''}
             />
             <RowItem
               style={{justifyContent: 'flex-start'}}
               icon={ImageAssets.MapPinIcon}
-              label={'101 Tôn Dật Tiên, Tân Phú, Quận 7, Thành phố Hồ Chí Minh'}
+              label={data?.current_address ?? ''}
             />
             <RowItem
               style={{justifyContent: 'flex-start'}}
               icon={ImageAssets.PhoneIcon}
-              label={'+84 667 778 889'}
+              label={data?.cell_number ?? ''}
             />
           </View>
         </View>
@@ -176,11 +191,11 @@ const ReportOrderDetail = () => {
           />
           <RowItem
             title={'VAT(%)'}
-            label={data?.total_taxes_and_charges.toString() ?? '0'}
+            label={data?.rate_tax ? data.rate_tax.toString() : '0'}
           />
           <RowItem
             title={'VAT(VND)'}
-            label={CommonUtils.convertNumber(100000).toString()}
+            label={CommonUtils.convertNumber(data?.tax_amount ?? 0).toString()}
           />
         </Block>
       </Accordion>
@@ -200,7 +215,7 @@ const ReportOrderDetail = () => {
             label={data?.apply_discount_on ?? 'Không'}
           />
           <RowItem
-            title={'Chiết khấu(%)'}
+            title={`${getLabel('discount')}(%)`}
             label={data?.additional_discount_percentage.toString() ?? '0'}
           />
           <RowItem
@@ -247,15 +262,12 @@ const ReportOrderDetail = () => {
           style={{rowGap: 10}}
           borderRadius={16}
           padding={16}>
-          <PayItem
-            label={getLabel('intoMoney')}
-            price={data?.rounded_total ?? 0}
-          />
+          <PayItem label={getLabel('intoMoney')} price={data?.total ?? 0} />
           <PayItem
             label={getLabel('discount')}
             price={data?.discount_amount ?? 0}
           />
-          <PayItem label={'VAT'} price={100000} />
+          <PayItem label={'VAT'} price={data?.total_taxes_and_charges ?? 0} />
           <PayItem
             label={getLabel('totalPrice')}
             price={data?.grand_total ?? 0}
@@ -287,8 +299,8 @@ const ReportOrderDetail = () => {
             {_renderCustomer()}
             {_renderOrderInfo()}
             <ProductOrderItem
-              productData={OrderProductData}
-              promotionalData={OrderProductData}
+              productData={productData as any}
+              promotionalData={promotionalData as any}
             />
             {_renderVAT()}
             {_renderDiscount()}
@@ -357,36 +369,3 @@ const createSheetStyles = (theme: ExtendedTheme) =>
       borderColor: theme.colors.border,
     },
   });
-
-const OrderProductData: ReportProductOrderType[] = [
-  {
-    id: 1,
-    label: 'Sp-123',
-    count: 10,
-    unit: 'Cái',
-    price: 700000,
-    discount_percent: 3,
-    discount_VND: 10000,
-    total: 7000000,
-  },
-  {
-    id: 2,
-    label: 'Sp-123',
-    count: 10,
-    unit: 'Cái',
-    price: 700000,
-    discount_percent: null,
-    discount_VND: null,
-    total: 7000000,
-  },
-  {
-    id: 3,
-    label: 'Sp-123',
-    count: 10,
-    unit: 'Cái',
-    price: 700000,
-    discount_percent: null,
-    discount_VND: null,
-    total: 7000000,
-  },
-];
