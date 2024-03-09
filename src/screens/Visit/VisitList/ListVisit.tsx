@@ -71,7 +71,7 @@ const ListVisit = () => {
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
 
-  const mapboxCameraRef = useRef<CameraRef>(null);
+  const mapboxCameraRef = useRef<Mapbox.Camera>(null);
   const filterRef = useRef<BottomSheet>(null);
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -285,6 +285,7 @@ const ListVisit = () => {
                 />
               </Mapbox.RasterSource>
               <Mapbox.Camera
+                ref={mapboxCameraRef}
                 centerCoordinate={[
                   location?.coords.longitude ?? 0,
                   location?.coords.latitude ?? 0,
@@ -320,6 +321,19 @@ const ListVisit = () => {
                 showsUserHeadingIndicator={true}
               />
             </Mapbox.MapView>
+            <TouchableOpacity
+              onPress={handleRegainLocation}
+              style={styles.regainPosition}>
+              <Image
+                source={ImageAssets.MapIcon}
+                style={{width: 16, height: 16}}
+                resizeMode={'cover'}
+                tintColor={colors.bg_default}
+              />
+              <Text style={{color: colors.bg_default, marginLeft: 4}}>
+                {getLabel('currentPosition')}
+              </Text>
+            </TouchableOpacity>
             {visitItemSelected && (
               <View
                 style={{
@@ -421,6 +435,19 @@ const ListVisit = () => {
     }
   };
 
+  const handleRegainLocation = async () => {
+    const newLocation = await BackgroundGeolocation.getCurrentPosition({
+      samples: 1,
+      timeout: 3,
+    });
+    mapboxCameraRef.current &&
+      mapboxCameraRef.current.moveTo(
+        [newLocation.coords.longitude, newLocation.coords.latitude],
+        1000,
+      );
+    setLocation(location);
+  };
+
   useEffect(() => {
     mounted.current = true;
     getData().then();
@@ -472,4 +499,19 @@ const rootStyles = (theme: ExtendedTheme) =>
       borderColor: theme.colors.border,
       maxWidth: 180,
     },
+    regainPosition: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.action,
+      alignSelf: 'flex-end',
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 16,
+      right: 0,
+      zIndex: 99999999,
+    } as ViewStyle,
   });
