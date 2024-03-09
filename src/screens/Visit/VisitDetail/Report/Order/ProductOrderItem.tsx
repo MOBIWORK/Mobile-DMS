@@ -139,31 +139,36 @@ const ProductOrderItem: FC<ProductOrderItemProps> = ({
           }}
           icon={ImageAssets.BarCodeIcon}
           iconStyles={styles.rowItemIcon}
-          label={item.label}
+          label={`${item?.item_name ?? ''} - ${item?.item_code ?? ''}`}
         />
         <View style={styles.productRowItem}>
-          <RowItem title={getLabel('unit')} label={item.unit} />
-          <RowItem title={getLabel('quantity')} label={item.count.toString()} />
+          <RowItem title={getLabel('unit')} label={item?.uom ?? ''} />
+          <RowItem
+            title={getLabel('quantity')}
+            label={item?.qty ? item.qty.toString() : '0'}
+          />
           <RowItem
             title={getLabel('unitPrice')}
-            label={item.price.toString()}
+            label={item?.rate ? item.rate.toString() : '0'}
           />
-          {item.discount_percent && item.discount_VND && (
+          {item.discount_percentage && item.discount_amount && (
             <>
               <RowItem
                 title={`${getLabel('discount')}(%)`}
-                label={item.discount_percent.toString()}
+                label={item.discount_percentage.toString()}
               />
               <RowItem
                 title={`${getLabel('discount')}(VND)`}
-                label={item.discount_VND.toString()}
+                label={item.discount_amount.toString()}
               />
             </>
           )}
         </View>
         <RowItem
           title={getLabel('intoMoney')}
-          label={CommonUtils.convertNumber(7000000).toString()}
+          label={CommonUtils.convertNumber(
+            item?.amount ? item.amount : 0,
+          ).toString()}
           titleStyle={{fontWeight: '500'}}
           labelStyle={{fontWeight: '500', fontSize: 16}}
         />

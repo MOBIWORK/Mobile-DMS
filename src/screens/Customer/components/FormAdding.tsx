@@ -9,6 +9,7 @@ import {
   ImageStyle,
   Image,
   Pressable,
+  TextInput as TextInput2,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 
@@ -130,7 +131,7 @@ const FormAdding = (props: Props) => {
   };
 
   useEffect(() => {
-    if (location) {
+    if (location?.coords) {
       AppService.getDetailLocation(
         location.coords.latitude,
         location.coords.longitude,
@@ -140,7 +141,7 @@ const FormAdding = (props: Props) => {
         }
       });
     }
-  }, []);
+  }, [location]);
 
   return (
     <ScrollView
@@ -399,12 +400,7 @@ const FormAdding = (props: Props) => {
         <Text style={styles.titleText}>{translate('location')}</Text>
         <View style={[styles.contentView, {height: 320}]}>
           {location && (
-            <View
-              style={{
-                overflow: 'hidden',
-                width: '100%',
-                flex: 1,
-              }}>
+            <View style={styles.mapView}>
               <Mapbox.MapView
                 pitchEnabled={false}
                 attributionEnabled={false}
@@ -448,36 +444,36 @@ const FormAdding = (props: Props) => {
                     <SvgIcon source={'LocationCheckIn'} size={40} />
                   </Mapbox.MarkerView>
                 )}
-                <View style={styles.searchContainer}>
-                  <Image
-                    source={ImageAssets.MapPinFillIcon}
-                    style={{width: 24, height: 24}}
-                    resizeMode={'cover'}
-                    tintColor={theme.colors.text_secondary}
-                  />
-                  <TextInput
-                    style={styles.textInput}
-                    numberOfLines={1}
-                    value={value}
-                    onChangeText={setValue}
-                    onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}
-                    onBlur={() => handleSearchText(value)}
-                  />
-                </View>
-                <TouchableOpacity
-                  onPress={handleRegainLocation}
-                  style={styles.regainPosition}>
-                  <Image
-                    source={ImageAssets.MapIcon}
-                    style={{width: 16, height: 16}}
-                    resizeMode={'cover'}
-                    tintColor={theme.colors.bg_default}
-                  />
-                  <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
-                    {translate('currentPosition')}
-                  </Text>
-                </TouchableOpacity>
               </Mapbox.MapView>
+              <View style={styles.searchContainer}>
+                <Image
+                  source={ImageAssets.MapPinFillIcon}
+                  style={{width: 24, height: 24}}
+                  resizeMode={'cover'}
+                  tintColor={theme.colors.text_secondary}
+                />
+                <TextInput2
+                  style={styles.textInput}
+                  numberOfLines={1}
+                  value={value}
+                  onChangeText={setValue}
+                  onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}
+                  onBlur={() => handleSearchText(value)}
+                />
+              </View>
+              <TouchableOpacity
+                onPress={handleRegainLocation}
+                style={styles.regainPosition}>
+                <Image
+                  source={ImageAssets.MapIcon}
+                  style={{width: 16, height: 16}}
+                  resizeMode={'cover'}
+                  tintColor={theme.colors.bg_default}
+                />
+                <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
+                  {translate('currentPosition')}
+                </Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -551,8 +547,10 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'center',
     } as ViewStyle,
     mapView: {
+      overflow: 'hidden',
       width: '100%',
-      height: 381,
+      flex: 1,
+      borderRadius: 16,
     } as ViewStyle,
     fab: {
       position: 'absolute',
@@ -576,12 +574,10 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
-      // alignSelf: 'center',
       borderColor: theme.colors.border,
       borderWidth: 1,
       flexDirection: 'row',
       paddingHorizontal: 32,
-      // paddingVertical:16,
     } as ViewStyle,
     location2View: {
       backgroundColor: theme.colors.action,
@@ -590,13 +586,10 @@ const rootStyles = (theme: AppTheme) =>
       top: 70,
       width: 129,
       right: 20,
-      // left:0,
-      // bottom:0,
       borderRadius: 8,
       justifyContent: 'center',
       flexDirection: 'row',
       alignItems: 'center',
-      // alignSelf:'center'
     } as ViewStyle,
     locationText: {
       fontSize: 16,
@@ -636,7 +629,8 @@ const rootStyles = (theme: AppTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
       padding: 8,
-      top: -20,
+      position: 'absolute',
+      top: 16,
     } as ViewStyle,
     textInput: {
       backgroundColor: theme.colors.bg_default,
@@ -648,12 +642,14 @@ const rootStyles = (theme: AppTheme) =>
       paddingHorizontal: 16,
       paddingVertical: 8,
       backgroundColor: theme.colors.action,
-      maxWidth: '50%',
       alignSelf: 'flex-end',
       marginRight: 24,
       borderRadius: 10,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 75,
+      right: 0,
     } as ViewStyle,
   });
