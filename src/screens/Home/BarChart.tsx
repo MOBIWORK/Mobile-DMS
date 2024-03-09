@@ -1,22 +1,34 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Text, View, TextStyle, ViewStyle} from 'react-native';
 import {BarChart} from 'react-native-gifted-charts';
-import {AppConstant} from '../../const';
 import {StyleSheet} from 'react-native';
 import {AppTheme, useTheme} from '../../layouts/theme';
+import {AppConstant} from '../../const';
+import moment from 'moment';
+import {CommonUtils} from '../../utils';
+import {useTranslation} from 'react-i18next';
+// @ts-ignore
+import StringFormat from 'string-format';
 
-const BarChartStatistical = ({color}: PropTypes) => {
+const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
   const {colors} = useTheme();
   const styles = rootStyles(useTheme());
+  const {t: getLabel} = useTranslation();
 
-  const data = [
-    {value: 200, label: '06'},
-    {value: 300, label: '07'},
-    {value: 500, label: '08'},
-    {value: 400, label: '09'},
-    {value: 300, label: '10'},
-    {value: 300, label: '11'},
-  ];
+  const barCharData = useMemo(() => {
+    if (data?.sales_invoice.length! > 0) {
+      const newData: any = data?.sales_invoice.map((item: any) => {
+        return {
+          label: moment(item.ngay).format('DD'),
+          value: isSales ? item.doanh_so / 1e6 : item.doanh_thu / 1e6,
+        };
+      });
+      return newData.slice(-6);
+    } else {
+      return null;
+    }
+  }, [data]);
+
   return (
     <View
       style={{
@@ -26,25 +38,29 @@ const BarChartStatistical = ({color}: PropTypes) => {
       }}>
       <View>
         <Text style={[styles.title]}>
-          Tổng doanh số tháng đến thời điểm hiện tại
+          {isSales
+            ? getLabel('totalSalesPerMouth')
+            : getLabel('totalRevenuePerMouth')}
         </Text>
         <Text style={[styles.description]}>
-          105.035.984 đ
-          <Text style={[styles.desSub, {color: color}]}>{'  '}(Đạt 50.2%)</Text>
+          {data?.Kpi ? CommonUtils.convertNumber(data.Kpi.dat_duoc) : 0}đ
+          <Text style={[styles.desSub, {color: color}]}>
+            {` (${StringFormat(getLabel('reachPercent'), {
+              percent: data?.Kpi ? data.Kpi.phan_tram_thuc_hien : 0,
+            })})`}
+          </Text>
         </Text>
       </View>
       <View style={[styles.containerBar]}>
         <BarChart
-          barWidth={10}
-          data={data}
+          barWidth={15}
+          data={barCharData}
           frontColor={color}
           noOfSections={6}
-          stepValue={100}
-          initialSpacing={37}
-          yAxisIndicesHeight={20}
-          spacing={37}
-          maxValue={600}
-          stepHeight={20}
+          yAxisLabelSuffix={'m'}
+          initialSpacing={30}
+          spacing={(AppConstant.WIDTH * 0.5) / 6}
+          width={AppConstant.WIDTH * 0.7}
           xAxisColor={colors.border}
           yAxisColor={colors.border}
         />
@@ -55,6 +71,8 @@ const BarChartStatistical = ({color}: PropTypes) => {
 
 interface PropTypes {
   color: string;
+  isSales?: boolean;
+  data: any;
 }
 
 export default BarChartStatistical;

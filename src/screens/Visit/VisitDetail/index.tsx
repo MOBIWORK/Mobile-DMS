@@ -1,4 +1,4 @@
-import React, {useRef, useState, useMemo} from 'react';
+import React, {useRef, useState, useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {
@@ -29,6 +29,8 @@ import {CommonUtils} from '../../../utils';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import {useMMKVString} from 'react-native-mmkv';
+import {CustomerService} from '../../../services';
+import {IVisitRouteDetail} from '../../../models/types';
 
 const Index = () => {
   const {t: getLabel} = useTranslation();
@@ -52,6 +54,8 @@ const Index = () => {
   const [filterData, setFilterData] = useState<IFilterType[]>(
     AppConstant.SelectedDateFilterData,
   );
+
+  const [detailData, setDetailData] = useState<IVisitRouteDetail>();
 
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);
@@ -117,7 +121,10 @@ const Index = () => {
   const DetailScreen = () => (
     <AppContainer style={{marginBottom: bottom}}>
       <View style={{flex: 1, padding: 16}}>
-        <Detail item={route.params && route.params.data} />
+        <Detail
+          item={route.params && route.params.data}
+          otherInfo={detailData}
+        />
       </View>
     </AppContainer>
   );
@@ -129,6 +136,7 @@ const Index = () => {
           bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
         }
         timeLabel={filterTime}
+        itemData={route.params.data}
       />
     </View>
   );
@@ -167,6 +175,18 @@ const Index = () => {
       />
     );
   };
+
+  useEffect(() => {
+    const getDetail = async (customer_name: string) => {
+      const response: any = await CustomerService.getVisitRouteDetail(
+        customer_name,
+      );
+      if (Object.keys(response?.result).length > 0) {
+        setDetailData(response.result);
+      }
+    };
+    getDetail(route.params.data.customer_name).then();
+  }, []);
 
   return (
     <MainLayout style={{paddingHorizontal: 0}}>

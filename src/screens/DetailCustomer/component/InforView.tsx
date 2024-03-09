@@ -7,6 +7,7 @@ import {MainLayout} from '../../../layouts';
 import Mapbox, {Location} from '@rnmapbox/maps';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import {useTranslation} from 'react-i18next';
+import {AppConstant} from '../../../const';
 
 type Props = {
   data: IDataCustomer;
@@ -269,6 +270,15 @@ const InforBlock = (props: Props) => {
             scaleBarEnabled={false}
             logoEnabled={false}
             style={styles.mapBlock}>
+            <Mapbox.RasterSource
+              id="adminmap"
+              tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+              <Mapbox.RasterLayer
+                id={'adminmap'}
+                sourceID={'admin'}
+                style={{visibility: 'visible'}}
+              />
+            </Mapbox.RasterSource>
             <Mapbox.Camera
               // ref={mapboxCameraRef}
               ref={ref}

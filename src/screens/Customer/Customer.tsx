@@ -8,17 +8,17 @@ import {
   ImageStyle,
   ActivityIndicator,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import React, { useRef, useMemo, useCallback, useEffect } from 'react';
-import { TextInput } from 'react-native-paper';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import {useTranslation} from 'react-i18next';
+import React, {useRef, useMemo, useCallback, useEffect} from 'react';
+import {TextInput} from 'react-native-paper';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
-import { AppConstant, ScreenConstant } from '../../const';
-import { Colors } from '../../assets';
+import {AppConstant, ScreenConstant} from '../../const';
+import {Colors} from '../../assets';
 import MainLayout from '../../layouts/MainLayout';
 import AppImage from '../../components/common/AppImage';
 import FilterHandle from './components/FilterHandle';
-import { listFilter } from './components/data';
+import {listFilter} from './components/data';
 import ListCard from './components/ListCard';
 import {
   AppBottomSheet,
@@ -29,22 +29,19 @@ import {
   Block,
 } from '../../components/common';
 import ListFilter from './components/ListFilter';
-import { NavigationProp } from '../../navigation';
-import { AppTheme, useTheme } from '../../layouts/theme';
-import { useNavigation } from '@react-navigation/native';
+import {NavigationProp} from '../../navigation';
+import {AppTheme, useTheme} from '../../layouts/theme';
+import {useNavigation} from '@react-navigation/native';
 import {
   calculateDistance,
   handleBackgroundLocation,
   useSelector,
 } from '../../config/function';
-// import {dispatch} from '../../utils/redux';
-import { customerActions } from '../../redux-store/customer-reducer/reducer';
-import { shallowEqual, useDispatch } from 'react-redux';
-import { Location } from 'react-native-background-geolocation';
-import { IDataCustomers, ListCustomerType } from '../../models/types';
-import { LocationProps } from '../Visit/VisitList/VisitItem';
-import { getCustomerType } from '../../services/appService';
-import SkeletonLoading from '../Visit/SkeletonLoading';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {shallowEqual, useDispatch} from 'react-redux';
+import {Location} from 'react-native-background-geolocation';
+import {IDataCustomers, ListCustomerType} from '../../models/types';
+import {LocationProps} from '../Visit/VisitList/VisitItem';
 
 export type IValueType = {
   customerType: string;
@@ -53,7 +50,7 @@ export type IValueType = {
 };
 
 const Customer = () => {
-  const { t: getLabel } = useTranslation();
+  const {t: getLabel} = useTranslation();
   const theme = useTheme();
   const styles = rootStyles(theme);
   const dispatch = useDispatch();
@@ -70,8 +67,10 @@ const Customer = () => {
     shallowEqual,
   );
   const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
-  const page = useSelector(state => state.customer.listCustomer.page_number, shallowEqual)
-
+  const page = useSelector(
+    state => state.customer.listCustomer.page_number,
+    shallowEqual,
+  );
 
   const location: Location = useSelector(
     state => state.app.currentLocation,
@@ -210,7 +209,6 @@ const Customer = () => {
       const newData = listCustomer?.filter(
         item => item.customer_type === valueFilter.customerType,
       );
-      console.log(newData, 'customerType');
       setCustomerData(newData);
       bottomRef2.current?.close();
     } else if (
@@ -249,7 +247,11 @@ const Customer = () => {
 
   const listFooter = useMemo(() => {
     return (
-      <Block justifyContent="center" alignItems="center" marginTop={8} marginBottom={8}>
+      <Block
+        justifyContent="center"
+        alignItems="center"
+        marginTop={8}
+        marginBottom={8}>
         <ActivityIndicator size={'small'} color={theme.colors.primary} />
       </Block>
     );
@@ -258,12 +260,10 @@ const Customer = () => {
   const onEndReachedThreshold = useCallback(() => {
     if (page <= totalPage.current) {
       dispatch(customerActions.getCustomerNewPage(page + 1));
-      console.log('runnnnnnn')
     } else {
-      return null
+      return null;
     }
     // dispatch(customerActions.getCustomerNewPage(1));
-
   }, [listCustomerResult]);
 
   const renderBottomView = () => {
@@ -286,7 +286,7 @@ const Customer = () => {
             label={getLabel('groupCustomer')}
             value={valueFilter.customerGroupType}
             editable={false}
-            styles={{ marginBottom: 24 }}
+            styles={{marginBottom: 24}}
             onPress={() => {
               setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
               filterRef.current?.snapToIndex(0);
@@ -294,7 +294,7 @@ const Customer = () => {
             rightIcon={
               <TextInput.Icon
                 icon={'chevron-down'}
-                style={{ width: 24, height: 24 }}
+                style={{width: 24, height: 24}}
                 color={theme.colors.text_secondary}
               />
             }
@@ -303,7 +303,7 @@ const Customer = () => {
             label={getLabel('customerType')}
             value={valueFilter.customerType}
             editable={false}
-            styles={{ marginBottom: 24 }}
+            styles={{marginBottom: 24}}
             onPress={() => {
               setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
               filterRef.current?.snapToIndex(0);
@@ -311,7 +311,7 @@ const Customer = () => {
             rightIcon={
               <TextInput.Icon
                 icon={'chevron-down'}
-                style={{ width: 24, height: 24 }}
+                style={{width: 24, height: 24}}
                 color={theme.colors.text_secondary}
               />
             }
@@ -327,7 +327,7 @@ const Customer = () => {
             rightIcon={
               <TextInput.Icon
                 icon={'chevron-down'}
-                style={{ width: 24, height: 24 }}
+                style={{width: 24, height: 24}}
                 color={theme.colors.text_secondary}
               />
             }
@@ -355,7 +355,7 @@ const Customer = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <Block block>
       <MainLayout style={styles.backgroundRoot}>
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
@@ -384,8 +384,6 @@ const Customer = () => {
           listFooter={listFooter}
           onLoadData={onEndReachedThreshold}
         />
-
-
       </MainLayout>
 
       <AppBottomSheet
@@ -395,10 +393,10 @@ const Customer = () => {
           if (index != undefined && toIndex != undefined) {
             let cal = index - toIndex;
             if (cal > 0) {
-              setShow(prev => ({ ...prev, firstModal: false }));
+              setShow(prev => ({...prev, firstModal: false}));
               //  dispatch(appActions.setShowModal(false))
             } else {
-              setShow(prev => ({ ...prev, firstModal: true }));
+              setShow(prev => ({...prev, firstModal: true}));
               //  dispatch(appActions.setShowModal(true))
             }
           }
@@ -445,10 +443,10 @@ const Customer = () => {
           if (index != undefined && toIndex != undefined) {
             let cal = index - toIndex;
             if (cal > 0) {
-              setShow(prev => ({ ...prev, secondModal: false }));
+              setShow(prev => ({...prev, secondModal: false}));
               //  dispatch(appActions.setShowModal(false))
             } else {
-              setShow(prev => ({ ...prev, secondModal: true }));
+              setShow(prev => ({...prev, secondModal: true}));
               //  dispatch(appActions.setShowModal(true))
             }
           }
@@ -468,7 +466,9 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-      <TouchableOpacity onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)} style={[styles.fab]}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
+        style={[styles.fab]}>
         <AppIcons
           iconType="IonIcon"
           name="add-outline"
@@ -476,7 +476,7 @@ const Customer = () => {
           color={theme.colors.white}
         />
       </TouchableOpacity>
-    </View>
+    </Block>
   );
 };
 
@@ -519,7 +519,7 @@ const rootStyles = (theme: AppTheme) =>
       width: 200,
       flex: 1,
     } as ViewStyle,
-    labelContentStyle: { alignSelf: 'flex-end' } as ViewStyle,
+    labelContentStyle: {alignSelf: 'flex-end'} as ViewStyle,
     rootHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -553,12 +553,12 @@ const rootStyles = (theme: AppTheme) =>
       marginBottom: 5,
     } as ViewStyle,
     itemText: (text: string, value: string) =>
-    ({
-      fontSize: 16,
-      fontWeight: text === value ? '600' : '400',
-      lineHeight: 21,
-      marginBottom: 16,
-    } as TextStyle),
+      ({
+        fontSize: 16,
+        fontWeight: text === value ? '600' : '400',
+        lineHeight: 21,
+        marginBottom: 16,
+      } as TextStyle),
     containListFilter: {
       marginTop: 24,
       flex: 1,
@@ -623,8 +623,8 @@ const rootStyles = (theme: AppTheme) =>
       textAlign: 'center',
     } as TextStyle,
     fab: {
-      width :60,
-      height :60,
+      width: 60,
+      height: 60,
       flex: 1,
       zIndex: 99,
       right: 20,
@@ -633,9 +633,9 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.primary,
       borderWidth: 2,
       borderColor: Colors.white,
-      position: "absolute",
-      justifyContent:"center",
-      alignItems :"center"
+      position: 'absolute',
+      justifyContent: 'center',
+      alignItems: 'center',
     } as ViewStyle,
     backgroundRoot: {
       backgroundColor: theme.colors.bg_neutral,

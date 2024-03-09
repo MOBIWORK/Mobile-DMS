@@ -34,7 +34,7 @@ import {AppService} from './src/services';
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_START,
-  installMode: codePush.InstallMode.IMMEDIATE,
+  installMode: codePush.InstallMode.ON_NEXT_RESTART,
 };
 
 if (!isIos) {
@@ -109,21 +109,21 @@ function App(): JSX.Element {
       },
     );
     //
-    const onMotionChange: Subscription = BackgroundGeolocation.onMotionChange(
-      (event) => {
-        console.log("[onMotionChange]", event);
-      }
-    );
-    
-    const onActivityChange: Subscription =
-      BackgroundGeolocation.onActivityChange((event) => {
-        console.log("[onActivityChange]", event);
-      });
-    
-    const onProviderChange: Subscription =
-      BackgroundGeolocation.onProviderChange((event) => {
-        console.log("[onProviderChange]", event);
-      });
+    // const onMotionChange: Subscription = BackgroundGeolocation.onMotionChange(
+    //   (event) => {
+    //     console.log("[onMotionChange]", event);
+    //   }
+    // );
+    //
+    // const onActivityChange: Subscription =
+    //   BackgroundGeolocation.onActivityChange((event) => {
+    //     console.log("[onActivityChange]", event);
+    //   });
+    //
+    // const onProviderChange: Subscription =
+    //   BackgroundGeolocation.onProviderChange((event) => {
+    //     console.log("[onProviderChange]", event);
+    //   });
 
     const onHttp: Subscription = BackgroundGeolocation.onHttp(httpEvent => {
       console.log(httpEvent.responseText);
@@ -206,4 +206,4 @@ function App(): JSX.Element {
   // )
 }
 
-export default codePush(codePushOptions)(App);
+export default App;

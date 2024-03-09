@@ -1,4 +1,4 @@
-import { MMKV } from 'react-native-mmkv';
+import {MMKV} from 'react-native-mmkv';
 import {
   Dimensions,
   InteractionManager,
@@ -9,13 +9,12 @@ import {
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import * as LocalAuthentication from 'expo-local-authentication';
-import { AppConstant } from '../const';
+import {AppConstant} from '../const';
 import * as Location from 'expo-location';
 import {LocationAccuracy} from 'expo-location';
-import { dispatch } from './redux';
-import { appActions } from '../redux-store/app-reducer/reducer';
-import { AppTheme } from '../layouts/theme';
-
+import {dispatch} from './redux';
+import {appActions} from '../redux-store/app-reducer/reducer';
+import {AppTheme} from '../layouts/theme';
 
 export const storage = new MMKV();
 
@@ -150,7 +149,7 @@ export const convertDate = (time: number | string) => {
 };
 
 //format date to hh:mm:ss
-export const formatTime2 = (timeStamp: number) => {
+export const formatTime2 = (timeStamp: number | string) => {
   const date = new Date(timeStamp);
   return [
     padTo2Digits(date.getHours()),
@@ -392,6 +391,12 @@ export const Auth_header = (api_key: string, api_secret: string) => {
     'content-type': 'application/json',
   };
 };
+export const FormData_header = (api_key: string, api_secret: string) => {
+  return {
+    Authorization: `Basic ${Base64.btoa(api_key + ':' + api_secret)}`,
+    'content-type': 'multipart/form-data',
+  };
+};
 
 export const handleOpenSettings = async () => {
   if (Platform.OS === 'ios') {
@@ -432,7 +437,7 @@ export const formatCash = (str: string) => {
 
 const guidelineBaseWidth = 350;
 const scale = (size: number) => (shortDimension / guidelineBaseWidth) * size;
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 const [shortDimension] = width < height ? [width, height] : [height, width];
 export const sizeScale = (size: number, factor = 0.5) =>
   size + (scale(size) - size) * factor;
@@ -457,7 +462,7 @@ export const propsToStyle = <T = any>(arrStyle: Array<T>) => {
       ) {
         curr[firstKey as string] = sizeScale(firstValue);
       }
-      return { ...prev, ...curr };
+      return {...prev, ...curr};
     }, {});
 };
 
@@ -465,64 +470,72 @@ export const isNumber = (value: any) => {
   return typeof value === 'number';
 };
 
-
-export const dateToDate = (type : string) => {
-
+export const dateToDate = (type: string) => {
   const curr = new Date(); // get current date
-  let firstDateString = ``
-  let lastDateString = ``
+  let firstDateString = '';
+  let lastDateString = '';
 
   switch (type) {
-    case "today":
-        firstDateString = `${curr.getFullYear()}-${curr.getMonth() +1 }-${curr.getDate()}`
-        lastDateString = `${curr.getFullYear()}-${curr.getMonth() +1 }-${curr.getDate()}`
+    case 'today':
+      firstDateString = `${curr.getFullYear()}-${
+        curr.getMonth() + 1
+      }-${curr.getDate()}`;
+      lastDateString = `${curr.getFullYear()}-${
+        curr.getMonth() + 1
+      }-${curr.getDate()}`;
       break;
-    case "weekly" :
+    case 'weekly':
       const first = curr.getDate() - curr.getDay() + 1;
       const last = first + 6;
       const firstday = new Date(curr.setDate(first));
       const lastday = new Date(curr.setDate(last));
-      firstDateString = `${firstday.getFullYear()}-${firstday.getMonth() +1 }-${firstday.getDate()}`
-      lastDateString = `${lastday.getFullYear()}-${lastday.getMonth() +1 }-${lastday.getDate()}`
+      firstDateString = `${firstday.getFullYear()}-${
+        firstday.getMonth() + 1
+      }-${firstday.getDate()}`;
+      lastDateString = `${lastday.getFullYear()}-${
+        lastday.getMonth() + 1
+      }-${lastday.getDate()}`;
       break;
-    case "monthly": {
+    case 'monthly': {
       let date = new Date(curr.getFullYear(), curr.getMonth() + 1);
       date.setDate(date.getDate() - 1);
-      const lastDateMonthly = date.getDate()
-      firstDateString = `${curr.getFullYear()}-${curr.getMonth() +1 }-01`
-      lastDateString = `${curr.getFullYear()}-${curr.getMonth() +1 }-${lastDateMonthly}`
+      const lastDateMonthly = date.getDate();
+      firstDateString = `${curr.getFullYear()}-${curr.getMonth() + 1}-01`;
+      lastDateString = `${curr.getFullYear()}-${
+        curr.getMonth() + 1
+      }-${lastDateMonthly}`;
       break;
     }
-    case "last_month": {
-      let year:number
-      let month = curr.getMonth() +1
-      if(month === 1) {
-        year = curr.getFullYear() - 1
-        month = 12
+    case 'last_month': {
+      let year: number;
+      let month = curr.getMonth() + 1;
+      if (month === 1) {
+        year = curr.getFullYear() - 1;
+        month = 12;
       } else {
-        year = curr.getFullYear()
+        year = curr.getFullYear();
       }
-      let date = new Date(year, month)
+      let date = new Date(year, month);
       date.setDate(date.getDate() - 1);
-      const lastDateMonthly = date.getDate()
-      firstDateString = `${year}-${month}-01`
-      lastDateString = `${year}-${month}-${lastDateMonthly}`
+      const lastDateMonthly = date.getDate();
+      firstDateString = `${year}-${month}-01`;
+      lastDateString = `${year}-${month}-${lastDateMonthly}`;
       break;
     }
-    case "last_month_again": {
-      let year:number
-      let month = curr.getMonth() - 1
-      if(month <1) {
-        year = curr.getFullYear() - 1
-        month = 11
+    case 'last_month_again': {
+      let year: number;
+      let month = curr.getMonth() - 1;
+      if (month < 1) {
+        year = curr.getFullYear() - 1;
+        month = 11;
       } else {
-        year = curr.getFullYear()
+        year = curr.getFullYear();
       }
-      let date = new Date(year, month)
+      let date = new Date(year, month);
       date.setDate(date.getDate() - 1);
-      const lastDateMonthly = date.getDate()
-      firstDateString = `${year}-${month}-01`
-      lastDateString = `${year}-${month}-${lastDateMonthly}`
+      const lastDateMonthly = date.getDate();
+      firstDateString = `${year}-${month}-01`;
+      lastDateString = `${year}-${month}-${lastDateMonthly}`;
       break;
     }
     default:
@@ -530,35 +543,35 @@ export const dateToDate = (type : string) => {
   }
 
   return {
-    from_date : firstDateString,
-    to_date : lastDateString
-  }
-}
+    from_date: firstDateString,
+    to_date: lastDateString,
+  };
+};
 
-export const getStatusColor = (status : string,color :any)=>{
-  let sttText = "";
-  let sttColor = "";
-  let sttBgColor = "";
+export const getStatusColor = (status: string, color: any) => {
+  let sttText = '';
+  let sttColor = '';
+  let sttBgColor = '';
   switch (status) {
-    case "Draft":
-        sttText = "pending";
-        sttColor = color.warning;
-        sttBgColor = "rgba(255, 171, 0, 0.08)"
+    case 'Draft':
+      sttText = 'pending';
+      sttColor = color.warning;
+      sttBgColor = 'rgba(255, 171, 0, 0.08)';
       break;
-    case "To Deliver and Bill":
-        sttText = "pendingDeliverAndBill";
-        sttColor = color.warning;
-        sttBgColor = "rgba(255, 171, 0, 0.08)"
-    break;
+    case 'To Deliver and Bill':
+      sttText = 'pendingDeliverAndBill';
+      sttColor = color.warning;
+      sttBgColor = 'rgba(255, 171, 0, 0.08)';
+      break;
     default:
-        sttText = status;
-        sttColor = color.warning;
-        sttBgColor = "rgba(255, 171, 0, 0.08)"
+      sttText = status;
+      sttColor = color.warning;
+      sttBgColor = 'rgba(255, 171, 0, 0.08)';
       break;
   }
   return {
-    color : sttColor,
-    text : sttText,
-    bg : sttBgColor
-  }
-}
+    color: sttColor,
+    text: sttText,
+    bg: sttBgColor,
+  };
+};

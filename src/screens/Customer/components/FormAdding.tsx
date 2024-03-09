@@ -420,6 +420,15 @@ const FormAdding = (props: Props) => {
                     feature.geometry.coordinates[0],
                   )
                 }>
+                <Mapbox.RasterSource
+                  id="adminmap"
+                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                  <Mapbox.RasterLayer
+                    id={'adminmap'}
+                    sourceID={'admin'}
+                    style={{visibility: 'visible'}}
+                  />
+                </Mapbox.RasterSource>
                 <Mapbox.Camera
                   ref={mapboxCameraRef}
                   centerCoordinate={[

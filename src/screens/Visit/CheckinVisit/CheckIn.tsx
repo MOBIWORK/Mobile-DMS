@@ -1,5 +1,12 @@
-import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
+import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useLayoutEffect,
+} from 'react';
 import {
   Block,
   AppText as Text,
@@ -14,13 +21,35 @@ import {Modal} from 'react-native-paper';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
-import {decimalMinutesToTime, useSelector} from '../../../config/function';
+import {
+  decimalMinutesToTime,
+  useDisableBackHandler,
+  useSelector,
+} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import { item } from './ultil';
 import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import isEqual from 'react-fast-compare';
+
+
+const useTimer = () => {
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const intervalIdRef = useRef<any>(0);
+
+  useEffect(() => {
+    intervalIdRef.current = setInterval(() => {
+      setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+    }, 1000); // Update every 1 second
+
+    return () => clearInterval(intervalIdRef.current);
+  }, []);
+
+  return elapsedTime;
+}
+
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -42,8 +71,13 @@ const CheckIn = () => {
       ? dataCheckIn?.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
-  const [elapsedTime, setElapsedTime] = useState(0);
+  // const [elapsedTime, setElapsedTime] = useState(0);
+  const elapsedTime = useTimer()
   const intervalId = useRef<any>();
+  const listImage = useSelector(
+    state => state.app.dataCheckIn?.listImage,
+    shallowEqual,
+  );
   const systemConfig: DMSConfigMobile = useSelector(
     state => state.app.systemConfig,
     shallowEqual,
@@ -51,20 +85,21 @@ const CheckIn = () => {
   const timeCheckin = useRef(
     decimalMinutesToTime(systemConfig.thoigian_toithieu),
   );
-
-  useEffect(() => {
-    // Start the interval when the component mounts
-    const startInterval = () => {
-      intervalId.current = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1);
-      }, 1000); // Update every second (1000 milliseconds)
-    };
-
-    startInterval();
-
-    // Clear the interval when the component unmounts
-    return () => clearInterval(intervalId.current);
-  }, []); // The empty dependency array ensures that the effect runs only once
+  useDisableBackHandler(true);
+  // console.log(elapsedTime, 'listImage');
+  // console.log()
+  // useEffect(() => {
+  //   const startInterval = () => {
+  //     intervalId.current = setInterval(
+  //       () => {
+  //         setElapsedTime(prevTime => prevTime + 1);
+  //       },
+  //       1000,
+  //     ); // Update every 1 seconds
+  //   };
+  //   startInterval();
+  //   return () => clearInterval(intervalId.current);
+  // }, []);
 
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
@@ -104,18 +139,17 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn]);
 
-  const isCompleteCheckin = useMemo(() => {
-    const result = categoriesCheckin.find(
-      item => item.isRequire == true && item.isDone == false,
-    );
-    return result ? false : true;
-  }, [categoriesCheckin]);
+  // const isCompleteCheckin = useMemo(() => {
+  //   const result = categoriesCheckin.find(
+  //     item => item.isRequire == true && item.isDone == false,
+  //   );
+  //   return result ? false : true;
+  // }, [categoriesCheckin]);
 
   const onConfirmCheckout = useCallback(() => {
     dispatch(checkinActions.resetData())
     goBack();
     setShow(false);
-
   }, [dataCheckIn]);
 
   return (
@@ -258,7 +292,7 @@ const CheckIn = () => {
   );
 };
 
-export default CheckIn;
+export default React.memo(CheckIn, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

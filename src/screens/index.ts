@@ -44,7 +44,11 @@ import VisitResult from './Report/Route/VisitResult';
 import NewCustomer from './Report/Sale/NewCustomer';
 import ReportDebt from './Report/Debt/ReportDebt';
 import KPI from './Report/Sale/KPI';
-import SearchSreen from "./Search"
+import SearchSreen from "./Search";
+import ListAlbumScore from './Checkin/ListAlbumScore/index';
+import TakePictureScore from './Checkin/TakePictureScore';
+import UserInfoScreen from './Profile/UserInfoScreen';
+import EditAccount from './Profile/EditAccount';
 
 export {
   SelectOrganization,
@@ -93,5 +97,9 @@ export {
   ReportDebt,
   KPI,
   UpdateScreen,
-  SearchSreen
+  SearchSreen,
+  ListAlbumScore,
+  TakePictureScore,
+  UserInfoScreen,
+  EditAccount,
 };

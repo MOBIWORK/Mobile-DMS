@@ -13,7 +13,7 @@ import {
 
 const DEFAULT_CONFIG: CreateAxiosDefaults = {
   baseURL: BASE_URL,
-  headers: {...ApiConstant.HEADER_DEFAULT},
+  headers: {'Content-Type':'multipart/form-data'},
   timeout: ApiConstant.TIMEOUT,
 };
 
@@ -59,7 +59,7 @@ const createInstance = (deleteHeader?: boolean) => {
   const api_key = CommonUtils.storage.getString(AppConstant.Api_key);
   const api_secret = CommonUtils.storage.getString(AppConstant.Api_secret);
   const header =
-    api_key && api_secret ? CommonUtils.Auth_header(api_key, api_secret) : null;
+    api_key && api_secret ? CommonUtils.FormData_header(api_key, api_secret) : null;
   let organization = CommonUtils.storage.getString(AppConstant.Organization);
   if (organization) {
     const organizationObj = JSON.parse(organization);
@@ -76,5 +76,5 @@ const createInstance = (deleteHeader?: boolean) => {
 Api.addResponseTransform(response => {
   handleErrorResponse(response, true);
 });
-export const createApi = (deleteHeader?: boolean) =>
+export const createFormData = (deleteHeader?: boolean) =>
   createInstance(deleteHeader);

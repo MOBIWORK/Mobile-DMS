@@ -15,4 +15,16 @@ export function* checkinSaga() {
     checkinActions.getListNoteType.type.toString(),
     Saga.getDataNoteType,
   );
+  yield* takeLatest(
+    checkinActions.getListProgram.toString(),
+    Saga.getListProgramData,
+  );
+  yield* takeLatest(
+    checkinActions.postImageScore.type.toString(),
+    Saga.postImageScore,
+  );
+  yield* takeLatest(
+    checkinActions.createReportMarkScore.type.toString(),
+    Saga.createReportMarkScoreSaga,
+  );
 }

@@ -1,5 +1,6 @@
 import React, {
   FC,
+  memo,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -58,6 +59,7 @@ import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
+import MarkerItem from '../../../components/common/MarkerItem';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -69,7 +71,7 @@ const ListVisit = () => {
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
 
-  const mapboxCameraRef = useRef<CameraRef>(null);
+  const mapboxCameraRef = useRef<Mapbox.Camera>(null);
   const filterRef = useRef<BottomSheet>(null);
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -84,7 +86,6 @@ const ListVisit = () => {
   const customerType: ListCustomerType[] = useSelector(
     state => state.customer.listCustomerType,
   );
-  const appLoading = useSelector(state => state.app.loadingApp);
 
   const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
     getLabel('nearest'),
@@ -157,30 +158,6 @@ const ListVisit = () => {
       );
     setShowListVisit(false);
     setVisitItemSelected(item);
-  };
-
-  const MarkerItem: FC<MarkerItemProps> = ({item, index}) => {
-    return (
-      <TouchableOpacity
-        style={{alignItems: 'center', justifyContent: 'center'}}
-        onPress={() => setVisitItemSelected(item)}>
-        <Image
-          source={ImageAssets.TooltipIcon}
-          style={{width: 20, height: 20, marginBottom: -5}}
-          resizeMode={'contain'}
-          tintColor={colors.text_primary}
-        />
-        <Text style={{color: colors.bg_default, position: 'absolute', top: 0}}>
-          {index + 1}
-        </Text>
-        <Image
-          source={ImageAssets.MapPinFillIcon}
-          style={{width: 32, height: 32}}
-          tintColor={item.is_checkin ? colors.success : colors.warning}
-          resizeMode={'cover'}
-        />
-      </TouchableOpacity>
-    );
   };
 
   const _renderHeader = () => {
@@ -274,6 +251,10 @@ const ListVisit = () => {
                 style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
                 data={listCustomer}
+                keyExtractor={(item, index) => item.customer_code}
+                decelerationRate={'fast'}
+                bounces={false}
+                initialNumToRender={5}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
                   <VisitItem
@@ -294,7 +275,17 @@ const ListVisit = () => {
               styleURL={Mapbox.StyleURL.Street}
               logoEnabled={false}
               style={{flex: 1}}>
+              <Mapbox.RasterSource
+                id="adminmap"
+                tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                <Mapbox.RasterLayer
+                  id={'adminmap'}
+                  sourceID={'admin'}
+                  style={{visibility: 'visible'}}
+                />
+              </Mapbox.RasterSource>
               <Mapbox.Camera
+                ref={mapboxCameraRef}
                 centerCoordinate={[
                   location?.coords.longitude ?? 0,
                   location?.coords.latitude ?? 0,
@@ -315,7 +306,11 @@ const ListVisit = () => {
                         Number(location.long),
                         Number(location.lat),
                       ]}>
-                      <MarkerItem item={item} index={index} />
+                      <MarkerItem
+                        item={item}
+                        index={index}
+                        onPress={item => setVisitItemSelected(item)}
+                      />
                     </Mapbox.MarkerView>
                   );
                 })}
@@ -325,21 +320,34 @@ const ListVisit = () => {
                 androidRenderMode="gps"
                 showsUserHeadingIndicator={true}
               />
-              {visitItemSelected && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    bottom: bottom + 70,
-                    left: 24,
-                    right: 24,
-                  }}>
-                  <VisitItem
-                    item={visitItemSelected}
-                    handleClose={() => setVisitItemSelected(null)}
-                  />
-                </View>
-              )}
             </Mapbox.MapView>
+            <TouchableOpacity
+              onPress={handleRegainLocation}
+              style={styles.regainPosition}>
+              <Image
+                source={ImageAssets.MapIcon}
+                style={{width: 16, height: 16}}
+                resizeMode={'cover'}
+                tintColor={colors.bg_default}
+              />
+              <Text style={{color: colors.bg_default, marginLeft: 4}}>
+                {getLabel('currentPosition')}
+              </Text>
+            </TouchableOpacity>
+            {visitItemSelected && (
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: bottom + 70,
+                  left: 24,
+                  right: 24,
+                }}>
+                <VisitItem
+                  item={visitItemSelected}
+                  handleClose={() => setVisitItemSelected(null)}
+                />
+              </View>
+            )}
           </View>
         )}
       </View>
@@ -347,8 +355,6 @@ const ListVisit = () => {
   };
 
   useLayoutEffect(() => {
-    // setLoading(true);
-
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
@@ -358,12 +364,9 @@ const ListVisit = () => {
     })
       .then(location => setLocation(location))
       .catch(e => console.log('err', e));
-
-    // setLoading(false);
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
-    setLoading(true);
     await getCustomerVisit(params).then((res: any) => {
       if (Object.keys(res.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
@@ -371,7 +374,6 @@ const ListVisit = () => {
         dispatch(customerActions.setCustomerVisit(newData));
       }
     });
-    setLoading(false);
   };
 
   const getCustomerRoute = async () => {
@@ -390,6 +392,13 @@ const ListVisit = () => {
         dispatch(setListCustomerType(response?.result));
       }
     }
+  };
+
+  const getData = async () => {
+    setLoading(true);
+    await getCustomerRoute();
+    await getDataGroup();
+    setLoading(false);
   };
 
   const handleFilterData = async () => {
@@ -426,17 +435,24 @@ const ListVisit = () => {
     }
   };
 
+  const handleRegainLocation = async () => {
+    const newLocation = await BackgroundGeolocation.getCurrentPosition({
+      samples: 1,
+      timeout: 3,
+    });
+    mapboxCameraRef.current &&
+      mapboxCameraRef.current.moveTo(
+        [newLocation.coords.longitude, newLocation.coords.latitude],
+        1000,
+      );
+    setLocation(location);
+  };
+
   useEffect(() => {
     mounted.current = true;
-    dispatch(appActions.onLoadApp());
-    getCustomer();
-    getCustomerRoute();
-    getDataGroup();
-    dispatch(appActions.onLoadAppEnd());
-
+    getData().then();
     return () => {
       mounted.current = false;
-      dispatch(appActions.onLoadAppEnd());
     };
   }, []);
 
@@ -464,12 +480,7 @@ const ListVisit = () => {
     </SafeAreaView>
   );
 };
-
-interface MarkerItemProps {
-  item: VisitListItemType;
-  index: number;
-}
-export default ListVisit;
+export default memo(ListVisit);
 
 const rootStyles = (theme: ExtendedTheme) =>
   StyleSheet.create({
@@ -488,4 +499,19 @@ const rootStyles = (theme: ExtendedTheme) =>
       borderColor: theme.colors.border,
       maxWidth: 180,
     },
+    regainPosition: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.action,
+      alignSelf: 'flex-end',
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 16,
+      right: 0,
+      zIndex: 99999999,
+    } as ViewStyle,
   });

@@ -9,21 +9,23 @@ import {
   SvgIcon,
 } from '../../components/common';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import { dispatch } from '../../utils/redux';
+import {dispatch} from '../../utils/redux';
 
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation';
 import ContentList from './components/ContentList';
-import {ContentProfile} from './ultil/config';
-import { useSelector } from '../../config/function';
-import { appActions } from '../../redux-store/app-reducer/reducer';
-type Props = {};
+import {ContentProfile, ProfileContent} from './ultil/config';
+import {useSelector} from '../../config/function';
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import {IUser} from '../../models/types';
 
-const Profile = (props: Props) => {
+const Profile = () => {
   const theme = useTheme();
   const appTheme = useSelector(state => state.app.theme);
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
+
+  const userInfo: IUser = useSelector(state => state.app.userProfile);
 
   const onSwitch = useCallback(() => {
     // 'worklet';
@@ -49,28 +51,31 @@ const Profile = (props: Props) => {
       <View style={styles.containView}>
         <AppAvatar
           size={48}
-          name="Văn Hiếu"
-          url="https://picture.vn/wp-content/uploads/2015/12/da-lat.png"
+          name={userInfo?.employee_name}
+          url={userInfo?.image}
         />
         <View style={styles.containLabel}>
-          <AppText fontSize={16} fontWeight="500" colorTheme='text_primary'>
-            Thân Văn Hiếu
+          <AppText fontSize={16} fontWeight="500" colorTheme="text_primary">
+            {userInfo?.employee_name}
           </AppText>
           <View style={styles.containSecondView}>
             <SvgIcon source="AccountIcon" size={16} />
             <AppText fontSize={14} colorTheme="text_secondary" fontWeight="400">
               {' '}
-              Nhân viên lập trình |
+              {userInfo?.designation} |
             </AppText>
             <AppText fontSize={14} colorTheme="text_secondary" fontWeight="400">
               {' '}
-              NV-199{' '}
+              {userInfo?.employee}{' '}
             </AppText>
           </View>
         </View>
       </View>
       <View style={styles.containContentView}>
-        <ContentList data={ContentProfile} onSwitch={onSwitch} />
+        <ContentList
+          data={ContentProfile(navigation) as ProfileContent[]}
+          onSwitch={onSwitch}
+        />
       </View>
     </MainLayout>
   );

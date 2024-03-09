@@ -14,6 +14,7 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ViewStyle} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {CommonUtils} from '../../../../utils';
 
 const Inventory: FC<InventoryProps> = ({inventoryData}) => {
   const theme = useTheme();
@@ -27,15 +28,19 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
 
         <View style={styles.productItem as ViewStyle}>
           <Text style={styles.productLeftLabel as ViewStyle}>
-            {productItem.productName}
+            {`${productItem?.item_name ?? ''} - ${
+              productItem?.item_code ?? ''
+            }`}
           </Text>
-          <Text style={styles.productRightLabel}>x{productItem.count}</Text>
+          <Text style={styles.productRightLabel}>
+            {productItem?.quanity ?? 0}
+          </Text>
         </View>
 
         <Text style={styles.productRightLabel}>
           ĐVT: {'  '}
           <Text style={{color: theme.colors.text_primary}}>
-            {productItem.unit}
+            {productItem?.item_unit ?? ''}
           </Text>
         </Text>
       </Block>
@@ -47,7 +52,11 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
       <Accordion
         type="regular"
         containerStyle={{backgroundColor: theme.colors.bg_default}}
-        title={`${getLabel('day')} ${inventoryItem.dateTime.toString()}`}>
+        title={`${getLabel('day')} ${
+          inventoryItem?.creation
+            ? CommonUtils.convertDate(inventoryItem.creation)
+            : ''
+        }`}>
         <>
           <Block
             direction="row"
@@ -61,7 +70,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
               {getLabel('quantity')}
             </Text>
           </Block>
-          {inventoryItem.listProduct.map((item, index) => {
+          {inventoryItem.items.map((item, index) => {
             return (
               <Block key={index} marginBottom={8} block color={'white'}>
                 {ProductItem(item)}
