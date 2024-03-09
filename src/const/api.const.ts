@@ -125,3 +125,4 @@ export const GET_VISIT_ROUTE_DETAIL =
   '/api/method/mbw_dms.api.kpi.report_visit_orders_invoices';
 export const GET_REPORT_ORDER =
   '/api/method/mbw_dms.api.kpi.report_detail_visit';
+export const GET_TRAVEL_LOG_REPORT = '/api/method/mbw_dms.api.ekgis.history_checkin.get_history_checkin';
