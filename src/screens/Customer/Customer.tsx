@@ -467,17 +467,15 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-
-      <AppFAB
-        icon="plus"
-        style={styles.fab}
-        color="white"
-        customIconSize={32}
-        mode="flat"
-        visible={!(show.firstModal || show.secondModal)}
-        onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
-      />
-    </Block>
+      <TouchableOpacity onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)} style={[styles.fab]}>
+        <AppIcons
+          iconType="IonIcon"
+          name="add-outline"
+          size={40}
+          color={theme.colors.white}
+        />
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -624,14 +622,19 @@ const rootStyles = (theme: AppTheme) =>
       textAlign: 'center',
     } as TextStyle,
     fab: {
-      position: 'absolute',
-      margin: 16,
-      right: 0,
-      bottom: 0,
+      width :60,
+      height :60,
+      flex: 1,
+      zIndex: 99,
+      right: 20,
+      bottom: 150,
       borderRadius: 30,
       backgroundColor: theme.colors.primary,
       borderWidth: 2,
       borderColor: Colors.white,
+      position: "absolute",
+      justifyContent:"center",
+      alignItems :"center"
     } as ViewStyle,
     backgroundRoot: {
       backgroundColor: theme.colors.bg_neutral,

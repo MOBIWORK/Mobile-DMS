@@ -28,6 +28,7 @@ import { dispatch } from '../../utils/redux';
 import { useSelector } from '../../config/function';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from '../../layouts/ErrorBoundary';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 
 const OrderList = () => {
 
@@ -253,7 +254,7 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.itemDesc as any, { marginLeft: 6 }]}>
-              {CommonUtils.convertDateToString(item.po_date * 1000)}
+              {CommonUtils.convertDateToString(item.creation * 1000)}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -267,7 +268,7 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.itemDesc as any, { marginLeft: 6 }]}>
-              {CommonUtils.convertDate(item.delivery_date * 1000)}
+              {item.delivery_date ? CommonUtils.convertDate(item.delivery_date * 1000): "- - - "}
             </Text>
           </View>
         </View>
@@ -296,7 +297,7 @@ const OrderList = () => {
   };
 
 
-  const fetchData = () => {
+  const fetchData = async () => {
     dispatch(orderAction.onGetData({
       from_date: fromDate > 0 ? fromDate / 1000 : undefined,
       to_date: toDate > 0 ? toDate / 1000 : undefined,

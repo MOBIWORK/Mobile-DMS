@@ -1,30 +1,29 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {MainLayout} from '../../../layouts';
+import React, { useEffect, useRef, useState } from 'react';
+import { MainLayout } from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
-import {AppContainer, SvgIcon} from '../../../components/common';
-import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { AppContainer, SvgIcon } from '../../../components/common';
+import { ExtendedTheme, useTheme } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FlatList, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
-import {CommonUtils} from '../../../utils';
-import {AppConstant} from '../../../const';
-import {useTranslation} from 'react-i18next';
+import { CommonUtils } from '../../../utils';
+import { AppConstant } from '../../../const';
+import { useTranslation } from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {IFilterType} from '../../../components/common/FilterListComponent';
+import { IFilterType } from '../../../components/common/FilterListComponent';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
-const RouteResult = () => {
-  const theme = useTheme();
-  const {bottom} = useSafeAreaInsets();
-  const {t: getLabel} = useTranslation();
-  const styles = createStyle(theme);
+import RouterResutlLoading from './Loading/RouterResutlLoading';
 
+
+
+
+const RouteResult = () => {
+
+  const theme = useTheme();
+  const { bottom } = useSafeAreaInsets();
+  const { t: getLabel } = useTranslation();
+  const styles = createStyle(theme);
+  const [isLoading, _] = useState<boolean>(false);
   const filerBottomSheetRef = useRef<BottomSheet>(null);
 
   const [headerDate, setHeaderDate] = useState<string>(
@@ -72,10 +71,10 @@ const RouteResult = () => {
       <View
         style={[
           styles.processContainer,
-          {flexDirection: 'row', justifyContent: 'flex-start'},
+          { flexDirection: 'row', justifyContent: 'flex-start' },
         ]}>
         <SvgIcon source={'Money'} size={40} />
-        <View style={{rowGap: 4, marginLeft: 8}}>
+        <View style={{ rowGap: 4, marginLeft: 8 }}>
           <Text style={styles.txt12}>Doanh số</Text>
           <Text style={styles.txt18}>
             {CommonUtils.convertNumber(100000000)}
@@ -97,14 +96,14 @@ const RouteResult = () => {
     return (
       <FlatList
         data={VisitReportData}
-        renderItem={({item}) => Item(item)}
+        renderItem={({ item }) => Item(item)}
         numColumns={2}
       />
     );
   };
 
   return (
-    <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
+    <MainLayout style={{ backgroundColor: theme.colors.bg_neutral }}>
       <ReportHeader
         title={'Kết quả đi tuyến'}
         date={headerDate}
@@ -113,11 +112,13 @@ const RouteResult = () => {
           filerBottomSheetRef.current.snapToIndex(0)
         }
       />
-      <AppContainer style={{marginBottom: bottom}}>
-        {_renderProcess()}
-        {_renderSales()}
-        {_renderVisitReport()}
-      </AppContainer>
+      {isLoading ? <RouterResutlLoading /> :
+        <AppContainer style={{ marginBottom: bottom }}>
+          {_renderProcess()}
+          {_renderSales()}
+          {_renderVisitReport()}
+        </AppContainer>
+      }
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
         onChange={onChangeHeaderDate}

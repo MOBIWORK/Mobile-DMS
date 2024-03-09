@@ -1,5 +1,4 @@
 export const HEADER_DEFAULT = {
-
   'Content-Type': 'application/json',
 };
 export const TIMEOUT = 50000;
@@ -112,6 +111,7 @@ export const CREATE_IMAGE_CHECKIN =
 // REPORT
 export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';
 export const GET_REPORT_VISIT = '/api/method/mbw_dms.api.kpi.visit_report';
+export const GET_TRAVEL_LOG_REPORT = '/api/method/mbw_dms.api.ekgis.history_checkin.get_history_checkin';
 // IMAGE_SCORE
 export const POST_IMAGE_SCORE = 'api/method/mbw_audit.api.api.upload_file';
 export const GET_CAMPAIGN_PROGRAM =

@@ -4,6 +4,7 @@ import { orderAction } from '../../redux-store/order-reducer/reducer';
 import { OrderService } from '../../services';
 import { KeyAbleProps } from '../../models/types';
 import { ApiConstant } from '../../const';
+import { appActions } from '../../redux-store/app-reducer/reducer';
 
 export type ResponseGenerator = {
     config?: any;
@@ -20,13 +21,16 @@ export type ResponseGenerator = {
 export function* onGetOrders(action: PayloadAction) {
     if (orderAction.onGetData.match(action)) {
         try {
+            yield put(appActions.setProcessingStatus(true))
             const { status, data }: KeyAbleProps = yield call(OrderService.get, action.payload);
             yield put(orderAction.setLoading())
+            yield put(appActions.setProcessingStatus(false))
             if (status === ApiConstant.STT_OK) {
                 yield put(orderAction.setData({ data: data.result?.data, totalItem: data.result.total }));
             }
         } catch (err: any) {
             yield put(orderAction.setMessage(err.message));
+            yield put(appActions.setProcessingStatus(false))
         }
     }
 
