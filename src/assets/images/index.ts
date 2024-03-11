@@ -56,6 +56,8 @@ const LogoMBW = require('./logoMBW.png');
 const NoDataImage = require('./noImage.jpg');
 const CameraSelect = require('./cameraSelect.png');
 const ImageLibrary = require('./imageLibrary.png');
+const SettingIcon = require('./setting.png');
+const NotifyIcon = require('./notify.png');
 
 export {
   IconBill,
@@ -115,4 +117,6 @@ export {
   NoDataImage,
   CameraSelect,
   ImageLibrary,
+  SettingIcon,
+  NotifyIcon,
 };

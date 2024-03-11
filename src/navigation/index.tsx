@@ -67,6 +67,10 @@ import {
   EditAccount,
   TakePictureScore,
   ListAlbumScore,
+  AccountSetting,
+  CurrentPassword,
+  ChangePassword,
+  NotifySetting,
 } from '../screens';
 // import { MAIN_TAB } from '../const/screen.const';
 import {MyAppTheme} from '../layouts/theme';
@@ -306,6 +310,22 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
           name={ScreenConstant.EDIT_ACCOUNT}
           component={EditAccount}
         />
+        <Stack.Screen
+          name={ScreenConstant.ACCOUNT_SETTING}
+          component={AccountSetting}
+        />
+        <Stack.Screen
+          name={ScreenConstant.CURRENT_PASSWORD}
+          component={CurrentPassword}
+        />
+        <Stack.Screen
+          name={ScreenConstant.CHANGE_PASSWORD}
+          component={ChangePassword}
+        />
+        <Stack.Screen
+          name={ScreenConstant.NOTIFY_SETTING}
+          component={NotifySetting}
+        />
       </Stack.Navigator>
       {children}
       <RXStore />
@@ -380,6 +400,10 @@ export type RootStackParamList = {
   };
   [ScreenConstant.USER_INFO_SCREEN]: undefined;
   [ScreenConstant.EDIT_ACCOUNT]: {title: string; content: string};
+  [ScreenConstant.ACCOUNT_SETTING]: undefined;
+  [ScreenConstant.CURRENT_PASSWORD]: undefined;
+  [ScreenConstant.CHANGE_PASSWORD]: {isForgotPassword: boolean};
+  [ScreenConstant.NOTIFY_SETTING]: undefined;
 };
 
 // Define prop type for useNavigation and useRoute

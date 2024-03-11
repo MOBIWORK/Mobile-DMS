@@ -41,7 +41,7 @@ export const ContentProfile = (navigation: any) => [
     icon: 'Setting',
     rightSide: false,
     onPress: () => {
-      console.log('v');
+      navigation.navigate(ScreenConstant.ACCOUNT_SETTING);
     },
   },
   {

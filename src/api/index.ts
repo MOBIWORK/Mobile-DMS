@@ -27,7 +27,7 @@ const handleErrorResponse = (
   response: ApiResponse<IApiResponse>,
   throwErrorIfFailed: any,
 ) => {
-  if (response.status ) {
+  if (response.status) {
     const isSuccessRequest = /^2\d{2}/g.test(response.status?.toString());
     if (isSuccessRequest && response.data?.result) {
       return;
