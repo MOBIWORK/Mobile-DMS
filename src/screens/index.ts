@@ -44,12 +44,15 @@ import VisitResult from './Report/Route/VisitResult';
 import NewCustomer from './Report/Sale/NewCustomer';
 import ReportDebt from './Report/Debt/ReportDebt';
 import KPI from './Report/Sale/KPI';
-import SearchSreen from "./Search";
+import SearchSreen from './Search';
 import ListAlbumScore from './Checkin/ListAlbumScore/index';
 import TakePictureScore from './Checkin/TakePictureScore';
 import UserInfoScreen from './Profile/UserInfoScreen';
 import EditAccount from './Profile/EditAccount';
-
+import AccountSetting from './Profile/AccountSetting';
+import CurrentPassword from './Profile/CurrentPassword';
+import ChangePassword from './Authen/ChangePassword';
+import NotifySetting from './Profile/NotifySetting';
 export {
   SelectOrganization,
   SignIn,
@@ -102,4 +105,8 @@ export {
   TakePictureScore,
   UserInfoScreen,
   EditAccount,
+  AccountSetting,
+  CurrentPassword,
+  ChangePassword,
+  NotifySetting,
 };
