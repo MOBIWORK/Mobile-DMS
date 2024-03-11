@@ -28,17 +28,15 @@ import {NavigationProp, RouterProp} from '../../navigation';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {CommonUtils} from '../../utils';
 
-
 import {AppService} from '../../services';
-import { appActions } from '../../redux-store/app-reducer/reducer';
-import { dispatch } from '../../utils/redux';
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import {dispatch} from '../../utils/redux';
 
 const SelectOrganization = () => {
   const {t: getLabel, i18n} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'SELECT_ORGANIZATION'>>();
   const {colors} = useTheme();
-
 
   const [organizationName, setOrganizationName] = useState<string>(
     route.params?.data ?? '',
@@ -76,11 +74,9 @@ const SelectOrganization = () => {
 
   const getOrganization = async () => {
     await CommonUtils.CheckNetworkState();
-    console.log('run first')
     const response: KeyAbleProps = await AppService.verifyOrganization({
       organization: organizationName,
     });
-    console.log(response,'run second')
     if (response.status === ApiConstant.STT_OK) {
       const {result} = response.data;
       setOrganization(result);
