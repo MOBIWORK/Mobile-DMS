@@ -30,13 +30,12 @@ const MainTab = () => {
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log(nextAppState, 'app state');
+      //
     }
     setAppState(nextAppState);
   };
 
   useEffect(() => {
-    console.log('dataCheckIn', dataCheckIn);
     const appState = AppState.addEventListener('change', handleAppStateChange);
     if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});

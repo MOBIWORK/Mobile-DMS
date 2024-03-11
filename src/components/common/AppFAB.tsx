@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { forwardRef } from 'react';
+import {forwardRef} from 'react';
 import {
   AccessibilityState,
   ActivityIndicator,
@@ -11,18 +11,23 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import Icon, { IconSource } from 'react-native-paper/src/components/Icon';
+import Icon, {IconSource} from 'react-native-paper/src/components/Icon';
 import Surface from 'react-native-paper/src/components/Surface';
-import { useInternalTheme } from 'react-native-paper/src/core/theming';
-import { $Omit, $RemoveChildren, ThemeProp } from 'react-native-paper/lib/typescript/types';
-import  CrossFadeIcon  from 'react-native-paper/src/components/CrossFadeIcon';
-import { getExtendedFabStyle, getFABColors, getFabStyle } from 'react-native-paper/src/components/FAB/utils';
+import {useInternalTheme} from 'react-native-paper/src/core/theming';
+import {
+  $Omit,
+  $RemoveChildren,
+  ThemeProp,
+} from 'react-native-paper/lib/typescript/types';
+import CrossFadeIcon from 'react-native-paper/src/components/CrossFadeIcon';
+import {
+  getExtendedFabStyle,
+  getFABColors,
+  getFabStyle,
+} from 'react-native-paper/src/components/FAB/utils';
 import TouchableRipple from 'react-native-paper/src/components/TouchableRipple/TouchableRipple';
-import { Text } from 'react-native-paper';
-import { TextStyle } from 'react-native';
-
-
-
+import {Text} from 'react-native-paper';
+import {TextStyle} from 'react-native';
 
 type FABSize = 'small' | 'medium' | 'large';
 
@@ -146,9 +151,9 @@ export type Props = $Omit<$RemoveChildren<typeof Surface>, 'mode'> & {
   testID?: string;
 
   /*
-  *Custom size Icon
-  */
-  customIconSize?:number
+   *Custom size Icon
+   */
+  customIconSize?: number;
   ref?: React.RefObject<View>;
 } & IconOrLabel;
 
@@ -206,18 +211,18 @@ const AppFAB = forwardRef<View, Props>(
       mode = 'elevated',
       variant = 'primary',
       labelMaxFontSizeMultiplier,
-      customIconSize=36,
+      customIconSize = 36,
       ...rest
     }: Props,
-    ref
+    ref,
   ) => {
     const theme = useInternalTheme(themeOverrides);
     const uppercase = uppercaseProp ?? !theme.isV3;
-    const { current: visibility } = React.useRef<Animated.Value>(
-      new Animated.Value(visible ? 1 : 0)
+    const {current: visibility} = React.useRef<Animated.Value>(
+      new Animated.Value(visible ? 1 : 0),
     );
-    const { isV3, animation } = theme;
-    const { scale } = animation;
+    const {isV3, animation} = theme;
+    const {scale} = animation;
 
     React.useEffect(() => {
       if (visible) {
@@ -237,14 +242,14 @@ const AppFAB = forwardRef<View, Props>(
 
     const IconComponent = animated ? CrossFadeIcon : Icon;
 
-    const fabStyle = getFabStyle({ customSize, size, theme });
+    const fabStyle = getFabStyle({customSize, size, theme});
 
     const {
       borderRadius = fabStyle.borderRadius,
       backgroundColor: customBackgroundColor,
     } = (StyleSheet.flatten(style) || {}) as ViewStyle;
 
-    const { backgroundColor, foregroundColor, rippleColor } = getFABColors({
+    const {backgroundColor, foregroundColor, rippleColor} = getFABColors({
       theme,
       variant,
       disabled,
@@ -259,7 +264,7 @@ const AppFAB = forwardRef<View, Props>(
     const loadingIndicatorSize = isLargeSize ? 24 : 18;
     const font = isV3 ? theme.fonts.labelLarge : theme.fonts.medium;
 
-    const extendedStyle = getExtendedFabStyle({ customSize, theme });
+    const extendedStyle = getExtendedFabStyle({customSize, theme});
     const textStyle = {
       color: foregroundColor,
       ...font,
@@ -267,7 +272,7 @@ const AppFAB = forwardRef<View, Props>(
 
     const md3Elevation = isFlatMode || disabled ? 0 : 3;
 
-    const newAccessibilityState = { ...accessibilityState, disabled };
+    const newAccessibilityState = {...accessibilityState, disabled};
 
     return (
       <Surface
@@ -290,8 +295,7 @@ const AppFAB = forwardRef<View, Props>(
         ]}
         pointerEvents={visible ? 'auto' : 'none'}
         testID={`${testID}-container`}
-        {...(isV3 && { elevation: md3Elevation })}
-      >
+        {...(isV3 && {elevation: md3Elevation})}>
         <TouchableRipple
           borderless
           onPress={onPress}
@@ -303,18 +307,16 @@ const AppFAB = forwardRef<View, Props>(
           accessibilityRole="button"
           accessibilityState={newAccessibilityState}
           testID={testID}
-          style={{ borderRadius }}
-          {...rest}
-        >
+          style={{borderRadius}}
+          {...rest}>
           <View
             style={[styles.content, label ? extendedStyle : fabStyle]}
             testID={`${testID}-content`}
-            pointerEvents="none"
-          >
+            pointerEvents="none">
             {icon && loading !== true ? (
               <IconComponent
                 source={icon}
-                size={customIconSize ? customIconSize  : iconSize}
+                size={customIconSize ? customIconSize : iconSize}
                 color={foregroundColor}
               />
             ) : null}
@@ -331,11 +333,10 @@ const AppFAB = forwardRef<View, Props>(
                 testID={`${testID}-text`}
                 style={[
                   styles.label,
-                  uppercase && styles.uppercaseLabel  as TextStyle,
+                  uppercase && (styles.uppercaseLabel as TextStyle),
                   textStyle,
                 ]}
-                maxFontSizeMultiplier={labelMaxFontSizeMultiplier}
-              >
+                maxFontSizeMultiplier={labelMaxFontSizeMultiplier}>
                 {label}
               </Text>
             ) : null}
@@ -343,7 +344,7 @@ const AppFAB = forwardRef<View, Props>(
         </TouchableRipple>
       </Surface>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({
@@ -369,4 +370,3 @@ const styles = StyleSheet.create({
 export default React.memo(AppFAB);
 
 // @component-docs ignore-next-line
-
