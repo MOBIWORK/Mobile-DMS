@@ -1,8 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-
 import {allReducer} from './all-reducer';
-import {compose,applyMiddleware} from 'redux'
 import {persistStore, persistReducer} from 'redux-persist';
 import {reduxPersistStorage} from '../utils';
 import rootSaga from './root-saga';
@@ -11,7 +9,7 @@ const persistedReducer = persistReducer(
   {
     key: 'root',
     storage: reduxPersistStorage,
-    whitelist: ['app','checkin'],
+    whitelist: ['app'],
     timeout: 1000,
   },
   allReducer,
