@@ -262,4 +262,6 @@ export default {
   receiveNews: 'Nhận tin',
   notifyLastUpdate: 'Thông báo cho tôi về tính năng cập nhật mới nhất',
   notifyService: 'Cho phép thông báo trên các dịch vụ',
+  resultRouter :"Kết quả đi tuyến",
+  numberToVisit :"Số lượt khách hàng phải viếng thăm",
 };

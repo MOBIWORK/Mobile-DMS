@@ -854,3 +854,16 @@ export type IOrderDetailItem = {
   cell_number: string;
   current_address: string;
 };
+
+
+export interface ReportRouterResultType {
+  doanh_so: number
+  vieng_tham_co_don: number
+  vieng_tham_ko_don: number
+  vieng_tham_co_anh: number
+  vieng_tham_ko_anh: number
+  vt_dung_tuyen: number
+  vt_ngoai_tuyen: number
+  so_kh_da_vt: number
+  so_kh_phai_vt: number
+}
