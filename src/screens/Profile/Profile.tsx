@@ -1,10 +1,10 @@
-import {StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {StyleSheet, View, ViewStyle} from 'react-native';
 import React, {useCallback} from 'react';
 import {MainLayout} from '../../layouts';
 import {
   AppAvatar,
+  AppButton,
   AppHeader,
-  AppSwitch,
   AppText,
   SvgIcon,
 } from '../../components/common';
@@ -77,6 +77,12 @@ const Profile = () => {
           onSwitch={onSwitch}
         />
       </View>
+      <AppButton
+        style={{marginTop: 32, backgroundColor: theme.colors.bg_default}}
+        onPress={() => console.log('handleLogout')}
+        label={'Đăng xuất'}
+        styleLabel={{color: theme.colors.error}}
+      />
     </MainLayout>
   );
 };
@@ -86,19 +92,15 @@ export default Profile;
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     root: {
-      // paddingTop:0,
       backgroundColor: theme.colors.bg_neutral,
     } as ViewStyle,
     containView: {
       marginTop: 12,
-      // backgroundColor: theme.colors.bg_default,
       flexDirection: 'row',
-      // justifyContent: 'center',
       paddingVertical: 10,
     } as ViewStyle,
     containLabel: {
       paddingLeft: 8,
-      // backgroundColor:'red',
       justifyContent: 'center',
     } as ViewStyle,
     containSecondView: {
@@ -110,6 +112,5 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.bg_default,
       borderRadius: 16,
       marginTop: 16,
-      // padding:8
     } as ViewStyle,
   });

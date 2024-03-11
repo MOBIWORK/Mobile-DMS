@@ -45,7 +45,7 @@ import {
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
-import {CustomerService} from '../../services';
+import {AppService, CustomerService} from '../../services';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {useSelector} from '../../config/function';
 import {MainAddress, MainContactAddress} from './components/CardAddress';
@@ -115,7 +115,7 @@ const AddingNewCustomer = () => {
     const contact: MainContactAddress = mainContactAddress;
     const updateListData: IDataCustomer = {
       ...newListData,
-      frequency: newListData.frequency.toString(),
+      frequency: newListData?.frequency ? newListData.frequency.toString() : '',
       customer_type:
         newListData.customer_type === getLabel('individual')
           ? 'Individual'
@@ -155,7 +155,7 @@ const AddingNewCustomer = () => {
       province_contact:
         Object.keys(contact).length > 0 ? String(contact?.city?.id) : '',
       first_name: contact?.nameContact ?? '',
-      router_name: newListData.router_name[1] ?? '',
+      router_name: newListData?.router_name?.[1] ?? '',
       website: newListData.website ?? '',
       longitude: newListData.longitude ?? 0,
       latitude: newListData.latitude ?? 0,
@@ -163,12 +163,15 @@ const AddingNewCustomer = () => {
         ? newListData.custom_birthday / 1000
         : new Date().getTime() / 1000,
     };
-
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
     const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
+      const cusRes: any = await AppService.getCustomer();
+      if (Object.keys(cusRes?.result).length > 0) {
+        await dispatch(customerActions.setCustomer(cusRes.result));
+      }
       navigation.navigate(ScreenConstant.MAIN_TAB, {
         screen: ScreenConstant.CUSTOMER,
       });
@@ -213,11 +216,10 @@ const AddingNewCustomer = () => {
   };
 
   const getCustomerRoute = async () => {
-    // const response: any = await CustomerService.getCustomerRoute();
-    // if (response?.result.length > 0) {
-    //   dispatch(customerActions.setListCustomerRoute(response.result));
-    // }
-    dispatch(customerActions.onGetCustomerVisit());
+    const response: any = await CustomerService.getCustomerRoute();
+    if (response?.result.length > 0) {
+      dispatch(customerActions.setListCustomerRoute(response.result));
+    }
   };
   //get Cur Location
   useEffect(() => {
