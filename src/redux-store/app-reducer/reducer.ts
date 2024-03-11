@@ -109,6 +109,7 @@ const appSlice = createSlice({
     setUserProfile: (state, action: PayloadAction<any>) => {
       state.userProfile = action.payload;
     },
+    resetDataApp: (state: any) => (state = undefined),
   },
 });
 

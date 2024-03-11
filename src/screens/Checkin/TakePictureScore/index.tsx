@@ -141,7 +141,7 @@ const TakePictureScore = () => {
   //   });
   // }, [selectedImages]);
   const handleCameraPicture = React.useCallback(async () => {
-    await CameraUtils.openImagePicker((img, base64) => {
+    await CameraUtils.openImagePickerCamera((img, base64) => {
       setAlbumImage(prevImages => {
         if (prevImages.length === 0) {
           // If no images exist, add the new image as the initial picture

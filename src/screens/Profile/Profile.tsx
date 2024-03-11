@@ -12,12 +12,17 @@ import {AppTheme, useTheme} from '../../layouts/theme';
 import {dispatch} from '../../utils/redux';
 
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp, navigate} from '../../navigation';
 import ContentList from './components/ContentList';
 import {ContentProfile, ProfileContent} from './ultil/config';
 import {useSelector} from '../../config/function';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {IUser} from '../../models/types';
+import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
+import {noteActions} from '../../redux-store/note-reducer/reducer';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {orderAction} from '../../redux-store/order-reducer/reducer';
+import {ScreenConstant} from '../../const';
 
 const Profile = () => {
   const theme = useTheme();
@@ -35,6 +40,14 @@ const Profile = () => {
       dispatch(appActions.onSetAppTheme('dark'));
     }
   }, [appTheme]);
+  const onLogout = useCallback(() => {
+    dispatch(appActions.resetDataApp());
+    dispatch(checkinActions.resetDataState());
+    dispatch(noteActions.setLogoutNote());
+    dispatch(customerActions.resetDataCustomer());
+    dispatch(orderAction.setLogoutData());
+    navigate(ScreenConstant.SELECT_ORGANIZATION);
+  }, [dispatch]);
 
   return (
     <MainLayout style={styles.root}>
@@ -79,7 +92,7 @@ const Profile = () => {
       </View>
       <AppButton
         style={{marginTop: 32, backgroundColor: theme.colors.bg_default}}
-        onPress={() => console.log('handleLogout')}
+        onPress={onLogout}
         label={'Đăng xuất'}
         styleLabel={{color: theme.colors.error}}
       />
