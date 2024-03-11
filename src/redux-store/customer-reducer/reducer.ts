@@ -53,6 +53,7 @@ const customerSlice = createSlice({
     setPage: (state, action: PayloadAction<any>) => {
       state.listCustomer.page_number = action.payload;
     },
+    resetDataCustomer: (state: any) => (state = undefined),
   },
 });
 

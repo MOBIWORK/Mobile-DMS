@@ -17,6 +17,7 @@ const noteSlice = createSlice({
     setListNote: (state, action: PayloadAction<any>) => {
       state.listNote = action.payload;
     },
+    setLogoutNote: (state: any) => (state = undefined),
   },
 });
 

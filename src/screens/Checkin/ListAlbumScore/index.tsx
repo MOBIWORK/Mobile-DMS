@@ -49,7 +49,7 @@ const ListAlbumScore = (props: Props) => {
     shallowEqual,
   );
   const itemCheckin: IItemCheckIn[] = useSelector(
-    state => state.checkin.categoriesCheckin,
+    state => state.checkin?.categoriesCheckin,
     shallowEqual,
   );
 
