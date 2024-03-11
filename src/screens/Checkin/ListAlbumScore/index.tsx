@@ -66,7 +66,7 @@ const ListAlbumScore = (props: Props) => {
       e_name: userInfor.employee,
       campaign_code: campaign.name,
       category: campaign.categories,
-      customer_code: itemParams.kh_ma,
+      customer_code: itemParams.kh_ten,
       images: JSON.stringify(
         listImageResponse.map((item: any) => item.file_url),
       ),
