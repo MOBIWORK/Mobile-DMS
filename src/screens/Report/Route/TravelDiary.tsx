@@ -20,20 +20,23 @@ import {useTranslation} from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
+import { ReportService } from '../../../services';
 const TravelDiary = () => {
+
   const theme = useTheme();
   const styles = createStyle(theme);
   const {bottom} = useSafeAreaInsets();
   const {t: getLabel} = useTranslation();
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
-
+  const [date,setDate] = useState<any>(new Date())
   const [headerDate, setHeaderDate] = useState<string>(
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
+      setDate(item.value)
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
@@ -77,6 +80,15 @@ const TravelDiary = () => {
       </View>
     );
   };
+
+  const fetchData = async () =>{
+      const {status ,data} = await ReportService.getTravelLogReport({
+        fromdate : new Date(date).setHours(0,0),
+        todate : new Date(date).setHours(23,59)
+      })
+      console.log(data);
+  }
+  
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
