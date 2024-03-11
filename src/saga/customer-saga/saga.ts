@@ -110,7 +110,6 @@ export function* getCustomerTerritorySaga(action: PayloadAction) {
         CustomerService.getCustomerTerritory,
         action.payload,
       );
-      console.log(response.result, 'customer territory');
       if (response.result?.length > 0) {
         yield* put(customerActions.setListCustomerTerritory(response.result));
       }
@@ -128,7 +127,6 @@ export function* getMoreDataCustomer(action: PayloadAction) {
         getPageCustomer,
         action.payload,
       );
-      console.log(response, 'response new page');
       if (response.message === 'ok') {
         console.log('dafuck');
         yield put(customerActions.addingListCustomer(response.result?.data));

@@ -80,7 +80,7 @@ import {CommonUtils} from '../utils';
 import {PortalHost} from '../components/common/portal';
 import {CheckinData} from '../services/appService';
 import {AppState, AppStateStatus} from 'react-native';
-import { shallowEqual } from 'react-redux';
+import {shallowEqual} from 'react-redux';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   children,
@@ -89,8 +89,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   const theme = useSelector(state => state.app.theme);
 
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
-  const [appState,setAppState] = useState<any>(AppState.currentState)
-  const dataCheckIn = useSelector(state => state.app.dataCheckIn)
+  const [appState, setAppState] = useState<any>(AppState.currentState);
+  const dataCheckIn = useSelector(state => state.app.dataCheckIn);
   // const [organiztion] = useMMKVObject<IResOrganization>(
   //   AppConstant.Organization,
   // );
@@ -108,7 +108,6 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({
   // }, []);
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log(nextAppState, 'app state');
       setAppState(nextAppState);
     }
   };

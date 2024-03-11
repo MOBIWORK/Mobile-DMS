@@ -48,16 +48,6 @@ const appSlice = createSlice({
     setShowModal: (state, {payload}: PayloadAction<boolean>) => {
       state.showModal = payload;
     },
-    // removeContactAddress: (state, action: PayloadAction<any>) => {
-    //   state.mainContactAddress = state.mainContactAddress?.filter(
-    //     (item: any) => item !== action.payload,
-    //   );
-    // },
-    // removeAddress: (state, action: PayloadAction<any>) => {
-    //   state.mainAddress = state.mainAddress?.filter(
-    //     (item: any) => item !== action.payload,
-    //   );
-    // },
     setNewCustomer: (state, action: PayloadAction<any>) => {
       if (state.newCustomer.length === 0) {
         state.newCustomer = [action.payload];

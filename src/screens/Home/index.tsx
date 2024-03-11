@@ -21,7 +21,7 @@ import ProgressCircle from 'react-native-progress-circle';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import VersionCheck from 'react-native-version-check';
 import {ImageAssets} from '../../assets';
 import {AppConstant, ScreenConstant} from '../../const';
@@ -77,6 +77,7 @@ const HomeScreen = () => {
   const snapPoint = useMemo(() => ['100%'], []);
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
+  const isFocus = useIsFocused();
 
   const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -417,7 +418,6 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    // setLoading(true);
     const getLocation = async () => {
       await BackgroundGeolocation.getCurrentPosition(
         {
@@ -437,17 +437,21 @@ const HomeScreen = () => {
         // err => backgroundErrorListener(err),
       );
     };
-    setLoading(false);
-    getLocation();
-    getCustomer();
+    if (isFocus) {
+      getLocation();
+      getCustomer();
+      getProfile();
+      getCurrentShit();
+      getReportKPI();
+      getReportSales();
+      getReportRevenue();
+      getReportVisit();
+    }
+  }, [isFocus]);
+
+  useEffect(() => {
     getSystemConfig();
     getWidget();
-    getProfile();
-    getCurrentShit();
-    getReportKPI();
-    getReportSales();
-    getReportRevenue();
-    getReportVisit();
   }, []);
 
   const getSystemConfig = () => {
@@ -771,7 +775,7 @@ const HomeScreen = () => {
                       animationDuration={500}
                       zoomLevel={12}
                     />
-                    {listCustomerVisit &&
+                    {listCustomerVisit.length > 0 &&
                       listCustomerVisit.map((item, index) => {
                         const newLocation: LocationProps = JSON.parse(
                           item.customer_location_primary!,

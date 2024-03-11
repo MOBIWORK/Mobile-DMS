@@ -75,7 +75,6 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         getSystemConfig,
         action.payload,
       );
-      console.log(response, 'response systemconfig');
       if (response.message === 'Thành công') {
         yield put(appActions.setSystemConfig(response.result));
       } else {
@@ -160,7 +159,6 @@ export function* createImageCheckIn(action: PayloadAction) {
         action.payload,
       );
       if (response.result?.status === true) {
-        console.log(response?.result, 'response');
         yield put(appActions.setListImage([response.result?.file_url]));
       } else {
         console.log('error');

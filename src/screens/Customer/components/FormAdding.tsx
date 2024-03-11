@@ -155,7 +155,7 @@ const FormAdding = (props: Props) => {
         <View style={styles.containImageCamera}>
           {imageSource !== undefined && imageSource ? (
             <Image
-              source={{uri: `data:image/png;base64,${imageSource}`}}
+              source={{uri: imageSource}}
               resizeMode="cover"
               style={styles.imageStyle}
             />
