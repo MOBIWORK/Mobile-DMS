@@ -92,11 +92,14 @@ const checkinSlice = createSlice({
       if (Platform.OS === 'android') {
         state.imageToMark = [];
       }
-     
+
       state.imageToMark = [...state.imageToMark, action.payload];
     },
     setListImageProgram: (state, action: PayloadAction<any>) => {
       state.listImageSelect = [...state.listImageSelect, action.payload];
+    },
+    resetDataState: (state: any) => {
+      state = undefined;
     },
   },
 });
