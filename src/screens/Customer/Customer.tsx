@@ -43,7 +43,6 @@ import {Location} from 'react-native-background-geolocation';
 import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 
-
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -467,7 +466,6 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-
       <AppFAB
         icon="plus"
         style={styles.fab}
@@ -632,6 +630,7 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.primary,
       borderWidth: 2,
       borderColor: Colors.white,
+      zIndex: 9999999,
     } as ViewStyle,
     backgroundRoot: {
       backgroundColor: theme.colors.bg_neutral,
