@@ -31,8 +31,6 @@ const HandlingError: FC = () => {
   const msgError = useMemo(() => {
     if (error?.message) {
       switch (error?.status) {
-        case ApiConstant.STT_INTERNAL_SERVER:
-          return getLabel('serverErr');
         default:
           return error?.message;
       }

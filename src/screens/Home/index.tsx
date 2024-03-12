@@ -648,7 +648,7 @@ const HomeScreen = () => {
                       },
                     ]}
                     onPress={openToDeeplink}
-                    disabled={currentShit?.shift_type_now}>
+                    disabled={currentShit?.shift_type_now === false}>
                     <Image
                       source={ImageAssets.Usercheckin}
                       resizeMode={'cover'}
@@ -747,7 +747,8 @@ const HomeScreen = () => {
                     pitchEnabled={false}
                     attributionEnabled={false}
                     scaleBarEnabled={false}
-                    zoomEnabled={false}
+                    zoomEnabled
+                    scrollEnabled
                     logoEnabled={false}
                     styleURL={Mapbox.StyleURL.Street}
                     style={{
@@ -773,7 +774,7 @@ const HomeScreen = () => {
                       ]}
                       animationMode={'flyTo'}
                       animationDuration={500}
-                      zoomLevel={12}
+                      zoomLevel={11}
                     />
                     {listCustomerVisit.length > 0 &&
                       listCustomerVisit.map((item, index) => {

@@ -413,23 +413,27 @@ const ListVisit = () => {
           ? CommonUtils.dateToDate('monthly')
           : undefined;
       const params: IListVisitParams = {
-        route: filterParams?.route && [`${filterParams.route.name}`],
-        status:
-          filterParams?.status && filterParams.status === getLabel('visited')
-            ? 'active'
-            : 'lock',
+        route: filterParams?.route && [`${filterParams.route.channel_code}`],
+        // status:
+        //   filterParams?.status && filterParams.status === getLabel('visited')
+        //     ? 'active'
+        //     : 'lock',
         orderby:
           filterParams?.orderby && filterParams.orderby === 'A -> Z'
             ? 'asc'
             : 'desc',
-        birthday_from:
-          birthDayObj && new Date(birthDayObj.from_date).getTime() / 1000,
-        birthday_to:
-          birthDayObj && new Date(birthDayObj.to_date).getTime() / 1000,
-        customer_group:
-          filterParams?.customer_group && filterParams.customer_group,
-        customer_type:
-          filterParams?.customer_type && filterParams.customer_type,
+        birthday_from: birthDayObj
+          ? new Date(birthDayObj.from_date).getTime() / 1000
+          : '',
+        birthday_to: birthDayObj
+          ? new Date(birthDayObj.to_date).getTime() / 1000
+          : '',
+        customer_group: filterParams?.customer_group
+          ? filterParams.customer_group
+          : '',
+        customer_type: filterParams?.customer_type
+          ? filterParams.customer_type
+          : '',
       };
       await getCustomer(params);
     }
