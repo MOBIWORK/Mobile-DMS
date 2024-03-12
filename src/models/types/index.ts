@@ -867,3 +867,25 @@ export interface ReportRouterResultType {
   so_kh_da_vt: number
   so_kh_phai_vt: number
 }
+
+export interface ReportTravelDiaryType {
+  __time: string
+  objectid: string
+  projectid: string
+  uuid: string
+  lng: any
+  lat: any
+  activity: string
+  accuracy: number
+  battery_checkin: number
+  battery_checkout: number
+  createddate: string
+  time_checkout: string
+  time_checkin: string
+  ext: string
+  timestamp: string
+  coordinates: string
+  "kafka.timestamp": number
+  "kafka.topic": string,
+  address : string | null
+}

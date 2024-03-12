@@ -1,4 +1,4 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
 import {
@@ -13,7 +13,7 @@ import {
 import {ImageAssets} from '../../../assets';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {AppContainer, SvgIcon} from '../../../components/common';
-import {TravelDiaryType} from '../../../models/types';
+import {KeyAbleProps, ReportTravelDiaryType, TravelDiaryType} from '../../../models/types';
 import {CommonUtils} from '../../../utils';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -29,7 +29,8 @@ const TravelDiary = () => {
   const {t: getLabel} = useTranslation();
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
-  const [date,setDate] = useState<any>(new Date())
+  const [date,setDate] = useState<any>(new Date());
+  const [data,setData] = useState<ReportTravelDiaryType[]>([]);
   const [headerDate, setHeaderDate] = useState<string>(
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
@@ -82,13 +83,18 @@ const TravelDiary = () => {
   };
 
   const fetchData = async () =>{
-      const {status ,data} = await ReportService.getTravelLogReport({
+      const {status ,data}: KeyAbleProps = await ReportService.getTravelLogReport({
         fromdate : new Date(date).setHours(0,0),
         todate : new Date(date).setHours(23,59)
       })
+      setData(data.result)
       console.log(data);
   }
   
+  useEffect(()=>{
+    fetchData()
+  },[date])
+
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>

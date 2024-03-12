@@ -21,7 +21,6 @@ import {OrderService} from '../../../services';
 import {CheckinOrderDetail, KeyAbleProps} from '../../../models/types';
 import {dispatch} from '../../../utils/redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
-import OrderDetail from './OrderDetail';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorBoundary';
 import {CommonUtils} from '../../../utils';
@@ -39,18 +38,28 @@ const CheckinOrder = () => {
   const type = router.params.type;
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
   const orderDetail = useSelector(state => state.checkin.orderDetail);
+  const returnOrderDetail = useSelector(state => state.checkin.returnOrderDetail);
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );
 
   const fetchDataOrder = async () => {
     if (type == 'ORDER') {
-      const {status, data}: KeyAbleProps =
-        await OrderService.getDetailCheckinOrder(dataCheckin.checkin_id);
+      const {status, data}: KeyAbleProps = await OrderService.getDetailCheckinOrder({
+          doctype : 'Sales Order',
+          checkin_id: dataCheckin.checkin_id
+        });
       if (status === ApiConstant.STT_OK) {
-        dispatch(
-          checkinActions.setData({typeData: 'detailOrder', data: data.result}),
-        );
+        dispatch(  checkinActions.setData({typeData: 'detailOrder', data: data.result}));
+      }
+    }
+    if (type == 'RETURN_ORDER') {
+      const {status, data}: KeyAbleProps =  await OrderService.getDetailCheckinOrder({
+          doctype : "Sales Invoice",
+          checkin_id: dataCheckin.checkin_id
+        });
+      if (status === ApiConstant.STT_OK) {
+        dispatch(  checkinActions.setData({typeData: 'returnOrder', data: data.result}));
       }
     }
   };
@@ -152,7 +161,8 @@ const CheckinOrder = () => {
                     <Pressable key={index}>
                       <ItemProduct
                         dvt={item.uom}
-                        name={item.item_code}
+                        name={item.item_name}
+                        code={item.item_code}
                         quantity={item.qty}
                         price={item.amount}
                         percentage_discount={item.discount_percentage}
@@ -312,7 +322,7 @@ const CheckinOrder = () => {
           <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
             <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
             <Text style={styles.totalPrice}>
-              {CommonUtils.formatCash(data.grand_total.toString())}
+              {CommonUtils.formatCash(data.grand_total?.toString()) ||""}
             </Text>
           </View>
           <AppButton
@@ -347,9 +357,7 @@ const CheckinOrder = () => {
         onBack={() => navigation.goBack()}
         style={{paddingHorizontal: 16}}
       />
-      {orderDetail && type == 'ORDER'
-        ? renderDetailOrder(orderDetail)
-        : renderNoDataUi()}
+      {orderDetail && type == 'ORDER' ? renderDetailOrder(orderDetail) : returnOrderDetail && type == 'RETURN_ORDER' ? renderDetailOrder(returnOrderDetail) : renderNoDataUi()}
     </MainLayout>
   );
 };
