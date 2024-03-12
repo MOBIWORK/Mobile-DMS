@@ -10,7 +10,7 @@ export const MAPBOX_TOKEN =
 
 export const MAP_TITLE_URL = {
   adminMap:
-    'https://api.ekgis.vn/v1/maps/adminmap/{z}/{x}/{y}.png?api_key=oR8BDxoEoVUhPVfUP5fFGZkB5veGbADBwMYeJNYY',
+    'https://api.ekgis.vn/v1/maps/roadmap/{z}/{x}/{y}.png?api_key=oR8BDxoEoVUhPVfUP5fFGZkB5veGbADBwMYeJNYY',
 };
 
 //notification

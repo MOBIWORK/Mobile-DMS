@@ -24,20 +24,22 @@ let Api = create({axiosInstance: customAxiosInstance, baseURL: BASE_URL});
  * Middleware to handle failed request
  */
 const handleErrorResponse = (
-  response: ApiResponse<IApiResponse>,
+  response: ApiResponse<any>,
   throwErrorIfFailed: any,
 ) => {
   if (response.status) {
     const isSuccessRequest = /^2\d{2}/g.test(response.status?.toString());
     if (isSuccessRequest && response.data?.result) {
       return;
-    } else if (throwErrorIfFailed || response.data?.message) {
+    } else if (
+      throwErrorIfFailed ||
+      response.data?.message ||
+      response.data?.exception
+    ) {
       dispatch(
         setError({
-          // @ts-ignore
-          title: response?.data ? response.data?.title : response.exc_type,
-          // @ts-ignore
-          message: response?.data ? response.data?.message : response.exception,
+          title: response.data?.title || response.data?.exc_type,
+          message: response.data?.message || response.data?.exception,
           viewOnly: true,
           status: response.status,
         }),
