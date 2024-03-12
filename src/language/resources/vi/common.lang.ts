@@ -264,4 +264,5 @@ export default {
   notifyService: 'Cho phép thông báo trên các dịch vụ',
   resultRouter :"Kết quả đi tuyến",
   numberToVisit :"Số lượt khách hàng phải viếng thăm",
+  logTravel :"Nhật kí di chuyển"
 };

@@ -887,5 +887,5 @@ export interface ReportTravelDiaryType {
   coordinates: string
   "kafka.timestamp": number
   "kafka.topic": string,
-  address : string | null
+  address : string | null,
 }

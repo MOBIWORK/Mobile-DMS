@@ -259,5 +259,6 @@ export default {
   receiveNews: 'Receive news',
   resultRouter :"Route results",
   numberToVisit :"Number of customers to visit",
+  logTravel :"Travel log"
 
 };
