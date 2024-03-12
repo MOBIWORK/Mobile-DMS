@@ -98,8 +98,8 @@ export type IListVisitParams = {
   status?: 'active' | 'lock' | string;
   orderby?: 'asc' | 'desc' | string;
   birthDay?: string;
-  birthday_from?: number;
-  birthday_to?: number;
+  birthday_from?: any;
+  birthday_to?: any;
   customer_group?: string;
   customer_type?: string;
 };
