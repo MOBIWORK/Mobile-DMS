@@ -10,7 +10,6 @@
 		00E356F31AD99517003FC87E /* DMSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* DMSTests.m */; };
 		112FA1E87DB74F598C87B51C /* SF-Pro-Display-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CE7B73780E5A4E6B9EC659F8 /* SF-Pro-Display-Light.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		19C51F8404F24762AF307E28 /* SF-Pro-Display-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 757539F9222145F0875B5AF8 /* SF-Pro-Display-Heavy.ttf */; };
 		3B619080E9C1F597533F45E8 /* libPods-DMS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D6C468B8A5D8D767AEE30C0 /* libPods-DMS.a */; };
@@ -39,6 +38,7 @@
 		8E93C6E34DF0BA573FC2EE8F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B173BD5BC2B065BDEA7DCE /* ExpoModulesProvider.swift */; };
 		9279090B9EB145D89A21A297 /* SF-Pro-Display-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9858CB14A1AA4E57BB89A006 /* SF-Pro-Display-Black.ttf */; };
 		946C2A8A868D7E4476C02B01 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33C535FB06B25050AEF29D0 /* ExpoModulesProvider.swift */; };
+		C995DABB2BA0427D0001CC28 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C995DABA2BA0427C0001CC28 /* Images.xcassets */; };
 		C9E9CEF22B479B1000157D58 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = C9E9CEF12B479B0F00157D58 /* AppCenter-Config.plist */; };
 		C9F95DDA2B2D3D9900626856 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = C9F95DD92B2D3D9900626856 /* fonts */; };
 		CA027E128CDD4E488E254166 /* SF-Pro-Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BF58B281E448485F9587267C /* SF-Pro-Display-Medium.ttf */; };
@@ -65,7 +65,6 @@
 		13B07F961A680F5B00A75B9A /* DMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = DMS/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = DMS/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DMS/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DMS/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = DMS/main.m; sourceTree = "<group>"; };
 		27F6167BF361E195D5546E15 /* Pods-DMS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMS.release.xcconfig"; path = "Target Support Files/Pods-DMS/Pods-DMS.release.xcconfig"; sourceTree = "<group>"; };
@@ -98,6 +97,7 @@
 		9858CB14A1AA4E57BB89A006 /* SF-Pro-Display-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Black.ttf"; path = "../assets/fonts/SF-Pro-Display-Black.ttf"; sourceTree = "<group>"; };
 		AFB8556F35864F1BAF368C21 /* SF-Pro-Display-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Regular.ttf"; path = "../assets/fonts/SF-Pro-Display-Regular.ttf"; sourceTree = "<group>"; };
 		BF58B281E448485F9587267C /* SF-Pro-Display-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Medium.ttf"; path = "../assets/fonts/SF-Pro-Display-Medium.ttf"; sourceTree = "<group>"; };
+		C995DABA2BA0427C0001CC28 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		C9E9CEF12B479B0F00157D58 /* AppCenter-Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AppCenter-Config.plist"; sourceTree = "<group>"; };
 		C9F95DD92B2D3D9900626856 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		CE7B73780E5A4E6B9EC659F8 /* SF-Pro-Display-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Light.ttf"; path = "../assets/fonts/SF-Pro-Display-Light.ttf"; sourceTree = "<group>"; };
@@ -155,10 +155,10 @@
 		13B07FAE1A68108700A75B9A /* DMS */ = {
 			isa = PBXGroup;
 			children = (
+				C995DABA2BA0427C0001CC28 /* Images.xcassets */,
 				8A1099A62B1847C900E1435A /* Fonts */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
-				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -395,10 +395,10 @@
 				8A1099C82B1847C900E1435A /* EvilIcons.ttf in Resources */,
 				8A1099BB2B1847C900E1435A /* Octicons.ttf in Resources */,
 				8A1099C62B1847C900E1435A /* FontAwesome.ttf in Resources */,
-				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				8A1099C02B1847C900E1435A /* MaterialCommunityIcons.ttf in Resources */,
 				8A1099C92B1847C900E1435A /* FontAwesome6_Solid.ttf in Resources */,
 				8A1099BD2B1847C900E1435A /* FontAwesome6_Regular.ttf in Resources */,
+				C995DABB2BA0427D0001CC28 /* Images.xcassets in Resources */,
 				8A1099CC2B1847C900E1435A /* MaterialIcons.ttf in Resources */,
 				9279090B9EB145D89A21A297 /* SF-Pro-Display-Black.ttf in Resources */,
 				6ACB8476A34F4FFEAABCC98B /* SF-Pro-Display-Bold.ttf in Resources */,

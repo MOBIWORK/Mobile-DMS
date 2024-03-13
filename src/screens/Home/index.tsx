@@ -483,13 +483,13 @@ const HomeScreen = () => {
       }
       case codePush.SyncStatus.INSTALLING_UPDATE: {
         setUpdateMessage('Đang cài đặt bản cập nhật...');
-        setShowModalHotUpdate(false);
+        // setShowModalHotUpdate(false);
         break;
       }
       case codePush.SyncStatus.UPDATE_INSTALLED: {
         codePush.notifyAppReady();
         setUpdateMessage('Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!');
-        // setShowModalUpdate(false);
+        setShowModalUpdate(false);
         break;
       }
       case codePush.SyncStatus.UNKNOWN_ERROR: {

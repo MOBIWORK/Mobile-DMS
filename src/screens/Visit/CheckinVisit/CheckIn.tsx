@@ -30,10 +30,9 @@ import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-import { item } from './ultil';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import {item} from './ultil';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
-
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -48,8 +47,7 @@ const useTimer = () => {
   }, []);
 
   return elapsedTime;
-}
-
+};
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -72,12 +70,8 @@ const CheckIn = () => {
       : params.checkin_trangthaicuahang,
   );
   // const [elapsedTime, setElapsedTime] = useState(0);
-  const elapsedTime = useTimer()
-  const intervalId = useRef<any>();
-  const listImage = useSelector(
-    state => state.app.dataCheckIn?.listImage,
-    shallowEqual,
-  );
+  const elapsedTime = useTimer();
+
   const systemConfig: DMSConfigMobile = useSelector(
     state => state.app.systemConfig,
     shallowEqual,
@@ -147,7 +141,8 @@ const CheckIn = () => {
   // }, [categoriesCheckin]);
 
   const onConfirmCheckout = useCallback(() => {
-    dispatch(checkinActions.resetData())
+    dispatch(checkinActions.resetData());
+    dispatch(appActions.setDataCheckIn({}))
     goBack();
     setShow(false);
   }, [dataCheckIn]);

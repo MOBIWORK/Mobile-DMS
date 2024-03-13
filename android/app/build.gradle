@@ -90,8 +90,8 @@ android {
         applicationId 'mbw.next.dms'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
-        versionName "0.2.0"
+        versionCode 11
+        versionName "0.2.1"
         multiDexEnabled true
     }
     signingConfigs {
@@ -127,7 +127,7 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
-            resValue "string", "CodePushDeploymentKey", '_-MWbV6ZGxV89-6iXRT1QVNBEoj-u1EZSiIdl'
+            resValue "string", "CodePushDeploymentKey", 'gkVJ0zwamNq1B4cVsP6O6szvdJdQKXVeSvgO8'
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             // Add following proguardFiles (leave existing one above untouched)
             proguardFiles "${background_geolocation.projectDir}/proguard-rules.pro"

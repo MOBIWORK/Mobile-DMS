@@ -399,10 +399,12 @@ export function navigate<RouteName extends keyof RootStackParamList>(
         | [screen: RouteName, params?: RootStackParamList[RouteName]]
     : [screen: RouteName, params?: RootStackParamList[RouteName]]
 ) {
-  navigationRef.current?.navigate(
-    arg[0] as any,
-    arg.length > 1 ? arg[1] : undefined,
-  );
+  if (navigationRef.current?.isReady()) {
+    navigationRef.current?.navigate(
+      arg[0] as any,
+      arg.length > 1 ? arg[1] : undefined,
+    );
+  }
 }
 export function goBack() {
   navigationRef.current?.dispatch(CommonActions.goBack);

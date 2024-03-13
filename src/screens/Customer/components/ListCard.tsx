@@ -3,19 +3,15 @@ import React from 'react';
 import CardView from './CardView';
 import {IDataCustomers} from '../../../models/types';
 import isEqual from 'react-fast-compare';
-import SkeletonLoading from '../../Visit/SkeletonLoading';
 
 type Props = {
-  data: IDataCustomers[];
-  appLoading: boolean;
+  data: IDataCustomers[]
   onLoadData?:() => void;
   listFooter:React.ReactElement
 };
 
 const ListCard = (props: Props) => {
-  if (props.appLoading) {
-    return  <SkeletonLoading />;
-  }
+  
   return (
     <FlatList
       data={props.data}
@@ -24,6 +20,9 @@ const ListCard = (props: Props) => {
       onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}
       onEndReachedThreshold={2}
+      initialNumToRender={4}
+      maxToRenderPerBatch={2}
+      updateCellsBatchingPeriod={20}
       ListFooterComponent={props.listFooter}
       keyExtractor={(item, index) => index.toString()}
       renderItem={({item, index}) => {
