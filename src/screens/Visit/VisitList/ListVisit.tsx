@@ -296,23 +296,23 @@ const ListVisit = () => {
               />
               {listCustomer &&
                 listCustomer.map((item, index) => {
-                  const location: LocationProps = JSON.parse(
-                    item.customer_location_primary!,
-                  );
-                  return (
-                    <Mapbox.MarkerView
-                      key={index}
-                      coordinate={[
-                        Number(location.long),
-                        Number(location.lat),
-                      ]}>
-                      <MarkerItem
-                        item={item}
-                        index={index}
-                        onPress={item => setVisitItemSelected(item)}
-                      />
-                    </Mapbox.MarkerView>
-                  );
+                  if (item.customer_location_primary) {
+                    const newLocation: LocationProps = JSON.parse(
+                      item.customer_location_primary!,
+                    );
+                    return (
+                      <Mapbox.MarkerView
+                        key={index}
+                        coordinate={[
+                          Number(newLocation.long),
+                          Number(newLocation.lat),
+                        ]}>
+                        <MarkerItem item={item} index={index} />
+                      </Mapbox.MarkerView>
+                    );
+                  } else {
+                    return null;
+                  }
                 })}
               <Mapbox.UserLocation
                 visible={true}
@@ -367,11 +367,13 @@ const ListVisit = () => {
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
+    console.log('params2', params);
     await getCustomerVisit(params).then((res: any) => {
       if (Object.keys(res.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
-        const newData = data.filter(item => item.customer_location_primary);
-        dispatch(customerActions.setCustomerVisit(newData));
+        console.log('cusss', data);
+        // const newData = data.filter(item => item.customer_location_primary);
+        dispatch(customerActions.setCustomerVisit(data));
       }
     });
   };
@@ -413,7 +415,7 @@ const ListVisit = () => {
           ? CommonUtils.dateToDate('monthly')
           : undefined;
       const params: IListVisitParams = {
-        route: filterParams?.route && [`${filterParams.route.channel_code}`],
+        router: filterParams?.router && filterParams.router.channel_code,
         // status:
         //   filterParams?.status && filterParams.status === getLabel('visited')
         //     ? 'active'
@@ -435,6 +437,7 @@ const ListVisit = () => {
           ? filterParams.customer_type
           : '',
       };
+      // console.log('params', params);
       await getCustomer(params);
     }
   };
