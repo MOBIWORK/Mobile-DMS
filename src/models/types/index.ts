@@ -606,6 +606,7 @@ export type ListCustomerTerritory = {
 export type ListCustomerRoute = {
   name: string;
   channel_name: string;
+  channel_code: string;
 };
 
 export type IProductPromotion = {

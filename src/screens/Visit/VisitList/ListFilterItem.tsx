@@ -95,18 +95,18 @@ const ListFilterItem: FC<ListFilterItemProps> = ({
                   onPress={() => {
                     setValueFilter((prev: IListVisitParams) => ({
                       ...prev,
-                      route: item,
+                      router: item,
                     }));
                     filterRef?.current?.close();
                   }}>
                   <Text
                     style={styles.itemText(
                       item.channel_name,
-                      valueFilter.route ?? '',
+                      valueFilter.router ?? '',
                     )}>
                     {item.channel_name}
                   </Text>
-                  {item.channel_name === valueFilter.route && (
+                  {item.channel_name === valueFilter?.router?.channel_name && (
                     <AppIcons
                       iconType={AppConstant.ICON_TYPE.Feather}
                       name="check"
@@ -149,7 +149,7 @@ const ListFilterItem: FC<ListFilterItemProps> = ({
                   <Text
                     style={styles.itemText(
                       item.title,
-                      valueFilter.route ?? '',
+                      valueFilter.status ?? '',
                     )}>
                     {item.title}
                   </Text>

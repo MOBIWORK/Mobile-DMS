@@ -118,8 +118,8 @@ const FilterContainer: FC<FilterContainerProps> = ({
             <Item
               label={getLabel('gland')}
               value={
-                filterValue?.route
-                  ? filterValue.route.channel_name
+                filterValue?.router
+                  ? filterValue.router.channel_name
                   : getLabel('all')
               }
               type={AppConstant.VisitFilterType.channel}

@@ -93,7 +93,7 @@ export type IListVisitParams = {
   view_mode?: 'list' | 'map';
   page_size?: number;
   page_number?: number;
-  route?: any;
+  router?: any;
   distance?: string;
   status?: 'active' | 'lock' | string;
   orderby?: 'asc' | 'desc' | string;

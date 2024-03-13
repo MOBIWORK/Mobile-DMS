@@ -19,14 +19,18 @@ export default async function base64File(url: string) {
 }
 
 export const openImagePickerCamera = async (
-  callBack: (image: string | undefined, base64?: string,timeStamp?:any) => void,
+  callBack: (
+    image: string | undefined,
+    base64?: string,
+    timeStamp?: any,
+  ) => void,
 ) => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     includeBase64: true,
     quality: 0.5,
-    maxHeight: 300,
-    maxWidth: 300,
+    maxHeight: 1000,
+    maxWidth: 1000,
     presentationStyle: 'fullScreen',
   };
   let base64Image: string;
@@ -40,16 +44,16 @@ export const openImagePickerCamera = async (
       response?.assets?.[0].uri ||
       (response.assets && response.assets.length > 0)
     ) {
-      console.log(response.assets[0].fileSize,'fizesize')
+      console.log(response.assets[0].fileSize, 'fizesize');
       const selectedImage = response?.assets?.[0].uri;
       base64Image = response.assets[0].base64 as string;
-      callBack(selectedImage, base64Image,response.assets[0].timestamp);
+      callBack(selectedImage, base64Image, response.assets[0].timestamp);
     }
   });
 };
 
 export const openImagePicker = async (
-  callBack: (image: string | undefined, base64?: any,timeStamp?:any) => void,
+  callBack: (image: string | undefined, base64?: any, timeStamp?: any) => void,
   maxWidth?: number,
   maxHeight?: number,
 ) => {
@@ -75,7 +79,7 @@ export const openImagePicker = async (
       //   return res;
       // });
       base64Image = (await base64File(response.assets[0].uri!)) as any;
-      callBack(selectedImage, base64Image,response.assets[0].timestamp);
+      callBack(selectedImage, base64Image, response.assets[0].timestamp);
     }
   });
 };
