@@ -19,10 +19,10 @@ const ListCard = (props: Props) => {
       decelerationRate={'fast'}
       onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}
-      onEndReachedThreshold={2}
+      onEndReachedThreshold={0.5}
       initialNumToRender={4}
       maxToRenderPerBatch={2}
-      updateCellsBatchingPeriod={20}
+      updateCellsBatchingPeriod={50}
       ListFooterComponent={props.listFooter}
       keyExtractor={(item, index) => index.toString()}
       renderItem={({item, index}) => {

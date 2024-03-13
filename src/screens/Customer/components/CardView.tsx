@@ -17,6 +17,7 @@ import {ScreenConstant} from '../../../const';
 import {IDataCustomers} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
+import isEqual from 'react-fast-compare';
 
 const CardView = (props: IDataCustomers) => {
   const theme = useTheme();
@@ -75,7 +76,7 @@ const CardView = (props: IDataCustomers) => {
   );
 };
 
-export default React.memo(CardView);
+export default React.memo(CardView,isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

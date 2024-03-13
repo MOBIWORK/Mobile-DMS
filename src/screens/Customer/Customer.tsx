@@ -44,6 +44,7 @@ import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SkeletonLoading from '../Visit/SkeletonLoading';
+import isEqual from 'react-fast-compare';
 
 export type IValueType = {
   customerType: string;
@@ -112,76 +113,53 @@ const Customer = () => {
   const onPressType1 = () => {
     bottomRef.current?.snapToIndex(0);
   };
-  const onPressType2 = () => {
+  const onPressType2 = useCallback(() => {
     bottomRef2.current?.snapToIndex(0);
-  };
+  }, [bottomRef2.current]);
 
   React.useEffect(() => {
     let mounted: boolean;
     mounted = true;
     handleBackgroundLocation();
-    let newData: IDataCustomers[] =
-      listCustomer?.length > 0 ? [...listCustomer] : [];
-    if (value.first === getLabel('nearest')) {
-      // console.log(newData,'data')
+    // let newData: IDataCustomers[] =
+    //   listCustomer?.length > 0 ? [...listCustomer] : [];
 
-      const sortData = newData?.sort((a, b) => {
-        const locationA: LocationProps = JSON.parse(
-          a.customer_location_primary !== null && a?.customer_location_primary,
-        );
-        const locationB: LocationProps = JSON.parse(
-          b.customer_location_primary !== null && b?.customer_location_primary,
-        );
-        const distance1 = calculateDistance(
-          location.coords.latitude,
-          location.coords.longitude,
-          locationA != null ? locationA.lat : 0,
-          locationA != null ? locationA.long : 0,
-        );
-        const distance2 = calculateDistance(
-          location.coords.latitude,
-          location.coords.longitude,
-          locationB != null ? locationB.lat : 0,
-          locationB != null ? locationB.long : 0,
-        );
-        return distance1 - distance2;
-      });
-      setCustomerData(sortData);
-    } else {
-      const sortData = newData?.sort((a, b) => {
-        const locationA: LocationProps = JSON.parse(
-          a.customer_location_primary,
-        );
-        const locationB: LocationProps = JSON.parse(
-          b.customer_location_primary,
-        );
-        const distance1 = calculateDistance(
-          location.coords.latitude,
-          location.coords.longitude,
-          locationA != null ? locationA.lat : 0,
-          locationA != null ? locationA.long : 0,
-        );
-        const distance2 = calculateDistance(
-          location.coords.latitude,
-          location.coords.longitude,
-          locationB != null ? locationB.lat : 0,
-          locationB != null ? locationB.long : 0,
-        );
-        return distance2 - distance1;
-      });
-      setCustomerData(sortData);
-    }
     const getDataType = () => {
       dispatch(customerActions.getCustomerType());
     };
 
     getDataType();
-    if (listCustomer?.length > 0) {
-      let newData =
-        listCustomer && listCustomer.length > 0 ? [...listCustomer] : [];
-      setCustomerData(
-        newData?.filter(item => item.customer_location_primary != null),
+    if (listCustomer && listCustomer.length > 0) {
+      const filteredData = listCustomer.filter(
+        item => item.customer_location_primary != null,
       );
+      const sortedData = () => {
+        return filteredData.slice().sort((a, b) => {
+          const locationA: LocationProps = JSON.parse(
+            a.customer_location_primary,
+          );
+          const locationB: LocationProps = JSON.parse(
+            b.customer_location_primary,
+          );
+          const distance1 = calculateDistance(
+            location.coords.latitude,
+            location.coords.longitude,
+            locationA.lat,
+            locationA.long,
+          );
+          const distance2 = calculateDistance(
+            location.coords.latitude,
+            location.coords.longitude,
+            locationB.lat,
+            locationB.long,
+          );
+          return value.first === getLabel('nearest')
+            ? distance1 - distance2
+            : distance2 - distance1;
+        });
+      };
+
+      setCustomerData(sortedData);
     } else {
       dispatch(customerActions.onGetCustomer());
     }
@@ -190,7 +168,7 @@ const Customer = () => {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [dispatch,value.first]);
 
   const handleApplyFilter = useCallback(() => {
     if (
@@ -253,7 +231,7 @@ const Customer = () => {
         <ActivityIndicator size={'small'} color={theme.colors.primary} />
       </Block>
     );
-  }, []);
+  }, [dispatch]);
 
   const onEndReachedThreshold = useCallback(() => {
     if (page <= totalPage.current) {
@@ -469,7 +447,7 @@ const Customer = () => {
       </AppBottomSheet>
       <TouchableOpacity
         onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
-        style={[styles.fab]}>
+        style={styles.fab}>
         <AppIcons
           iconType="IonIcon"
           name="add-outline"
@@ -481,7 +459,7 @@ const Customer = () => {
   );
 };
 
-export default React.memo(Customer);
+export default React.memo(Customer, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
