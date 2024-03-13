@@ -257,4 +257,8 @@ export default {
   notifyLastUpdate: 'Notify me about the latest feature updates',
   notifyService: 'Allow notifications across services',
   receiveNews: 'Receive news',
+  resultRouter :"Route results",
+  numberToVisit :"Number of customers to visit",
+  logTravel :"Travel log"
+
 };

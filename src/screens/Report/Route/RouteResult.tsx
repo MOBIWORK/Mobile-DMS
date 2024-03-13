@@ -7,12 +7,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FlatList, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
 import { CommonUtils } from '../../../utils';
-import { AppConstant } from '../../../const';
+import { ApiConstant, AppConstant } from '../../../const';
 import { useTranslation } from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { IFilterType } from '../../../components/common/FilterListComponent';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import RouterResutlLoading from './Loading/RouterResutlLoading';
+import { ReportService } from '../../../services';
+import { KeyAbleProps, ReportRouterResultType } from '../../../models/types';
 
 
 
@@ -23,15 +25,18 @@ const RouteResult = () => {
   const { bottom } = useSafeAreaInsets();
   const { t: getLabel } = useTranslation();
   const styles = createStyle(theme);
-  const [isLoading, _] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
   const filerBottomSheetRef = useRef<BottomSheet>(null);
-
+  const [date,setDate] = useState<any>(new Date());
+  const [reportRouter ,setReportRouter] = useState<ReportRouterResultType | any>();
   const [headerDate, setHeaderDate] = useState<string>(
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
+  
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
+    setDate(item.value)
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
@@ -45,22 +50,25 @@ const RouteResult = () => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
 
+
   const _renderProcess = () => {
     return (
       <View style={styles.processContainer}>
         <ProgressCircle
-          percent={6}
+          percent={reportRouter ?  reportRouter.so_kh_da_vt / reportRouter.so_kh_phai_vt : 0}
           radius={80}
           borderWidth={30}
           color={theme.colors.action}
           shadowColor={theme.colors.bg_disable}
           bgColor={theme.colors.bg_default}>
           <View>
-            <Text style={[styles.textProcess]}>3/50</Text>
+            <Text style={[styles.textProcess]}>
+              {reportRouter ? `${reportRouter.so_kh_da_vt} / ${reportRouter.so_kh_phai_vt}` : ""}
+            </Text>
           </View>
         </ProgressCircle>
         <Text style={[styles.checkinDesc]}>
-          Số lượt khách hàng phải viếng thăm
+          {getLabel("numberToVisit")}
         </Text>
       </View>
     );
@@ -75,9 +83,9 @@ const RouteResult = () => {
         ]}>
         <SvgIcon source={'Money'} size={40} />
         <View style={{ rowGap: 4, marginLeft: 8 }}>
-          <Text style={styles.txt12}>Doanh số</Text>
+          <Text style={styles.txt12}>{getLabel("sales")}</Text>
           <Text style={styles.txt18}>
-            {CommonUtils.convertNumber(100000000)}
+            {CommonUtils.convertNumber(reportRouter?.doanh_so || 0)}
           </Text>
         </View>
       </View>
@@ -89,7 +97,7 @@ const RouteResult = () => {
       return (
         <View style={styles.visitReportContainer}>
           <Text style={styles.txt12}>{item.label}</Text>
-          <Text style={styles.txt18}>{item.count}</Text>
+          <Text style={styles.txt18}>{reportRouter ? reportRouter[item.keyData] : ""}</Text>
         </View>
       );
     };
@@ -102,10 +110,27 @@ const RouteResult = () => {
     );
   };
 
+
+  const fetchData = async () =>{
+      setLoading(true);
+      const {status,data}:KeyAbleProps = await ReportService.getRouterResult({
+        from_date : new Date(date).getTime(),
+        to_date : new Date(date).getTime()
+      })
+      setLoading(false);
+      if(status === ApiConstant.STT_OK) {
+        setReportRouter(data.result)
+      }
+  }
+
+  useEffect(()=>{
+    fetchData()
+  },[date])
+
   return (
     <MainLayout style={{ backgroundColor: theme.colors.bg_neutral }}>
       <ReportHeader
-        title={'Kết quả đi tuyến'}
+        title={getLabel("resultRouter")}
         date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&
@@ -171,35 +196,28 @@ const createStyle = (theme: ExtendedTheme) =>
   });
 type VisitReportDataType = {
   label: string;
-  count: number;
+  keyData: string;
 };
 const VisitReportData: VisitReportDataType[] = [
   {
-    label: 'Viếng thăm đúng tuyến - có đơn',
-    count: 0,
+    label: 'Viếng thăm đúng tuyến',
+    keyData: "vt_dung_tuyen",
   },
   {
-    label: 'Viếng thăm khác tuyến - có đơn',
-    count: 0,
+    label: 'Viếng thăm khác tuyến',
+    keyData: "vt_ngoai_tuyen",
   },
   {
     label: 'Viếng thăm không có đơn',
-    count: 0,
+    keyData: "vieng_tham_ko_don",
   },
   {
     label: 'Viếng thăm có hình ảnh',
-    count: 0,
+    keyData: "vieng_tham_co_anh",
+
   },
   {
     label: 'Viếng thăm không có hình ảnh',
-    count: 0,
-  },
-  {
-    label: 'Viếng thăm hợp lệ',
-    count: 0,
-  },
-  {
-    label: 'Viếng thăm không hợp lệ',
-    count: 0,
+    keyData: "vieng_tham_ko_anh",
   },
 ];

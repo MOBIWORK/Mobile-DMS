@@ -1,35 +1,32 @@
-import React, {FC, useRef, useState} from 'react';
-import {MainLayout} from '../../../layouts';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { MainLayout } from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
-import {ImageAssets} from '../../../assets';
-import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {AppContainer, SvgIcon} from '../../../components/common';
-import {TravelDiaryType} from '../../../models/types';
-import {CommonUtils} from '../../../utils';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useTranslation} from 'react-i18next';
+import {Image,StyleSheet,Text,TextStyle,TouchableOpacity,View,ViewStyle} from 'react-native';
+import { ImageAssets } from '../../../assets';
+import { ExtendedTheme, useTheme } from '@react-navigation/native';
+import { AppContainer, SvgIcon } from '../../../components/common';
+import { KeyAbleProps, ReportTravelDiaryType } from '../../../models/types';
+import { CommonUtils } from '../../../utils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {IFilterType} from '../../../components/common/FilterListComponent';
+import { IFilterType } from '../../../components/common/FilterListComponent';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import { ReportService } from '../../../services';
+import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
+
+
 const TravelDiary = () => {
 
   const theme = useTheme();
   const styles = createStyle(theme);
-  const {bottom} = useSafeAreaInsets();
-  const {t: getLabel} = useTranslation();
+  const { bottom } = useSafeAreaInsets();
+  const { t: getLabel } = useTranslation();
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
-  const [date,setDate] = useState<any>(new Date())
+  const [date, setDate] = useState<any>(new Date());
+  const [data, setData] = useState<ReportTravelDiaryType[]>([]);
   const [headerDate, setHeaderDate] = useState<string>(
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
@@ -50,50 +47,72 @@ const TravelDiary = () => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
 
-  const Item: FC<ItemProps> = ({item}) => {
+  const Item: FC<ItemProps> = ({ item }) => {
+    const customer = JSON.parse(item.ext)
     return (
-      <View style={styles.rowFlexStart}>
-        <View style={{alignSelf: 'flex-start', rowGap: 4}}>
-          <Text style={styles.txtTime}>{item.time}</Text>
-          <Text style={styles.txtDate}>
-            {CommonUtils.convertDate(item.date)}
-          </Text>
-        </View>
-        <View style={{marginHorizontal: 8}}>
-          <View style={styles.rowFlexStart}>
-            <SvgIcon
-              source={'Dot'}
-              size={16}
-              color={
-                item.isCheckIn ? theme.colors.success : theme.colors.primary
-              }
-            />
-            <Text style={styles.txtStatus}>
-              {item.isCheckIn ? 'Checkin' : 'Checkout'}
+      <>
+        <View style={styles.rowFlexStart}>
+          <View style={{ alignSelf: 'flex-start', rowGap: 4 }}>
+            <Text style={styles.txtTime}>{item.createddate}</Text>
+            <Text style={styles.txtDate}>
+              {CommonUtils.convertDate(item.createddate)}
             </Text>
           </View>
-          <View style={styles.content}>
-            <Text style={styles.txtName}>{item.locationName}</Text>
-            <Text style={styles.txtAddress}>{item.locationAddress}</Text>
+          <View style={{ marginHorizontal: 8 }}>
+            <View style={styles.rowFlexStart}>
+              <SvgIcon source={'Dot'} size={16} color={theme.colors.success} />
+              <Text style={styles.txtStatus}>Checkin</Text>
+            </View>
+            <View style={styles.content}>
+              <Text style={styles.txtName}>{customer ? customer.customer_name : ""}</Text>
+              <Text style={styles.txtAddress}>{customer ? customer.address : ""}</Text>
+            </View>
           </View>
         </View>
-      </View>
+        {item.time_checkout != "" && (
+          <View style={styles.rowFlexStart}>
+            <View style={{ alignSelf: 'flex-start', rowGap: 4 }}>
+              <Text style={styles.txtTime}>{item.createddate}</Text>
+              <Text style={styles.txtDate}>
+                {CommonUtils.convertDate(item.createddate)}
+              </Text>
+            </View>
+            <View style={{ marginHorizontal: 8 }}>
+              <View style={styles.rowFlexStart}>
+                <SvgIcon source={'Dot'} size={16} color={theme.colors.primary} />
+                <Text style={styles.txtStatus}>Checkout</Text>
+              </View>
+              <View style={styles.content}>
+                <Text style={styles.txtName}>{customer ? customer.customer_name : ""}</Text>
+                <Text style={styles.txtAddress}>{customer ? customer.address : ""}</Text>
+              </View>
+            </View>
+          </View>
+        )}
+
+      </>
     );
   };
 
-  const fetchData = async () =>{
-      const {status ,data} = await ReportService.getTravelLogReport({
-        fromdate : new Date(date).setHours(0,0),
-        todate : new Date(date).setHours(23,59)
-      })
-      console.log(data);
+  const fetchData = async () => {
+    dispatch(appActions.setProcessingStatus(true))
+    const { status, data }: KeyAbleProps = await ReportService.getTravelLogReport({
+      fromdate: new Date(date).setHours(0, 0),
+      todate: new Date(date).setHours(23, 59)
+    })
+    dispatch(appActions.setProcessingStatus(false))
+    setData(data.result)
   }
-  
+
+  useEffect(() => {
+    fetchData()
+  }, [date])
+
 
   return (
-    <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
+    <MainLayout style={{ backgroundColor: theme.colors.bg_neutral }}>
       <ReportHeader
-        title={'Nhật ký di chuyển'}
+        title={getLabel("logTravel")}
         date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&
@@ -101,27 +120,20 @@ const TravelDiary = () => {
         }
         rightIcon={
           <TouchableOpacity onPress={() => console.log('123')}>
-            <Image
-              source={ImageAssets.MapIcon}
-              style={{width: 28, height: 28}}
-              tintColor={theme.colors.text_secondary}
-              resizeMode={'cover'}
+            <Image source={ImageAssets.MapIcon} style={{ width: 28, height: 28 }} tintColor={theme.colors.text_secondary} resizeMode={'cover'}
             />
           </TouchableOpacity>
         }
       />
-      <AppContainer style={{marginBottom: bottom}}>
-        <View
-          style={{
-            marginTop: 24,
-            borderRadius: 16,
-            backgroundColor: theme.colors.bg_default,
-            padding: 16,
-          }}>
-          {TravelDiaryDataFake.map((item, index) => {
-            return <Item key={index} item={item} />;
-          })}
-        </View>
+      <AppContainer style={{ marginBottom: bottom }}>
+        {data.length > 0 && (
+          <View style={{ marginTop: 24,borderRadius: 16,backgroundColor: theme.colors.bg_default,padding: 16}}>
+            {data.map((item, index) => {
+                return <Item key={index} item={item} />
+            })}
+          </View>
+        )}
+
       </AppContainer>
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
@@ -132,7 +144,7 @@ const TravelDiary = () => {
   );
 };
 interface ItemProps {
-  item: TravelDiaryType;
+  item: ReportTravelDiaryType;
 }
 export default TravelDiary;
 const createStyle = (theme: ExtendedTheme) =>
@@ -153,7 +165,7 @@ const createStyle = (theme: ExtendedTheme) =>
       fontWeight: '500',
       color: theme.colors.text_primary,
     } as TextStyle,
-    txtDate: {color: theme.colors.text_secondary, fontSize: 12} as TextStyle,
+    txtDate: { color: theme.colors.text_secondary, fontSize: 12 } as TextStyle,
     content: {
       marginVertical: 4,
       marginLeft: 8,
@@ -164,40 +176,6 @@ const createStyle = (theme: ExtendedTheme) =>
       borderColor: theme.colors.border,
       rowGap: 8,
     } as ViewStyle,
-    txtName: {width: '65%', color: theme.colors.text_primary} as TextStyle,
-    txtAddress: {width: '65%', color: theme.colors.text_secondary} as TextStyle,
+    txtName: { width: '65%', color: theme.colors.text_primary } as TextStyle,
+    txtAddress: { width: '65%', color: theme.colors.text_secondary } as TextStyle,
   });
-const TravelDiaryDataFake: TravelDiaryType[] = [
-  {
-    time: '08:00',
-    date: 1704687330161,
-    isCheckIn: true,
-    locationName: 'Cửa hàng tiện lợi KIM',
-    locationAddress:
-      '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-  },
-  {
-    time: '07:00',
-    date: 1704687330161,
-    isCheckIn: false,
-    locationName: 'Winmart',
-    locationAddress:
-      '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-  },
-  {
-    time: '09:00',
-    date: 1704687330161,
-    isCheckIn: true,
-    locationName: 'EZ Mart',
-    locationAddress:
-      '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-  },
-  {
-    time: '10:20',
-    date: 1704687330161,
-    isCheckIn: false,
-    locationName: 'Cửa hàng tiện lợi KIM',
-    locationAddress:
-      '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-  },
-];
