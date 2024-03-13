@@ -42,6 +42,8 @@ import {shallowEqual, useDispatch} from 'react-redux';
 import {Location} from 'react-native-background-geolocation';
 import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
   customerType: string;
@@ -114,7 +116,9 @@ const Customer = () => {
     bottomRef2.current?.snapToIndex(0);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
+    let mounted: boolean;
+    mounted = true;
     handleBackgroundLocation();
     let newData: IDataCustomers[] =
       listCustomer?.length > 0 ? [...listCustomer] : [];
@@ -167,12 +171,6 @@ const Customer = () => {
       });
       setCustomerData(sortData);
     }
-  }, [listCustomer?.length, value]);
-
-  React.useEffect(() => {
-    let mounted: boolean;
-    mounted = true;
-
     const getDataType = () => {
       dispatch(customerActions.getCustomerType());
     };
@@ -355,8 +353,8 @@ const Customer = () => {
   };
 
   return (
-    <Block block>
-      <MainLayout style={styles.backgroundRoot}>
+    <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
+      <Block paddingHorizontal={16}>
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity
@@ -378,13 +376,16 @@ const Customer = () => {
           <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
           {getLabel('customer')}
         </Text>
-        <ListCard
-          data={customerData}
-          appLoading={appLoading!}
-          listFooter={listFooter}
-          onLoadData={onEndReachedThreshold}
-        />
-      </MainLayout>
+        {appLoading ? (
+          <SkeletonLoading />
+        ) : (
+          <ListCard
+            data={customerData}
+            listFooter={listFooter}
+            onLoadData={onEndReachedThreshold}
+          />
+        )}
+      </Block>
 
       <AppBottomSheet
         bottomSheetRef={bottomRef}
@@ -476,7 +477,7 @@ const Customer = () => {
           color={theme.colors.white}
         />
       </TouchableOpacity>
-    </Block>
+    </SafeAreaView>
   );
 };
 
@@ -639,5 +640,6 @@ const rootStyles = (theme: AppTheme) =>
     } as ViewStyle,
     backgroundRoot: {
       backgroundColor: theme.colors.bg_neutral,
+      flex: 1,
     } as ViewStyle,
   });
