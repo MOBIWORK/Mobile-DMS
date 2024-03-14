@@ -38,13 +38,10 @@ export const POST_CHECKIN = '/api/method/mbw_dms.api.checkin.create_checkin';
 // Product
 export const GET_PRODUCT = URL_PREFIX + '.api.selling.product.list_product';
 export const GET_BRAND_PRODUCT = URL_PREFIX + '.api.selling.product.list_brand';
-export const GET_INDUSTRY_PRODUCT =
-  URL_PREFIX + '.api.selling.product.list_industry';
-export const GET_GROUP_PRODUCT =
-  URL_PREFIX + '.api.selling.product.list_item_group';
+export const GET_INDUSTRY_PRODUCT = URL_PREFIX + '.api.selling.product.list_industry';
+export const GET_GROUP_PRODUCT = URL_PREFIX + '.api.selling.product.list_item_group';
 export const GET_PRICE_PRODUCT = URL_PREFIX + '.api.selling.order.price_list';
-export const GET_PRODUCT_PROMOTION =
-  URL_PREFIX + '.api.selling.order.pricing_rule';
+export const GET_PRODUCT_PROMOTION = URL_PREFIX + '.api.selling.order.pricing_rule';
 
 // Customer
 

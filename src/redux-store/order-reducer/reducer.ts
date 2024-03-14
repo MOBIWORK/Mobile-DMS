@@ -40,6 +40,10 @@ const orderSlice = createSlice({
       state.data = mergeArrays(state.data, action.payload.data);
       state.totalItem = action.payload.totalItem;
     },
+    resetDataOrder: (state, action: PayloadAction) => {
+      state.data = [];
+      state.totalItem = 0;
+    },
     setMessage: (state, action: PayloadAction<string>) => {
       state.message = action.payload;
       state.loading = false;

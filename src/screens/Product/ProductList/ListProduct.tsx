@@ -65,6 +65,7 @@ const ListProduct = () => {
   
   const {data,totalItem,isLoading} = useSelector(state => state.product);
   const [page,setPage] = useState<number>(1)
+  const [pageSize,setPageSize] = useState<number>(10)
   const [brand, setBrand] = useState<TypeFilter>();
   const [industry, setIndustry] = useState<TypeFilter>();
   const [groupItem, setGroupItem] = useState<TypeFilter>();
@@ -186,6 +187,7 @@ const ListProduct = () => {
     setFilterBrand(brand?.value || "");
     setFilterGroup(groupItem?.value || "");
     setFilterIndustry(industry?.value || "");
+    setPage(1)
     if (bottomSheetRef.current) {
       bottomSheetRef.current.close()
     }
@@ -294,11 +296,10 @@ const ListProduct = () => {
       industry: filterIndustry.toString(),
       item_group: filterGroup.toString(),
       item_name: searchProduct,
-      page_size : 20,
+      page_size : pageSize,
       page : page
     }))
   }
-
 
   const fetchBrandProduct = async () => {
     const { status, data }: KeyAbleProps = await ProductService.getBrand();
@@ -381,6 +382,11 @@ const ListProduct = () => {
     }
   }
 
+  const onScrollPage = ()=>{
+    const number_page = (totalItem / pageSize).toFixed();
+    if(Number(number_page) > page) setPage(page +1)
+  }
+
   const onSearchFilterData = (txt : string)=>{
     setSearchFilter(txt)
     switch (filterType) {
@@ -414,6 +420,11 @@ const ListProduct = () => {
   useEffect(() => {
     fetchProduct();
   }, [filterBrand, filterIndustry, filterGroup, searchProduct,page])
+
+  useEffect(() => {
+    dispatch(productActions.resetDataProduct());
+  }, [filterBrand, filterIndustry, filterGroup, searchProduct])
+
 
   useEffect(() => {
     setSearchProduct(searchProductValue);
@@ -466,7 +477,8 @@ const ListProduct = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ rowGap: 16 }}
           style={{ height: '85%' }}
-          onEndReached={() => setPage(page + 1)}
+          onEndReachedThreshold={0.1}
+          onEndReached={onScrollPage}
         />
         )}
         
@@ -489,10 +501,10 @@ const ListProduct = () => {
             title={titleModal}
             searchPlaceholder={placeholder}
             data={dataFilter}
+            isSearch={true}
             handleItem={handleItem}
             searchValue={searchFilter}
-            onChangeSearch={(txt: string) => onSearchFilterData(txt)
-            }
+            onChangeSearch={(txt: string) => onSearchFilterData(txt)}
             onClose={() => filterRef.current && filterRef.current.close()}
           />
         </BottomSheetScrollView>

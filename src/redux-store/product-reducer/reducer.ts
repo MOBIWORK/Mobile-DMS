@@ -10,7 +10,7 @@ const initState: StateType = {
   data: [],
   totalItem: 0,
   dataSelected: [],
-  isLoading: true,
+  isLoading: false,
   message: '',
 };
 
@@ -60,6 +60,9 @@ const productSlice = createSlice({
       state.data = mergeArrays(state.data, newDaata);
       state.totalItem = action.payload.total;
       state.isLoading = false;
+    },
+    resetDataProduct : (state,action: PayloadAction)=>{
+      state.data = []
     },
     setProductSelected: (state, action: PayloadAction<IProduct[]>) => {
       const newData = mergeArraysSelectProduct(
