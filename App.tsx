@@ -140,8 +140,8 @@ function App(): JSX.Element {
       // Application config
       debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
       logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-      stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
-      startOnBoot: true, // <-- Auto start tracking when device is powered-up.
+      stopOnTerminate: true, // <-- Allow the background-service to continue tracking when user closes the app.
+      startOnBoot: false, // <-- Auto start tracking when device is powered-up.
       // HTTP / SQLite config
       // url: 'https://api.ekgis.vn/tracking/locationHistory/position/64dae1bf20309bc61366a2b1?api_key=dCceCixTANM4zeayfXslpTNTcbONf9aBsDCFWxIs',
       batchSync: true, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
@@ -158,6 +158,7 @@ function App(): JSX.Element {
       //   // <-- Optional HTTP params
       //   auth_token: "maybe_your_server_authenticates_via_token_YES?",
       // },
+      locationAuthorizationRequest: 'Any',
     }).then(state => {
       console.log(
         '- BackgroundGeolocation is configured and ready: ',
