@@ -7,6 +7,7 @@ import {useTheme} from '@react-navigation/native';
 import {View} from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
 import { Portal } from './portal';
+import isEqual from 'react-fast-compare';
 
 const AppBottomSheet: FC<AppBottomSheetProps> = ({
   bottomSheetRef,
@@ -119,4 +120,4 @@ interface AppBottomSheetProps {
   onAnimated?:(fromIndex?:number,toIndex?:number) => void
 }
 
-export default AppBottomSheet;
+export default React.memo(AppBottomSheet,isEqual);
