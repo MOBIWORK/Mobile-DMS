@@ -33,6 +33,7 @@ import BackgroundGeolocation, {
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 import {AppService} from '../../../services';
 import {CommonUtils} from '../../../utils';
+import isEqual from 'react-fast-compare';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -482,7 +483,7 @@ const FormAdding = (props: Props) => {
   );
 };
 
-export default React.memo(FormAdding);
+export default React.memo(FormAdding,isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

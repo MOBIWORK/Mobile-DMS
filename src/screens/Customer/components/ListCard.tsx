@@ -24,7 +24,7 @@ const ListCard = (props: Props) => {
       maxToRenderPerBatch={2}
       updateCellsBatchingPeriod={50}
       ListFooterComponent={props.listFooter}
-      keyExtractor={(item, index) => index.toString()}
+      keyExtractor={(item, index) => item.name}
       renderItem={({item, index}) => {
         return <CardView {...item} key={index} />;
       }}

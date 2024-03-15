@@ -442,8 +442,9 @@ PODS:
     - glog
   - react-native-image-picker (4.10.3):
     - React-Core
-  - react-native-mmkv (2.12.1):
+  - react-native-mmkv (2.12.2):
     - MMKV (>= 1.3.3)
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - react-native-netinfo (11.3.1):
     - React-Core
@@ -956,7 +957,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 194e32c6aab382d88713ad3dd0025c5f5c4ee072
   React-logger: cebf22b6cf43434e471dc561e5911b40ac01d289
   react-native-image-picker: 60f4246eb5bb7187fc15638a8c1f13abd3820695
-  react-native-mmkv: 124b22209aacdcd172b6ac39071b9647080f0411
+  react-native-mmkv: 38d484ccd8f5760fe0e46d206ed07add5ddda1fc
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-pager-view: e26d35e382d86950c936f8917e3beb9188115ccc
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
