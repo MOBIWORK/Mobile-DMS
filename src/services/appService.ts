@@ -96,7 +96,7 @@ export type IListVisitParams = {
   router?: any;
   distance?: string;
   status?: 'active' | 'lock' | string;
-  orderby?: 'asc' | 'desc' | string;
+  order_by?: 'asc' | 'desc' | string;
   birthDay?: string;
   birthday_from?: any;
   birthday_to?: any;

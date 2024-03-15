@@ -131,7 +131,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
             />
             <Item
               label={getLabel('sortByName')}
-              value={filterValue?.orderby ?? 'A -> Z'}
+              value={filterValue?.order_by ?? 'Z -> A'}
               type={AppConstant.VisitFilterType.name}
             />
             <Item

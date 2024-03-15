@@ -146,13 +146,20 @@ const CheckInLocation = () => {
   };
 
   useLayoutEffect(() => {
-    setLocation({
-      // @ts-ignore
-      coords: {
-        longitude: customer_location.long,
-        latitude: customer_location.lat,
-      },
-    });
+    if (customer_location) {
+      setLocation({
+        // @ts-ignore
+        coords: {
+          longitude: customer_location.long,
+          latitude: customer_location.lat,
+        },
+      });
+    } else {
+      BackgroundGeolocation.getCurrentPosition({
+        samples: 1,
+        timeout: 3,
+      }).then(new_location => setLocation(new_location));
+    }
   }, []);
 
   return (
@@ -175,7 +182,7 @@ const CheckInLocation = () => {
           scaleBarEnabled={false}
           styleURL={Mapbox.StyleURL.Street}
           logoEnabled={false}
-          style={{flex: 1, zIndex: 10, position: 'absolute'}}
+          style={{flex: 1}}
           onPress={feature =>
             handleMarkerMap(
               // @ts-ignore

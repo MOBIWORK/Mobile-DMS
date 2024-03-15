@@ -439,7 +439,6 @@ const HomeScreen = () => {
     };
     if (isFocus) {
       getLocation();
-      getCustomer();
       getProfile();
       getCurrentShit();
       getReportKPI();
@@ -452,6 +451,7 @@ const HomeScreen = () => {
   useEffect(() => {
     getSystemConfig();
     getWidget();
+    getCustomer();
   }, []);
 
   const getSystemConfig = () => {

@@ -58,7 +58,6 @@ import {CommonUtils} from '../../../utils';
 import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 import MarkerItem from '../../../components/common/MarkerItem';
 
 //config Mapbox
@@ -94,6 +93,10 @@ const ListVisit = () => {
     AppConstant.DistanceFilterData,
   );
   const dispatch = useDispatch();
+
+  //refresh data
+  const [isFetching, setFetching] = useState<boolean>(false);
+  const [filterData, setFilterData] = useState<IListVisitParams>({});
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -251,11 +254,16 @@ const ListVisit = () => {
                 style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
                 data={listCustomer}
-                keyExtractor={(item, index) => item.customer_code}
+                keyExtractor={item => item.customer_code}
                 decelerationRate={'fast'}
                 bounces={false}
                 initialNumToRender={5}
                 contentContainerStyle={{rowGap: 16}}
+                // refreshing={isFetching}
+                // onRefresh={() => {
+                //   setFetching(true);
+                //   getCustomer(filterData);
+                // }}
                 renderItem={({item}) => (
                   <VisitItem
                     item={item}
@@ -367,15 +375,14 @@ const ListVisit = () => {
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
-    console.log('params2', params);
     await getCustomerVisit(params).then((res: any) => {
       if (Object.keys(res.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
-        console.log('cusss', data);
         // const newData = data.filter(item => item.customer_location_primary);
         dispatch(customerActions.setCustomerVisit(data));
       }
     });
+    setFetching(false);
   };
 
   const getCustomerRoute = async () => {
@@ -420,8 +427,8 @@ const ListVisit = () => {
         //   filterParams?.status && filterParams.status === getLabel('visited')
         //     ? 'active'
         //     : 'lock',
-        orderby:
-          filterParams?.orderby && filterParams.orderby === 'A -> Z'
+        order_by:
+          filterParams?.order_by && filterParams.order_by === 'A -> Z'
             ? 'asc'
             : 'desc',
         birthday_from: birthDayObj
@@ -437,7 +444,7 @@ const ListVisit = () => {
           ? filterParams.customer_type
           : '',
       };
-      // console.log('params', params);
+      setFilterData(params);
       await getCustomer(params);
     }
   };

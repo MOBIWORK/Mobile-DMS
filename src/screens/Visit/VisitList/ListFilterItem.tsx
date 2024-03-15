@@ -189,18 +189,18 @@ const ListFilterItem: FC<ListFilterItemProps> = ({
                   onPress={() => {
                     setValueFilter((prev: IListVisitParams) => ({
                       ...prev,
-                      orderby: item.title,
+                      order_by: item.title,
                     }));
                     filterRef?.current?.close();
                   }}>
                   <Text
                     style={styles.itemText(
                       item.title,
-                      valueFilter.orderby ?? '',
+                      valueFilter.order_by ?? '',
                     )}>
                     {item.title}
                   </Text>
-                  {item.title === valueFilter.orderby && (
+                  {item.title === valueFilter.order_by && (
                     <AppIcons
                       iconType={AppConstant.ICON_TYPE.Feather}
                       name="check"
