@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {AppHeader, AppIcons} from '../../../components/common';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {FlatList, Image, ImageStyle, Pressable, StyleSheet, View, ViewStyle} from 'react-native';
 import {AppConstant} from '../../../const';
 import { useTranslation } from 'react-i18next';

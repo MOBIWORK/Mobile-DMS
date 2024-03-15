@@ -3,10 +3,10 @@ import {MainLayout} from '../../layouts';
 import {Image, Text, View} from 'react-native';
 import {AppButton, AppHeader} from '../../components/common';
 import {useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
 import {ImageAssets} from '../../assets';
 import {useTranslation} from 'react-i18next';
 import {ScreenConstant} from '../../const';
+import { NavigationProp } from '../../navigation/screen-type';
 const SuccessChanged = () => {
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();

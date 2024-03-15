@@ -14,7 +14,7 @@ import {
   SvgIcon,
 } from '../../../components/common/';
 import {useRoute} from '@react-navigation/native';
-import {RouterProp, goBack} from '../../../navigation';
+import {RouterProp} from '../../../navigation/screen-type';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Modal} from 'react-native-paper';
@@ -33,6 +33,7 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {item} from './ultil';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
+import {goBack} from '../../../navigation/navigation-service';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -142,7 +143,7 @@ const CheckIn = () => {
 
   const onConfirmCheckout = useCallback(() => {
     dispatch(checkinActions.resetData());
-    dispatch(appActions.setDataCheckIn({}))
+    dispatch(appActions.setDataCheckIn({}));
     goBack();
     setShow(false);
   }, [dataCheckIn]);

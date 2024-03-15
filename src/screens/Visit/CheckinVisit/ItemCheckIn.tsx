@@ -3,10 +3,11 @@ import React from 'react';
 import {IItemCheckIn} from './ultil';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp, navigate} from '../../../navigation';
+import {NavigationProp} from '../../../navigation/screen-type';
 import {useTheme} from '../../../layouts/theme';
 import isEqual from 'react-fast-compare';
 import { CheckinData } from '../../../services/appService';
+import { navigate } from '../../../navigation/navigation-service';
 
 type Props = {
   item: IItemCheckIn;

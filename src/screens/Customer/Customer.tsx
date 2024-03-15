@@ -29,7 +29,7 @@ import {
   Block,
 } from '../../components/common';
 import ListFilter from './components/ListFilter';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -116,6 +116,8 @@ const Customer = () => {
   const onPressType2 = useCallback(() => {
     bottomRef2.current?.snapToIndex(0);
   }, [bottomRef2.current]);
+
+  console.log(customerData.length,'b')
 
   React.useEffect(() => {
     let mounted: boolean;
@@ -351,7 +353,7 @@ const Customer = () => {
         </View>
 
         <Text style={styles.containCustomer}>
-          <Text style={styles.numberCustomer}>{listCustomer?.length} </Text>
+          <Text style={styles.numberCustomer}>{customerData.length} </Text>
           {getLabel('customer')}
         </Text>
         {appLoading ? (

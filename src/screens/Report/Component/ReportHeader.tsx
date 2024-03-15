@@ -11,7 +11,7 @@ import {
 import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
 import {AppSelectedDate} from '../../../components/common';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp} from '../../../navigation/screen-type';
 const ReportHeader: FC<ReportHeaderProps> = ({
   title,
   date,

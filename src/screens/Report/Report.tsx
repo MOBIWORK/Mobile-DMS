@@ -12,7 +12,7 @@ import {useTheme} from '../../layouts/theme';
 import {rootStyles} from './styles';
 import {ScrollView, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {ScreenConstant} from '../../const';
 import {ItemProps, LineItem, SalesItem} from './ultil';
 

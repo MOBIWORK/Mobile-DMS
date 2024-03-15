@@ -12,7 +12,7 @@ import {AppTheme, useTheme} from '../../layouts/theme';
 import {dispatch} from '../../utils/redux';
 
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import ContentList from './components/ContentList';
 import {ContentProfile, ProfileContent} from './ultil/config';
 import {useSelector} from '../../config/function';

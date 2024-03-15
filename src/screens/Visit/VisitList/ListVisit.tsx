@@ -16,6 +16,7 @@ import {
 import {
   FlatList,
   Image,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -24,7 +25,7 @@ import {
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp} from '../../../navigation/screen-type';
 import {ListCustomerType, VisitListItemType} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -58,7 +59,6 @@ import {CommonUtils} from '../../../utils';
 import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 import MarkerItem from '../../../components/common/MarkerItem';
 
 //config Mapbox
@@ -136,6 +136,17 @@ const ListVisit = () => {
       backgroundErrorListener,
     );
   };
+
+  const onRefreshData = useCallback(async () => {
+    try {
+      setLoading(true);
+      dispatch(customerActions.onGetCustomerVisit());
+    } catch (er) {
+      console.log('errDispatch: ', er);
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch]);
 
   const handleItemDistanceFilter = (itemData: IFilterType) => {
     setDistanceFilterValue(getLabel(itemData.label));
@@ -253,8 +264,17 @@ const ListVisit = () => {
                 data={listCustomer}
                 keyExtractor={(item, index) => item.customer_code}
                 decelerationRate={'fast'}
-                bounces={false}
+                // bounces={false}
                 initialNumToRender={5}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={loading}
+                    onRefresh={onRefreshData}
+                  />
+                }
+                maxToRenderPerBatch={2}
+                updateCellsBatchingPeriod={20}
+                // onRefresh={()}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
                   <VisitItem

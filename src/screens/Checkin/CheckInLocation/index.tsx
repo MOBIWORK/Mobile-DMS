@@ -6,7 +6,7 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {dispatch, NavigationProp, RouterProp} from '../../../navigation';
+import { NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
@@ -35,6 +35,7 @@ import {IUpdateAddress} from '../../../services/checkInService';
 import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import { dispatch } from '../../../utils/redux';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);

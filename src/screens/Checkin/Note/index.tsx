@@ -20,13 +20,14 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ItemNoteVisitDetail, NoteType } from '../../../models/types';
 import { ImageAssets } from '../../../assets';
-import { NavigationProp, goBack } from '../../../navigation';
+import { NavigationProp } from '../../../navigation/screen-type';
 import { ScreenConstant } from '../../../const';
 import { dispatch } from '../../../utils/redux';
 import { useSelector } from '../../../config/function';
 import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 import { CommonUtils } from '../../../utils';
 import { useTranslation } from 'react-i18next';
+import { goBack } from '../../../navigation/navigation-service';
 
 const CheckinNote = () => {
   const theme = useTheme();

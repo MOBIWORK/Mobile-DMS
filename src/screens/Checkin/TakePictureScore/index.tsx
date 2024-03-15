@@ -19,7 +19,6 @@ import {
 } from '../../../components/common';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {CameraUtils} from '../../../utils';
-import {RootStackParamList, goBack, navigate} from '../../../navigation';
 import isEqual from 'react-fast-compare';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {useDisableBackHandler, useSelector} from '../../../config/function';
@@ -34,6 +33,8 @@ import {Modal} from 'react-native-paper';
 import {ScreenConstant} from '../../../const';
 import {ImageAssets} from '../../../assets';
 import moment from 'moment';
+import {RootStackParamList} from '../../../navigation/screen-type';
+import {goBack, navigate} from '../../../navigation/navigation-service';
 
 interface ImageSelect {
   uri: string;
@@ -73,6 +74,7 @@ const TakePictureScore = () => {
   );
 
   useDisableBackHandler(true);
+  // console.log()
 
   const onPressConfirm = useCallback(
     async (listProgram: any[]) => {

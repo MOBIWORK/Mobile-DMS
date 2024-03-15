@@ -3,7 +3,7 @@ import {MainLayout} from '../../layouts';
 import {AppHeader} from '../../components/common';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {View, StyleSheet, Text, Switch, ViewStyle} from 'react-native';
 import ProfileItem from './components/ProfileItem';
 const NotifySetting = () => {
