@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 import { AppTheme, useTheme } from './theme';
+import isEqual from 'react-fast-compare';
 
 const MainLayout: FC<Props> = ({
   children,
@@ -87,4 +88,4 @@ interface Props {
   imgBackground?: any;
 }
 
-export default memo(MainLayout);
+export default memo(MainLayout,isEqual);

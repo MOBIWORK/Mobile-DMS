@@ -32,13 +32,13 @@ import {AppService} from '../../services';
 
 import {useTranslation} from 'react-i18next';
 import {setProcessingStatus} from '../../redux-store/app-reducer/reducer';
-import {dispatch} from '../../utils/redux';
+import {dispatch, getState} from '../../utils/redux';
 
 const SignIn = () => {
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-
+  const app = getState('checkin')
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
   const [isLogOut] = useMMKVBoolean(AppConstant.isLogOut);
   const [organiztion] = useMMKVObject<IResOrganization>(
@@ -68,6 +68,8 @@ const SignIn = () => {
   const disable = useMemo(() => {
     return !(userName && password);
   }, [userName, password]);
+
+  console.log(app,'app')
 
   const handleLogin = async () => {
     //TODO: call API
