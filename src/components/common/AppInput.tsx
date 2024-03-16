@@ -2,6 +2,7 @@ import React, {FC, ReactNode, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 import {Text, TextInput, TextInputProps} from 'react-native-paper';
 import {TextStyle, TouchableOpacity, ViewStyle} from 'react-native';
+import isEqual from 'react-fast-compare';
 
 const AppInput: FC<AppInputProps> = ({
   styles,
@@ -111,4 +112,4 @@ type AppInputPropsNonEditable = {
   show?: boolean; // Adjust the type accordingly
 } & AppInputPropsBase;
 type AppInputProps = AppInputPropsEditable | AppInputPropsNonEditable;
-export default AppInput;
+export default React.memo(AppInput,isEqual);
