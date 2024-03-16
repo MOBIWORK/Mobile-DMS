@@ -498,7 +498,7 @@ const ListProduct = () => {
       <AppBottomSheet
         bottomSheetRef={filterRef}
         snapPointsCustom={snapPointsFilter}>
-        <ScrollView
+        <View
           style={{ paddingBottom: bottom + 16 ,flex: 1}}>
           <FilterListComponent
             title={titleModal}
@@ -510,7 +510,7 @@ const ListProduct = () => {
             onChangeSearch={(txt: string) => onSearchFilterData(txt)}
             onClose={() => filterRef.current && filterRef.current.close()}
           />
-        </ScrollView>
+        </View>
       </AppBottomSheet>
     </MainLayout>
   );
