@@ -8,6 +8,7 @@ import { ApiConstant } from "../../const";
 export function* getDataProducts(action:PayloadAction){
     if (productActions.onGetData.match(action)) {
         try {
+            yield put(productActions.setLoading(true))
             const {status , data} = yield call(ProductService.get,action.payload);
             if(status === ApiConstant.STT_OK){
                 yield put(productActions.setDataProduct({
@@ -16,6 +17,7 @@ export function* getDataProducts(action:PayloadAction){
                 }))
             }
         } catch (error) {
+            yield put(productActions.setLoading(false))
             yield put(productActions.setMessage("Lỗi không lấy được dữ liệu sản phảm"))
         }
     }
