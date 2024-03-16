@@ -10,7 +10,7 @@ const initState: StateType = {
   data: [],
   totalItem: 0,
   dataSelected: [],
-  isLoading: false,
+  isLoading: true,
   message: '',
 };
 
@@ -74,8 +74,8 @@ const productSlice = createSlice({
     setMessage: (state, action: PayloadAction<string>) => {
       state.message = action.payload;
     },
-    setLoading: state => {
-      state.isLoading = false;
+    setLoading: (state,action:PayloadAction<any>) => {
+      state.isLoading = action.payload;
     },
     setLogoutData: (state: any) => (state = undefined),
   },

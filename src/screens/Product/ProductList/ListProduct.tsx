@@ -13,7 +13,7 @@ import {
   AppInput,
   FilterView,
 } from '../../../components/common';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ImageAssets } from '../../../assets';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +35,7 @@ import { useSelector } from '../../../config/function';
 import { dispatch } from '../../../utils/redux';
 import { productActions } from '../../../redux-store/product-reducer/reducer';
 import ItemSekeleton from '../ItemSekeleton';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 
 const ListProduct = () => {
@@ -48,7 +49,8 @@ const ListProduct = () => {
 
   const filterRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['100%'], []);
+  const snapPoints = useMemo(() => ['90%'], []);
+  const snapPointsFilter = useMemo(() => ['70%'], []);
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
@@ -82,6 +84,11 @@ const ListProduct = () => {
   const [searchProduct, setSearchProduct] = useState<string>("");
   const [placeholder,setPlaceholder] = useState<string>("");
   const [titleModal,setTitleModal] = useState<string>("");
+
+  const onBack = ()=>{
+    dispatch(appActions.setSearchProductValue(""))
+    navigation.goBack();
+  }
 
   const handleItem = (item: IFilterType) => {
     switch (filterType) {
@@ -435,7 +442,7 @@ const ListProduct = () => {
       <AppHeader
         label={getLabel('product')}
         labelStyle={{ textAlign: 'left', marginLeft: 8 }}
-        onBack={() => navigation.goBack()}
+        onBack={() => onBack()}
         rightButton={
           <TouchableOpacity
             onPress={() => navigation.navigate(ScreenConstant.SEARCH_PRODUCT)}>
@@ -461,7 +468,7 @@ const ListProduct = () => {
           <Text style={{ fontWeight: '400', fontSize: 14 }}>{getLabel("product").toLocaleLowerCase()}</Text>
         </Text>
 
-        {isLoading ? (
+        {isLoading && data.length == 0 ? (
           <FlatList
             key={"2"}
             data={new Array(8)}
@@ -490,13 +497,9 @@ const ListProduct = () => {
       </AppBottomSheet>
       <AppBottomSheet
         bottomSheetRef={filterRef}
-        snapPointsCustom={animatedSnapPoints}
-        // @ts-ignore
-        handleHeight={animatedHandleHeight}
-        contentHeight={animatedContentHeight}>
-        <BottomSheetScrollView
-          style={{ paddingBottom: bottom + 16 }}
-          onLayout={handleContentLayout}>
+        snapPointsCustom={snapPointsFilter}>
+        <View
+          style={{ paddingBottom: bottom + 16 ,flex: 1}}>
           <FilterListComponent
             title={titleModal}
             searchPlaceholder={placeholder}
@@ -507,7 +510,7 @@ const ListProduct = () => {
             onChangeSearch={(txt: string) => onSearchFilterData(txt)}
             onClose={() => filterRef.current && filterRef.current.close()}
           />
-        </BottomSheetScrollView>
+        </View>
       </AppBottomSheet>
     </MainLayout>
   );

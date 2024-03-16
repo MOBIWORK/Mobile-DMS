@@ -19,7 +19,7 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
     if(overviewData.custom_images_item.length >0){
 
     return (
-      <View style={{ marginTop: 16  , marginBottom : 20}}>
+      <View style={{ marginTop: 16  , marginBottom : 20 ,paddingHorizontal :16}}>
         <View
           style={{
             flexDirection: 'row',
@@ -128,10 +128,22 @@ const Overview: FC<OverviewProps> = ({ overviewData }) => {
           </View>
           <View style={[styles.element, { borderColor: colors.border }]}>
             <Text style={{ color: colors.text_disable, fontSize: 16 }}>
-              {getLabel('trademark')}
+              {getLabel('groupProduct')}
             </Text>
             <Text style={[styles.text, { color: colors.text_primary }]}>
-              {overviewData.item_group}
+              {overviewData.item_group ?? "---"}
+            </Text>
+          </View>
+          <View
+            style={[
+              styles.element,
+              { borderColor: colors.border, borderBottomWidth: 0 },
+            ]}>
+            <Text style={{ color: colors.text_disable, fontSize: 16 }}>
+              {getLabel('brand')}
+            </Text>
+            <Text style={[styles.text, { color: colors.text_primary }]}>
+              {overviewData.brand ?? '---'}
             </Text>
           </View>
           <View
