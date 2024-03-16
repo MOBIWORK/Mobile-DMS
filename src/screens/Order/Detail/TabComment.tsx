@@ -1,17 +1,17 @@
 import React from 'react'
-import { StyleSheet, TextInput, View } from 'react-native'
+import { StyleSheet, TextInput, View, ViewStyle } from 'react-native'
 import { MainLayout } from '../../../layouts'
 import AppContainer from '../../../components/AppContainer'
-import { useTheme } from '@react-navigation/native'
 import { AppAvatar, AppIcons } from '../../../components/common'
 import { Text } from 'react-native-paper'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { ICON_TYPE } from '../../../const/app.const'
+import { AppTheme, useTheme } from '../../../layouts/theme'
+import { TextStyle } from 'react-native'
 
 const TabComment = () => {
-
     const { colors } = useTheme()
-
+    const styles =createStyles(useTheme())
     return (
         <MainLayout style={{ backgroundColor: colors.bg_neutral ,paddingHorizontal :0}}>
             <AppContainer style={{marginTop :16,paddingHorizontal :16}}>
@@ -20,21 +20,19 @@ const TabComment = () => {
                         <AppAvatar size={40} url={"https://picture.vn/wp-content/uploads/2015/12/da-lat.png"} />
                         <View style={{ marginLeft: 8 }}>
                             <View>
-                                <Text style={{ fontSize: 14, lineHeight: 24, fontWeight: "400", color: colors.text_primary }}>
-                                    <Text style={[styles.userComment,{color :colors.text_primary}]}>Đỗ Toàn</Text>
-                                </Text>
+                                <Text style={[styles.userComment]}>Đỗ Toàn</Text>
                                 <Text style={[styles.commentCt]}>Đơn này đã bị huỷ</Text>
                             </View>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={[styles.commentCt,{  color: colors.text_secondary }]}>10 phút trước</Text>
+                                <Text style={[styles.timeCmt]}>10 phút trước</Text>
                             </View>
                         </View>
                     </View>
                 </View>
             </AppContainer>
-            <View style={{ backgroundColor: colors.bg_default, borderTopWidth: 1, borderColor: colors.border, padding: 16 }}>
-                <View style={{ flexDirection: "row", alignItems: 'center', marginBottom: 16 }}>
-                    <View style={{ flex: 1, backgroundColor: colors.bg_neutral, paddingHorizontal: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 100 }}>
+            <View style={styles.footer}>
+                <View style={styles.containerFt}>
+                    <View style={styles.containerInput}>
                         <TextInput placeholderTextColor={colors.text_secondary}
                             placeholder="Nhập nội dung"
                             value={""}
@@ -53,22 +51,43 @@ const TabComment = () => {
 
 export default TabComment;
 
-const styles = StyleSheet.create({
+const createStyles = (theme :AppTheme)=>StyleSheet.create({
+    footer: {
+        backgroundColor: theme.colors.bg_default,
+        borderTopWidth: 1,
+        borderColor: theme.colors.border,
+        padding: 16 
+    }as ViewStyle,
+    containerFt :{
+        flexDirection: "row",
+        alignItems: 'center',
+        marginBottom: 16
+    }as ViewStyle,
+    containerInput :{
+        flex: 1,
+        backgroundColor: theme.colors.bg_neutral,
+        paddingHorizontal: 12,
+        borderWidth: 1,
+        borderColor: theme.colors.border, borderRadius: 100
+    },
     userComment :{
+        color :theme.colors.text_primary,
         fontSize :16,
         lineHeight :24,
         fontWeight :"500"
-    },
+    } as TextStyle,
     commentCt :{
+        color :theme.colors.text_primary,
         fontSize: 16,
         lineHeight: 24,
         fontWeight: "400"
-    },
+    }as TextStyle,
     timeCmt :{
+        color: theme.colors.text_secondary,
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "400",
-    },
+    }as TextStyle,
     inputStyle :{
         height: 36,
         fontSize: 16,
@@ -76,5 +95,5 @@ const styles = StyleSheet.create({
         fontWeight: "400", 
         paddingRight: 60,
         paddingTop :8
-    }
+    }as TextStyle,
 })

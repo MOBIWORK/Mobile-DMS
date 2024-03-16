@@ -14,14 +14,16 @@ import {KeyAbleProps} from '../../models/types';
 import {AppService} from '../../services';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {AppActions} from '../../redux-store';
-import {useDispatch} from 'react-redux';
+
+
 import {CommonUtils} from '../../utils';
+import { appActions } from '../../redux-store/app-reducer/reducer';
+import { dispatch } from '../../utils/redux';
 
 const ForgotPassword = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
-  const dispatch = useDispatch();
+  
 
   const [email, setEmail] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
@@ -31,13 +33,13 @@ const ForgotPassword = () => {
   }, [email]);
 
   const handleAccuracy = async () => {
-    dispatch(AppActions.setProcessingStatus(true));
+    dispatch(appActions.setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
     const response: KeyAbleProps = await AppService.resetPassword(email, true);
     if (response?.status === ApiConstant.STT_OK) {
       setOpen(true);
     }
-    dispatch(AppActions.setProcessingStatus(false));
+    dispatch(appActions.setProcessingStatus(false));
   };
 
   return (

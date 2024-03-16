@@ -1,73 +1,107 @@
-import React from 'react'
-import { Text, View } from 'react-native'
-import { BarChart } from 'react-native-gifted-charts';
-import { useTheme } from '@react-navigation/native'
-import { AppConstant } from '../../const';
-import { StyleSheet } from 'react-native';
+import React, {useMemo} from 'react';
+import {Text, View, TextStyle, ViewStyle} from 'react-native';
+import {BarChart} from 'react-native-gifted-charts';
+import {StyleSheet} from 'react-native';
+import {AppTheme, useTheme} from '../../layouts/theme';
+import {AppConstant} from '../../const';
+import moment from 'moment';
+import {CommonUtils} from '../../utils';
+import {useTranslation} from 'react-i18next';
+// @ts-ignore
+import StringFormat from 'string-format';
 
-const BarChartStatistical = ({color}:PropTypes) => {
-    const { colors } = useTheme();
+const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
+  const {colors} = useTheme();
+  const styles = rootStyles(useTheme());
+  const {t: getLabel} = useTranslation();
 
+  const barCharData = useMemo(() => {
+    if (data?.sales_invoice.length! > 0) {
+      const newData: any = data?.sales_invoice.map((item: any) => {
+        return {
+          label: moment(item.ngay).format('DD'),
+          value: isSales ? item.doanh_so / 1e6 : item.doanh_thu / 1e6,
+        };
+      });
+      return newData.slice(-6);
+    } else {
+      return null;
+    }
+  }, [data]);
 
-    const data = [
-        { value: 200, label: '06' },
-        { value: 300, label: '07' },
-        {value: 500,  label: '08'},
-        { value: 400, label: '09' },
-        { value: 300, label: '10' },
-        { value: 300, label: '11' },
-    ];
-    return (
-        <View style={{padding :16, backgroundColor: colors.bg_default ,borderRadius :16}}>
-            <View>
-                <Text style={[styles.title,{color :colors.text_secondary}]} >Tổng doanh số tháng đến thời điểm hiện tại</Text>
-                <Text style={[styles.description,{color :colors.text_primary}]} >105.035.984 đ 
-                    <Text style={[styles.desSub,{color :color}]}>(Đạt 50.2%)</Text>
-                </Text>
-            </View>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' ,marginTop :8}}>
-                <BarChart 
-                    barWidth={10} data={data}
-                    frontColor={color}
-                    noOfSections={6}
-                    stepValue={10}
-                    initialSpacing={37}
-                    yAxisIndicesHeight={20}
-                    spacing={37}
-                    maxValue={600}
-                    stepHeight={20}
-                    xAxisColor={colors.border}
-                    yAxisColor={colors.border}
-                />
-            </View>
-        </View>
-
-    )
-}
+  return (
+    <View
+      style={{
+        padding: 16,
+        backgroundColor: colors.bg_default,
+        borderRadius: 16,
+      }}>
+      <View>
+        <Text style={[styles.title]}>
+          {isSales
+            ? getLabel('totalSalesPerMouth')
+            : getLabel('totalRevenuePerMouth')}
+        </Text>
+        <Text style={[styles.description]}>
+          {data?.Kpi ? CommonUtils.convertNumber(data.Kpi.dat_duoc) : 0}đ
+          <Text style={[styles.desSub, {color: color}]}>
+            {` (${StringFormat(getLabel('reachPercent'), {
+              percent: data?.Kpi ? data.Kpi.phan_tram_thuc_hien : 0,
+            })})`}
+          </Text>
+        </Text>
+      </View>
+      <View style={[styles.containerBar]}>
+        <BarChart
+          barWidth={15}
+          data={barCharData}
+          frontColor={color}
+          noOfSections={6}
+          yAxisLabelSuffix={'m'}
+          initialSpacing={30}
+          spacing={(AppConstant.WIDTH * 0.5) / 6}
+          width={AppConstant.WIDTH * 0.7}
+          xAxisColor={colors.border}
+          yAxisColor={colors.border}
+        />
+      </View>
+    </View>
+  );
+};
 
 interface PropTypes {
-    color :string,
-
+  color: string;
+  isSales?: boolean;
+  data: any;
 }
 
 export default BarChartStatistical;
 
-const styles = StyleSheet.create({
-    title :{
-        fontSize :12 ,
-        lineHeight :18 ,
-        fontWeight :"400",
-        marginBottom :5
-    },
-    description :{
-        fontSize :20 ,
-        lineHeight :30 ,
-        fontWeight :"500",
-        marginBottom :5
-    },
-    desSub : {
-        fontSize :14 ,
-        lineHeight :21 ,
-        fontWeight :"400",
-    }
-})
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    title: {
+      fontSize: 12,
+      lineHeight: 18,
+      fontWeight: '400',
+      marginBottom: 5,
+      color: theme.colors.text_secondary,
+    } as TextStyle,
+    description: {
+      marginTop: 5,
+      fontSize: 20,
+      lineHeight: 30,
+      fontWeight: '500',
+      color: theme.colors.text_primary,
+    } as TextStyle,
+    desSub: {
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '400',
+    } as TextStyle,
+    containerBar: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 16,
+    } as ViewStyle,
+  });

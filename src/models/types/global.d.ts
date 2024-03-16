@@ -22,5 +22,6 @@ declare module '@react-navigation/native' {
       main :string
     };
   };
+  export type ColorSchema = ExtendedTheme
   export function useTheme(): ExtendedTheme;
 }

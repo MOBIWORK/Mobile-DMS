@@ -1,11 +1,20 @@
 import {MMKV} from 'react-native-mmkv';
-import {InteractionManager, Keyboard, Linking, Platform} from 'react-native';
+import {
+  Dimensions,
+  InteractionManager,
+  Keyboard,
+  Linking,
+  Platform,
+  StyleSheet,
+} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import store, {AppActions} from '../redux-store';
 import * as LocalAuthentication from 'expo-local-authentication';
 import {AppConstant} from '../const';
 import * as Location from 'expo-location';
 import {LocationAccuracy} from 'expo-location';
+import {dispatch} from './redux';
+import {appActions} from '../redux-store/app-reducer/reducer';
+import {AppTheme} from '../layouts/theme';
 
 export const storage = new MMKV();
 
@@ -16,8 +25,24 @@ export const padTo2Digits = (num: number) => {
   return num.toString().padStart(2, '0');
 };
 
+// converdate yyyy-mm-dd
+export function taskDate(date : string | number) {
+  var d = new Date(date),
+  month = '' + (d.getMonth() + 1),
+  day = '' + d.getDate(),
+  year = d.getFullYear();
+
+if (month.length < 2) 
+  month = '0' + month;
+if (day.length < 2) 
+  day = '0' + day;
+
+return [year, month, day].join('-');
+}
+
+
 //format dateTime to hh:pp dd//mm//yyyy
-export const convertDateToString = (dateTime: number) => {
+export const convertDateToString = (dateTime: number | string) => {
   const date = new Date(dateTime);
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -116,7 +141,7 @@ export function convertHoursMinutes(gioPhutGiay: string) {
   return `${gio}:${phut}`;
 }
 //format dateTime to dd//mm//yyyy
-export const convertDate = (time: number) => {
+export const convertDate = (time: number | string) => {
   const date = new Date(time);
   return `${padTo2Digits(date.getDate())}/${padTo2Digits(
     date.getMonth() + 1,
@@ -124,7 +149,7 @@ export const convertDate = (time: number) => {
 };
 
 //format date to hh:mm:ss
-export const formatTime2 = (timeStamp: number) => {
+export const formatTime2 = (timeStamp: number | string) => {
   const date = new Date(timeStamp);
   return [
     padTo2Digits(date.getHours()),
@@ -172,7 +197,7 @@ export const openMaps = async (latitude: number, longitude: number) => {
 
 //format 1000 to 1,000
 export const convertNumber = (value: number) => {
-  return new Intl.NumberFormat().format(value);
+  return new Intl.NumberFormat().format(value).replaceAll(',', '.');
 };
 
 export const removeVietnamesePunctuation = (str: string) => {
@@ -238,14 +263,14 @@ export const handleSearchStaff = (
 export const CheckNetworkState = async () => {
   const state = await NetInfo.fetch();
   if (!state.isConnected) {
-    store.dispatch(
-      AppActions.setError({
+    dispatch(
+      appActions.setError({
         title: null,
         message: 'Không có kết nối mạng',
         viewOnly: true,
       }),
     );
-    store.dispatch(AppActions.setProcessingStatus(false));
+    dispatch(appActions.setProcessingStatus(false));
     return;
   }
 };
@@ -366,6 +391,12 @@ export const Auth_header = (api_key: string, api_secret: string) => {
     'content-type': 'application/json',
   };
 };
+export const FormData_header = (api_key: string, api_secret: string) => {
+  return {
+    Authorization: `Basic ${Base64.btoa(api_key + ':' + api_secret)}`,
+    'content-type': 'multipart/form-data',
+  };
+};
 
 export const handleOpenSettings = async () => {
   if (Platform.OS === 'ios') {
@@ -400,6 +431,147 @@ export const formatCash = (str: string) => {
     .split('')
     .reverse()
     .reduce((prev, next, index) => {
-      return (index % 3 ? next : next + ',') + prev;
+      return (index % 3 ? next : next + '.') + prev;
     });
+};
+
+const guidelineBaseWidth = 350;
+const scale = (size: number) => (shortDimension / guidelineBaseWidth) * size;
+const {width, height} = Dimensions.get('window');
+const [shortDimension] = width < height ? [width, height] : [height, width];
+export const sizeScale = (size: number, factor = 0.5) =>
+  size + (scale(size) - size) * factor;
+
+export const enhance = <T>(arrStyle: Array<T>) => {
+  return StyleSheet.flatten<T>(arrStyle);
+};
+
+export const propsToStyle = <T = any>(arrStyle: Array<T>) => {
+  return arrStyle
+    .filter(
+      (x: any) =>
+        x !== undefined && !Object.values(x).some(v => v === undefined),
+    )
+    .reduce((prev: any, curr: any) => {
+      const firstKey = Object.keys(curr)[0];
+      const firstValue = curr[firstKey];
+
+      if (
+        !['opacity', 'zIndex', 'flex'].includes(firstKey as never) &&
+        typeof firstValue === 'number'
+      ) {
+        curr[firstKey as string] = sizeScale(firstValue);
+      }
+      return {...prev, ...curr};
+    }, {});
+};
+
+export const isNumber = (value: any) => {
+  return typeof value === 'number';
+};
+
+export const dateToDate = (type: string) => {
+  const curr = new Date(); // get current date
+  let firstDateString = '';
+  let lastDateString = '';
+
+  switch (type) {
+    case 'today':
+      firstDateString = `${curr.getFullYear()}-${
+        curr.getMonth() + 1
+      }-${curr.getDate()}`;
+      lastDateString = `${curr.getFullYear()}-${
+        curr.getMonth() + 1
+      }-${curr.getDate()}`;
+      break;
+    case 'weekly':
+      const first = curr.getDate() - curr.getDay() + 1;
+      const last = first + 6;
+      const firstday = new Date(curr.setDate(first));
+      const lastday = new Date(curr.setDate(last));
+      firstDateString = `${firstday.getFullYear()}-${
+        firstday.getMonth() + 1
+      }-${firstday.getDate()}`;
+      lastDateString = `${lastday.getFullYear()}-${
+        lastday.getMonth() + 1
+      }-${lastday.getDate()}`;
+      break;
+    case 'monthly': {
+      let date = new Date(curr.getFullYear(), curr.getMonth() + 1);
+      date.setDate(date.getDate() - 1);
+      const lastDateMonthly = date.getDate();
+      firstDateString = `${curr.getFullYear()}-${curr.getMonth() + 1}-01`;
+      lastDateString = `${curr.getFullYear()}-${
+        curr.getMonth() + 1
+      }-${lastDateMonthly}`;
+      break;
+    }
+    case 'last_month': {
+      let year: number;
+      let month = curr.getMonth() + 1;
+      if (month === 1) {
+        year = curr.getFullYear() - 1;
+        month = 12;
+      } else {
+        year = curr.getFullYear();
+      }
+      let date = new Date(year, month);
+      date.setDate(date.getDate() - 1);
+      const lastDateMonthly = date.getDate();
+      firstDateString = `${year}-${month}-01`;
+      lastDateString = `${year}-${month}-${lastDateMonthly}`;
+      break;
+    }
+    case 'last_month_again': {
+      let year: number;
+      let month = curr.getMonth() - 1;
+      if (month < 1) {
+        year = curr.getFullYear() - 1;
+        month = 11;
+      } else {
+        year = curr.getFullYear();
+      }
+      let date = new Date(year, month);
+      date.setDate(date.getDate() - 1);
+      const lastDateMonthly = date.getDate();
+      firstDateString = `${year}-${month}-01`;
+      lastDateString = `${year}-${month}-${lastDateMonthly}`;
+      break;
+    }
+    default:
+      break;
+  }
+
+  return {
+    from_date: firstDateString,
+    to_date: lastDateString,
+  };
+};
+
+export const getStatusColor = (status: string, color: any) => {
+  let sttText = '';
+  let sttColor = '';
+  let sttBgColor = '';
+  switch (status) {
+    case 'Draft':
+      sttText = 'pending';
+      sttColor = color.warning;
+      sttBgColor = 'rgba(255, 171, 0, 0.08)';
+      break;
+    case 'To Deliver and Bill':
+      sttText = 'pendingDeliverAndBill';
+      sttColor = color.warning;
+      sttBgColor = 'rgba(255, 171, 0, 0.08)';
+      break;
+    default:
+      sttText = status;
+      sttColor = color.warning;
+      sttBgColor = 'rgba(255, 171, 0, 0.08)';
+      break;
+  }
+  return {
+    color: sttColor,
+    text: sttText,
+    bg: sttBgColor,
+  };
 };

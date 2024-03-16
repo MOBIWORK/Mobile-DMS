@@ -15,14 +15,14 @@ import {NavigationProp} from '../../../navigation';
 import {useMMKVString} from 'react-native-mmkv';
 import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
-import {useDispatch} from 'react-redux';
-import {AppActions} from '../../../redux-store';
+import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { useTranslation } from 'react-i18next';
 
 const SearchProduct = ({}) => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const dispatch = useDispatch();
-
+  const {t :getLabel} = useTranslation()
   const [listProductNearly, setListProductNearly] = useMMKVString(
     AppConstant.ListSearchProductNearly,
   );
@@ -48,9 +48,10 @@ const SearchProduct = ({}) => {
                     marginVertical: 6,
                   }}>
                   <Text
-                    onPress={() =>
-                      dispatch(AppActions.setSearchProductValue(item.label))
-                    }
+                    onPress={() => {
+                      dispatch(appActions.setSearchProductValue(item.label));
+                      navigation.goBack();
+                    }}
                     style={{
                       color: colors.text_primary,
                       width: '80%',
@@ -76,10 +77,11 @@ const SearchProduct = ({}) => {
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => {
     //TODO:save to redux
-    dispatch(AppActions.setSearchProductValue(String(e.nativeEvent.text)));
+    dispatch(appActions.setSearchProductValue(String(e.nativeEvent.text)));
     const newListNearly = listProductNearly && JSON.parse(listProductNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
     setListProductNearly(JSON.stringify(newListNearly));
+    navigation.goBack();
   };
 
   const handleItem = (item: any) => {
@@ -93,7 +95,7 @@ const SearchProduct = ({}) => {
 
   useEffect(() => {
     if (!listProductNearly) {
-      setListProductNearly(JSON.stringify(SearchProductNearly));
+      setListProductNearly(JSON.stringify([]));
     }
   }, []);
 
@@ -121,7 +123,7 @@ const SearchProduct = ({}) => {
             width: '90%',
             marginLeft: 12,
           }}
-          placeholder={'Tìm kiếm sản phẩm'}
+          placeholder={getLabel("searchProduct")}
           placeholderTextColor={colors.text_disable}
           icon={ImageAssets.SearchIcon}
           value={searchValue}
@@ -136,12 +138,3 @@ const SearchProduct = ({}) => {
 };
 
 export default SearchProduct;
-
-const SearchProductNearly = [
-  {
-    label: 'Đồng hồ apple watch',
-  },
-  {
-    label: 'Máy tính laptop Macbook air',
-  },
-];

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TextStyle, View, ViewStyle } from "react-native";
 import { Text } from "react-native";
 import { AppAvatar, AppIcons } from "../common"; 
 import { useTheme } from "@react-navigation/native";
@@ -75,20 +75,20 @@ export default ItemNotification;
 const styles = StyleSheet.create({
     flex: {
         flexDirection: "row",
-    },
+    } as ViewStyle,
     title: {
         fontSize: 16,
         fontWeight: "500",
         lineHeight: 24,
-    },
+    } as TextStyle,
     description: {
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "400",
-    },
+    } as TextStyle,
     time: {
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "400",
-    },
+    } as TextStyle,
 });

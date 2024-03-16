@@ -5,9 +5,11 @@ import {
   TouchableWithoutFeedback,
   View,
   ViewStyle,
+  StyleSheet,
 } from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useTheme} from '@react-navigation/native';
+import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
+import { AppTheme, useTheme } from './theme';
+import isEqual from 'react-fast-compare';
 
 const MainLayout: FC<Props> = ({
   children,
@@ -16,47 +18,34 @@ const MainLayout: FC<Props> = ({
   dismissHiddenKeyBoard,
 }) => {
   const insets = useSafeAreaInsets();
-  const {colors} = useTheme();
+
+  const theme = useTheme();
   return (
     <>
       {imgBackground ? (
         <ImageBackground
           source={imgBackground}
           resizeMode={'cover'}
-          style={{flex: 1, justifyContent: 'center'}}>
+          style={styles.root}>
           <HiddenKeyboard>
             <View
-              style={{
-                flex: 1,
-                paddingTop: insets.top,
-                paddingHorizontal: 16,
-                ...style,
-              }}>
+              style={[
+                styles.firstCase(insets),
+                {
+                  ...style,
+                },
+              ]}>
               {children}
             </View>
           </HiddenKeyboard>
         </ImageBackground>
       ) : dismissHiddenKeyBoard ? (
-        <View
-          style={{
-            flex: 1,
-            paddingTop: insets.top,
-            paddingHorizontal: 16,
-            backgroundColor: colors.bg_default,
-            ...style,
-          }}>
+        <View style={[styles.thirdCaseView(theme, insets), {...style}]}>
           {children}
         </View>
       ) : (
         <HiddenKeyboard>
-          <View
-            style={{
-              flex: 1,
-              paddingTop: insets.top,
-              paddingHorizontal: 16,
-              backgroundColor: colors.bg_default,
-              ...style,
-            }}>
+          <View style={[styles.thirdCaseView(theme, insets), {...style}]}>
             {children}
           </View>
         </HiddenKeyboard>
@@ -64,6 +53,23 @@ const MainLayout: FC<Props> = ({
     </>
   );
 };
+const styles = StyleSheet.create({
+  thirdCaseView: (colors: AppTheme, insets: EdgeInsets) => ({
+    flex: 1,
+    paddingTop: insets.top,
+    paddingHorizontal: 16,
+    backgroundColor: colors.colors.bg_default,
+  }),
+  root: {
+    flex: 1,
+    justifyContent: 'center',
+  } as ViewStyle,
+  firstCase: (insets: EdgeInsets) => ({
+    flex: 1,
+    paddingTop: insets.top,
+    paddingHorizontal: 16,
+  }),
+});
 
 const HiddenKeyboard: FC<HiddenKeyboardProp> = ({children}) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -82,4 +88,4 @@ interface Props {
   imgBackground?: any;
 }
 
-export default memo(MainLayout);
+export default memo(MainLayout,isEqual);

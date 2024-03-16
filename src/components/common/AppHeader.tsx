@@ -25,7 +25,7 @@ const AppHeader: FC<AppHeaderProps> = ({
 }) => {
   const {colors} = useTheme();
   return (
-    <View style={[styles.header, style]}>
+    <View style={[styles.header as any, style]}>
       {!hiddenBackButton && (
         <TouchableOpacity
           onPress={() => {
@@ -34,7 +34,7 @@ const AppHeader: FC<AppHeaderProps> = ({
               onBack && onBack();
             });
           }}
-          style={styles.backButton}>
+          style={styles.backButton as any}>
           {backButtonIcon ? (
             backButtonIcon
           ) : (
@@ -48,7 +48,12 @@ const AppHeader: FC<AppHeaderProps> = ({
         </TouchableOpacity>
       )}
       {label && (
-        <Text style={[styles.label, {color: colors.text_primary}, labelStyle]}>
+        <Text
+          style={[
+            styles.label as any,
+            {color: colors.text_primary, flex: rightButton ? 0 : 1},
+            labelStyle,
+          ]}>
           {label}
         </Text>
       )}
@@ -64,7 +69,11 @@ interface AppHeaderProps {
   backButtonStyle?: TextStyle;
   onBack?: () => void;
   hiddenBackButton?: boolean;
-  rightButton?: JSX.Element;
+  rightButton?:
+    | JSX.Element
+    | JSX.Element[]
+    | React.JSX.Element
+    | React.JSX.Element[];
   backButtonIcon?: JSX.Element;
 }
 
@@ -80,10 +89,11 @@ const styles = StyleSheet.create({
     height: 32,
   },
   label: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '500',
-    flex: 1,
+    // flex: 1,
     textAlign: 'center',
+    marginLeft: 17,
   },
   backButton: {
     position: 'relative',

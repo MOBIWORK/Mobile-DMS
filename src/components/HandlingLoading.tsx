@@ -1,11 +1,12 @@
 import React, {FC} from 'react';
-import {useSelector} from 'react-redux';
-import {AppSelector} from '../redux-store';
+
+
 
 import {AppLoading} from './common';
+import { useSelector } from '../config/function';
 
 const HandlingLoading: FC = () => {
-  const isLoading = useSelector(AppSelector.getProcessingStatus);
+  const isLoading = useSelector( state => state.app.isProcessing);
 
   return <>{Boolean(isLoading) && <AppLoading />}</>;
 };

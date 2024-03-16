@@ -1,45 +1,37 @@
-import {
-  legacy_createStore as createStore,
-  applyMiddleware,
-  combineReducers,
-} from 'redux';
+import {configureStore} from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-// import rootSaga from 'sagas';
+import {allReducer} from './all-reducer';
+import {persistStore, persistReducer} from 'redux-persist';
+import {reduxPersistStorage} from '../utils';
+import rootSaga from './root-saga';
 
-import {
-  Creators as AppActions,
-  Types as AppTypes,
-  reducer as AppReducer,
-  Selector as AppSelector,
-  IAppRedux,
-} from './app.redux';
+const persistedReducer = persistReducer(
+  {
+    key: 'root',
+    storage: reduxPersistStorage,
+    whitelist: ['app'],
+    timeout: 1000,
+  },
+  allReducer,
+);
 
-/* ------------- Assemble The Reducers ------------- */
-const appReducer = combineReducers({
-  appRedux: AppReducer,
-});
+const devMode = __DEV__;
+const sagaMiddleware = createSagaMiddleware();
+const middlewares = [sagaMiddleware];
 
-const rootReducer = (state: any, action: any) => {
-  return appReducer(state, action);
+const storeConfig = () => {
+  
+  const store = configureStore({
+    reducer: persistedReducer,
+    devTools: devMode,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({thunk:false,serializableCheck: false}).concat(middlewares),
+    
+    
+  });
+  sagaMiddleware.run(rootSaga);
+  return store;
 };
 
-/* ------------- Redux Configuration ------------- */
-
-/* ------------- Saga Middleware ------------- */
-const sagaMiddleware = createSagaMiddleware();
-
-// Create store
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
-
-// kick off root saga
-// sagaMiddleware.run(rootSaga);
-
-interface IAppReduxState {
-  appRedux: IAppRedux;
-}
-
-/* ------------- Redux Actions ------------- */
-export {AppActions, AppTypes, AppSelector};
-export type {IAppReduxState};
-
-export default store;
+export const store = storeConfig();
+export const persistore = persistStore(store);

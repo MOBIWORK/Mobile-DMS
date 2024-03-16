@@ -1,6 +1,14 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {MainLayout} from '../../layouts';
-import {Image, Linking, Platform, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  Linking,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {
   AppButton,
   AppDialog,
@@ -11,7 +19,6 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
-import {AppActions} from '../../redux-store';
 import {CommonUtils} from '../../utils';
 import {ImageAssets} from '../../assets';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -22,15 +29,16 @@ import {
   KeyAbleProps,
 } from '../../models/types';
 import {AppService} from '../../services';
-import {useDispatch} from 'react-redux';
+
 import {useTranslation} from 'react-i18next';
+import {setProcessingStatus} from '../../redux-store/app-reducer/reducer';
+import {dispatch, getState} from '../../utils/redux';
 
 const SignIn = () => {
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-  const dispatch = useDispatch();
-
+  const app = getState('checkin')
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
   const [isLogOut] = useMMKVBoolean(AppConstant.isLogOut);
   const [organiztion] = useMMKVObject<IResOrganization>(
@@ -61,9 +69,11 @@ const SignIn = () => {
     return !(userName && password);
   }, [userName, password]);
 
+  console.log(app,'app')
+
   const handleLogin = async () => {
     //TODO: call API
-    dispatch(AppActions.setProcessingStatus(true));
+    dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
     const response: KeyAbleProps = await AppService.login(
       {
@@ -86,12 +96,11 @@ const SignIn = () => {
       setPasswordStore(password);
 
       await CommonUtils.dismissKeyboard(() => {
-        // navigation.navigate(ScreenConstant.MAIN_TAB);
-        console.log('go Maintab');
+        navigation.navigate(ScreenConstant.MAIN_TAB);
       });
     }
 
-    dispatch(AppActions.setProcessingStatus(false));
+    dispatch(setProcessingStatus(false));
   };
 
   const Authenticate = async () => {
@@ -102,8 +111,7 @@ const SignIn = () => {
           enable: true,
           type: biometricType,
         });
-        // navigation.navigate(ScreenConstant.MAIN_TAB);
-        console.log('go Maintab');
+        navigation.navigate(ScreenConstant.MAIN_TAB);
       }
     } catch (e) {
       console.log('biometric Error', e);
@@ -112,15 +120,13 @@ const SignIn = () => {
 
   //auto Login
   useEffect(() => {
-    if (CommonUtils.storage.contains(AppConstant.isLogOut)) {
-      if (!isLogOut) {
-        if (biometricObject?.enable) {
-          Authenticate();
-        } else if (userNameStore && passwordStore) {
-          // navigation.navigate(ScreenConstant.MAIN_TAB);
-          console.log('go Maintab');
+    if (!isLogOut) {
+      if (biometricObject?.enable) {
+        Authenticate()
         }
-      }
+      // } else if (userNameStore && passwordStore) {
+      //   navigation.navigate(ScreenConstant.MAIN_TAB);
+      // }
     }
   }, []);
 
@@ -167,7 +173,7 @@ const SignIn = () => {
             isPassword
           />
         </View>
-        <View style={styles.checkBox}>
+        <View style={styles.checkBox as ViewStyle}>
           <Text
             style={{color: colors.primary}}
             onPress={() => navigation.navigate(ScreenConstant.FORGOT_PASSWORD)}>

@@ -5,6 +5,10 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {View} from 'react-native';
+import { SharedValue } from 'react-native-reanimated';
+import { Portal } from './portal';
+import isEqual from 'react-fast-compare';
+
 const AppBottomSheet: FC<AppBottomSheetProps> = ({
   bottomSheetRef,
   snapPointsCustom,
@@ -13,7 +17,14 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   enablePanDownToClose,
   onClose,
   children,
+  contentHeight,
   backgroundColor,
+  handleHeight,
+  onChange,
+  index=-1,
+  onAnimated,
+  ...otherProps
+
 }) => {
   const snapPoints = useMemo(() => ['20%'], []);
   const {colors} = useTheme();
@@ -24,29 +35,38 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         {...props}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
+        
       />
     ),
     [],
   );
   return (
+  <Portal hostName={'Bottom-Sheet'}>
     <BottomSheet
       snapPoints={snapPointsCustom ?? snapPoints}
       onClose={onClose}
       ref={bottomSheetRef}
+      contentHeight={contentHeight}
+      handleHeight={handleHeight}
+      onChange={onChange}
+      onAnimate={onAnimated}
       handleIndicatorStyle={{
         backgroundColor: backgroundColor ?? colors.bg_default,
       }}
       handleStyle={{
+        // display: 'none',
         backgroundColor: backgroundColor ?? colors.bg_default,
         borderTopLeftRadius: 8,
         borderTopRightRadius: 8,
+        // backgroundColor:'red'
       }}
       backdropComponent={hiddenBackdrop ? null : renderBackdrop}
       enablePanDownToClose={enablePanDownToClose ?? true}
       enableHandlePanningGesture={false}
       enableContentPanningGesture={true}
+
       enableOverDrag={false}
-      index={-1}
+      index={index}
       style={{
         // backgroundColor: 'transparent',
         shadowColor: '#000',
@@ -56,9 +76,10 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         },
         shadowOpacity: 0.58,
         shadowRadius: 16.0,
-
+        // backgroundColor:'red',
         elevation: 24,
-      }}>
+      }}
+      {...otherProps}>
       {useBottomSheetView ? (
         <BottomSheetView
           style={{
@@ -78,6 +99,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         </View>
       )}
     </BottomSheet>
+    </Portal>
   );
 };
 
@@ -89,8 +111,13 @@ interface AppBottomSheetProps {
   useBottomSheetView?: boolean;
   onClose?: () => void;
   footer?: boolean;
-  children?: ReactElement;
+  children?: ReactElement | ReactElement[] ;
   backgroundColor?: any;
+  onChange?:(index:number) => void,
+  contentHeight?:number | SharedValue<number>,
+  handleHeight?:number | SharedValue<number>,
+  index?:number,
+  onAnimated?:(fromIndex?:number,toIndex?:number) => void
 }
 
-export default AppBottomSheet;
+export default React.memo(AppBottomSheet,isEqual);

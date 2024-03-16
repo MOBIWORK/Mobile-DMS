@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 33
         targetSdkVersion = 33
-
+        RNMapboxMapsVersion = '11.0.0'
         appCompatVersion 	= "1.4.2"
         googlePlayServicesLocationVersion = "21.0.1"
 
@@ -17,7 +17,19 @@ buildscript {
 //            implementation 'com.mapbox.maps:android:10.6.0'
 //            implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.4.1'
 //        }
+
     }
+    subprojects { subproject ->
+        afterEvaluate{
+            if((subproject.plugins.hasPlugin('android') || subproject.plugins.hasPlugin('android-library'))) {
+                android {
+                    compileSdkVersion rootProject.ext.compileSdkVersion
+                    buildToolsVersion rootProject.ext.buildToolsVersion
+                }
+            }
+        }
+    }
+    
     repositories {
         google()
         mavenCentral()
@@ -72,19 +84,19 @@ allprojects {
         google()
         maven { url 'https://www.jitpack.io' }
 
-//        maven {
-//            url 'https://api.mapbox.com/downloads/v2/releases/maven'
-//            authentication {
-//                basic(BasicAuthentication)
-//            }
-//            credentials {
-//                // Do not change the username below.
-//                // This should always be `mapbox` (not your username).
-//                username = 'mapbox'
-//                // Use the secret token you stored in gradle.properties as the password
-//                password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
-//            }
-//        }
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                // Do not change the username below.
+                // This should always be `mapbox` (not your username).
+                username = 'mapbox'
+                // Use the secret token you stored in gradle.properties as the password
+                password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
+            }
+        }
     }
 }
 

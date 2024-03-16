@@ -7,7 +7,7 @@ import {
   Text,
 } from 'react-native';
 
-import {Colors} from '../../assets';
+import {useTheme} from '@react-navigation/native';
 
 const AppButton: FC<AppButtonProps> = ({
   disabled,
@@ -17,12 +17,22 @@ const AppButton: FC<AppButtonProps> = ({
   children,
   onPress,
 }) => {
+  const {colors} = useTheme();
+  
   return (
     <TouchableOpacity
-      style={[styles.buttonContainer, style, disabled && [styles.bgDisable]]}
+      style={[
+        styles.buttonContainer,
+        {backgroundColor: !disabled ? colors.primary : '#C4CDD5'},
+        style,
+      ]}
       disabled={disabled}
       onPress={onPress}>
-      {children ?? <Text style={[styles.label, styleLabel]}>{label}</Text>}
+      {children ?? (
+        <Text style={[styles.label, {color: colors.bg_default}, styleLabel]}>
+          {label}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };
@@ -36,25 +46,23 @@ export interface AppButtonProps {
   children?: JSX.Element;
 }
 
-export default memo(AppButton);
+export default AppButton;
 
 const styles = StyleSheet.create({
   label: {
-    color: Colors.white,
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '700',
     lineHeight: 24,
-  },
+  } as TextStyle,
   bgDisable: {
     backgroundColor: '#C4CDD5',
     borderWidth: 0,
-  },
+  }as ViewStyle,
   buttonContainer: {
-    backgroundColor: '#C4161C',
-    width: 148,
-    height: 48,
+    paddingHorizontal: 24,
+    paddingVertical: 8,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-  },
+  } as ViewStyle,
 });

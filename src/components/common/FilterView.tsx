@@ -2,9 +2,11 @@ import {Image, Text, TouchableOpacity, ViewStyle} from 'react-native';
 import {ImageAssets} from '../../assets';
 import React, {FC} from 'react';
 import {useTheme} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 
 const FilterView: FC<FilterViewProp> = ({style, label, onPress}) => {
   const {colors} = useTheme();
+  const {t: getLabel} = useTranslation();
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -29,7 +31,7 @@ const FilterView: FC<FilterViewProp> = ({style, label, onPress}) => {
           color: colors.text_primary,
           marginLeft: 8,
         }}>
-        {label ?? 'Bộ lọc khác'}
+        {label ?? getLabel('otherFilters')}
       </Text>
     </TouchableOpacity>
   );
