@@ -10,7 +10,7 @@ import {
 import {MainLayout} from '../../layouts';
 import {useNavigation} from '@react-navigation/native';
 import {AppHeader, AppIcons} from '../../components/common';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import {AppConstant, DataConstant} from '../../const';
 import AppContainer from '../../components/AppContainer';

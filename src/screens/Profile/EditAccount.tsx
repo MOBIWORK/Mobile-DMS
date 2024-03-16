@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {MainLayout} from '../../layouts';
 import {AppHeader, AppInput} from '../../components/common';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../navigation';
+import {NavigationProp, RouterProp} from '../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import {TouchableOpacity, View, Text} from 'react-native';
 import {useDispatch} from 'react-redux';

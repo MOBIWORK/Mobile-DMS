@@ -5,7 +5,7 @@ import {Switch, View} from 'react-native';
 import {useMMKVObject} from 'react-native-mmkv';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {AppConstant, ScreenConstant} from '../../const';
 import {MainLayout} from '../../layouts';
 import {AppHeader} from '../../components/common';

@@ -4,7 +4,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, { useMemo,  useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   Accordion,
   AppHeader,
@@ -12,7 +12,9 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import {useTheme} from '../../../layouts/theme';
-import {RootStackParamList, navigate, pop} from '../../../navigation';
+import {navigate, pop} from '../../../navigation/navigation-service';
+import {RootStackParamList} from '../../../navigation/screen-type';
+
 import {useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {rootStyles} from './style';
@@ -78,6 +80,9 @@ const ListAlbumScore = (props: Props) => {
       setting_score_audit: campaign.setting_score_audit,
     };
   });
+
+  console.log(resultData, 'result data');
+
   const confirmUploadImage = async () => {
     try {
       setAppLoading(true);
@@ -109,7 +114,8 @@ const ListAlbumScore = (props: Props) => {
         <AppHeader
           style={styles.header}
           label="Chấm điểm trưng bày"
-          onBack={() => pop(2)}
+          onBack={() => pop(1)}
+          // hiddenBackButton={true}
         />
         <Block
           direction="row"

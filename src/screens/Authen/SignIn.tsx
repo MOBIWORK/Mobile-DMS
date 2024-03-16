@@ -16,7 +16,7 @@ import {
   AppInput,
 } from '../../components/common';
 import {useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {CommonUtils} from '../../utils';

@@ -21,7 +21,7 @@ const ListProgram = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const [listSelect, setListSelect] = React.useState<any[]>([]);
-  const [listData, setListData] = React.useState<any>([]);
+
   const handleSelectItem = (item: string, list?: any) => {
     if (listSelect.includes(item)) {
       // If the data is already selected, remove it from the selectedData array
@@ -33,7 +33,7 @@ const ListProgram = (props: Props) => {
       setListSelect(prevSelected => [...prevSelected, item]);
     }
   };
-  const selectedProgram:any[] = useSelector(
+  const selectedProgram: any[] = useSelector(
     state => state.checkin.selectedProgram,
     shallowEqual,
   );
@@ -63,26 +63,29 @@ const ListProgram = (props: Props) => {
   }, [listSelect]);
 
   const handleConfirmSelect = () => {
-    const existingProgramNames = selectedProgram && selectedProgram.length > 0
-      ? selectedProgram.map((program: any) => program.campaign_name)
-      : [];
-  
+    const existingProgramNames =
+      selectedProgram && selectedProgram.length > 0
+        ? selectedProgram.map((program: any) => program.campaign_name)
+        : [];
+
     // Filter out programs from props.data that are already in selectedProgram
-    const newProgramsToAdd = props.data.filter((item: any) =>
-      listSelect.includes(item.campaign_name) && !existingProgramNames.includes(item.campaign_name)
+    const newProgramsToAdd = props.data.filter(
+      (item: any) =>
+        listSelect.includes(item.campaign_name) &&
+        !existingProgramNames.includes(item.campaign_name),
     );
-  
+
     // Merge existing selected programs with new ones
     const updatedSelectedProgram = Array.isArray(selectedProgram)
-    ? [...selectedProgram, ...newProgramsToAdd]
-    : [...newProgramsToAdd];
-  
+      ? [...selectedProgram, ...newProgramsToAdd]
+      : [...newProgramsToAdd];
+
     console.log(updatedSelectedProgram, 'updated selected program');
     dispatch(checkinActions.setSelectedProgram(updatedSelectedProgram));
     props.onPressConfirm(listSelect);
+    setListSelect([]);
   };
-  
-  
+
   return (
     <Block>
       <Block
@@ -99,8 +102,13 @@ const ListProgram = (props: Props) => {
         <Text fontSize={18} fontWeight="500">
           Chương trinh
         </Text>
-        <TouchableOpacity onPress={handleConfirmSelect}>
-          <Text fontSize={16} fontWeight="500" colorTheme="action">
+        <TouchableOpacity
+          onPress={handleConfirmSelect}
+          disabled={listSelect.length > 0 ? false : true}>
+          <Text
+            fontSize={16}
+            fontWeight="500"
+            colorTheme={listSelect.length > 0 ? 'action' : 'bg_disable'}>
             Xác nhận
           </Text>
         </TouchableOpacity>
@@ -170,4 +178,5 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'space-around',
       alignItems: 'center',
     } as ViewStyle,
+    handleConfirm: (length: number) => ({} as ViewStyle),
   });

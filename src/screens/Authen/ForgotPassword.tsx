@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import {
   AppButton,

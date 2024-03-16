@@ -32,7 +32,7 @@ import {
 import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {IDataCustomer, KeyAbleProps} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';

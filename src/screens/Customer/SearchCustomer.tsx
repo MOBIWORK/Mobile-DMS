@@ -10,7 +10,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useMMKVString} from 'react-native-mmkv';
 import {dispatch} from '../../utils/redux';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {AppConstant} from '../../const';
 import {AppText as Text, Block, SvgIcon} from '../../components/common';
 import {MainLayout} from '../../layouts';

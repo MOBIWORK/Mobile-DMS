@@ -13,7 +13,7 @@ import {useTranslation} from 'react-i18next';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {NavigationContainerRef} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {RootStackParamList} from '.';
+import {RootStackParamList} from './screen-type';
 import {ScreenConstant} from '../const';
 
 import {AppTheme, useTheme} from '../layouts/theme';

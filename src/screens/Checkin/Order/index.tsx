@@ -13,7 +13,7 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {ImageAssets} from '../../../assets';
 import {Image} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {ApiConstant, ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import {useSelector} from '../../../config/function';
