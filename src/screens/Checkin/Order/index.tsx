@@ -50,7 +50,9 @@ const CheckinOrder = () => {
           checkin_id: dataCheckin.checkin_id
         });
       if (status === ApiConstant.STT_OK) {
-        dispatch(  checkinActions.setData({typeData: 'detailOrder', data: data.result}));
+        if(Object.keys(data.result).length > 0) {
+          dispatch(  checkinActions.setData({typeData: 'detailOrder', data: data.result}));
+        }
       }
     }
     if (type == 'RETURN_ORDER') {
@@ -59,7 +61,10 @@ const CheckinOrder = () => {
           checkin_id: dataCheckin.checkin_id
         });
       if (status === ApiConstant.STT_OK) {
-        dispatch(  checkinActions.setData({typeData: 'returnOrder', data: data.result}));
+        if(Object.keys(data.result).length > 0) {
+          dispatch(  checkinActions.setData({typeData: 'returnOrder', data: data.result}));
+        }
+
       }
     }
   };
