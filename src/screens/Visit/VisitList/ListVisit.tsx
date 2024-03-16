@@ -1,5 +1,4 @@
 import React, {
-  FC,
   memo,
   useCallback,
   useEffect,
@@ -96,8 +95,7 @@ const ListVisit = () => {
   const dispatch = useDispatch();
 
   //refresh data
-  const [isFetching, setFetching] = useState<boolean>(false);
-  const [filterData, setFilterData] = useState<IListVisitParams>({});
+  const filterDataRef = useRef<IListVisitParams>({});
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -144,7 +142,7 @@ const ListVisit = () => {
   const onRefreshData = useCallback(async () => {
     try {
       setLoading(true);
-      dispatch(customerActions.onGetCustomerVisit());
+      await getCustomer(filterDataRef.current);
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
@@ -266,7 +264,9 @@ const ListVisit = () => {
                 style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
                 data={listCustomer}
-                keyExtractor={item => item.customer_code}
+                keyExtractor={(item, index) =>
+                  `${item.customer_code} - ${index}`
+                }
                 decelerationRate={'fast'}
                 // bounces={false}
                 initialNumToRender={5}
@@ -278,13 +278,7 @@ const ListVisit = () => {
                 }
                 maxToRenderPerBatch={2}
                 updateCellsBatchingPeriod={20}
-                // onRefresh={()}
                 contentContainerStyle={{rowGap: 16}}
-                // refreshing={isFetching}
-                // onRefresh={() => {
-                //   setFetching(true);
-                //   getCustomer(filterData);
-                // }}
                 renderItem={({item}) => (
                   <VisitItem
                     item={item}
@@ -403,7 +397,6 @@ const ListVisit = () => {
         dispatch(customerActions.setCustomerVisit(data));
       }
     });
-    setFetching(false);
   };
 
   const getCustomerRoute = async () => {
@@ -431,42 +424,60 @@ const ListVisit = () => {
     setLoading(false);
   };
 
+  const handleReset = async () => {
+    try {
+      setLoading(true);
+      await getCustomer();
+    } catch (e) {
+      //
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleFilterData = async () => {
     bottomSheetRef.current && bottomSheetRef.current.close();
-    if (Object.keys(filterParams).length > 0) {
-      const birthDayObj: any =
-        filterParams?.birthDay && filterParams.birthDay === getLabel('today')
-          ? CommonUtils.dateToDate('today')
-          : filterParams.birthDay === getLabel('thisWeek')
-          ? CommonUtils.dateToDate('weekly')
-          : filterParams.birthDay === getLabel('thisMonth')
-          ? CommonUtils.dateToDate('monthly')
-          : undefined;
-      const params: IListVisitParams = {
-        router: filterParams?.router && filterParams.router.channel_code,
-        // status:
-        //   filterParams?.status && filterParams.status === getLabel('visited')
-        //     ? 'active'
-        //     : 'lock',
-        order_by:
-          filterParams?.order_by && filterParams.order_by === 'A -> Z'
-            ? 'asc'
-            : 'desc',
-        birthday_from: birthDayObj
-          ? new Date(birthDayObj.from_date).getTime() / 1000
-          : '',
-        birthday_to: birthDayObj
-          ? new Date(birthDayObj.to_date).getTime() / 1000
-          : '',
-        customer_group: filterParams?.customer_group
-          ? filterParams.customer_group
-          : '',
-        customer_type: filterParams?.customer_type
-          ? filterParams.customer_type
-          : '',
-      };
-      setFilterData(params);
-      await getCustomer(params);
+    try {
+      setLoading(true);
+      if (Object.keys(filterParams).length > 0) {
+        const birthDayObj: any =
+          filterParams?.birthDay && filterParams.birthDay === getLabel('today')
+            ? CommonUtils.dateToDate('today')
+            : filterParams.birthDay === getLabel('thisWeek')
+            ? CommonUtils.dateToDate('weekly')
+            : filterParams.birthDay === getLabel('thisMonth')
+            ? CommonUtils.dateToDate('monthly')
+            : undefined;
+        const params: IListVisitParams = {
+          router: filterParams?.router && filterParams.router.channel_code,
+          // status:
+          //   filterParams?.status && filterParams.status === getLabel('visited')
+          //     ? 'active'
+          //     : 'lock',
+          order_by:
+            filterParams?.order_by && filterParams.order_by === 'A -> Z'
+              ? 'asc'
+              : 'desc',
+          birthday_from: birthDayObj
+            ? new Date(birthDayObj.from_date).getTime() / 1000
+            : '',
+          birthday_to: birthDayObj
+            ? new Date(birthDayObj.to_date).getTime() / 1000
+            : '',
+          customer_group: filterParams?.customer_group
+            ? filterParams.customer_group
+            : '',
+          customer_type: filterParams?.customer_type
+            ? filterParams.customer_type
+            : '',
+        };
+        filterDataRef.current = params;
+        await getCustomer(params);
+      }
+    } catch (e) {
+      //
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -504,6 +515,7 @@ const ListVisit = () => {
         channelData={lisCustomerRoute}
         customerGroupData={customerType}
         handleFilter={handleFilterData}
+        handleReset={handleReset}
       />
       <AppBottomSheet bottomSheetRef={distanceRef}>
         <FilterListComponent

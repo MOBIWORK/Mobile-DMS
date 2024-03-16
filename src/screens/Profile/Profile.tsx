@@ -22,6 +22,8 @@ import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 import {noteActions} from '../../redux-store/note-reducer/reducer';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {orderAction} from '../../redux-store/order-reducer/reducer';
+import {CommonUtils} from '../../utils';
+import {AppConstant} from '../../const';
 
 const Profile = () => {
   const theme = useTheme();
@@ -45,11 +47,12 @@ const Profile = () => {
     dispatch(noteActions.setLogoutNote());
     dispatch(customerActions.resetDataCustomer());
     dispatch(orderAction.setLogoutData());
+    CommonUtils.storage.set(AppConstant.isLogOut, true);
     navigation.reset({
       index: 0,
       routes: [
         {
-          name: 'SIGN_IN',
+          name: 'UNAUTHORIZED',
         },
       ],
     });

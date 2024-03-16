@@ -1,8 +1,8 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {AuthorizeParamsList} from './screen-type';
-import {ScreenConstant} from '../const';
+import {AppConstant, ScreenConstant} from '../const';
 import {
   Home,
   WidgetFavouriteScreen,
@@ -51,11 +51,23 @@ import {
   NotifySetting,
 } from '../screens';
 import MainTab from './MainTab';
+import {CommonUtils} from '../utils';
 
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
+
+  useEffect(() => {
+    CommonUtils.storage.set(AppConstant.FirstLogin, true);
+  }, []);
+
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        gestureEnabled: false,
+        animation: 'slide_from_left',
+      }}
+      initialRouteName={'MAIN_TAB'}>
       <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
       <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
       <Stack.Screen
