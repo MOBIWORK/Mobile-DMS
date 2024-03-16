@@ -17,7 +17,7 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
 import StatisticalItem from './StatisticalItem';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp} from '../../../navigation/screen-type';
 import {ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
@@ -266,7 +266,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   );
 };
 interface VisitItemProps {
-  item: VisitListItemType;
+  item: any;
   otherInfo: IVisitRouteDetail | undefined;
 }
 

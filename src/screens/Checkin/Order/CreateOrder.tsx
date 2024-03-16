@@ -9,7 +9,7 @@ import {
     AppInput,
 } from '../../../components/common';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { NavigationProp, RouterProp } from '../../../navigation';
+import { NavigationProp, RouterProp } from '../../../navigation/screen-type';
 import {
     ImageStyle,
     Pressable,

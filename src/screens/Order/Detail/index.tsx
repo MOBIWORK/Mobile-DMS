@@ -6,7 +6,7 @@ import TabOverview from './TabOverview';
 import TabComment from './TabComment';
 import { AppBottomSheet, AppHeader, AppIcons } from '../../../components/common';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { NavigationProp, RouterProp } from '../../../navigation';
+import { NavigationProp, RouterProp } from '../../../navigation/screen-type';
 import { useTheme } from '@react-navigation/native';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native';

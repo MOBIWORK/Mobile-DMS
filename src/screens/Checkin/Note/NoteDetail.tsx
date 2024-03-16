@@ -1,7 +1,7 @@
 import React from 'react';
 import {AppCustomHeader} from '../../../components/common';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {MainLayout} from '../../../layouts';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ImageAssets} from '../../../assets';

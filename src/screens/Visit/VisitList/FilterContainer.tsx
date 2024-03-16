@@ -29,6 +29,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
   channelData,
   customerGroupData,
   handleFilter,
+  handleReset,
 }) => {
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
@@ -131,7 +132,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
             />
             <Item
               label={getLabel('sortByName')}
-              value={filterValue?.orderby ?? 'A -> Z'}
+              value={filterValue?.order_by ?? 'Z -> A'}
               type={AppConstant.VisitFilterType.name}
             />
             <Item
@@ -167,6 +168,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
             onPress={() => {
               setFilter({});
               bottomSheetRef.current?.close();
+              handleReset();
             }}
           />
           <AppButton
@@ -205,6 +207,7 @@ interface FilterContainerProps {
   channelData: ListCustomerRoute[];
   customerGroupData: ListCustomerType[];
   handleFilter: () => void;
+  handleReset: () => void;
 }
 interface ItemProps {
   label: string;

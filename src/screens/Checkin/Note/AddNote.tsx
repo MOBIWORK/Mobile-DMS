@@ -11,7 +11,7 @@ import {
 } from '../../../components/common';
 import {TextInput} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp} from '../../../navigation/screen-type';
 import {Pressable, Text, TouchableOpacity, View} from 'react-native';
 import {KeyAbleProps, StaffType} from '../../../models/types';
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';

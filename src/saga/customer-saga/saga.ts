@@ -21,7 +21,7 @@ import {call, put} from 'typed-redux-saga';
 
 import {CustomerService} from '../../services';
 import {ApiConstant, ScreenConstant} from '../../const';
-import {navigate} from '../../navigation';
+import {navigate} from '../../navigation/navigation-service';
 
 export type ResponseGenerator = {
   config?: any;

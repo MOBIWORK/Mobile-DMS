@@ -4,7 +4,7 @@ import {ScreenConstant} from '../const';
 import {Customer, Home, Visits, WidgetScreen} from '../screens';
 import BottomTabDisplay from './BottomTabDisplay';
 import {AppState, AppStateStatus} from 'react-native';
-import {navigate} from './index';
+import {navigate} from './navigation-service';
 import {CheckinData} from '../services/appService';
 import {useSelector} from '../config/function';
 import {shallowEqual} from 'react-redux';

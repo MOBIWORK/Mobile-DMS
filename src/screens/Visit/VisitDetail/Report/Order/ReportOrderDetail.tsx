@@ -12,7 +12,7 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../../../navigation';
+import {NavigationProp, RouterProp} from '../../../../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import {ImageAssets} from '../../../../../assets';
 import {

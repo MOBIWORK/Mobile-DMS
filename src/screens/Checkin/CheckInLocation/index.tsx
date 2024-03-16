@@ -6,7 +6,7 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {dispatch, NavigationProp, RouterProp} from '../../../navigation';
+import { NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
@@ -35,6 +35,7 @@ import {IUpdateAddress} from '../../../services/checkInService';
 import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import { dispatch } from '../../../utils/redux';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -146,13 +147,20 @@ const CheckInLocation = () => {
   };
 
   useLayoutEffect(() => {
-    setLocation({
-      // @ts-ignore
-      coords: {
-        longitude: customer_location.long,
-        latitude: customer_location.lat,
-      },
-    });
+    if (customer_location) {
+      setLocation({
+        // @ts-ignore
+        coords: {
+          longitude: customer_location.long,
+          latitude: customer_location.lat,
+        },
+      });
+    } else {
+      BackgroundGeolocation.getCurrentPosition({
+        samples: 1,
+        timeout: 3,
+      }).then(new_location => setLocation(new_location));
+    }
   }, []);
 
   return (
@@ -175,7 +183,7 @@ const CheckInLocation = () => {
           scaleBarEnabled={false}
           styleURL={Mapbox.StyleURL.Street}
           logoEnabled={false}
-          style={{flex: 1, zIndex: 10, position: 'absolute'}}
+          style={{flex: 1}}
           onPress={feature =>
             handleMarkerMap(
               // @ts-ignore

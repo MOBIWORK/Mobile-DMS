@@ -6,7 +6,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Image } from 'react-native';
 import { ImageAssets } from '../../../assets';
 import { Button, IconButton, TextInput } from 'react-native-paper';
-import { NavigationProp } from '../../../navigation';
+import { NavigationProp } from '../../../navigation/screen-type';
 import { ICON_TYPE } from '../../../const/app.const';
 import SwipeableItem from './components/SwipeableItem';
 import { ApiConstant, AppConstant, ScreenConstant } from '../../../const';

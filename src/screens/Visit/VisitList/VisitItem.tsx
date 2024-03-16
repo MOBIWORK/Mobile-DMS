@@ -12,7 +12,7 @@ import {
 import {ImageAssets} from '../../../assets';
 import {AppButton} from '../../../components/common';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {navigate} from '../../../navigation';
+import {navigate} from '../../../navigation/navigation-service';
 import {ScreenConstant} from '../../../const';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorBoundary';

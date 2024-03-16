@@ -3,7 +3,7 @@ import {MainLayout} from '../../layouts';
 import {View} from 'react-native';
 import {AppButton, AppInput, AuthenHeader} from '../../components/common';
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import {ScreenConstant} from '../../const';
 const ChangePassword = () => {

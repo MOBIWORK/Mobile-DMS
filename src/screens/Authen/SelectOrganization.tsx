@@ -24,7 +24,7 @@ import {
 } from '../../const';
 import BottomSheet from '@gorhom/bottom-sheet';
 import LanguageBottomSheet from '../../components/common/LanguageBottomSheet';
-import {NavigationProp, RouterProp} from '../../navigation';
+import {NavigationProp, RouterProp} from '../../navigation/screen-type';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {CommonUtils} from '../../utils';
 

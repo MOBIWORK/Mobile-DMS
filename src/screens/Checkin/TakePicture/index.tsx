@@ -27,7 +27,7 @@ import {IAlbumImage, ImageCheckIn} from '../../../models/types';
 import {ImageAssets} from '../../../assets';
 import {AppConstant} from '../../../const';
 import {CameraUtils} from '../../../utils';
-import {RouterProp} from '../../../navigation';
+import {RouterProp} from '../../../navigation/screen-type';
 import {CheckinData} from '../../../services/appService';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
