@@ -12,7 +12,7 @@ import {Button} from 'react-native-paper';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {ImageAssets} from '../../../assets';
 import {Image} from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../../navigation';
 import {ApiConstant, ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
@@ -42,6 +42,7 @@ const CheckinOrder = () => {
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );
+  const isForcus = useIsFocused();
 
   const fetchDataOrder = async () => {
     if (type == 'ORDER') {
@@ -331,7 +332,7 @@ const CheckinOrder = () => {
             </Text>
           </View>
           <AppButton
-            label={getLabel('orderCreated')}
+            label={getLabel('completed')}
             style={styles.button}
             onPress={() => completeCheckin()}
           />
@@ -350,8 +351,10 @@ const CheckinOrder = () => {
   };
 
   useLayoutEffect(() => {
-    fetchDataOrder();
-  }, []);
+    if(isForcus){
+      fetchDataOrder();
+    }
+  }, [isForcus]);
 
   return (
     <MainLayout style={styles.layout}>

@@ -560,12 +560,12 @@ const CreateOrder = () => {
     };
 
     const isDisabled = useMemo(()=> {
-        if(!warehouse || warehouse?.value ==="" || vat.label === "") {
+        if(!warehouse || warehouse?.value ==="") {
             return true
         } else {
             return false
         }
-    },[warehouse,vat])
+    },[warehouse])
 
     const onCreatedOrder = async () => {
         let status :any = 0
