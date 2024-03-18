@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
 import {MainLayout} from '../../layouts';
-import {Text} from 'react-native';
+import {Text,TouchableOpacity} from 'react-native';
 import AppContainer from '../../components/AppContainer';
 import {AppHeader} from '../../components/common';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {NavigationProp} from '../../navigation/screen-type';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import {AppTheme, useTheme} from '../../layouts/theme';
 

@@ -45,6 +45,7 @@ import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 import isEqual from 'react-fast-compare';
+import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 
 export type IValueType = {
   customerType: string;
@@ -96,15 +97,13 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
-  const [customerData, setCustomerData] = React.useState<IDataCustomers[]>(
-    listCustomer ? listCustomer : [],
-  );
+  const customerData = React.useRef<IDataCustomers[]>(listCustomer);
 
   const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
-
+  const mounted = useRef<boolean>(true);
   const snapPoints = useMemo(() => ['100%'], []);
   const totalPage = useRef<number>(
     Math.ceil(listCustomerResult.total / listCustomerResult.page_size),
@@ -117,60 +116,71 @@ const Customer = () => {
     bottomRef2.current?.snapToIndex(0);
   }, [bottomRef2.current]);
 
-  console.log(customerData.length,'b')
+  // console.log(listCustomer,'b')
+  const sortedData = useCallback(
+    (filteredData: IDataCustomers[]) => {
+      return filteredData.slice().sort((a, b) => {
+        const locationA: LocationProps = JSON.parse(
+          a.customer_location_primary,
+        );
+        const locationB: LocationProps = JSON.parse(
+          b.customer_location_primary,
+        );
+        const distance1 = calculateDistance(
+          location.coords.latitude,
+          location.coords.longitude,
+          locationA.lat,
+          locationA.long,
+        );
+        const distance2 = calculateDistance(
+          location.coords.latitude,
+          location.coords.longitude,
+          locationB.lat,
+          locationB.long,
+        );
+        return value.first === getLabel('nearest')
+          ? distance1 - distance2
+          : distance2 - distance1;
+      });
+    },
+    [listCustomer],
+  );
+
+  const onRefreshData = useCallback(async () => {
+    try {
+      dispatch(onLoadApp());
+      dispatch(customerActions.onGetCustomer());
+    } catch (er) {
+      console.log('errDispatch: ', er);
+    } finally {
+      dispatch(onLoadAppEnd());
+    }
+  }, [dispatch]);
 
   React.useEffect(() => {
-    let mounted: boolean;
-    mounted = true;
-    handleBackgroundLocation();
-    // let newData: IDataCustomers[] =
-    //   listCustomer?.length > 0 ? [...listCustomer] : [];
+    if (mounted.current === true) {
+      handleBackgroundLocation();
+      if (listCustomer && listCustomer.length > 0) {
+        const filteredData = listCustomer.filter(
+          item => item.customer_location_primary != null,
+        );
 
-    const getDataType = () => {
-      dispatch(customerActions.getCustomerType());
-    };
+        customerData.current = sortedData(filteredData);
+      } else {
+        dispatch(customerActions.onGetCustomer());
+        onRefreshData();
+      }
 
-    getDataType();
-    if (listCustomer && listCustomer.length > 0) {
-      const filteredData = listCustomer.filter(
-        item => item.customer_location_primary != null,
-      );
-      const sortedData = () => {
-        return filteredData.slice().sort((a, b) => {
-          const locationA: LocationProps = JSON.parse(
-            a.customer_location_primary,
-          );
-          const locationB: LocationProps = JSON.parse(
-            b.customer_location_primary,
-          );
-          const distance1 = calculateDistance(
-            location.coords.latitude,
-            location.coords.longitude,
-            locationA.lat,
-            locationA.long,
-          );
-          const distance2 = calculateDistance(
-            location.coords.latitude,
-            location.coords.longitude,
-            locationB.lat,
-            locationB.long,
-          );
-          return value.first === getLabel('nearest')
-            ? distance1 - distance2
-            : distance2 - distance1;
-        });
+      const getDataType = () => {
+        dispatch(customerActions.getCustomerType());
       };
-
-      setCustomerData(sortedData);
-    } else {
-      dispatch(customerActions.onGetCustomer());
+      getDataType();
     }
-    mounted = false;
 
     return () => {
-      mounted = false;
+      mounted.current = false;
     };
-  }, [dispatch,value.first]);
+  }, [listCustomer]);
 
   const handleApplyFilter = useCallback(() => {
     if (
@@ -187,7 +197,7 @@ const Customer = () => {
       const newData = listCustomer?.filter(
         item => item.customer_type === valueFilter.customerType,
       );
-      setCustomerData(newData);
+      customerData.current = newData;
       bottomRef2.current?.close();
     } else if (
       valueFilter.customerGroupType !== getLabel('all') &&
@@ -199,7 +209,7 @@ const Customer = () => {
           item.customer_group === valueFilter.customerGroupType &&
           item.customer_type === valueFilter.customerType,
       );
-      setCustomerData(newData);
+      customerData.current = newData;
     } else if (
       valueFilter.customerGroupType !== getLabel('all') &&
       valueFilter.customerType === getLabel('all') &&
@@ -208,7 +218,7 @@ const Customer = () => {
       const newData = listCustomer?.filter(
         item => item.customer_group === valueFilter.customerGroupType,
       );
-      setCustomerData(newData);
+      customerData.current = newData;
       bottomRef2.current?.close();
     } else {
       console.log('fuck ?');
@@ -223,7 +233,7 @@ const Customer = () => {
     });
   };
 
-  const listFooter = useMemo(() => {
+  const listFooter = () => {
     return (
       <Block
         justifyContent="center"
@@ -233,18 +243,18 @@ const Customer = () => {
         <ActivityIndicator size={'small'} color={theme.colors.primary} />
       </Block>
     );
-  }, [dispatch]);
+  };
 
   const onEndReachedThreshold = useCallback(() => {
     if (page <= totalPage.current) {
-      dispatch(customerActions.getCustomerNewPage(page + 1));
+      // dispatch(customerActions.getCustomerNewPage(page + 1));
     } else {
       return null;
     }
     // dispatch(customerActions.getCustomerNewPage(1));
-  }, [listCustomerResult]);
+  }, [listCustomerResult, dispatch]);
 
-  const renderBottomView = () => {
+  const renderBottomView = React.useCallback(() => {
     return (
       <MainLayout>
         <AppHeader
@@ -330,11 +340,11 @@ const Customer = () => {
         </View>
       </MainLayout>
     );
-  };
+  }, []);
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
-      <Block paddingHorizontal={16}>
+      <Block paddingHorizontal={16} block>
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity
@@ -353,18 +363,19 @@ const Customer = () => {
         </View>
 
         <Text style={styles.containCustomer}>
-          <Text style={styles.numberCustomer}>{customerData.length} </Text>
+          <Text style={styles.numberCustomer}>
+            {customerData.current.length}{' '}
+          </Text>
           {getLabel('customer')}
         </Text>
-        {appLoading ? (
-          <SkeletonLoading />
-        ) : (
-          <ListCard
-            data={customerData}
-            listFooter={listFooter}
-            onLoadData={onEndReachedThreshold}
-          />
-        )}
+
+        <ListCard
+          data={customerData.current}
+          loading={appLoading!}
+          onRefresh={onRefreshData}
+          listFooter={listFooter}
+          onLoadData={onEndReachedThreshold}
+        />
       </Block>
 
       <AppBottomSheet

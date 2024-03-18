@@ -72,7 +72,10 @@ const TakePictureScore = () => {
     state => state.checkin.listImageSelect,
     shallowEqual,
   );
-
+  const listImageProgram = useSelector(
+    state => state.checkin.listProgramImage,
+    shallowEqual,
+  );
   useDisableBackHandler(true);
   // console.log()
 
@@ -84,8 +87,8 @@ const TakePictureScore = () => {
         item,
         image: selectedImages,
       }));
-      // console.log(newArray, 'bb');
-      dispatch(checkinActions.setListImageProgram(newArray));
+      // console.log(newArray[0].image, 'new array');
+      dispatch(checkinActions.setListImageProgram([...newArray]));
 
       try {
         setLoading(true);
@@ -117,7 +120,7 @@ const TakePictureScore = () => {
           await new Promise(resolve => setTimeout(resolve, 1000));
 
           // Dispatch action to post image score
-          await dispatch(checkinActions.postImageScore(formData));
+          await dispatch(checkinActions.postImageScore(formData,listProgram));
         }
       } catch (err) {
         console.log('Error uploading images:', err);
@@ -143,7 +146,7 @@ const TakePictureScore = () => {
   //   });
   // }, [selectedImages]);
   const handleCameraPicture = React.useCallback(async () => {
-    await CameraUtils.openImagePickerCamera((img, base64) => {
+    await CameraUtils.openImagePicker((img, base64) => {
       setAlbumImage(prevImages => {
         if (prevImages.length === 0) {
           // If no images exist, add the new image as the initial picture
@@ -300,7 +303,7 @@ const TakePictureScore = () => {
           colorTheme="white"
           padding={80}>
           <ActivityIndicator size="large" color={theme.colors.action} />
-          <Text>Đang tải ảnh, từ từ</Text>
+          <Text  >Đang tải ảnh</Text>
         </Block>
       </Modal>
       <Modal visible={showModal} style={styles.modalError}>

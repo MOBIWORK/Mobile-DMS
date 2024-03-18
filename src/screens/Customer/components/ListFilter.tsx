@@ -5,6 +5,7 @@ import {
   View,
   TextStyle,
   ViewStyle,
+  FlatList
 } from 'react-native';
 import React from 'react';
 import {AppIcons} from '../../../components/common';
@@ -15,7 +16,6 @@ import {IValueType} from '../Customer';
 import {useTheme} from '../../../layouts/theme';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {ListCustomerType} from '../../../models/types';
-import {FlatList} from 'react-native-gesture-handler';
 import {useTranslation} from 'react-i18next';
 
 type Props = {

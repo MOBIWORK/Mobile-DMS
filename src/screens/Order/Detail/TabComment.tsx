@@ -1,10 +1,15 @@
 import React from 'react';
-import {StyleSheet, TextInput, View, ViewStyle} from 'react-native';
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  ViewStyle,
+  TouchableOpacity,
+} from 'react-native';
 import {MainLayout} from '../../../layouts';
 import AppContainer from '../../../components/AppContainer';
 import {AppAvatar, AppIcons} from '../../../components/common';
 import {Text} from 'react-native-paper';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ICON_TYPE} from '../../../const/app.const';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {TextStyle} from 'react-native';

@@ -11,7 +11,6 @@ import {
   UIManager,
 } from 'react-native';
 
-import 'react-native-gesture-handler';
 import './src/language';
 
 import {Provider} from 'react-redux';
@@ -43,6 +42,8 @@ if (!isIos) {
   }
 }
 function App(): JSX.Element {
+  const [enable, setEnable] = React.useState<boolean>(false);
+
   useEffect(() => {
     LogBox.ignoreAllLogs();
     const backHandler = BackHandler.addEventListener(
@@ -138,33 +139,11 @@ function App(): JSX.Element {
       // Activity Recognition
       stopTimeout: 5,
       // Application config
-      debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
-      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+      debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
       stopOnTerminate: true, // <-- Allow the background-service to continue tracking when user closes the app.
       startOnBoot: false, // <-- Auto start tracking when device is powered-up.
-      // HTTP / SQLite config
-      // url: 'https://api.ekgis.vn/tracking/locationHistory/position/64dae1bf20309bc61366a2b1?api_key=dCceCixTANM4zeayfXslpTNTcbONf9aBsDCFWxIs',
-      batchSync: true, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
-      autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
-      autoSyncThreshold: 5,
-      maxBatchSize: 50,
-      locationsOrderDirection: 'DESC',
-      maxDaysToPersist: 14,
-      // headers: {
-      //   // <-- Optional HTTP headers
-      //   "X-FOO": "bar",
-      // },
-      // params: {
-      //   // <-- Optional HTTP params
-      //   auth_token: "maybe_your_server_authenticates_via_token_YES?",
-      // },
-      locationAuthorizationRequest: 'Any',
     }).then(state => {
-      console.log(
-        '- BackgroundGeolocation is configured and ready: ',
-        state.enabled,
-      );
-      BackgroundGeolocation.start();
+      setEnable(state.enabled);
     });
 
     return () => {
@@ -178,6 +157,14 @@ function App(): JSX.Element {
       onHttp.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (enable) {
+      BackgroundGeolocation.start();
+    } else {
+      BackgroundGeolocation.stop();
+    }
+  }, [enable]);
 
   return (
     <SafeAreaProvider>

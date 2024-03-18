@@ -9,6 +9,7 @@ import {appActions, onLoadApp, onLoadAppEnd, setError} from '../../redux-store/a
 import {Platform} from 'react-native';
 import {showSnack} from '../../components/common';
 import {pop} from '../../navigation/navigation-service';
+import { getState } from '../../utils/redux';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
@@ -73,13 +74,13 @@ export function* getListProgramData(action: PayloadAction) {
 export function* postImageScore(action: PayloadAction) {
   if (checkinActions.postImageScore.match(action)) {
     try {
-      console.log(action.payload, 'payload send');
+      const {listProgramImage} = getState('checkin')
       const response: ResponseGenerator = yield call(
         CheckinService.postImagePictureScore,
-        action.payload as any,
+        action.payload.data as any,
       );
       console.log(
-        response,
+        listProgramImage[0].image,
         Platform.OS === 'android' ? 'log android' : 'log ios',
       );
       if (

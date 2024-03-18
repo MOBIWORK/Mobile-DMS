@@ -55,7 +55,7 @@ import MainTab from './MainTab';
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
       <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
       <Stack.Screen

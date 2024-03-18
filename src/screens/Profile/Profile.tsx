@@ -11,8 +11,8 @@ import {
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {dispatch} from '../../utils/redux';
 
-import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation/screen-type';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../navigation/screen-type';
 import ContentList from './components/ContentList';
 import {ContentProfile, ProfileContent} from './ultil/config';
 import {useSelector} from '../../config/function';
@@ -27,7 +27,7 @@ const Profile = () => {
   const theme = useTheme();
   const appTheme = useSelector(state => state.app.theme);
   const styles = rootStyles(theme);
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const userInfo: IUser = useSelector(state => state.app.userProfile);
 
@@ -49,7 +49,10 @@ const Profile = () => {
       index: 0,
       routes: [
         {
-          name: 'SIGN_IN',
+          name: 'UNAUTHORIZED',
+          state: {
+            routes: [{name: 'SIGN_IN'}],
+          },
         },
       ],
     });

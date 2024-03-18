@@ -141,6 +141,8 @@ const ListVisit = () => {
     try {
       setLoading(true);
       dispatch(customerActions.onGetCustomerVisit());
+      console.log(listCustomer,'???')
+      console.log('run get customer ? ')
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
@@ -171,7 +173,7 @@ const ListVisit = () => {
     setVisitItemSelected(item);
   };
 
-  const _renderHeader = () => {
+  const _renderHeader = useCallback(() => {
     return (
       <View style={{paddingHorizontal: 16}}>
         <AppHeader
@@ -242,7 +244,15 @@ const ListVisit = () => {
         </View>
       </View>
     );
-  };
+  },[]);
+  const renderItem = ({item}: {item: VisitListItemType}) => (
+    <VisitItem
+      item={item}
+      handleOpenMap={() => presentMap(item)}
+      onPress={handleBackground}
+    />
+  );
+  const memorizedValue = React.useMemo(() => renderItem, [listCustomer]);
 
   const _renderContent = () => {
     return (
@@ -272,17 +282,11 @@ const ListVisit = () => {
                     onRefresh={onRefreshData}
                   />
                 }
+                removeClippedSubviews={true}
                 maxToRenderPerBatch={2}
                 updateCellsBatchingPeriod={20}
-                // onRefresh={()}
                 contentContainerStyle={{rowGap: 16}}
-                renderItem={({item}) => (
-                  <VisitItem
-                    item={item}
-                    handleOpenMap={() => presentMap(item)}
-                    onPress={handleBackground}
-                  />
-                )}
+                renderItem={memorizedValue}
               />
             )}
           </View>
@@ -416,10 +420,11 @@ const ListVisit = () => {
     }
   };
 
-  const getData = async () => {
+  const getData = () => {
     setLoading(true);
-    await getCustomerRoute();
-    await getDataGroup();
+    // getCustomer()
+    getCustomerRoute();
+    getDataGroup();
     setLoading(false);
   };
 
@@ -477,7 +482,8 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-    getData().then();
+    getData();
+    onRefreshData();
     return () => {
       mounted.current = false;
     };

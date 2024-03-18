@@ -30,7 +30,6 @@ import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {item} from './ultil';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import {goBack} from '../../../navigation/navigation-service';
@@ -148,6 +147,8 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn]);
 
+ 
+
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <Block block colorTheme="bg_neutral">
@@ -174,7 +175,7 @@ const CheckIn = () => {
               Viếng thăm {formatTime(elapsedTime)}
             </Text>
           </Block>
-          <Switch type="text" status onSwitch={handleSwitch} title={title} />
+          <Switch type="text" status={status!} onSwitch={handleSwitch} title={title} />
         </Block>
         <Block colorTheme="white" paddingHorizontal={32}>
           <Block direction="row" paddingTop={20} marginBottom={8}>

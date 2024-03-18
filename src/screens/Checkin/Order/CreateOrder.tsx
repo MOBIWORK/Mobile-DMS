@@ -18,10 +18,10 @@ import {
     TextStyle,
     View,
     ViewStyle,
+    TouchableOpacity
 } from 'react-native';
 import { AppTheme, useTheme } from '../../../layouts/theme';
 import { Button, TextInput } from 'react-native-paper';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { ICON_TYPE } from '../../../const/app.const';
 import { Image } from 'react-native';
 import { ImageAssets } from '../../../assets';

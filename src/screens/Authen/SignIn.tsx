@@ -8,6 +8,7 @@ import {
   Text,
   View,
   ViewStyle,
+  TouchableOpacity,
 } from 'react-native';
 import {
   AppButton,
@@ -21,7 +22,6 @@ import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {useMMKVBoolean, useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import {CommonUtils} from '../../utils';
 import {ImageAssets} from '../../assets';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import * as LocalAuthentication from 'expo-local-authentication';
 import {
   ILoginResponse,
@@ -38,7 +38,7 @@ const SignIn = () => {
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-  const app = getState('checkin')
+  const app = getState('checkin');
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
   const [isLogOut] = useMMKVBoolean(AppConstant.isLogOut);
   const [organiztion] = useMMKVObject<IResOrganization>(
@@ -69,7 +69,7 @@ const SignIn = () => {
     return !(userName && password);
   }, [userName, password]);
 
-  console.log(app,'app')
+  console.log(app, 'app');
 
   const handleLogin = async () => {
     //TODO: call API
@@ -96,7 +96,7 @@ const SignIn = () => {
       setPasswordStore(password);
 
       await CommonUtils.dismissKeyboard(() => {
-        navigation.navigate(ScreenConstant.MAIN_TAB);
+        navigation.navigate(ScreenConstant.AUTHORIZED, {screen: 'MAIN_TAB'});
       });
     }
 
@@ -111,7 +111,7 @@ const SignIn = () => {
           enable: true,
           type: biometricType,
         });
-        navigation.navigate(ScreenConstant.MAIN_TAB);
+        navigation.navigate(ScreenConstant.AUTHORIZED, {screen: 'MAIN_TAB'});
       }
     } catch (e) {
       console.log('biometric Error', e);
@@ -122,8 +122,8 @@ const SignIn = () => {
   useEffect(() => {
     if (!isLogOut) {
       if (biometricObject?.enable) {
-        Authenticate()
-        }
+        Authenticate();
+      }
       // } else if (userNameStore && passwordStore) {
       //   navigation.navigate(ScreenConstant.MAIN_TAB);
       // }
