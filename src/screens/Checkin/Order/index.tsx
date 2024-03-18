@@ -13,7 +13,6 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {ImageAssets} from '../../../assets';
 import {Image} from 'react-native';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation';
 import {ApiConstant, ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import {useSelector} from '../../../config/function';
@@ -28,6 +27,7 @@ import {TouchableOpacity} from 'react-native';
 import {ICON_TYPE} from '../../../const/app.const';
 import {Pressable} from 'react-native';
 import ItemProduct from './components/ItemProduct';
+import { NavigationProp, RouterProp } from '../../../navigation/screen-type';
 
 const CheckinOrder = () => {
   const {colors} = useTheme();

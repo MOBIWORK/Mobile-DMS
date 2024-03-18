@@ -6,7 +6,6 @@ import TabOverview from './TabOverview';
 import TabComment from './TabComment';
 import { AppBottomSheet, AppHeader, AppIcons } from '../../../components/common';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { NavigationProp, RouterProp } from '../../../navigation';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -18,6 +17,7 @@ import { IOrderDetail, KeyAbleProps } from '../../../models/types';
 import { useTranslation } from 'react-i18next';
 import { CommonUtils } from '../../../utils';
 import { useTheme } from '../../../layouts/theme';
+import { NavigationProp, RouterProp } from '../../../navigation/screen-type';
 
 
 
