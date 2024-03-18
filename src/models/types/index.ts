@@ -584,6 +584,7 @@ export type IOrderDetail = {
   tax_amount?: number;
   rate?: number;
   account_head?: string;
+  status: string;
   charge_type?: string;
 };
 

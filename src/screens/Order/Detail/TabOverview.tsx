@@ -28,7 +28,10 @@ const TabOverview = ({ data }: PropsType) => {
     const [productSelect, setProductSelect] = useState<ItemProductOrder>();
     const [discountProduct, setDiscountProduct] = useState<number>(0);
     const [totalPriceProduct, setTotalPriceProduct] = useState<number>(0);
+    const status = CommonUtils.getStatusColor(data?.status ,colors)
 
+    console.log(data);
+    
     const onOpenBottomSheetProduct = (item: ItemProductOrder) => {
         setProductSelect(item);
         discountCalculation(item);
@@ -169,7 +172,7 @@ const TabOverview = ({ data }: PropsType) => {
                                 <View style={{ marginTop: 8, paddingTop: 8, borderColor: colors.border, borderTopWidth: 1 }}>
                                     <View style={[styles.flex, { marginTop: 4 }]}>
                                         <AppIcons iconType={ICON_TYPE.Feather} name='map-pin' size={18} color={colors.text_primary} />
-                                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.KHinforDesc]}>{data?.address_display}</Text>
+                                        <Text numberOfLines={1} ellipsizeMode='tail' style={[styles.KHinforDesc,{width :"90%"}]}>{data?.address_display}</Text>
                                     </View>
                                     <View style={[styles.flex, { marginTop: 4 }]}>
                                         <AppIcons iconType={ICON_TYPE.Feather} name='phone' size={18} color={colors.text_primary} />
@@ -193,10 +196,13 @@ const TabOverview = ({ data }: PropsType) => {
                                 <View style={[styles.containerIfOd]}>
 
                                     <View style={[styles.orderInforE, styles.flexSpace]}>
-                                        <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
-                                        <Text style={[styles.textInforO]}>{data.delivery_date ? CommonUtils.convertDate(data.delivery_date * 1000) : "- - -"}</Text>
+                                        <Text style={[styles.labelDetail]}>{getLabel("status")}</Text>
+                                        <Text style={[styles.textInforO]}>{getLabel(status.text) || "- - -"}</Text>
                                     </View>
-
+                                    <View style={[styles.orderInforE, styles.flexSpace]}>
+                                        <Text style={[styles.labelDetail]}>{getLabel("deliveryDate")}</Text>
+                                        <Text style={[styles.textInforO]}>{data?.delivery_date ? CommonUtils.convertDate(data.delivery_date * 1000) : "- - -"}</Text>
+                                    </View>
                                     <View style={[styles.orderInforE, styles.flexSpace, { borderColor: colors.bg_default }]}>
                                         <Text style={[styles.labelDetail]}>{getLabel("eXwarehouse")}</Text>
                                         <Text style={[styles.textInforO]}>{data?.set_warehouse}</Text>

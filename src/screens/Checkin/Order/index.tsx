@@ -359,9 +359,7 @@ const CheckinOrder = () => {
   return (
     <MainLayout style={styles.layout}>
       <AppHeader
-        label={
-          type === 'ORDER' ? getLabel('putOrder') : getLabel('returnOrder')
-        }
+        label={ type === 'ORDER' ? getLabel('putOrder') : getLabel('returnOrder')}
         onBack={() => navigation.goBack()}
         style={{paddingHorizontal: 16}}
       />
