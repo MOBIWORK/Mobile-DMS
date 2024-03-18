@@ -222,7 +222,7 @@ const OrderList = () => {
               ellipsizeMode="tail"
               style={[
                 styles.itemDesc as any,
-                { marginLeft: 6, color: colors.text_primary },
+                { marginLeft: 6, color: colors.text_primary  },
               ]}>
               {item.name}
             </Text>
@@ -429,6 +429,7 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 4,
+    width :"80%"
   } as ViewStyle,
   countOrder: {
     fontSize: 14,
@@ -470,7 +471,8 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     fontWeight: '400',
-    color: theme.colors.text_primary
+    color: theme.colors.text_primary,
+    width :"100%"
   } as TextStyle,
   itemTotal: {
     fontSize: 12,
