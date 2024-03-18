@@ -195,9 +195,10 @@ const OrderList = () => {
       <View
         style={[styles.containerItem]}>
         <View style={[styles.flexSpace as any, { paddingBottom: 8 }]}>
-          <Text style={[styles.nameCustomer]}>
-            {item.customer} - {item.custom_id}
-          </Text>
+          <View>
+            <Text style={[styles.nameCustomer]}> {item.customer} </Text>
+            <Text style={[styles.codeCustomer]}> {item.custom_id} </Text>
+          </View>
           <View
             style={[
               styles.statusView,
@@ -296,6 +297,10 @@ const OrderList = () => {
     );
   };
 
+  const onScrollPage = ()=>{
+    const number_page = (totalData / pageSize).toFixed();
+    if(Number(number_page) > page) setPage(page +1)
+  }
 
   const fetchData = async () => {
     dispatch(orderAction.onGetData({
@@ -357,7 +362,8 @@ const OrderList = () => {
         <View style={{flex :1}}>
           <FlatList
             data={orders}
-            onEndReached={() => setPage(page + 1)}
+            onEndReached={onScrollPage}
+            onEndReachedThreshold={0.1}
             initialNumToRender={pageSize}
             showsVerticalScrollIndicator={false}
             style={{flex :1}}
@@ -442,12 +448,18 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     fontWeight: '500',
-  },
+  } as TextStyle,
   nameCustomer: {
     color: theme.colors.text_primary,
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '500',
+  } as TextStyle,
+  codeCustomer :{
+    color: theme.colors.text_primary,
+    fontSize: 14,
+    lineHeight: 21,
+    fontWeight: '400',
   } as TextStyle,
   statusView: {
     paddingHorizontal: 8,

@@ -6,8 +6,7 @@ import TabOverview from './TabOverview';
 import TabComment from './TabComment';
 import { AppBottomSheet, AppHeader, AppIcons } from '../../../components/common';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { NavigationProp, RouterProp } from '../../../navigation/screen-type';
-import { useTheme } from '@react-navigation/native';
+import { NavigationProp, RouterProp } from '../../../navigation';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -17,10 +16,13 @@ import { OrderService } from '../../../services';
 import { ApiConstant } from '../../../const';
 import { IOrderDetail, KeyAbleProps } from '../../../models/types';
 import { useTranslation } from 'react-i18next';
+import { CommonUtils } from '../../../utils';
+import { useTheme } from '../../../layouts/theme';
 
 
 
 const OrderDetail = () => {
+
     const layout = useWindowDimensions();
     const navigation = useNavigation<NavigationProp>();
     const { colors } = useTheme();
@@ -89,7 +91,7 @@ const OrderDetail = () => {
     const fetchDataDetail = async ()=>{
         const {status ,data} :KeyAbleProps= await OrderService.getDetail(name);
         if (status === ApiConstant.STT_OK) {
-            setData(data.result)
+            setData(data.result);
         }
     }
 
