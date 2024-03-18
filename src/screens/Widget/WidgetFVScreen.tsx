@@ -119,6 +119,9 @@ const UtilitiesLoveScreen = () => {
                         source={item.icon}
                         navigate={item.navigate}
                         isTouchable={isEdit ? false : true}
+                        handleChangeWidget={() =>
+                          changeUtilltiesFavourites('remove', item)
+                        }
                       />
                       {isEdit ? (
                         <Pressable
@@ -158,6 +161,11 @@ const UtilitiesLoveScreen = () => {
                         source={item.icon}
                         navigate={item.navigate}
                         isTouchable={isEdit ? false : true}
+                        handleChangeWidget={() =>
+                          item.isUse
+                            ? changeUtilltiesFavourites('remove', item)
+                            : changeUtilltiesFavourites('add', item)
+                        }
                       />
                       {isEdit ? (
                         <View style={styles.positionBt}>
@@ -267,6 +275,6 @@ const createSheetStyle = (theme: AppTheme) =>
     positionBt: {
       position: 'absolute',
       right: 8,
-      top: -2,
+      top: 0,
     } as ViewStyle,
   });
