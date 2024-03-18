@@ -42,7 +42,7 @@ const OrderList = () => {
   const [dataStatus, setDataStatus] = useState<IFilterType[]>([
     {
       label: 'all',
-      value: "",
+      value: "All",
       isSelected: true,
     },
     {
