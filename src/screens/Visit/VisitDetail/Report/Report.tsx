@@ -10,7 +10,7 @@ import {
   VisitListItemType,
 } from '../../../../models/types';
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../../../navigation';
+import {NavigationProp} from '../../../../navigation/screen-type';
 import {ScreenConstant} from '../../../../const';
 import Inventory from './Inventory';
 import Debt from './Debt';

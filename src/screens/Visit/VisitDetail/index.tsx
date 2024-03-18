@@ -8,7 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {NavigationProp, RouterProp} from '../../../navigation';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {MainLayout} from '../../../layouts';
 import {

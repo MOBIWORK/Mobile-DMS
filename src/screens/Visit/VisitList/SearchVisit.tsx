@@ -11,7 +11,7 @@ import {
 import {ImageAssets} from '../../../assets';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {Searchbar} from 'react-native-paper';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp} from '../../../navigation/screen-type';
 import {useMMKVString} from 'react-native-mmkv';
 import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';

@@ -17,7 +17,7 @@ import {
 } from '../../services/appService';
 import {all, call, fork, put} from 'typed-redux-saga';
 import {showSnack} from '../../components/common';
-import {navigate} from '../../navigation';
+import {navigate} from '../../navigation/navigation-service';
 import {ScreenConstant} from '../../const';
 
 export const checkKeyInObject = (T: any, key: string) => {

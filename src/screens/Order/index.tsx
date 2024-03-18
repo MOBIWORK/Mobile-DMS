@@ -17,7 +17,7 @@ import { ApiConstant, AppConstant, ScreenConstant } from '../../const';
 import FilterListComponent, {
   IFilterType,
 } from '../../components/common/FilterListComponent';
-import { NavigationProp } from '../../navigation';
+import { NavigationProp } from '../../navigation/screen-type';
 import { AppTheme, useTheme } from '../../layouts/theme';
 import { CommonUtils } from '../../utils';
 import { useTranslation } from 'react-i18next';

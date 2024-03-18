@@ -1,12 +1,11 @@
 import React, { FC, memo, useEffect, useState } from 'react';
-import { IProduct, IProductOverview } from '../../../models/types';
+import { IProduct } from '../../../models/types';
 import { useTranslation } from 'react-i18next';
 import { useNavigation, useTheme } from '@react-navigation/native';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { AppConstant, ScreenConstant } from '../../../const';
-import { ImageAssets } from '../../../assets';
 import { CommonUtils } from '../../../utils';
-import { NavigationProp } from '../../../navigation';
+import { NavigationProp } from '../../../navigation/screen-type';
 import RenderHtml from 'react-native-render-html';
 
 const Overview: FC<OverviewProps> = ({ overviewData }) => {

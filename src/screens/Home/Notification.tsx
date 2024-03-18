@@ -14,7 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {AppConstant} from '../../const';
 import {AppBottomSheet} from '../../components/common';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 // import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import { dispatch } from '../../utils/redux';

@@ -47,7 +47,6 @@ import {
   VisitListItemType,
 } from '../../models/types';
 import ItemWidget from '../../components/Widget/ItemWidget';
-import {NavigationProp} from '../../navigation';
 import NotificationScreen from './Notification';
 import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
@@ -65,10 +64,11 @@ import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
-import {getCustomerVisit, IListVisitParams} from '../../services/appService';
+import {getCustomerVisit} from '../../services/appService';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import MarkerItem from '../../components/common/MarkerItem';
+import {NavigationProp} from '../../navigation/screen-type';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -439,7 +439,6 @@ const HomeScreen = () => {
     };
     if (isFocus) {
       getLocation();
-      getCustomer();
       getProfile();
       getCurrentShit();
       getReportKPI();
@@ -452,6 +451,7 @@ const HomeScreen = () => {
   useEffect(() => {
     getSystemConfig();
     getWidget();
+    getCustomer();
   }, []);
 
   const getSystemConfig = () => {

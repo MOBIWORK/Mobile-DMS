@@ -1,6 +1,6 @@
 import {SvgIconTypes} from '../../assets/svgIcon';
 import {ScreenConstant} from '../../const';
-import {navigate} from '../../navigation';
+import {navigate} from '../../navigation/navigation-service';
 
 export type ItemProps = {
   title: string;

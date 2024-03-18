@@ -1,5 +1,4 @@
 import React, {
-  FC,
   memo,
   useCallback,
   useEffect,
@@ -16,6 +15,7 @@ import {
 import {
   FlatList,
   Image,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -24,7 +24,7 @@ import {
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation';
+import {NavigationProp} from '../../../navigation/screen-type';
 import {ListCustomerType, VisitListItemType} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -58,7 +58,6 @@ import {CommonUtils} from '../../../utils';
 import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 import MarkerItem from '../../../components/common/MarkerItem';
 
 //config Mapbox
@@ -94,6 +93,9 @@ const ListVisit = () => {
     AppConstant.DistanceFilterData,
   );
   const dispatch = useDispatch();
+
+  //refresh data
+  const filterDataRef = useRef<IListVisitParams>({});
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -136,6 +138,17 @@ const ListVisit = () => {
       backgroundErrorListener,
     );
   };
+
+  const onRefreshData = useCallback(async () => {
+    try {
+      setLoading(true);
+      await getCustomer(filterDataRef.current);
+    } catch (er) {
+      console.log('errDispatch: ', er);
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch]);
 
   const handleItemDistanceFilter = (itemData: IFilterType) => {
     setDistanceFilterValue(getLabel(itemData.label));
@@ -251,10 +264,20 @@ const ListVisit = () => {
                 style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
                 data={listCustomer}
-                keyExtractor={(item, index) => item.customer_code}
+                keyExtractor={(item, index) =>
+                  `${item.customer_code} - ${index}`
+                }
                 decelerationRate={'fast'}
-                bounces={false}
+                // bounces={false}
                 initialNumToRender={5}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={loading}
+                    onRefresh={onRefreshData}
+                  />
+                }
+                maxToRenderPerBatch={2}
+                updateCellsBatchingPeriod={20}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
                   <VisitItem
@@ -367,11 +390,9 @@ const ListVisit = () => {
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
-    console.log('params2', params);
     await getCustomerVisit(params).then((res: any) => {
       if (Object.keys(res.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
-        console.log('cusss', data);
         // const newData = data.filter(item => item.customer_location_primary);
         dispatch(customerActions.setCustomerVisit(data));
       }
@@ -403,42 +424,60 @@ const ListVisit = () => {
     setLoading(false);
   };
 
+  const handleReset = async () => {
+    try {
+      setLoading(true);
+      await getCustomer();
+    } catch (e) {
+      //
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleFilterData = async () => {
     bottomSheetRef.current && bottomSheetRef.current.close();
-    if (Object.keys(filterParams).length > 0) {
-      const birthDayObj: any =
-        filterParams?.birthDay && filterParams.birthDay === getLabel('today')
-          ? CommonUtils.dateToDate('today')
-          : filterParams.birthDay === getLabel('thisWeek')
-          ? CommonUtils.dateToDate('weekly')
-          : filterParams.birthDay === getLabel('thisMonth')
-          ? CommonUtils.dateToDate('monthly')
-          : undefined;
-      const params: IListVisitParams = {
-        router: filterParams?.router && filterParams.router.channel_code,
-        // status:
-        //   filterParams?.status && filterParams.status === getLabel('visited')
-        //     ? 'active'
-        //     : 'lock',
-        orderby:
-          filterParams?.orderby && filterParams.orderby === 'A -> Z'
-            ? 'asc'
-            : 'desc',
-        birthday_from: birthDayObj
-          ? new Date(birthDayObj.from_date).getTime() / 1000
-          : '',
-        birthday_to: birthDayObj
-          ? new Date(birthDayObj.to_date).getTime() / 1000
-          : '',
-        customer_group: filterParams?.customer_group
-          ? filterParams.customer_group
-          : '',
-        customer_type: filterParams?.customer_type
-          ? filterParams.customer_type
-          : '',
-      };
-      // console.log('params', params);
-      await getCustomer(params);
+    try {
+      setLoading(true);
+      if (Object.keys(filterParams).length > 0) {
+        const birthDayObj: any =
+          filterParams?.birthDay && filterParams.birthDay === getLabel('today')
+            ? CommonUtils.dateToDate('today')
+            : filterParams.birthDay === getLabel('thisWeek')
+            ? CommonUtils.dateToDate('weekly')
+            : filterParams.birthDay === getLabel('thisMonth')
+            ? CommonUtils.dateToDate('monthly')
+            : undefined;
+        const params: IListVisitParams = {
+          router: filterParams?.router && filterParams.router.channel_code,
+          // status:
+          //   filterParams?.status && filterParams.status === getLabel('visited')
+          //     ? 'active'
+          //     : 'lock',
+          order_by:
+            filterParams?.order_by && filterParams.order_by === 'A -> Z'
+              ? 'asc'
+              : 'desc',
+          birthday_from: birthDayObj
+            ? new Date(birthDayObj.from_date).getTime() / 1000
+            : '',
+          birthday_to: birthDayObj
+            ? new Date(birthDayObj.to_date).getTime() / 1000
+            : '',
+          customer_group: filterParams?.customer_group
+            ? filterParams.customer_group
+            : '',
+          customer_type: filterParams?.customer_type
+            ? filterParams.customer_type
+            : '',
+        };
+        filterDataRef.current = params;
+        await getCustomer(params);
+      }
+    } catch (e) {
+      //
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -476,6 +515,7 @@ const ListVisit = () => {
         channelData={lisCustomerRoute}
         customerGroupData={customerType}
         handleFilter={handleFilterData}
+        handleReset={handleReset}
       />
       <AppBottomSheet bottomSheetRef={distanceRef}>
         <FilterListComponent

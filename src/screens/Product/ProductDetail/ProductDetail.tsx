@@ -3,7 +3,7 @@ import {MainLayout} from '../../../layouts';
 import {AppContainer, AppHeader} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import ProductDetailTab, {PRODUCT_DETAIL_TAB_VALUES} from './ProductDetailTab';
 import Overview from './Overview';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';

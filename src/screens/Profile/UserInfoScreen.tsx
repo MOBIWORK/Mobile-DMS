@@ -2,7 +2,7 @@ import React, {useLayoutEffect, useRef, useState} from 'react';
 import {MainLayout} from '../../layouts';
 import {AppBottomSheet, AppHeader} from '../../components/common';
 import {useIsFocused, useNavigation, useTheme} from '@react-navigation/native';
-import {NavigationProp} from '../../navigation';
+import {NavigationProp} from '../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import {EditAccountInfo, IUser} from '../../models/types';
 import {useSelector} from '../../config/function';

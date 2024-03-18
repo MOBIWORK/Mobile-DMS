@@ -4,7 +4,7 @@ import {dispatch} from '../utils/redux';
 import {AppDialog} from './common';
 import {ApiConstant, ScreenConstant} from '../const';
 import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../navigation';
+import {NavigationProp} from '../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import {useSelector} from '../config/function';
 import {

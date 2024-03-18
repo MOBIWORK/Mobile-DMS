@@ -8,7 +8,7 @@ import {ResponseGenerator} from '../app-saga/saga';
 import {appActions, onLoadApp, onLoadAppEnd, setError} from '../../redux-store/app-reducer/reducer';
 import {Platform} from 'react-native';
 import {showSnack} from '../../components/common';
-import {pop} from '../../navigation';
+import {pop} from '../../navigation/navigation-service';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
