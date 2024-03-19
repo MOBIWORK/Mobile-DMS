@@ -468,8 +468,8 @@ const SelectProducts = () => {
                             />
                         }
                         rightButton={
-                            <TouchableOpacity onPress={onSubmitProductSelect}>
-                                <Text style={[styles.headerAction]}>{getLabel("continue")}</Text>
+                            <TouchableOpacity disabled={isSelected} onPress={onSubmitProductSelect}>
+                                <Text style={[styles.headerAction , {color : isSelected ? colors.text_disable : colors.action}]}>{getLabel("continue")}</Text>
                             </TouchableOpacity>}
                     />
                     <View style={[styles.flex as any, { marginTop: 16 }]}>
