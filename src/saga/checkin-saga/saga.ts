@@ -11,10 +11,6 @@ import {
   onLoadAppEnd,
   setError,
 } from '../../redux-store/app-reducer/reducer';
-import {Platform} from 'react-native';
-import {showSnack} from '../../components/common';
-import {pop} from '../../navigation/navigation-service';
-import {getState} from '../../utils/redux';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
@@ -80,30 +76,26 @@ export function* getListProgramData(action: PayloadAction) {
 export function* postImageScore(action: PayloadAction) {
   if (checkinActions.postImageScore.match(action)) {
     try {
-      const {listProgramImage} = getState('checkin');
-
-
-      console.log(action.payload.data,'dataSend')
-
-      // const response: ResponseGenerator = yield call(
-      //   CheckinService.postImagePictureScore,
-      //   action.payload.data as any,
-      // );
-      console.log(
-        listProgramImage,
-        Platform.OS === 'android' ? 'log android' : 'log ios',
+      let listProgram: any[] = [...action.payload.listProgram];
+      const response: ResponseGenerator = yield call(
+        CheckinService.postImagePictureScore,
+        action.payload.data as any,
       );
-      // if (
-      //   response.message === 'ok' &&
-      //   Object.keys(response.result).length > 0
-      // ) {
-      // console.log(response.result,'response image server')
+      if (response.message === 'ok') {
+        const list = listProgram?.map((item: any) => {
+          return {
+            item,
+            image: [
+              ...(item.image || []),
+              ...(response.result ? [response.result] : []),
+            ],
+          };
+        });
 
-        // yield put(checkinActions.setImageResponse(updateData));
-
-      // } else {
-      //   // yield put(checkinActions.setImageError([action.payload]))
-      // }
+        yield put(checkinActions.setImageResponse(list));
+      } else {
+        // yield put(checkinActions.setImageError([action.payload]))
+      }
     } catch (err) {
       console.log('err:', err);
     } finally {
@@ -115,27 +107,9 @@ export function* createReportMarkScoreSaga(action: PayloadAction) {
   if (checkinActions.createReportMarkScore.match(action)) {
     try {
       yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(
-        CheckinService.createReportMarkingApi,
-        action.payload,
-      );
-      console.log(response, 'fuck report');
-      if (response.message === 'ok') {
-        showSnack({
-          msg: 'Tạo báo cáo thành công',
-          interval: 2000,
-          type: 'success',
-        });
-        pop(2);
-      } else {
-        showSnack({
-          msg: 'Tạo báo cáo thất bại',
-          interval: 2000,
-          type: 'error',
-        });
-      }
+      yield call(CheckinService.createReportMarkingApi, action.payload);
     } catch (err) {
-      console.log(`[err: ]`, err);
+      console.log('[err: ]', err);
     } finally {
       yield put(onLoadAppEnd());
     }

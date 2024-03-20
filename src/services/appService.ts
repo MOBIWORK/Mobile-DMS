@@ -1,9 +1,8 @@
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
-import {BASE_URL, BASE_URL_MAP, API_EK_KEY, API_URL} from '@env';
+import {BASE_URL, BASE_URL_MAP, API_EK_KEY} from '@env';
 import {client} from '../config/client';
 import {VisitListItemType} from '../models/types';
-import {GET_CUSTOMER_TERRITORY} from '../const/api.const';
 
 export type ILogin = {
   usr: string;

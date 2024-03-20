@@ -157,8 +157,8 @@ const TakePictureScore = () => {
           await new Promise(resolve => setTimeout(resolve, 1000));
 
           // Dispatch action to post image score
+          dispatch(checkinActions.postImageScore(formData, listProgram));
         }
-        dispatch(checkinActions.postImageScore(newArr, listProgram));
       } catch (err) {
         console.log('Error uploading images:', err);
       } finally {
@@ -379,7 +379,7 @@ const TakePictureScore = () => {
               <TouchableOpacity
                 style={styles.buttonContinue}
                 onPress={() => {
-                  navigate(ScreenConstant.LIST_ALBUM_SCORE, {data: itemParams});
+                  navigate(ScreenConstant.LIST_ALBUM_SCORE, {data: itemParams,screen:ScreenConstant.TAKE_PICTURE_SCORE});
                   setShowModal(false);
                 }}>
                 <Text

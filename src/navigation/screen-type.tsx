@@ -70,6 +70,7 @@ export type AuthorizeParamsList = {
   };
   [ScreenConstant.LIST_ALBUM_SCORE]: {
     data: any;
+    screen?:string
   };
   [ScreenConstant.USER_INFO_SCREEN]: undefined;
   [ScreenConstant.EDIT_ACCOUNT]: {title: string; content: string};
