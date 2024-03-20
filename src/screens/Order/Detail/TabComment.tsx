@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -17,9 +17,16 @@ import {TextStyle} from 'react-native';
 const TabComment = () => {
   const {colors} = useTheme();
   const styles = createStyles(useTheme());
+
+  const [comment, setComment] = useState<string>('');
+
   return (
     <MainLayout
-      style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0 ,marginTop : -40}}>
+      style={{
+        backgroundColor: colors.bg_neutral,
+        paddingHorizontal: 0,
+        marginTop: -40,
+      }}>
       <AppContainer style={{marginTop: 16, paddingHorizontal: 16}}>
         <View
           style={{
@@ -53,7 +60,8 @@ const TabComment = () => {
             <TextInput
               placeholderTextColor={colors.text_secondary}
               placeholder="Nhập nội dung"
-              value={''}
+              value={comment}
+              onChangeText={setComment}
               style={[styles.inputStyle, {color: colors.text_secondary}]}
             />
           </View>
@@ -84,7 +92,7 @@ const createStyles = (theme: AppTheme) =>
     containerFt: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 16,
+      marginBottom: 23,
     } as ViewStyle,
     containerInput: {
       flex: 1,
@@ -113,11 +121,10 @@ const createStyles = (theme: AppTheme) =>
       fontWeight: '400',
     } as TextStyle,
     inputStyle: {
-      height: 36,
+      // height: 36,
+      paddingVertical: 8,
       fontSize: 16,
-      lineHeight: 24,
+      // lineHeight: 24,
       fontWeight: '400',
-      paddingRight: 60,
-      paddingTop: 8,
     } as TextStyle,
   });
