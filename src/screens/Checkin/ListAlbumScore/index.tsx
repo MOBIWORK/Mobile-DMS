@@ -12,7 +12,7 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import {useTheme} from '../../../layouts/theme';
-import {navigate, pop} from '../../../navigation/navigation-service';
+import {goBack, navigate, pop} from '../../../navigation/navigation-service';
 import {RootStackParamList} from '../../../navigation/screen-type';
 
 import {useSelector} from '../../../config/function';
@@ -38,6 +38,8 @@ const ListAlbumScore = (props: Props) => {
   const styles = rootStyles(theme);
   const itemParams: ParamsList =
     useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.data;
+  const screens =
+    useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.screen;
   const listProgramSelected: ListCampaignScore[] = useSelector(
     state => state.checkin?.selectedProgram,
     shallowEqual,
@@ -56,7 +58,6 @@ const ListAlbumScore = (props: Props) => {
     shallowEqual,
   );
   const [appLoading, setAppLoading] = useState<boolean>();
-
 
   const resultData: DataSendMarkScore[] = listProgramSelected?.map(campaign => {
     return {
@@ -84,7 +85,6 @@ const ListAlbumScore = (props: Props) => {
     };
   });
 
-  
   const confirmUploadImage = async () => {
     try {
       setAppLoading(true);
@@ -100,11 +100,12 @@ const ListAlbumScore = (props: Props) => {
 
         dispatch(checkinActions.createReportMarkScore(element));
       }
-    
+
       // let data:DataSendMarkScore ={
     } catch (err) {
       console.log(`[err: ]`, err);
     } finally {
+      screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack();
       setAppLoading(false);
     }
     //   customer_code:itemParams.kh_ten,
@@ -117,7 +118,7 @@ const ListAlbumScore = (props: Props) => {
         <AppHeader
           style={styles.header}
           label="Chấm điểm trưng bày"
-          onBack={() => pop(1)}
+          onBack={() => screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack()}
           // hiddenBackButton={true}
         />
         <Block

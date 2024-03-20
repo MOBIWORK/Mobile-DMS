@@ -379,7 +379,7 @@ const TakePictureScore = () => {
               <TouchableOpacity
                 style={styles.buttonContinue}
                 onPress={() => {
-                  navigate(ScreenConstant.LIST_ALBUM_SCORE, {data: itemParams});
+                  navigate(ScreenConstant.LIST_ALBUM_SCORE, {data: itemParams,screen:ScreenConstant.TAKE_PICTURE_SCORE});
                   setShowModal(false);
                 }}>
                 <Text
