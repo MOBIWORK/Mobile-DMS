@@ -13,7 +13,7 @@ import ButtonFilter from '../../components/common/ButtonFilter';
 import { ICON_TYPE } from '../../const/app.const';
 import { Button } from 'react-native-paper';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import { ApiConstant, AppConstant, ScreenConstant } from '../../const';
+import { AppConstant, ScreenConstant } from '../../const';
 import FilterListComponent, {
   IFilterType,
 } from '../../components/common/FilterListComponent';
@@ -21,14 +21,12 @@ import { NavigationProp } from '../../navigation/screen-type';
 import { AppTheme, useTheme } from '../../layouts/theme';
 import { CommonUtils } from '../../utils';
 import { useTranslation } from 'react-i18next';
-import { IOrderList, KeyAbleProps } from '../../models/types';
-import { OrderService } from '../../services';
+import { IOrderList } from '../../models/types';
 import { orderAction } from '../../redux-store/order-reducer/reducer';
 import { dispatch } from '../../utils/redux';
 import { useSelector } from '../../config/function';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from '../../layouts/ErrorBoundary';
-import { appActions } from '../../redux-store/app-reducer/reducer';
 
 const OrderList = () => {
 
@@ -42,7 +40,7 @@ const OrderList = () => {
   const [dataStatus, setDataStatus] = useState<IFilterType[]>([
     {
       label: 'all',
-      value: "",
+      value: "All",
       isSelected: true,
     },
     {
@@ -222,7 +220,7 @@ const OrderList = () => {
               ellipsizeMode="tail"
               style={[
                 styles.itemDesc as any,
-                { marginLeft: 6, color: colors.text_primary },
+                { marginLeft: 6, color: colors.text_primary  },
               ]}>
               {item.name}
             </Text>
@@ -429,6 +427,7 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 4,
+    width :"80%"
   } as ViewStyle,
   countOrder: {
     fontSize: 14,
@@ -470,7 +469,8 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     fontWeight: '400',
-    color: theme.colors.text_primary
+    color: theme.colors.text_primary,
+    width :"100%"
   } as TextStyle,
   itemTotal: {
     fontSize: 12,

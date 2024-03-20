@@ -52,15 +52,6 @@ const ListProduct = () => {
   const snapPoints = useMemo(() => ['90%'], []);
   const snapPointsFilter = useMemo(() => ['70%'], []);
 
-  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
-
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
-
   const [filterType, setFilterType] = useState<string>(
     AppConstant.ProductFilterType.nhom_sp,
   );
@@ -86,6 +77,7 @@ const ListProduct = () => {
   const [titleModal,setTitleModal] = useState<string>("");
 
   const onBack = ()=>{
+
     dispatch(appActions.setSearchProductValue(""))
     navigation.goBack();
   }
@@ -497,7 +489,9 @@ const ListProduct = () => {
       </AppBottomSheet>
       <AppBottomSheet
         bottomSheetRef={filterRef}
-        snapPointsCustom={snapPointsFilter}>
+        snapPointsCustom={snapPointsFilter}
+        onClose={()=> setSearchFilter("")}
+        >
         <View
           style={{ paddingBottom: bottom + 16 ,flex: 1}}>
           <FilterListComponent
