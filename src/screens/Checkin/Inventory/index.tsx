@@ -3,7 +3,7 @@ import { MainLayout } from '../../../layouts';
 import { AppBottomSheet, AppButton, AppContainer, AppHeader, AppIcons, AppInput } from '../../../components/common';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
-import { Image } from 'react-native';
+import { Image,TouchableOpacity } from 'react-native';
 import { ImageAssets } from '../../../assets';
 import { Button, IconButton, TextInput } from 'react-native-paper';
 import { NavigationProp } from '../../../navigation/screen-type';
@@ -11,7 +11,7 @@ import { ICON_TYPE } from '../../../const/app.const';
 import SwipeableItem from './components/SwipeableItem';
 import { ApiConstant, AppConstant, ScreenConstant } from '../../../const';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
 import { useTranslation } from 'react-i18next';
 import { useSelector } from '../../../config/function';
 import { IProduct } from '../../../models/types';

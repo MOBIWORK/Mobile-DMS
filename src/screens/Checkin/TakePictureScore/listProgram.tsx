@@ -80,7 +80,6 @@ const ListProgram = (props: Props) => {
       ? [...selectedProgram, ...newProgramsToAdd]
       : [...newProgramsToAdd];
 
-    console.log(updatedSelectedProgram, 'updated selected program');
     dispatch(checkinActions.setSelectedProgram(updatedSelectedProgram));
     props.onPressConfirm(listSelect);
     setListSelect([]);

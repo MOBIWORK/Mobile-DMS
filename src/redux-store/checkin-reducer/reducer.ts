@@ -92,7 +92,7 @@ const checkinSlice = createSlice({
       state.imageToMark = [...state.imageToMark, action.payload];
     },
     setListImageProgram: (state, action: PayloadAction<any>) => {
-      state.listImageSelect = [...state.listImageSelect, action.payload];
+      state.listProgramImage = action.payload;
     },
     resetDataState: (state: any) => {
       state = undefined;
@@ -115,9 +115,15 @@ const getListProgram = createAction(
     payload: {customer_code, e_name},
   }),
 );
-const postImageScore = createAction(Actions.POST_IMAGE_SCORE, (data: any) => ({
-  payload: data,
-}));
+const postImageScore = createAction(
+  Actions.POST_IMAGE_SCORE,
+  (data: any, listProgram: any) => ({
+    payload: {
+      data,
+      listProgram,
+    },
+  }),
+);
 
 const createReportMarkScore = createAction(
   Actions.CREATE_REPORT_MARK_SCORE,

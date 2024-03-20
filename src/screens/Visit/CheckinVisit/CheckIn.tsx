@@ -1,11 +1,9 @@
-import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React, {
   useCallback,
   useState,
   useEffect,
   useRef,
-  useMemo,
-  useLayoutEffect,
 } from 'react';
 import {
   Block,
@@ -30,7 +28,6 @@ import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {item} from './ultil';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import {goBack} from '../../../navigation/navigation-service';
@@ -95,7 +92,7 @@ const CheckIn = () => {
   //   startInterval();
   //   return () => clearInterval(intervalId.current);
   // }, []);
-
+// console.log(status,'statús')
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
     const hours = Math.floor(seconds / 3600);
@@ -106,6 +103,7 @@ const CheckIn = () => {
 
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
+  
 
   const handleSwitch = useCallback(() => {
     if (title === getLabel('openDoor')) {
@@ -117,7 +115,7 @@ const CheckIn = () => {
       setStatus(true);
       dispatch(appActions.setCheckInStoreStatus(true));
     }
-  }, []);
+  }, [status]);
   const isCurrentTimeGreaterOrEqual = (minTime: any) => {
     const currentTime = elapsedTime;
     return currentTime >= timeToSeconds(minTime);
@@ -148,6 +146,8 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn]);
 
+ 
+
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <Block block colorTheme="bg_neutral">
@@ -174,7 +174,7 @@ const CheckIn = () => {
               Viếng thăm {formatTime(elapsedTime)}
             </Text>
           </Block>
-          <Switch type="text" status onSwitch={handleSwitch} title={title} />
+          <Switch type="text" status={status!} onSwitch={handleSwitch} title={title} />
         </Block>
         <Block colorTheme="white" paddingHorizontal={32}>
           <Block direction="row" paddingTop={20} marginBottom={8}>

@@ -1,11 +1,10 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useCallback, useImperativeHandle} from 'react';
+import {StyleSheet} from 'react-native';
+import React, { useCallback, useImperativeHandle} from 'react';
 import {rootStyles} from './style';
 import {useTheme} from '../../../layouts/theme';
 import {
   Gesture,
   GestureDetector,
-  TouchableOpacity,
 } from 'react-native-gesture-handler';
 import Animated, {
   Extrapolate,

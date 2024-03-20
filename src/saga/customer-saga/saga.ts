@@ -41,9 +41,11 @@ export function* onGetCustomer(action: PayloadAction) {
       yield put(onLoadApp());
       const response: ResponseGenerator = yield call(getCustomer);
       if (response.message === 'ok') {
+        console.log('run this shit ')
         yield put(setCustomer(response.result));
       }
     } catch (err) {
+      console.log('errCustomer: ',err)
     } finally {
       yield put(onLoadAppEnd());
     }
@@ -74,6 +76,7 @@ export function* getCustomerVisitSaga(action: PayloadAction) {
   if (customerActions.onGetCustomerVisit.match(action)) {
     try {
       const response: ResponseGenerator = yield call(getCustomerVisit);
+      console.log(response,'response visit')
       if (Object.keys(response.result?.length > 0)) {
         yield put(setCustomerVisit(response.result.data));
       }
@@ -128,7 +131,6 @@ export function* getMoreDataCustomer(action: PayloadAction) {
         action.payload,
       );
       if (response.message === 'ok') {
-        console.log('dafuck');
         yield put(customerActions.addingListCustomer(response.result?.data));
         yield put(customerActions.setPage(response.result?.page_number));
       } else {

@@ -80,8 +80,8 @@ export type AuthorizeParamsList = {
 };
 
 export type RootStackParamList = {
-  [ScreenConstant.UNAUTHORIZED]: undefined;
-  [ScreenConstant.AUTHORIZED]: undefined;
+  [ScreenConstant.UNAUTHORIZED]: NavigatorScreenParams<UnAuthorizeParamList>;
+  [ScreenConstant.AUTHORIZED]: NavigatorScreenParams<AuthorizeParamsList>;
 } & UnAuthorizeParamList &
   AuthorizeParamsList;
 
