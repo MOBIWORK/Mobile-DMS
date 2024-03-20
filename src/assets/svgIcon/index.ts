@@ -69,7 +69,9 @@ import UserGroup2 from './userGroup.svg';
 import LocationCheckIn from './locationCheckin.svg';
 import MarkPicture from './MarkPicture.svg';
 import TakePicture from './TakePicture.svg';
-import checkCircle from './fi_check-circle.svg'
+import checkCircle from './fi_check-circle.svg';
+import MapPin2 from './map-pin.svg';
+import AsynIcon from './asynIcon.svg';
 export const SvgComponent = {
   TakePicture,
   MoneyIcon,
@@ -143,5 +145,7 @@ export const SvgComponent = {
   Folder,
   UserGroup2,
   LocationCheckIn,
+  MapPin2,
+  AsynIcon,
 };
 export type SvgIconTypes = keyof typeof SvgComponent;

@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, ViewStyle} from 'react-native';
 import React, {useCallback} from 'react';
 import {ProfileContent} from '../ultil/config';
 import {useTheme} from '../../../layouts/theme';
@@ -15,13 +9,16 @@ import {useSelector} from '../../../config/function';
 type Props = {
   item: ProfileContent;
   onSwitch: () => void;
+  onSwitchAutoLocation: () => void;
 };
 
 const ContentItemView = (props: Props) => {
-  const {item, onSwitch} = props;
+  const {item, onSwitch, onSwitchAutoLocation} = props;
   const theme = useTheme();
-  const appTheme = useSelector(state => state.app.theme);
   const {t: getLabel, i18n} = useTranslation();
+
+  const appTheme = useSelector(state => state.app.theme);
+  const automaticLocation = useSelector(state => state.app.automaticLocation);
 
   const handleOnPress = useCallback(
     (name: string) => {
@@ -54,7 +51,10 @@ const ContentItemView = (props: Props) => {
       <TouchableOpacity>
         {item.rightSide && item.name === 'language' ? (
           <TouchableOpacity
-            style={styles.containTouchable}
+            style={[
+              styles.containTouchable,
+              {borderColor: theme.colors.border},
+            ]}
             onPress={() =>
               i18n.language === 'vi'
                 ? i18n.changeLanguage('en')
@@ -65,8 +65,7 @@ const ContentItemView = (props: Props) => {
             ) : (
               <SvgIcon source="EnFlag" size={20} />
             )}
-            <Text>{''}</Text>
-            <SvgIcon source="ArrowDown" size={16} />
+            <SvgIcon style={{marginLeft: 4}} source="ArrowDown" size={16} />
           </TouchableOpacity>
         ) : item.rightSide && item.name === 'darkMode' ? (
           <View>
@@ -74,6 +73,14 @@ const ContentItemView = (props: Props) => {
               type="none"
               onSwitch={onSwitch}
               status={appTheme === 'dark'}
+            />
+          </View>
+        ) : item.rightSide && item.name === 'autoLocation' ? (
+          <View>
+            <AppSwitch
+              type="none"
+              onSwitch={onSwitchAutoLocation}
+              status={automaticLocation}
             />
           </View>
         ) : null}

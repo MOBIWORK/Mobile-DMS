@@ -1,5 +1,5 @@
 import {StyleSheet, View, ViewStyle} from 'react-native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {MainLayout} from '../../layouts';
 import {
   AppAvatar,
@@ -24,12 +24,18 @@ import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {orderAction} from '../../redux-store/order-reducer/reducer';
 import {CommonUtils} from '../../utils';
 import {AppConstant} from '../../const';
+import {useTranslation} from 'react-i18next';
+import BackgroundGeolocation, {
+  Subscription,
+} from 'react-native-background-geolocation';
 
 const Profile = () => {
   const theme = useTheme();
   const appTheme = useSelector(state => state.app.theme);
+  const automaticLocation = useSelector(state => state.app.automaticLocation);
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
+  const {t: getLabel} = useTranslation();
 
   const userInfo: IUser = useSelector(state => state.app.userProfile);
 
@@ -41,6 +47,15 @@ const Profile = () => {
       dispatch(appActions.onSetAppTheme('dark'));
     }
   }, [appTheme]);
+
+  const onSwitchAutomaticLocation = useCallback(() => {
+    if (automaticLocation) {
+      dispatch(appActions.setAutomaticLocation(true));
+    } else {
+      dispatch(appActions.setAutomaticLocation(false));
+    }
+  }, [automaticLocation]);
+
   const onLogout = useCallback(() => {
     dispatch(appActions.resetDataApp());
     dispatch(checkinActions.resetDataState());
@@ -97,12 +112,13 @@ const Profile = () => {
         <ContentList
           data={ContentProfile(navigation) as ProfileContent[]}
           onSwitch={onSwitch}
+          onSwitchAutomaticLocation={onSwitchAutomaticLocation}
         />
       </View>
       <AppButton
         style={{marginTop: 32, backgroundColor: theme.colors.bg_default}}
         onPress={onLogout}
-        label={'Đăng xuất'}
+        label={getLabel('signOut')}
         styleLabel={{color: theme.colors.error}}
       />
     </MainLayout>

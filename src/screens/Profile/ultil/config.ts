@@ -51,9 +51,15 @@ export const ContentProfile = (navigation: any) => [
     rightSide: true,
   },
   {
+    id: 'autoLocation',
+    name: 'autoLocation',
+    icon: 'MapPin2',
+    rightSide: true,
+  },
+  {
     id: 'sync',
     name: 'syncData',
-    icon: 'IconUser',
+    icon: 'AsynIcon',
     rightSide: false,
     onPress: () => {
       console.log('c');

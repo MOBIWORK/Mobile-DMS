@@ -59,7 +59,7 @@ export default {
   location: 'Location',
   infor: 'Account Information',
   language: 'Language',
-  accountSetting: 'AccountSetting',
+  accountSetting: 'Account setting',
   theme: 'Theme',
   syncData: 'Sync Data',
   today: 'Today',
@@ -236,8 +236,8 @@ export default {
   name: 'Tên',
   gender: 'Giới tính',
   dateOfBirth: 'Ngày sinh',
-  male: 'male',
-  female: 'female',
+  male: 'Male',
+  female: 'Female',
   editAddress: 'Edit address',
   editPhoneNumber: 'Edit phone number',
   darkMode: 'Dark mode',
@@ -257,8 +257,9 @@ export default {
   notifyLastUpdate: 'Notify me about the latest feature updates',
   notifyService: 'Allow notifications across services',
   receiveNews: 'Receive news',
-  resultRouter :"Route results",
-  numberToVisit :"Number of customers to visit",
-  logTravel :"Travel log"
-
+  resultRouter: 'Route results',
+  numberToVisit: 'Number of customers to visit',
+  logTravel: 'Travel log',
+  autoLocation: 'Automatic location',
+  signOut: 'Log out',
 };

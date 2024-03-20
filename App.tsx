@@ -121,8 +121,8 @@ function App(): JSX.Element {
     //   });
     //
     // const onProviderChange: Subscription =
-    //   BackgroundGeolocation.onProviderChange((event) => {
-    //     console.log("[onProviderChange]", event);
+    //   BackgroundGeolocation.onProviderChange(event => {
+    //     console.log('[onProviderChange]', event);
     //   });
 
     const onHttp: Subscription = BackgroundGeolocation.onHttp(httpEvent => {
@@ -140,7 +140,7 @@ function App(): JSX.Element {
       // Application config
       debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
       logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-      stopOnTerminate: true, // <-- Allow the background-service to continue tracking when user closes the app.
+      stopOnTerminate: true, // <-- Allow the background-service to continue tracking when user closes the app(default : true).
       startOnBoot: false, // <-- Auto start tracking when device is powered-up.
       // HTTP / SQLite config
       // url: 'https://api.ekgis.vn/tracking/locationHistory/position/64dae1bf20309bc61366a2b1?api_key=dCceCixTANM4zeayfXslpTNTcbONf9aBsDCFWxIs',
@@ -150,6 +150,14 @@ function App(): JSX.Element {
       maxBatchSize: 50,
       locationsOrderDirection: 'DESC',
       maxDaysToPersist: 14,
+      // locationAuthorizationAlert: {
+      //   titleWhenNotEnabled: 'Yo, location-services not enabled',
+      //   titleWhenOff: 'Yo, location-services OFF',
+      //   instructions: "You must enable 'Always' in location-services, buddy",
+      //   cancelButton: 'Cancel',
+      //   settingsButton: 'Settings',
+      // },
+      disableLocationAuthorizationAlert: true,
       // headers: {
       //   // <-- Optional HTTP headers
       //   "X-FOO": "bar",
@@ -158,7 +166,7 @@ function App(): JSX.Element {
       //   // <-- Optional HTTP params
       //   auth_token: "maybe_your_server_authenticates_via_token_YES?",
       // },
-      locationAuthorizationRequest: 'Any',
+      locationAuthorizationRequest: 'WhenInUse',
     }).then(state => {
       console.log(
         '- BackgroundGeolocation is configured and ready: ',

@@ -5,18 +5,25 @@ import ContentItemView from './ContentItemView';
 
 type Props = {
   data: ProfileContent[];
-  onSwitch:() => void
+  onSwitch: () => void;
+  onSwitchAutomaticLocation: () => void;
 };
 
 const ContentList = (props: Props) => {
-  const {data,onSwitch} = props;
+  const {data, onSwitch, onSwitchAutomaticLocation} = props;
   return (
     <FlatList
       data={data}
       keyExtractor={item => item.id.toString()}
       showsVerticalScrollIndicator={false}
       renderItem={({item}) => {
-        return <ContentItemView item={item} onSwitch={onSwitch}/>;
+        return (
+          <ContentItemView
+            item={item}
+            onSwitch={onSwitch}
+            onSwitchAutoLocation={onSwitchAutomaticLocation}
+          />
+        );
       }}
     />
   );
