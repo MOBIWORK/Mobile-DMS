@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useMemo, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
   AppButton,
@@ -107,6 +107,7 @@ const CheckinOrder = () => {
           </View>
         </AppContainer>
         <AppButton
+          disabled={isDisabled}
           label={getLabel('completed')}
           style={styles.footerBt}
           onPress={() => completeCheckin()}
@@ -349,6 +350,14 @@ const CheckinOrder = () => {
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
     navigation.goBack();
   };
+
+  const isDisabled = useMemo(()=>{
+    const typ = type == 'ORDER' ? 'order' : 'return_order';
+    const newData = categoriesCheckin.find(item =>
+      item.key === typ && item.isRequire,
+    );
+    return newData ? true : false
+  },[categoriesCheckin])
 
   useLayoutEffect(() => {
     if(isForcus){

@@ -14,7 +14,7 @@ const TabComment = () => {
   const styles = createStyles(useTheme());
   return (
     <MainLayout
-      style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
+      style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0 ,marginTop : -40}}>
       <AppContainer style={{marginTop: 16, paddingHorizontal: 16}}>
         <View
           style={{

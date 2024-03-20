@@ -39,6 +39,8 @@ import { useTranslation } from 'react-i18next';
 import { dispatch } from '../../../utils/redux';
 import { productActions } from '../../../redux-store/product-reducer/reducer';
 import { useMMKVObject } from 'react-native-mmkv';
+import { DatePickerModal } from 'react-native-paper-dates';
+import { SingleChange } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 
 const defautItem1 = {
     "doctype": "Sales Order Item",
@@ -54,15 +56,16 @@ const CreateOrder = () => {
 
     const navigation = useNavigation<NavigationProp>();
     const { colors } = useTheme();
-    const { t: getLabel } = useTranslation();
     const styles = createSheetStyle(useTheme());
     const bottomSheetRef = useRef<BottomSheet>(null);
     const bottomSheetWh = useRef<BottomSheet>(null);
     const snapPointDetail = useMemo(() => ['70%'], []);
     const router = useRoute<RouterProp<'CHECKIN_ORDER'>>();
     const type = router.params.type;
+    const { t: getLabel, i18n } = useTranslation();
 
-    const [organization,_] = useMMKVObject<IResOrganization>(AppConstant.Organization)
+    const [openDate, setOpenDate] = useState<boolean>(false);
+    const [organization, _] = useMMKVObject<IResOrganization>(AppConstant.Organization)
     const [date, setDate] = useState<number>(new Date().getTime());
     const [DataWarehouse, setDataWarehouse] = useState<IFilterType[]>([]);
     const [dataDiscount, setDataDiscount] = useState<IFilterType[]>([
@@ -487,7 +490,7 @@ const CreateOrder = () => {
     const fetchProductPromotion = async () => {
         if (type === "ORDER") {
             if (data.length > 0) {
-                const newItems = data.map((item:any) => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
+                const newItems = data.map((item: any) => ({ ...defautItem1, item_code: item.item_code, uom: item.stock_uom, qty: item.quantity, stock_qty: item.quantity }))
                 const objecData = {
                     "items": newItems,
                     "customer": dataCheckin.item.customer_code,        // Khách hàng
@@ -559,16 +562,31 @@ const CreateOrder = () => {
         setDiscountAmout(dsc);
     };
 
-    const isDisabled = useMemo(()=> {
-        if(!warehouse || warehouse?.value ==="") {
+    const isDisabled = useMemo(() => {
+        if (!warehouse || warehouse?.value === "") {
             return true
         } else {
             return false
         }
-    },[warehouse])
+    }, [warehouse])
+
+    const onConfirmSingle = React.useCallback<SingleChange>(
+        params => {
+            setOpenDate(false);
+            const newDate = new Date(params.date ?? '');
+            setDate(newDate.getTime())
+        },
+        [setOpenDate, setDate],
+    );
+
+    const onDismissSingle = React.useCallback(() => {
+        setOpenDate(false);
+    }, [setOpenDate]);
+
+
 
     const onCreatedOrder = async () => {
-        let status :any = 0
+        let status: any = 0
         const arrItems = products.map(item => ({ item_code: item.item_code, qty: item.quantity, rate: item.price, uom: item.stock_uom, discount_percentage: item.discount }))
         const objectData: any = {
             set_warehouse: warehouse?.value,
@@ -598,7 +616,7 @@ const CreateOrder = () => {
             default:
                 break;
         }
-        if(status === ApiConstant.STT_CREATED) onBackScreen();
+        if (status === ApiConstant.STT_CREATED) onBackScreen();
     };
 
     useEffect(() => {
@@ -641,8 +659,10 @@ const CreateOrder = () => {
                                     label={getLabel("deliveryDate")}
                                     value={CommonUtils.convertDate(date)}
                                     editable={false}
+                                    onPress={()=>setOpenDate(true)}
                                     rightIcon={
                                         <TextInput.Icon
+                                            onPress={()=>setOpenDate(true)}
                                             icon={'calendar-month-outline'}
                                             size={20}
                                             color={colors.text_secondary}
@@ -895,9 +915,20 @@ const CreateOrder = () => {
                     handleItem={onChangeData}
                 />
             </AppBottomSheet>
+
+            <DatePickerModal
+                locale={i18n.language ?? 'vi'}
+                mode="single"
+                startYear={1900}
+                visible={openDate}
+                label={getLabel('selectDate')}
+                onDismiss={onDismissSingle}
+                date={new Date(date)}
+                onConfirm={onConfirmSingle}
+            />
         </>
     );
-    
+
 };
 
 export default CreateOrder;
