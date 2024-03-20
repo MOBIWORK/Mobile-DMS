@@ -68,6 +68,8 @@ import {LocationProps} from '../Visit/VisitList/VisitItem';
 import MarkerItem from '../../components/common/MarkerItem';
 import {NavigationProp} from '../../navigation/screen-type';
 import ModalErrorLocation from './components/ModalErrorLocation';
+import {getCustomerVisit, IListVisitParams} from '../../services/appService';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -335,12 +337,11 @@ const HomeScreen = () => {
     const link = `mbwess://sign_in/${userNameStore?.toLocaleLowerCase()}/${passwordStore}/${organiztion?.company_name?.toLocaleLowerCase()}`;
     Linking.canOpenURL(link)
       .then(supported => {
-        // if (supported) {
-        //   Linking.openURL(link);
-        // } else {
-        //   return openAppStore();
-        // }
-        console.log('not sup', supported);
+        if (supported) {
+          Linking.openURL(link);
+        } else {
+          return openAppStore();
+        }
       })
       .catch(() => openAppStore());
   };
@@ -401,6 +402,16 @@ const HomeScreen = () => {
     if (Object.keys(response?.result).length > 0) {
       setVisitValue(response.result);
     }
+  };
+
+  const getCustomer = async (params?: IListVisitParams) => {
+    await getCustomerVisit(params).then((res: any) => {
+      if (Object.keys(res.result).length > 0) {
+        const data: VisitListItemType[] = res?.result.data;
+        // const newData = data.filter(item => item.customer_location_primary);
+        dispatch(customerActions.setCustomerVisit(data));
+      }
+    });
   };
 
   const handleRegainLocation = useCallback(async () => {
@@ -779,7 +790,7 @@ const HomeScreen = () => {
                       ]}
                       animationMode={'flyTo'}
                       animationDuration={500}
-                      zoomLevel={15}
+                      zoomLevel={11}
                     />
                     {listCustomerVisit.length > 0 &&
                       listCustomerVisit.map((item, index) => {
