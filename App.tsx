@@ -142,7 +142,7 @@ function App(): JSX.Element {
       debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
       stopOnTerminate: true, // <-- Allow the background-service to continue tracking when user closes the app.
       startOnBoot: false, // <-- Auto start tracking when device is powered-up.
-      locationAuthorizationRequest:'WhenInUse'
+      locationAuthorizationRequest: 'WhenInUse',
     }).then(state => {
       setEnable(state.enabled);
     });
@@ -176,11 +176,7 @@ function App(): JSX.Element {
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
             <PortalProvider>
-              <AppNavigationContainer>
-                <StatusBar backgroundColor={'#fff'} />
-                <HandlingError />
-                <SnackBar />
-              </AppNavigationContainer>
+              <AppNavigationContainer />
             </PortalProvider>
           </GestureHandlerRootView>
           <HandlingLoading />

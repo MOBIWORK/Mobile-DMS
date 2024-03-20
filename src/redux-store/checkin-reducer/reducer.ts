@@ -89,7 +89,17 @@ const checkinSlice = createSlice({
       state.listImageSelect = [...state.listImageSelect, ...action.payload];
     },
     setImageResponse: (state, action: PayloadAction<any>) => {
-      state.imageToMark = [...state.imageToMark, action.payload];
+      const newImages = action.payload;
+      newImages.forEach((newImage: any) => {
+        const existingIndex = state.imageToMark.findIndex(
+          (existingImage: any) => existingImage.item === newImage.item,
+        );
+        if (existingIndex !== -1) {
+          state.imageToMark[existingIndex].image.push(...newImage.image);
+        } else {
+          state.imageToMark.push(newImage);
+        }
+      });
     },
     setListImageProgram: (state, action: PayloadAction<any>) => {
       state.listProgramImage = action.payload;

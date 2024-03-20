@@ -14,8 +14,6 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 const RootNavigation = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const theme = useSelector(state => state.app.theme);
-
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
   const [appState, setAppState] = useState<any>(AppState.currentState);
   const dataCheckIn = useSelector(state => state.app.dataCheckIn);

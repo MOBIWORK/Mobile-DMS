@@ -12,6 +12,8 @@ import {StatusBar} from 'react-native';
 import {navigationRef} from './navigation-service';
 
 import RootNavigation from './root-navigation';
+import HandlingError from '../components/HandlingError';
+import { SnackBar } from '../components/common/AppSnack';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({}) => {
   const theme = useSelector(state => state.app.theme);
@@ -38,6 +40,8 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({}) => {
       ref={navigationRef}>
       <StatusBar backgroundColor={'transparent'} translucent />
       <>
+         <SnackBar />
+         <HandlingError />
         <RootNavigation />
         <PortalHost name={'Bottom-Sheet'} />
       </>
