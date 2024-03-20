@@ -185,10 +185,7 @@ function App(): JSX.Element {
           style={{flex: 1}}>
           <GestureHandlerRootView style={{flex: 1}}>
             <PortalProvider>
-              <AppNavigationContainer>
-                <StatusBar backgroundColor={'#fff'} />
-                <SnackBar />
-              </AppNavigationContainer>
+              <AppNavigationContainer />
             </PortalProvider>
           </GestureHandlerRootView>
           <HandlingLoading />

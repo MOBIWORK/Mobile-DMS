@@ -11,10 +11,6 @@ import {
   onLoadAppEnd,
   setError,
 } from '../../redux-store/app-reducer/reducer';
-import {Platform} from 'react-native';
-import {showSnack} from '../../components/common';
-import {goBack, pop} from '../../navigation/navigation-service';
-import {getState} from '../../utils/redux';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
@@ -90,12 +86,12 @@ export function* postImageScore(action: PayloadAction) {
           return {
             item,
             image: [
-              ...item.image || [],
+              ...(item.image || []),
               ...(response.result ? [response.result] : []),
             ],
           };
         });
-       
+
         yield put(checkinActions.setImageResponse(list));
       } else {
         // yield put(checkinActions.setImageError([action.payload]))
@@ -111,26 +107,9 @@ export function* createReportMarkScoreSaga(action: PayloadAction) {
   if (checkinActions.createReportMarkScore.match(action)) {
     try {
       yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(
-        CheckinService.createReportMarkingApi,
-        action.payload,
-      );
-      console.log(response, 'fuck report');
-      if (response.message === 'ok') {
-        showSnack({
-          msg: 'Tạo báo cáo thành công',
-          interval: 2000,
-          type: 'success',
-        });
-      } else {
-        showSnack({
-          msg: 'Tạo báo cáo thất bại',
-          interval: 2000,
-          type: 'error',
-        });
-      }
+      yield call(CheckinService.createReportMarkingApi, action.payload);
     } catch (err) {
-      console.log(`[err: ]`, err);
+      console.log('[err: ]', err);
     } finally {
       yield put(onLoadAppEnd());
     }

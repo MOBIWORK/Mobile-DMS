@@ -34,12 +34,19 @@ const handleErrorResponse = (
     } else if (
       throwErrorIfFailed ||
       response.data?.message ||
-      response.data?.exception
+      response.data?.exception ||
+      response.data?._error_message
     ) {
       dispatch(
         setError({
-          title: response.data?.title || response.data?.exc_type,
-          message: response.data?.message || response.data?.exception,
+          title:
+            response.data?.title ||
+            response.data?.exc_type ||
+            response.data?._error_message,
+          message:
+            response.data?.message ||
+            response.data?.exception ||
+            response.data?._server_messages,
           viewOnly: true,
           status: response.status,
         }),
