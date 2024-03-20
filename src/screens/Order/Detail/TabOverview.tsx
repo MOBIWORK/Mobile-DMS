@@ -30,8 +30,6 @@ const TabOverview = ({ data }: PropsType) => {
     const [totalPriceProduct, setTotalPriceProduct] = useState<number>(0);
     const status = CommonUtils.getStatusColor(data?.status ,colors)
 
-    console.log(data);
-    
     const onOpenBottomSheetProduct = (item: ItemProductOrder) => {
         setProductSelect(item);
         discountCalculation(item);
@@ -155,11 +153,9 @@ const TabOverview = ({ data }: PropsType) => {
     return (
         <ErrorBoundary fallbackRender={ErrorFallback}>
             <MainLayout style={styles.layout} >
-                <AppContainer style={{ paddingTop: 16 }}>
-                    <View style={{ paddingHorizontal: 16, rowGap: 24, paddingBottom: 50 }}>
-
+                <AppContainer>
+                    <View style={{ paddingHorizontal: 16, rowGap: 24 ,marginTop: 10}}>
                         <View>
-
                             <View style={[styles.flexSpace]}>
                                 <Text style={[styles.textLabel]}>{getLabel("customer")}</Text>
                                 <TouchableOpacity>
@@ -341,7 +337,8 @@ export default TabOverview;
 const createStyles = (theme: AppTheme) => StyleSheet.create({
     layout: {
         backgroundColor: theme.colors.bg_neutral,
-        paddingHorizontal: 0
+        paddingHorizontal: 0,
+        marginTop : -35
     } as ViewStyle,
     iconInput: {
         width: 24,
