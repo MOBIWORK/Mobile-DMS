@@ -142,9 +142,10 @@ function App(): JSX.Element {
       debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
       stopOnTerminate: true, // <-- Allow the background-service to continue tracking when user closes the app.
       startOnBoot: false, // <-- Auto start tracking when device is powered-up.
-      locationAuthorizationRequest:'WhenInUse'
+      locationAuthorizationRequest: 'WhenInUse',
     }).then(state => {
-      setEnable(state.enabled);
+      // setEnable(state.enabled);
+      BackgroundGeolocation.start();
     });
 
     return () => {
@@ -159,13 +160,13 @@ function App(): JSX.Element {
     };
   }, []);
 
-  useEffect(() => {
-    if (enable) {
-      BackgroundGeolocation.start();
-    } else {
-      BackgroundGeolocation.stop();
-    }
-  }, [enable]);
+  // useEffect(() => {
+  //   if (enable) {
+  //     BackgroundGeolocation.start();
+  //   } else {
+  //     BackgroundGeolocation.stop();
+  //   }
+  // }, [enable]);
 
   return (
     <SafeAreaProvider>
