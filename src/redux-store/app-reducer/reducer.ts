@@ -24,6 +24,7 @@ const initialAppState: IAppRedux = {
   },
   dataCheckIn: {},
   userProfile: {},
+  automaticLocation: false,
 };
 
 const appSlice = createSlice({
@@ -110,6 +111,9 @@ const appSlice = createSlice({
       state.userProfile = action.payload;
     },
     resetDataApp: (state: any) => (state = undefined),
+    setAutomaticLocation: (state, action: PayloadAction<any>) => {
+      state.automaticLocation = action.payload;
+    },
   },
 });
 

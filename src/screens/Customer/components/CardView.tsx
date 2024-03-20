@@ -95,7 +95,7 @@ const rootStyles = (theme: AppTheme) =>
           shadowColor: Colors.darker,
         },
         ios: {
-          shadowColor: '#000',
+          shadowColor:Colors.darker,
           shadowOffset: {
             width: 0,
             height: 1,

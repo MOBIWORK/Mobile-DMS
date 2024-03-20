@@ -35,7 +35,7 @@ const ItemuWidget = ({
           onPress={
             isTouchable
               ? () => navigation.navigate(navigate)
-              : () => handleChangeWidget()
+              : () => handleChangeWidget && handleChangeWidget()
           }
           style={[styles.iconContail]}>
           <SvgIcon source={source} size={32} />
@@ -51,7 +51,7 @@ interface PropTypes {
   name: string;
   navigate: any;
   isTouchable?: boolean;
-  handleChangeWidget: () => void;
+  handleChangeWidget?: () => void;
 }
 
 export default ItemuWidget;

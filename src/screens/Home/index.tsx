@@ -64,11 +64,12 @@ import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
-import {getCustomerVisit} from '../../services/appService';
-import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import MarkerItem from '../../components/common/MarkerItem';
 import {NavigationProp} from '../../navigation/screen-type';
+import ModalErrorLocation from './components/ModalErrorLocation';
+import {getCustomerVisit, IListVisitParams} from '../../services/appService';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -79,9 +80,9 @@ const HomeScreen = () => {
   const {t: getLabel} = useTranslation();
   const isFocus = useIsFocused();
 
-  const [location, setLocation] = useState<Location | null>(null);
+  const location = useRef<Location | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [enabled, setEnabled] = React.useState(false);
   // const showModal = useSelector(state => state.app.showModal);
   const userProfile: IUser = useSelector(state => state.app.userProfile);
   const listCustomerVisit: VisitListItemType[] = useSelector(
@@ -93,7 +94,9 @@ const HomeScreen = () => {
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(
+    'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+  );
   const [screen, setScreen] = useState(false);
 
   const syncWithCodePush = (status: number) => {
@@ -146,7 +149,7 @@ const HomeScreen = () => {
     }
   };
 
-  const renderUiWidget = () => {
+  const renderUiWidget = useCallback(() => {
     return (
       <View>
         <View style={styles.widgetView}>
@@ -182,27 +185,35 @@ const HomeScreen = () => {
         </View>
       </View>
     );
-  };
+  }, [widgets]);
 
-  const backgroundErrorListener = useCallback((errorCode: number) => {
-    // Handle background location errors
-    switch (errorCode) {
-      case 0:
-        setError(
-          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-        );
-        break;
-      case 1:
-        setError('GPS đã bị tắt. Vui lòng bật lại.');
-        break;
-      default:
-        setError(
-          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-        );
-    }
-  }, []);
+  const backgroundErrorListener = useCallback(
+    (errorCode: number) => {
+      // Handle background location errors
+      switch (errorCode) {
+        case 0:
+          setError(
+            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+          );
+          setEnabled(true);
+          break;
+        case 1:
+          setError('GPS đã bị tắt. Vui lòng bật lại.');
+          setEnabled(true);
 
-  const renderUiStatistical = () => {
+          break;
+        default:
+          setError(
+            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+          );
+          setEnabled(true);
+          break;
+      }
+    },
+    [location],
+  );
+
+  const renderUiStatistical = useCallback(() => {
     return (
       <View>
         <View style={[styles.flexSpace]}>
@@ -320,18 +331,17 @@ const HomeScreen = () => {
         </View>
       </View>
     );
-  };
+  }, [KpiValue]);
 
   const openToDeeplink = () => {
     const link = `mbwess://sign_in/${userNameStore?.toLocaleLowerCase()}/${passwordStore}/${organiztion?.company_name?.toLocaleLowerCase()}`;
     Linking.canOpenURL(link)
       .then(supported => {
-        // if (supported) {
-        //   Linking.openURL(link);
-        // } else {
-        //   return openAppStore();
-        // }
-        console.log('not sup', supported);
+        if (supported) {
+          Linking.openURL(link);
+        } else {
+          return openAppStore();
+        }
       })
       .catch(() => openAppStore());
   };
@@ -394,8 +404,8 @@ const HomeScreen = () => {
     }
   };
 
-  const getCustomer = async () => {
-    await getCustomerVisit().then((res: any) => {
+  const getCustomer = async (params?: IListVisitParams) => {
+    await getCustomerVisit(params).then((res: any) => {
       if (Object.keys(res.result).length > 0) {
         const data: VisitListItemType[] = res?.result.data;
         // const newData = data.filter(item => item.customer_location_primary);
@@ -404,18 +414,24 @@ const HomeScreen = () => {
     });
   };
 
-  const handleRegainLocation = async () => {
-    const newLocation = await BackgroundGeolocation.getCurrentPosition({
-      samples: 1,
-      timeout: 3,
-    });
-    mapboxCameraRef.current &&
-      mapboxCameraRef.current.moveTo(
-        [newLocation.coords.longitude, newLocation.coords.latitude],
-        1000,
-      );
-    setLocation(location);
-  };
+  const handleRegainLocation = useCallback(async () => {
+    await BackgroundGeolocation.getCurrentPosition(
+      {
+        samples: 1,
+        timeout: 3,
+      },
+      res => {
+        mapboxCameraRef.current &&
+          mapboxCameraRef.current.flyTo(
+            [res?.coords.longitude, res?.coords.latitude],
+            1000,
+          );
+        location.current = res;
+      },
+      err => console.log('err', err),
+    );
+    // console.log(newLocation,'newLocation')
+  }, []);
 
   useEffect(() => {
     const getLocation = async () => {
@@ -426,15 +442,15 @@ const HomeScreen = () => {
           maximumAge: 0,
           desiredAccuracy: 10,
         },
-        location => {
-          setLocation(location);
-          dispatch(appActions.onSetCurrentLocation(location));
+        locations => {
+          location.current = locations;
+          dispatch(appActions.onSetCurrentLocation(locations));
           mapboxCameraRef.current?.flyTo(
-            [location.coords.longitude, location.coords.latitude],
+            [locations.coords.longitude, locations.coords.latitude],
             1000,
           );
         },
-        // err => backgroundErrorListener(err),
+        err => backgroundErrorListener(err),
       );
     };
     if (isFocus) {
@@ -550,10 +566,6 @@ const HomeScreen = () => {
     // );
     // syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
-
-  if (error !== '') {
-    Alert.alert(error);
-  }
 
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>
@@ -769,8 +781,12 @@ const HomeScreen = () => {
                     <Mapbox.Camera
                       ref={mapboxCameraRef}
                       centerCoordinate={[
-                        location?.coords.longitude ?? 0,
-                        location?.coords.latitude ?? 0,
+                        location.current != null
+                          ? location.current.coords.longitude
+                          : 0,
+                        location.current != null
+                          ? location.current.coords.latitude
+                          : 0,
                       ]}
                       animationMode={'flyTo'}
                       animationDuration={500}
@@ -862,7 +878,6 @@ const HomeScreen = () => {
         )}
       </Block>
 
-      {/* <Block block > */}
       <ModalUpdate
         show={showModalHotUpdate}
         onPress={() => {
@@ -871,7 +886,11 @@ const HomeScreen = () => {
           // dispatch(AppActions.setShowModal(true));
         }}
       />
-      {/* </Block> */}
+      <ModalErrorLocation
+        show={enabled}
+        text={error}
+        onPress={() => console.log('fuck')}
+      />
     </SafeAreaView>
   );
 };

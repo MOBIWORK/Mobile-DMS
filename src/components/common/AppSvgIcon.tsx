@@ -1,6 +1,5 @@
 import React, {createElement, memo} from 'react'
-import { View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { View,TouchableOpacity } from "react-native";
 import { SvgComponent } from "../../assets/svgIcon";
 import { useTheme } from "../../layouts/theme";
 import { SvgIconProps } from './type';

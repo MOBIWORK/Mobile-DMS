@@ -36,7 +36,7 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
-import {useSelector} from '../../../config/function';
+import {calculateDistance, useSelector} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 
 import {appActions} from '../../../redux-store/app-reducer/reducer';
@@ -86,6 +86,13 @@ const ListVisit = () => {
     state => state.customer.listCustomerType,
   );
 
+  const currentLocation = useSelector(
+    state => state.app.currentLocation,
+    shallowEqual,
+  );
+
+  const [customerDataSort, setCustomerData] = useState<VisitListItemType[]>();
+
   const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
     getLabel('nearest'),
   );
@@ -122,12 +129,12 @@ const ListVisit = () => {
   }, []);
 
   const customerCheckinCount = useMemo(() => {
-    if (listCustomer && listCustomer.length > 0) {
-      return listCustomer.filter(item => item.is_checkin).length;
+    if (listCustomer && customerDataSort && customerDataSort.length > 0) {
+      return customerDataSort.filter(item => item.is_checkin).length;
     } else {
       return '';
     }
-  }, [listCustomer]);
+  }, [listCustomer, customerDataSort]);
 
   const handleBackground = () => {
     BackgroundGeolocation.getCurrentPosition(
@@ -151,6 +158,7 @@ const ListVisit = () => {
   }, [dispatch]);
 
   const handleItemDistanceFilter = (itemData: IFilterType) => {
+    distanceRef.current?.close();
     setDistanceFilterValue(getLabel(itemData.label));
     const newData = distanceFilterData.map(item => {
       if (itemData.value === item.value) {
@@ -160,6 +168,7 @@ const ListVisit = () => {
       }
     });
     setDistanceFilterData(newData);
+    sortDataCustomer(getLabel(itemData.label));
   };
 
   const presentMap = (item: VisitListItemType) => {
@@ -254,7 +263,7 @@ const ListVisit = () => {
             <Text style={{color: colors.text_secondary}}>
               {StringFormat(getLabel('customerVisitedCount'), {
                 customerCheckinCount: customerCheckinCount,
-                allCustomer: listCustomer?.length,
+                allCustomer: customerDataSort?.length,
               })}
             </Text>
             {loading ? (
@@ -263,7 +272,7 @@ const ListVisit = () => {
               <FlatList
                 style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
-                data={listCustomer}
+                data={customerDataSort ?? listCustomer}
                 keyExtractor={(item, index) =>
                   `${item.customer_code} - ${index}`
                 }
@@ -399,6 +408,43 @@ const ListVisit = () => {
     });
   };
 
+  const sortDataCustomer = (distanceLabel: string) => {
+    if (listCustomer && listCustomer.length > 0) {
+      const filteredData = listCustomer.filter(
+        item => item.customer_location_primary != null,
+      );
+      const sortedData = () => {
+        return filteredData.slice().sort((a, b) => {
+          const locationA: LocationProps = JSON.parse(
+            a.customer_location_primary,
+          );
+          const locationB: LocationProps = JSON.parse(
+            b.customer_location_primary,
+          );
+          const distance1 = calculateDistance(
+            currentLocation.coords.latitude,
+            currentLocation.coords.longitude,
+            locationA.lat,
+            locationA.long,
+          );
+          const distance2 = calculateDistance(
+            currentLocation.coords.latitude,
+            currentLocation.coords.longitude,
+            locationB.lat,
+            locationB.long,
+          );
+          return distanceLabel === getLabel('nearest')
+            ? distance1 - distance2
+            : distance2 - distance1;
+        });
+      };
+
+      setCustomerData(sortedData);
+    } else {
+      getCustomer();
+    }
+  };
+
   const getCustomerRoute = async () => {
     if (lisCustomerRoute.length === 0) {
       const response: any = await CustomerService.getCustomerRoute();
@@ -419,6 +465,7 @@ const ListVisit = () => {
 
   const getData = async () => {
     setLoading(true);
+    await sortDataCustomer(distanceFilterValue);
     await getCustomerRoute();
     await getDataGroup();
     setLoading(false);
@@ -500,7 +547,7 @@ const ListVisit = () => {
     return () => {
       mounted.current = false;
     };
-  }, []);
+  }, [listCustomer]);
 
   return (
     <SafeAreaView

@@ -61,6 +61,8 @@ const ListAlbumScore = (props: Props) => {
   );
   const [appLoading, setAppLoading] = useState<boolean>();
 
+    console.log(listImageResponse,'listImageResponse')
+
   const resultData: DataResultAlbum[] = listProgramSelected?.map(campaign => {
     return {
       title: campaign?.campaign_name,
@@ -81,7 +83,6 @@ const ListAlbumScore = (props: Props) => {
     };
   });
 
-  console.log(resultData, 'result data');
 
   const confirmUploadImage = async () => {
     try {

@@ -6,7 +6,7 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import { NavigationProp, RouterProp} from '../../../navigation/screen-type';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
 import BackgroundGeolocation, {
   Location,
@@ -35,7 +35,7 @@ import {IUpdateAddress} from '../../../services/checkInService';
 import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
-import { dispatch } from '../../../utils/redux';
+import {dispatch} from '../../../utils/redux';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -165,6 +165,7 @@ const CheckInLocation = () => {
 
   return (
     <SafeAreaView
+      edges={['bottom']}
       style={{backgroundColor: theme.colors.bg_default, paddingHorizontal: 0}}>
       <AppHeader
         style={{paddingHorizontal: 16}}
