@@ -12,7 +12,7 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import {useTheme} from '../../../layouts/theme';
-import {navigate, pop} from '../../../navigation/navigation-service';
+import {goBack, navigate, pop} from '../../../navigation/navigation-service';
 import {RootStackParamList} from '../../../navigation/screen-type';
 
 import {useSelector} from '../../../config/function';
@@ -32,16 +32,14 @@ import {ListCampaignScore, ParamsList} from './type';
 import {IUser} from '../../../models/types';
 import {Modal} from 'react-native-paper';
 type Props = {};
-interface DataResultAlbum extends DataSendMarkScore {
-  title: string;
-  image: [];
-}
 
 const ListAlbumScore = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const itemParams: ParamsList =
     useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.data;
+  const screens =
+    useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.screen;
   const listProgramSelected: ListCampaignScore[] = useSelector(
     state => state.checkin?.selectedProgram,
     shallowEqual,
@@ -61,28 +59,31 @@ const ListAlbumScore = (props: Props) => {
   );
   const [appLoading, setAppLoading] = useState<boolean>();
 
-    console.log(listImageResponse,'listImageResponse')
-
-  const resultData: DataResultAlbum[] = listProgramSelected?.map(campaign => {
+  const resultData: DataSendMarkScore[] = listProgramSelected?.map(campaign => {
     return {
-      title: campaign?.campaign_name,
-      image: listImageResponse.map((item: any) => item.file_url),
       e_name: userInfor.employee,
       campaign_code: campaign.name,
       category: campaign.categories,
       customer_code: itemParams.kh_ten,
       images: JSON.stringify(
-        listImageResponse.map((item: any) => item.file_url),
+        JSON.stringify(
+          listImageResponse
+            .map((item: any) => item.image)[0]
+            .map((image: any) => image.file_url),
+        ),
       ),
       images_time: parseFloat(
-        listImageResponse.map((item: any) => item.date_time)[
-          listImageResponse.map((item: any) => item.date_time).length - 1
+        listImageResponse
+          .map((item: any) => item.image)[0]
+          .map((image: any) => image.date_time)[
+          listImageResponse
+            .map((item: any) => item.image)[0]
+            .map((image: any) => image.date_time).length - 1
         ],
       ),
       setting_score_audit: campaign.setting_score_audit,
     };
   });
-
 
   const confirmUploadImage = async () => {
     try {
@@ -96,13 +97,15 @@ const ListAlbumScore = (props: Props) => {
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
       for (let index = 0; index < resultData.length; index++) {
         const element = resultData[index];
-        let {title, image, ...rest} = element;
-        dispatch(checkinActions.createReportMarkScore(rest));
+
+        dispatch(checkinActions.createReportMarkScore(element));
       }
+
       // let data:DataSendMarkScore ={
     } catch (err) {
       console.log(`[err: ]`, err);
     } finally {
+      screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack();
       setAppLoading(false);
     }
     //   customer_code:itemParams.kh_ten,
@@ -115,7 +118,7 @@ const ListAlbumScore = (props: Props) => {
         <AppHeader
           style={styles.header}
           label="Chấm điểm trưng bày"
-          onBack={() => pop(1)}
+          onBack={() => screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack()}
           // hiddenBackButton={true}
         />
         <Block
@@ -146,7 +149,7 @@ const ListAlbumScore = (props: Props) => {
     <SafeAreaView style={styles.root} edges={['bottom', 'top']}>
       <Block block>
         <FlatList
-          data={resultData}
+          data={listImageResponse}
           keyExtractor={(item, index) => index.toString()}
           bounces={false}
           showsVerticalScrollIndicator={false}
@@ -155,7 +158,7 @@ const ListAlbumScore = (props: Props) => {
           stickyHeaderIndices={[0]}
           renderItem={({item}) => {
             return (
-              <Accordion type="regular" title={item.title}>
+              <Accordion type="regular" title={item.item}>
                 <FlatList
                   numColumns={3}
                   data={item.image}
@@ -164,7 +167,10 @@ const ListAlbumScore = (props: Props) => {
                   renderItem={({item, index}) => {
                     return (
                       <Block padding={5} alignItems="center">
-                        <Image style={styles.cameraImg} source={{uri: item}} />
+                        <Image
+                          style={styles.cameraImg}
+                          source={{uri: item.file_url}}
+                        />
                       </Block>
                     );
                   }}
