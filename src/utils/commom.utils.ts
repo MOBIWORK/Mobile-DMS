@@ -509,11 +509,13 @@ export const dateToDate = (type: string) => {
     case 'last_month': {
       let year: number;
       let month = curr.getMonth() + 1;
+      
       if (month === 1) {
         year = curr.getFullYear() - 1;
         month = 12;
       } else {
         year = curr.getFullYear();
+        month = curr.getMonth()
       }
       let date = new Date(year, month);
       date.setDate(date.getDate() - 1);
@@ -524,12 +526,13 @@ export const dateToDate = (type: string) => {
     }
     case 'last_month_again': {
       let year: number;
-      let month = curr.getMonth() - 1;
-      if (month < 1) {
+      let month = curr.getMonth() + 1;
+      if (month == 1) {
         year = curr.getFullYear() - 1;
         month = 11;
       } else {
         year = curr.getFullYear();
+        month = month - 2
       }
       let date = new Date(year, month);
       date.setDate(date.getDate() - 1);
