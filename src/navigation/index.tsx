@@ -12,24 +12,10 @@ import {StatusBar} from 'react-native';
 import {navigationRef} from './navigation-service';
 
 import RootNavigation from './root-navigation';
+import HandlingError from '../components/HandlingError';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({}) => {
   const theme = useSelector(state => state.app.theme);
-  // const [organiztion] = useMMKVObject<IResOrganization>(
-  //   AppConstant.Organization,
-  // );
-
-  // const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
-
-  // useEffect(() => {
-  //   PushNotification.configure({
-  //     onNotification: notification => {
-  //       if (notification.userInteraction) {
-  //         console.log('312');
-  //       }
-  //     },
-  //   });
-  // }, []);
 
   return (
     <NavigationContainer
@@ -39,6 +25,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({}) => {
       <StatusBar backgroundColor={'transparent'} translucent />
       <>
         <RootNavigation />
+        <HandlingError />
         <PortalHost name={'Bottom-Sheet'} />
       </>
       <RXStore />

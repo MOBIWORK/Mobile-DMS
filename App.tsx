@@ -17,7 +17,6 @@ import {Provider} from 'react-redux';
 
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import AppNavigationContainer from './src/navigation';
-import HandlingError from './src/components/HandlingError';
 import HandlingLoading from './src/components/HandlingLoading';
 import {SnackBar} from './src/components/common/AppSnack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -143,6 +142,15 @@ function App(): JSX.Element {
       stopOnTerminate: true, // <-- Allow the background-service to continue tracking when user closes the app.
       startOnBoot: false, // <-- Auto start tracking when device is powered-up.
       locationAuthorizationRequest: 'WhenInUse',
+      // url: 'https://api.ekgis.vn/tracking/locationHistory/position/64dae1bf20309bc61366a2b1?api_key=dCceCixTANM4zeayfXslpTNTcbONf9aBsDCFWxIs',
+      // autoSyncThreshold: 5,
+      // maxBatchSize: 50,
+      // locationsOrderDirection: 'DESC',
+      // maxDaysToPersist: 14,
+      // params: {
+      //   projectId: '12333',
+      //   objectId: '21111',
+      // },
     }).then(state => {
       // setEnable(state.enabled);
       BackgroundGeolocation.start();
@@ -179,7 +187,6 @@ function App(): JSX.Element {
             <PortalProvider>
               <AppNavigationContainer>
                 <StatusBar backgroundColor={'#fff'} />
-                <HandlingError />
                 <SnackBar />
               </AppNavigationContainer>
             </PortalProvider>
