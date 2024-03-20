@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {
@@ -41,6 +41,15 @@ interface ImageSelect {
   timeStamp: number;
 }
 
+const useIsItemExists = () => {
+  const isItemExists = useMemo(() => {
+    return (listProgramImage: any[], newItem: any) => {
+      return listProgramImage.some(item => item.item === newItem.item);
+    };
+  }, []);
+
+  return isItemExists;
+};
 const TakePictureScore = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
@@ -56,6 +65,7 @@ const TakePictureScore = () => {
       .screen;
   const snapPoints = React.useMemo(() => ['45%'], []);
   const bottomSheetRef = React.useRef<BottomSheetMethods>();
+  const isItemExists = useIsItemExists();
   const userInfor: IUser = useSelector(
     state => state.app.userProfile,
     shallowEqual,
@@ -72,27 +82,54 @@ const TakePictureScore = () => {
     state => state.checkin.listImageSelect,
     shallowEqual,
   );
-  const listImageProgram = useSelector(
-    state => state.checkin.listProgramImage,
-    shallowEqual,
-  );
+
+  const {listProgramImage} = getState('checkin');
+
   useDisableBackHandler(true);
-  // console.log()
+  // console.log(listProgram,'listProgram')
+  // Should be true
 
   const onPressConfirm = useCallback(
     async (listProgram: any[]) => {
       await dispatch(checkinActions.setListImageSelect(selectedImages));
       bottomSheetRef?.current?.close();
-      const newArray = listProgram.map((item: any, index) => ({
+
+      let updatedListProgramImage: any[] = [...listProgramImage];
+
+      const newArray = listProgram.map((item: any) => ({
         item,
         image: selectedImages,
       }));
-      // console.log(newArray[0].image, 'new array');
-      dispatch(checkinActions.setListImageProgram([...newArray]));
+
+      newArray.forEach(newItem => {
+        // Check if the item already exists in the listProgramImage
+        const exists = isItemExists(updatedListProgramImage, newItem);
+        if (exists) {
+          // If the item already exists, create a new array with the merged image arrays
+          updatedListProgramImage = updatedListProgramImage.map(
+            existingItem => {
+              if (existingItem.item === newItem.item) {
+                return {
+                  ...existingItem,
+                  image: [...existingItem.image, ...newItem.image],
+                };
+              }
+              return existingItem;
+            },
+          );
+        } else {
+          // If the item does not exist, add it to the listProgramImage
+          updatedListProgramImage.push(newItem);
+        }
+      });
+
+      console.log('Updated List:', updatedListProgramImage[0].image);
+
+      dispatch(checkinActions.setListImageProgram(updatedListProgramImage));
 
       try {
         setLoading(true);
-
+        let newArr: any[] = [];
         // Loop over each image in selectedImages
         for (let i = 0; i < selectedImages.length; i++) {
           const formData = new FormData(); // Create a new FormData object for each image
@@ -115,13 +152,13 @@ const TakePictureScore = () => {
 
           // Append file data to form data
           formData.append('file', fileData);
-
+          newArr.push(formData);
           // Delay if needed
           await new Promise(resolve => setTimeout(resolve, 1000));
 
           // Dispatch action to post image score
-          await dispatch(checkinActions.postImageScore(formData,listProgram));
         }
+        dispatch(checkinActions.postImageScore(newArr, listProgram));
       } catch (err) {
         console.log('Error uploading images:', err);
       } finally {
@@ -303,7 +340,7 @@ const TakePictureScore = () => {
           colorTheme="white"
           padding={80}>
           <ActivityIndicator size="large" color={theme.colors.action} />
-          <Text  >Đang tải ảnh</Text>
+          <Text>Đang tải ảnh</Text>
         </Block>
       </Modal>
       <Modal visible={showModal} style={styles.modalError}>

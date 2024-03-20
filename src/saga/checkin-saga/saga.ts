@@ -5,11 +5,16 @@ import {CheckinService} from '../../services';
 import {ApiConstant} from '../../const';
 import {KeyAbleProps} from '../../models/types';
 import {ResponseGenerator} from '../app-saga/saga';
-import {appActions, onLoadApp, onLoadAppEnd, setError} from '../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  onLoadApp,
+  onLoadAppEnd,
+  setError,
+} from '../../redux-store/app-reducer/reducer';
 import {Platform} from 'react-native';
 import {showSnack} from '../../components/common';
 import {pop} from '../../navigation/navigation-service';
-import { getState } from '../../utils/redux';
+import {getState} from '../../utils/redux';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
@@ -55,6 +60,7 @@ export function* getListProgramData(action: PayloadAction) {
         CheckinService.getListProgram,
         action.payload,
       );
+      console.log(response, 'response campaign');
       if (response?.message === 'ok') {
         yield put(checkinActions.setDataListProgram(response.result?.data));
       } else {
@@ -74,26 +80,32 @@ export function* getListProgramData(action: PayloadAction) {
 export function* postImageScore(action: PayloadAction) {
   if (checkinActions.postImageScore.match(action)) {
     try {
-      const {listProgramImage} = getState('checkin')
-      const response: ResponseGenerator = yield call(
-        CheckinService.postImagePictureScore,
-        action.payload.data as any,
-      );
+      const {listProgramImage} = getState('checkin');
+
+
+      console.log(action.payload.data,'dataSend')
+
+      // const response: ResponseGenerator = yield call(
+      //   CheckinService.postImagePictureScore,
+      //   action.payload.data as any,
+      // );
       console.log(
-        listProgramImage[0].image,
+        listProgramImage,
         Platform.OS === 'android' ? 'log android' : 'log ios',
       );
-      if (
-        response.message === 'ok' &&
-        Object.keys(response.result).length > 0
-      ) {
-        yield put(checkinActions.setImageResponse(response.result));
-      } else {
-        // yield put(checkinActions.setImageError([action.payload]))
-      }
+      // if (
+      //   response.message === 'ok' &&
+      //   Object.keys(response.result).length > 0
+      // ) {
+      // console.log(response.result,'response image server')
+
+        // yield put(checkinActions.setImageResponse(updateData));
+
+      // } else {
+      //   // yield put(checkinActions.setImageError([action.payload]))
+      // }
     } catch (err) {
       console.log('err:', err);
-      console.log('run here ?');
     } finally {
     }
   }
@@ -102,7 +114,7 @@ export function* postImageScore(action: PayloadAction) {
 export function* createReportMarkScoreSaga(action: PayloadAction) {
   if (checkinActions.createReportMarkScore.match(action)) {
     try {
-      yield put(onLoadApp())
+      yield put(onLoadApp());
       const response: ResponseGenerator = yield call(
         CheckinService.createReportMarkingApi,
         action.payload,
@@ -123,9 +135,9 @@ export function* createReportMarkScoreSaga(action: PayloadAction) {
         });
       }
     } catch (err) {
-      console.log(`[err: ]`,err)
-    }finally{
-      yield put(onLoadAppEnd())
+      console.log(`[err: ]`, err);
+    } finally {
+      yield put(onLoadAppEnd());
     }
   }
 }

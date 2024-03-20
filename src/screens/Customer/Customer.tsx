@@ -43,7 +43,6 @@ import {Location} from 'react-native-background-geolocation';
 import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import SkeletonLoading from '../Visit/SkeletonLoading';
 import isEqual from 'react-fast-compare';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 
@@ -147,6 +146,7 @@ const Customer = () => {
   );
 
   const onRefreshData = useCallback(async () => {
+    if(mounted.current){
     try {
       dispatch(onLoadApp());
       dispatch(customerActions.onGetCustomer());
@@ -155,10 +155,12 @@ const Customer = () => {
     } finally {
       dispatch(onLoadAppEnd());
     }
-  }, [dispatch]);
-
+  }
+  }, [dispatch,appLoading]);
+  
   React.useEffect(() => {
-    if (mounted.current === true) {
+    mounted.current = true
+    if (mounted.current) {
       handleBackgroundLocation();
       if (listCustomer && listCustomer.length > 0) {
         const filteredData = listCustomer.filter(
@@ -167,6 +169,7 @@ const Customer = () => {
 
         customerData.current = sortedData(filteredData);
       } else {
+        console.log('run this')
         dispatch(customerActions.onGetCustomer());
         onRefreshData();
       }
@@ -176,11 +179,13 @@ const Customer = () => {
       };
       getDataType();
     }
-
+    mounted.current = false
     return () => {
       mounted.current = false;
     };
   }, [listCustomer]);
+
+  // console.log(sortedData(),'sorted data')
 
   const handleApplyFilter = useCallback(() => {
     if (

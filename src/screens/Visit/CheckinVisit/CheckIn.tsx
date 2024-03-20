@@ -1,11 +1,9 @@
-import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React, {
   useCallback,
   useState,
   useEffect,
   useRef,
-  useMemo,
-  useLayoutEffect,
 } from 'react';
 import {
   Block,
@@ -94,7 +92,7 @@ const CheckIn = () => {
   //   startInterval();
   //   return () => clearInterval(intervalId.current);
   // }, []);
-
+// console.log(status,'statús')
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
     const hours = Math.floor(seconds / 3600);
@@ -105,6 +103,7 @@ const CheckIn = () => {
 
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
+  
 
   const handleSwitch = useCallback(() => {
     if (title === getLabel('openDoor')) {
@@ -116,7 +115,7 @@ const CheckIn = () => {
       setStatus(true);
       dispatch(appActions.setCheckInStoreStatus(true));
     }
-  }, []);
+  }, [status]);
   const isCurrentTimeGreaterOrEqual = (minTime: any) => {
     const currentTime = elapsedTime;
     return currentTime >= timeToSeconds(minTime);

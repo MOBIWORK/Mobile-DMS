@@ -92,7 +92,7 @@ const checkinSlice = createSlice({
       state.imageToMark = [...state.imageToMark, action.payload];
     },
     setListImageProgram: (state, action: PayloadAction<any>) => {
-      state.listProgramImage = [...state.listProgramImage, ...action.payload];
+      state.listProgramImage = action.payload;
     },
     resetDataState: (state: any) => {
       state = undefined;
