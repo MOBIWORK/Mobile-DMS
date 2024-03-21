@@ -262,4 +262,5 @@ export default {
   logTravel: 'Travel log',
   autoLocation: 'Automatic location',
   signOut: 'Log out',
+  unknown: 'Unknown',
 };

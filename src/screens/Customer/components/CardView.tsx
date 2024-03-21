@@ -13,7 +13,7 @@ import {TextStyle} from 'react-native';
 import {useTheme, AppTheme} from '../../../layouts/theme';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
-import { navigate } from '../../../navigation/navigation-service';
+import {navigate} from '../../../navigation/navigation-service';
 import {ScreenConstant} from '../../../const';
 import {IDataCustomers} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
@@ -55,7 +55,9 @@ const CardView = (props: IDataCustomers) => {
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconAddress'} style={styles.iconStyle} />
           <Text numberOfLines={1} style={styles.contentText}>
-            {props?.address?.[0]?.address ? props.address[0]?.address : '---'}
+            {props?.customer_primary_address
+              ? props.customer_primary_address
+              : '---'}
           </Text>
         </View>
         <View style={styles.contentContainLayout}>
@@ -77,7 +79,7 @@ const CardView = (props: IDataCustomers) => {
   );
 };
 
-export default React.memo(CardView,isEqual);
+export default React.memo(CardView, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -95,7 +97,7 @@ const rootStyles = (theme: AppTheme) =>
           shadowColor: Colors.darker,
         },
         ios: {
-          shadowColor:Colors.darker,
+          shadowColor: Colors.darker,
           shadowOffset: {
             width: 0,
             height: 1,

@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, {useRef, useMemo, useCallback, useEffect} from 'react';
+import React, {useRef, useMemo, useCallback} from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -25,7 +25,6 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
-  AppFAB,
   Block,
 } from '../../components/common';
 import ListFilter from './components/ListFilter';
@@ -115,7 +114,6 @@ const Customer = () => {
     bottomRef2.current?.snapToIndex(0);
   }, [bottomRef2.current]);
 
-  // console.log(listCustomer,'b')
   const sortedData = useCallback(
     (filteredData: IDataCustomers[]) => {
       return filteredData.slice().sort((a, b) => {
@@ -146,30 +144,35 @@ const Customer = () => {
   );
 
   const onRefreshData = useCallback(async () => {
-    if(mounted.current){
-    try {
-      dispatch(onLoadApp());
-      dispatch(customerActions.onGetCustomer());
-    } catch (er) {
-      console.log('errDispatch: ', er);
-    } finally {
-      dispatch(onLoadAppEnd());
+    if (mounted.current) {
+      try {
+        dispatch(onLoadApp());
+        dispatch(customerActions.onGetCustomer());
+      } catch (er) {
+        console.log('errDispatch: ', er);
+      } finally {
+        dispatch(onLoadAppEnd());
+      }
     }
-  }
-  }, [dispatch,appLoading]);
-  
+  }, [dispatch, appLoading]);
+
   React.useEffect(() => {
-    mounted.current = true
+    mounted.current = true;
     if (mounted.current) {
       handleBackgroundLocation();
       if (listCustomer && listCustomer.length > 0) {
         const filteredData = listCustomer.filter(
           item => item.customer_location_primary != null,
         );
+        const noLocationCustomer = listCustomer.filter(
+          item => item.customer_location_primary === null,
+        );
 
-        customerData.current = sortedData(filteredData);
+        customerData.current = [
+          ...sortedData(filteredData),
+          ...noLocationCustomer,
+        ];
       } else {
-        console.log('run this')
         dispatch(customerActions.onGetCustomer());
         onRefreshData();
       }
@@ -179,13 +182,11 @@ const Customer = () => {
       };
       getDataType();
     }
-    mounted.current = false
+    mounted.current = false;
     return () => {
       mounted.current = false;
     };
   }, [listCustomer]);
-
-  // console.log(sortedData(),'sorted data')
 
   const handleApplyFilter = useCallback(() => {
     if (
@@ -199,31 +200,31 @@ const Customer = () => {
       valueFilter.customerType === getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      const newData = listCustomer?.filter(
+      const newData1 = listCustomer?.filter(
         item => item.customer_type === valueFilter.customerType,
       );
-      customerData.current = newData;
+      customerData.current = newData1;
       bottomRef2.current?.close();
     } else if (
       valueFilter.customerGroupType !== getLabel('all') &&
       valueFilter.customerType !== getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      const newData = listCustomer?.filter(
+      const newData2 = listCustomer?.filter(
         item =>
           item.customer_group === valueFilter.customerGroupType &&
           item.customer_type === valueFilter.customerType,
       );
-      customerData.current = newData;
+      customerData.current = newData2;
     } else if (
       valueFilter.customerGroupType !== getLabel('all') &&
       valueFilter.customerType === getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      const newData = listCustomer?.filter(
+      const newData3 = listCustomer?.filter(
         item => item.customer_group === valueFilter.customerGroupType,
       );
-      customerData.current = newData;
+      customerData.current = newData3;
       bottomRef2.current?.close();
     } else {
       console.log('fuck ?');
@@ -378,7 +379,7 @@ const Customer = () => {
           data={customerData.current}
           loading={appLoading!}
           onRefresh={onRefreshData}
-          listFooter={listFooter}
+          // listFooter={listFooter}
           onLoadData={onEndReachedThreshold}
         />
       </Block>

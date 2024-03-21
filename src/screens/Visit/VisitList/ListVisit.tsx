@@ -173,11 +173,15 @@ const ListVisit = () => {
 
   const presentMap = (item: VisitListItemType) => {
     const item_location: any = JSON.parse(item.customer_location_primary);
-    mapboxCameraRef.current &&
-      mapboxCameraRef.current.moveTo(
-        [item_location.long, item_location.lat],
-        1000,
-      );
+    console.log('item_location', item_location.long);
+    CommonUtils.sleep(100).then(() => {
+      mapboxCameraRef.current &&
+        mapboxCameraRef.current.moveTo(
+          [Number(item_location.long), Number(item_location.lat)],
+          1000,
+        );
+    });
+
     setShowListVisit(false);
     setVisitItemSelected(item);
   };
@@ -192,7 +196,10 @@ const ListVisit = () => {
           rightButton={
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
-                onPress={() => setShowListVisit(!isShowListVisit)}>
+                onPress={() => {
+                  setShowListVisit(!isShowListVisit);
+                  setVisitItemSelected(null);
+                }}>
                 <Image
                   source={
                     isShowListVisit ? ImageAssets.MapIcon : ImageAssets.ListIcon
@@ -316,18 +323,20 @@ const ListVisit = () => {
                   style={{visibility: 'visible'}}
                 />
               </Mapbox.RasterSource>
-              <Mapbox.Camera
-                ref={mapboxCameraRef}
-                centerCoordinate={[
-                  location?.coords.longitude ?? 0,
-                  location?.coords.latitude ?? 0,
-                ]}
-                animationMode={'flyTo'}
-                animationDuration={500}
-                zoomLevel={12}
-              />
-              {listCustomer &&
-                listCustomer.map((item, index) => {
+              {location?.coords && (
+                <Mapbox.Camera
+                  ref={mapboxCameraRef}
+                  centerCoordinate={[
+                    location?.coords.longitude,
+                    location?.coords.latitude,
+                  ]}
+                  animationMode={'flyTo'}
+                  animationDuration={500}
+                  zoomLevel={12}
+                />
+              )}
+              {customerDataSort &&
+                customerDataSort.map((item, index) => {
                   if (item.customer_location_primary) {
                     const newLocation: LocationProps = JSON.parse(
                       item.customer_location_primary!,
@@ -339,7 +348,11 @@ const ListVisit = () => {
                           Number(newLocation.long),
                           Number(newLocation.lat),
                         ]}>
-                        <MarkerItem item={item} index={index} />
+                        <MarkerItem
+                          item={item}
+                          index={index}
+                          onPress={() => setVisitItemSelected(item)}
+                        />
                       </Mapbox.MarkerView>
                     );
                   } else {
@@ -413,6 +426,9 @@ const ListVisit = () => {
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary != null,
       );
+      const noLocationCustomer = listCustomer.filter(
+        item => item.customer_location_primary === null,
+      );
       const sortedData = () => {
         return filteredData.slice().sort((a, b) => {
           const locationA: LocationProps = JSON.parse(
@@ -438,8 +454,7 @@ const ListVisit = () => {
             : distance2 - distance1;
         });
       };
-
-      setCustomerData(sortedData);
+      setCustomerData([...sortedData(), ...noLocationCustomer]);
     } else {
       getCustomer();
     }
