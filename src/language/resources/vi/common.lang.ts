@@ -267,4 +267,5 @@ export default {
   logTravel: 'Nhật kí di chuyển',
   autoLocation: 'Vị trí tự động',
   signOut: 'Đăng xuất',
+  unknown: 'Không xác định',
 };

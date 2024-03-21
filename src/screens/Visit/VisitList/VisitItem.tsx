@@ -199,16 +199,28 @@ const VisitItem: FC<VisitItemProps> = ({
             />
             <TouchableOpacity
               onPress={() => handleOpenMap && handleOpenMap(item)}
-              style={styles.content}>
+              style={styles.content}
+              disabled={!distanceCal.distance}>
               <Image
                 source={ImageAssets.SendIcon}
                 style={{width: 16, height: 16}}
                 resizeMode={'cover'}
-                tintColor={colors.action}
+                tintColor={
+                  distanceCal.distance ? colors.action : colors.text_secondary
+                }
               />
               <Text
-                style={{color: colors.action, textDecorationLine: 'underline'}}>
-                {Math.floor(distanceCal.distance)}km
+                style={{
+                  color: distanceCal.distance
+                    ? colors.action
+                    : colors.text_secondary,
+                  textDecorationLine: distanceCal.distance
+                    ? 'underline'
+                    : 'none',
+                }}>
+                {distanceCal.distance
+                  ? `${Math.floor(distanceCal.distance)}km`
+                  : getLabel('unknown')}
               </Text>
             </TouchableOpacity>
           </View>

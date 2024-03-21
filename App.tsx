@@ -143,17 +143,22 @@ function App(): JSX.Element {
       startOnBoot: false, // <-- Auto start tracking when device is powered-up.
       locationAuthorizationRequest: 'WhenInUse',
       // url: 'https://api.ekgis.vn/tracking/locationHistory/position/64dae1bf20309bc61366a2b1?api_key=dCceCixTANM4zeayfXslpTNTcbONf9aBsDCFWxIs',
-      // autoSyncThreshold: 5,
+      // httpTimeout: 10000,
+      // batchSync: false, // <-- Set true to sync locations to server in a single HTTP request.
+      // autoSync: true, // <-- Set true to sync each location to server as it arrives.
+      // autoSyncThreshold: 1,
       // maxBatchSize: 50,
       // locationsOrderDirection: 'DESC',
-      // maxDaysToPersist: 14,
+      maxDaysToPersist: 7,
       // params: {
       //   projectId: '12333',
       //   objectId: '21111',
       // },
     }).then(state => {
       // setEnable(state.enabled);
-      BackgroundGeolocation.start();
+      if (!state.enabled) {
+        BackgroundGeolocation.start().finally();
+      }
     });
 
     return () => {
