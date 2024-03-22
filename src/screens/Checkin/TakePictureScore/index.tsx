@@ -251,7 +251,7 @@ const TakePictureScore = () => {
       <Block middle block justifyContent="center">
         <SvgIcon source={'TakePicture'} size={90} />
         <Text style={{color: theme.colors.text_secondary}}>
-          Thêm album để chụp ảnh
+          Thêm ảnh chụp
         </Text>
         <TouchableOpacity
           style={styles.emptyAlbumAdding}
