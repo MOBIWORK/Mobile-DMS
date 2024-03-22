@@ -183,7 +183,7 @@ const TakePictureScore = () => {
   //   });
   // }, [selectedImages]);
   const handleCameraPicture = React.useCallback(async () => {
-    await CameraUtils.openImagePicker((img, base64) => {
+    await CameraUtils.openImagePickerCamera((img, base64) => {
       setAlbumImage(prevImages => {
         if (prevImages.length === 0) {
           // If no images exist, add the new image as the initial picture
@@ -248,7 +248,7 @@ const TakePictureScore = () => {
       <Block middle block justifyContent="center">
         <SvgIcon source={'TakePicture'} size={90} />
         <Text style={{color: theme.colors.text_secondary}}>
-          Thêm album để chụp ảnh
+          Thêm ảnh chụp
         </Text>
         <TouchableOpacity
           style={styles.emptyAlbumAdding}

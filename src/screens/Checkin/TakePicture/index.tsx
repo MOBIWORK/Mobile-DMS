@@ -55,8 +55,6 @@ const TakePicture = () => {
     state => state.app.dataCheckIn?.listImage,
     shallowEqual,
   );
-  console.log(listImage)
-
   const [message, setMessage] = useState<number>(0);
   const data = useRef<ImageCheckIn>({
     album_id: '',
@@ -87,17 +85,13 @@ const TakePicture = () => {
           data.current.album_name = albumImageData[index].label;
         }
         const element = albumImageData[index].image;
-        for (let i = 0; i < element.length; i++) {
+        for (let i = 1; i < element.length; i++) {
           let image = element[i];
           if (data?.current) {
             data.current.image = image?.base64!;
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await new Promise<void>(resolve => {
-              dispatch(appActions.postImageCheckIn(data.current));
-              resolve();
-            });
+            await new Promise(resolve => setTimeout(resolve, 1500));
             totalItemsProcessed++;
-            setMessage(totalItemsProcessed);
+            dispatch(appActions.postImageCheckIn(data.current));
           }
         }
       }
@@ -105,7 +99,9 @@ const TakePicture = () => {
       console.error('Error during image processing', error);
     } finally {
       console.log(`Done processing ${totalItemsProcessed} items`);
-      completeCheckin();
+      dispatch(appActions.clearListImage([]));
+      completeCheckin()
+      setMessage(totalItemsProcessed);
       setLoading(false);
     }
   };
@@ -118,7 +114,7 @@ const TakePicture = () => {
   };
 
   const handleCamera = async (item: IAlbumImage) => {
-    await CameraUtils.openImagePickerCamera((img, base64) => {
+    await CameraUtils.openImagePicker((img, base64) => {
       const newListImage = [
         ...item.image,
         {url: img || '', base64: base64 || ''},
@@ -138,7 +134,8 @@ const TakePicture = () => {
       });
     });
   };
-
+  // const obje = {...data.current}
+  console.log(listImage, 'listImage');
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
     const newListImage = itemSelected.image.filter(item => item.url !== img);
     const newItem: IAlbumImage = {...itemSelected, image: newListImage};
@@ -183,11 +180,14 @@ const TakePicture = () => {
             <FlatList
               numColumns={3}
               data={itemAlbum.image}
+              keyExtractor={(item, index) => index.toString()}
+              decelerationRate={'fast'}
+              bounces={false}
               renderItem={({item, index}) => {
                 return (
                   <>
                     {index === 0 ? (
-                      <Block padding={5}  marginRight={4} marginLeft={4}  >
+                      <Block padding={5} marginRight={4} marginLeft={4}>
                         <Pressable
                           onPress={() => handleCamera(itemAlbum)}
                           style={styles.cameraImg}>
@@ -297,7 +297,7 @@ const TakePicture = () => {
           </Block>
           <Block marginTop={16} marginBottom={16}>
             <ProgressCircle
-              percent={30}
+              percent={listImage?.length / data.current.image.length}
               radius={50}
               borderWidth={12}
               color={theme.colors.success}

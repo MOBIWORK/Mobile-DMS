@@ -158,6 +158,7 @@ export function* createImageCheckIn(action: PayloadAction) {
         createImageCheckinApi,
         action.payload,
       );
+      console.log(createImageCheckinApi,'serv')
       if (response.result?.status === true) {
         yield put(appActions.setListImage([response.result?.file_url]));
       } else {

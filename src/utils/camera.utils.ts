@@ -78,7 +78,7 @@ export const openImagePicker = async (
       // base64Image = await RNFS.readFile(selectedImage!, 'base64').then(res => {
       //   return res;
       // });
-      base64Image = (await base64File(response.assets[0].uri!)) as any;
+      base64Image = response.assets[0].base64 as string;
       callBack(selectedImage, base64Image, response.assets[0].timestamp);
     }
   });

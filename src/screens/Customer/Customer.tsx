@@ -146,30 +146,35 @@ const Customer = () => {
   );
 
   const onRefreshData = useCallback(async () => {
-    if(mounted.current){
-    try {
-      dispatch(onLoadApp());
-      dispatch(customerActions.onGetCustomer());
-    } catch (er) {
-      console.log('errDispatch: ', er);
-    } finally {
-      dispatch(onLoadAppEnd());
+    if (mounted.current) {
+      try {
+        dispatch(onLoadApp());
+        dispatch(customerActions.onGetCustomer());
+      } catch (er) {
+        console.log('errDispatch: ', er);
+      } finally {
+        dispatch(onLoadAppEnd());
+      }
     }
-  }
-  }, [dispatch,appLoading]);
-  
+  }, [dispatch, appLoading]);
+
   React.useEffect(() => {
-    mounted.current = true
+    mounted.current = true;
     if (mounted.current) {
       handleBackgroundLocation();
       if (listCustomer && listCustomer.length > 0) {
         const filteredData = listCustomer.filter(
           item => item.customer_location_primary != null,
         );
-
-        customerData.current = sortedData(filteredData);
+        const noLocationCustomer = listCustomer.filter(
+          item => item.customer_location_primary === null,
+        );
+        customerData.current = [
+          ...sortedData(filteredData),
+          ...noLocationCustomer,
+        ];
       } else {
-        console.log('run this')
+        console.log('run this');
         dispatch(customerActions.onGetCustomer());
         onRefreshData();
       }
@@ -179,13 +184,15 @@ const Customer = () => {
       };
       getDataType();
     }
-    mounted.current = false
+    mounted.current = false;
     return () => {
       mounted.current = false;
     };
   }, [listCustomer]);
 
   // console.log(sortedData(),'sorted data')
+
+  console.log('customerData', customerData.current);
 
   const handleApplyFilter = useCallback(() => {
     if (

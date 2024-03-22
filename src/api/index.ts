@@ -30,6 +30,7 @@ const handleErrorResponse = (
   if (response.status) {
     const isSuccessRequest = /^2\d{2}/g.test(response.status?.toString());
     if (isSuccessRequest && response.data?.result) {
+      console.log(response.config?.baseURL,'url response')
       return;
     } else if (
       throwErrorIfFailed ||
