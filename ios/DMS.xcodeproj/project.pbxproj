@@ -91,7 +91,7 @@
 		8A1099B72B1847C900E1435A /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		8A1099B82B1847C900E1435A /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Brands.ttf; sourceTree = "<group>"; };
 		8A1099B92B1847C900E1435A /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
-		8A1C22CF2BA5497600FB25B0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../../../Documents/Zalo Received Files/Info.plist"; sourceTree = "<group>"; };
+		8A1BE1602BAD3E8600946D2B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DMS/Info.plist; sourceTree = "<group>"; };
 		8A55741F2B9BFFC100B90BE6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../../../Downloads/AppIconsDMS/Images.xcassets; sourceTree = "<group>"; };
 		92A2F88607274EEB8FC85AFD /* SplashScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SplashScreen.storyboard; path = DMS/SplashScreen.storyboard; sourceTree = "<group>"; };
 		9406E9CEB84AB01714ED525E /* Pods-DMS-DMSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMS-DMSTests.release.xcconfig"; path = "Target Support Files/Pods-DMS-DMSTests/Pods-DMS-DMSTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -158,7 +158,7 @@
 				8A1099A62B1847C900E1435A /* Fonts */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
-				8A1C22CF2BA5497600FB25B0 /* Info.plist */,
+				8A1BE1602BAD3E8600946D2B /* Info.plist */,
 				8A55741F2B9BFFC100B90BE6 /* Images.xcassets */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -711,7 +711,7 @@
 				CODE_SIGN_ENTITLEMENTS = DMS/DMS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5YLS976TT9;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -734,7 +734,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -761,7 +761,7 @@
 				CODE_SIGN_ENTITLEMENTS = DMS/DMS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5YLS976TT9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DMS/Info.plist;
@@ -783,7 +783,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

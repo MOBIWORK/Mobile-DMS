@@ -31,9 +31,6 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
-import BackgroundGeolocation, {
-  Location,
-} from 'react-native-background-geolocation';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {calculateDistance, useSelector} from '../../../config/function';
@@ -59,6 +56,7 @@ import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
 import MarkerItem from '../../../components/common/MarkerItem';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -107,7 +105,7 @@ const ListVisit = () => {
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
-  const [location, setLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [error, setError] = useState<string>('');
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
@@ -135,16 +133,6 @@ const ListVisit = () => {
       return '';
     }
   }, [listCustomer, customerDataSort]);
-
-  const handleBackground = () => {
-    BackgroundGeolocation.getCurrentPosition(
-      {samples: 1, timeout: 3},
-      location => {
-        console.log('location: ', location);
-      },
-      backgroundErrorListener,
-    );
-  };
 
   const onRefreshData = useCallback(async () => {
     try {
@@ -299,7 +287,7 @@ const ListVisit = () => {
                   <VisitItem
                     item={item}
                     handleOpenMap={() => presentMap(item)}
-                    onPress={handleBackground}
+                    // onPress={handleBackground}
                   />
                 )}
               />
@@ -403,12 +391,7 @@ const ListVisit = () => {
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
-    BackgroundGeolocation.getCurrentPosition({
-      samples: 1,
-      timeout: 3,
-    })
-      .then(location => setLocation(location))
-      .catch(e => console.log('err', e));
+    CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
@@ -544,16 +527,14 @@ const ListVisit = () => {
   };
 
   const handleRegainLocation = async () => {
-    const newLocation = await BackgroundGeolocation.getCurrentPosition({
-      samples: 1,
-      timeout: 3,
+    CommonUtils.getCurrentLocation(locations => {
+      setLocation(locations);
+      mapboxCameraRef.current &&
+        mapboxCameraRef.current.moveTo(
+          [locations.coords.longitude, locations.coords.latitude],
+          1000,
+        );
     });
-    mapboxCameraRef.current &&
-      mapboxCameraRef.current.moveTo(
-        [newLocation.coords.longitude, newLocation.coords.latitude],
-        1000,
-      );
-    setLocation(location);
   };
 
   useEffect(() => {

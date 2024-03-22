@@ -28,8 +28,9 @@ import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import moment from 'moment';
-import BackgroundGeolocation from 'react-native-background-geolocation';
 import isEquals from 'react-fast-compare';
+import {CommonUtils} from '../../../utils';
+import {useBatteryLevel} from 'expo-battery';
 
 export interface LocationProps {
   long: number;
@@ -46,6 +47,8 @@ const VisitItem: FC<VisitItemProps> = ({
   const styles = createStyleSheet(useTheme());
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
+  const batteryLevel = useBatteryLevel();
+
   const currentCustomerCheckin = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -74,8 +77,8 @@ const VisitItem: FC<VisitItemProps> = ({
   };
 
   const handleBackground = async (item: VisitListItemType) => {
-    await BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 30})
-      .then(location => {
+    CommonUtils.getCurrentLocation(
+      location => {
         let data: CheckinData = {
           checkin_id:
             currentCustomerCheckin &&
@@ -89,12 +92,10 @@ const VisitItem: FC<VisitItemProps> = ({
           kh_lat: distanceCal?.location?.lat ?? '',
           checkin_giovao: moment(new Date()).format('HH:mm'),
           checkin_pinvao:
-            location.battery.level > 0
-              ? location.battery.level * 100
-              : -location.battery.level * 100,
+            batteryLevel > 0 ? batteryLevel * 100 : -batteryLevel * 100,
           checkin_khoangcach: distanceCal.distance,
           createdDate: moment(new Date()).valueOf(),
-          checkin_timegps: location.timestamp,
+          checkin_timegps: location.timestamp.toString(),
           checkin_dochinhxac: location.coords.accuracy,
           checkinvalidate_khoangcachcheckin:
             systemConfig.saiso_chophep_kb_vitringoaisaiso,
@@ -114,11 +115,9 @@ const VisitItem: FC<VisitItemProps> = ({
         };
         navigate(ScreenConstant.CHECKIN, {item: data});
         dispatch(appActions.setDataCheckIn(data));
-      })
-      .catch(err => {
-        console.log(err, 'err');
-        backgroundErrorListener(err);
-      });
+      },
+      error => backgroundErrorListener(error.code),
+    );
   };
 
   const statusItem = (status: boolean) => {
