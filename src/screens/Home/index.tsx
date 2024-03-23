@@ -417,33 +417,33 @@ const HomeScreen = () => {
           );
         location.current = res;
       },
-      err => console.log('err', err),
+      err => backgroundErrorListener(err),
     );
     // console.log(newLocation,'newLocation')
   }, []);
 
   useEffect(() => {
-    const getLocation = async () => {
-      await BackgroundGeolocation.getCurrentPosition(
-        {
-          samples: 1,
-          timeout: 10,
-          maximumAge: 0,
-          desiredAccuracy: 10,
-        },
-        locations => {
-          location.current = locations;
-          dispatch(appActions.onSetCurrentLocation(locations));
-          mapboxCameraRef.current?.flyTo(
-            [locations.coords.longitude, locations.coords.latitude],
-            1000,
-          );
-        },
-        err => backgroundErrorListener(err),
-      );
-    };
+    // const getLocation = async () => {
+    //   await BackgroundGeolocation.getCurrentPosition(
+    //     {
+    //       samples: 1,
+    //       timeout: 10,
+    //       maximumAge: 0,
+    //       desiredAccuracy: 10,
+    //     },
+    //     locations => {
+    //       location.current = locations;
+    //       dispatch(appActions.onSetCurrentLocation(locations));
+    //       mapboxCameraRef.current?.flyTo(
+    //         [locations.coords.longitude, locations.coords.latitude],
+    //         1000,
+    //       );
+    //     },
+    //     // err => backgroundErrorListener(err),
+    //   );
+    // };
     if (isFocus) {
-      getLocation();
+      // getLocation();
       getProfile();
       getCurrentShit();
       getReportKPI();
