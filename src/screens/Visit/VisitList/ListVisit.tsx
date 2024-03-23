@@ -110,6 +110,7 @@ const ListVisit = () => {
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
+
   const backgroundErrorListener = useCallback((errorCode: number) => {
     // Handle background location errors
     switch (errorCode) {
@@ -534,7 +535,7 @@ const ListVisit = () => {
           [locations.coords.longitude, locations.coords.latitude],
           1000,
         );
-    });
+    },err => backgroundErrorListener(err.code));
   };
 
   useEffect(() => {
