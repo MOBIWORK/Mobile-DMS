@@ -72,10 +72,10 @@ allprojects {
 //            // Required for react-native-background-geolocation
 //            url("${project(':react-native-background-geolocation').projectDir}/libs")
 //        }
-        maven {
-            // Required for react-native-background-fetch
-            url("${project(':react-native-background-fetch').projectDir}/libs")
-        }
+//        maven {
+//            // Required for react-native-background-fetch
+//            url("${project(':react-native-background-fetch').projectDir}/libs")
+//        }
         google()
         maven { url 'https://www.jitpack.io' }
 

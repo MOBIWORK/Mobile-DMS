@@ -566,8 +566,6 @@ PODS:
     - React-jsi (= 0.72.6)
     - React-logger (= 0.72.6)
     - React-perflogger (= 0.72.6)
-  - RNBackgroundFetch (4.2.3):
-    - React-Core
   - RNCMaskedView (0.1.11):
     - React
   - RNFS (2.20.0):
@@ -712,7 +710,6 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -873,8 +870,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  RNBackgroundFetch:
-    :path: "../node_modules/react-native-background-fetch"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
   RNFS:
@@ -975,7 +970,6 @@ SPEC CHECKSUMS:
   React-runtimescheduler: f23e337008403341177fc52ee4ca94e442c17ede
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
-  RNBackgroundFetch: b6cb89fa8ff0e1d8a245b19caca2944304b95fbf
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 7909c50383a18f0cb10ce1db7262b9a6da504c03
