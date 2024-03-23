@@ -182,13 +182,13 @@ const HomeScreen = () => {
     (errorCode: number) => {
       // Handle background location errors
       switch (errorCode) {
-        case 0:
+        case 1:
           setError(
             'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
           );
           setEnabled(true);
           break;
-        case 1:
+        case 2:
           setError('GPS đã bị tắt. Vui lòng bật lại.');
           setEnabled(true);
 
@@ -420,6 +420,9 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
+    mapboxCameraRef.current?.fitBounds
+
+
     const getLocation = () => {
       CommonUtils.getCurrentLocation(
         locations => {
@@ -430,7 +433,7 @@ const HomeScreen = () => {
             1000,
           );
         },
-        err => backgroundErrorListener(err.code),
+        // err => backgroundErrorListener(err.code),
       );
     };
     if (isFocus) {
