@@ -268,4 +268,8 @@ export default {
   autoLocation: 'Vị trí tự động',
   signOut: 'Đăng xuất',
   unknown: 'Không xác định',
+  inRoute : "Trong tuyến",
+  outRoute : "Ngoại tuyến",
+  ys :"Có",
+  no: "Không",
 };
