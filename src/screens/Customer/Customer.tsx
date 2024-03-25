@@ -38,12 +38,12 @@ import {
 } from '../../config/function';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {shallowEqual, useDispatch} from 'react-redux';
-import {Location} from 'react-native-background-geolocation';
 import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import isEqual from 'react-fast-compare';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 export type IValueType = {
   customerType: string;
@@ -74,7 +74,7 @@ const Customer = () => {
     shallowEqual,
   );
 
-  const location: Location = useSelector(
+  const location: GeolocationResponse = useSelector(
     state => state.app.currentLocation,
     shallowEqual,
   );

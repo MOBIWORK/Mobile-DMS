@@ -370,6 +370,11 @@ const SelectProducts = () => {
         setData(newData);
     }
 
+    const onScrollPage = ()=>{
+        const number_page = (totalItem / pageSize).toFixed();
+        if(Number(number_page) > page) setPage(page +1)
+    }
+
     const onChangeQuantityProduct = (idItem: string, qty: number) => {
         const newData = data.map(item => item.item_code === idItem ? { ...item, quantity: qty } : item);
         setData(newData);
@@ -519,7 +524,9 @@ const SelectProducts = () => {
                         <FlatList
                             data={data}
                             renderItem={({ item }) => <Pressable>{renderUiItem(item)}</Pressable>}
-                            onEndReached={() => setPage(page + 1)}
+                            onEndReachedThreshold={0.1}
+                            initialNumToRender={pageSize}
+                            onEndReached={onScrollPage}
                             contentContainerStyle={{ rowGap: 16 }}
                             showsVerticalScrollIndicator={false}
                             style={{flex :1}}

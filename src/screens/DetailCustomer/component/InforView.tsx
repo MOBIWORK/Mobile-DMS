@@ -4,10 +4,11 @@ import {IDataCustomer} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {AppText, Block, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
-import Mapbox, {Location} from '@rnmapbox/maps';
-import BackgroundGeolocation from 'react-native-background-geolocation';
+import Mapbox from '@rnmapbox/maps';
 import {useTranslation} from 'react-i18next';
 import {AppConstant} from '../../../const';
+import {CommonUtils} from '../../../utils';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 type Props = {
   data: IDataCustomer;
@@ -20,20 +21,10 @@ const InforBlock = (props: Props) => {
   const {t: translate} = useTranslation();
   console.log(props);
 
-  const [location, setLocation] = useState<Location | any>({
-    coords: {
-      latitude: 0,
-      longitude: 0,
-    },
-    timestamp: 0,
-  });
+  const [location, setLocation] = useState<GeolocationResponse | null>(null);
 
   useEffect(() => {
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-      .then(res => {
-        setLocation(res);
-      })
-      .catch(err => console.log(err));
+    CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
 
   return (

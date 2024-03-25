@@ -10,11 +10,13 @@ import {
 import NetInfo from '@react-native-community/netinfo';
 import * as LocalAuthentication from 'expo-local-authentication';
 import {AppConstant} from '../const';
-import * as Location from 'expo-location';
-import {LocationAccuracy} from 'expo-location';
 import {dispatch} from './redux';
 import {appActions} from '../redux-store/app-reducer/reducer';
-import {AppTheme} from '../layouts/theme';
+import Geolocation, {
+  GeolocationError,
+  GeolocationOptions,
+  GeolocationResponse,
+} from '@react-native-community/geolocation';
 
 export const storage = new MMKV();
 
@@ -26,20 +28,21 @@ export const padTo2Digits = (num: number) => {
 };
 
 // converdate yyyy-mm-dd
-export function taskDate(date : string | number) {
+export function taskDate(date: string | number) {
   var d = new Date(date),
-  month = '' + (d.getMonth() + 1),
-  day = '' + d.getDate(),
-  year = d.getFullYear();
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
 
-if (month.length < 2) 
-  month = '0' + month;
-if (day.length < 2) 
-  day = '0' + day;
+  if (month.length < 2) {
+    month = '0' + month;
+  }
+  if (day.length < 2) {
+    day = '0' + day;
+  }
 
-return [year, month, day].join('-');
+  return [year, month, day].join('-');
 }
-
 
 //format dateTime to hh:pp dd//mm//yyyy
 export const convertDateToString = (dateTime: number | string) => {
@@ -406,21 +409,12 @@ export const handleOpenSettings = async () => {
   }
 };
 
-export const getCurrentLocation = async () => {
-  // const status = await Location.getForegroundPermissionsAsync();
-  const isEnable = await Location.hasServicesEnabledAsync();
-  if (isEnable) {
-    const location = await Location.getCurrentPositionAsync({
-      accuracy: LocationAccuracy.Balanced,
-    });
-    if (location) {
-      return location;
-    } else {
-      return null;
-    }
-  } else {
-    return null;
-  }
+export const getCurrentLocation = (
+  success: (position: GeolocationResponse) => void,
+  error?: ((error: GeolocationError) => void) | undefined,
+  options?: GeolocationOptions | undefined,
+) => {
+  Geolocation.getCurrentPosition(success, error, {timeout: 5000, ...options});
 };
 
 export const formatCash = (str: string) => {
@@ -509,13 +503,13 @@ export const dateToDate = (type: string) => {
     case 'last_month': {
       let year: number;
       let month = curr.getMonth() + 1;
-      
+
       if (month === 1) {
         year = curr.getFullYear() - 1;
         month = 12;
       } else {
         year = curr.getFullYear();
-        month = curr.getMonth()
+        month = curr.getMonth();
       }
       let date = new Date(year, month);
       date.setDate(date.getDate() - 1);
@@ -532,7 +526,7 @@ export const dateToDate = (type: string) => {
         month = 11;
       } else {
         year = curr.getFullYear();
-        month = month - 2
+        month = month - 2;
       }
       let date = new Date(year, month);
       date.setDate(date.getDate() - 1);
