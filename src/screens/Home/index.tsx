@@ -420,9 +420,6 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
-    mapboxCameraRef.current?.fitBounds
-
-
     const getLocation = () => {
       CommonUtils.getCurrentLocation(
         locations => {

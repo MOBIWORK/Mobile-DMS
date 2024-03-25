@@ -13,8 +13,8 @@
 	<string>MBW SFA</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	 <key>CFBundleIdentifier</key>
-    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -22,7 +22,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
+	<string>1.0.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -34,8 +34,8 @@
 			</array>
 		</dict>
 	</array>
-	 <key>CFBundleVersion</key>
-    <string>2</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
 	<key>CodePushDeploymentKey</key>
 	<string>Bozh-YVVdWxAOZzVQQe_28V5CItNh05g4-eYK </string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -59,7 +59,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>The purpose for accessing the camera, such as scanning QR or taking photos.</string>
+	<string>Allow $(PRODUCT_NAME) to use your camera</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to use Face ID</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -67,11 +67,11 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to use your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>App uses this information to provide you with personalized experiences, such as smart timekeeping, getting the location of the nearest location.</string>
+	<string>Location required when app is in use.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>This app uses motion-detection to determine the motion-activity of the device (walking, vehicle, bicycle, etc).</string>
+	<string>Accelerometer use increases battery efficiency by intelligently toggling location-tracking.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>The app accesses your photos to let you share them with your friends.</string>
+	<string>Allow $(PRODUCT_NAME) to use your photo library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -103,7 +103,9 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>location</string>
+		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
@@ -118,11 +120,15 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
