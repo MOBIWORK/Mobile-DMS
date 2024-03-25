@@ -22,7 +22,6 @@ import {AppConstant} from '../../../const';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {MainLayout} from '../../../layouts';
 
-import BackgroundGeolocation from 'react-native-background-geolocation';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {RootEkMapResponse} from '../../../models/types';
@@ -31,6 +30,7 @@ import SelectedAddress from './SelectedAddress';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import {MainAddress, MainContactAddress} from './CardAddress';
 import {useTranslation} from 'react-i18next';
+import {CommonUtils} from '../../../utils';
 
 type Props = {
   onPressClose: () => void;
@@ -122,17 +122,9 @@ const FormAddress = (props: Props) => {
   };
 
   const onPressButtonGetLocation = () => {
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-      .then(res => {
-        fetchData(res?.coords?.latitude, res?.coords?.longitude);
-
-        showSnack({
-          msg: getLabel('success'),
-          type: 'success',
-          interval: 1000,
-        });
-      })
-      .catch(err => console.log(err));
+    CommonUtils.getCurrentLocation(locations => {
+      fetchData(locations.coords.latitude, locations.coords.longitude);
+    });
   };
 
   useEffect(() => {
