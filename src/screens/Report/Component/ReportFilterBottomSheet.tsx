@@ -64,6 +64,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   };
 
   const handleItem = (item: IFilterType) => {
+    
     const newData = data.map(newItem => {
       if (item.value === newItem.value) {
         return {...newItem, isSelected: true};

@@ -114,6 +114,7 @@ export const GET_TRAVEL_LOG_REPORT =
   '/api/method/mbw_dms.api.ekgis.history_checkin.get_history_checkin';
 export const GET_REPORT_ROUTER_RESULT =
   '/api/method/mbw_dms.api.ekgis.history_checkin.get_history_checkin';
+export const GET_REPORT_VISIT_DETAIL = '/api/method/mbw_dms.api.kpi.checkin_report';
 // IMAGE_SCORE
 export const POST_IMAGE_SCORE = 'api/method/mbw_audit.api.api.upload_file';
 export const GET_CAMPAIGN_PROGRAM =

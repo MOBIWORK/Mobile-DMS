@@ -441,17 +441,15 @@ export type TravelDiaryType = {
 };
 
 export type VisitedItemType = {
-  name: string;
-  code: string;
-  time?: string;
-  date?: number;
-  inChannel?: boolean;
-  imgCount?: number;
-  isOrder?: boolean;
-  totalSale?: number;
-  businessType?: string;
-  address?: string;
-  phone?: string;
+  name: string
+  kh_ten: string
+  kh_ma: string
+  checkin_giovao: string
+  checkin_giora: any
+  checkin_donhang: number
+  checkin_dungtuyen: number
+  doanh_so: number
+  checkin_hinhanh: number
 };
 
 export type ReportCustomerType = {
@@ -890,4 +888,17 @@ export interface ReportTravelDiaryType {
   "kafka.timestamp": number
   "kafka.topic": string,
   address : string | null,
+}
+
+export interface VisitReportNoCheckin {
+  customer: string
+  customer_code: string
+  customer_name: string
+  display_address: any
+  phone_number: any
+}
+export interface VisitCheckinReport {
+  doanh_so: number
+  so_kh_da_vt: number
+  so_kh_chua_vt: number
 }

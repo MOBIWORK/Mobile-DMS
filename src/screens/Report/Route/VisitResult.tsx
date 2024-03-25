@@ -1,4 +1,4 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {AppSegmentedButtonsType} from '../../../components/common/AppSegmentedButtons';
 import {AppContainer, TabSelected, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
@@ -7,11 +7,14 @@ import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {CommonUtils} from '../../../utils';
-import {VisitedItemType} from '../../../models/types';
+import {KeyAbleProps, VisitCheckinReport, VisitReportNoCheckin, VisitedItemType} from '../../../models/types';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import {useTranslation} from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {IFilterType} from '../../../components/common/FilterListComponent';
+import { ReportService } from '../../../services';
+
+
 const VisitResult = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
@@ -24,24 +27,28 @@ const VisitResult = () => {
   const [selectedValue, setSelectedValue] = useState<number | string>(
     dataSeg[0].value,
   );
+  const [from_date,setFromDate] = useState<number>(new Date().getTime());
+  const [to_date,setToDate] = useState<number>(new Date().getTime());
+  
+  const [data, setData] = useState<VisitCheckinReport>()
+  const [visitedData, setVisitedData] = useState<VisitedItemType[]>([]);
+  const [notVisitData, setNotVisitData] = useState<VisitReportNoCheckin[]>([]);
 
-  const [visitedData, setVisitedData] =
-    useState<VisitedItemType[]>(VisitedDataFake);
-  const [notVisitData, setNotVisitData] =
-    useState<VisitedItemType[]>(NotVisitedDataFake);
-
-  const [headerDate, setHeaderDate] = useState<string>(
-    `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
-  );
+  const [headerDate, setHeaderDate] = useState<string>(`${getLabel('today')}, ${CommonUtils.convertDate(from_date)}`,);
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
+      setFromDate(Number(item.value))
+      setToDate(Number(item.value))
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      setHeaderDate(getLabel(String(item.value)));
+      const {from_date ,to_date} = CommonUtils.dateToDate(item.value?.toString() || "");
+      setFromDate(new Date(from_date).getTime());
+      setToDate(new Date(to_date).getTime());
+      setHeaderDate(getLabel(String(item.label)));
     }
   };
 
@@ -88,7 +95,6 @@ const VisitResult = () => {
       <View
         style={{
           flexDirection: 'row',
-          alignItems: 'center',
           justifyContent: 'flex-start',
         }}>
         <SvgIcon
@@ -108,13 +114,13 @@ const VisitResult = () => {
       <View style={styles.totalContainer}>
         <View style={styles.itemTotal}>
           <SvgIcon source={'Visited'} size={40} />
-          <Text style={styles.txt12}>Viếng thăm</Text>
-          <Text style={styles.txt18}>30</Text>
+          <Text style={styles.txt12}>{getLabel("visit")}</Text>
+          <Text style={styles.txt18}>{data?.so_kh_da_vt}</Text>
         </View>
         <View style={styles.itemTotal}>
           <SvgIcon source={'NotVisit'} size={40} />
-          <Text style={styles.txt12}>Chưa viếng thăm</Text>
-          <Text style={styles.txt18}>15</Text>
+          <Text style={styles.txt12}>{getLabel("notVisited")}</Text>
+          <Text style={styles.txt18}>{data?.so_kh_chua_vt}</Text>
         </View>
       </View>
     );
@@ -127,7 +133,7 @@ const VisitResult = () => {
         <View style={{rowGap: 4, marginLeft: 8}}>
           <Text style={styles.txt12}>Tổng doanh thu</Text>
           <Text style={styles.txt18}>
-            {CommonUtils.convertNumber(100000000)}
+            {CommonUtils.convertNumber(data?.doanh_so || 0)}
           </Text>
         </View>
       </View>
@@ -142,26 +148,24 @@ const VisitResult = () => {
             <Text style={styles.txtTitleName}>{item.name}</Text>
             <Text style={{color: theme.colors.text_primary}}>KH - 1233</Text>
           </View>
-          <VisitedRowItem label={'Thời gian'} content={item.time} />
+          <VisitedRowItem label={getLabel("time")} content={item.checkin_giovao} />
           <VisitedRowItem
             label={''}
-            content={CommonUtils.convertDate(item.date ?? 0)}
+            content={CommonUtils.convertDate(item.checkin_giovao || "")}
           />
           <VisitedRowItem
-            label={'Tuyến'}
-            content={item.inChannel ? 'Trong tuyến' : 'Ngoài tuyến'}
-            contentColor={
-              item.inChannel ? theme.colors.text_primary : theme.colors.primary
-            }
+            label={getLabel("gland")}
+            content={item.checkin_dungtuyen > 0 ? getLabel("inRoute") : getLabel("outRoute")}
+            contentColor={item.checkin_dungtuyen > 0 ? theme.colors.text_primary : theme.colors.primary}
           />
-          <VisitedRowItem label={'Hình ảnh'} content={item.imgCount} />
+          <VisitedRowItem label={getLabel("image")} content={item.checkin_hinhanh} />
           <VisitedRowItem
-            label={'Đặt hàng'}
-            content={item.isOrder ? 'Có' : 'Không'}
+            label={getLabel("putOrder")}
+            content={item.checkin_donhang > 0 ? getLabel("ys") : getLabel("no")}
           />
           <VisitedRowItem
-            label={'Doanh số'}
-            content={CommonUtils.convertNumber(item.totalSale ?? 0)}
+            label={getLabel("sales")}
+            content={CommonUtils.convertNumber(item.doanh_so || 0)}
           />
         </View>
       );
@@ -176,16 +180,16 @@ const VisitResult = () => {
   };
 
   const _renderNotVisit = () => {
-    const notVisitItem = (item: VisitedItemType) => {
+    const notVisitItem = (item: VisitReportNoCheckin) => {
       return (
         <View style={styles.visitContainer}>
           <View style={styles.titleVisit}>
-            <Text style={styles.txtTitleName}>{item.name}</Text>
-            <Text style={{color: theme.colors.text_primary}}>KH - 1233</Text>
+            <Text style={styles.txtTitleName}>{item.customer_name}</Text>
+            <Text style={{color: theme.colors.text_primary}}>{item.customer_code}</Text>
           </View>
-          <NotVisitRowItem iconName={'MapPin'} content={item.address} />
-          <NotVisitRowItem iconName={'Phone'} content={item.phone} />
-          <NotVisitRowItem iconName={'Folder'} content={item.businessType} />
+          <NotVisitRowItem iconName={'MapPin'} content={item.display_address} />
+          <NotVisitRowItem iconName={'Phone'} content={item.phone_number} />
+          <NotVisitRowItem iconName={'Folder'} content={""} />
         </View>
       );
     };
@@ -197,6 +201,20 @@ const VisitResult = () => {
       </>
     );
   };
+
+  useEffect(()=>{
+      const getData = async ()=>{
+        const {data,status} :KeyAbleProps = await ReportService.getVisitReoprt({
+          from_date : from_date / 1000 ,
+          to_date : to_date / 1000
+        })
+        const result =data.result
+        setData(result.data);
+        setVisitedData(result.has_checkin);
+        setNotVisitData(result.not_checkin);
+      }
+      getData();
+  },[from_date,to_date])
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
@@ -300,44 +318,5 @@ const dataSeg: AppSegmentedButtonsType[] = [
     title: 'notVisited',
     value: 2,
     isSelected: false,
-  },
-];
-const VisitedDataFake: VisitedItemType[] = [
-  {
-    name: 'Công ty TNHH ABC',
-    code: 'KH - 123',
-    time: '15:03 - 15:07 (00:04)',
-    date: 1704774485459,
-    inChannel: true,
-    imgCount: 0,
-    isOrder: false,
-    totalSale: 7000000,
-  },
-  {
-    name: 'Công ty TNHH ABC',
-    code: 'KH - 123',
-    time: '15:03 - 15:07 (00:04)',
-    date: 1704774485459,
-    inChannel: false,
-    imgCount: 0,
-    isOrder: false,
-    totalSale: 9000000,
-  },
-];
-
-const NotVisitedDataFake: VisitedItemType[] = [
-  {
-    name: 'Công ty TNHH ABC',
-    code: 'KH - 123',
-    address: '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-    phone: '+84 667 435 265',
-    businessType: 'Công ty',
-  },
-  {
-    name: 'Công ty TNHH ABC',
-    code: 'KH - 123',
-    address: '191 đường Lê Văn Thọ, Phường 8, Gò Vấp, Thành phố Hồ Chí Minh',
-    phone: '+84 667 435 265',
-    businessType: 'Công ty',
   },
 ];

@@ -1,18 +1,17 @@
-import { createApi } from '../api';
-import { ApiConstant } from '../const';
+import {createApi} from '../api';
+import {ApiConstant} from '../const';
 
 type getTravelLogReport = {
-  fromdate: number,
-  todate: number
+  fromdate: number;
+  todate: number;
 };
 type getReportResultRouter = {
-  from_date: number,
-  to_date: number
-}
+  from_date: number;
+  to_date: number;
+};
 
 export const getTravelLogReport = (params: getTravelLogReport) =>
   createApi().get(ApiConstant.GET_TRAVEL_LOG_REPORT, params);
-
 
 export const getRouterResult = (params: getReportResultRouter) =>
   createApi().get(ApiConstant.GET_TRAVEL_LOG_REPORT, params);
@@ -34,3 +33,5 @@ export const getReportRevenue = () =>
   createApi()
     .get(ApiConstant.GET_REPORT_REVENUE)
     .then(res => res.data);
+export const getVisitReoprt = (params: getReportResultRouter) =>
+  createApi().get(ApiConstant.GET_REPORT_VISIT_DETAIL, params);

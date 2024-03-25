@@ -135,12 +135,12 @@ export const ReportFilterData: IFilterType[] = [
   },
   {
     label: 'thisMonth',
-    value: 'thisMonth',
+    value: 'monthly',
     isSelected: false,
   },
   {
     label: 'lastMonth',
-    value: 'lastMonth',
+    value: 'last_month',
     isSelected: false,
   },
   {
