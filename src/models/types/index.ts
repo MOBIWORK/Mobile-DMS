@@ -902,3 +902,24 @@ export interface VisitCheckinReport {
   so_kh_da_vt: number
   so_kh_chua_vt: number
 }
+export interface StatisticsOrder {
+  total_customers: number
+  total_items: number
+  total_qty: number
+  sum_amount : number
+}
+
+export interface StatisticsOrderCustomer {
+  customer: string
+  customer_code: string
+  qty: number
+  amount: number
+}
+export interface StatisticsOrderProduct {
+  item_name: string
+  rate: number
+  qty: number
+  uom: string
+  amount: number
+  item_code : string
+}

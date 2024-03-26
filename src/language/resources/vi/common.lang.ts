@@ -272,4 +272,7 @@ export default {
   outRoute : "Ngoại tuyến",
   ys :"Có",
   no: "Không",
+  numberCustomer :"Số khách hàng",
+  numberProduct :"Số sản phẩm",
+  quantityOrder :"Số lượng đặt",
 };

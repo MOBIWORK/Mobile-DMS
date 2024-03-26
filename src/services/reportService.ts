@@ -35,3 +35,5 @@ export const getReportRevenue = () =>
     .then(res => res.data);
 export const getVisitReoprt = (params: getReportResultRouter) =>
   createApi().get(ApiConstant.GET_REPORT_VISIT_DETAIL, params);
+export const getReoprtOrderStatistics = (params: getReportResultRouter) =>
+  createApi().get(ApiConstant.GET_REPORT_ORDER_STATISTICS, params);
