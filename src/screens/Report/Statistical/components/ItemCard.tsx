@@ -5,13 +5,14 @@ import {Block, AppText as Text} from '../../../../components/common';
 import {formatMoney} from '../../../../config/function';
 import {ItemCardCustomer, ItemCardProduct} from './data';
 import isEqual from 'react-fast-compare';
+import { StatisticsOrderCustomer, StatisticsOrderProduct } from '../../../../models/types';
 
 type Product = {
-  item: ItemCardProduct;
+  item: StatisticsOrderProduct;
   type: 'product';
 };
 type Customer = {
-  item: ItemCardCustomer;
+  item: StatisticsOrderCustomer;
   type: 'customer';
 };
 
@@ -23,10 +24,10 @@ const ItemCard = (props: Props) => {
     <Block colorTheme="white" borderRadius={12} marginTop={8} marginBottom={8}>
       <TouchableOpacity style={styles.containContent}>
         <Text fontSize={16} fontWeight="500" colorTheme="text_primary">
-          {props.item.nameCompany}
+          {props.item.customer}
         </Text>
         <Text fontSize={12} fontWeight="400" colorTheme="text_primary">
-          {props.item.customerCode}
+          {props.item.customer_code}
         </Text>
         <Block height={1} marginTop={8} marginBottom={8} colorTheme="divider" />
         <Block

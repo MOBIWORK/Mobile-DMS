@@ -267,4 +267,8 @@ export default {
   outRoute : "Ngoại tuyến",
   ys :"Có",
   no: "Không",
+  numberCustomer :"Customers number",
+  numberProduct :"The number of products",
+  quantityOrder :"Number of orders",
+
 };
