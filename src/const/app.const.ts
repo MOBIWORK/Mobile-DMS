@@ -153,12 +153,12 @@ export const ReportFilterData: IFilterType[] = [
 export const ReportFilterKPIData: IFilterType[] = [
   {
     label: 'thisMonth',
-    value: 'thisMonth',
+    value: 'monthly',
     isSelected: true,
   },
   {
     label: 'lastMonth',
-    value: 'lastMonth',
+    value: 'last_month',
     isSelected: false,
   },
 ];

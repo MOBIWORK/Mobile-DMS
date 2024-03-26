@@ -923,3 +923,26 @@ export interface StatisticsOrderProduct {
   amount: number
   item_code : string
 }
+export interface ReportTagerKpiType{
+  so_ngay_thuc_hien: number
+  th_doanh_thu: number
+  kh_doanh_thu: number
+  cl_doanh_thu: number
+  th_doanh_so: number
+  kh_doanh_so: number
+  cl_doanh_so: number
+  th_don_hang: number
+  kh_don_hang: number
+  cl_don_hang: number
+  th_vieng_tham: number
+  kh_vieng_tham: number
+  cl_vieng_tham: number
+  th_kh_moi: number
+  kh_kh_moi: number
+  cl_kh_moi: number
+  ti_le_doanh_thu: number
+  ti_le_doanh_so: number
+  ti_le_don_hang: number
+  ti_le_vieng_tham: number
+  ti_le_kh_moi: number
+}

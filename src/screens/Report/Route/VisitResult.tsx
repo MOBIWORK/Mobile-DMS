@@ -13,6 +13,8 @@ import {useTranslation} from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import { ReportService } from '../../../services';
+import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 
 const VisitResult = () => {
@@ -204,10 +206,14 @@ const VisitResult = () => {
 
   useEffect(()=>{
       const getData = async ()=>{
+      dispatch(appActions.setProcessingStatus(true))
+
         const {data,status} :KeyAbleProps = await ReportService.getVisitReoprt({
           from_date : from_date / 1000 ,
           to_date : to_date / 1000
         })
+      dispatch(appActions.setProcessingStatus(false))
+
         const result =data.result
         setData(result.data);
         setVisitedData(result.has_checkin);

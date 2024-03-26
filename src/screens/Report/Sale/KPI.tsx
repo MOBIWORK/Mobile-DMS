@@ -1,9 +1,9 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
 import {ProgressBar} from 'react-native-paper';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {ReportKPIItemType, ReportKPIType} from '../../../models/types';
+import {KeyAbleProps, ReportKPIItemType, ReportKPIType, ReportTagerKpiType} from '../../../models/types';
 import {StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {CommonUtils} from '../../../utils';
 import {AppContainer, SvgIcon} from '../../../components/common';
@@ -12,6 +12,10 @@ import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import {useTranslation} from 'react-i18next';
+import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { ReportService } from '../../../services';
+import { ApiConstant } from '../../../const';
 
 const KPI = () => {
   const theme = useTheme();
@@ -23,15 +27,26 @@ const KPI = () => {
 
   const [headerDate, setHeaderDate] = useState<string>(getLabel('thisMonth'));
   const [KPIData, setKpiData] = useState<ReportKPIType>(KPIDataFake);
+  const [data,setData] = useState<ReportTagerKpiType>();
+
+  const {from_date : from,to_date : to} = CommonUtils.dateToDate("monthly");
+
+  const [from_date,setFromDate] = useState<number>(new Date(from).getTime());
+  const [to_date,setToDate] = useState<number>(new Date(to).getTime());
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
+      setFromDate(Number(item.value))
+      setToDate(Number(item.value))
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      setHeaderDate(getLabel(String(item.value)));
+      const {from_date ,to_date} = CommonUtils.dateToDate(item.value?.toString() || "");
+      setFromDate(new Date(from_date).getTime());
+      setToDate(new Date(to_date).getTime());
+      setHeaderDate(getLabel(String(item.label)));
     }
   };
 
@@ -94,10 +109,26 @@ const KPI = () => {
     );
   };
 
+  useEffect(()=>{
+
+    const getData  = async()=>{
+      dispatch(appActions.setProcessingStatus(true))
+      const { status, data :res}: KeyAbleProps = await ReportService.getReoprtTagertKpi({
+        month: new Date(from_date).getMonth() + 1,
+        year: new Date(to_date).getFullYear()
+      })
+      dispatch(appActions.setProcessingStatus(false))
+      if(status == ApiConstant.STT_OK){
+        setData(res.result)
+      } 
+    }
+    getData();
+  },[from_date,to_date])
+
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
-        title={'Chỉ tiêu KPI'}
+        title={getLabel("targetKpi")}
         date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&
@@ -105,10 +136,46 @@ const KPI = () => {
         }
       />
       <AppContainer style={{marginTop: 16, marginBottom: bottom}}>
-        <KPIItem item={KPIData.revenue} />
-        <KPIItem item={KPIData.sales} />
-        <KPIItem item={KPIData.order} />
-        <KPIItem item={KPIData.visit} />
+        <KPIItem item={{
+            title: getLabel("revenue"),
+            progress: data ? data.ti_le_doanh_thu : 0,
+            time:  data ? data.so_ngay_thuc_hien : 0,
+            plan: data ? data.kh_doanh_thu : 0,
+            perform: data ? data.th_doanh_thu : 0,
+            remaining: data ? data.cl_doanh_thu : 0,
+        }} />
+        <KPIItem item={{
+            title: getLabel("sales"),
+            progress: data ? data.ti_le_doanh_so : 0,
+            time:  data ? data.so_ngay_thuc_hien : 0,
+            plan: data ? data.kh_doanh_so : 0,
+            perform: data ? data.th_doanh_so : 0,
+            remaining: data ? data.cl_doanh_so : 0,
+        }} />
+        <KPIItem item={{
+            title: getLabel("order"),
+            progress:data ? data.ti_le_don_hang : 0,
+            time:  data ? data.so_ngay_thuc_hien : 0,
+            plan: data ? data.kh_don_hang : 0,
+            perform: data ? data.th_don_hang : 0,
+            remaining: data ? data.cl_don_hang : 0,
+        }} />
+        <KPIItem item={{
+            title: getLabel("visit"),
+            progress: data ? data.ti_le_vieng_tham : 0,
+            time:  data ? data.so_ngay_thuc_hien : 0,
+            plan: data ? data.kh_vieng_tham : 0,
+            perform: data ? data.th_vieng_tham : 0,
+            remaining: data ? data.cl_vieng_tham : 0,
+        }} />
+        <KPIItem item={{
+            title: getLabel("newCustomer"),
+            progress: data ? data.ti_le_kh_moi : 0,
+            time:  data ? data.so_ngay_thuc_hien : 0,
+            plan: data ? data.kh_kh_moi : 0,
+            perform: data ? data.th_kh_moi : 0,
+            remaining: data ? data.cl_kh_moi : 0,
+        }} />
       </AppContainer>
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
@@ -118,6 +185,7 @@ const KPI = () => {
       />
     </MainLayout>
   );
+
 };
 interface KPIItemProps {
   item: ReportKPIItemType;
