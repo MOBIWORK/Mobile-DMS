@@ -275,4 +275,6 @@ export default {
   numberCustomer :"Số khách hàng",
   numberProduct :"Số sản phẩm",
   quantityOrder :"Số lượng đặt",
+  targetKpi :"Chỉ tiêt KPI",
+  
 };
