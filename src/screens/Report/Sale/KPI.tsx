@@ -25,7 +25,7 @@ const KPI = () => {
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
 
-  const [headerDate, setHeaderDate] = useState<string>(getLabel('thisMonth'));
+  const [headerDate, setHeaderDate] = useState<string>(getLabel('monthly'));
   const [KPIData, setKpiData] = useState<ReportKPIType>(KPIDataFake);
   const [data,setData] = useState<ReportTagerKpiType>();
 
