@@ -106,7 +106,7 @@ const SelectOrganization = () => {
 
   return (
     <MainLayout>
-      <View style={{flex: 1}} />
+      <View style={{flex: 0.6}} />
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Image
           source={ImageAssets.InitLogo}
@@ -121,7 +121,7 @@ const SelectOrganization = () => {
           styles={{marginTop: 24}}
         />
       </View>
-      <View style={{flex: 1}} />
+      <View style={{flex: 0.5}} />
       <View style={{flex: 1}}>
         <Text
           style={{

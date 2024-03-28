@@ -414,14 +414,10 @@ export const getCurrentLocation = (
   error?: ((error: GeolocationError) => void) | undefined,
   options?: GeolocationOptions | undefined,
 ) => {
-  Geolocation.requestAuthorization(
-    () =>
-      Geolocation.getCurrentPosition(success, error, {
-        timeout: 5000,
-        ...options,
-      }),
-    error,
-  );
+  Geolocation.getCurrentPosition(success, error, {
+    timeout: 5000,
+    ...options,
+  });
 };
 
 export const formatCash = (str: string) => {
