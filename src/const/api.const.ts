@@ -87,8 +87,7 @@ export const GET_LIST_WARD =
   '/api/method/mbw_dms.api.location.list_ward?ma_quan_huyen=';
 
 // Inventory
-export const POST_CHECKIN_INVENTORY =
-  URL_PREFIX + '/api/method/mbw_dms.api.checkin.create_checkin_inventory';
+export const POST_CHECKIN_INVENTORY = URL_PREFIX + '.api.checkin.create_checkin_inventory';
 
 // NOTE
 export const POST_NEW_NOTE_CHECKIN = '/mbw_dms.api.note.create_note';
