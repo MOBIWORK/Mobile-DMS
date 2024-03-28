@@ -128,10 +128,7 @@ const CheckIn = () => {
   };
 
   const onCheckout = useCallback(() => {
-    console.log('====================================');
-    console.log(dataCheckIn);
-    console.log('====================================');
-    dispatch(appActions.onCheckIn(dataCheckIn));
+    dispatch(appActions.onCheckIn({...dataCheckIn , checkin_giora : new Date().getTime() / 1000}));
     setShow(false);
   }, [dataCheckIn]);
 

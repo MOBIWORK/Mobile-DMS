@@ -90,7 +90,7 @@ const VisitItem: FC<VisitItemProps> = ({
           kh_diachi: item.customer_primary_address,
           kh_long: distanceCal?.location?.long ?? '',
           kh_lat: distanceCal?.location?.lat ?? '',
-          checkin_giovao: moment(new Date()).format('HH:mm'),
+          checkin_giovao: new Date().getTime() / 1000,
           checkin_pinvao:
             batteryLevel > 0 ? batteryLevel * 100 : -batteryLevel * 100,
           checkin_khoangcach: distanceCal.distance,
@@ -103,7 +103,7 @@ const VisitItem: FC<VisitItemProps> = ({
             systemConfig.saiso_chophep_checkout_ngoaisaiso,
           checkin_trangthaicuahang: true,
           checkin_donhang: '',
-          checkin_giora: '',
+          checkin_giora: null,
           checkin_hinhanh: [],
           checkin_lat: location.coords.latitude,
           checkin_long: location.coords.longitude,
