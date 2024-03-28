@@ -162,7 +162,6 @@ const ListVisit = () => {
 
   const presentMap = (item: VisitListItemType) => {
     const item_location: any = JSON.parse(item.customer_location_primary);
-    console.log('item_location', item_location.long);
     CommonUtils.sleep(100).then(() => {
       mapboxCameraRef.current &&
         mapboxCameraRef.current.moveTo(
@@ -528,14 +527,17 @@ const ListVisit = () => {
   };
 
   const handleRegainLocation = async () => {
-    CommonUtils.getCurrentLocation(locations => {
-      setLocation(locations);
-      mapboxCameraRef.current &&
-        mapboxCameraRef.current.moveTo(
-          [locations.coords.longitude, locations.coords.latitude],
-          1000,
-        );
-    },err => backgroundErrorListener(err.code));
+    CommonUtils.getCurrentLocation(
+      locations => {
+        setLocation(locations);
+        mapboxCameraRef.current &&
+          mapboxCameraRef.current.moveTo(
+            [locations.coords.longitude, locations.coords.latitude],
+            1000,
+          );
+      },
+      err => backgroundErrorListener(err.code),
+    );
   };
 
   useEffect(() => {

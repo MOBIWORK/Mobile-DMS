@@ -121,7 +121,7 @@ const SelectOrganization = () => {
           styles={{marginTop: 24}}
         />
       </View>
-      <View style={{flex: 1}} />
+      <View style={{flex: 0.5}} />
       <View style={{flex: 1}}>
         <Text
           style={{
