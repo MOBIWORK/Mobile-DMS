@@ -128,6 +128,9 @@ const CheckIn = () => {
   };
 
   const onCheckout = useCallback(() => {
+    console.log('====================================');
+    console.log(dataCheckIn);
+    console.log('====================================');
     dispatch(appActions.onCheckIn(dataCheckIn));
     setShow(false);
   }, [dataCheckIn]);

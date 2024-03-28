@@ -268,4 +268,13 @@ export default {
   autoLocation: 'Vị trí tự động',
   signOut: 'Đăng xuất',
   unknown: 'Không xác định',
+  inRoute : "Trong tuyến",
+  outRoute : "Ngoại tuyến",
+  ys :"Có",
+  no: "Không",
+  numberCustomer :"Số khách hàng",
+  numberProduct :"Số sản phẩm",
+  quantityOrder :"Số lượng đặt",
+  targetKpi :"Chỉ tiêt KPI",
+  
 };

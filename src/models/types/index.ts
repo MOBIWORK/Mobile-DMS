@@ -441,17 +441,15 @@ export type TravelDiaryType = {
 };
 
 export type VisitedItemType = {
-  name: string;
-  code: string;
-  time?: string;
-  date?: number;
-  inChannel?: boolean;
-  imgCount?: number;
-  isOrder?: boolean;
-  totalSale?: number;
-  businessType?: string;
-  address?: string;
-  phone?: string;
+  name: string
+  kh_ten: string
+  kh_ma: string
+  checkin_giovao: string
+  checkin_giora: any
+  checkin_donhang: number
+  checkin_dungtuyen: number
+  doanh_so: number
+  checkin_hinhanh: number
 };
 
 export type ReportCustomerType = {
@@ -890,4 +888,61 @@ export interface ReportTravelDiaryType {
   "kafka.timestamp": number
   "kafka.topic": string,
   address : string | null,
+}
+
+export interface VisitReportNoCheckin {
+  customer: string
+  customer_code: string
+  customer_name: string
+  display_address: any
+  phone_number: any
+}
+export interface VisitCheckinReport {
+  doanh_so: number
+  so_kh_da_vt: number
+  so_kh_chua_vt: number
+}
+export interface StatisticsOrder {
+  total_customers: number
+  total_items: number
+  total_qty: number
+  sum_amount : number
+}
+
+export interface StatisticsOrderCustomer {
+  customer: string
+  customer_code: string
+  qty: number
+  amount: number
+}
+export interface StatisticsOrderProduct {
+  item_name: string
+  rate: number
+  qty: number
+  uom: string
+  amount: number
+  item_code : string
+}
+export interface ReportTagerKpiType{
+  so_ngay_thuc_hien: number
+  th_doanh_thu: number
+  kh_doanh_thu: number
+  cl_doanh_thu: number
+  th_doanh_so: number
+  kh_doanh_so: number
+  cl_doanh_so: number
+  th_don_hang: number
+  kh_don_hang: number
+  cl_don_hang: number
+  th_vieng_tham: number
+  kh_vieng_tham: number
+  cl_vieng_tham: number
+  th_kh_moi: number
+  kh_kh_moi: number
+  cl_kh_moi: number
+  ti_le_doanh_thu: number
+  ti_le_doanh_so: number
+  ti_le_don_hang: number
+  ti_le_vieng_tham: number
+  ti_le_kh_moi: number
 }

@@ -263,4 +263,13 @@ export default {
   autoLocation: 'Automatic location',
   signOut: 'Log out',
   unknown: 'Unknown',
+  inRoute : "Trong tuyến",
+  outRoute : "Ngoại tuyến",
+  ys :"Có",
+  no: "Không",
+  numberCustomer :"Customers number",
+  numberProduct :"The number of products",
+  quantityOrder :"Number of orders",
+  targetKpi :"Chỉ tiêt KPI",
+
 };
