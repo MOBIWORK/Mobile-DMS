@@ -13,7 +13,7 @@ import {
 import './src/language';
 
 import {Provider} from 'react-redux';
-
+f1c1b8c5eafeb88783c8843441faf20178f949e8
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import AppNavigationContainer from './src/navigation';
 import HandlingLoading from './src/components/HandlingLoading';
