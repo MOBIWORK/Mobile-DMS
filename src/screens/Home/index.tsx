@@ -59,7 +59,9 @@ import {NavigationProp} from '../../navigation/screen-type';
 import ModalErrorLocation from './components/ModalErrorLocation';
 import {getCustomerVisit, IListVisitParams} from '../../services/appService';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
-import {GeolocationResponse} from '@react-native-community/geolocation';
+import Geolocation, {
+  GeolocationResponse,
+} from '@react-native-community/geolocation';
 import {CommonUtils} from '../../utils';
 
 const HomeScreen = () => {
@@ -421,16 +423,18 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const getLocation = () => {
-      CommonUtils.getCurrentLocation(
-        locations => {
-          location.current = locations;
-          dispatch(appActions.onSetCurrentLocation(locations));
-          mapboxCameraRef.current?.flyTo(
-            [locations.coords.longitude, locations.coords.latitude],
-            1000,
-          );
-        },
-        // err => backgroundErrorListener(err.code),
+      Geolocation.requestAuthorization(() =>
+        CommonUtils.getCurrentLocation(
+          locations => {
+            location.current = locations;
+            dispatch(appActions.onSetCurrentLocation(locations));
+            mapboxCameraRef.current?.flyTo(
+              [locations.coords.longitude, locations.coords.latitude],
+              1000,
+            );
+          },
+          // err => backgroundErrorListener(err.code),
+        ),
       );
     };
     if (isFocus) {

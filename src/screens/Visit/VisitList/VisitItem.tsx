@@ -37,12 +37,7 @@ export interface LocationProps {
   lat: number;
 }
 
-const VisitItem: FC<VisitItemProps> = ({
-  item,
-  handleOpenMap,
-  handleClose,
-  onPress,
-}) => {
+const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const theme = useTheme();
@@ -113,8 +108,8 @@ const VisitItem: FC<VisitItemProps> = ({
           createdByEmail: '',
           item: item,
         };
-        navigate(ScreenConstant.CHECKIN, {item: data});
         dispatch(appActions.setDataCheckIn(data));
+        navigate(ScreenConstant.CHECKIN, {item: data});
       },
       error => backgroundErrorListener(error.code),
     );
@@ -141,7 +136,7 @@ const VisitItem: FC<VisitItemProps> = ({
     <ErrorBoundary fallbackRender={ErrorFallback}>
       <Pressable
         onPress={() => {
-          navigate(ScreenConstant.VISIT_DETAIL, {data: item}), onPress!();
+          navigate(ScreenConstant.VISIT_DETAIL, {data: item});
         }}>
         <View style={styles.viewContainer}>
           <View style={styles.user}>
