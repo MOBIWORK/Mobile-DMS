@@ -2,7 +2,7 @@ import {PayloadAction} from '@reduxjs/toolkit';
 import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 import {call, put} from 'typed-redux-saga';
 import {CheckinService} from '../../services';
-import {ApiConstant} from '../../const';
+import {ApiConstant, ScreenConstant} from '../../const';
 import {KeyAbleProps} from '../../models/types';
 import {ResponseGenerator} from '../app-saga/saga';
 import {
@@ -11,6 +11,7 @@ import {
   onLoadAppEnd,
   setError,
 } from '../../redux-store/app-reducer/reducer';
+import {goBack, pop} from '../../navigation/navigation-service';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
@@ -107,11 +108,14 @@ export function* createReportMarkScoreSaga(action: PayloadAction) {
   if (checkinActions.createReportMarkScore.match(action)) {
     try {
       yield put(onLoadApp());
-      yield call(CheckinService.createReportMarkingApi, action.payload);
+      yield call(CheckinService.createReportMarkingApi, action.payload.data);
     } catch (err) {
       console.log('[err: ]', err);
     } finally {
       yield put(onLoadAppEnd());
+      action.payload.screen === ScreenConstant.TAKE_PICTURE_SCORE
+        ? pop(2)
+        : goBack();
     }
   }
 }

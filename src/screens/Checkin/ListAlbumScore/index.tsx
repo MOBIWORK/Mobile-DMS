@@ -65,12 +65,17 @@ const ListAlbumScore = (props: Props) => {
       campaign_code: campaign.name,
       category: campaign.categories,
       customer_code: itemParams.kh_ten,
+      // images: JSON.stringify(
+      //   JSON.stringify(
+      //     listImageResponse
+      //       .map((item: any) => item.image)[0]
+      //       .map((image: any) => image.file_url),
+      //   ),
+      // ).replace(/\\"/g, '"'),
       images: JSON.stringify(
-        JSON.stringify(
-          listImageResponse
-            .map((item: any) => item.image)[0]
-            .map((image: any) => image.file_url),
-        ),
+        listImageResponse
+          .map((item: any) => item.image)[0]
+          .map((image: any) => image.file_url),
       ),
       images_time: parseFloat(
         listImageResponse
@@ -97,20 +102,13 @@ const ListAlbumScore = (props: Props) => {
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
       for (let index = 0; index < resultData.length; index++) {
         const element = resultData[index];
-
-        dispatch(checkinActions.createReportMarkScore(element));
+        dispatch(checkinActions.createReportMarkScore(element, screens));
       }
-
-      // let data:DataSendMarkScore ={
     } catch (err) {
-      console.log(`[err: ]`, err);
+      console.log('[err: ]', err);
     } finally {
-      screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack();
       setAppLoading(false);
     }
-    //   customer_code:itemParams.kh_ten,
-    //   campaign_code:li
-    // }
   };
   const listHeaderComponent = useMemo(() => {
     return (
@@ -118,7 +116,9 @@ const ListAlbumScore = (props: Props) => {
         <AppHeader
           style={styles.header}
           label="Chấm điểm trưng bày"
-          onBack={() => screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack()}
+          onBack={() =>
+            screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack()
+          }
           // hiddenBackButton={true}
         />
         <Block
