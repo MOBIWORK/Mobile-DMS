@@ -27,13 +27,11 @@ import CardAddress from './CardAddress';
 import {dispatch} from '../../../utils/redux';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import Mapbox from '@rnmapbox/maps';
-import BackgroundGeolocation, {
-  Location,
-} from 'react-native-background-geolocation';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 import {AppService} from '../../../services';
 import {CommonUtils} from '../../../utils';
 import isEqual from 'react-fast-compare';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -45,8 +43,8 @@ type Props = {
   addingBottomRef: React.RefObject<BottomSheetMethods>;
   cameraBottomRef: React.RefObject<BottomSheetMethods>;
   imageSource: any;
-  location: Location | null;
-  setLocation: (location: Location) => void;
+  location: GeolocationResponse | null;
+  setLocation: (location: GeolocationResponse) => void;
 };
 
 const FormAdding = (props: Props) => {
@@ -89,21 +87,19 @@ const FormAdding = (props: Props) => {
   };
 
   const handleRegainLocation = () => {
-    BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-      .then(cur_location => {
-        mapboxCameraRef.current &&
-          mapboxCameraRef.current.moveTo(
-            [cur_location.coords.longitude, cur_location.coords.latitude],
-            1000,
-          );
-        setLocation(cur_location);
-        setData(prev => ({
-          ...prev,
-          latitude: cur_location.coords.latitude,
-          longitude: cur_location.coords.longitude,
-        }));
-      })
-      .catch(e => console.log('err', e));
+    CommonUtils.getCurrentLocation(cur_location => {
+      setLocation(cur_location);
+      mapboxCameraRef.current &&
+        mapboxCameraRef.current.moveTo(
+          [cur_location.coords.longitude, cur_location.coords.latitude],
+          1000,
+        );
+      setData(prev => ({
+        ...prev,
+        latitude: cur_location.coords.latitude,
+        longitude: cur_location.coords.longitude,
+      }));
+    });
   };
 
   const handleSearchText = async (text: string) => {
@@ -483,7 +479,7 @@ const FormAdding = (props: Props) => {
   );
 };
 
-export default React.memo(FormAdding,isEqual);
+export default React.memo(FormAdding, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

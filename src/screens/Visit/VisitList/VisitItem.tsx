@@ -28,24 +28,22 @@ import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import moment from 'moment';
-import BackgroundGeolocation from 'react-native-background-geolocation';
 import isEquals from 'react-fast-compare';
+import {CommonUtils} from '../../../utils';
+import {useBatteryLevel} from 'expo-battery';
 
 export interface LocationProps {
   long: number;
   lat: number;
 }
 
-const VisitItem: FC<VisitItemProps> = ({
-  item,
-  handleOpenMap,
-  handleClose,
-  onPress,
-}) => {
+const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
+  const batteryLevel = useBatteryLevel();
+
   const currentCustomerCheckin = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -74,8 +72,8 @@ const VisitItem: FC<VisitItemProps> = ({
   };
 
   const handleBackground = async (item: VisitListItemType) => {
-    await BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 30})
-      .then(location => {
+    CommonUtils.getCurrentLocation(
+      location => {
         let data: CheckinData = {
           checkin_id:
             currentCustomerCheckin &&
@@ -87,14 +85,12 @@ const VisitItem: FC<VisitItemProps> = ({
           kh_diachi: item.customer_primary_address,
           kh_long: distanceCal?.location?.long ?? '',
           kh_lat: distanceCal?.location?.lat ?? '',
-          checkin_giovao: moment(new Date()).format('HH:mm'),
+          checkin_giovao: new Date().getTime() / 1000,
           checkin_pinvao:
-            location.battery.level > 0
-              ? location.battery.level * 100
-              : -location.battery.level * 100,
+            batteryLevel > 0 ? batteryLevel * 100 : -batteryLevel * 100,
           checkin_khoangcach: distanceCal.distance,
           createdDate: moment(new Date()).valueOf(),
-          checkin_timegps: location.timestamp,
+          checkin_timegps: moment(new Date(location.timestamp * 1000)).format("hh:mm") ,
           checkin_dochinhxac: location.coords.accuracy,
           checkinvalidate_khoangcachcheckin:
             systemConfig.saiso_chophep_kb_vitringoaisaiso,
@@ -102,7 +98,7 @@ const VisitItem: FC<VisitItemProps> = ({
             systemConfig.saiso_chophep_checkout_ngoaisaiso,
           checkin_trangthaicuahang: true,
           checkin_donhang: '',
-          checkin_giora: '',
+          checkin_giora: null,
           checkin_hinhanh: [],
           checkin_lat: location.coords.latitude,
           checkin_long: location.coords.longitude,
@@ -112,13 +108,11 @@ const VisitItem: FC<VisitItemProps> = ({
           createdByEmail: '',
           item: item,
         };
-        navigate(ScreenConstant.CHECKIN, {item: data});
         dispatch(appActions.setDataCheckIn(data));
-      })
-      .catch(err => {
-        console.log(err, 'err');
-        backgroundErrorListener(err);
-      });
+        navigate(ScreenConstant.CHECKIN, {item: data});
+      },
+      error => backgroundErrorListener(error.code),
+    );
   };
 
   const statusItem = (status: boolean) => {
@@ -142,7 +136,7 @@ const VisitItem: FC<VisitItemProps> = ({
     <ErrorBoundary fallbackRender={ErrorFallback}>
       <Pressable
         onPress={() => {
-          navigate(ScreenConstant.VISIT_DETAIL, {data: item}), onPress!();
+          navigate(ScreenConstant.VISIT_DETAIL, {data: item});
         }}>
         <View style={styles.viewContainer}>
           <View style={styles.user}>
@@ -199,16 +193,28 @@ const VisitItem: FC<VisitItemProps> = ({
             />
             <TouchableOpacity
               onPress={() => handleOpenMap && handleOpenMap(item)}
-              style={styles.content}>
+              style={styles.content}
+              disabled={!distanceCal.distance}>
               <Image
                 source={ImageAssets.SendIcon}
                 style={{width: 16, height: 16}}
                 resizeMode={'cover'}
-                tintColor={colors.action}
+                tintColor={
+                  distanceCal.distance ? colors.action : colors.text_secondary
+                }
               />
               <Text
-                style={{color: colors.action, textDecorationLine: 'underline'}}>
-                {Math.floor(distanceCal.distance)}km
+                style={{
+                  color: distanceCal.distance
+                    ? colors.action
+                    : colors.text_secondary,
+                  textDecorationLine: distanceCal.distance
+                    ? 'underline'
+                    : 'none',
+                }}>
+                {distanceCal.distance
+                  ? `${Math.floor(distanceCal.distance)}km`
+                  : getLabel('unknown')}
               </Text>
             </TouchableOpacity>
           </View>

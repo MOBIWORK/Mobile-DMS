@@ -49,11 +49,10 @@ import {AppService, CustomerService} from '../../services';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {useSelector} from '../../config/function';
 import {MainAddress, MainContactAddress} from './components/CardAddress';
-import BackgroundGeolocation, {
-  Location,
-} from 'react-native-background-geolocation';
+
 import {CommonUtils} from '../../utils';
 import {useTranslation} from 'react-i18next';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -67,7 +66,7 @@ const AddingNewCustomer = () => {
     customerBirthday: 'Tất cả',
   });
 
-  const [location, setLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<GeolocationResponse | null>(null);
 
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
@@ -224,17 +223,7 @@ const AddingNewCustomer = () => {
   //get Cur Location
   useEffect(() => {
     if (!location) {
-      BackgroundGeolocation.getCurrentPosition({samples: 1, timeout: 3})
-        .then(cur_location => {
-          setLocation(cur_location);
-        })
-        .catch(() => {
-          showSnack({
-            msg: getLabel('GPSErr'),
-            interval: 2000,
-            type: 'error',
-          });
-        });
+      CommonUtils.getCurrentLocation(locations => setLocation(locations));
     }
   }, []);
 

@@ -96,7 +96,9 @@ const SignIn = () => {
       setPasswordStore(password);
 
       await CommonUtils.dismissKeyboard(() => {
-        navigation.navigate(ScreenConstant.AUTHORIZED);
+        navigation.navigate(ScreenConstant.AUTHORIZED, {
+          screen: ScreenConstant.MAIN_TAB,
+        });
       });
     }
 
@@ -111,7 +113,9 @@ const SignIn = () => {
           enable: true,
           type: biometricType,
         });
-        navigation.navigate(ScreenConstant.AUTHORIZED);
+        navigation.navigate(ScreenConstant.AUTHORIZED, {
+          screen: ScreenConstant.MAIN_TAB,
+        });
       }
     } catch (e) {
       console.log('biometric Error', e);

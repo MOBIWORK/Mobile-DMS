@@ -67,13 +67,6 @@
 		<string>SF-Pro-Display-Regular.ttf</string>
 		<string>SF-Pro-Display-Thin.ttf</string>
 	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-		<string>location</string>
-		<string>processing</string>
-		<string>remote-notification</string>
-	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

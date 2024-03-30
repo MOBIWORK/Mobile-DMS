@@ -95,12 +95,16 @@ const CheckinInventory = () => {
 
     const onSubmit = async () => {
         if (products.length > 0) {
-            const newItems = products.map(item => ({
+            const newItems = products.map(item => {
+                const price = item.details.find(item2 => item2.uom == item.stock_uom)
+                return {
                 item_code: item.item_code,
                 item_unit: item.stock_uom,
                 quantity: item.quantity,
-                exp_time: new Date(item.end_of_life).getTime() / 1000
-            }))
+                exp_time: new Date(item.end_of_life).getTime() / 1000,
+                item_price : price?.price_list_rate
+            }
+        })
             const objectData = {
                 "customer_code": dataCheckin.item.customer_code,//id khách hàng
                 "customer_id": dataCheckin.item.customer_name,//mã khách hàng

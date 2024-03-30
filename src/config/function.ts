@@ -1,15 +1,13 @@
 import moment from 'moment';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 import isEqual from 'react-fast-compare';
 import {BackHandler, Keyboard, Platform, processColor} from 'react-native';
-import BackgroundGeolocation, {
-  Location,
-} from 'react-native-background-geolocation';
 import {RootState} from '../redux-store/all-reducer';
 import {useSelector as useReduxSelector} from 'react-redux';
-import {dispatch} from '../utils/redux/index';
+import {dispatch} from '../utils/redux';
 import {appActions} from '../redux-store/app-reducer/reducer';
 import {ObjectId} from 'bson';
+import {CommonUtils} from '../utils';
 
 type TypesBase =
   | 'bigint'
@@ -117,18 +115,12 @@ const calculateDistance = (
 };
 
 export const handleBackgroundLocation = () => {
-  BackgroundGeolocation.getCurrentPosition({samples: 3, timeout: 5})
-    .then(
-      location => {
-        return dispatch(appActions.onSetCurrentLocation(location));
-      },
-      err => backgroundErrorListener(err),
-    )
-    .catch(err => {
-      console.log('====================================');
-      console.log(err);
-      console.log('====================================');
-    });
+  CommonUtils.getCurrentLocation(
+    locations => {
+      return dispatch(appActions.onSetCurrentLocation(locations));
+    },
+    error => backgroundErrorListener(error.code),
+  );
 };
 
 export const hexStringFromCSSColor = (color: string) => {
@@ -185,19 +177,17 @@ const backgroundErrorListener = (errorCode: number) => {
   }
 };
 
-function decimalMinutesToTime(decimalMinutes:any) {
+function decimalMinutesToTime(decimalMinutes: any) {
   const hours = Math.floor(decimalMinutes / 60);
   const minutes = Math.floor(decimalMinutes % 60);
   const seconds = Math.floor((decimalMinutes * 60) % 60);
 
   const formattedTime = `${String(hours).padStart(2, '0')}:${String(
-    minutes
+    minutes,
   ).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
   return formattedTime;
 }
-
-
 
 export {
   formatPhoneNumber,
@@ -213,5 +203,5 @@ export {
   useSelector,
   backgroundErrorListener,
   generateRandomObjectId,
-  decimalMinutesToTime
+  decimalMinutesToTime,
 };

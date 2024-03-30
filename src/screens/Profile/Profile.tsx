@@ -25,9 +25,6 @@ import {orderAction} from '../../redux-store/order-reducer/reducer';
 import {CommonUtils} from '../../utils';
 import {AppConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
-import BackgroundGeolocation, {
-  Subscription,
-} from 'react-native-background-geolocation';
 
 const Profile = () => {
   const theme = useTheme();

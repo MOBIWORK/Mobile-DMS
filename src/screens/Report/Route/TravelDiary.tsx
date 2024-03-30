@@ -25,21 +25,26 @@ const TravelDiary = () => {
   const { t: getLabel } = useTranslation();
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
-  const [date, setDate] = useState<any>(new Date());
   const [data, setData] = useState<ReportTravelDiaryType[]>([]);
   const [headerDate, setHeaderDate] = useState<string>(
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
+  const [from_date,setFromDate] = useState<number>(new Date().getTime());
+  const [to_date,setToDate] = useState<number>(new Date().getTime());
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-      setDate(item.value)
+      setFromDate(Number(item.value))
+      setToDate(Number(item.value))
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      setHeaderDate(getLabel(String(item.value)));
+      const {from_date ,to_date} = CommonUtils.dateToDate(item.value?.toString() || "");
+      setFromDate(new Date(from_date).getTime());
+      setToDate(new Date(to_date).getTime());
+      setHeaderDate(getLabel(String(item.label)));
     }
   };
 
@@ -97,8 +102,8 @@ const TravelDiary = () => {
   const fetchData = async () => {
     dispatch(appActions.setProcessingStatus(true))
     const { status, data }: KeyAbleProps = await ReportService.getTravelLogReport({
-      fromdate: new Date(date).setHours(0, 0),
-      todate: new Date(date).setHours(23, 59)
+      fromdate: new Date(from_date).setHours(0, 0),
+      todate: new Date(to_date).setHours(23, 59)
     })
     dispatch(appActions.setProcessingStatus(false))
     setData(data.result)
@@ -106,7 +111,7 @@ const TravelDiary = () => {
 
   useEffect(() => {
     fetchData()
-  }, [date])
+  }, [from_date,to_date])
 
 
   return (

@@ -8,7 +8,7 @@ import SkeletonLoading from '../../Visit/SkeletonLoading';
 type Props = {
   data: IDataCustomers[];
   onLoadData?: () => void;
-  listFooter: () => React.JSX.Element;
+  listFooter?: () => React.JSX.Element;
   onRefresh: () => Promise<void>;
   loading: boolean;
 };

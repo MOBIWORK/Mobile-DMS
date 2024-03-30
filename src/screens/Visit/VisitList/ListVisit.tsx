@@ -31,9 +31,6 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
-import BackgroundGeolocation, {
-  Location,
-} from 'react-native-background-geolocation';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {calculateDistance, useSelector} from '../../../config/function';
@@ -59,6 +56,7 @@ import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
 import MarkerItem from '../../../components/common/MarkerItem';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -107,11 +105,12 @@ const ListVisit = () => {
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
-  const [location, setLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [error, setError] = useState<string>('');
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
+
   const backgroundErrorListener = useCallback((errorCode: number) => {
     // Handle background location errors
     switch (errorCode) {
@@ -135,16 +134,6 @@ const ListVisit = () => {
       return '';
     }
   }, [listCustomer, customerDataSort]);
-
-  const handleBackground = () => {
-    BackgroundGeolocation.getCurrentPosition(
-      {samples: 1, timeout: 3},
-      location => {
-        console.log('location: ', location);
-      },
-      backgroundErrorListener,
-    );
-  };
 
   const onRefreshData = useCallback(async () => {
     try {
@@ -173,11 +162,14 @@ const ListVisit = () => {
 
   const presentMap = (item: VisitListItemType) => {
     const item_location: any = JSON.parse(item.customer_location_primary);
-    mapboxCameraRef.current &&
-      mapboxCameraRef.current.moveTo(
-        [item_location.long, item_location.lat],
-        1000,
-      );
+    CommonUtils.sleep(100).then(() => {
+      mapboxCameraRef.current &&
+        mapboxCameraRef.current.moveTo(
+          [Number(item_location.long), Number(item_location.lat)],
+          1000,
+        );
+    });
+
     setShowListVisit(false);
     setVisitItemSelected(item);
   };
@@ -192,7 +184,10 @@ const ListVisit = () => {
           rightButton={
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
-                onPress={() => setShowListVisit(!isShowListVisit)}>
+                onPress={() => {
+                  setShowListVisit(!isShowListVisit);
+                  setVisitItemSelected(null);
+                }}>
                 <Image
                   source={
                     isShowListVisit ? ImageAssets.MapIcon : ImageAssets.ListIcon
@@ -292,7 +287,7 @@ const ListVisit = () => {
                   <VisitItem
                     item={item}
                     handleOpenMap={() => presentMap(item)}
-                    onPress={handleBackground}
+                    // onPress={handleBackground}
                   />
                 )}
               />
@@ -316,18 +311,20 @@ const ListVisit = () => {
                   style={{visibility: 'visible'}}
                 />
               </Mapbox.RasterSource>
-              <Mapbox.Camera
-                ref={mapboxCameraRef}
-                centerCoordinate={[
-                  location?.coords.longitude ?? 0,
-                  location?.coords.latitude ?? 0,
-                ]}
-                animationMode={'flyTo'}
-                animationDuration={500}
-                zoomLevel={12}
-              />
-              {listCustomer &&
-                listCustomer.map((item, index) => {
+              {location?.coords && (
+                <Mapbox.Camera
+                  ref={mapboxCameraRef}
+                  centerCoordinate={[
+                    location?.coords.longitude,
+                    location?.coords.latitude,
+                  ]}
+                  animationMode={'flyTo'}
+                  animationDuration={500}
+                  zoomLevel={12}
+                />
+              )}
+              {customerDataSort &&
+                customerDataSort.map((item, index) => {
                   if (item.customer_location_primary) {
                     const newLocation: LocationProps = JSON.parse(
                       item.customer_location_primary!,
@@ -339,7 +336,11 @@ const ListVisit = () => {
                           Number(newLocation.long),
                           Number(newLocation.lat),
                         ]}>
-                        <MarkerItem item={item} index={index} />
+                        <MarkerItem
+                          item={item}
+                          index={index}
+                          onPress={() => setVisitItemSelected(item)}
+                        />
                       </Mapbox.MarkerView>
                     );
                   } else {
@@ -390,12 +391,7 @@ const ListVisit = () => {
     if (Object.keys(systemConfig).length < 0) {
       dispatch(appActions.onGetSystemConfig());
     }
-    BackgroundGeolocation.getCurrentPosition({
-      samples: 1,
-      timeout: 3,
-    })
-      .then(location => setLocation(location))
-      .catch(e => console.log('err', e));
+    CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
 
   const getCustomer = async (params?: IListVisitParams) => {
@@ -412,6 +408,9 @@ const ListVisit = () => {
     if (listCustomer && listCustomer.length > 0) {
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary != null,
+      );
+      const noLocationCustomer = listCustomer.filter(
+        item => item.customer_location_primary === null,
       );
       const sortedData = () => {
         return filteredData.slice().sort((a, b) => {
@@ -438,8 +437,7 @@ const ListVisit = () => {
             : distance2 - distance1;
         });
       };
-
-      setCustomerData(sortedData);
+      setCustomerData([...sortedData(), ...noLocationCustomer]);
     } else {
       getCustomer();
     }
@@ -529,16 +527,17 @@ const ListVisit = () => {
   };
 
   const handleRegainLocation = async () => {
-    const newLocation = await BackgroundGeolocation.getCurrentPosition({
-      samples: 1,
-      timeout: 3,
-    });
-    mapboxCameraRef.current &&
-      mapboxCameraRef.current.moveTo(
-        [newLocation.coords.longitude, newLocation.coords.latitude],
-        1000,
-      );
-    setLocation(location);
+    CommonUtils.getCurrentLocation(
+      locations => {
+        setLocation(locations);
+        mapboxCameraRef.current &&
+          mapboxCameraRef.current.moveTo(
+            [locations.coords.longitude, locations.coords.latitude],
+            1000,
+          );
+      },
+      err => backgroundErrorListener(err.code),
+    );
   };
 
   useEffect(() => {

@@ -8,9 +8,6 @@ import {
 } from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
-import BackgroundGeolocation, {
-  Location,
-} from 'react-native-background-geolocation';
 import {ApiConstant, AppConstant} from '../../../const';
 import {
   Image,
@@ -36,6 +33,7 @@ import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -54,27 +52,25 @@ const CheckInLocation = () => {
     route.params?.data &&
     JSON.parse(route.params.data.item.customer_location_primary);
 
-  const [location, setLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [value, setValue] = useState<string>(
     route.params?.data && route.params.data.item.customer_primary_address,
   );
   const mapboxCameraRef = useRef<CameraRef>(null);
 
-  const handleRegainLocation = async () => {
-    const newLocation = await BackgroundGeolocation.getCurrentPosition({
-      samples: 1,
-      timeout: 3,
-    });
-    mapboxCameraRef.current &&
-      mapboxCameraRef.current.moveTo(
-        [newLocation.coords.longitude, newLocation.coords.latitude],
-        1000,
+  const handleRegainLocation = () => {
+    CommonUtils.getCurrentLocation(newLocation => {
+      setLocation(location);
+      mapboxCameraRef.current &&
+        mapboxCameraRef.current.moveTo(
+          [newLocation.coords.longitude, newLocation.coords.latitude],
+          1000,
+        );
+      handleMarkerMap(
+        newLocation?.coords.latitude,
+        newLocation?.coords.longitude,
       );
-    setLocation(location);
-    await handleMarkerMap(
-      newLocation?.coords.latitude,
-      newLocation?.coords.longitude,
-    );
+    });
   };
 
   const handleSearchText = async (text: string) => {
@@ -156,10 +152,7 @@ const CheckInLocation = () => {
         },
       });
     } else {
-      BackgroundGeolocation.getCurrentPosition({
-        samples: 1,
-        timeout: 3,
-      }).then(new_location => setLocation(new_location));
+      CommonUtils.getCurrentLocation(locations => setLocation(locations));
     }
   }, []);
 

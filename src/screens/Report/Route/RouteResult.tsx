@@ -27,25 +27,29 @@ const RouteResult = () => {
   const styles = createStyle(theme);
   const [isLoading, setLoading] = useState<boolean>(false);
   const filerBottomSheetRef = useRef<BottomSheet>(null);
-  const [date,setDate] = useState<any>(new Date());
   const [reportRouter ,setReportRouter] = useState<ReportRouterResultType | any>();
   const [headerDate, setHeaderDate] = useState<string>(
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
-  
+  const [from_date,setFromDate] = useState<number>(new Date().getTime());
+  const [to_date,setToDate] = useState<number>(new Date().getTime());
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-    setDate(item.value)
+      setFromDate(Number(item.value))
+      setToDate(Number(item.value))
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      setHeaderDate(getLabel(String(item.value)));
+      const {from_date ,to_date} = CommonUtils.dateToDate(item.value?.toString() || "");
+      setFromDate(new Date(from_date).getTime());
+      setToDate(new Date(to_date).getTime());
+      setHeaderDate(getLabel(String(item.label)));
     }
   };
-
+  
   const onChangeDateCalender = (date: any) => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
@@ -114,8 +118,8 @@ const RouteResult = () => {
   const fetchData = async () =>{
       setLoading(true);
       const {status,data}:KeyAbleProps = await ReportService.getRouterResult({
-        from_date : new Date(date).getTime(),
-        to_date : new Date(date).getTime()
+        from_date : from_date / 1000,
+        to_date : to_date / 1000
       })
       setLoading(false);
       if(status === ApiConstant.STT_OK) {
@@ -125,7 +129,7 @@ const RouteResult = () => {
 
   useEffect(()=>{
     fetchData()
-  },[date])
+  },[from_date,to_date])
 
   return (
     <MainLayout style={{ backgroundColor: theme.colors.bg_neutral }}>

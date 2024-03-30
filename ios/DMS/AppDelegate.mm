@@ -8,7 +8,7 @@
 
 #import <React/RCTBundleURLProvider.h>
 
-#import <TSBackgroundFetch/TSBackgroundFetch.h>
+//#import <TSBackgroundFetch/TSBackgroundFetch.h>
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
@@ -23,7 +23,8 @@
   self.initialProps = @{};
   
    // [REQUIRED] Register BackgroundFetch
-   [[TSBackgroundFetch sharedInstance] didFinishLaunching];
+//   [[TSBackgroundFetch sharedInstance] didFinishLaunching];
+  
   //  #ifdef FB_SONARKIT_ENABLED
   // InitializeFlipper(application);
    [AppCenterReactNative register];

@@ -13,11 +13,6 @@ buildscript {
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
         ndkVersion = "23.1.7779620"
 
-//        RNMapboxMapsLibs = { // optional - only required if you want to customize it
-//            implementation 'com.mapbox.maps:android:10.6.0'
-//            implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.4.1'
-//        }
-
     }
     subprojects { subproject ->
         afterEvaluate{
@@ -29,7 +24,7 @@ buildscript {
             }
         }
     }
-    
+
     repositories {
         google()
         mavenCentral()
@@ -73,14 +68,14 @@ allprojects {
                 excludeGroup "com.facebook.react"
             }
         }
-        maven {
-            // Required for react-native-background-geolocation
-            url("${project(':react-native-background-geolocation').projectDir}/libs")
-        }
-        maven {
-            // Required for react-native-background-fetch
-            url("${project(':react-native-background-fetch').projectDir}/libs")
-        }
+//        maven {
+//            // Required for react-native-background-geolocation
+//            url("${project(':react-native-background-geolocation').projectDir}/libs")
+//        }
+//        maven {
+//            // Required for react-native-background-fetch
+//            url("${project(':react-native-background-fetch').projectDir}/libs")
+//        }
         google()
         maven { url 'https://www.jitpack.io' }
 

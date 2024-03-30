@@ -16,10 +16,10 @@ const ItemNumber = (props: Props) => {
     <Block
       block
       colorTheme="bg_default"
-      paddingHorizontal={8}
+      paddingHorizontal={12}
       margin={8}
       borderRadius={12}
-      paddingVertical={24}
+      paddingVertical={16}
       justifyContent="center"
       alignItems="center">
       <Block direction="row" alignItems="center" justifyContent="space-around">

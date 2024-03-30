@@ -1,18 +1,10 @@
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
   Image,
   Linking,
   Platform,
-  Alert,
   TouchableOpacity,
 } from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
@@ -49,9 +41,6 @@ import {
 import ItemWidget from '../../components/Widget/ItemWidget';
 import NotificationScreen from './Notification';
 import Mapbox from '@rnmapbox/maps';
-import BackgroundGeolocation, {
-  Location,
-} from 'react-native-background-geolocation';
 import {rootStyles} from './styles';
 import ItemLoading from './components/ItemLoading';
 import CardLoading from './components/CardLoading';
@@ -70,6 +59,11 @@ import {NavigationProp} from '../../navigation/screen-type';
 import ModalErrorLocation from './components/ModalErrorLocation';
 import {getCustomerVisit, IListVisitParams} from '../../services/appService';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import Geolocation, {
+  GeolocationResponse,
+} from '@react-native-community/geolocation';
+import {CommonUtils} from '../../utils';
+import { getVersion } from '../../native-module/app-module';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -80,7 +74,7 @@ const HomeScreen = () => {
   const {t: getLabel} = useTranslation();
   const isFocus = useIsFocused();
 
-  const location = useRef<Location | null>(null);
+  const location = useRef<GeolocationResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [enabled, setEnabled] = React.useState(false);
   // const showModal = useSelector(state => state.app.showModal);
@@ -191,13 +185,13 @@ const HomeScreen = () => {
     (errorCode: number) => {
       // Handle background location errors
       switch (errorCode) {
-        case 0:
+        case 1:
           setError(
             'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
           );
           setEnabled(true);
           break;
-        case 1:
+        case 2:
           setError('GPS đã bị tắt. Vui lòng bật lại.');
           setEnabled(true);
 
@@ -415,42 +409,33 @@ const HomeScreen = () => {
   };
 
   const handleRegainLocation = useCallback(async () => {
-    await BackgroundGeolocation.getCurrentPosition(
-      {
-        samples: 1,
-        timeout: 3,
+    CommonUtils.getCurrentLocation(
+      locations => {
+        location.current = locations;
+        dispatch(appActions.onSetCurrentLocation(locations));
+        mapboxCameraRef.current?.flyTo(
+          [locations.coords.longitude, locations.coords.latitude],
+          1000,
+        );
       },
-      res => {
-        mapboxCameraRef.current &&
-          mapboxCameraRef.current.flyTo(
-            [res?.coords.longitude, res?.coords.latitude],
-            1000,
-          );
-        location.current = res;
-      },
-      err => console.log('err', err),
+      err => backgroundErrorListener(err.code),
     );
-    // console.log(newLocation,'newLocation')
   }, []);
 
   useEffect(() => {
-    const getLocation = async () => {
-      await BackgroundGeolocation.getCurrentPosition(
-        {
-          samples: 1,
-          timeout: 10,
-          maximumAge: 0,
-          desiredAccuracy: 10,
-        },
-        locations => {
-          location.current = locations;
-          dispatch(appActions.onSetCurrentLocation(locations));
-          mapboxCameraRef.current?.flyTo(
-            [locations.coords.longitude, locations.coords.latitude],
-            1000,
-          );
-        },
-        err => backgroundErrorListener(err),
+    const getLocation = () => {
+      Geolocation.requestAuthorization(() =>
+        CommonUtils.getCurrentLocation(
+          locations => {
+            location.current = locations;
+            dispatch(appActions.onSetCurrentLocation(locations));
+            mapboxCameraRef.current?.flyTo(
+              [locations.coords.longitude, locations.coords.latitude],
+              1000,
+            );
+          },
+          // err => backgroundErrorListener(err.code),
+        ),
       );
     };
     if (isFocus) {
@@ -482,8 +467,8 @@ const HomeScreen = () => {
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
     console.log(
       'syncStatus',
+     
       syncStatus,
-      codePush.SyncStatus.CHECKING_FOR_UPDATE,
     );
     switch (syncStatus) {
       case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
@@ -536,7 +521,7 @@ const HomeScreen = () => {
       }
     }
     setUpdateStatus(syncStatus);
-  }, []);
+  }, [syncWithCodePush]);
 
   const onDownloadProgress = useCallback(
     (downloadProgress: DownloadProgress): void => {
@@ -549,22 +534,25 @@ const HomeScreen = () => {
     },
     [],
   );
-  useEffect(() => {
-    // codePush.sync(
-    //   {
-    //     updateDialog: {
-    //       appendReleaseDescription: true,
-    //       descriptionPrefix: 'Release',
-    //       title: 'Update Available',
-    //       optionalUpdateMessage: updateMessage,
-    //     },
-    //     installMode: codePush.InstallMode.ON_NEXT_RESTART,
-    //     mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
-    //   },
-    //   onSyncStatusChanged,
-    //   onDownloadProgress,
-    // );
-    // syncWithCodePush;
+
+    
+
+  useLayoutEffect(() => {
+    codePush.sync(
+      {
+        updateDialog: {
+          appendReleaseDescription: true,
+          descriptionPrefix: 'Release',
+          title: 'Update Available',
+          optionalUpdateMessage: updateMessage,
+        },
+        installMode: codePush.InstallMode.ON_NEXT_RESTART,
+        mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+      },
+      onSyncStatusChanged,
+      onDownloadProgress,
+    );
+    syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
   return (
@@ -781,10 +769,10 @@ const HomeScreen = () => {
                     <Mapbox.Camera
                       ref={mapboxCameraRef}
                       centerCoordinate={[
-                        location.current != null
+                        location.current !== null
                           ? location.current.coords.longitude
                           : 0,
-                        location.current != null
+                        location.current !== null
                           ? location.current.coords.latitude
                           : 0,
                       ]}
