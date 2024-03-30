@@ -90,7 +90,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
             batteryLevel > 0 ? batteryLevel * 100 : -batteryLevel * 100,
           checkin_khoangcach: distanceCal.distance,
           createdDate: moment(new Date()).valueOf(),
-          checkin_timegps: location.timestamp.toString(),
+          checkin_timegps: moment(new Date(location.timestamp * 1000)).format("hh:mm") ,
           checkin_dochinhxac: location.coords.accuracy,
           checkinvalidate_khoangcachcheckin:
             systemConfig.saiso_chophep_kb_vitringoaisaiso,

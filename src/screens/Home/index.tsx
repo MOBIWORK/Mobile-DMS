@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -63,6 +63,7 @@ import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
 import {CommonUtils} from '../../utils';
+import { getVersion } from '../../native-module/app-module';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -466,8 +467,8 @@ const HomeScreen = () => {
   const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
     console.log(
       'syncStatus',
+     
       syncStatus,
-      codePush.SyncStatus.CHECKING_FOR_UPDATE,
     );
     switch (syncStatus) {
       case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
@@ -520,7 +521,7 @@ const HomeScreen = () => {
       }
     }
     setUpdateStatus(syncStatus);
-  }, []);
+  }, [syncWithCodePush]);
 
   const onDownloadProgress = useCallback(
     (downloadProgress: DownloadProgress): void => {
@@ -533,22 +534,25 @@ const HomeScreen = () => {
     },
     [],
   );
-  useEffect(() => {
-    // codePush.sync(
-    //   {
-    //     updateDialog: {
-    //       appendReleaseDescription: true,
-    //       descriptionPrefix: 'Release',
-    //       title: 'Update Available',
-    //       optionalUpdateMessage: updateMessage,
-    //     },
-    //     installMode: codePush.InstallMode.ON_NEXT_RESTART,
-    //     mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
-    //   },
-    //   onSyncStatusChanged,
-    //   onDownloadProgress,
-    // );
-    // syncWithCodePush;
+
+    
+
+  useLayoutEffect(() => {
+    codePush.sync(
+      {
+        updateDialog: {
+          appendReleaseDescription: true,
+          descriptionPrefix: 'Release',
+          title: 'Update Available',
+          optionalUpdateMessage: updateMessage,
+        },
+        installMode: codePush.InstallMode.ON_NEXT_RESTART,
+        mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+      },
+      onSyncStatusChanged,
+      onDownloadProgress,
+    );
+    syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
 
   return (

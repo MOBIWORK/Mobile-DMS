@@ -127,7 +127,7 @@ const CheckIn = () => {
     return totalSeconds;
   };
 
-  const onCheckout = useCallback(() => {
+  const onCheckout = useCallback( async () => {
     dispatch(appActions.onCheckIn({...dataCheckIn , checkin_giora : new Date().getTime() / 1000}));
     setShow(false);
   }, [dataCheckIn]);
