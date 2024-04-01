@@ -59,36 +59,29 @@ const ListAlbumScore = (props: Props) => {
   );
   const [appLoading, setAppLoading] = useState<boolean>();
 
-  const resultData: DataSendMarkScore[] = listProgramSelected?.map(campaign => {
-    return {
-      e_name: userInfor.employee,
-      campaign_code: campaign.name,
-      category: campaign.categories,
-      customer_code: itemParams.kh_ten,
-      // images: JSON.stringify(
-      //   JSON.stringify(
-      //     listImageResponse
-      //       .map((item: any) => item.image)[0]
-      //       .map((image: any) => image.file_url),
-      //   ),
-      // ).replace(/\\"/g, '"'),
-      images: JSON.stringify(
-        listImageResponse
-          .map((item: any) => item.image)[0]
-          .map((image: any) => image.file_url),
-      ),
-      images_time: parseFloat(
-        listImageResponse
-          .map((item: any) => item.image)[0]
-          .map((image: any) => image.date_time)[
-          listImageResponse
-            .map((item: any) => item.image)[0]
-            .map((image: any) => image.date_time).length - 1
-        ],
-      ),
-      setting_score_audit: campaign.setting_score_audit,
-    };
-  });
+  const resultData: DataSendMarkScore[] = listProgramSelected?.map(
+    (campaign, index) => {
+      const imageUrls = listImageResponse[index].image.map(
+        (item: any) => item.file_url,
+      );
+      const lastImageDateTime = listImageResponse[index].image.map(
+        (item: any) => item.date_time ?? 0,
+      );
+
+      // Map the listProgramSelected to resultData
+      return {
+        e_name: userInfor.employee,
+        campaign_code: campaign.name,
+        category: campaign.categories,
+        customer_code: itemParams.kh_ten,
+        images: JSON.stringify(imageUrls),
+        images_time: parseFloat(
+          lastImageDateTime[lastImageDateTime.length - 1],
+        ),
+        setting_score_audit: campaign.setting_score_audit,
+      };
+    },
+  );
 
   const confirmUploadImage = async () => {
     try {
@@ -100,10 +93,14 @@ const ListAlbumScore = (props: Props) => {
       );
 
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
+
       for (let index = 0; index < resultData.length; index++) {
         const element = resultData[index];
         dispatch(checkinActions.createReportMarkScore(element, screens));
       }
+      //remove store: listProgramSelected, listImageSelected:
+      dispatch(checkinActions.setSelectedProgram([]));
+      dispatch(checkinActions.setListImageSelect([]));
     } catch (err) {
       console.log('[err: ]', err);
     } finally {

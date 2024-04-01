@@ -44,7 +44,6 @@ export const openImagePickerCamera = async (
       response?.assets?.[0].uri ||
       (response.assets && response.assets.length > 0)
     ) {
-      console.log(response.assets[0].fileSize, 'fizesize');
       const selectedImage = response?.assets?.[0].uri;
       base64Image = response.assets[0].base64 as string;
       callBack(selectedImage, base64Image, response.assets[0].timestamp);
