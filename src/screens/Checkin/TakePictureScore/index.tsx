@@ -35,6 +35,7 @@ import {ImageAssets} from '../../../assets';
 import moment from 'moment';
 import {RootStackParamList} from '../../../navigation/screen-type';
 import {goBack, navigate} from '../../../navigation/navigation-service';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 interface ImageSelect {
   uri: string;
@@ -183,7 +184,8 @@ const TakePictureScore = () => {
   //   });
   // }, [selectedImages]);
   const handleCameraPicture = React.useCallback(async () => {
-    await CameraUtils.openImagePicker((img, base64) => {
+    dispatch(appActions.setProcessingStatus(true));
+    await CameraUtils.openImagePickerCamera(img => {
       setAlbumImage(prevImages => {
         if (prevImages.length === 0) {
           // If no images exist, add the new image as the initial picture
@@ -202,6 +204,7 @@ const TakePictureScore = () => {
         }
       });
     });
+    dispatch(appActions.setProcessingStatus(false));
   }, [selectedImages]);
 
   const handleSelectImage = useCallback(
@@ -379,7 +382,10 @@ const TakePictureScore = () => {
               <TouchableOpacity
                 style={styles.buttonContinue}
                 onPress={() => {
-                  navigate(ScreenConstant.LIST_ALBUM_SCORE, {data: itemParams,screen:ScreenConstant.TAKE_PICTURE_SCORE});
+                  navigate(ScreenConstant.LIST_ALBUM_SCORE, {
+                    data: itemParams,
+                    screen: ScreenConstant.TAKE_PICTURE_SCORE,
+                  });
                   setShowModal(false);
                 }}>
                 <Text

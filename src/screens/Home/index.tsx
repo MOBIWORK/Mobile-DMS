@@ -422,22 +422,23 @@ const HomeScreen = () => {
     );
   }, []);
 
+  const getLocation = () => {
+    Geolocation.requestAuthorization(() =>
+      CommonUtils.getCurrentLocation(
+        locations => {
+          location.current = locations;
+          dispatch(appActions.onSetCurrentLocation(locations));
+          mapboxCameraRef.current?.flyTo(
+            [locations.coords.longitude, locations.coords.latitude],
+            1000,
+          );
+        },
+        // err => backgroundErrorListener(err.code),
+      ),
+    );
+  };
+
   useEffect(() => {
-    const getLocation = () => {
-      Geolocation.requestAuthorization(() =>
-        CommonUtils.getCurrentLocation(
-          locations => {
-            location.current = locations;
-            dispatch(appActions.onSetCurrentLocation(locations));
-            mapboxCameraRef.current?.flyTo(
-              [locations.coords.longitude, locations.coords.latitude],
-              1000,
-            );
-          },
-          // err => backgroundErrorListener(err.code),
-        ),
-      );
-    };
     if (isFocus) {
       getLocation();
       getProfile();
