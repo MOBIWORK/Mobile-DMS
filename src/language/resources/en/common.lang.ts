@@ -271,5 +271,6 @@ export default {
   numberProduct :"The number of products",
   quantityOrder :"Number of orders",
   targetKpi :"Chỉ tiêt KPI",
+  reportVisit :"Visit report"
 
 };
