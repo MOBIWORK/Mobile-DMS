@@ -92,19 +92,14 @@ export const POST_CHECKIN_INVENTORY = URL_PREFIX + '.api.checkin.create_checkin_
 // NOTE
 export const POST_NEW_NOTE_CHECKIN = '/mbw_dms.api.note.create_note';
 export const GET_NOTE_USER_RECEIVED = '/mbw_dms.api.note.list_email';
-export const GET_LIST_NOTE_API =
-  URL_PREFIX + '/api/method/mbw_dms.api.note.list_note';
-export const GET_NOTE_TYPE =
-  URL_PREFIX + '/api/method/mbw_dms.api.note.list_note_type';
+export const GET_LIST_NOTE_API = '/api/method/mbw_dms.api.note.list_note';
+export const GET_NOTE_TYPE ='/api/method/mbw_dms.api.note.list_note_type';
 
 // IMAGE_CHECKIN
 export const PUT_IMAGE_CHECKIN = '/mbw_dms.api.checkin.add_checkin_image';
-export const POST_NOTE_CHECKIN =
-  URL_PREFIX + '/api/method/mbw_dms.api.note.create_note';
-export const GET_LIST_STAFF =
-  URL_PREFIX + '/api/method/mbw_dms.api.note.list_email';
-export const CREATE_IMAGE_CHECKIN =
-  'api/method/mbw_dms.api.checkin.create_checkin_image';
+export const POST_NOTE_CHECKIN ='/api/method/mbw_dms.api.note.create_note';
+export const GET_LIST_STAFF ='/api/method/mbw_dms.api.note.list_email';
+export const CREATE_IMAGE_CHECKIN ='api/method/mbw_dms.api.checkin.create_checkin_image';
 
 // REPORT
 export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';

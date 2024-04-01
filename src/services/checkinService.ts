@@ -50,9 +50,7 @@ export const createNote = (data: POST_NOTE_CHECKIN) =>
     .post(ApiConstant.POST_NOTE_CHECKIN, data)
     .then(res => res.data);
 export const getListStaff = () =>
-  createApi()
-    .get(ApiConstant.GET_LIST_STAFF)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_LIST_STAFF)
 export const getNoteCheckin = () =>
   createApi()
     .get(ApiConstant.GET_LIST_NOTE_API)
