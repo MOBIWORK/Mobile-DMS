@@ -117,7 +117,7 @@ android {
             resValue "string", "CodePushDeploymentKey",""
         }
          releaseStaging {
-            resValue "string", "CodePushDeploymentKey", 'sYbkNWwV1OMlC0hSEjARyIn0cRfZdoligQm_u'
+            resValue "string", "CodePushDeploymentKey", 'RPts1OZKIToDFjJCl0_928otTkFADXvhZA2eU'
             // Note: It's a good idea to provide matchingFallbacks for the new buildType you create to prevent build issues
             // Add the following line if not already there
             matchingFallbacks = ['release']
@@ -128,7 +128,7 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
-            resValue "string", "CodePushDeploymentKey", 'gkVJ0zwamNq1B4cVsP6O6szvdJdQKXVeSvgO8'
+            resValue "string", "CodePushDeploymentKey", 'qbc4OXXkSsyj0ByUYJl0YOrFre_tnUr3qSNOZ'
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             // Add following proguardFiles (leave existing one above untouched)
 //            proguardFiles "${background_geolocation.projectDir}/proguard-rules.pro"

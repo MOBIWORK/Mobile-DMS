@@ -35,8 +35,8 @@ export type CheckinData = {
   kh_diachi: string;
   kh_long?: number;
   kh_lat?: number;
-  checkin_giovao: string;
-  checkin_giora?: string;
+  checkin_giovao: number | null;
+  checkin_giora?: number | null;
   checkin_pinvao: number;
   checkin_pinra?: number;
   checkin_khoangcach?: number;
