@@ -15,6 +15,7 @@ import {IFilterType} from '../../../components/common/FilterListComponent';
 import { ReportService } from '../../../services';
 import { dispatch } from '../../../utils/redux';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { ApiConstant } from '../../../const';
 
 
 const VisitResult = () => {
@@ -207,17 +208,18 @@ const VisitResult = () => {
   useEffect(()=>{
       const getData = async ()=>{
       dispatch(appActions.setProcessingStatus(true))
-
         const {data,status} :KeyAbleProps = await ReportService.getVisitReoprt({
           from_date : from_date / 1000 ,
           to_date : to_date / 1000
         })
       dispatch(appActions.setProcessingStatus(false))
+        if(status == ApiConstant.STT_OK){
+          const result = data.result
+          setData(result.data);
+          setVisitedData(result.has_checkin);
+          setNotVisitData(result.not_checkin);
+      }
 
-        const result =data.result
-        setData(result.data);
-        setVisitedData(result.has_checkin);
-        setNotVisitData(result.not_checkin);
       }
       getData();
   },[from_date,to_date])
@@ -225,7 +227,7 @@ const VisitResult = () => {
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
-        title={'Báo cáo viếng thăm'}
+        title={getLabel("reportVisit")}
         date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&

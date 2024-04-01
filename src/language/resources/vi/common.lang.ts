@@ -276,5 +276,5 @@ export default {
   numberProduct :"Số sản phẩm",
   quantityOrder :"Số lượng đặt",
   targetKpi :"Chỉ tiêt KPI",
-  
+  reportVisit :"Báo cáo viếng thăm"
 };
