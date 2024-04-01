@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {MainLayout} from '../../../layouts';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { MainLayout } from '../../../layouts';
 import {
   AppAvatar,
   AppBottomSheet,
@@ -9,35 +9,35 @@ import {
   AppIcons,
   AppInput,
 } from '../../../components/common';
-import {TextInput} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation/screen-type';
-import {Pressable, Text, TouchableOpacity, View} from 'react-native';
-import {KeyAbleProps, StaffType} from '../../../models/types';
-import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import { TextInput } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../../../navigation/screen-type';
+import { Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { KeyAbleProps, StaffType } from '../../../models/types';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {useSelector} from '../../../config/function';
-import {CheckinService} from '../../../services';
-import {ApiConstant} from '../../../const';
-import {useTranslation} from 'react-i18next';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import { useSelector } from '../../../config/function';
+import { CheckinService } from '../../../services';
+import { ApiConstant } from '../../../const';
+import { useTranslation } from 'react-i18next';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 import {
   StyleSheet,
   TextInput as Input,
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import {ICON_TYPE} from '../../../const/app.const';
-import {dispatch} from '../../../utils/redux';
-import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import { ICON_TYPE } from '../../../const/app.const';
+import { dispatch } from '../../../utils/redux';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 import InputViewCompoment from './components/InputView';
 
 const AddNote = () => {
   const theme = useTheme();
-  const {t: getLabel} = useTranslation();
-  const {colors} = theme;
+  const { t: getLabel } = useTranslation();
+  const { colors } = theme;
   const styles = createStyle(theme);
   const navigation = useNavigation<NavigationProp>();
   const bottomSheetRef = useRef<BottomSheet>();
@@ -62,7 +62,7 @@ const AddNote = () => {
       custom_checkin_id: dataCheckin.checkin_id,
       email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
     };
-    const {status}: any = await CheckinService.createNote(objectData);
+    const { status }: any = await CheckinService.createNote(objectData);
     if (status === ApiConstant.STT_CREATED) navigation.goBack();
   };
 
@@ -71,14 +71,14 @@ const AddNote = () => {
       <View style={styles.viewItem}>
         <View style={styles.flex}>
           <AppAvatar size={48} url={item.image} name={item.first_name} />
-          <View style={{marginLeft: 8}}>
+          <View style={{ marginLeft: 8 }}>
             <Text style={styles.codeEmploye}>{item.first_name}</Text>
             <Text style={styles.nameEmploye}>{item.user_id}</Text>
           </View>
         </View>
-        <View style={{paddingRight: 8}}>
+        <View style={{ paddingRight: 8 }}>
           <AppCheckBox
-            styles={{borderRadius: 10}}
+            styles={{ borderRadius: 10 }}
             status={item.isCheck ? true : false}
             onChangeValue={() =>
               onCheckStaff(item, item.isCheck ? item.isCheck : false)
@@ -90,24 +90,9 @@ const AddNote = () => {
   };
 
   const onCheckStaff = (staff: StaffType, isCheck: boolean) => {
-    if (!isCheck) {
-      const newArr = staffData.map(item => {
-        if (item.user_id == staff.user_id) {
-          item.isCheck = true;
-        }
-        return item;
-      });
-      setStaffData(newArr);
-    } else {
-      const newArr = staffData.map(item => {
-        if (item.user_id == staff.user_id) {
-          item.isCheck = false;
-        }
-        return item;
-      });
-      setStaffData(newArr);
-    }
-    const arrStf = staffData.filter(item => item.isCheck == true);
+    const newArr = staffData.map(item => item.user_id == staff.user_id ? {...item , isCheck : !isCheck} : item);
+    const arrStf = newArr.filter(item => item.isCheck == true);
+    setStaffData(newArr);
     setSelectPersonal(arrStf);
   };
 
@@ -116,8 +101,10 @@ const AddNote = () => {
     if (bottomSheetRef.current) bottomSheetRef.current.snapToIndex(0);
   };
 
+
   const closeStaff = () => {
     setSelectPersonal([]);
+    setStaffData(personals)
     if (bottomSheetRef.current) bottomSheetRef.current.close();
   };
 
@@ -138,18 +125,15 @@ const AddNote = () => {
         value: item.loai_ghi_chu,
         isSelected: false,
       }));
-      dispatch(checkinActions.setData({typeData: 'note_type', data: result}));
+      dispatch(checkinActions.setData({ typeData: 'note_type', data: result }));
       setDataType(newData);
     }
   };
 
   const fetchDataStaff = async () => {
-    const result: any = await CheckinService.getListStaff();
-    if (result.message === 'Thành công') {
-      dispatch(
-        checkinActions.setData({typeData: 'staff', data: result.result?.data}),
-      );
-      setStaffData(result);
+    const { status, data }: any = await CheckinService.getListStaff();
+    if (status === ApiConstant.STT_OK) {
+      dispatch(checkinActions.setData({ typeData: 'staff', data: data.result?.data }));
     }
   };
 
@@ -167,25 +151,25 @@ const AddNote = () => {
   }, []);
 
   useEffect(() => {
-    if (personals.length == 0) {
-      fetchDataStaff();
-    } else {
-      setStaffData(personals);
-    }
+    fetchDataStaff();
   }, []);
+  useEffect(()=>{
+    setStaffData(personals)
+  },[personals])
 
   const renderBottomSheetStaff = () => {
     return (
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
         snapPointsCustom={snapPoint}>
-        <View style={{paddingHorizontal: 16}}>
+        <View style={{ paddingHorizontal: 16 }}>
           <AppHeader
-            style={{marginTop: -5}}
+            style={{ marginTop: -5 }}
             label={getLabel('staff')}
             onBack={closeStaff}
             backButtonIcon={
               <AppIcons
+                onPress={closeStaff}
                 iconType="IonIcon"
                 name="close"
                 size={30}
@@ -193,10 +177,12 @@ const AddNote = () => {
               />
             }
             rightButton={
-              <Text style={styles.textBt}>{getLabel('confirm')}</Text>
+              <TouchableOpacity onPress={()=>bottomSheetRef.current?.close()}>
+                <Text style={styles.textBt}>{getLabel('confirm')}</Text>
+              </TouchableOpacity>
             }
           />
-          <View style={{marginTop: 24}}>
+          <View style={{ marginTop: 24 }}>
             <View style={styles.containerSearch}>
               <AppIcons
                 iconType={ICON_TYPE.IonIcon}
@@ -206,17 +192,17 @@ const AddNote = () => {
               />
               <Input
                 placeholder={`${getLabel('search')} ...`}
-                style={{marginLeft: 8, flex: 1}}
+                style={{ marginLeft: 8, flex: 1 }}
               />
             </View>
 
-            <View style={{marginTop: 20}}>
+            <View style={{ marginTop: 20 }}>
               {selectPersonal.length > 0 ? (
-                <View style={{marginBottom: 16, flexDirection: 'row'}}>
+                <View style={{ marginBottom: 16, flexDirection: 'row' }}>
                   {selectPersonal.map(item => (
                     <View
                       key={item.name}
-                      style={{flexDirection: 'row', marginRight: 12}}>
+                      style={{ flexDirection: 'row', marginRight: 12 }}>
                       <AppAvatar size={48} url={item.image} />
                       <Pressable
                         onPress={() => onCheckStaff(item, true)}
@@ -239,11 +225,12 @@ const AddNote = () => {
                 </View>
               )}
 
-              <BottomSheetScrollView>
-                {staffData.map((item, i) => (
-                  <View key={i}>{renderItem(item)}</View>
-                ))}
-              </BottomSheetScrollView>
+              <ScrollView>
+                {staffData.map((item, i) => {
+                  return <View key={i}>{renderItem(item)}</View>
+                }
+                )}
+              </ScrollView>
             </View>
           </View>
         </View>
@@ -257,9 +244,9 @@ const AddNote = () => {
         onBack={() => navigation.goBack()}
         label={getLabel('addNote')}
       />
-      <View style={{flex: 1, justifyContent: 'space-between'}}>
+      <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View>
-          <View style={{marginTop: 16, gap: 16}}>
+          <View style={{ marginTop: 16, gap: 16 }}>
             <AppInput
               label={getLabel('typeNote')}
               value={title?.label || ''}
@@ -275,7 +262,7 @@ const AddNote = () => {
                     bottomSheetType.current.snapToIndex(0)
                   }
                   icon={'chevron-down'}
-                  style={{width: 24, height: 24}}
+                  style={{ width: 24, height: 24 }}
                   color={theme.colors.text_secondary}
                 />
               }
@@ -302,13 +289,13 @@ const AddNote = () => {
               status={sentEmail}
               onChangeValue={() => setSendEmail(!sentEmail)}
             />
-            <Text style={{color: theme.colors.text_primary, marginLeft: 8}}>
+            <Text style={{ color: theme.colors.text_primary, marginLeft: 8 }}>
               {getLabel('sendEmailToEveryone')}
             </Text>
           </TouchableOpacity>
 
           {sentEmail && (
-            <View style={{marginTop: 24}}>
+            <View style={{ marginTop: 24 }}>
               <InputViewCompoment
                 data={selectPersonal}
                 label={getLabel('userNote')}
@@ -321,7 +308,7 @@ const AddNote = () => {
 
         <AppButton
           label={getLabel('save')}
-          style={{width: '100%', marginBottom: 30}}
+          style={{ width: '100%', marginBottom: 30 }}
           onPress={() => onCreateNoteCheckin()}
         />
       </View>
