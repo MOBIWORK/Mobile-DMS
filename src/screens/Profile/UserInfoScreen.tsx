@@ -1,6 +1,6 @@
 import React, {useLayoutEffect, useRef, useState} from 'react';
 import {MainLayout} from '../../layouts';
-import {AppBottomSheet, AppHeader} from '../../components/common';
+import {AppBottomSheet, AppHeader, SvgIcon} from '../../components/common';
 import {useIsFocused, useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
@@ -257,57 +257,75 @@ const UserInfoScreen = () => {
         label={getLabel('infor')}
         onBack={() => navigation.goBack()}
       />
-      <View
-        style={{
-          // flex: 9.5,
-          paddingHorizontal: 16,
-          backgroundColor: colors.bg_default,
-          borderRadius: 8,
-          marginTop: 32,
-        }}>
-        <InfoItem
-          title={getLabel('avatar')}
-          img={dataInfo.avatar}
-          onPress={() => cameraRef.current && cameraRef.current.snapToIndex(0)}
-        />
-        <InfoItem title={getLabel('name')} content={dataInfo.name} unEdit />
-        <InfoItem title={'Email'} content={dataInfo.email} unEdit />
-        <InfoItem
-          title={getLabel('gender')}
-          content={getLabel(
-            dataInfo.gender ? dataInfo.gender.toLocaleLowerCase() : '',
-          )}
-          onPress={() => genderRef.current && genderRef.current.snapToIndex(0)}
-        />
-        <InfoItem
-          title={getLabel('phoneNumber')}
-          content={dataInfo.phone}
-          onPress={() =>
-            navigation.navigate(ScreenConstant.EDIT_ACCOUNT, {
-              title: getLabel('phoneNumber'),
-              content: dataInfo.phone ?? '',
-            })
-          }
-        />
-        <InfoItem
-          title={getLabel('dateOfBirth')}
-          content={CommonUtils.convertDate(
-            new Date(dataInfo.bornDate).getTime(),
-          )}
-          onPress={() => setOpenDate(true)}
-        />
-        <InfoItem
-          title={getLabel('address')}
-          content={dataInfo.address}
-          borderBottomDisable
-          onPress={() =>
-            navigation.navigate(ScreenConstant.EDIT_ACCOUNT, {
-              title: getLabel('address'),
-              content: dataInfo.address ?? '',
-            })
-          }
-        />
-      </View>
+      {Object.keys(user).length > 0 ? (
+        <View
+          style={{
+            // flex: 9.5,
+            paddingHorizontal: 16,
+            backgroundColor: colors.bg_default,
+            borderRadius: 8,
+            marginTop: 32,
+          }}>
+          <InfoItem
+            title={getLabel('avatar')}
+            img={dataInfo.avatar}
+            onPress={() =>
+              cameraRef.current && cameraRef.current.snapToIndex(0)
+            }
+          />
+          <InfoItem title={getLabel('name')} content={dataInfo.name} unEdit />
+          <InfoItem title={'Email'} content={dataInfo.email} unEdit />
+          <InfoItem
+            title={getLabel('gender')}
+            content={getLabel(
+              dataInfo.gender ? dataInfo.gender.toLocaleLowerCase() : '',
+            )}
+            onPress={() =>
+              genderRef.current && genderRef.current.snapToIndex(0)
+            }
+          />
+          <InfoItem
+            title={getLabel('phoneNumber')}
+            content={dataInfo.phone}
+            onPress={() =>
+              navigation.navigate(ScreenConstant.EDIT_ACCOUNT, {
+                title: getLabel('phoneNumber'),
+                content: dataInfo.phone ?? '',
+              })
+            }
+          />
+          <InfoItem
+            title={getLabel('dateOfBirth')}
+            content={CommonUtils.convertDate(
+              new Date(dataInfo.bornDate).getTime(),
+            )}
+            onPress={() => setOpenDate(true)}
+          />
+          <InfoItem
+            title={getLabel('address')}
+            content={dataInfo.address}
+            borderBottomDisable
+            onPress={() =>
+              navigation.navigate(ScreenConstant.EDIT_ACCOUNT, {
+                title: getLabel('address'),
+                content: dataInfo.address ?? '',
+              })
+            }
+          />
+        </View>
+      ) : (
+        <View
+          style={{
+            flex: 0.9,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <SvgIcon size={80} source={'EmptyBox'} />
+          <Text style={{marginTop: 24, color: colors.text_primary}}>
+            Tài khoản của bạn không có thông tin trên hệ thống
+          </Text>
+        </View>
+      )}
       <DatePickerModal
         locale={i18n.language ?? 'vi'}
         mode="single"
