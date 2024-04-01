@@ -1,4 +1,11 @@
-import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -63,7 +70,7 @@ import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
 import {CommonUtils} from '../../utils';
-import { getVersion } from '../../native-module/app-module';
+import {getVersion} from '../../native-module/app-module';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -358,6 +365,8 @@ const HomeScreen = () => {
     const response: any = await AppService.getUserProfile();
     if (Object.keys(response?.result).length > 0) {
       dispatch(appActions.setUserProfile(response.result));
+    } else {
+      dispatch(appActions.setUserProfile({}));
     }
   };
 
@@ -465,64 +474,64 @@ const HomeScreen = () => {
     }
   };
 
-  const onSyncStatusChanged = React.useCallback((syncStatus: number) => {
-    console.log(
-      'syncStatus',
-     
-      syncStatus,
-    );
-    switch (syncStatus) {
-      case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
-        setUpdateMessage('Đang kiểm tra bản cập nhật...');
+  const onSyncStatusChanged = React.useCallback(
+    (syncStatus: number) => {
+      switch (syncStatus) {
+        case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
+          setUpdateMessage('Đang kiểm tra bản cập nhật...');
 
-        break;
-      }
-      case codePush.SyncStatus.DOWNLOADING_PACKAGE: {
-        setShowModalHotUpdate(true);
+          break;
+        }
+        case codePush.SyncStatus.DOWNLOADING_PACKAGE: {
+          setShowModalHotUpdate(true);
 
-        setUpdateMessage('Đang tải xuống bản cập nhật...');
-        break;
-      }
-      case codePush.SyncStatus.INSTALLING_UPDATE: {
-        setUpdateMessage('Đang cài đặt bản cập nhật...');
-        // setShowModalHotUpdate(false);
-        break;
-      }
-      case codePush.SyncStatus.UPDATE_INSTALLED: {
-        codePush.notifyAppReady();
-        setUpdateMessage('Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!');
-        setShowModalUpdate(false);
-        break;
-      }
-      case codePush.SyncStatus.UNKNOWN_ERROR: {
-        setUpdateMessage('Cập nhật thất bại!');
+          setUpdateMessage('Đang tải xuống bản cập nhật...');
+          break;
+        }
+        case codePush.SyncStatus.INSTALLING_UPDATE: {
+          setUpdateMessage('Đang cài đặt bản cập nhật...');
+          // setShowModalHotUpdate(false);
+          break;
+        }
+        case codePush.SyncStatus.UPDATE_INSTALLED: {
+          codePush.notifyAppReady();
+          setUpdateMessage(
+            'Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!',
+          );
+          setShowModalUpdate(false);
+          break;
+        }
+        case codePush.SyncStatus.UNKNOWN_ERROR: {
+          setUpdateMessage('Cập nhật thất bại!');
 
-        // setTimeout(() => {
-        //   codePush.restartApp();
-        // }, 800);
-        break;
-      }
-      case codePush.SyncStatus.UP_TO_DATE: {
-        codePush.notifyAppReady();
-        // setTimeout(() => {
-        VersionCheck.needUpdate({}).then(res => {
-          if (res.isNeeded != undefined) {
-            setShowModalUpdate(res.isNeeded);
-          } else {
-            return;
-          }
-        });
+          // setTimeout(() => {
+          //   codePush.restartApp();
+          // }, 800);
+          break;
+        }
+        case codePush.SyncStatus.UP_TO_DATE: {
+          codePush.notifyAppReady();
+          // setTimeout(() => {
+          VersionCheck.needUpdate({}).then(res => {
+            if (res.isNeeded != undefined) {
+              setShowModalUpdate(res.isNeeded);
+            } else {
+              return;
+            }
+          });
 
-        // codePush.restartApp();
-        // }, 800);
-        break;
+          // codePush.restartApp();
+          // }, 800);
+          break;
+        }
+        default: {
+          break;
+        }
       }
-      default: {
-        break;
-      }
-    }
-    setUpdateStatus(syncStatus);
-  }, [syncWithCodePush]);
+      setUpdateStatus(syncStatus);
+    },
+    [syncWithCodePush],
+  );
 
   const onDownloadProgress = useCallback(
     (downloadProgress: DownloadProgress): void => {
@@ -535,8 +544,6 @@ const HomeScreen = () => {
     },
     [],
   );
-
-    
 
   useLayoutEffect(() => {
     codePush.sync(
@@ -574,7 +581,7 @@ const HomeScreen = () => {
                     {Object.keys(userProfile) &&
                     Object.keys(userProfile!)?.length > 0
                       ? userProfile?.employee_name
-                      : ''}
+                      : '---'}
                   </Text>
                 </View>
               </View>
