@@ -85,12 +85,12 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
           kh_diachi: item.customer_primary_address,
           kh_long: distanceCal?.location?.long ?? '',
           kh_lat: distanceCal?.location?.lat ?? '',
-          checkin_giovao: moment(new Date()).format('HH:mm'),
+          checkin_giovao: new Date().getTime() / 1000,
           checkin_pinvao:
             batteryLevel > 0 ? batteryLevel * 100 : -batteryLevel * 100,
           checkin_khoangcach: distanceCal.distance,
           createdDate: moment(new Date()).valueOf(),
-          checkin_timegps: location.timestamp.toString(),
+          checkin_timegps: moment(new Date(location.timestamp * 1000)).format("hh:mm") ,
           checkin_dochinhxac: location.coords.accuracy,
           checkinvalidate_khoangcachcheckin:
             systemConfig.saiso_chophep_kb_vitringoaisaiso,
@@ -98,7 +98,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
             systemConfig.saiso_chophep_checkout_ngoaisaiso,
           checkin_trangthaicuahang: true,
           checkin_donhang: '',
-          checkin_giora: '',
+          checkin_giora: null,
           checkin_hinhanh: [],
           checkin_lat: location.coords.latitude,
           checkin_long: location.coords.longitude,
