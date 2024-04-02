@@ -19,7 +19,7 @@ import {
   Block,
   SvgIcon,
 } from '../../../components/common';
-import {ActivityIndicator, Button, Modal} from 'react-native-paper';
+import {Button, Modal} from 'react-native-paper';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import BottomSheet from '@gorhom/bottom-sheet';
 import SelectAlbum from './SelectAlbum';
@@ -36,14 +36,16 @@ import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {shallowEqual} from 'react-redux';
 import {useTheme} from '../../../layouts/theme';
 import ProgressCircle from 'react-native-progress-circle';
+import {CheckinService} from '../../../services';
+import {useTranslation} from 'react-i18next';
 const TakePicture = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
+  const {t: getLabel} = useTranslation();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const navigation = useNavigation();
-  const [albumBottomSheet, setAlbumBottomSheet] =
-    useState<IFilterType[]>(ListAlbumFake);
+  const [albumBottomSheet, setAlbumBottomSheet] = useState<IFilterType[]>();
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
   const dataCheckIn = useRef<CheckinData>(params.data);
@@ -51,11 +53,6 @@ const TakePicture = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
-  const listImage = useSelector(
-    state => state.app.dataCheckIn?.listImage,
-    shallowEqual,
-  );
-  console.log(listImage)
 
   const [message, setMessage] = useState<number>(0);
   const data = useRef<ImageCheckIn>({
@@ -87,7 +84,8 @@ const TakePicture = () => {
           data.current.album_name = albumImageData[index].label;
         }
         const element = albumImageData[index].image;
-        for (let i = 0; i < element.length; i++) {
+        // console.log('eeee', element.length);
+        for (let i = 1; i < element.length; i++) {
           let image = element[i];
           if (data?.current) {
             data.current.image = image?.base64!;
@@ -115,6 +113,7 @@ const TakePicture = () => {
       item.key === 'camera' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    navigation.goBack();
   };
 
   const handleCamera = async (item: IAlbumImage) => {
@@ -147,6 +146,24 @@ const TakePicture = () => {
       newItem,
     ]);
   };
+
+  useEffect(() => {
+    const getListAlbum = async () => {
+      const res: any = await CheckinService.getListAlbum();
+      if (res?.result?.length > 0) {
+        const listAlbum = res.result.map((item: any, index: number) => {
+          return {
+            label: item.album_name,
+            value: index + 1,
+            isSelected: false,
+          };
+        });
+        console.log('assss', listAlbum);
+        setAlbumBottomSheet(listAlbum);
+      }
+    };
+    getListAlbum();
+  }, []);
 
   const EmptyAlbum = () => {
     return (
@@ -187,7 +204,7 @@ const TakePicture = () => {
                 return (
                   <>
                     {index === 0 ? (
-                      <Block padding={5}  marginRight={4} marginLeft={4}  >
+                      <Block padding={5} marginRight={4} marginLeft={4}>
                         <Pressable
                           onPress={() => handleCamera(itemAlbum)}
                           style={styles.cameraImg}>
@@ -196,20 +213,28 @@ const TakePicture = () => {
                       </Block>
                     ) : (
                       <View
-                        style={{padding: 5, rowGap: 8, marginHorizontal: 4}}>
+                        style={{
+                          padding: 5,
+                          rowGap: 8,
+                          marginHorizontal: 4,
+                        }}>
                         <View style={styles.img}>
                           <Image
                             // @ts-ignore
                             source={{uri: item.url}}
-                            style={{width: '100%', height: '100%'}}
-                            resizeMode={'contain'}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              borderRadius: 10,
+                            }}
+                            resizeMode={'cover'}
                           />
                         </View>
                         <TouchableOpacity
                           onPress={() =>
                             onDeleteImageOfAlbum(itemAlbum, item.url)
                           }
-                          style={{position: 'absolute', top: 0, right: 8}}>
+                          style={{position: 'absolute', top: 0, right: 0}}>
                           <Image
                             source={ImageAssets.CloseFameIcon}
                             style={{width: 20, height: 20}}
@@ -271,17 +296,19 @@ const TakePicture = () => {
       <View style={styles.footer}>
         <AppButton
           style={{width: '100%'}}
-          label={'Hoàn thành'}
+          label={getLabel('completed')}
           onPress={handlePushImageData}
         />
       </View>
-      <SelectAlbum
-        bottomSheetRef={bottomSheetRef}
-        data={albumBottomSheet}
-        setData={setAlbumBottomSheet}
-        albumImageData={albumImageData}
-        setAlbumImageData={setAlbumImageData}
-      />
+      {albumBottomSheet && (
+        <SelectAlbum
+          bottomSheetRef={bottomSheetRef}
+          data={albumBottomSheet}
+          setData={setAlbumBottomSheet}
+          albumImageData={albumImageData}
+          setAlbumImageData={setAlbumImageData}
+        />
+      )}
 
       <Modal visible={loading} style={styles.modal}>
         <Block
@@ -372,72 +399,72 @@ const createStyleSheet = (theme: ExtendedTheme) =>
     } as ViewStyle,
   });
 
-const ListAlbumFake: any[] = [
-  {
-    label: 'Album 91',
-    value: 1,
-    isSelected: false,
-  },
-  {
-    label: 'Hình ảnh cửa hàng 1',
-    value: 2,
-    isSelected: false,
-  },
-  {
-    label: 'Album 2',
-    value: 3,
-    isSelected: false,
-  },
-  {
-    label: 'Hình ảnh công ty',
-    value: 4,
-    isSelected: false,
-  },
-  {
-    label: 'Tình trạng viếng thăm',
-    value: 5,
-    isSelected: false,
-  },
-  {
-    label: 'Báo cáo khách hàng',
-    value: 6,
-    isSelected: false,
-  },
-  {
-    label: 'album6',
-    value: 7,
-    isSelected: false,
-  },
-];
-const AlbumImageFake: IAlbumImage[] = [
-  {
-    id: 1,
-    label: 'Album 1',
-    image: [
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-    ],
-  },
-  {
-    id: 2,
-    label: 'Album 2',
-    image: [
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-    ],
-  },
-  {
-    id: 3,
-    label: 'Album 3',
-    image: [
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-      ImageAssets.ImgAppWatch,
-    ],
-  },
-];
+// const ListAlbumFake: any[] = [
+//   {
+//     label: 'Album 91',
+//     value: 1,
+//     isSelected: false,
+//   },
+//   {
+//     label: 'Hình ảnh cửa hàng 1',
+//     value: 2,
+//     isSelected: false,
+//   },
+//   {
+//     label: 'Album 2',
+//     value: 3,
+//     isSelected: false,
+//   },
+//   {
+//     label: 'Hình ảnh công ty',
+//     value: 4,
+//     isSelected: false,
+//   },
+//   {
+//     label: 'Tình trạng viếng thăm',
+//     value: 5,
+//     isSelected: false,
+//   },
+//   {
+//     label: 'Báo cáo khách hàng',
+//     value: 6,
+//     isSelected: false,
+//   },
+//   {
+//     label: 'album6',
+//     value: 7,
+//     isSelected: false,
+//   },
+// ];
+// const AlbumImageFake: IAlbumImage[] = [
+//   {
+//     id: 1,
+//     label: 'Album 1',
+//     image: [
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//     ],
+//   },
+//   {
+//     id: 2,
+//     label: 'Album 2',
+//     image: [
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//     ],
+//   },
+//   {
+//     id: 3,
+//     label: 'Album 3',
+//     image: [
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//       ImageAssets.ImgAppWatch,
+//     ],
+//   },
+// ];

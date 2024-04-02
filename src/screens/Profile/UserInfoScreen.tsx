@@ -322,7 +322,7 @@ const UserInfoScreen = () => {
           }}>
           <SvgIcon size={80} source={'EmptyBox'} />
           <Text style={{marginTop: 24, color: colors.text_primary}}>
-            Tài khoản của bạn không có thông tin trên hệ thống
+            {getLabel('nonUserProfileDes')}
           </Text>
         </View>
       )}

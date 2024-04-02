@@ -87,19 +87,22 @@ export const GET_LIST_WARD =
   '/api/method/mbw_dms.api.location.list_ward?ma_quan_huyen=';
 
 // Inventory
-export const POST_CHECKIN_INVENTORY = URL_PREFIX + '.api.checkin.create_checkin_inventory';
+export const POST_CHECKIN_INVENTORY =
+  URL_PREFIX + '.api.checkin.create_checkin_inventory';
 
 // NOTE
 export const POST_NEW_NOTE_CHECKIN = '/mbw_dms.api.note.create_note';
 export const GET_NOTE_USER_RECEIVED = '/mbw_dms.api.note.list_email';
 export const GET_LIST_NOTE_API = '/api/method/mbw_dms.api.note.list_note';
-export const GET_NOTE_TYPE ='/api/method/mbw_dms.api.note.list_note_type';
+export const GET_NOTE_TYPE = '/api/method/mbw_dms.api.note.list_note_type';
 
 // IMAGE_CHECKIN
 export const PUT_IMAGE_CHECKIN = '/mbw_dms.api.checkin.add_checkin_image';
-export const POST_NOTE_CHECKIN ='/api/method/mbw_dms.api.note.create_note';
-export const GET_LIST_STAFF ='/api/method/mbw_dms.api.note.list_email';
-export const CREATE_IMAGE_CHECKIN ='api/method/mbw_dms.api.checkin.create_checkin_image';
+export const POST_NOTE_CHECKIN = '/api/method/mbw_dms.api.note.create_note';
+export const GET_LIST_STAFF = '/api/method/mbw_dms.api.note.list_email';
+export const CREATE_IMAGE_CHECKIN =
+  'api/method/mbw_dms.api.checkin.create_checkin_image';
+export const GET_LIST_ALBUM = '/api/method/mbw_dms.api.album.list_album_name';
 
 // REPORT
 export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';
@@ -108,9 +111,11 @@ export const GET_TRAVEL_LOG_REPORT =
   '/api/method/mbw_dms.api.ekgis.history_checkin.get_history_checkin';
 export const GET_REPORT_ROUTER_RESULT =
   '/api/method/mbw_dms.api.ekgis.history_checkin.get_history_checkin';
-export const GET_REPORT_VISIT_DETAIL = '/api/method/mbw_dms.api.kpi.checkin_report';
-export const GET_REPORT_ORDER_STATISTICS = '/api/method/mbw_dms.api.kpi.order_statistics';
-export const GET_REPORT_TARGETS_KPI= '/api/method/mbw_dms.api.kpi.kpi_targets';
+export const GET_REPORT_VISIT_DETAIL =
+  '/api/method/mbw_dms.api.kpi.checkin_report';
+export const GET_REPORT_ORDER_STATISTICS =
+  '/api/method/mbw_dms.api.kpi.order_statistics';
+export const GET_REPORT_TARGETS_KPI = '/api/method/mbw_dms.api.kpi.kpi_targets';
 // IMAGE_SCORE
 export const POST_IMAGE_SCORE = 'api/method/mbw_audit.api.api.upload_file';
 export const GET_CAMPAIGN_PROGRAM =
