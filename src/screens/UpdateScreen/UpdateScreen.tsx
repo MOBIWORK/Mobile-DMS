@@ -12,7 +12,7 @@ import AppImage from '../../components/common/AppImage';
 
 type Props = {
   progress:number,
-  setScreen:React.Dispatch<React.SetStateAction<boolean>>
+  setScreen:React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 
