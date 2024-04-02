@@ -31,6 +31,7 @@ import moment from 'moment';
 import isEquals from 'react-fast-compare';
 import {CommonUtils} from '../../../utils';
 import {useBatteryLevel} from 'expo-battery';
+import {tr} from 'react-native-paper-dates';
 
 export interface LocationProps {
   long: number;
@@ -67,11 +68,14 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
     return {location, distance};
   }, [item, currentLocation]);
 
-  const onPressCheckIn = (item: VisitListItemType) => {
-    handleBackground(item);
-  };
+  // const onPressCheckIn = (item: VisitListItemType) => {
+  //   handleBackground(item);
+  // };
 
-  const handleBackground = async (item: VisitListItemType) => {
+  const handleBackground = async (
+    item: VisitListItemType,
+    isDetail: boolean,
+  ) => {
     CommonUtils.getCurrentLocation(
       location => {
         let data: CheckinData = {
@@ -90,7 +94,9 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
             batteryLevel > 0 ? batteryLevel * 100 : -batteryLevel * 100,
           checkin_khoangcach: distanceCal.distance,
           createdDate: moment(new Date()).valueOf(),
-          checkin_timegps: moment(new Date(location.timestamp * 1000)).format("hh:mm") ,
+          checkin_timegps: moment(new Date(location.timestamp * 1000)).format(
+            'hh:mm',
+          ),
           checkin_dochinhxac: location.coords.accuracy,
           checkinvalidate_khoangcachcheckin:
             systemConfig.saiso_chophep_kb_vitringoaisaiso,
@@ -107,9 +113,14 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
           createByName: '',
           createdByEmail: '',
           item: item,
+          ...item,
         };
         dispatch(appActions.setDataCheckIn(data));
-        navigate(ScreenConstant.CHECKIN, {item: data});
+        if (isDetail) {
+          navigate(ScreenConstant.VISIT_DETAIL, {data: data});
+        } else {
+          navigate(ScreenConstant.CHECKIN, {item: data});
+        }
       },
       error => backgroundErrorListener(error.code),
     );
@@ -134,10 +145,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
-      <Pressable
-        onPress={() => {
-          navigate(ScreenConstant.VISIT_DETAIL, {data: item});
-        }}>
+      <Pressable onPress={() => handleBackground(item, true)}>
         <View style={styles.viewContainer}>
           <View style={styles.user}>
             <View style={styles.userLeft}>
@@ -182,7 +190,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
               {marginTop: 8, justifyContent: 'space-between'},
             ]}>
             <AppButton
-              onPress={() => onPressCheckIn(item)}
+              onPress={() => handleBackground(item, false)}
               disabled={item.is_checkin}
               style={createStyleSheet(theme).button(item.is_checkin)}
               label={'Checkin'}

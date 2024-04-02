@@ -40,7 +40,7 @@ export type AuthorizeParamsList = {
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomers};
-  [ScreenConstant.VISIT_DETAIL]: {data: VisitListItemType};
+  [ScreenConstant.VISIT_DETAIL]: {data: any};
   [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
@@ -70,7 +70,7 @@ export type AuthorizeParamsList = {
   };
   [ScreenConstant.LIST_ALBUM_SCORE]: {
     data: any;
-    screen?:string
+    screen?: string;
   };
   [ScreenConstant.USER_INFO_SCREEN]: undefined;
   [ScreenConstant.EDIT_ACCOUNT]: {title: string; content: string};
