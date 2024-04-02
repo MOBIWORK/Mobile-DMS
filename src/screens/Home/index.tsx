@@ -6,14 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  Linking,
-  Platform,
-  TouchableOpacity,
-} from 'react-native';
+import {View,Text,Image,Linking,Platform,TouchableOpacity, Alert} from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
 import ProgressCircle from 'react-native-progress-circle';
@@ -26,15 +19,10 @@ import {ImageAssets} from '../../assets';
 import {AppConstant, ScreenConstant} from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import BarChartStatistical from './BarChart';
-import {
-  AppAvatar,
-  AppContainer,
-  AppIcons,
-  Block,
-} from '../../components/common';
-
+import {AppAvatar,AppContainer,AppIcons,Block} from '../../components/common';
 import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
+
 import {
   IKpi,
   IReportVisit,
@@ -476,24 +464,25 @@ const HomeScreen = () => {
 
   const onSyncStatusChanged = React.useCallback(
     (syncStatus: number) => {
+      console.log(syncStatus);
+      
       switch (syncStatus) {
         case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
           setUpdateMessage('Đang kiểm tra bản cập nhật...');
-
           break;
         }
         case codePush.SyncStatus.DOWNLOADING_PACKAGE: {
           setShowModalHotUpdate(true);
-
           setUpdateMessage('Đang tải xuống bản cập nhật...');
           break;
         }
         case codePush.SyncStatus.INSTALLING_UPDATE: {
           setUpdateMessage('Đang cài đặt bản cập nhật...');
-          // setShowModalHotUpdate(false);
+          setShowModalHotUpdate(false);
           break;
         }
         case codePush.SyncStatus.UPDATE_INSTALLED: {
+          setScreen(false)
           codePush.notifyAppReady();
           setUpdateMessage(
             'Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!',
@@ -510,8 +499,9 @@ const HomeScreen = () => {
           break;
         }
         case codePush.SyncStatus.UP_TO_DATE: {
+          setScreen(false)
           codePush.notifyAppReady();
-          // setTimeout(() => {
+          setTimeout(() => {
           VersionCheck.needUpdate({}).then(res => {
             if (res.isNeeded != undefined) {
               setShowModalUpdate(res.isNeeded);
@@ -520,8 +510,8 @@ const HomeScreen = () => {
             }
           });
 
-          // codePush.restartApp();
-          // }, 800);
+          codePush.restartApp();
+          }, 800);
           break;
         }
         default: {
@@ -533,19 +523,23 @@ const HomeScreen = () => {
     [syncWithCodePush],
   );
 
-  const onDownloadProgress = useCallback(
-    (downloadProgress: DownloadProgress): void => {
-      setUpdatePercentage(
-        Math.floor(
-          (downloadProgress.receivedBytes * 100) / downloadProgress.totalBytes,
-        ),
-      );
+  const onDownloadProgress = (downloadProgress: DownloadProgress): void => {
+      setUpdatePercentage(Number(((downloadProgress.receivedBytes * 100) / downloadProgress.totalBytes).toFixed(2)));
       setShowModalHotUpdate(false);
-    },
-    [],
-  );
+  }
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    // Kiểm tra xem có phiên bản mới không
+    codePush.checkForUpdate().then(update => {
+      if(update){
+        setShowModalHotUpdate(true)
+      }
+    });
+  }, []);
+    
+  const handerUpdateApp = () =>{
+    setScreen(true);
+    setShowModalHotUpdate(false);
     codePush.sync(
       {
         updateDialog: {
@@ -554,15 +548,33 @@ const HomeScreen = () => {
           title: 'Update Available',
           optionalUpdateMessage: updateMessage,
         },
-        installMode: codePush.InstallMode.ON_NEXT_RESTART,
-        mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+        installMode: codePush.InstallMode.IMMEDIATE,
+        mandatoryInstallMode: codePush.InstallMode.IMMEDIATE,
       },
       onSyncStatusChanged,
       onDownloadProgress,
     );
-    syncWithCodePush;
-  }, [onDownloadProgress, onSyncStatusChanged]);
+  }
 
+  // useLayoutEffect(() => {
+  //   codePush.sync(
+  //     {
+  //       updateDialog: {
+  //         appendReleaseDescription: true,
+  //         descriptionPrefix: 'Release',
+  //         title: 'Update Available',
+  //         optionalUpdateMessage: updateMessage,
+  //       },
+  //       installMode: codePush.InstallMode.IMMEDIATE,
+  //       mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+  //     },
+  //     onSyncStatusChanged,
+  //     onDownloadProgress,
+  //   );
+  //   syncWithCodePush;
+  // }, [onDownloadProgress, onSyncStatusChanged]);
+
+  
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>
       <Block block>
@@ -831,7 +843,7 @@ const HomeScreen = () => {
                 </View>
                 <View>
                   <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>Thông báo nội bộ</Text>
+                    <Text style={[styles.tilteSection]}>{getLabel("internalNotifi")}</Text>
                     <TouchableOpacity
                       onPress={() =>
                         navigation.navigate(ScreenConstant.NOTIFYCATION)
@@ -870,16 +882,16 @@ const HomeScreen = () => {
             />
           </>
         ) : (
-          <UpdateScreen progress={updatePercent} setScreen={setScreen} />
+          <>
+            <UpdateScreen progress={updatePercent} setScreen={setScreen} />
+          </>
         )}
       </Block>
 
       <ModalUpdate
         show={showModalHotUpdate}
         onPress={() => {
-          setScreen(true);
-          setShowModalHotUpdate(false);
-          // dispatch(AppActions.setShowModal(true));
+          handerUpdateApp();
         }}
       />
       <ModalErrorLocation

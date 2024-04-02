@@ -278,4 +278,5 @@ export default {
   targetKpi: 'Chỉ tiêt KPI',
   reportVisit: 'Báo cáo viếng thăm',
   nonUserProfileDes: 'Tài khoản của bạn không có thông tin trên hệ thống',
+  internalNotifi:"Thông báo nội bộ",
 };
