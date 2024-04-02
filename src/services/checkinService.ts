@@ -2,6 +2,7 @@ import {createApi} from '../api';
 import {createFormData} from '../api/formData';
 import {ApiConstant} from '../const';
 import {DataSendMarkScore} from '../redux-store/checkin-reducer/type';
+import {GET_LIST_ALBUM} from '../const/api.const';
 
 export type IUpdateAddress = {
   customer: string;
@@ -49,8 +50,7 @@ export const createNote = (data: POST_NOTE_CHECKIN) =>
   createApi()
     .post(ApiConstant.POST_NOTE_CHECKIN, data)
     .then(res => res.data);
-export const getListStaff = () =>
-  createApi().get(ApiConstant.GET_LIST_STAFF)
+export const getListStaff = () => createApi().get(ApiConstant.GET_LIST_STAFF);
 export const getNoteCheckin = () =>
   createApi()
     .get(ApiConstant.GET_LIST_NOTE_API)
@@ -81,4 +81,9 @@ export const getListProgram = ({
 export const createReportMarkingApi = (data: DataSendMarkScore) =>
   createApi()
     .post(ApiConstant.CREATE_REPORT_MARK_API, data)
+    .then(res => res.data);
+
+export const getListAlbum = () =>
+  createApi()
+    .get(ApiConstant.GET_LIST_ALBUM)
     .then(res => res.data);
