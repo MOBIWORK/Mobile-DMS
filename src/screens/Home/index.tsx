@@ -6,7 +6,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {View,Text,Image,Linking,Platform,TouchableOpacity, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Linking,
+  Platform,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
 import ProgressCircle from 'react-native-progress-circle';
@@ -19,7 +27,12 @@ import {ImageAssets} from '../../assets';
 import {AppConstant, ScreenConstant} from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import BarChartStatistical from './BarChart';
-import {AppAvatar,AppContainer,AppIcons,Block} from '../../components/common';
+import {
+  AppAvatar,
+  AppContainer,
+  AppIcons,
+  Block,
+} from '../../components/common';
 import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
 
@@ -465,7 +478,7 @@ const HomeScreen = () => {
   const onSyncStatusChanged = React.useCallback(
     (syncStatus: number) => {
       console.log(syncStatus);
-      
+
       switch (syncStatus) {
         case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
           setUpdateMessage('Đang kiểm tra bản cập nhật...');
@@ -482,7 +495,7 @@ const HomeScreen = () => {
           break;
         }
         case codePush.SyncStatus.UPDATE_INSTALLED: {
-          setScreen(false)
+          setScreen(false);
           codePush.notifyAppReady();
           setUpdateMessage(
             'Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!',
@@ -499,19 +512,19 @@ const HomeScreen = () => {
           break;
         }
         case codePush.SyncStatus.UP_TO_DATE: {
-          setScreen(false)
+          setScreen(false);
           codePush.notifyAppReady();
           setTimeout(() => {
-          VersionCheck.needUpdate({}).then(res => {
-            if (res.isNeeded != undefined) {
-              setShowModalUpdate(res.isNeeded);
-            } else {
-              return;
-            }
-          });
+            VersionCheck.needUpdate({}).then(res => {
+              if (res.isNeeded !== undefined) {
+                setShowModalUpdate(res.isNeeded);
+              } else {
+                return;
+              }
+            });
 
-          codePush.restartApp();
-          }, 800);
+            // codePush.restartApp();
+          }, 1000);
           break;
         }
         default: {
@@ -524,22 +537,29 @@ const HomeScreen = () => {
   );
 
   const onDownloadProgress = (downloadProgress: DownloadProgress): void => {
-      setUpdatePercentage(Number(((downloadProgress.receivedBytes * 100) / downloadProgress.totalBytes).toFixed(2)));
-      setShowModalHotUpdate(false);
-  }
+    setUpdatePercentage(
+      Number(
+        (
+          (downloadProgress.receivedBytes * 100) /
+          downloadProgress.totalBytes
+        ).toFixed(2),
+      ),
+    );
+    setShowModalHotUpdate(false);
+  };
 
   useEffect(() => {
     // Kiểm tra xem có phiên bản mới không
     codePush.checkForUpdate().then(update => {
-      if(update){
-        setShowModalHotUpdate(true)
+      if (update) {
+        setShowModalHotUpdate(true);
       }
     });
   }, []);
-    
-  const handerUpdateApp = () =>{
-    setScreen(true);
-    setShowModalHotUpdate(false);
+
+  const handerUpdateApp = async () => {
+    await setScreen(true);
+    await setShowModalHotUpdate(false);
     codePush.sync(
       {
         updateDialog: {
@@ -554,7 +574,7 @@ const HomeScreen = () => {
       onSyncStatusChanged,
       onDownloadProgress,
     );
-  }
+  };
 
   // useLayoutEffect(() => {
   //   codePush.sync(
@@ -574,7 +594,6 @@ const HomeScreen = () => {
   //   syncWithCodePush;
   // }, [onDownloadProgress, onSyncStatusChanged]);
 
-  
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>
       <Block block>
@@ -843,7 +862,9 @@ const HomeScreen = () => {
                 </View>
                 <View>
                   <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>{getLabel("internalNotifi")}</Text>
+                    <Text style={[styles.tilteSection]}>
+                      {getLabel('internalNotifi')}
+                    </Text>
                     <TouchableOpacity
                       onPress={() =>
                         navigation.navigate(ScreenConstant.NOTIFYCATION)
@@ -897,7 +918,7 @@ const HomeScreen = () => {
       <ModalErrorLocation
         show={enabled}
         text={error}
-        onPress={() => console.log('fuck')}
+        onPress={() => setEnabled(false)}
       />
     </SafeAreaView>
   );

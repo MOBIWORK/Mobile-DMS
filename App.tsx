@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {registerTranslation} from 'react-native-paper-dates';
 import './src/language';
 
