@@ -19,7 +19,9 @@
 		</dict>
 	</array>
 	<key>CodePushDeploymentKey</key>
-	<string>Bozh-YVVdWxAOZzVQQe_28V5CItNh05g4-eYK </string>
+	<string>dHOHNH1t9mQbPOh569nnKj-1NN5QG-PgoYIPu</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.0.1</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>itms-apps</string>

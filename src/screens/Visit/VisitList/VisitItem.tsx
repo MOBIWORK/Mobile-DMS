@@ -31,7 +31,6 @@ import moment from 'moment';
 import isEquals from 'react-fast-compare';
 import {CommonUtils} from '../../../utils';
 import {useBatteryLevel} from 'expo-battery';
-import {tr} from 'react-native-paper-dates';
 
 export interface LocationProps {
   long: number;
@@ -76,6 +75,12 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
     item: VisitListItemType,
     isDetail: boolean,
   ) => {
+    console.log(
+      'itemmm3',
+      item.customer_code,
+      currentCustomerCheckin,
+      String(item.customer_code) === String(currentCustomerCheckin.kh_ma),
+    );
     CommonUtils.getCurrentLocation(
       location => {
         let data: CheckinData = {
