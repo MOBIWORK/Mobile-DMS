@@ -23,8 +23,11 @@ import {isIos} from './src/config/function';
 import {PortalProvider} from './src/components/common/portal';
 
 let codePushOptions = {
-  checkFrequency: codePush.CheckFrequency.ON_APP_START,
-  installMode: codePush.InstallMode.ON_NEXT_RESTART,
+  checkFrequency: codePush.CheckFrequency.MANUAL,
+  rollbackRetryOptions: {
+    delayInHours: 12,
+    maxRetryAttempts: 2,
+  },
 };
 
 if (!isIos) {

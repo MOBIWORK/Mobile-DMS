@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -13,7 +6,6 @@ import {
   Linking,
   Platform,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
@@ -22,7 +14,6 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import VersionCheck from 'react-native-version-check';
 import {ImageAssets} from '../../assets';
 import {AppConstant, ScreenConstant} from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
@@ -50,10 +41,6 @@ import ItemWidget from '../../components/Widget/ItemWidget';
 import NotificationScreen from './Notification';
 import Mapbox from '@rnmapbox/maps';
 import {rootStyles} from './styles';
-import ItemLoading from './components/ItemLoading';
-import CardLoading from './components/CardLoading';
-import ItemNotiLoading from './components/ItemNotiLoading';
-import UpdateScreen from '../UpdateScreen/UpdateScreen';
 
 import {dispatch, getState} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
@@ -71,7 +58,6 @@ import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
 import {CommonUtils} from '../../utils';
-import {getVersion} from '../../native-module/app-module';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -83,23 +69,17 @@ const HomeScreen = () => {
   const isFocus = useIsFocused();
 
   const location = useRef<GeolocationResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
   const [enabled, setEnabled] = React.useState(false);
-  // const showModal = useSelector(state => state.app.showModal);
   const userProfile: IUser = useSelector(state => state.app.userProfile);
   const listCustomerVisit: VisitListItemType[] = useSelector(
     state => state.customer.listCustomerVisit,
   );
 
-  const [updateMessage, setUpdateMessage] = React.useState('');
-  const [updateStatus, setUpdateStatus] = React.useState(-1);
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
-  const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
   const [error, setError] = useState(
     'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
   );
-  const [screen, setScreen] = useState(false);
 
   const syncWithCodePush = (status: number) => {
     console.log('Codepush sync status', status);
@@ -167,22 +147,18 @@ const HomeScreen = () => {
         </View>
         <View>
           <View style={[styles.shadow, styles.editView]}>
-            {loading ? (
-              <ItemLoading loading={loading} />
-            ) : (
-              <View style={styles.containWidgetView}>
-                {widgets &&
-                  JSON.parse(widgets).map((item: IWidget, i: any) => (
-                    <View key={i} style={styles.containItemWidget}>
-                      <ItemWidget
-                        name={item.name}
-                        source={item.icon}
-                        navigate={item.navigate}
-                      />
-                    </View>
-                  ))}
-              </View>
-            )}
+            <View style={styles.containWidgetView}>
+              {widgets &&
+                JSON.parse(widgets).map((item: IWidget, i: any) => (
+                  <View key={i} style={styles.containItemWidget}>
+                    <ItemWidget
+                      name={item.name}
+                      source={item.icon}
+                      navigate={item.navigate}
+                    />
+                  </View>
+                ))}
+            </View>
           </View>
         </View>
       </View>
@@ -477,34 +453,28 @@ const HomeScreen = () => {
 
   const onSyncStatusChanged = React.useCallback(
     (syncStatus: number) => {
-      console.log(syncStatus);
-
       switch (syncStatus) {
         case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
-          setUpdateMessage('Đang kiểm tra bản cập nhật...');
+          // Đang kiểm tra bản cập nhật...
           break;
         }
         case codePush.SyncStatus.DOWNLOADING_PACKAGE: {
-          setShowModalHotUpdate(true);
-          setUpdateMessage('Đang tải xuống bản cập nhật...');
+          //Đang tải xuống bản cập nhật...
           break;
         }
         case codePush.SyncStatus.INSTALLING_UPDATE: {
-          setUpdateMessage('Đang cài đặt bản cập nhật...');
-          setShowModalHotUpdate(false);
+          //Đang cài đặt bản cập nhật...
           break;
         }
         case codePush.SyncStatus.UPDATE_INSTALLED: {
-          setScreen(false);
+          setShowModalHotUpdate(false);
           codePush.notifyAppReady();
-          setUpdateMessage(
-            'Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!',
-          );
-          setShowModalUpdate(false);
+          //'Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!'
           break;
         }
         case codePush.SyncStatus.UNKNOWN_ERROR: {
-          setUpdateMessage('Cập nhật thất bại!');
+          //Cập nhật thất bại!
+          setShowModalHotUpdate(false);
 
           // setTimeout(() => {
           //   codePush.restartApp();
@@ -512,26 +482,13 @@ const HomeScreen = () => {
           break;
         }
         case codePush.SyncStatus.UP_TO_DATE: {
-          setScreen(false);
           codePush.notifyAppReady();
-          setTimeout(() => {
-            VersionCheck.needUpdate({}).then(res => {
-              if (res.isNeeded !== undefined) {
-                setShowModalUpdate(res.isNeeded);
-              } else {
-                return;
-              }
-            });
-
-            // codePush.restartApp();
-          }, 1000);
           break;
         }
         default: {
           break;
         }
       }
-      setUpdateStatus(syncStatus);
     },
     [syncWithCodePush],
   );
@@ -545,7 +502,6 @@ const HomeScreen = () => {
         ).toFixed(2),
       ),
     );
-    setShowModalHotUpdate(false);
   };
 
   useEffect(() => {
@@ -557,17 +513,9 @@ const HomeScreen = () => {
     });
   }, []);
 
-  const handerUpdateApp = async () => {
-    await setScreen(true);
-    await setShowModalHotUpdate(false);
+  const handleUpdateApp = async () => {
     codePush.sync(
       {
-        updateDialog: {
-          appendReleaseDescription: true,
-          descriptionPrefix: 'Release',
-          title: 'Update Available',
-          optionalUpdateMessage: updateMessage,
-        },
         installMode: codePush.InstallMode.IMMEDIATE,
         mandatoryInstallMode: codePush.InstallMode.IMMEDIATE,
       },
@@ -576,343 +524,291 @@ const HomeScreen = () => {
     );
   };
 
-  // useLayoutEffect(() => {
-  //   codePush.sync(
-  //     {
-  //       updateDialog: {
-  //         appendReleaseDescription: true,
-  //         descriptionPrefix: 'Release',
-  //         title: 'Update Available',
-  //         optionalUpdateMessage: updateMessage,
-  //       },
-  //       installMode: codePush.InstallMode.IMMEDIATE,
-  //       mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
-  //     },
-  //     onSyncStatusChanged,
-  //     onDownloadProgress,
-  //   );
-  //   syncWithCodePush;
-  // }, [onDownloadProgress, onSyncStatusChanged]);
-
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>
       <Block block>
-        {!screen ? (
-          <>
-            <View style={[styles.shadow, styles.header]}>
-              <View style={{flexDirection: 'row'}}>
-                {Object.keys(userProfile).length > 0 && userProfile?.image ? (
-                  <AppAvatar url={userProfile.image} size={48} />
-                ) : (
-                  <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
-                )}
-                <View style={[styles.containerIfU]}>
-                  <Text style={[styles.userName]}> Xin chào ,</Text>
-                  <Text style={[styles.userName]}>
-                    {Object.keys(userProfile) &&
-                    Object.keys(userProfile!)?.length > 0
-                      ? userProfile?.employee_name
-                      : '---'}
+        <View style={[styles.shadow, styles.header]}>
+          <View style={{flexDirection: 'row'}}>
+            {Object.keys(userProfile).length > 0 && userProfile?.image ? (
+              <AppAvatar url={userProfile.image} size={48} />
+            ) : (
+              <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
+            )}
+            <View style={[styles.containerIfU]}>
+              <Text style={[styles.userName]}> Xin chào,</Text>
+              <Text style={[styles.userName]}>
+                {Object.keys(userProfile) &&
+                Object.keys(userProfile!)?.length > 0
+                  ? userProfile?.employee_name
+                  : '---'}
+              </Text>
+            </View>
+          </View>
+          <View>
+            <IconButton
+              icon="bell-outline"
+              iconColor={colors.text_primary}
+              size={20}
+              mode="contained"
+              containerColor={colors.border}
+              onPress={() => {
+                bottomSheetNotification.current &&
+                  bottomSheetNotification.current.snapToIndex(0);
+                // dispatch(AppActions.setShowModal(!showModal));
+              }}
+            />
+          </View>
+        </View>
+        <AppContainer style={{marginBottom: 100}}>
+          <View style={styles.mainLayout}>
+            <View style={[styles.shadow, styles.containerTimekeep]}>
+              <View>
+                <Text style={[styles.userName]}>
+                  {currentShit?.shift_status ||
+                  currentShit?.shift_status === 'Vào'
+                    ? getLabel('timeKeepOut')
+                    : getLabel('timeKeepIn')}
+                </Text>
+                <View style={[styles.flex, {marginTop: 8}]}>
+                  <AppIcons
+                    iconType={
+                      currentShit?.shift_type_now
+                        ? AppConstant.ICON_TYPE.AntIcon
+                        : AppConstant.ICON_TYPE.MateriallIcon
+                    }
+                    name={
+                      currentShit?.shift_type_now
+                        ? 'clockcircleo'
+                        : 'report-problem'
+                    }
+                    size={16}
+                    color={
+                      currentShit?.shift_type_now
+                        ? colors.text_secondary
+                        : colors.error
+                    }
+                  />
+                  <Text
+                    style={{
+                      marginLeft: 5,
+                      fontSize: 16,
+                      color: currentShit?.shift_type_now
+                        ? colors.text_secondary
+                        : colors.error,
+                    }}>
+                    {currentShit?.shift_type_now
+                      ? `${currentShit.shift_type_now.start_time} - ${currentShit.shift_type_now.end_time}`
+                      : getLabel('noShirtNow')}
                   </Text>
                 </View>
               </View>
+              <TouchableOpacity
+                style={[
+                  styles.btnTimekeep,
+                  {
+                    backgroundColor: !currentShit?.shift_type_now
+                      ? colors.bg_disable
+                      : currentShit?.shift_status ||
+                        currentShit?.shift_status === 'Vào'
+                      ? colors.error
+                      : colors.success,
+                  },
+                ]}
+                onPress={openToDeeplink}
+                disabled={currentShit?.shift_type_now === false}>
+                <Image
+                  source={ImageAssets.Usercheckin}
+                  resizeMode={'cover'}
+                  style={styles.iconBtnTk}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View>{renderUiWidget()}</View>
+
+            <View>{renderUiStatistical()}</View>
+
+            <View>
+              <View style={[styles.flexSpace]}>
+                <Text style={[styles.tilteSection]}>{getLabel('sales')}</Text>
+              </View>
               <View>
-                <IconButton
-                  icon="bell-outline"
-                  iconColor={colors.text_primary}
-                  size={20}
-                  mode="contained"
-                  containerColor={colors.border}
-                  onPress={() => {
-                    bottomSheetNotification.current &&
-                      bottomSheetNotification.current.snapToIndex(0);
-                    // dispatch(AppActions.setShowModal(!showModal));
-                  }}
+                <BarChartStatistical
+                  color={colors.action}
+                  isSales
+                  data={salesValue}
                 />
               </View>
             </View>
-            <AppContainer style={{marginBottom: 100}}>
-              <View style={styles.mainLayout}>
-                <View style={[styles.shadow, styles.containerTimekeep]}>
-                  <View>
-                    <Text style={[styles.userName]}>
-                      {currentShit?.shift_status ||
-                      currentShit?.shift_status === 'Vào'
-                        ? getLabel('timeKeepOut')
-                        : getLabel('timeKeepIn')}
-                    </Text>
-                    <View style={[styles.flex, {marginTop: 8}]}>
-                      <AppIcons
-                        iconType={
-                          currentShit?.shift_type_now
-                            ? AppConstant.ICON_TYPE.AntIcon
-                            : AppConstant.ICON_TYPE.MateriallIcon
-                        }
-                        name={
-                          currentShit?.shift_type_now
-                            ? 'clockcircleo'
-                            : 'report-problem'
-                        }
-                        size={16}
-                        color={
-                          currentShit?.shift_type_now
-                            ? colors.text_secondary
-                            : colors.error
-                        }
-                      />
-                      <Text
-                        style={{
-                          marginLeft: 5,
-                          fontSize: 16,
-                          color: currentShit?.shift_type_now
-                            ? colors.text_secondary
-                            : colors.error,
-                        }}>
-                        {currentShit?.shift_type_now
-                          ? `${currentShit.shift_type_now.start_time} - ${currentShit.shift_type_now.end_time}`
-                          : getLabel('noShirtNow')}
-                      </Text>
-                    </View>
-                  </View>
-                  <TouchableOpacity
-                    style={[
-                      styles.btnTimekeep,
-                      {
-                        backgroundColor: !currentShit?.shift_type_now
-                          ? colors.bg_disable
-                          : currentShit?.shift_status ||
-                            currentShit?.shift_status === 'Vào'
-                          ? colors.error
-                          : colors.success,
-                      },
-                    ]}
-                    onPress={openToDeeplink}
-                    disabled={currentShit?.shift_type_now === false}>
-                    <Image
-                      source={ImageAssets.Usercheckin}
-                      resizeMode={'cover'}
-                      style={styles.iconBtnTk}
-                    />
-                  </TouchableOpacity>
-                </View>
 
-                <View>{renderUiWidget()}</View>
-
-                <View>{renderUiStatistical()}</View>
-
-                <View>
-                  <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>
-                      {getLabel('sales')}
-                    </Text>
-                  </View>
-                  <View>
-                    {loading ? (
-                      <CardLoading />
-                    ) : (
-                      <BarChartStatistical
-                        color={colors.action}
-                        isSales
-                        data={salesValue}
-                      />
-                    )}
-                  </View>
-                </View>
-
-                <View>
-                  <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>
-                      {getLabel('revenue')}
-                    </Text>
-                  </View>
-                  <View>
-                    {loading ? (
-                      <CardLoading />
-                    ) : (
-                      <BarChartStatistical
-                        isSales={false}
-                        color={colors.main}
-                        data={revenueValue}
-                      />
-                    )}
-                  </View>
-                </View>
-
-                <View>
-                  <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>
-                      {getLabel('visit')}
-                    </Text>
-                  </View>
-                  {loading ? (
-                    <CardLoading />
-                  ) : (
-                    <View style={[styles.containerCheckin]}>
-                      <ProgressCircle
-                        percent={
-                          visitValue ? visitValue.phan_tram_thuc_hien : 0
-                        }
-                        radius={80}
-                        borderWidth={30}
-                        color={colors.action}
-                        shadowColor={colors.bg_disable}
-                        bgColor={colors.bg_default}>
-                        <View>
-                          <Text style={[styles.textProcess]}>
-                            {visitValue?.dat_duoc}/{visitValue?.chi_tieu}
-                          </Text>
-                          <Text style={[styles.textProcessDesc]}>
-                            {' '}
-                            (Đạt {visitValue?.phan_tram_thuc_hien}
-                            %)
-                          </Text>
-                        </View>
-                      </ProgressCircle>
-                      <Text style={[styles.checkinDesc]}>
-                        {getLabel('visitPerMonth')}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-
-                <View style={[styles.flexSpace]}>
-                  <Text style={[styles.tilteSection]}>
-                    {getLabel('visitMap')}
-                  </Text>
-                </View>
-
-                <View style={styles.map}>
-                  <Mapbox.MapView
-                    pitchEnabled={false}
-                    attributionEnabled={false}
-                    scaleBarEnabled={false}
-                    zoomEnabled
-                    scrollEnabled
-                    logoEnabled={false}
-                    styleURL={Mapbox.StyleURL.Street}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      zIndex: 10,
-                      position: 'absolute',
-                    }}>
-                    <Mapbox.RasterSource
-                      id="adminmap"
-                      tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-                      <Mapbox.RasterLayer
-                        id={'adminmap'}
-                        sourceID={'admin'}
-                        style={{visibility: 'visible'}}
-                      />
-                    </Mapbox.RasterSource>
-                    <Mapbox.Camera
-                      ref={mapboxCameraRef}
-                      centerCoordinate={[
-                        location.current !== null
-                          ? location.current.coords.longitude
-                          : 0,
-                        location.current !== null
-                          ? location.current.coords.latitude
-                          : 0,
-                      ]}
-                      animationMode={'flyTo'}
-                      animationDuration={500}
-                      zoomLevel={11}
-                    />
-                    {listCustomerVisit.length > 0 &&
-                      listCustomerVisit.map((item, index) => {
-                        if (item.customer_location_primary) {
-                          const newLocation: LocationProps = JSON.parse(
-                            item.customer_location_primary!,
-                          );
-                          return (
-                            <Mapbox.MarkerView
-                              key={index}
-                              coordinate={[
-                                Number(newLocation.long),
-                                Number(newLocation.lat),
-                              ]}>
-                              <MarkerItem item={item} index={index} />
-                            </Mapbox.MarkerView>
-                          );
-                        } else {
-                          return null;
-                        }
-                      })}
-                    <Mapbox.UserLocation
-                      visible={true}
-                      animated
-                      androidRenderMode="gps"
-                      showsUserHeadingIndicator={true}
-                    />
-                  </Mapbox.MapView>
-                  <TouchableOpacity
-                    onPress={handleRegainLocation}
-                    style={styles.regainPosition}>
-                    <Image
-                      source={ImageAssets.MapIcon}
-                      style={{width: 16, height: 16}}
-                      resizeMode={'cover'}
-                      tintColor={colors.bg_default}
-                    />
-                    <Text style={{color: colors.bg_default, marginLeft: 4}}>
-                      {getLabel('currentPosition')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View>
-                  <View style={[styles.flexSpace]}>
-                    <Text style={[styles.tilteSection]}>
-                      {getLabel('internalNotifi')}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate(ScreenConstant.NOTIFYCATION)
-                      }>
-                      <Text
-                        style={[styles.tilteSection, {color: colors.action}]}>
-                        {getLabel('all')}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.containerNtf}>
-                    {notifiCations?.map((item, i) => (
-                      <View key={i}>
-                        {loading ? (
-                          <ItemNotiLoading />
-                        ) : (
-                          <ItemNotification
-                            isSend={true}
-                            title={item.name}
-                            time={item.time}
-                            description={item.description}
-                            avatar={
-                              'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
-                            }
-                          />
-                        )}
-                      </View>
-                    ))}
-                  </View>
-                </View>
+            <View>
+              <View style={[styles.flexSpace]}>
+                <Text style={[styles.tilteSection]}>{getLabel('revenue')}</Text>
               </View>
-            </AppContainer>
-            <NotificationScreen
-              bottomSheetRef={bottomSheetNotification}
-              snapPointsCustom={snapPoint}
-            />
-          </>
-        ) : (
-          <>
-            <UpdateScreen progress={updatePercent} setScreen={setScreen} />
-          </>
-        )}
+              <View>
+                <BarChartStatistical
+                  isSales={false}
+                  color={colors.main}
+                  data={revenueValue}
+                />
+              </View>
+            </View>
+
+            <View>
+              <View style={[styles.flexSpace]}>
+                <Text style={[styles.tilteSection]}>{getLabel('visit')}</Text>
+              </View>
+              <View style={[styles.containerCheckin]}>
+                <ProgressCircle
+                  percent={visitValue ? visitValue.phan_tram_thuc_hien : 0}
+                  radius={80}
+                  borderWidth={30}
+                  color={colors.action}
+                  shadowColor={colors.bg_disable}
+                  bgColor={colors.bg_default}>
+                  <View>
+                    <Text style={[styles.textProcess]}>
+                      {visitValue?.dat_duoc}/{visitValue?.chi_tieu}
+                    </Text>
+                    <Text style={[styles.textProcessDesc]}>
+                      {' '}
+                      (Đạt {visitValue?.phan_tram_thuc_hien}
+                      %)
+                    </Text>
+                  </View>
+                </ProgressCircle>
+                <Text style={[styles.checkinDesc]}>
+                  {getLabel('visitPerMonth')}
+                </Text>
+              </View>
+            </View>
+
+            <View style={[styles.flexSpace]}>
+              <Text style={[styles.tilteSection]}>{getLabel('visitMap')}</Text>
+            </View>
+
+            <View style={styles.map}>
+              <Mapbox.MapView
+                pitchEnabled={false}
+                attributionEnabled={false}
+                scaleBarEnabled={false}
+                zoomEnabled
+                scrollEnabled
+                logoEnabled={false}
+                styleURL={Mapbox.StyleURL.Street}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  zIndex: 10,
+                  position: 'absolute',
+                }}>
+                <Mapbox.RasterSource
+                  id="adminmap"
+                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                  <Mapbox.RasterLayer
+                    id={'adminmap'}
+                    sourceID={'admin'}
+                    style={{visibility: 'visible'}}
+                  />
+                </Mapbox.RasterSource>
+                <Mapbox.Camera
+                  ref={mapboxCameraRef}
+                  centerCoordinate={[
+                    location.current !== null
+                      ? location.current.coords.longitude
+                      : 0,
+                    location.current !== null
+                      ? location.current.coords.latitude
+                      : 0,
+                  ]}
+                  animationMode={'flyTo'}
+                  animationDuration={500}
+                  zoomLevel={11}
+                />
+                {listCustomerVisit.length > 0 &&
+                  listCustomerVisit.map((item, index) => {
+                    if (item.customer_location_primary) {
+                      const newLocation: LocationProps = JSON.parse(
+                        item.customer_location_primary!,
+                      );
+                      return (
+                        <Mapbox.MarkerView
+                          key={index}
+                          coordinate={[
+                            Number(newLocation.long),
+                            Number(newLocation.lat),
+                          ]}>
+                          <MarkerItem item={item} index={index} />
+                        </Mapbox.MarkerView>
+                      );
+                    } else {
+                      return null;
+                    }
+                  })}
+                <Mapbox.UserLocation
+                  visible={true}
+                  animated
+                  androidRenderMode="gps"
+                  showsUserHeadingIndicator={true}
+                />
+              </Mapbox.MapView>
+              <TouchableOpacity
+                onPress={handleRegainLocation}
+                style={styles.regainPosition}>
+                <Image
+                  source={ImageAssets.MapIcon}
+                  style={{width: 16, height: 16}}
+                  resizeMode={'cover'}
+                  tintColor={colors.bg_default}
+                />
+                <Text style={{color: colors.bg_default, marginLeft: 4}}>
+                  {getLabel('currentPosition')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <View style={[styles.flexSpace]}>
+                <Text style={[styles.tilteSection]}>
+                  {getLabel('internalNotifi')}
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate(ScreenConstant.NOTIFYCATION)
+                  }>
+                  <Text style={[styles.tilteSection, {color: colors.action}]}>
+                    {getLabel('all')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.containerNtf}>
+                {notifiCations?.map((item, i) => (
+                  <View key={i}>
+                    <ItemNotification
+                      isSend={true}
+                      title={item.name}
+                      time={item.time}
+                      description={item.description}
+                      avatar={
+                        'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
+                      }
+                    />
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+        </AppContainer>
+        <NotificationScreen
+          bottomSheetRef={bottomSheetNotification}
+          snapPointsCustom={snapPoint}
+        />
       </Block>
 
       <ModalUpdate
         show={showModalHotUpdate}
+        progress={updatePercent}
         onPress={() => {
-          handerUpdateApp();
+          handleUpdateApp();
         }}
       />
       <ModalErrorLocation
