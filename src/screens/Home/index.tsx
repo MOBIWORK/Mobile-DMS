@@ -530,22 +530,17 @@ const HomeScreen = () => {
     [],
   );
   useEffect(() => {
-    // codePush.sync(
-    //   {
-    //     updateDialog: {
-    //       appendReleaseDescription: true,
-    //       descriptionPrefix: 'Release',
-    //       title: 'Update Available',
-    //       optionalUpdateMessage: updateMessage,
-    //     },
-    //     installMode: codePush.InstallMode.ON_NEXT_RESTART,
-    //     mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
-    //   },
-    //   onSyncStatusChanged,
-    //   onDownloadProgress,
-    // );
-    // syncWithCodePush;
+    codePush.sync(
+      {
+        installMode: codePush.InstallMode.ON_NEXT_RESTART,
+        mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+      },
+      onSyncStatusChanged,
+      download => onDownloadProgress(download),
+    );
+    syncWithCodePush;
   }, [onDownloadProgress, onSyncStatusChanged]);
+  // console.log(location,'')
 
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>

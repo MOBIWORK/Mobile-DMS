@@ -135,8 +135,6 @@ const TakePictureScore = () => {
           const formData = new FormData(); // Create a new FormData object for each image
           formData.append('folder', 'Home');
           formData.append('is_private', 0);
-
-          // Extract file name from URI
           let parts = selectedImages[i].uri.split('/');
           const trimmedURI =
             Platform.OS === 'android'
@@ -155,7 +153,6 @@ const TakePictureScore = () => {
           newArr.push(formData);
           // Delay if needed
           await new Promise(resolve => setTimeout(resolve, 1000));
-
           // Dispatch action to post image score
           dispatch(checkinActions.postImageScore(formData, listProgram));
         }

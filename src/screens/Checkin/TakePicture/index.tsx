@@ -92,10 +92,7 @@ const TakePicture = () => {
           if (data?.current) {
             data.current.image = image?.base64!;
             await new Promise(resolve => setTimeout(resolve, 1000));
-            await new Promise<void>(resolve => {
-              dispatch(appActions.postImageCheckIn(data.current));
-              resolve();
-            });
+            dispatch(appActions.postImageCheckIn(data.current));
             totalItemsProcessed++;
             setMessage(totalItemsProcessed);
           }

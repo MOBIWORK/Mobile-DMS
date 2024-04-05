@@ -39,6 +39,7 @@
 		8E93C6E34DF0BA573FC2EE8F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B173BD5BC2B065BDEA7DCE /* ExpoModulesProvider.swift */; };
 		9279090B9EB145D89A21A297 /* SF-Pro-Display-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9858CB14A1AA4E57BB89A006 /* SF-Pro-Display-Black.ttf */; };
 		946C2A8A868D7E4476C02B01 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33C535FB06B25050AEF29D0 /* ExpoModulesProvider.swift */; };
+		C9470C302BB3B4ED00DAF21E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8A914C7F2BB11B1B00AEB256 /* Info.plist */; };
 		C9E9CEF22B479B1000157D58 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = C9E9CEF12B479B0F00157D58 /* AppCenter-Config.plist */; };
 		C9F95DDA2B2D3D9900626856 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = C9F95DD92B2D3D9900626856 /* fonts */; };
 		CA027E128CDD4E488E254166 /* SF-Pro-Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BF58B281E448485F9587267C /* SF-Pro-Display-Medium.ttf */; };
@@ -91,8 +92,8 @@
 		8A1099B72B1847C900E1435A /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		8A1099B82B1847C900E1435A /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Brands.ttf; sourceTree = "<group>"; };
 		8A1099B92B1847C900E1435A /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
-		8A55741F2B9BFFC100B90BE6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../../../Downloads/AppIconsDMS/Images.xcassets; sourceTree = "<group>"; };
-		8A914C7F2BB11B1B00AEB256 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../../../Downloads/Info.plist; sourceTree = "<group>"; };
+		8A55741F2B9BFFC100B90BE6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DMS/Images.xcassets; sourceTree = "<group>"; };
+		8A914C7F2BB11B1B00AEB256 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DMS/Info.plist; sourceTree = "<group>"; };
 		92A2F88607274EEB8FC85AFD /* SplashScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SplashScreen.storyboard; path = DMS/SplashScreen.storyboard; sourceTree = "<group>"; };
 		9406E9CEB84AB01714ED525E /* Pods-DMS-DMSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMS-DMSTests.release.xcconfig"; path = "Target Support Files/Pods-DMS-DMSTests/Pods-DMS-DMSTests.release.xcconfig"; sourceTree = "<group>"; };
 		9858CB14A1AA4E57BB89A006 /* SF-Pro-Display-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Black.ttf"; path = "../assets/fonts/SF-Pro-Display-Black.ttf"; sourceTree = "<group>"; };
@@ -407,6 +408,7 @@
 				CA027E128CDD4E488E254166 /* SF-Pro-Display-Medium.ttf in Resources */,
 				3BA899B5D7D24A69A5428B2F /* SF-Pro-Display-Regular.ttf in Resources */,
 				CA3923D6D2964F77A7D1C1C1 /* SF-Pro-Display-Thin.ttf in Resources */,
+				C9470C302BB3B4ED00DAF21E /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

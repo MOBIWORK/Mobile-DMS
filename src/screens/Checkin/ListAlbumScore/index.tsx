@@ -59,28 +59,28 @@ const ListAlbumScore = (props: Props) => {
   );
   const [appLoading, setAppLoading] = useState<boolean>();
 
+  // Retrieve listImageResponse and its corresponding data outside of the map function
+  const imageResponse = useMemo(() => {
+    return listImageResponse.map((item: any) => item.image)[0];
+  }, [listImageResponse]);
+  
+  const imageUrls = useMemo(() => {
+    return imageResponse.map((image: any) => image.file_url);
+  }, [imageResponse]);
+  
+  const lastImageDateTime = useMemo(() => {
+    return imageResponse[imageResponse.length - 1]?.date_time || 0;
+  }, [imageResponse]);
+
+  // Map the listProgramSelected to resultData
   const resultData: DataSendMarkScore[] = listProgramSelected?.map(campaign => {
     return {
       e_name: userInfor.employee,
       campaign_code: campaign.name,
       category: campaign.categories,
       customer_code: itemParams.kh_ten,
-      images: JSON.stringify(
-        JSON.stringify(
-          listImageResponse
-            .map((item: any) => item.image)[0]
-            .map((image: any) => image.file_url),
-        ),
-      ),
-      images_time: parseFloat(
-        listImageResponse
-          .map((item: any) => item.image)[0]
-          .map((image: any) => image.date_time)[
-          listImageResponse
-            .map((item: any) => item.image)[0]
-            .map((image: any) => image.date_time).length - 1
-        ],
-      ),
+      images: JSON.stringify(imageUrls),
+      images_time: parseFloat(lastImageDateTime),
       setting_score_audit: campaign.setting_score_audit,
     };
   });
@@ -105,7 +105,7 @@ const ListAlbumScore = (props: Props) => {
     } catch (err) {
       console.log(`[err: ]`, err);
     } finally {
-      screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack();
+      // screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack();
       setAppLoading(false);
     }
     //   customer_code:itemParams.kh_ten,
@@ -118,7 +118,9 @@ const ListAlbumScore = (props: Props) => {
         <AppHeader
           style={styles.header}
           label="Chấm điểm trưng bày"
-          onBack={() => screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack()}
+          onBack={() =>
+            screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack()
+          }
           // hiddenBackButton={true}
         />
         <Block
