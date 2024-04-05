@@ -4,6 +4,7 @@ import {
   ViewStyle,
   StatusBar,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import React from 'react';
 import {Modal} from 'react-native-paper';
@@ -48,13 +49,12 @@ const ModalUpdate = ({show, onPress, progress}: Props) => {
                 {progress
                   ? 'Ứng dụng đang được cập nhật, \n' +
                     'vui lòng chờ trong giây lát.'
-                  : 'Để tăng trải nghiệm người dùng và tính năng, vui lòng cập nhật\n' +
-                    '                ứng dụng.'}
+                  : 'Để tăng trải nghiệm người dùng và tính năng, vui lòng cập nhật ứng dụng.'}
               </Text>
             </Block>
           </Block>
           {progress ? (
-            <Block paddingVertical={4} paddingHorizontal={80}>
+            <Block height={16} paddingHorizontal={70}>
               <ProgressLinear strokeWidth={16} progress={progress} />
             </Block>
           ) : (

@@ -482,7 +482,6 @@ const HomeScreen = () => {
           break;
         }
         case codePush.SyncStatus.UP_TO_DATE: {
-          setShowModalHotUpdate(false);
           codePush.notifyAppReady();
           break;
         }
@@ -517,8 +516,8 @@ const HomeScreen = () => {
   const handleUpdateApp = async () => {
     codePush.sync(
       {
-        installMode: codePush.InstallMode.ON_NEXT_RESTART,
-        mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+        installMode: codePush.InstallMode.IMMEDIATE,
+        mandatoryInstallMode: codePush.InstallMode.IMMEDIATE,
       },
       onSyncStatusChanged,
       onDownloadProgress,
@@ -536,7 +535,7 @@ const HomeScreen = () => {
               <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
             )}
             <View style={[styles.containerIfU]}>
-              <Text style={[styles.userName]}> Xin chào ,</Text>
+              <Text style={[styles.userName]}> Xin chào,</Text>
               <Text style={[styles.userName]}>
                 {Object.keys(userProfile) &&
                 Object.keys(userProfile!)?.length > 0
