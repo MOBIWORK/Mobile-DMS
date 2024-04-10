@@ -51,13 +51,14 @@ export function* onCheckInData(action: PayloadAction) {
   if (appActions.onCheckIn.match(action)) {
     try {
       yield put(appActions.onLoadApp());
-
       const response: ResponseGenerator = yield call(
         postChecking,
         action.payload,
       );
-      if (response?.result.length > 0) {
-        navigate(ScreenConstant.CHECKIN, {item: action.payload});
+      if (Object.keys(response?.result).length > 0) {
+        navigate(ScreenConstant.AUTHORIZED, {
+          screen: ScreenConstant.MAIN_TAB,
+        });
       }
     } catch (err) {
       console.log(err, 'err');

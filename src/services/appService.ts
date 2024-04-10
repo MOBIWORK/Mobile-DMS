@@ -136,10 +136,11 @@ export const updateProfile = (data: IProfile) =>
 
 export const postChecking = (data: CheckinData) =>
   createApi()
-    .post(ApiConstant.POST_CHECKIN, data, {
-      baseURL: BASE_URL,
-    })
+    .post(ApiConstant.POST_CHECKIN, data)
     .then(res => res.data);
+
+export const checkOut = (checkin_id: string) =>
+  createApi().post(ApiConstant.CHECK_OUT, {checkin_id: checkin_id});
 
 export const getCustomer = () =>
   createApi()
