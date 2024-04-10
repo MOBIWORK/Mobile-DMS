@@ -33,6 +33,7 @@ export const GET_CURRENT_SHIT =
 export const PUT_USER_PROFILE =
   '/api/method/mbw_service_v2.api.user.update_profile';
 export const POST_CHECKIN = '/api/method/mbw_dms.api.checkin.create_checkin';
+export const CHECK_OUT = '/api/method/mbw_dms.api.checkin.cancel_checkout';
 
 // Product
 export const GET_PRODUCT = URL_PREFIX + '.api.selling.product.list_product';

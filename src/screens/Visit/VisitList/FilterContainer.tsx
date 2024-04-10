@@ -5,10 +5,8 @@ import {
   AppButton,
   AppHeader,
   AppIcons,
-  AppInput,
 } from '../../../components/common';
 import {AppConstant, DataConstant} from '../../../const';
-import {TextInput} from 'react-native-paper';
 import {useTheme} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {
@@ -20,6 +18,7 @@ import {ListCustomerRoute, ListCustomerType} from '../../../models/types';
 import {IListVisitParams} from '../../../services/appService';
 import {listFilterType} from '../../Customer/components/data';
 import ListFilterItem from './ListFilterItem';
+import FilterItem from './Component/FilterItem';
 
 const FilterContainer: FC<FilterContainerProps> = ({
   bottomSheetRef,
@@ -35,7 +34,6 @@ const FilterContainer: FC<FilterContainerProps> = ({
   const {t: getLabel} = useTranslation();
   const {bottom} = useSafeAreaInsets();
   const snapPoints = useMemo(() => ['100%'], []);
-
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
   const {
@@ -48,29 +46,6 @@ const FilterContainer: FC<FilterContainerProps> = ({
   const [filterType, setFilterType] = useState<string>(
     AppConstant.VisitFilterType.channel,
   );
-
-  //redux store
-
-  const Item: FC<ItemProps> = ({label, value, type}) => {
-    return (
-      <AppInput
-        label={label}
-        value={value}
-        onPress={() => {
-          setFilterType(type);
-          filterRef.current && filterRef.current.snapToIndex(0);
-        }}
-        editable={false}
-        rightIcon={
-          <TextInput.Icon
-            icon={'chevron-down'}
-            style={{width: 24, height: 24}}
-            color={colors.text_secondary}
-          />
-        }
-      />
-    );
-  };
 
   const _renderData = () => {
     switch (filterType) {
@@ -116,7 +91,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
             height: '100%',
           }}>
           <Pressable style={{marginTop: 32, rowGap: 24}}>
-            <Item
+            <FilterItem
               label={getLabel('gland')}
               value={
                 filterValue?.router
@@ -124,31 +99,43 @@ const FilterContainer: FC<FilterContainerProps> = ({
                   : getLabel('all')
               }
               type={AppConstant.VisitFilterType.channel}
+              setFilterType={setFilterType}
+              filterRef={filterRef}
             />
-            <Item
+            <FilterItem
               label={getLabel('visitStatus')}
               value={filterValue?.status ?? getLabel('all')}
               type={AppConstant.VisitFilterType.state}
+              setFilterType={setFilterType}
+              filterRef={filterRef}
             />
-            <Item
+            <FilterItem
               label={getLabel('sortByName')}
               value={filterValue?.order_by ?? 'Z -> A'}
               type={AppConstant.VisitFilterType.name}
+              setFilterType={setFilterType}
+              filterRef={filterRef}
             />
-            <Item
+            <FilterItem
               label={getLabel('customerBirthDay')}
               value={filterValue?.birthDay ?? getLabel('all')}
               type={AppConstant.VisitFilterType.birthday}
+              setFilterType={setFilterType}
+              filterRef={filterRef}
             />
-            <Item
+            <FilterItem
               label={getLabel('groupCustomer')}
               value={filterValue?.customer_group ?? getLabel('all')}
               type={AppConstant.VisitFilterType.customerGroup}
+              setFilterType={setFilterType}
+              filterRef={filterRef}
             />
-            <Item
+            <FilterItem
               label={getLabel('customerType')}
               value={filterValue?.customer_type ?? getLabel('all')}
               type={AppConstant.VisitFilterType.customerType}
+              setFilterType={setFilterType}
+              filterRef={filterRef}
             />
           </Pressable>
         </BottomSheetScrollView>
@@ -209,9 +196,5 @@ interface FilterContainerProps {
   handleFilter: () => void;
   handleReset: () => void;
 }
-interface ItemProps {
-  label: string;
-  value: string;
-  type: string;
-}
-export default FilterContainer;
+
+export default React.memo(FilterContainer);
