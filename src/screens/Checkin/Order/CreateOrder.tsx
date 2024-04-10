@@ -92,7 +92,7 @@ const CreateOrder = () => {
     const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
 
     const [warehouse, setWarehouse] = useState<IFilterType>();
-    const [vat, setVat] = useState<object | any>({ label: "", value: "", rate: "" });
+    const [vat, setVat] = useState<object | any>({ label: "", value: 0, rate: 0 });
     const [discount, setDiscount] = useState<any>({
         label: 'Grand Total',
         value: 'grand',
@@ -616,6 +616,9 @@ const CreateOrder = () => {
             default:
                 break;
         }
+        console.log('====================================');
+        console.log(objectData);
+        console.log('====================================');
         if (status === ApiConstant.STT_CREATED) onBackScreen();
     };
 
