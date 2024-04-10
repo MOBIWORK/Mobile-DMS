@@ -1,10 +1,5 @@
-import { StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-} from 'react';
+import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
   AppText as Text,
@@ -31,6 +26,8 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import {goBack} from '../../../navigation/navigation-service';
+import {AppService} from '../../../services';
+import {ApiConstant} from '../../../const';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -67,7 +64,7 @@ const CheckIn = () => {
       ? dataCheckIn?.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
-  // const [elapsedTime, setElapsedTime] = useState(0);
+
   const elapsedTime = useTimer();
 
   const systemConfig: DMSConfigMobile = useSelector(
@@ -78,21 +75,6 @@ const CheckIn = () => {
     decimalMinutesToTime(systemConfig.thoigian_toithieu),
   );
   useDisableBackHandler(true);
-  // console.log(elapsedTime, 'listImage');
-  // console.log()
-  // useEffect(() => {
-  //   const startInterval = () => {
-  //     intervalId.current = setInterval(
-  //       () => {
-  //         setElapsedTime(prevTime => prevTime + 1);
-  //       },
-  //       1000,
-  //     ); // Update every 1 seconds
-  //   };
-  //   startInterval();
-  //   return () => clearInterval(intervalId.current);
-  // }, []);
-// console.log(status,'statús')
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
     const hours = Math.floor(seconds / 3600);
@@ -103,7 +85,6 @@ const CheckIn = () => {
 
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
-  
 
   const handleSwitch = useCallback(() => {
     if (title === getLabel('openDoor')) {
@@ -127,26 +108,25 @@ const CheckIn = () => {
     return totalSeconds;
   };
 
-  const onCheckout = useCallback( async () => {
-    dispatch(appActions.onCheckIn({...dataCheckIn , checkin_giora : new Date().getTime() / 1000}));
+  const onCheckout = useCallback(async () => {
+    dispatch(
+      appActions.onCheckIn({
+        ...dataCheckIn,
+        checkin_giora: new Date().getTime() / 1000,
+      }),
+    );
     setShow(false);
   }, [dataCheckIn]);
 
-  // const isCompleteCheckin = useMemo(() => {
-  //   const result = categoriesCheckin.find(
-  //     item => item.isRequire == true && item.isDone == false,
-  //   );
-  //   return result ? false : true;
-  // }, [categoriesCheckin]);
-
-  const onConfirmCheckout = useCallback(() => {
-    dispatch(checkinActions.resetData());
-    dispatch(appActions.setDataCheckIn({}));
-    goBack();
+  const onConfirmCheckout = useCallback(async () => {
     setShow(false);
+    const res: any = await AppService.checkOut(dataCheckIn.checkin_id);
+    if (res?.status === ApiConstant.STT_OK) {
+      dispatch(checkinActions.resetData());
+      dispatch(appActions.setDataCheckIn({}));
+      goBack();
+    }
   }, [dataCheckIn]);
-
- 
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -174,7 +154,12 @@ const CheckIn = () => {
               Viếng thăm {formatTime(elapsedTime)}
             </Text>
           </Block>
-          <Switch type="text" status={status!} onSwitch={handleSwitch} title={title} />
+          <Switch
+            type="text"
+            status={status!}
+            onSwitch={handleSwitch}
+            title={title}
+          />
         </Block>
         <Block colorTheme="white" paddingHorizontal={32}>
           <Block direction="row" paddingTop={20} marginBottom={8}>
