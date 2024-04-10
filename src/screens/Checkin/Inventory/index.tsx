@@ -1,9 +1,9 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MainLayout } from '../../../layouts';
 import { AppBottomSheet, AppButton, AppContainer, AppHeader, AppIcons, AppInput } from '../../../components/common';
-import { useNavigation, useTheme } from '@react-navigation/native';
-import { StyleSheet, Text, View } from 'react-native';
-import { Image,TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { ImageStyle, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
 import { ImageAssets } from '../../../assets';
 import { Button, IconButton, TextInput } from 'react-native-paper';
 import { NavigationProp } from '../../../navigation/screen-type';
@@ -21,6 +21,7 @@ import { productActions } from '../../../redux-store/product-reducer/reducer';
 import { CheckinService } from '../../../services';
 import FilterListComponent, { IFilterType } from '../../../components/common/FilterListComponent';
 import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 
 const CheckinInventory = () => {
 
@@ -30,6 +31,7 @@ const CheckinInventory = () => {
     const bottomSheetRef = useRef<BottomSheet>(null);
     const bottomSheetRefDetail = useRef<BottomSheet>(null);
     const bottomSheetData = useRef<BottomSheet>(null);
+    const styles = createStyles(useTheme());
     const snapPointsDetailPr = useMemo(() => ['60%'], []);
     const snapPointsData = useMemo(() => ['60%'], []);
     const [detailProduct, setDetailProduct] = useState<IProduct | any>();
@@ -38,17 +40,18 @@ const CheckinInventory = () => {
     const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
     const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
     const [dataBottomSheet, setDataBottomSheet] = useState<IFilterType[]>([])
-    const isDisabled = useMemo(() => products.length > 0 ? false : true, [products]);
-
+    const [data,setData] = useState<IProduct[]>([])
+    
     const onBackScreen = () => {
         dispatch(productActions.setProductSelected([]))
         navigation.goBack()
     }
-
+    
+    const isDisabled = useMemo(() => data.length > 0 ? false : true, [data]);
     const updateProduct = () => {
         if (detailProduct) {
-            const newData = products.map(item => item.item_code === detailProduct.item_code ? detailProduct : item);
-            dispatch(productActions.setProductSelected(newData))
+            const newData = data.map(item => item.item_code === detailProduct.item_code ? detailProduct : item);
+            setData(newData);
         }
         if (bottomSheetRefDetail.current) {
             bottomSheetRefDetail.current.close()
@@ -94,17 +97,17 @@ const CheckinInventory = () => {
     }
 
     const onSubmit = async () => {
-        if (products.length > 0) {
-            const newItems = products.map(item => {
+        if (data.length > 0) {
+            const newItems = data.map(item => {
                 const price = item.details.find(item2 => item2.uom == item.stock_uom)
                 return {
-                item_code: item.item_code,
-                item_unit: item.stock_uom,
-                quantity: item.quantity,
-                exp_time: new Date(item.end_of_life).getTime() / 1000,
-                item_price : price?.price_list_rate
-            }
-        })
+                    item_code: item.item_code,
+                    item_unit: item.stock_uom,
+                    quantity: item.quantity,
+                    exp_time: new Date(item.end_of_life).getTime() / 1000,
+                    item_price: price?.price_list_rate
+                }
+            })
             const objectData = {
                 "customer_code": dataCheckin.item.customer_code,//id khách hàng
                 "customer_id": dataCheckin.item.customer_name,//mã khách hàng
@@ -112,7 +115,7 @@ const CheckinInventory = () => {
                 "customer_address": dataCheckin.item.customer_primary_address,
                 "inventory_items": newItems
             }
-            const { status, data }:any = await CheckinService.checkinInventory(objectData);
+            const { status }: any = await CheckinService.checkinInventory(objectData);
             if (status === ApiConstant.STT_OK) onBackScreen();
         }
         completeCheckin();
@@ -120,38 +123,42 @@ const CheckinInventory = () => {
 
     const removeItem = (id: string) => {
         const newProducts = products.filter(item => item.item_code !== id);
-        dispatch(productActions.setProductSelected(newProducts))
+        setData(newProducts)
     }
 
     const renderItem = (item: IProduct) => {
         return (
-            <SwipeableItem handlerClick={() => removeItem(item.item_code)}>
-                <View style={[styles.flexSpace as any, styles.item, { alignItems: "flex-start", backgroundColor: colors.bg_default, }]}>
-                    <View>
-                        <View style={[styles.flex as any, { columnGap: 5 }]}>
-                            <AppIcons
-                                iconType={ICON_TYPE.IonIcon}
-                                name="barcode-outline"
-                                size={20}
-                                color={colors.text_primary}
-                            />
-                            <Text style={[styles.nameProduct as any, { color: colors.text_primary }]}>{item.item_code}</Text>
-                        </View>
-                        <Text style={[styles.dateProduct as any, { color: colors.text_secondary }]}>
-                            {getLabel("expired")} : {CommonUtils.convertDate(item.end_of_life)}
-                        </Text>
+            <View>
+                <View style={{paddingHorizontal:16,paddingVertical:12 ,backgroundColor:colors.bg_default,borderRadius:16}}>
+                    <View style={[styles.flex as any, { columnGap: 5 ,paddingTop:8}]}>
+                        <AppIcons
+                            iconType={ICON_TYPE.IonIcon}
+                            name="barcode-outline"
+                            size={20}
+                            color={colors.text_primary}
+                        />
+                        <Text style={[styles.nameProduct as any, { color: colors.text_primary }]}>{item.item_code}</Text>
                     </View>
-                    <View style={{ alignItems: "flex-end" }}>
-                        <Text style={[styles.dateProduct as any, {}]}>
-                            {getLabel("unt")} : <Text style={{ color: colors.text_primary, fontWeight: "500" }}>{item.stock_uom}</Text>
-                        </Text>
-                        <Text style={[styles.dateProduct as any, { marginTop: 8 }]} >
-                            {getLabel("quantity")} : <Text style={{ color: colors.text_primary, fontWeight: "500" }}>
-                                {item.quantity}</Text>
-                        </Text >
+                    <Text style={styles.nameProduct}>{item.item_name}</Text>
+                    <View style={[styles.flexSpace]}>
+                        <Text style={[styles.dateProduct]}>{CommonUtils.formatCash(item.price.toString())} đ</Text>
+                        <Text style={[styles.dateProduct]}>x{item.quantity}{`(${item.stock_uom})`}</Text>
+                    </View>
+                    <View style={{paddingTop:12,borderTopWidth :1 ,borderColor :colors.divider ,borderStyle:"dashed",marginTop:8}}>
+                        <Text style={[styles.dateProduct]}>Hạn sử dụng :{CommonUtils.convertDate(item.end_of_life)}</Text>
                     </View>
                 </View>
-            </SwipeableItem>
+                <TouchableOpacity style={[styles.removeIcon]}
+                    onPress={()=>removeItem(item.item_code)}
+                >
+                    <AppIcons 
+                        iconType={AppConstant.ICON_TYPE.AweIcons}
+                        name='trash-o'
+                        size={22}
+                        color={colors.error}
+                    />
+                </TouchableOpacity>
+            </View>
         )
     }
 
@@ -257,11 +264,18 @@ const CheckinInventory = () => {
         navigation.goBack();
     }
 
+    useEffect(()=>{
+        if(products.length>0){
+            setData(products);
+        }
+        dispatch(productActions.setProductSelected([]))
+    },[products]);
+
     return (
         <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
             <AppHeader label={getLabel("inventoryControl")} onBack={onBackScreen} />
 
-            {products.length > 0 && (
+            {data.length > 0 && (
                 <View style={[styles.flexSpace as any, { marginTop: 40, marginBottom: 8 }]}>
                     <Text style={[styles.titile as any, { color: colors.text_secondary }]}>{getLabel("listProduct")}</Text>
                     <View style={{ flexDirection: "row" }}>
@@ -287,9 +301,9 @@ const CheckinInventory = () => {
 
             <AppContainer>
 
-                {products.length > 0 && (
+                {data.length > 0 && (
                     <View style={{ rowGap: 16 }}>
-                        {products.map((item, index) => (
+                        {data.map((item, index) => (
                             <TouchableOpacity key={index} onPress={() => openBottonSheetDetail(item)} activeOpacity={0.5}>
                                 {renderItem(item)}
                             </TouchableOpacity>
@@ -300,7 +314,7 @@ const CheckinInventory = () => {
 
                 )}
 
-                {products.length == 0 && (
+                {data.length == 0 && (
                     <View style={[styles.containerNodata as any]}>
                         <View style={{ alignItems: "center" }}>
                             <Image style={[styles.iconImage]} source={ImageAssets.IconBill} resizeMode='cover' />
@@ -359,47 +373,54 @@ const CheckinInventory = () => {
 
 export default CheckinInventory;
 
-const styles = StyleSheet.create({
+const createStyles =(theme:AppTheme)=> StyleSheet.create({
+    removeIcon:{
+        position:"absolute",
+        top :20,
+        right :20
+    }as ViewStyle,
     containerNodata: {
         height: "100%",
         justifyContent: "center",
         alignItems: "center"
-    },
+    }as ViewStyle,
     flex: {
         flexDirection: "row",
         alignItems: "center"
-    },
+    } as ViewStyle,
     flexSpace: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center"
-    },
+    }as ViewStyle,
     iconImage: {
         width: 67,
         height: 57,
-    },
+    } as ImageStyle,
     textInventory: {
         fontSize: 16,
         lineHeight: 24,
         fontWeight: "400"
-    },
+    } as TextStyle,
     titile: {
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "500"
-    },
+    }as TextStyle,
     nameProduct: {
         fontSize: 16,
         lineHeight: 24,
-        fontWeight: "500"
-    },
+        fontWeight: "500",
+        color:theme.colors.text_primary
+    }as TextStyle,
     dateProduct: {
         fontSize: 14,
         lineHeight: 21,
-        fontWeight: "400"
-    },
+        fontWeight: "400",
+        color:theme.colors.text_primary
+    } as TextStyle,
     item: {
         paddingHorizontal: 16,
         paddingVertical: 12
-    }
+    }as ViewStyle
 })

@@ -20,10 +20,6 @@ const ItemSkeleton = () => {
                     <SkeletonLoading width={70} height={20} borderRadius={6}/>
                     <SkeletonLoading width={80} height={30} borderRadius={6}/>
                 </View>
-                <View style={styles.row}>
-                    <SkeletonLoading width={90} height={20} borderRadius={6}/>
-                    <SkeletonLoading width={150} height={35} borderRadius={6}/>
-                </View>
                 <View style={[styles.row,{borderColor : colors.bg_default}]}>
                     <SkeletonLoading width={60} height={20} borderRadius={6}/>
                     <SkeletonLoading width={130} height={35} borderRadius={6}/>
