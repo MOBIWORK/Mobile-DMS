@@ -10,6 +10,7 @@ import {
   Image,
   Pressable,
   TextInput as TextInput2,
+  Keyboard,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 
@@ -194,6 +195,7 @@ const FormAdding = (props: Props) => {
         styles={{marginBottom: 20}}
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
+          Keyboard.dismiss();
           filterRef.current?.snapToIndex(0);
         }}
         rightIcon={

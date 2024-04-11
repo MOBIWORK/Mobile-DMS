@@ -1,6 +1,6 @@
 import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {IDataCustomer} from '../../../models/types';
+import {IDataCustomers} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {AppText, Block, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
@@ -11,7 +11,7 @@ import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 
 type Props = {
-  data: IDataCustomer;
+  data: IDataCustomers;
 };
 
 const InforBlock = (props: Props) => {
@@ -30,16 +30,15 @@ const InforBlock = (props: Props) => {
   return (
     <Block style={styles.root}>
       <Block style={styles.containImage}>
-        <Image
-          source={{
-            uri:
-              props.data.image != undefined
-                ? props.data.image
-                : 'https://yt3.googleusercontent.com/ytc/APkrFKa93uRfPROMhBKD5UCngwnLlJqVyhbfJEptGLtK=s900-c-k-c0x00ffffff-no-rj',
-          }}
-          style={styles.imageStyle}
-          resizeMode="center"
-        />
+        {props?.data?.image && (
+          <Image
+            source={{
+              uri: props.data.image !== undefined && props.data.image,
+            }}
+            style={styles.imageStyle}
+            resizeMode="center"
+          />
+        )}
       </Block>
       <MainLayout style={styles.containContent}>
         <Block>
@@ -271,7 +270,6 @@ const InforBlock = (props: Props) => {
               />
             </Mapbox.RasterSource>
             <Mapbox.Camera
-              // ref={mapboxCameraRef}
               ref={ref}
               centerCoordinate={[
                 location?.coords.longitude ?? 0,
@@ -309,13 +307,11 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'center',
       alignSelf: 'center',
       paddingVertical: 16,
-      //   backgroundColor:'red'
     } as ViewStyle,
     imageStyle: {
       width: 90,
       height: 90,
       borderRadius: 12,
-      //   backgroundColor:'red'
     } as ImageStyle,
     containContent: {
       paddingTop: 0,
@@ -329,5 +325,7 @@ const rootStyles = (theme: AppTheme) =>
       width: '100%',
       height: 381,
       marginTop: 8,
+      borderRadius: 12,
+      overflow: 'hidden',
     } as ViewStyle,
   });

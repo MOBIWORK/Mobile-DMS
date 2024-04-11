@@ -28,7 +28,7 @@ const AppInput: FC<AppInputProps> = ({
   return (
     <TouchableOpacity disabled={disable} onPress={onPress}>
       <TextInput
-      onPressIn={onPress}
+        onPressIn={onPress}
         contentStyle={{
           color: colors.text_primary,
           fontSize: 16,
@@ -112,4 +112,4 @@ type AppInputPropsNonEditable = {
   show?: boolean; // Adjust the type accordingly
 } & AppInputPropsBase;
 type AppInputProps = AppInputPropsEditable | AppInputPropsNonEditable;
-export default React.memo(AppInput,isEqual);
+export default React.memo(AppInput, isEqual);

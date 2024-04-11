@@ -11,7 +11,12 @@ const initialState: IProduct = {
     page_size: 20,
     total: 10,
   },
-  listCustomerVisit: [],
+  listCustomerVisit: {
+    data: [],
+    page_number: 1,
+    page_size: 20,
+    total: 20,
+  },
   newCustomer: [],
   listCustomerType: [],
   listCustomerTerritory: [],
