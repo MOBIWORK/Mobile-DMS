@@ -1,5 +1,5 @@
 export type IProduct = {
-  listCustomerVisit: any[];
+  listCustomerVisit: any;
   listCustomer: {
     data: any[];
     page_number: number;

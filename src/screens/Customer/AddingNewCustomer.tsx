@@ -26,14 +26,13 @@ import {
   AppHeader,
   AppIcons,
   AppText,
-  showSnack,
   SvgIcon,
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation/screen-type';
-import {IDataCustomer, KeyAbleProps} from '../../models/types';
+import {IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
@@ -195,8 +194,11 @@ const AddingNewCustomer = () => {
     openImagePickerCamera((selectedImage, base64) => {
       // Handle the selected image, e.g., set it to state
       cameraBottomRef.current?.close();
-      setImageSource(base64);
-      setListData(prevState => ({...prevState, faceimage: base64}));
+      setImageSource('data:image/jpeg;base64,' + base64);
+      setListData(prevState => ({
+        ...prevState,
+        faceimage: `data:image/jpeg;base64,${base64}`,
+      }));
     });
   };
   const onConfirmSingle = React.useCallback<SingleChange>(

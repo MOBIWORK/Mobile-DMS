@@ -40,7 +40,7 @@ import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import isEqual from 'react-fast-compare';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
@@ -56,6 +56,8 @@ const Customer = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const dispatch = useDispatch();
+  const {bottom} = useSafeAreaInsets();
+
   const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer?.data,
     shallowEqual,
@@ -240,25 +242,12 @@ const Customer = () => {
     });
   };
 
-  const listFooter = () => {
-    return (
-      <Block
-        justifyContent="center"
-        alignItems="center"
-        marginTop={8}
-        marginBottom={8}>
-        <ActivityIndicator size={'small'} color={theme.colors.primary} />
-      </Block>
-    );
-  };
-
   const onEndReachedThreshold = useCallback(() => {
     if (page <= totalPage.current) {
-      // dispatch(customerActions.getCustomerNewPage(page + 1));
+      dispatch(customerActions.getCustomerNewPage(page + 1));
     } else {
       return null;
     }
-    // dispatch(customerActions.getCustomerNewPage(1));
   }, [listCustomerResult, dispatch]);
 
   const renderBottomView = React.useCallback(() => {
@@ -351,7 +340,7 @@ const Customer = () => {
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
-      <Block paddingHorizontal={16} block>
+      <Block paddingHorizontal={16} block paddingBottom={bottom + 24}>
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity

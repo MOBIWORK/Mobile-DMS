@@ -125,6 +125,15 @@ export type VisitListItemType = {
   customer_name: string;
   birthday: string | null;
   is_checkin: boolean;
+  total?: number;
+  page_size?: number;
+};
+
+export type VisitListItemResult = {
+  data: VisitListItemType[];
+  total: number;
+  page_size: number;
+  page_number: number;
 };
 
 export interface RootObjectGeoDecoding {
@@ -441,15 +450,15 @@ export type TravelDiaryType = {
 };
 
 export type VisitedItemType = {
-  name: string
-  kh_ten: string
-  kh_ma: string
-  checkin_giovao: string
-  checkin_giora: any
-  checkin_donhang: number
-  checkin_dungtuyen: number
-  doanh_so: number
-  checkin_hinhanh: number
+  name: string;
+  kh_ten: string;
+  kh_ma: string;
+  checkin_giovao: string;
+  checkin_giora: any;
+  checkin_donhang: number;
+  checkin_dungtuyen: number;
+  doanh_so: number;
+  checkin_hinhanh: number;
 };
 
 export type ReportCustomerType = {
@@ -606,6 +615,8 @@ export type ListCustomerRoute = {
   name: string;
   channel_name: string;
   channel_code: string;
+  is_today: boolean;
+  travel_date?: string;
 };
 
 export type IProductPromotion = {
@@ -855,94 +866,93 @@ export type IOrderDetailItem = {
   current_address: string;
 };
 
-
 export interface ReportRouterResultType {
-  doanh_so: number
-  vieng_tham_co_don: number
-  vieng_tham_ko_don: number
-  vieng_tham_co_anh: number
-  vieng_tham_ko_anh: number
-  vt_dung_tuyen: number
-  vt_ngoai_tuyen: number
-  so_kh_da_vt: number
-  so_kh_phai_vt: number
+  doanh_so: number;
+  vieng_tham_co_don: number;
+  vieng_tham_ko_don: number;
+  vieng_tham_co_anh: number;
+  vieng_tham_ko_anh: number;
+  vt_dung_tuyen: number;
+  vt_ngoai_tuyen: number;
+  so_kh_da_vt: number;
+  so_kh_phai_vt: number;
 }
 
 export interface ReportTravelDiaryType {
-  __time: string
-  objectid: string
-  projectid: string
-  uuid: string
-  lng: any
-  lat: any
-  activity: string
-  accuracy: number
-  battery_checkin: number
-  battery_checkout: number
-  createddate: string
-  time_checkout: string
-  time_checkin: string
-  ext: string
-  timestamp: string
-  coordinates: string
-  "kafka.timestamp": number
-  "kafka.topic": string,
-  address : string | null,
+  __time: string;
+  objectid: string;
+  projectid: string;
+  uuid: string;
+  lng: any;
+  lat: any;
+  activity: string;
+  accuracy: number;
+  battery_checkin: number;
+  battery_checkout: number;
+  createddate: string;
+  time_checkout: string;
+  time_checkin: string;
+  ext: string;
+  timestamp: string;
+  coordinates: string;
+  'kafka.timestamp': number;
+  'kafka.topic': string;
+  address: string | null;
 }
 
 export interface VisitReportNoCheckin {
-  customer: string
-  customer_code: string
-  customer_name: string
-  display_address: any
-  phone_number: any
+  customer: string;
+  customer_code: string;
+  customer_name: string;
+  display_address: any;
+  phone_number: any;
 }
 export interface VisitCheckinReport {
-  doanh_so: number
-  so_kh_da_vt: number
-  so_kh_chua_vt: number
+  doanh_so: number;
+  so_kh_da_vt: number;
+  so_kh_chua_vt: number;
 }
 export interface StatisticsOrder {
-  total_customers: number
-  total_items: number
-  total_qty: number
-  sum_amount : number
+  total_customers: number;
+  total_items: number;
+  total_qty: number;
+  sum_amount: number;
 }
 
 export interface StatisticsOrderCustomer {
-  customer: string
-  customer_code: string
-  qty: number
-  amount: number
+  customer: string;
+  customer_code: string;
+  qty: number;
+  amount: number;
 }
 export interface StatisticsOrderProduct {
-  item_name: string
-  rate: number
-  qty: number
-  uom: string
-  amount: number
-  item_code : string
+  item_name: string;
+  rate: number;
+  qty: number;
+  uom: string;
+  amount: number;
+  item_code: string;
 }
-export interface ReportTagerKpiType{
-  so_ngay_thuc_hien: number
-  th_doanh_thu: number
-  kh_doanh_thu: number
-  cl_doanh_thu: number
-  th_doanh_so: number
-  kh_doanh_so: number
-  cl_doanh_so: number
-  th_don_hang: number
-  kh_don_hang: number
-  cl_don_hang: number
-  th_vieng_tham: number
-  kh_vieng_tham: number
-  cl_vieng_tham: number
-  th_kh_moi: number
-  kh_kh_moi: number
-  cl_kh_moi: number
-  ti_le_doanh_thu: number
-  ti_le_doanh_so: number
-  ti_le_don_hang: number
-  ti_le_vieng_tham: number
-  ti_le_kh_moi: number
+export interface ReportTagerKpiType {
+  so_ngay_thuc_hien: number;
+  th_doanh_thu: number;
+  kh_doanh_thu: number;
+  cl_doanh_thu: number;
+  th_doanh_so: number;
+  kh_doanh_so: number;
+  cl_doanh_so: number;
+  th_don_hang: number;
+  kh_don_hang: number;
+  cl_don_hang: number;
+  th_vieng_tham: number;
+  kh_vieng_tham: number;
+  cl_vieng_tham: number;
+  th_kh_moi: number;
+  kh_kh_moi: number;
+  cl_kh_moi: number;
+  ti_le_doanh_thu: number;
+  ti_le_doanh_so: number;
+  ti_le_don_hang: number;
+  ti_le_vieng_tham: number;
+  ti_le_kh_moi: number;
 }
