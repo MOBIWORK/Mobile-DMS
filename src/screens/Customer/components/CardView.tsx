@@ -19,12 +19,20 @@ import {IDataCustomers} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
+import { dispatch } from '../../../utils/redux';
+import { orderAction } from '../../../redux-store/order-reducer/reducer';
 
 const CardView = (props: IDataCustomers) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const {t: translate} = useTranslation();
+
+  const navigateOrder = ()=>{
+    dispatch(orderAction.setCustomerOder(props));
+    navigation.navigate(ScreenConstant.CHECKIN_ORDER_CREATE,{type:"ORDER"})
+  }
+
   return (
     <TouchableOpacity
       style={styles.card}
@@ -42,11 +50,7 @@ const CardView = (props: IDataCustomers) => {
           <View style={styles.containButton}>
             <TouchableOpacity
               style={styles.containButtonBuy}
-              onPress={() =>
-                navigation.navigate(ScreenConstant.DETAIL_CUSTOMER, {
-                  data: props,
-                })
-              }>
+              onPress={navigateOrder}>
               <Text style={styles.textOrder}>{translate('putOrder')}</Text>
             </TouchableOpacity>
           </View>

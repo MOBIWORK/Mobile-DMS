@@ -41,6 +41,7 @@ import { productActions } from '../../../redux-store/product-reducer/reducer';
 import { useMMKVObject } from 'react-native-mmkv';
 import { DatePickerModal } from 'react-native-paper-dates';
 import { SingleChange } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import { orderAction } from '../../../redux-store/order-reducer/reducer';
 
 const defautItem1 = {
     "doctype": "Sales Order Item",
@@ -83,6 +84,7 @@ const CreateOrder = () => {
     const [dataVat, setDataVat] = useState<any[]>([]);
     const data = useSelector(state => state.product.dataSelected);
     const dataCheckin = useSelector(state => state.app.dataCheckIn);
+    const customer  = useSelector(state =>state.order.customerOrder);
     const [products, setProducts] = useState<IProduct[]>([]);
     const [productsPromotion, setProductsPromotion] = useState<IProductPromotion[]>([]);
     const [productDetail, setProductDetail] = useState<IProduct | any>();
@@ -105,7 +107,8 @@ const CreateOrder = () => {
     const [vatAmount, setVatAmount] = useState<number>(0);
 
     const onBackScreen = () => {
-        dispatch(productActions.setProductSelected([]))
+        dispatch(productActions.setProductSelected([]));
+        if(customer) dispatch(orderAction.setCustomerOder(null));
         navigation.goBack()
     };
 
@@ -584,7 +587,6 @@ const CreateOrder = () => {
     }, [setOpenDate]);
 
 
-
     const onCreatedOrder = async () => {
         let status: any = 0
         const arrItems = products.map(item => ({ item_code: item.item_code, qty: item.quantity, rate: item.price, uom: item.stock_uom, discount_percentage: item.discount }))
@@ -600,7 +602,10 @@ const CreateOrder = () => {
         }
         if (dataCheckin) {
             objectData["checkin_id"] = dataCheckin.checkin_id;
-            objectData["customer"] = dataCheckin.item.name;
+            objectData["customer"] = dataCheckin.customer_name;
+        }
+        if(customer) {
+            objectData["customer"] = customer.customer_name;
         }
 
         switch (type) {
@@ -616,9 +621,6 @@ const CreateOrder = () => {
             default:
                 break;
         }
-        console.log('====================================');
-        console.log(objectData);
-        console.log('====================================');
         if (status === ApiConstant.STT_CREATED) onBackScreen();
     };
 
