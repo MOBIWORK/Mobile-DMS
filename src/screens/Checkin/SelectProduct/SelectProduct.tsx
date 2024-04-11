@@ -98,7 +98,7 @@ const SelectProducts = () => {
                     <View style={{ flex: 1 }}>
 
                         <View style={[styles.flex,{justifyContent:"space-between"}]} > 
-                            <View>
+                            <View style={{width :"65%"}}>
                                 <View style={[styles.flex as any, { justifyContent: "flex-start", columnGap: 10 }]}>
                                     <AppCheckBox status={item.isSelected ? true : false}
                                         onChangeValue={() => onSelectProduct(item.item_code, item.isSelected ? item.isSelected : false)}
