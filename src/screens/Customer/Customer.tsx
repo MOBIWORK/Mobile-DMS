@@ -112,6 +112,7 @@ const Customer = () => {
   };
   const onPressType2 = useCallback(() => {
     bottomRef2.current?.snapToIndex(0);
+    bottomRef.current?.close();
   }, [bottomRef2.current]);
 
   const sortedData = useCallback(
@@ -387,18 +388,18 @@ const Customer = () => {
       <AppBottomSheet
         bottomSheetRef={bottomRef}
         useBottomSheetView={show.firstModal}
-        onAnimated={(index, toIndex) => {
-          if (index != undefined && toIndex != undefined) {
-            let cal = index - toIndex;
-            if (cal > 0) {
-              setShow(prev => ({...prev, firstModal: false}));
-              //  dispatch(appActions.setShowModal(false))
-            } else {
-              setShow(prev => ({...prev, firstModal: true}));
-              //  dispatch(appActions.setShowModal(true))
-            }
-          }
-        }}
+        // onAnimated={(index, toIndex) => {
+        //   if (index != undefined && toIndex != undefined) {
+        //     let cal = index - toIndex;
+        //     if (cal > 0) {
+        //       setShow(prev => ({...prev, firstModal: false}));
+        //       //  dispatch(appActions.setShowModal(false))
+        //     } else {
+        //       setShow(prev => ({...prev, firstModal: true}));
+        //       //  dispatch(appActions.setShowModal(true))
+        //     }
+        //   }
+        // }}
         enablePanDownToClose={true}>
         <View>
           <View style={styles.tittleHeader}>
