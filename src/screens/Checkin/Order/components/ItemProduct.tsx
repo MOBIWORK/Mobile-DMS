@@ -8,7 +8,7 @@ import { CommonUtils } from '../../../../utils';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native';
 
-const ItemProduct = ({ name,code, dvt, quantity, price, percentage_discount, onRemove }: ProductProps) => {
+const ItemProduct = ({ name, code, dvt, quantity, price, percentage_discount, onRemove }: ProductProps) => {
 
     const { t: getLabel } = useTranslation();
     const { colors } = useTheme();
@@ -22,39 +22,19 @@ const ItemProduct = ({ name,code, dvt, quantity, price, percentage_discount, onR
     }
     return (
         <View style={styles.container}>
-            <View style={[styles.flexSpace]}>
-                <View>
-                    <View style={styles.flex} >
-                        <AppIcons iconType={ICON_TYPE.IonIcon} name='barcode-outline' size={24} color={colors.text_secondary} />
-                        <Text style={[styles.code, { marginLeft: 4 }]}>{code}</Text>
-                    </View>
-                    <Text style={[styles.name, { marginLeft: 4 }]}>{name}</Text>
-
-                </View>
-                <View>
-                    {onRemove && (
-                        <TouchableOpacity onPress={() => onRemove && onRemove(name)} style={{paddingTop :3}}>
-                            <AppIcons iconType={ICON_TYPE.IonIcon} name='trash-outline' size={18} color={colors.error} />
-                        </TouchableOpacity>
-                    )}
-                </View>
+            <View style={styles.flex} >
+                <AppIcons iconType={ICON_TYPE.IonIcon} name='barcode-outline' size={24} color={colors.text_secondary} />
+                <Text style={[styles.code, { marginLeft: 4 }]}>{code}</Text>
+            </View>
+            <View style={{ width: "80%" }}>
+                <Text style={[styles.name]}>{name}</Text>
+            </View>
+            <View style={[styles.flexSpace, { paddingBottom: 8 }]}>
+                <Text style={styles.textIf(colors.text_primary)}>{CommonUtils.formatCash(price?.toString() || "")} {``} đ</Text>
+                <Text style={styles.textIf(colors.text_primary)} >x{quantity} {`(${dvt})`}</Text>
             </View>
 
             <View style={styles.contaienrIf}>
-                <View style={[styles.flexSpace, { paddingVertical: 4 }]}>
-                    <Text style={styles.textIf(colors.text_secondary)}>{getLabel("unit")}</Text>
-                    <Text style={styles.textIf(colors.text_primary)}>{dvt}</Text>
-                </View>
-                <View style={[styles.flexSpace, { paddingVertical: 4 }]}>
-                    <Text style={styles.textIf(colors.text_secondary)}>{getLabel("quantity")}</Text>
-                    <Text style={styles.textIf(colors.text_primary)}>{quantity}</Text>
-                </View>
-                {price?.toString() && (
-                    <View style={[styles.flexSpace, { paddingVertical: 4 }]}>
-                        <Text style={styles.textIf(colors.text_secondary)}>{getLabel("unitPrice")}</Text>
-                        <Text style={styles.textIf(colors.text_primary)}>{CommonUtils.formatCash(price.toString())}</Text>
-                    </View>
-                )}
                 {percentage_discount?.toString() && (
                     <View style={[styles.flexSpace, { paddingVertical: 4 }]}>
                         <Text style={styles.textIf(colors.text_secondary)}>{getLabel("discount")} (%)</Text>
@@ -72,16 +52,23 @@ const ItemProduct = ({ name,code, dvt, quantity, price, percentage_discount, onR
             </View>
             {price?.toString() && (
                 <View style={styles.flexSpace}>
-                    <Text style={styles.textIf(colors.text_primary)}>{getLabel("intoMoney")}</Text>
+                    <Text style={styles.textIf(colors.text_secondary)}>{getLabel("intoMoney")}:</Text>
                     <Text style={styles.name}>{CommonUtils.formatCash(totalPrice.toString())}</Text>
                 </View>
             )}
+
+            {onRemove && (
+                <TouchableOpacity onPress={() => onRemove && onRemove(name)} style={[styles.iconRemove]}>
+                    <AppIcons iconType={ICON_TYPE.IonIcon} name='trash-outline' size={22} color={colors.error} />
+                </TouchableOpacity>
+            )}
+
         </View>
     )
 }
 
 interface ProductProps {
-    code : string
+    code: string
     name: string,
     dvt: string,
     quantity: number,
@@ -94,12 +81,17 @@ interface ProductProps {
 export default ItemProduct;
 
 const createSheetStyle = (theme: AppTheme) => StyleSheet.create({
-    code :{
+    iconRemove: {
+        position: "absolute",
+        top: 16,
+        right: 20
+    } as ViewStyle,
+    code: {
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "400",
         color: theme.colors.text_secondary
-    }as TextStyle,
+    } as TextStyle,
     flex: {
         flexDirection: "row",
         alignItems: "center",
@@ -130,9 +122,9 @@ const createSheetStyle = (theme: AppTheme) => StyleSheet.create({
         color: color
     } as TextStyle),
     contaienrIf: {
-        paddingVertical: 4,
+        paddingTop: 12,
         borderTopWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: theme.colors.divider
+        borderColor: theme.colors.divider,
+        borderStyle: "dashed"
     } as ViewStyle
 })

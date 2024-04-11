@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {PayloadAction, createAction} from '@reduxjs/toolkit';
 import {OrderStateType} from './type';
-import {IOrderDetail, IOrderList} from '../../models/types';
+import {IDataCustomer, IOrderDetail, IOrderList} from '../../models/types';
 import * as Action from './type';
 import {PramsTypeOrder} from '../../services/orderService';
 
@@ -12,6 +12,7 @@ const initialState: OrderStateType = {
   message: '',
   totalItem: 0,
   item: null,
+  customerOrder : null
 };
 type DataType = {
   data: IOrderList[];
@@ -56,6 +57,9 @@ const orderSlice = createSlice({
       state.item = action.payload;
     },
     setLogoutData: (state: any) => (state = undefined),
+    setCustomerOder: (state, action: PayloadAction<IDataCustomer | null>) => {
+      state.customerOrder = action.payload;
+    },
   },
 });
 
