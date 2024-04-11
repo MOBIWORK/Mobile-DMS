@@ -21,6 +21,8 @@ import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import { dispatch } from '../../../utils/redux';
 import { orderAction } from '../../../redux-store/order-reducer/reducer';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 
 const CardView = (props: IDataCustomers) => {
   const theme = useTheme();
@@ -30,6 +32,7 @@ const CardView = (props: IDataCustomers) => {
 
   const navigateOrder = ()=>{
     dispatch(orderAction.setCustomerOder(props));
+    dispatch(appActions.setDataCheckIn(null));
     navigation.navigate(ScreenConstant.CHECKIN_ORDER_CREATE,{type:"ORDER"})
   }
 
