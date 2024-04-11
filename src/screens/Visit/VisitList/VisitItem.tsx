@@ -196,11 +196,10 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
             ]}>
             <AppButton
               onPress={() => handleBackground(item, false)}
-              disabled={item.is_checkin}
-              style={createStyleSheet(theme).button(item.is_checkin)}
+              style={createStyleSheet(theme).button(false)}
               label={'Checkin'}
               styleLabel={{
-                color: !item.is_checkin ? colors.action : colors.text_disable,
+                color: colors.action,
                 fontWeight: '400',
               }}
             />
