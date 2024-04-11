@@ -177,6 +177,7 @@ const CheckinOrder = () => {
                           item.amount *
                           (item.discount_percentage / 100)
                         ).toString()}
+                        onRemove={()=> console.log(12)}
                       />
                     </Pressable>
                   ))}
