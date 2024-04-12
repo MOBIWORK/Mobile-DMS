@@ -437,6 +437,7 @@ const SelectProducts = () => {
         fetchIndustryProduct();
     }, [])
 
+
     useEffect(()=>{
         debouncedSearch(textSearch)
     },[textSearch])
@@ -457,6 +458,11 @@ const SelectProducts = () => {
         }))
     }, [filterProduct.brand, filterProduct.group, filterProduct.industry, page, pageSize,productName])
 
+
+    useEffect(() => {
+        dispatch(productActions.resetDataProduct());
+    }, [filterProduct.brand, filterProduct.group, filterProduct.industry,productName])
+    
     return (
         <>
             <MainLayout style={styles.layout}>
