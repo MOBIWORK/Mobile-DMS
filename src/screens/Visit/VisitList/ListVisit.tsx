@@ -25,7 +25,12 @@ import {
 import {ImageAssets} from '../../../assets';
 import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
-import {ListCustomerType, VisitListItemType} from '../../../models/types';
+import {
+  ListCustomerRoute,
+  ListCustomerType,
+  VisitListItemResult,
+  VisitListItemType,
+} from '../../../models/types';
 import VisitItem, {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
@@ -67,13 +72,15 @@ const ListVisit = () => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
+  const dispatch = useDispatch();
 
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
   const filterRef = useRef<BottomSheet>(null);
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
-  const listCustomer: VisitListItemType[] = useSelector(
+
+  const listCustomer: VisitListItemResult = useSelector(
     state => state.customer.listCustomerVisit,
   );
   const lisCustomerRoute = useSelector(
@@ -97,7 +104,8 @@ const ListVisit = () => {
   const [distanceFilterData, setDistanceFilterData] = useState<IFilterType[]>(
     AppConstant.DistanceFilterData,
   );
-  const dispatch = useDispatch();
+
+  const routeTodayRef = useRef<any>();
 
   //refresh data
   const filterDataRef = useRef<IListVisitParams>({});
@@ -138,13 +146,46 @@ const ListVisit = () => {
   const onRefreshData = useCallback(async () => {
     try {
       setLoading(true);
-      await getCustomer(filterDataRef.current);
+      if (Object.keys(filterDataRef.current).length > 0) {
+        await getCustomer(filterDataRef.current);
+      } else {
+        await getCustomer({
+          ...filterParams,
+          router: filterParams?.router?.channel_code,
+        });
+      }
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
       setLoading(false);
     }
-  }, [dispatch]);
+  }, [dispatch, filterParams]);
+
+  const onEndReachedThreshold = useCallback(async () => {
+    const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
+    if (listCustomer.page_number <= totalPage) {
+      if (Object.keys(filterDataRef.current).length > 0) {
+        await getCustomer(
+          {
+            ...filterDataRef.current,
+            page_number: listCustomer.page_number + 1,
+          },
+          true,
+        );
+      } else {
+        await getCustomer(
+          {
+            ...filterParams,
+            router: filterParams?.router?.channel_code,
+            page_number: listCustomer.page_number + 1,
+          },
+          true,
+        );
+      }
+    } else {
+      return null;
+    }
+  }, [listCustomer, dispatch]);
 
   const handleItemDistanceFilter = (itemData: IFilterType) => {
     distanceRef.current?.close();
@@ -267,7 +308,7 @@ const ListVisit = () => {
               <FlatList
                 style={{height: '85%'}}
                 showsVerticalScrollIndicator={false}
-                data={customerDataSort ?? listCustomer}
+                data={customerDataSort ?? listCustomer.data}
                 keyExtractor={(item, index) =>
                   `${item.customer_code} - ${index}`
                 }
@@ -290,6 +331,8 @@ const ListVisit = () => {
                     // onPress={handleBackground}
                   />
                 )}
+                onEndReached={onEndReachedThreshold}
+                onEndReachedThreshold={0.5}
               />
             )}
           </View>
@@ -394,22 +437,34 @@ const ListVisit = () => {
     CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
 
-  const getCustomer = async (params?: IListVisitParams) => {
+  const getCustomer = async (params?: IListVisitParams, isMore?: boolean) => {
     await getCustomerVisit(params).then((res: any) => {
       if (Object.keys(res.result).length > 0) {
-        const data: VisitListItemType[] = res?.result.data;
-        // const newData = data.filter(item => item.customer_location_primary);
-        dispatch(customerActions.setCustomerVisit(data));
+        const data: VisitListItemResult = res?.result;
+        if (isMore) {
+          const newData: VisitListItemType[] = [
+            ...listCustomer.data,
+            ...data.data,
+          ];
+          dispatch(
+            customerActions.setCustomerVisit({
+              ...data,
+              data: newData,
+            }),
+          );
+        } else {
+          dispatch(customerActions.setCustomerVisit(data));
+        }
       }
     });
   };
 
   const sortDataCustomer = (distanceLabel: string) => {
-    if (listCustomer && listCustomer.length > 0) {
-      const filteredData = listCustomer.filter(
+    if (listCustomer && listCustomer.data.length > 0) {
+      const filteredData = listCustomer.data.filter(
         item => item.customer_location_primary != null,
       );
-      const noLocationCustomer = listCustomer.filter(
+      const noLocationCustomer = listCustomer.data.filter(
         item => item.customer_location_primary === null,
       );
       const sortedData = () => {
@@ -447,7 +502,26 @@ const ListVisit = () => {
     if (lisCustomerRoute.length === 0) {
       const response: any = await CustomerService.getCustomerRoute();
       if (response?.result.length > 0) {
-        dispatch(customerActions.setListCustomerRoute(response.result));
+        //add "all" to list route:
+        const all_route: ListCustomerRoute = {
+          name: '',
+          channel_name: 'Tất cả',
+          channel_code: '',
+          travel_date: '',
+          is_today: false,
+        };
+        const newListRoute: ListCustomerRoute[] = [all_route].concat(
+          response.result,
+        );
+        dispatch(customerActions.setListCustomerRoute(newListRoute));
+        const route_today: ListCustomerRoute[] = response.result.filter(
+          (item: ListCustomerRoute) => item.is_today,
+        );
+        if (route_today.length > 0) {
+          setFilterParams({router: route_today[0]});
+          routeTodayRef.current = route_today[0];
+          await getCustomer({router: route_today[0].channel_code});
+        }
       }
     }
   };
@@ -463,8 +537,8 @@ const ListVisit = () => {
 
   const getData = async () => {
     setLoading(true);
-    await sortDataCustomer(distanceFilterValue);
     await getCustomerRoute();
+    await sortDataCustomer(distanceFilterValue);
     await getDataGroup();
     setLoading(false);
   };
@@ -472,7 +546,8 @@ const ListVisit = () => {
   const handleReset = async () => {
     try {
       setLoading(true);
-      await getCustomer();
+      setFilterParams({router: routeTodayRef.current});
+      await getCustomer({router: routeTodayRef.current.channel_code});
     } catch (e) {
       //
     } finally {

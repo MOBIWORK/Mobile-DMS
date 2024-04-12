@@ -153,7 +153,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
             label={getLabel('reset')}
             styleLabel={{color: colors.text_secondary}}
             onPress={() => {
-              setFilter({});
+              // setFilter({});
               bottomSheetRef.current?.close();
               handleReset();
             }}

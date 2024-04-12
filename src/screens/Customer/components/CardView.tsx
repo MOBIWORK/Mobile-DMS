@@ -147,7 +147,6 @@ const rootStyles = (theme: AppTheme) =>
     containButton: {
       justifyContent: 'center',
       alignItems: 'center',
-      flex: 1,
     } as ViewStyle,
     containButtonBuy: {
       borderRadius: 16,
