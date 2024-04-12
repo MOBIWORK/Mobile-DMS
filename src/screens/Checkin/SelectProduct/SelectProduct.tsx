@@ -3,7 +3,7 @@ import { MainLayout } from '../../../layouts'
 import { AppBottomSheet, AppButton, AppCheckBox, AppHeader, AppIcons, AppInput } from '../../../components/common'
 import { ApiConstant, AppConstant } from '../../../const'
 import { useNavigation } from '@react-navigation/native'
-import { Text, TextInput as Input, TextStyle, View, ViewStyle, TouchableOpacity, FlatList, Pressable } from 'react-native'
+import { Text, TextInput as Input, TextStyle, View, ViewStyle, TouchableOpacity, FlatList, Pressable, Animated } from 'react-native'
 import { StyleSheet } from 'react-native'
 import { Searchbar, TextInput } from 'react-native-paper'
 import { ImageAssets } from '../../../assets'
@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next'
 import { CommonUtils } from '../../../utils'
 import { AppTheme, useTheme } from '../../../layouts/theme'
 import ItemSkeleton from './ItemSkeleton'
+import { useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 
 const initFilterValue = {
     label: "",
@@ -49,13 +50,15 @@ const SelectProducts = () => {
     const [category, setCategory] = useState<IFilterType>(initFilterValue);
     const [brand, setBrand] = useState<IFilterType>(initFilterValue);
     const [industry, setIndustry] = useState<IFilterType>(initFilterValue);
+    const [isSearch,setShowSearch] = useState<boolean>(false);
+    const [textSearch, setTextSearch] = useState<string>("");
+    const [productName,setProductName] = useState<string>("")
 
     const [filterProduct, setFilterProduct] = useState({
         brand: "",
         group: "",
         industry: ""
     })
-    const [textSearch, setTextSearch] = useState<string>("");
 
     const openBottomSheetDataFilter = (type: string, item?: IProduct) => {
         setDataFilter([]);
@@ -99,7 +102,7 @@ const SelectProducts = () => {
 
                         <View style={[styles.flex,{justifyContent:"space-between"}]} > 
                             <View style={{width :"65%"}}>
-                                <View style={[styles.flex as any, { justifyContent: "flex-start", columnGap: 10 }]}>
+                                <View style={[styles.flex as any, { justifyContent: "flex-start", columnGap: 16 }]}>
                                     <AppCheckBox status={item.isSelected ? true : false}
                                         onChangeValue={() => onSelectProduct(item.item_code, item.isSelected ? item.isSelected : false)}
                                     />
@@ -413,11 +416,31 @@ const SelectProducts = () => {
         }
     }
 
+    const animatedValue = useRef(new Animated.Value(1000)).current;
+
+    const animatedStyle = ()=>{
+        Animated.timing(animatedValue,{
+            toValue :0,
+            duration:1000,
+            useNativeDriver:false
+        }).start()
+
+    }
+    const debouncedSearch = CommonUtils.debounce(function(query :string) {
+        setPage(1)
+        setProductName(query)
+    }, 1000);
+
     useEffect(() => {
         fetchBrandProduct();
         fetchGroupProduct();
         fetchIndustryProduct();
     }, [])
+
+    useEffect(()=>{
+        debouncedSearch(textSearch)
+    },[textSearch])
+
 
     useEffect(() => {
         setData(products)
@@ -428,16 +451,18 @@ const SelectProducts = () => {
             item_group: filterProduct.group,
             brand: filterProduct.brand,
             industry: filterProduct.industry,
+            item_name:productName,
             page: page,
             page_size: pageSize,
         }))
-    }, [filterProduct.brand, filterProduct.group, filterProduct.industry, page, pageSize])
+    }, [filterProduct.brand, filterProduct.group, filterProduct.industry, page, pageSize,productName])
 
     return (
         <>
             <MainLayout style={styles.layout}>
                 
                 <View style={styles.container}>
+
                     <AppHeader
                         label={getLabel("product")}
                         onBack={() => navigation.goBack()}
@@ -459,7 +484,7 @@ const SelectProducts = () => {
                                         color={colors.text_secondary}
                                     />
                                 </TouchableOpacity>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={()=>{setShowSearch(true);animatedStyle()}} >
                                     <AppIcons
                                         iconType={AppConstant.ICON_TYPE.Feather}
                                         name={'search'}
@@ -470,28 +495,24 @@ const SelectProducts = () => {
                             </View>
                         }
                     />
-                    {/* <View style={[styles.flex as any, { marginTop: 16 }]}>
-                        <Searchbar
-                            style={styles.searchStyle}
-                            placeholder={getLabel("searchProduct")}
-                            placeholderTextColor={colors.text_disable}
-                            icon={ImageAssets.SearchIcon}
-                            value={textSearch}
-                            onChangeText={(txt: string) => setTextSearch(txt)}
-                            inputStyle={{ color: colors.text_primary }}
-                        />
-                        <TouchableOpacity onPress={() => bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)}>
-                            <View style={[styles.flex as any, { paddingHorizontal: 10 }]}>
-                                <AppIcons
-                                    iconType={AppConstant.ICON_TYPE.IonIcon}
-                                    name={'filter'}
-                                    size={24}
-                                    color={colors.text_secondary}
-                                />
-                                <Text style={[styles.filter as any, { color: colors.text_primary, marginLeft: 4 }]}>{getLabel("fill")}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View> */}
+
+                    {isSearch && (
+                        <Animated.View style={[styles.containerSearh,styles.flex as any, { marginTop: 16 ,columnGap :8,transform :[{translateX :animatedValue}]}]}>
+                            <Searchbar
+                                style={styles.searchStyle}
+                                placeholder={getLabel("searchProduct")}
+                                placeholderTextColor={colors.text_disable}
+                                icon={ImageAssets.SearchIcon}
+                                value={textSearch}
+                                autoFocus
+                                onChangeText={(txt: string) => setTextSearch(txt)}
+                                inputStyle={{ color: colors.text_primary }}
+                            />
+                            <TouchableOpacity onPress={()=>setShowSearch(false)}>
+                                <Text style={[styles.headerAction as any, { color: colors.action}]}>{getLabel("cancel")}</Text>
+                            </TouchableOpacity>
+                        </Animated.View>
+                    )}
 
                 </View>
 
@@ -571,6 +592,13 @@ const SelectProducts = () => {
 export default SelectProducts;
 
 const createStyles = (theme: AppTheme) => StyleSheet.create({
+    containerSearh:{
+        position:"absolute",
+        top :0,
+        left :16,
+        right :16,
+        backgroundColor :theme.colors.bg_neutral
+    }as ViewStyle,
     actionSubmit:{
         backgroundColor:theme.colors.primary,
         paddingHorizontal:12,
@@ -599,7 +627,7 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
     filter: {
         fontSize: 14,
         lineHeight: 21,
-        fontWeight: "400",
+        fontWeight: "500",
         color: theme.colors.text_primary
     } as TextStyle,
     action: {
@@ -639,7 +667,7 @@ const createStyles = (theme: AppTheme) => StyleSheet.create({
         marginBottom: 16
     } as ViewStyle,
     searchStyle: {
-        backgroundColor: theme.colors.bg_neutral,
+        backgroundColor: theme.colors.bg_default,
         borderRadius: 10,
         height: 50,
         flex: 1
