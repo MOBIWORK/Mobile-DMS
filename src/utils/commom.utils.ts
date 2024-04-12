@@ -20,6 +20,17 @@ import Geolocation, {
 
 export const storage = new MMKV();
 
+export function debounce(func : any, delay : number) {
+  let timeoutId : any;
+  return function(...args :any) {
+    const context = this;
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
 export const sleep = (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms));
 
