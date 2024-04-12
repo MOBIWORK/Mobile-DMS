@@ -72,6 +72,11 @@ const FormAdding = (props: Props) => {
   const [value, setValue] = useState<string>('');
   const mapboxCameraRef = useRef<CameraRef>(null);
 
+  const converArr = (arr: any[])=>{
+      const newArr = arr.map(item => item.title);
+      return newArr.join(",")
+  }
+
   const handleMarkerMap = async (lat: number, lng: number) => {
     setLocation({
       // @ts-ignore
@@ -282,7 +287,7 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('frequency')}
-        value={valueFilter.frequency ? valueFilter.frequency.toString() : ''}
+        value={valueFilter.frequency ? converArr(valueFilter.frequency) : ''}
         editable={false}
         isRequire={false}
         contentStyle={styles.contentStyle}
