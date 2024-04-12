@@ -48,9 +48,9 @@ const ListFilterAdding = (props: Props) => {
         const isItemInFrequency = prev?.frequency?.includes(item.title);
         const updatedFrequency = isItemInFrequency
           ? prev?.frequency?.filter(
-              (selectedItem: any) => selectedItem !== item.title,
+              (selectedItem: any) => selectedItem !== item.id,
             )
-          : [...(prev?.frequency || []), item.title];
+          : [...(prev?.frequency || []), item];
         return {
           ...prev,
           frequency: updatedFrequency,
