@@ -427,6 +427,7 @@ const SelectProducts = () => {
 
     }
     const debouncedSearch = CommonUtils.debounce(function(query :string) {
+        setPage(1)
         setProductName(query)
     }, 1000);
 
