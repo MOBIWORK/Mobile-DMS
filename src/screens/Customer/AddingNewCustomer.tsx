@@ -109,14 +109,13 @@ const AddingNewCustomer = () => {
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
   const onPressAdding = async (newListData: IDataCustomer) => {
-    
-    const frequency = newListData.frequency?.map((item :any) => item.value)
-    
     const address: MainAddress = mainAddress;
     const contact: MainContactAddress = mainContactAddress;
     const updateListData: IDataCustomer = {
       ...newListData,
-      frequency: frequency ? frequency.join(";") : '',
+      frequency: newListData?.frequency
+        ? newListData.frequency.toString().replace(',', ';')
+        : '',
       customer_type:
         newListData.customer_type === getLabel('individual')
           ? 'Individual'

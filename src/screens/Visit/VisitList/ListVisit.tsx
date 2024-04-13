@@ -517,10 +517,15 @@ const ListVisit = () => {
         const route_today: ListCustomerRoute[] = response.result.filter(
           (item: ListCustomerRoute) => item.is_today,
         );
-        if (route_today.length > 0) {
+        console.log('hahahahaaaa', route_today);
+        if (route_today && route_today?.length > 0) {
           setFilterParams({router: route_today[0]});
           routeTodayRef.current = route_today[0];
           await getCustomer({router: route_today[0].channel_code});
+        } else {
+          setFilterParams({router: all_route});
+          routeTodayRef.current = all_route;
+          await getCustomer();
         }
       }
     }

@@ -45,24 +45,17 @@ const ListFilterAdding = (props: Props) => {
   const handlePress = useCallback(
     (item: any) => {
       setData(prev => {
-        const isItemInFrequency = prev?.frequency?.includes(item.title);
+        const isItemInFrequency = prev?.frequency?.includes(item.value);
         const updatedFrequency = isItemInFrequency
           ? prev?.frequency?.filter(
-              (selectedItem: any) => selectedItem !== item.id,
+              (selectedItem: any) => selectedItem !== item.value,
             )
-          : [...(prev?.frequency || []), item];
+          : [...(prev?.frequency || []), item.value];
         return {
           ...prev,
           frequency: updatedFrequency,
         };
       });
-
-      setValueFilter(prev => ({
-        ...prev,
-        customerGroupType: item.title,
-      }));
-
-      // filterRef?.current?.close();
     },
     [setData, setValueFilter, filterRef],
   );
@@ -366,7 +359,7 @@ const ListFilterAdding = (props: Props) => {
                 key={item.id.toString()}
                 onPress={() => handlePress(item)}>
                 <Text style={{marginVertical: 8}}>{item.title}</Text>
-                {data.frequency && data.frequency.includes(item.title) && (
+                {data.frequency && data.frequency.includes(item.value) && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
                     name="check"

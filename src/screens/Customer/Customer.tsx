@@ -6,7 +6,6 @@ import {
   ViewStyle,
   TextStyle,
   ImageStyle,
-  ActivityIndicator,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import React, {useRef, useMemo, useCallback} from 'react';
@@ -360,7 +359,7 @@ const Customer = () => {
 
         <Text style={styles.containCustomer}>
           <Text style={styles.numberCustomer}>
-            {customerData.current.length}{' '}
+            {listCustomerResult?.total}{' '}
           </Text>
           {getLabel('customer')}
         </Text>
