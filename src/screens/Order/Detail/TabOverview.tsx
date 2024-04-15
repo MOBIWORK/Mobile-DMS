@@ -34,7 +34,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const TabOverview = ({ data }: PropsType) => {
     const { colors } = useTheme();
     const bottomSheetRef = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['100%'], []);
+    const snapPoints = useMemo(() => ['90%'], []);
     const styles = createStyles(useTheme());
     const { t: getLabel } = useTranslation();
     const { bottom } = useSafeAreaInsets();
@@ -315,7 +315,6 @@ const TabOverview = ({ data }: PropsType) => {
                                                     item.amount *
                                                     (item.discount_percentage / 100)
                                                 ).toString()}
-                                                onRemove={()=> console.log("remove-product")}
                                             />
                                         </Pressable>
                                     ))}
@@ -593,6 +592,7 @@ const createStyles = (theme: AppTheme) =>
             position: 'absolute',
             width: '100%',
             alignSelf: 'center',
+            marginBottom :30
         } as ViewStyle,
         footerDetail: {
             paddingVertical: 16,
