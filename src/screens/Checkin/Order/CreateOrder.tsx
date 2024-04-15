@@ -538,8 +538,8 @@ const CreateOrder = () => {
 
     const updateProductOrder = () => {
         if (productDetail) {
-            const newProducts = products.map(item => item.item_code === productDetail.item_code ? ({ ...item, quantity: productDetail.quantity, price: productDetail.price }) : item);
-            dispatch(productActions.setProductSelected(newProducts));
+            const newProducts = products.map(item => item.item_code === productDetail.item_code ? productDetail : item);
+            dispatch(productActions.updateProductSelect(newProducts));
         }
         if (bottomSheetRef.current) {
             bottomSheetRef.current.close();
@@ -990,6 +990,7 @@ const createSheetStyle = (theme: AppTheme) =>
             paddingTop: 16,
             borderTopWidth: 1,
             borderColor: theme.colors.border,
+            paddingBottom : 20
         } as ViewStyle,
         button: {
             width: '100%',
