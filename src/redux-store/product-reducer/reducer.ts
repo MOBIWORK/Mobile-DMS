@@ -71,6 +71,9 @@ const productSlice = createSlice({
       );
       state.dataSelected = newData;
     },
+    updateProductSelect: (state, action: PayloadAction<IProduct[]>) => {
+      state.dataSelected = action.payload;
+    },
     setMessage: (state, action: PayloadAction<string>) => {
       state.message = action.payload;
     },
