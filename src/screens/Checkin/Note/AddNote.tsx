@@ -62,12 +62,14 @@ const AddNote = () => {
       custom_checkin_id: dataCheckin.checkin_id,
       email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
     };
-    console.log('====================================');
-    console.log(objectData);
-    console.log('====================================');
     const { status }: any = await CheckinService.createNote(objectData);
     if (status === ApiConstant.STT_CREATED) navigation.goBack();
   };
+
+
+  const isDisable = useMemo(()=>{
+    return title?.label ? false : true
+  },[title])
 
   const renderItem = (item: StaffType) => {
     return (
@@ -117,12 +119,9 @@ const AddNote = () => {
   };
 
   const fetchDataNoteType = async () => {
-    const response: any = await CheckinService.getNoteType();
-    if (
-      response.message === 'Thành công' ||
-      response.result?.data?.length > 0
-    ) {
-      const result = response.result;
+    const {status,data}: any = await CheckinService.getNoteType();
+    if (status == ApiConstant.STT_OK) {
+      const result = data.result;
       const newData = result.map((item: any) => ({
         label: item.name,
         value: item.loai_ghi_chu,

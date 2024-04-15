@@ -48,14 +48,8 @@ export const updateCustomerAddress = (data: IUpdateAddress) =>
 
 export const createNote = (data: POST_NOTE_CHECKIN) =>createApi().post(ApiConstant.POST_NOTE_CHECKIN, data)
 export const getListStaff = () => createApi().get(ApiConstant.GET_LIST_STAFF);
-export const getNoteCheckin = () =>
-  createApi()
-    .get(ApiConstant.GET_LIST_NOTE_API)
-    .then(res => res.data);
-export const getNoteType = () =>
-  createApi()
-    .get(ApiConstant.GET_NOTE_TYPE)
-    .then(res => res.data);
+export const getNoteCheckin = (params :{custom_checkin_id : string}) => createApi().get(ApiConstant.GET_LIST_NOTE_API,params)
+export const getNoteType = () => createApi().get(ApiConstant.GET_NOTE_TYPE)
 export const postImagePictureScore = (data: typeof FormData) =>
   createFormData()
     .post(
