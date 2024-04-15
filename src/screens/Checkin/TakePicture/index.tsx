@@ -84,7 +84,6 @@ const TakePicture = () => {
           data.current.album_name = albumImageData[index].label;
         }
         const element = albumImageData[index].image;
-        // console.log('eeee', element.length);
         for (let i = 1; i < element.length; i++) {
           let image = element[i];
           if (data?.current) {
@@ -109,11 +108,15 @@ const TakePicture = () => {
   };
 
   const completeCheckin = () => {
-    const newData = categoriesCheckin.map(item =>
-      item.key === 'camera' ? {...item, isDone: true} : item,
-    );
-    dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    navigation.goBack();
+    try {
+      const newData = categoriesCheckin.map(item =>
+        item.key === 'camera' ? {...item, isDone: true} : item,
+      );
+      dispatch(checkinActions.setDataCategoriesCheckin(newData));
+      navigation.goBack();
+    } catch (e) {
+      console.log('err');
+    }
   };
 
   const handleCamera = async (item: IAlbumImage) => {

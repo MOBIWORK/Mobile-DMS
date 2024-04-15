@@ -499,17 +499,17 @@ const ListVisit = () => {
   };
 
   const getCustomerRoute = async () => {
+    const all_route: ListCustomerRoute = {
+      name: '',
+      channel_name: 'Tất cả',
+      channel_code: '',
+      travel_date: '',
+      is_today: false,
+    };
     if (lisCustomerRoute.length === 0) {
       const response: any = await CustomerService.getCustomerRoute();
       if (response?.result.length > 0) {
         //add "all" to list route:
-        const all_route: ListCustomerRoute = {
-          name: '',
-          channel_name: 'Tất cả',
-          channel_code: '',
-          travel_date: '',
-          is_today: false,
-        };
         const newListRoute: ListCustomerRoute[] = [all_route].concat(
           response.result,
         );
@@ -526,6 +526,10 @@ const ListVisit = () => {
           routeTodayRef.current = all_route;
           await getCustomer();
         }
+      } else {
+        setFilterParams({router: all_route});
+        routeTodayRef.current = all_route;
+        await getCustomer();
       }
     }
   };
