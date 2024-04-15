@@ -16,9 +16,7 @@ import {
   SvgIcon,
 } from '../../../components/common';
 import { Button, IconButton } from 'react-native-paper';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ItemNoteVisitDetail, NoteType } from '../../../models/types';
+import { NoteType } from '../../../models/types';
 import { ImageAssets } from '../../../assets';
 import { NavigationProp } from '../../../navigation/screen-type';
 import { ScreenConstant } from '../../../const';
@@ -34,18 +32,14 @@ const CheckinNote = () => {
   const styles = createStyleSheet(theme);
   const { t: getLabel } = useTranslation()
   const navigation = useNavigation<NavigationProp>();
-  const mounted = useRef<boolean>(true);
   const data = useSelector(state => state.checkin.dataNote);
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
   const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
 
   useEffect(() => {
-    mounted.current;
     dispatch(checkinActions.getListNoteCheckin({
       custom_checkin_id: dataCheckin.checkin_id
     }));
-    mounted.current = false;
-    return () => { };
   }, []);
 
   const completeCheckin = () => {

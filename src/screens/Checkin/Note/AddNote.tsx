@@ -62,6 +62,9 @@ const AddNote = () => {
       custom_checkin_id: dataCheckin.checkin_id,
       email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
     };
+    console.log('====================================');
+    console.log(objectData);
+    console.log('====================================');
     const { status }: any = await CheckinService.createNote(objectData);
     if (status === ApiConstant.STT_CREATED) navigation.goBack();
   };
