@@ -81,6 +81,8 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
       currentCustomerCheckin,
       String(item.customer_code) === String(currentCustomerCheckin.kh_ma),
     );
+    console.log(123);
+    
     CommonUtils.getCurrentLocation(
       location => {
         let data: CheckinData = {

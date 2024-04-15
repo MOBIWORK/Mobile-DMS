@@ -8,7 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { ExtendedTheme, useNavigation, useTheme } from '@react-navigation/native';
+import { ExtendedTheme, useIsFocused, useNavigation, useTheme } from '@react-navigation/native';
 import { MainLayout } from '../../../layouts';
 import {
   AppButton,
@@ -16,37 +16,45 @@ import {
   SvgIcon,
 } from '../../../components/common';
 import { Button, IconButton } from 'react-native-paper';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ItemNoteVisitDetail, NoteType } from '../../../models/types';
+import { NoteType } from '../../../models/types';
 import { ImageAssets } from '../../../assets';
 import { NavigationProp } from '../../../navigation/screen-type';
-import { ScreenConstant } from '../../../const';
+import { ApiConstant, ScreenConstant } from '../../../const';
 import { dispatch } from '../../../utils/redux';
 import { useSelector } from '../../../config/function';
 import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 import { CommonUtils } from '../../../utils';
 import { useTranslation } from 'react-i18next';
 import { goBack } from '../../../navigation/navigation-service';
+import { CheckinService } from '../../../services';
+import { noteActions } from '../../../redux-store/note-reducer/reducer';
 
 const CheckinNote = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const { t: getLabel } = useTranslation()
   const navigation = useNavigation<NavigationProp>();
-  const mounted = useRef<boolean>(true);
   const data = useSelector(state => state.checkin.dataNote);
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
   const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
+  const isForcus = useIsFocused();
+
+
+  const getData = async ()=>{{
+    const {status,data}:any = await CheckinService.getNoteCheckin({
+      custom_checkin_id : dataCheckin.checkin_id
+    })
+    if(status == ApiConstant.STT_OK){
+      dispatch(checkinActions.setData({typeData :"note" , data :data.result}))
+    }
+  }}
 
   useEffect(() => {
-    mounted.current;
-    dispatch(checkinActions.getListNoteCheckin({
-      custom_checkin_id: dataCheckin.checkin_id
-    }));
-    mounted.current = false;
-    return () => { };
-  }, []);
+    if (isForcus) {
+      getData();
+    }
+
+  }, [isForcus]);
 
   const completeCheckin = () => {
     const newData = categoriesCheckin.map(item => item.key === "note" ? ({ ...item, isDone: true }) : item);
@@ -56,7 +64,7 @@ const CheckinNote = () => {
 
   const EmptyNote = () => {
     return (
-      <>
+      <View style={{flex :1,justifyContent :"center" ,alignItems:"center"}}>
         <SvgIcon source={'EmptyNote'} size={90} />
         <Text style={{ color: theme.colors.text_secondary }}>
           Chưa có ghi chú nào
@@ -69,14 +77,14 @@ const CheckinNote = () => {
           onPress={() => navigation.navigate(ScreenConstant.ADD_NOTE)}>
           Tạo ghi chú
         </Button>
-      </>
+      </View>
     );
   };
 
   const ListNote = () => {
+
     const _renderNoteItem = (item: NoteType) => {
       return (
-        <Pressable>
           <Pressable
             onPress={() =>
               navigation.navigate(ScreenConstant.NOTE_DETAIL, { data: item })
@@ -111,12 +119,11 @@ const CheckinNote = () => {
               </Text>
             </View>
           </Pressable>
-        </Pressable>
       );
     };
 
     return (
-      <View style={{ marginTop: 20 }}>
+      <View style={{ marginTop: 20 ,width :"100%"}}>
         <View style={styles.flexSpace}>
           <Text>{getLabel("noteList")}</Text>
           <IconButton
@@ -177,7 +184,6 @@ const createStyleSheet = (theme: ExtendedTheme) =>
     body: {
       flex: 9,
       alignItems: 'center',
-      justifyContent: 'center',
     } as ViewStyle,
     footer: {
       flex: 1,
