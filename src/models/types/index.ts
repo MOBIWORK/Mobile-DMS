@@ -956,3 +956,11 @@ export interface ReportTagerKpiType {
   ti_le_vieng_tham: number;
   ti_le_kh_moi: number;
 }
+
+export type ListAlbumType = {
+  name: string;
+  ma_album: string;
+  ten_album: string;
+  so_anh_toi_thieu: string;
+  trang_thai: string;
+};
