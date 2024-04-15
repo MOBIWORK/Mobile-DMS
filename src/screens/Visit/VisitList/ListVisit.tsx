@@ -517,7 +517,6 @@ const ListVisit = () => {
         const route_today: ListCustomerRoute[] = response.result.filter(
           (item: ListCustomerRoute) => item.is_today,
         );
-        console.log('hahahahaaaa', route_today);
         if (route_today && route_today?.length > 0) {
           setFilterParams({router: route_today[0]});
           routeTodayRef.current = route_today[0];
