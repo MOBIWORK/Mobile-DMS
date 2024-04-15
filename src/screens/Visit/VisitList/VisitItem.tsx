@@ -120,11 +120,15 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
           item: item,
           ...item,
         };
+        console.log('dataaa', data);
         dispatch(appActions.setDataCheckIn(data));
         if (isDetail) {
           navigate(ScreenConstant.VISIT_DETAIL, {data: data});
+          console.log('run first');
         } else {
           navigate(ScreenConstant.CHECKIN, {item: data});
+          console.log('run sec');
+          console.log('data checkin', data);
         }
       },
       error => backgroundErrorListener(error.code),
