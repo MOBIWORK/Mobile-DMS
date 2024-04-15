@@ -309,6 +309,7 @@ const AddNote = () => {
         </View>
 
         <AppButton
+          disabled={isDisable}
           label={getLabel('save')}
           style={{ width: '100%', marginBottom: 30 }}
           onPress={() => onCreateNoteCheckin()}
