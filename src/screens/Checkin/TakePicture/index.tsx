@@ -23,7 +23,7 @@ import {Button, Modal} from 'react-native-paper';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import BottomSheet from '@gorhom/bottom-sheet';
 import SelectAlbum from './SelectAlbum';
-import {IAlbumImage, ImageCheckIn} from '../../../models/types';
+import {IAlbumImage, ImageCheckIn, ListAlbumType} from '../../../models/types';
 import {ImageAssets} from '../../../assets';
 import {AppConstant} from '../../../const';
 import {CameraUtils} from '../../../utils';
@@ -154,14 +154,14 @@ const TakePicture = () => {
     const getListAlbum = async () => {
       const res: any = await CheckinService.getListAlbum();
       if (res?.result?.length > 0) {
-        const listAlbum = res.result.map((item: any, index: number) => {
+        const listAlbumResult: ListAlbumType[] = res.result;
+        const listAlbum = listAlbumResult.map(item => {
           return {
-            label: item.album_name,
-            value: index + 1,
+            label: item.ten_album,
+            value: item.ma_album,
             isSelected: false,
           };
         });
-        console.log('assss', listAlbum);
         setAlbumBottomSheet(listAlbum);
       }
     };

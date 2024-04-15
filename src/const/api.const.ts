@@ -103,7 +103,7 @@ export const POST_NOTE_CHECKIN = '/api/method/mbw_dms.api.note.create_note';
 export const GET_LIST_STAFF = '/api/method/mbw_dms.api.note.list_email';
 export const CREATE_IMAGE_CHECKIN =
   'api/method/mbw_dms.api.checkin.create_checkin_image';
-export const GET_LIST_ALBUM = '/api/method/mbw_dms.api.album.list_album_name';
+export const GET_LIST_ALBUM = '/api/method/mbw_dms.api.album.list_album';
 
 // REPORT
 export const GET_REPORT_KPI = '/api/method/mbw_dms.api.kpi.get_kpi_monthly';
