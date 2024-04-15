@@ -21,6 +21,7 @@ export type ResponseGenerator = {
 
 export function* onGetListNote(action: PayloadAction) {
   if (noteActions.oGetListNote.match(action)) {
+
     try {
       yield put(appActions.onLoadApp());
       const response: ResponseGenerator = yield call(getListNoteApi);
