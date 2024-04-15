@@ -501,7 +501,8 @@ const CreateOrder = () => {
                     "currency": "VND",
                     "price_list": "Standard Selling",
                     "price_list_currency": "VND",
-                    "company": organization?.company_name || "",            // Lấy cty hiện tại
+                    // "company": organization?.company_name || "",
+                    "company": 'MBW',            // Lấy cty hiện tại
                     "doctype": "Sales Order",
                     "name": "new-sales-order-hnnkmtrehm",
                     "transaction_date": CommonUtils.taskDate(date),
