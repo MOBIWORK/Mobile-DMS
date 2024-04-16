@@ -150,6 +150,11 @@ const TakePicture = () => {
     ]);
   };
 
+  const onDeleteAlbum = (id: string) => {
+    const newAlbum = albumImageData.filter(item => item.id !== id);
+    setAlbumImageData(newAlbum);
+  };
+
   useEffect(() => {
     const getListAlbum = async () => {
       const res: any = await CheckinService.getListAlbum();
@@ -197,7 +202,11 @@ const TakePicture = () => {
             <Button mode={'text'} icon={'chevron-down'}>
               {itemAlbum.label}
             </Button>
-            <SvgIcon source={'TrashIcon'} size={25} />
+            <SvgIcon
+              source={'TrashIcon'}
+              size={25}
+              onPress={() => onDeleteAlbum(itemAlbum.id)}
+            />
           </View>
           <View style={styles.imgContainer}>
             <FlatList
@@ -256,6 +265,12 @@ const TakePicture = () => {
     },
     [handleCamera, albumBottomSheet],
   );
+
+  useEffect(() => {
+    if (albumImageData.length > 0) {
+      console.log('album', albumImageData);
+    }
+  }, [albumImageData]);
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
