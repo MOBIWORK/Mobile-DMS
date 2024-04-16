@@ -85,6 +85,7 @@ const ListVisit = () => {
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
+  const searchVisit = useSelector(state => state.app.searchVisitValue);
 
   const listCustomer: VisitListItemResult = useSelector(
     state => state.customer.listCustomerVisit,
