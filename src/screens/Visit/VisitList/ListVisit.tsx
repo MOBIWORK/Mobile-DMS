@@ -67,6 +67,7 @@ import {shallowEqual, useDispatch} from 'react-redux';
 import StringFormat from 'string-format';
 import MarkerItem from '../../../components/common/MarkerItem';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import {dispatch} from '../../../utils/redux';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -151,14 +152,20 @@ const ListVisit = () => {
   }, [listCustomer, customerDataSort]);
 
   const onRefreshData = useCallback(async () => {
+    dispatch(appActions.setSearchVisitValue(''));
     try {
       setLoading(true);
       if (Object.keys(filterDataRef.current).length > 0) {
-        await getCustomer(filterDataRef.current);
+        await getCustomer({
+          ...filterDataRef.current,
+          search_key: '',
+        });
+        // await sortDataCustomer()
       } else {
         await getCustomer({
           ...filterParams,
           router: filterParams?.router?.channel_code,
+          search_key: '',
         });
       }
     } catch (er) {
@@ -166,7 +173,7 @@ const ListVisit = () => {
     } finally {
       setLoading(false);
     }
-  }, [dispatch, filterParams]);
+  }, [dispatch, filterParams, filterDataRef.current]);
 
   const onEndReachedThreshold = useCallback(async () => {
     const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
@@ -636,13 +643,14 @@ const ListVisit = () => {
           ...filterDataRef.current,
           search_key: searchVisit,
         });
+        sortDataCustomer(distanceFilterValue);
       } else {
         await getCustomer({
           ...filterParams,
           router: filterParams?.router?.channel_code,
           search_key: searchVisit,
         });
-        await sortDataCustomer(distanceFilterValue);
+        sortDataCustomer(distanceFilterValue);
       }
     } catch (er) {
       console.log('errDispatch: ', er);
