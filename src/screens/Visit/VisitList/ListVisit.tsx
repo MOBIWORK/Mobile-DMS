@@ -23,7 +23,12 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
+import {
+  ExtendedTheme,
+  useIsFocused,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {
   ListCustomerRoute,
@@ -72,6 +77,7 @@ const ListVisit = () => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
+  const isFocus = useIsFocused();
   const dispatch = useDispatch();
 
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
@@ -163,7 +169,7 @@ const ListVisit = () => {
 
   const onEndReachedThreshold = useCallback(async () => {
     const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
-    if (listCustomer.page_number <= totalPage) {
+    if (listCustomer.page_number <= totalPage && listCustomer.data.length > 3) {
       if (Object.keys(filterDataRef.current).length > 0) {
         await getCustomer(
           {
@@ -506,9 +512,9 @@ const ListVisit = () => {
       travel_date: '',
       is_today: false,
     };
-    if (lisCustomerRoute.length === 0) {
+    if (lisCustomerRoute?.length === 0) {
       const response: any = await CustomerService.getCustomerRoute();
-      if (response?.result.length > 0) {
+      if (response?.result?.length > 0) {
         //add "all" to list route:
         const newListRoute: ListCustomerRoute[] = [all_route].concat(
           response.result,
@@ -625,11 +631,13 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-    getData().then();
+    if (isFocus) {
+      getData().then();
+    }
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer]);
+  }, [isFocus]);
 
   return (
     <SafeAreaView
