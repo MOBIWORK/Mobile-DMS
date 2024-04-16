@@ -18,8 +18,10 @@ import {AppIcons} from '../../../components/common';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {useTranslation} from 'react-i18next';
+import { useSelector } from '../../../config/function';
 
 const SearchVisit = () => {
+
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
@@ -27,8 +29,11 @@ const SearchVisit = () => {
   const [listVisitNearly, setListVisitNearly] = useMMKVString(
     AppConstant.ListSearchVisitNearly,
   );
-
+  const searchVisit = useSelector(state => state.app.searchVisitValue);
+  const [defautValue, setDefautValue] = useState<string>('');
   const [searchValue, setSearch] = useState<string>('');
+
+  
 
   const SearchNearly = () => {
     return (
@@ -94,6 +99,20 @@ const SearchVisit = () => {
     setListVisitNearly(JSON.stringify(newData));
   };
 
+  const onBack = ()=>{
+    if(searchValue ===""){
+      dispatch(appActions.setSearchVisitValue(""));
+    } else{
+      dispatch(appActions.setSearchVisitValue(defautValue));
+    }
+    navigation.goBack();
+  }
+
+  useEffect(()=>{
+    setSearch(searchVisit);
+    setDefautValue(searchVisit);
+  },[searchVisit])
+
   useEffect(() => {
     if (!listVisitNearly) {
       setListVisitNearly(JSON.stringify([]));
@@ -109,7 +128,7 @@ const SearchVisit = () => {
           justifyContent: 'flex-start',
           width: '100%',
         }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={onBack}>
           <Image
             source={ImageAssets.ArrowLeftIcon}
             style={{width: 24, height: 24}}
