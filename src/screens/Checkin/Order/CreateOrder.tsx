@@ -18,7 +18,8 @@ import {
   TextStyle,
   View,
   ViewStyle,
-  TouchableOpacity
+  TouchableOpacity,
+  Keyboard
 } from 'react-native';
 import { AppTheme, useTheme } from '../../../layouts/theme';
 import { Button, TextInput } from 'react-native-paper';
@@ -633,6 +634,7 @@ const CreateOrder = () => {
   useEffect(() => {
     fetchDataWarehouse();
     fetchDataVat();
+    Keyboard.dismiss();
   }, []);
 
   useEffect(() => {
