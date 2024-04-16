@@ -109,12 +109,19 @@ const CheckIn = () => {
   };
 
   const onCheckout = useCallback(async () => {
-    dispatch(
-      appActions.onCheckIn({
-        ...dataCheckIn,
-        checkin_giora: new Date().getTime() / 1000,
-      }),
-    );
+    try {
+      dispatch(
+        appActions.onCheckIn({
+          ...dataCheckIn,
+          checkin_giora: new Date().getTime() / 1000,
+        }),
+      );
+    } catch (e) {
+      console.log('err', e);
+    } finally {
+      dispatch(checkinActions.resetData());
+      dispatch(appActions.setDataCheckIn({}));
+    }
     setShow(false);
   }, [dataCheckIn]);
 

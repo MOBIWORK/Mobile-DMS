@@ -17,9 +17,6 @@ const RootNavigation = () => {
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
   const [appState, setAppState] = useState<any>(AppState.currentState);
   const dataCheckIn = useSelector(state => state.app.dataCheckIn);
-  // const [organiztion] = useMMKVObject<IResOrganization>(
-  //   AppConstant.Organization,
-  // );
 
   // const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
 
@@ -32,30 +29,35 @@ const RootNavigation = () => {
   //     },
   //   });
   // }, []);
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      setAppState(nextAppState);
-    }
-  };
+
+  // const handleAppStateChange = (nextAppState: AppStateStatus) => {
+  //   if (appState.match(/inactive|background/) && nextAppState === 'active') {
+  //     if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+  //       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
+  //     } else {
+  //       return;
+  //     }
+  //   }
+  //   setAppState(nextAppState);
+  // };
+  //
+  // useEffect(() => {
+  //   const appStateEvent = AppState.addEventListener(
+  //     'change',
+  //     handleAppStateChange,
+  //   );
+  //   return () => {
+  //     appStateEvent.remove();
+  //   };
+  // }, [appState]);
 
   useEffect(() => {
-    const appStateEvent = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
-    if (
-      dataCheckIn &&
-      Object.keys(dataCheckIn)?.length > 0 &&
-      AppState.currentState === 'background'
-    ) {
+    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
     } else {
       return;
     }
-    return () => {
-      appStateEvent.remove();
-    };
-  }, [dataCheckIn, appState]);
+  }, []);
 
   return (
     <SafeAreaProvider>

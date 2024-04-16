@@ -75,20 +75,12 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
     item: VisitListItemType,
     isDetail: boolean,
   ) => {
-    console.log(
-      'itemmm3',
-      item.customer_code,
-      currentCustomerCheckin,
-      String(item.customer_code) === String(currentCustomerCheckin.kh_ma),
-    );
-    console.log(123);
-    
     CommonUtils.getCurrentLocation(
       location => {
         let data: CheckinData = {
           checkin_id:
             currentCustomerCheckin &&
-            currentCustomerCheckin.kh_ma === item.customer_code
+            currentCustomerCheckin?.kh_ma === item.customer_code
               ? currentCustomerCheckin.checkin_id
               : generateRandomObjectId(),
           kh_ma: item.customer_code,
@@ -122,15 +114,11 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
           item: item,
           ...item,
         };
-        console.log('dataaa', data);
         dispatch(appActions.setDataCheckIn(data));
         if (isDetail) {
           navigate(ScreenConstant.VISIT_DETAIL, {data: data});
-          console.log('run first');
         } else {
           navigate(ScreenConstant.CHECKIN, {item: data});
-          console.log('run sec');
-          console.log('data checkin', data);
         }
       },
       error => backgroundErrorListener(error.code),
