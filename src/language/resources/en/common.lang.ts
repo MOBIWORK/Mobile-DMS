@@ -180,7 +180,7 @@ export default {
   noteList: 'List of notes',
   someThingErr: 'Some thing went wrong, please try again',
   customerVisitedCount: 'Visit {customerCheckinCount}/{allCustomer} customer',
-  pSearchVisit: 'Search visit...',
+  pSearchVisit: 'Search customer name...',
   sortByName: 'Sort by name',
   visitStatus: 'visiting status',
   haveToPay: 'Have to pay',
@@ -273,6 +273,5 @@ export default {
   targetKpi: 'Chỉ tiêt KPI',
   reportVisit: 'Visit report',
   nonUserProfileDes: 'Your account has no information on the system',
-  internalNotifi:"Internal notifications",
-
+  internalNotifi: 'Internal notifications',
 };

@@ -101,6 +101,7 @@ export type IListVisitParams = {
   birthday_to?: any;
   customer_group?: string;
   customer_type?: string;
+  search_key?: string;
 };
 
 export const login = (data: ILogin, deleteHeader: boolean) =>

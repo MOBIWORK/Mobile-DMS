@@ -628,15 +628,46 @@ const ListVisit = () => {
     );
   };
 
+  const handleSearchVisit = async () => {
+    try {
+      setLoading(true);
+      if (Object.keys(filterDataRef.current).length > 0) {
+        await getCustomer({
+          ...filterDataRef.current,
+          search_key: searchVisit,
+        });
+      } else {
+        await getCustomer({
+          ...filterParams,
+          router: filterParams?.router?.channel_code,
+          search_key: searchVisit,
+        });
+        await sortDataCustomer(distanceFilterValue);
+      }
+    } catch (er) {
+      console.log('errDispatch: ', er);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     mounted.current = true;
-    if (isFocus) {
+    if (isFocus && !searchVisit) {
       getData().then();
+    } else if (searchVisit) {
+      handleSearchVisit();
     }
     return () => {
       mounted.current = false;
     };
-  }, [isFocus, listCustomer]);
+  }, [isFocus, listCustomer, searchVisit]);
+
+  useEffect(() => {
+    if (searchVisit) {
+      handleSearchVisit();
+    }
+  }, [searchVisit]);
 
   return (
     <SafeAreaView

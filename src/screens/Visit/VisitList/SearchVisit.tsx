@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
   Image,
+  Keyboard,
   NativeSyntheticEvent,
   Text,
   TextInputSubmitEditingEventData,
@@ -18,10 +19,10 @@ import {AppIcons} from '../../../components/common';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {useTranslation} from 'react-i18next';
-import { useSelector } from '../../../config/function';
+import {useSelector} from '../../../config/function';
+import {CommonUtils} from '../../../utils';
 
 const SearchVisit = () => {
-
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
@@ -32,8 +33,6 @@ const SearchVisit = () => {
   const searchVisit = useSelector(state => state.app.searchVisitValue);
   const [defautValue, setDefautValue] = useState<string>('');
   const [searchValue, setSearch] = useState<string>('');
-
-  
 
   const SearchNearly = () => {
     return (
@@ -55,8 +54,9 @@ const SearchVisit = () => {
                   }}>
                   <Text
                     onPress={() => {
+                      Keyboard.dismiss();
                       dispatch(appActions.setSearchVisitValue(item.label));
-                      navigation.goBack();
+                      CommonUtils.sleep(100).then(() => navigation.goBack());
                     }}
                     style={{
                       color: colors.text_primary,
@@ -82,12 +82,13 @@ const SearchVisit = () => {
   const onSubmitEditing = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => {
+    Keyboard.dismiss();
     //TODO:save to redux
     dispatch(appActions.setSearchVisitValue(String(e.nativeEvent.text)));
     const newListNearly = listVisitNearly && JSON.parse(listVisitNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
     setListVisitNearly(JSON.stringify(newListNearly));
-    navigation.goBack();
+    CommonUtils.sleep(200).then(() => navigation.goBack());
   };
 
   const handleItem = (item: any) => {
@@ -99,19 +100,19 @@ const SearchVisit = () => {
     setListVisitNearly(JSON.stringify(newData));
   };
 
-  const onBack = ()=>{
-    if(searchValue ===""){
-      dispatch(appActions.setSearchVisitValue(""));
-    } else{
+  const onBack = () => {
+    if (searchValue === '') {
+      dispatch(appActions.setSearchVisitValue(''));
+    } else {
       dispatch(appActions.setSearchVisitValue(defautValue));
     }
-    navigation.goBack();
-  }
+    CommonUtils.sleep(200).then(() => navigation.goBack());
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     setSearch(searchVisit);
     setDefautValue(searchVisit);
-  },[searchVisit])
+  }, [searchVisit]);
 
   useEffect(() => {
     if (!listVisitNearly) {
