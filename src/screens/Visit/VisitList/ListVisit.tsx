@@ -466,7 +466,7 @@ const ListVisit = () => {
   };
 
   const sortDataCustomer = (distanceLabel: string) => {
-    if (listCustomer && listCustomer.data.length > 0) {
+    if (listCustomer && listCustomer?.data?.length > 0) {
       const filteredData = listCustomer.data.filter(
         item => item.customer_location_primary != null,
       );
@@ -512,31 +512,29 @@ const ListVisit = () => {
       travel_date: '',
       is_today: false,
     };
-    if (lisCustomerRoute?.length === 0) {
-      const response: any = await CustomerService.getCustomerRoute();
-      if (response?.result?.length > 0) {
-        //add "all" to list route:
-        const newListRoute: ListCustomerRoute[] = [all_route].concat(
-          response.result,
-        );
-        dispatch(customerActions.setListCustomerRoute(newListRoute));
-        const route_today: ListCustomerRoute[] = response.result.filter(
-          (item: ListCustomerRoute) => item.is_today,
-        );
-        if (route_today && route_today?.length > 0) {
-          setFilterParams({router: route_today[0]});
-          routeTodayRef.current = route_today[0];
-          await getCustomer({router: route_today[0].channel_code});
-        } else {
-          setFilterParams({router: all_route});
-          routeTodayRef.current = all_route;
-          await getCustomer();
-        }
+    const response: any = await CustomerService.getCustomerRoute();
+    if (response?.result?.length > 0) {
+      //add "all" to list route:
+      const newListRoute: ListCustomerRoute[] = [all_route].concat(
+        response.result,
+      );
+      dispatch(customerActions.setListCustomerRoute(newListRoute));
+      const route_today: ListCustomerRoute[] = response.result.filter(
+        (item: ListCustomerRoute) => item.is_today,
+      );
+      if (route_today && route_today?.length > 0) {
+        setFilterParams({router: route_today[0]});
+        routeTodayRef.current = route_today[0];
+        await getCustomer({router: route_today[0].channel_code});
       } else {
         setFilterParams({router: all_route});
         routeTodayRef.current = all_route;
         await getCustomer();
       }
+    } else {
+      setFilterParams({router: all_route});
+      routeTodayRef.current = all_route;
+      await getCustomer();
     }
   };
 
@@ -637,7 +635,7 @@ const ListVisit = () => {
     return () => {
       mounted.current = false;
     };
-  }, [isFocus]);
+  }, [isFocus, listCustomer]);
 
   return (
     <SafeAreaView
