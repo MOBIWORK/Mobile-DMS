@@ -274,6 +274,6 @@ export default {
   reportVisit: 'Visit report',
   nonUserProfileDes: 'Your account has no information on the system',
   internalNotifi:"Internal notifications",
-  confirmDeleteOrder :"Xác nhận xoá đơn hàng này",
+  confirmDeleteOrder :"Confirm deletion of this order",
 
 };
