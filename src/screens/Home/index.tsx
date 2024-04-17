@@ -58,6 +58,7 @@ import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
 import {CommonUtils} from '../../utils';
+import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -426,6 +427,9 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (isFocus) {
+      //delete search visit value in ListVisit.tsx
+      onResetSearchValueOfVisit();
+      //get Data
       getLocation();
       getProfile();
       getCurrentShit();

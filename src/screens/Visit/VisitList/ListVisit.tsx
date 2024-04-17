@@ -661,15 +661,20 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-    if (isFocus && !searchVisit) {
-      getData().then();
-    } else if (searchVisit) {
+    // if (isFocus && !searchVisit) {
+    //   getData().then();
+    // } else if (searchVisit) {
+    //   handleSearchVisit();
+    // }
+    if (searchVisit) {
       handleSearchVisit();
+    } else {
+      getData();
     }
     return () => {
       mounted.current = false;
     };
-  }, [isFocus, listCustomer, searchVisit]);
+  }, [listCustomer, searchVisit]);
 
   useEffect(() => {
     if (searchVisit) {

@@ -159,3 +159,6 @@ const SearchVisit = () => {
 };
 
 export default SearchVisit;
+
+export const onResetSearchValueOfVisit = () =>
+  dispatch(appActions.setSearchVisitValue(''));
