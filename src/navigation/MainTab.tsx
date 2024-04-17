@@ -1,13 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {ScreenConstant} from '../const';
+import {AppConstant, ScreenConstant} from '../const';
 import {Customer, Home, Visits, WidgetScreen} from '../screens';
 import BottomTabDisplay from './BottomTabDisplay';
-import {AppState, AppStateStatus} from 'react-native';
-import {navigate} from './navigation-service';
-import {CheckinData} from '../services/appService';
-import {useSelector} from '../config/function';
-import {shallowEqual} from 'react-redux';
+import {CommonUtils} from '../utils';
 
 export type TabParamList = {
   [ScreenConstant.HOME_SCREEN]: undefined;
@@ -19,32 +15,8 @@ export type TabParamList = {
 const Tab = createBottomTabNavigator();
 
 const MainTab = () => {
-  const [appState, setAppState] = useState<AppStateStatus>(
-    AppState.currentState,
-  );
-
-  const dataCheckIn: CheckinData = useSelector(
-    state => state.app.dataCheckIn,
-    shallowEqual,
-  );
-
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      //
-    }
-    setAppState(nextAppState);
-  };
-
   useEffect(() => {
-    const appState = AppState.addEventListener('change', handleAppStateChange);
-    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
-      navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
-    } else {
-      return;
-    }
-    return () => {
-      appState.remove();
-    };
+    CommonUtils.storage.set(AppConstant.isLogOut, false);
   }, []);
 
   return (

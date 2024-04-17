@@ -29,7 +29,7 @@ import {
 import ListFilter from './components/ListFilter';
 import {NavigationProp} from '../../navigation/screen-type';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   calculateDistance,
   handleBackgroundLocation,
@@ -43,6 +43,7 @@ import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import isEqual from 'react-fast-compare';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 
 export type IValueType = {
   customerType: string;
@@ -56,6 +57,7 @@ const Customer = () => {
   const styles = rootStyles(theme);
   const dispatch = useDispatch();
   const {bottom} = useSafeAreaInsets();
+  const isFocus = useIsFocused();
 
   const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer?.data,
@@ -157,6 +159,13 @@ const Customer = () => {
       }
     }
   }, [dispatch, appLoading]);
+
+  React.useEffect(() => {
+    if (isFocus) {
+      //delete search visit value in ListVisit.tsx
+      onResetSearchValueOfVisit();
+    }
+  }, [isFocus]);
 
   React.useEffect(() => {
     mounted.current = true;

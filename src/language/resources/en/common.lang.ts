@@ -180,7 +180,7 @@ export default {
   noteList: 'List of notes',
   someThingErr: 'Some thing went wrong, please try again',
   customerVisitedCount: 'Visit {customerCheckinCount}/{allCustomer} customer',
-  pSearchVisit: 'Search visit...',
+  pSearchVisit: 'Search customer name...',
   sortByName: 'Sort by name',
   visitStatus: 'visiting status',
   haveToPay: 'Have to pay',
