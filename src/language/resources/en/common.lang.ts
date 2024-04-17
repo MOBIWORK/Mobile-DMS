@@ -273,5 +273,7 @@ export default {
   targetKpi: 'Chỉ tiêt KPI',
   reportVisit: 'Visit report',
   nonUserProfileDes: 'Your account has no information on the system',
-  internalNotifi: 'Internal notifications',
+  internalNotifi:"Internal notifications",
+  confirmDeleteOrder :"Confirm deletion of this order",
+
 };

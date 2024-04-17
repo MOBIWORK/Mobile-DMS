@@ -1,4 +1,4 @@
-import React, {FC, ReactElement} from 'react';
+import React, { FC, ReactElement } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -9,11 +9,12 @@ import {
   TextStyle,
   StyleProp,
   Image,
+  TouchableOpacity,
 } from 'react-native';
-import {ImageAssets} from '../../assets';
+import { ImageAssets } from '../../assets';
 import Backdrop from './Backdrop';
 
-import {AppTheme, useTheme} from '../../layouts/theme';
+import { AppTheme, useTheme } from '../../layouts/theme';
 
 const AppDialog: FC<DialogProps> = ({
   open,
@@ -56,21 +57,24 @@ const AppDialog: FC<DialogProps> = ({
                         ? ImageAssets.ErrorApiIcon
                         : ImageAssets.SuccessApiIcon
                     }
-                    style={{width: 54, height: 54}}
+                    style={{ width: 54, height: 54 }}
                     resizeMode="contain"
                   />
 
                   {title && (
                     <Text style={[styles.modalText, titleType]}>{title}</Text>
                   )}
-                  <Text style={[styles.messageText, messageType, ,]}>
-                    {message}
-                  </Text>
+                  {message && (
+                    <Text style={[styles.messageText, messageType, ,]}>
+                      {message}
+                    </Text>
+                  )}
+
                   <View style={styles.buttonContainer}>
                     {showButton ? (
                       <>
                         {(Boolean(onClose) || !viewOnly) && (
-                          <Pressable
+                          <TouchableOpacity
                             style={[
                               styles.button,
                               buttonType,
@@ -81,13 +85,13 @@ const AppDialog: FC<DialogProps> = ({
                             <Text
                               style={[
                                 styles.textStyle,
-                                {color: theme.colors.text_secondary},
+                                { color: theme.colors.text_secondary },
                               ]}>
                               {closeLabel}
                             </Text>
-                          </Pressable>
+                          </TouchableOpacity>
                         )}
-                        <Pressable
+                        <TouchableOpacity
                           style={[
                             styles.button,
                             buttonType,
@@ -99,7 +103,7 @@ const AppDialog: FC<DialogProps> = ({
                           ]}
                           onPress={onSubmit}>
                           <Text style={styles.textStyle}>{submitLabel}</Text>
-                        </Pressable>
+                        </TouchableOpacity>
                       </>
                     ) : null}
                   </View>

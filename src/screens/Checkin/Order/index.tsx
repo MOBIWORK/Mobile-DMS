@@ -1,37 +1,40 @@
-import React, {useEffect, useLayoutEffect, useMemo, useState} from 'react';
-import {MainLayout} from '../../../layouts';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { MainLayout } from '../../../layouts';
 import {
+  AppBottomSheet,
   AppButton,
   AppContainer,
+  AppDialog,
   AppHeader,
   AppIcons,
 } from '../../../components/common';
-import {ImageStyle, StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
-import {Text} from 'react-native';
-import {Button} from 'react-native-paper';
-import {AppTheme, useTheme} from '../../../layouts/theme';
-import {ImageAssets} from '../../../assets';
-import {Image} from 'react-native';
-import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
-import {ApiConstant, ScreenConstant} from '../../../const';
-import {useTranslation} from 'react-i18next';
-import {useSelector} from '../../../config/function';
-import {OrderService} from '../../../services';
-import {CheckinOrderDetail, KeyAbleProps} from '../../../models/types';
-import {dispatch} from '../../../utils/redux';
-import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
-import {ErrorBoundary} from 'react-error-boundary';
+import { ImageStyle, StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
+import { Text } from 'react-native';
+import { Button } from 'react-native-paper';
+import { AppTheme, useTheme } from '../../../layouts/theme';
+import { ImageAssets } from '../../../assets';
+import { Image } from 'react-native';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
+import { ApiConstant, ScreenConstant } from '../../../const';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from '../../../config/function';
+import { OrderService } from '../../../services';
+import { CheckinOrderDetail, KeyAbleProps } from '../../../models/types';
+import { dispatch } from '../../../utils/redux';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorBoundary';
-import {CommonUtils} from '../../../utils';
-import {TouchableOpacity} from 'react-native';
-import {ICON_TYPE} from '../../../const/app.const';
-import {Pressable} from 'react-native';
+import { CommonUtils } from '../../../utils';
+import { TouchableOpacity } from 'react-native';
+import { ICON_TYPE } from '../../../const/app.const';
+import { Pressable } from 'react-native';
 import ItemProduct from './components/ItemProduct';
 import { NavigationProp, RouterProp } from '../../../navigation/screen-type';
+import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 
 const CheckinOrder = () => {
-  const {colors} = useTheme();
-  const {t: getLabel} = useTranslation();
+  const { colors } = useTheme();
+  const { t: getLabel } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const styles = createSheetStyle(useTheme());
   const router = useRoute<RouterProp<'CHECKIN_ORDER'>>();
@@ -43,27 +46,30 @@ const CheckinOrder = () => {
     state => state.checkin.categoriesCheckin,
   );
   const isForcus = useIsFocused();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoint = useMemo(() => ["15%"], []);
+  const [showDelete , setShow] = useState<boolean>(false)
 
   const fetchDataOrder = async () => {
     if (type == 'ORDER') {
-      const {status, data}: KeyAbleProps = await OrderService.getDetailCheckinOrder({
-          doctype : 'Sales Order',
-          checkin_id: dataCheckin.checkin_id
-        });
+      const { status, data }: KeyAbleProps = await OrderService.getDetailCheckinOrder({
+        doctype: 'Sales Order',
+        checkin_id: dataCheckin.checkin_id
+      });
       if (status === ApiConstant.STT_OK) {
-        if(Object.keys(data.result).length > 0) {
-          dispatch(  checkinActions.setData({typeData: 'detailOrder', data: data.result}));
+        if (Object.keys(data.result).length > 0) {
+          dispatch(checkinActions.setData({ typeData: 'detailOrder', data: data.result }));
         }
       }
     }
     if (type == 'RETURN_ORDER') {
-      const {status, data}: KeyAbleProps =  await OrderService.getDetailCheckinOrder({
-          doctype : "Sales Invoice",
-          checkin_id: dataCheckin.checkin_id
-        });
+      const { status, data }: KeyAbleProps = await OrderService.getDetailCheckinOrder({
+        doctype: "Sales Invoice",
+        checkin_id: dataCheckin.checkin_id
+      });
       if (status === ApiConstant.STT_OK) {
-        if(Object.keys(data.result).length > 0) {
-          dispatch(  checkinActions.setData({typeData: 'returnOrder', data: data.result}));
+        if (Object.keys(data.result).length > 0) {
+          dispatch(checkinActions.setData({ typeData: 'returnOrder', data: data.result }));
         }
 
       }
@@ -72,11 +78,11 @@ const CheckinOrder = () => {
 
   const renderNoDataUi = () => {
     return (
-      <View style={{paddingHorizontal: 16, flex: 1}}>
+      <View style={{ paddingHorizontal: 16, flex: 1 }}>
         <AppContainer>
           <View>
             <View style={[styles.containerNodata as any]}>
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <Image
                   style={styles.iconImage}
                   source={ImageAssets.IconOrder}
@@ -88,9 +94,9 @@ const CheckinOrder = () => {
                     : getLabel('noReturnOrder')}
                 </Text>
               </View>
-              <View style={{marginTop: 16}}>
+              <View style={{ marginTop: 16 }}>
                 <Button
-                  style={{borderColor: colors.action}}
+                  style={{ borderColor: colors.action }}
                   textColor={colors.action}
                   labelStyle={[styles.textBt]}
                   icon="plus"
@@ -119,10 +125,10 @@ const CheckinOrder = () => {
   const renderDetailOrder = (data: CheckinOrderDetail) => {
     return (
       <ErrorBoundary fallbackRender={ErrorFallback}>
-        <AppContainer style={{marginTop: 16, paddingHorizontal: 16}}>
-          <View style={{rowGap: 24, paddingBottom: 50}}>
+        <AppContainer style={{ marginTop: 16, paddingHorizontal: 16 }}>
+          <View style={{ rowGap: 24, paddingBottom: 50 }}>
             <View>
-              <View style={{marginTop: 8, rowGap: 16}}>
+              <View style={{ marginTop: 8, rowGap: 16 }}>
                 <View style={[styles.containerIfOd]}>
                   <View style={[styles.orderInforE, styles.flexSpace]}>
                     <Text style={[styles.labelDetail]}>
@@ -137,7 +143,7 @@ const CheckinOrder = () => {
                     style={[
                       styles.orderInforE,
                       styles.flexSpace,
-                      {borderColor: colors.bg_default},
+                      { borderColor: colors.bg_default },
                     ]}>
                     <Text style={[styles.labelDetail]}>
                       {getLabel('eXwarehouse')}
@@ -177,7 +183,7 @@ const CheckinOrder = () => {
                           item.amount *
                           (item.discount_percentage / 100)
                         ).toString()}
-                        onRemove={()=> console.log(12)}
+                        onRemove={() => console.log(12)}
                       />
                     </Pressable>
                   ))}
@@ -185,7 +191,7 @@ const CheckinOrder = () => {
             </View>
 
             <View>
-              <View style={[styles.flexSpace, {marginBottom: 8}]}>
+              <View style={[styles.flexSpace, { marginBottom: 8 }]}>
                 <Text style={[styles.textLabel]}>{getLabel('VAT')}</Text>
                 <TouchableOpacity>
                   <AppIcons
@@ -199,7 +205,7 @@ const CheckinOrder = () => {
               <View
                 style={[
                   styles.containerIfOd,
-                  {rowGap: 12, paddingVertical: 16},
+                  { rowGap: 12, paddingVertical: 16 },
                 ]}>
                 <View style={[styles.flexSpace]}>
                   <Text style={[styles.labelDetail]}>
@@ -229,7 +235,7 @@ const CheckinOrder = () => {
             </View>
 
             <View>
-              <View style={[styles.flexSpace, {marginBottom: 8}]}>
+              <View style={[styles.flexSpace, { marginBottom: 8 }]}>
                 <Text style={[styles.textLabel]}>{getLabel('discount')}</Text>
                 <TouchableOpacity>
                   <AppIcons
@@ -243,7 +249,7 @@ const CheckinOrder = () => {
               <View
                 style={[
                   styles.containerIfOd,
-                  {rowGap: 12, paddingVertical: 16},
+                  { rowGap: 12, paddingVertical: 16 },
                 ]}>
                 <View style={[styles.flexSpace]}>
                   <Text style={[styles.labelDetail]}>
@@ -273,7 +279,7 @@ const CheckinOrder = () => {
             </View>
 
             <View>
-              <View style={[styles.flexSpace, {marginBottom: 8}]}>
+              <View style={[styles.flexSpace, { marginBottom: 8 }]}>
                 <Text style={[styles.textLabel]}>{getLabel('detailPay')}</Text>
                 <TouchableOpacity>
                   <AppIcons
@@ -287,7 +293,7 @@ const CheckinOrder = () => {
               <View
                 style={[
                   styles.containerIfOd,
-                  {rowGap: 12, paddingVertical: 16},
+                  { rowGap: 12, paddingVertical: 16 },
                 ]}>
                 <View style={[styles.flexSpace]}>
                   <Text style={[styles.labelDetail]}>
@@ -327,10 +333,10 @@ const CheckinOrder = () => {
         </AppContainer>
 
         <View style={styles.footerView}>
-          <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
+          <View style={[styles.flexSpace, { alignItems: 'flex-end' }]}>
             <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
             <Text style={styles.totalPrice}>
-              {CommonUtils.formatCash(data.grand_total?.toString()) ||""}
+              {CommonUtils.formatCash(data.grand_total?.toString()) || ""}
             </Text>
           </View>
           <AppButton
@@ -346,34 +352,80 @@ const CheckinOrder = () => {
   const completeCheckin = () => {
     const typ = type == 'ORDER' ? 'order' : 'return_order';
     const newData = categoriesCheckin.map(item =>
-      item.key === typ ? {...item, isDone: true} : item,
+      item.key === typ ? { ...item, isDone: true } : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
     navigation.goBack();
   };
 
-  const isDisabled = useMemo(()=>{
+  const isDisabled = useMemo(() => {
     const typ = type == 'ORDER' ? 'order' : 'return_order';
     const newData = categoriesCheckin.find(item =>
       item.key === typ && item.isRequire,
     );
     return newData ? true : false
-  },[categoriesCheckin])
+  }, [categoriesCheckin])
+
+
+  const onDeleteOrder  = ()=>{
+    setShow(false);
+  }
 
   useLayoutEffect(() => {
-    if(isForcus){
+    if (isForcus) {
       fetchDataOrder();
     }
   }, [isForcus]);
 
+
+
   return (
     <MainLayout style={styles.layout}>
       <AppHeader
-        label={ type === 'ORDER' ? getLabel('putOrder') : getLabel('returnOrder')}
+        label={type === 'ORDER' ? getLabel('putOrder') : getLabel('returnOrder')}
         onBack={() => navigation.goBack()}
-        style={{paddingHorizontal: 16}}
+        style={{ paddingHorizontal: 16 }}
+        rightButton={
+          orderDetail && type == 'ORDER' || returnOrderDetail && type == 'RETURN_ORDER' ? (
+            <TouchableOpacity onPress={() => bottomSheetRef.current?.snapToIndex(0)}>
+              <AppIcons name='more-vertical' iconType={ICON_TYPE.Feather} size={22} />
+            </TouchableOpacity>
+          ) : <View></View>
+        }
       />
       {orderDetail && type == 'ORDER' ? renderDetailOrder(orderDetail) : returnOrderDetail && type == 'RETURN_ORDER' ? renderDetailOrder(returnOrderDetail) : renderNoDataUi()}
+
+      <AppBottomSheet bottomSheetRef={bottomSheetRef} snapPointsCustom={snapPoint}>
+        <View style={[{ paddingHorizontal: 16, rowGap: 12 }]}>
+          <TouchableOpacity>
+            <View style={[styles.flex, { columnGap: 10 }]}>
+              <AppIcons name='edit' iconType={ICON_TYPE.AntIcon} size={20} color={colors.text_secondary} />
+              <Text style={[styles.actionOrder]}>Chỉnh sửa đơn</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>{setShow(true); bottomSheetRef.current?.close()}}> 
+            <View style={[styles.flex, { columnGap: 10 }]}>
+              <AppIcons name='delete-outline' iconType={ICON_TYPE.MateriallIcon} size={22} color={colors.primary} />
+              <Text style={[styles.actionOrder, { color: colors.primary }]}>Xoá đơn</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </AppBottomSheet>
+
+      <AppDialog
+        open={showDelete}
+        viewOnly
+        buttonType={{width :"50%"}}
+        modalType={{width :"90%"}}
+        submitLabel={getLabel("confirm")}
+        closeLabel={getLabel("cancel")}
+        showButton={true}
+        title={getLabel("confirmDeleteOrder")}
+        errorType
+        onClose={()=> setShow(false)}
+        onSubmit={onDeleteOrder}
+      />
+
     </MainLayout>
   );
 };
@@ -382,6 +434,12 @@ export default CheckinOrder;
 
 const createSheetStyle = (theme: AppTheme) =>
   StyleSheet.create({
+    actionOrder: {
+      fontSize: 16,
+      lineHeight: 24,
+      fontWeight: '400',
+      color: theme.colors.text_primary,
+    } as TextStyle,
     footerView: {
       backgroundColor: theme.colors.bg_default,
       paddingHorizontal: 16,
@@ -430,7 +488,7 @@ const createSheetStyle = (theme: AppTheme) =>
     } as TextStyle,
     footerBt: {
       width: '100%',
-      marginBottom: 20,
+      marginBottom: 35,
     } as ViewStyle,
     iconInput: {
       width: 24,

@@ -19,7 +19,7 @@ export const DataWidget: IWidget[] = [
     id: 3,
     name: 'Khuyến mại',
     icon: 'iconTicket',
-    navigate: ScreenConstant.CHECKIN_ORDER,
+    navigate: "",
   },
   {
     id: 4,
