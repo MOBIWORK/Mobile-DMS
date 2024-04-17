@@ -23,7 +23,12 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
+import {
+  ExtendedTheme,
+  useIsFocused,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {
   ListCustomerRoute,
@@ -62,6 +67,7 @@ import {shallowEqual, useDispatch} from 'react-redux';
 import StringFormat from 'string-format';
 import MarkerItem from '../../../components/common/MarkerItem';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import {dispatch} from '../../../utils/redux';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -72,6 +78,7 @@ const ListVisit = () => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
+  const isFocus = useIsFocused();
   const dispatch = useDispatch();
 
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
@@ -145,14 +152,20 @@ const ListVisit = () => {
   }, [listCustomer, customerDataSort]);
 
   const onRefreshData = useCallback(async () => {
+    dispatch(appActions.setSearchVisitValue(''));
     try {
       setLoading(true);
       if (Object.keys(filterDataRef.current).length > 0) {
-        await getCustomer(filterDataRef.current);
+        await getCustomer({
+          ...filterDataRef.current,
+          search_key: '',
+        });
+        // await sortDataCustomer()
       } else {
         await getCustomer({
           ...filterParams,
           router: filterParams?.router?.channel_code,
+          search_key: '',
         });
       }
     } catch (er) {
@@ -160,11 +173,11 @@ const ListVisit = () => {
     } finally {
       setLoading(false);
     }
-  }, [dispatch, filterParams]);
+  }, [dispatch, filterParams, filterDataRef.current]);
 
   const onEndReachedThreshold = useCallback(async () => {
     const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
-    if (listCustomer.page_number <= totalPage) {
+    if (listCustomer.page_number <= totalPage && listCustomer.data.length > 3) {
       if (Object.keys(filterDataRef.current).length > 0) {
         await getCustomer(
           {
@@ -461,7 +474,7 @@ const ListVisit = () => {
   };
 
   const sortDataCustomer = (distanceLabel: string) => {
-    if (listCustomer && listCustomer.data.length > 0) {
+    if (listCustomer && listCustomer?.data?.length > 0) {
       const filteredData = listCustomer.data.filter(
         item => item.customer_location_primary != null,
       );
@@ -507,31 +520,29 @@ const ListVisit = () => {
       travel_date: '',
       is_today: false,
     };
-    if (lisCustomerRoute.length === 0) {
-      const response: any = await CustomerService.getCustomerRoute();
-      if (response?.result.length > 0) {
-        //add "all" to list route:
-        const newListRoute: ListCustomerRoute[] = [all_route].concat(
-          response.result,
-        );
-        dispatch(customerActions.setListCustomerRoute(newListRoute));
-        const route_today: ListCustomerRoute[] = response.result.filter(
-          (item: ListCustomerRoute) => item.is_today,
-        );
-        if (route_today && route_today?.length > 0) {
-          setFilterParams({router: route_today[0]});
-          routeTodayRef.current = route_today[0];
-          await getCustomer({router: route_today[0].channel_code});
-        } else {
-          setFilterParams({router: all_route});
-          routeTodayRef.current = all_route;
-          await getCustomer();
-        }
+    const response: any = await CustomerService.getCustomerRoute();
+    if (response?.result?.length > 0) {
+      //add "all" to list route:
+      const newListRoute: ListCustomerRoute[] = [all_route].concat(
+        response.result,
+      );
+      dispatch(customerActions.setListCustomerRoute(newListRoute));
+      const route_today: ListCustomerRoute[] = response.result.filter(
+        (item: ListCustomerRoute) => item.is_today,
+      );
+      if (route_today && route_today?.length > 0) {
+        setFilterParams({router: route_today[0]});
+        routeTodayRef.current = route_today[0];
+        await getCustomer({router: route_today[0].channel_code});
       } else {
         setFilterParams({router: all_route});
         routeTodayRef.current = all_route;
         await getCustomer();
       }
+    } else {
+      setFilterParams({router: all_route});
+      routeTodayRef.current = all_route;
+      await getCustomer();
     }
   };
 
@@ -624,13 +635,52 @@ const ListVisit = () => {
     );
   };
 
+  const handleSearchVisit = async () => {
+    try {
+      setLoading(true);
+      if (Object.keys(filterDataRef.current).length > 0) {
+        await getCustomer({
+          ...filterDataRef.current,
+          search_key: searchVisit,
+        });
+        sortDataCustomer(distanceFilterValue);
+      } else {
+        await getCustomer({
+          ...filterParams,
+          router: filterParams?.router?.channel_code,
+          search_key: searchVisit,
+        });
+        sortDataCustomer(distanceFilterValue);
+      }
+    } catch (er) {
+      console.log('errDispatch: ', er);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     mounted.current = true;
-    getData().then();
+    // if (isFocus && !searchVisit) {
+    //   getData().then();
+    // } else if (searchVisit) {
+    //   handleSearchVisit();
+    // }
+    if (searchVisit) {
+      handleSearchVisit();
+    } else {
+      getData();
+    }
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer]);
+  }, [listCustomer, searchVisit]);
+
+  useEffect(() => {
+    if (searchVisit) {
+      handleSearchVisit();
+    }
+  }, [searchVisit]);
 
   return (
     <SafeAreaView

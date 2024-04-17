@@ -15,6 +15,7 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 const RootNavigation = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
+  const isLogout = CommonUtils.storage.getBoolean(AppConstant.isLogOut);
   const [appState, setAppState] = useState<any>(AppState.currentState);
   const dataCheckIn = useSelector(state => state.app.dataCheckIn);
 
@@ -67,7 +68,9 @@ const RootNavigation = () => {
           gestureEnabled: false,
           animation: 'slide_from_left',
         }}
-        initialRouteName={!validate ? 'UNAUTHORIZED' : 'AUTHORIZED'}>
+        initialRouteName={
+          !validate || isLogout ? 'UNAUTHORIZED' : 'AUTHORIZED'
+        }>
         <Stack.Screen
           name={ScreenConstant.UNAUTHORIZED}
           component={UnAuthorNavigation}

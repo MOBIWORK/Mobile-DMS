@@ -184,7 +184,7 @@ export default {
   noteList: 'Danh sách ghi chú',
   customerVisitedCount:
     'Viếng thăm {customerCheckinCount}/{allCustomer} khách hàng',
-  pSearchVisit: 'Tìm kiếm viếng thăm...',
+  pSearchVisit: 'Tìm kiếm tên khách hàng...',
   sortByName: 'Sắp xếp theo tên',
   visitStatus: 'Trạng thái viếng thăm',
   sortByDistance: 'Sắp xếp theo khoảng cách',
@@ -278,5 +278,5 @@ export default {
   targetKpi: 'Chỉ tiêt KPI',
   reportVisit: 'Báo cáo viếng thăm',
   nonUserProfileDes: 'Tài khoản của bạn không có thông tin trên hệ thống',
-  internalNotifi:"Thông báo nội bộ",
+  internalNotifi: 'Thông báo nội bộ',
 };
