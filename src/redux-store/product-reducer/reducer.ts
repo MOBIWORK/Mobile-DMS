@@ -31,18 +31,25 @@ function mergeArrays(arr1: any[], arr2: any[]) {
 }
 
 function mergeArraysSelectProduct(arr1: IProduct[], arr2: IProduct[]) {
-  const newArr: IProduct[] = [];
-  for (let i = 0; i < arr2.length; i++) {
-    let e1 = arr2[i];
-    for (let j = 0; j < arr1.length; j++) {
-      let e2 = arr1[j];
-      if (e2.item_code === e1.item_code) {
-        e1 = {...e1, quantity: e1?.quantity! + e2?.quantity!};
+  const productMap :any= {};
+  arr1 = arr1.filter(product => product?.quantity! > 0);
+  arr2 = arr2.filter(product => product?.quantity! > 0);
+  arr1.forEach(product => {
+      if (product.item_code in productMap) {
+          productMap[product.item_code].quantity += product.quantity;
+      } else {
+          productMap[product.item_code] = { ...product };
       }
-    }
-    newArr.push(e1);
-  }
-  return newArr;
+  });
+  arr2.forEach(product => {
+      if (product.item_code in productMap) {
+          productMap[product.item_code].quantity += product.quantity;
+      } else {
+          productMap[product.item_code] = { ...product };
+      }
+  });
+  
+  return Object.values(productMap);
 }
 
 const productSlice = createSlice({

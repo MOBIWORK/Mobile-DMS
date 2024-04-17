@@ -487,8 +487,6 @@ const SelectProducts = () => {
     const {status, data}: KeyAbleProps = await ProductService.getBrand();
     if (status === ApiConstant.STT_OK) {
       const rlt = data.result;
-      console.log('brand product', rlt);
-
       const newData: IFilterType[] = [];
       for (let i = 0; i < rlt.length; i++) {
         const element = rlt[i];
@@ -506,7 +504,6 @@ const SelectProducts = () => {
     const {data, status}: KeyAbleProps = await ProductService.getIndustry();
     if (status === ApiConstant.STT_OK) {
       const rlt = data.result;
-      console.log('industry product', rlt);
       const newData: IFilterType[] = [];
       for (let i = 0; i < rlt.length; i++) {
         const element = rlt[i];
@@ -524,8 +521,6 @@ const SelectProducts = () => {
     const {data, status}: KeyAbleProps = await ProductService.getGroup();
     if (status === ApiConstant.STT_OK) {
       const rlt = data.result;
-      console.log('group product', rlt);
-
       const newData: IFilterType[] = [];
       for (let i = 0; i < rlt.length; i++) {
         const element = rlt[i];

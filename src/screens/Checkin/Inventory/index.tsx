@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MainLayout } from '../../../layouts';
 import { AppBottomSheet, AppButton, AppContainer, AppHeader, AppIcons, AppInput } from '../../../components/common';
 import { useNavigation } from '@react-navigation/native';
-import { ImageStyle, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { ImageStyle, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { Image, TouchableOpacity } from 'react-native';
 import { ImageAssets } from '../../../assets';
 import { Button, IconButton, TextInput } from 'react-native-paper';
@@ -40,18 +40,19 @@ const CheckinInventory = () => {
     const categoriesCheckin = useSelector(state => state.checkin.categoriesCheckin)
     const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
     const [dataBottomSheet, setDataBottomSheet] = useState<IFilterType[]>([])
-    const [data,setData] = useState<IProduct[]>([])
-    
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
     const onBackScreen = () => {
         dispatch(productActions.setProductSelected([]))
         navigation.goBack()
     }
-    
-    const isDisabled = useMemo(() => data.length > 0 ? false : true, [data]);
+
+    const isDisabled = useMemo(() => products.length > 0 ? false : true, [products]);
+
     const updateProduct = () => {
         if (detailProduct) {
-            const newData = data.map(item => item.item_code === detailProduct.item_code ? detailProduct : item);
-            setData(newData);
+            const newData = products.map(item => item.item_code === detailProduct.item_code ? detailProduct : item);
+            dispatch(productActions.updateProductSelect(newData))
         }
         if (bottomSheetRefDetail.current) {
             bottomSheetRefDetail.current.close()
@@ -97,8 +98,8 @@ const CheckinInventory = () => {
     }
 
     const onSubmit = async () => {
-        if (data.length > 0) {
-            const newItems = data.map(item => {
+        if (products.length > 0) {
+            const newItems = products.map(item => {
                 const price = item.details.find(item2 => item2.uom == item.stock_uom)
                 return {
                     item_code: item.item_code,
@@ -123,14 +124,14 @@ const CheckinInventory = () => {
 
     const removeItem = (id: string) => {
         const newProducts = products.filter(item => item.item_code !== id);
-        setData(newProducts)
+        dispatch(productActions.updateProductSelect(newProducts))
     }
 
     const renderItem = (item: IProduct) => {
         return (
             <View>
-                <View style={{paddingHorizontal:16,paddingVertical:12 ,backgroundColor:colors.bg_default,borderRadius:16}}>
-                    <View style={[styles.flex as any, { columnGap: 5 ,paddingTop:8}]}>
+                <View style={{ paddingHorizontal: 16, paddingVertical: 12, backgroundColor: colors.bg_default, borderRadius: 16 }}>
+                    <View style={[styles.flex as any, { columnGap: 5, paddingTop: 8 }]}>
                         <AppIcons
                             iconType={ICON_TYPE.IonIcon}
                             name="barcode-outline"
@@ -144,14 +145,14 @@ const CheckinInventory = () => {
                         <Text style={[styles.dateProduct]}>{CommonUtils.formatCash(item.price.toString())} đ</Text>
                         <Text style={[styles.dateProduct]}>x{item.quantity}{`(${item.stock_uom})`}</Text>
                     </View>
-                    <View style={{paddingTop:12,borderTopWidth :1 ,borderColor :colors.divider ,borderStyle:"dashed",marginTop:8}}>
+                    <View style={{ paddingTop: 12, borderTopWidth: 1, borderColor: colors.divider, borderStyle: "dashed", marginTop: 8 }}>
                         <Text style={[styles.dateProduct]}>Hạn sử dụng :{CommonUtils.convertDate(item.end_of_life)}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={[styles.removeIcon]}
-                    onPress={()=>removeItem(item.item_code)}
+                    onPress={() => removeItem(item.item_code)}
                 >
-                    <AppIcons 
+                    <AppIcons
                         iconType={AppConstant.ICON_TYPE.AweIcons}
                         name='trash-o'
                         size={22}
@@ -171,88 +172,92 @@ const CheckinInventory = () => {
 
     const renderUiBottomSheetDetailProduct = () => {
         return (
-            <View style={{ padding: 16, paddingTop: 0, height: '100%', marginTop: -20 }}>
-                <AppHeader
-                    label={getLabel("product")}
-                    onBack={() =>
-                        bottomSheetRefDetail.current && bottomSheetRefDetail.current.close()
-                    }
-                    backButtonIcon={
-                        <AppIcons
-                            iconType={AppConstant.ICON_TYPE.IonIcon}
-                            name={'close'}
-                            size={24}
-                            color={colors.text_primary}
+            <View style={{ flex: 1 }}>
+                <View style={{ padding: 16, paddingTop: 0, marginTop: -20, flex: 1 }}>
+                    <AppHeader
+                        label={getLabel("product")}
+                        onBack={() =>
+                            bottomSheetRefDetail.current && bottomSheetRefDetail.current.close()
+                        }
+                        backButtonIcon={
+                            <AppIcons
+                                iconType={AppConstant.ICON_TYPE.IonIcon}
+                                name={'close'}
+                                size={24}
+                                color={colors.text_primary}
+                            />
+                        }
+                    />
+                    <View style={{ marginTop: 32, rowGap: 24 }}>
+                        <AppInput
+                            label={getLabel("productCode")}
+                            value={detailProduct?.item_code || ""}
+                            editable={false}
+                            styles={{
+                                backgroundColor: colors.bg_neutral
+                            }}
+                            hiddenRightIcon
                         />
-                    }
-                />
-                <View style={{ marginTop: 32, rowGap: 24 }}>
-                    <AppInput
-                        label={getLabel("productCode")}
-                        value={detailProduct?.item_code || ""}
-                        editable={false}
-                        styles={{
-                            backgroundColor: colors.bg_neutral
-                        }}
-                        hiddenRightIcon
-                    />
-                    <AppInput
-                        label={getLabel("unit")}
-                        value={detailProduct?.stock_uom || ""}
-                        editable={false}
-                        onPress={() => onOpenBottonSheetData('unit')}
-                        rightIcon={
-                            <TextInput.Icon
-                                onPress={() => onOpenBottonSheetData('unit')}
-                                icon={'chevron-down'}
-                                style={{ width: 24, height: 24 }}
-                                color={colors.text_secondary}
+                        <AppInput
+                            label={getLabel("unit")}
+                            value={detailProduct?.stock_uom || ""}
+                            editable={false}
+                            onPress={() => onOpenBottonSheetData('unit')}
+                            rightIcon={
+                                <TextInput.Icon
+                                    onPress={() => onOpenBottonSheetData('unit')}
+                                    icon={'chevron-down'}
+                                    style={{ width: 24, height: 24 }}
+                                    color={colors.text_secondary}
+                                />
+                            }
+                        />
+                        <AppInput
+                            label={getLabel("quantity")}
+                            value={detailProduct?.quantity?.toString() || ""}
+                            hiddenRightIcon
+                            onChangeValue={(txt: string) => setDetailProduct({ ...detailProduct, quantity: txt == "" ? 0 : parseInt(txt) })}
+                            inputProp={{
+                                keyboardType: 'numeric'
+                            }}
+                        />
+                        <AppInput
+                            label={getLabel("expired")}
+                            value={detailProduct?.end_of_life ? CommonUtils.convertDate(detailProduct.end_of_life) : ""}
+                            editable={false}
+                            rightIcon={
+                                <TextInput.Icon
+                                    icon={'calendar-month-outline'}
+                                    style={{ width: 24, height: 24 }}
+                                    color={colors.text_secondary}
+                                />
+                            }
+                        />
+                    </View>
+
+                    {!isKeyboardVisible && (
+                        <View
+                            style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-end',
+                                marginBottom :30
+                            }}>
+                            <AppButton
+                                style={{ width: '45%', backgroundColor: colors.bg_neutral, height: 38 }}
+                                label={getLabel("cancel")}
+                                styleLabel={{ color: colors.text_secondary }}
+                                onPress={() => bottomSheetRef.current && bottomSheetRef.current.close()}
                             />
-                        }
-                    />
-                    <AppInput
-                        label={getLabel("quantity")}
-                        value={detailProduct?.quantity?.toString() || ""}
-                        hiddenRightIcon
-                        onChangeValue={(txt: string) => setDetailProduct({ ...detailProduct, quantity: txt == "" ? 0 : parseInt(txt) })}
-                        inputProp={{
-                            keyboardType: 'numeric'
-                        }}
-                    />
-                    <AppInput
-                        label={getLabel("expired")}
-                        value={detailProduct?.end_of_life ? CommonUtils.convertDate(detailProduct.end_of_life) : ""}
-                        editable={false}
-                        rightIcon={
-                            <TextInput.Icon
-                                icon={'calendar-month-outline'}
-                                style={{ width: 24, height: 24 }}
-                                color={colors.text_secondary}
+                            <AppButton
+                                style={{ width: '45%', height: 38 }}
+                                label={getLabel("update")}
+                                onPress={updateProduct}
                             />
-                        }
-                    />
-                </View>
-                <View
-                    style={{
-                        justifyContent: 'space-between',
-                        flexDirection: 'row',
-                        paddingTop: 10,
-                        position: 'absolute',
-                        bottom: 0,
-                        width: '100%',
-                        alignSelf: 'center',
-                    }}>
-                    <AppButton
-                        style={{ width: '45%', backgroundColor: colors.bg_neutral }}
-                        label={getLabel("cancel")}
-                        styleLabel={{ color: colors.text_secondary }}
-                        onPress={() => bottomSheetRef.current && bottomSheetRef.current.close()}
-                    />
-                    <AppButton
-                        style={{ width: '45%' }}
-                        label={getLabel("update")}
-                        onPress={updateProduct}
-                    />
+                        </View>
+                    )}
+
                 </View>
             </View>
         );
@@ -261,21 +266,40 @@ const CheckinInventory = () => {
     const completeCheckin = () => {
         const newData = categoriesCheckin.map(item => item.key === "inventory" ? ({ ...item, isDone: true }) : item);
         dispatch(checkinActions.setDataCategoriesCheckin(newData));
+        dispatch(productActions.setProductSelected([]));
         navigation.goBack();
     }
 
-    useEffect(()=>{
-        if(products.length>0){
-            setData(products);
-        }
-        dispatch(productActions.setProductSelected([]))
-    },[products]);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                setKeyboardVisible(true); // or some other action
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                setKeyboardVisible(false); // or some other action
+            }
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
+
+    useEffect(() => {
+        Keyboard.dismiss();
+    }, [products])
 
     return (
         <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
             <AppHeader label={getLabel("inventoryControl")} onBack={onBackScreen} />
 
-            {data.length > 0 && (
+            {products.length > 0 && (
                 <View style={[styles.flexSpace as any, { marginTop: 40, marginBottom: 8 }]}>
                     <Text style={[styles.titile as any, { color: colors.text_secondary }]}>{getLabel("listProduct")}</Text>
                     <View style={{ flexDirection: "row" }}>
@@ -301,9 +325,9 @@ const CheckinInventory = () => {
 
             <AppContainer>
 
-                {data.length > 0 && (
+                {products.length > 0 && (
                     <View style={{ rowGap: 16 }}>
-                        {data.map((item, index) => (
+                        {products.map((item, index) => (
                             <TouchableOpacity key={index} onPress={() => openBottonSheetDetail(item)} activeOpacity={0.5}>
                                 {renderItem(item)}
                             </TouchableOpacity>
@@ -314,7 +338,7 @@ const CheckinInventory = () => {
 
                 )}
 
-                {data.length == 0 && (
+                {products.length == 0 && (
                     <View style={[styles.containerNodata as any]}>
                         <View style={{ alignItems: "center" }}>
                             <Image style={[styles.iconImage]} source={ImageAssets.IconBill} resizeMode='cover' />
@@ -373,17 +397,17 @@ const CheckinInventory = () => {
 
 export default CheckinInventory;
 
-const createStyles =(theme:AppTheme)=> StyleSheet.create({
-    removeIcon:{
-        position:"absolute",
-        top :20,
-        right :20
-    }as ViewStyle,
+const createStyles = (theme: AppTheme) => StyleSheet.create({
+    removeIcon: {
+        position: "absolute",
+        top: 20,
+        right: 20
+    } as ViewStyle,
     containerNodata: {
         height: "100%",
         justifyContent: "center",
         alignItems: "center"
-    }as ViewStyle,
+    } as ViewStyle,
     flex: {
         flexDirection: "row",
         alignItems: "center"
@@ -392,7 +416,7 @@ const createStyles =(theme:AppTheme)=> StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center"
-    }as ViewStyle,
+    } as ViewStyle,
     iconImage: {
         width: 67,
         height: 57,
@@ -406,21 +430,21 @@ const createStyles =(theme:AppTheme)=> StyleSheet.create({
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "500"
-    }as TextStyle,
+    } as TextStyle,
     nameProduct: {
         fontSize: 16,
         lineHeight: 24,
         fontWeight: "500",
-        color:theme.colors.text_primary
-    }as TextStyle,
+        color: theme.colors.text_primary
+    } as TextStyle,
     dateProduct: {
         fontSize: 14,
         lineHeight: 21,
         fontWeight: "400",
-        color:theme.colors.text_primary
+        color: theme.colors.text_primary
     } as TextStyle,
     item: {
         paddingHorizontal: 16,
         paddingVertical: 12
-    }as ViewStyle
+    } as ViewStyle
 })
