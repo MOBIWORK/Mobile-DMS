@@ -348,7 +348,7 @@ const CheckinInventory = () => {
             <AppButton
                 disabled={isDisabled}
                 label={getLabel("completed")}
-                style={{ width: "100%", marginBottom: 20, backgroundColor: isDisabled ? colors.bg_disable : colors.primary }}
+                style={{ width: "100%", marginBottom: 35, backgroundColor: isDisabled ? colors.bg_disable : colors.primary }}
                 onPress={onSubmit}
             />
             <AppBottomSheet bottomSheetRef={bottomSheetRefDetail} snapPointsCustom={snapPointsDetailPr}>
