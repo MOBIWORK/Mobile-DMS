@@ -86,6 +86,17 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
           image: item.image.map(image => ({url: image})),
         })),
       ]);
+      // if (albumImageData.length > 0) {
+      //   console.log('albumImageData', albumImageData);
+      // } else {
+      //   setAlbumImageData([
+      //     ...selectedData.map(item => ({
+      //       id: item.id, // Adjust this based on your actual structure
+      //       label: item.label,
+      //       image: item.image.map(image => ({url: image})),
+      //     })),
+      //   ]);
+      // }
     } else {
       setAlbumImageData([]);
     }
@@ -119,8 +130,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
 
   const ListAlbumSelected = () => {
     return (
-      <View
-        style={styles.listAlbumStyle}>
+      <View style={styles.listAlbumStyle}>
         {curData
           .filter(item => item.isSelected)
           .map((item, index) => {
@@ -227,16 +237,14 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       fontSize: 16,
       fontWeight: '500',
     } as TextStyle,
-    listAlbumStyle:{
-      
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        rowGap: 8,
-        columnGap: 16,
-        flexWrap: 'wrap',
-        marginTop: 24,
-        marginBottom: 16,
-      
-    } as ViewStyle
+    listAlbumStyle: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      rowGap: 8,
+      columnGap: 16,
+      flexWrap: 'wrap',
+      marginTop: 24,
+      marginBottom: 16,
+    } as ViewStyle,
   });
