@@ -90,6 +90,7 @@ const ListVisit = () => {
 
   const listCustomer: VisitListItemResult = useSelector(
     state => state.customer.listCustomerVisit,
+    shallowEqual,
   );
   const lisCustomerRoute = useSelector(
     state => state.customer.listCustomerRoute,
@@ -558,7 +559,7 @@ const ListVisit = () => {
   const getData = async () => {
     setLoading(true);
     await getCustomerRoute();
-    await sortDataCustomer(distanceFilterValue);
+    // await sortDataCustomer(distanceFilterValue);
     await getDataGroup();
     setLoading(false);
   };
@@ -661,11 +662,6 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-    // if (isFocus && !searchVisit) {
-    //   getData().then();
-    // } else if (searchVisit) {
-    //   handleSearchVisit();
-    // }
     if (searchVisit) {
       handleSearchVisit();
     } else {
@@ -674,13 +670,11 @@ const ListVisit = () => {
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer, searchVisit]);
+  }, [searchVisit]);
 
   useEffect(() => {
-    if (searchVisit) {
-      handleSearchVisit();
-    }
-  }, [searchVisit]);
+    sortDataCustomer(distanceFilterValue);
+  }, [listCustomer]);
 
   return (
     <SafeAreaView

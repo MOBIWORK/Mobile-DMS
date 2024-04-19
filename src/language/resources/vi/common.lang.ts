@@ -278,6 +278,10 @@ export default {
   targetKpi: 'Chỉ tiêt KPI',
   reportVisit: 'Báo cáo viếng thăm',
   nonUserProfileDes: 'Tài khoản của bạn không có thông tin trên hệ thống',
-  internalNotifi:"Thông báo nội bộ",
-  confirmDeleteOrder :"Xác nhận xoá đơn hàng này",
+  internalNotifi: 'Thông báo nội bộ',
+  confirmDeleteOrder: 'Xác nhận xoá đơn hàng này',
+  welcome: 'Xin chào',
+  noAlbum: 'Không có album nào',
+  addAlbum: 'Thêm album',
+  addAlbumToTakePicture: 'Thêm album để chụp ảnh',
 };
