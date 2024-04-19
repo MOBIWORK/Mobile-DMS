@@ -34,7 +34,7 @@ import FilterListComponent, {
 } from '../../../components/common/FilterListComponent';
 import { ApiConstant, AppConstant, ScreenConstant } from '../../../const';
 import { OrderService, ProductService } from '../../../services';
-import { IProduct, IProductPromotion, IResOrganization, KeyAbleProps } from '../../../models/types';
+import { IProduct, IProductPromotion, IResOrganization, IUser, KeyAbleProps } from '../../../models/types';
 import { useSelector } from '../../../config/function';
 import { useTranslation } from 'react-i18next';
 import { dispatch } from '../../../utils/redux';
@@ -65,6 +65,7 @@ const CreateOrder = () => {
   const router = useRoute<RouterProp<'CHECKIN_ORDER'>>();
   const type = router.params.type;
   const { t: getLabel, i18n } = useTranslation();
+  const userInfo: IUser = useSelector(state => state.app.userProfile);
 
   const [openDate, setOpenDate] = useState<boolean>(false);
   const [organization, _] = useMMKVObject<IResOrganization>(AppConstant.Organization)
@@ -107,7 +108,7 @@ const CreateOrder = () => {
   const [vatAmount, setVatAmount] = useState<number>(0);
 
   const onBackScreen = () => {
-    dispatch(productActions.setProductSelected([]));
+    dispatch(productActions.updateProductSelect([]));
     if (customer) dispatch(orderAction.setCustomerOder(null));
     navigation.goBack()
   };
@@ -461,7 +462,7 @@ const CreateOrder = () => {
   };
 
   const fetchDataWarehouse = async () => {
-    const { data, status }: KeyAbleProps = await ProductService.getWarehouse();
+    const { data, status }: KeyAbleProps = await ProductService.getWarehouse(userInfo.company);
     if (status === ApiConstant.STT_OK) {
       const result = data.result;
       const newData: IFilterType[] = [];
@@ -507,8 +508,7 @@ const CreateOrder = () => {
           "currency": "VND",
           "price_list": "Standard Selling",
           "price_list_currency": "VND",
-          // "company": organization?.company_name || "",
-          "company": 'MBW',            // Lấy cty hiện tại
+          "company": userInfo.company,
           "doctype": "Sales Order",
           "name": "new-sales-order-hnnkmtrehm",
           "transaction_date": CommonUtils.taskDate(date),
