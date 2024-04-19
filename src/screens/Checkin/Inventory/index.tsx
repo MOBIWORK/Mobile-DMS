@@ -146,7 +146,7 @@ const CheckinInventory = () => {
                         <Text style={[styles.dateProduct]}>x{item.quantity}{`(${item.stock_uom})`}</Text>
                     </View>
                     <View style={{ paddingTop: 12, borderTopWidth: 1, borderColor: colors.divider, borderStyle: "dashed", marginTop: 8 }}>
-                        <Text style={[styles.dateProduct]}>Hạn sử dụng :{CommonUtils.convertDate(item.end_of_life)}</Text>
+                        <Text style={[styles.dateProduct]}>Hạn sử dụng :{item.end_of_life ? CommonUtils.convertDate(item.end_of_life) : ""}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={[styles.removeIcon]}
