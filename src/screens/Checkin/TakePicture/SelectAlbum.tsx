@@ -19,6 +19,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ImageAssets} from '../../../assets';
 import {Button} from 'react-native-paper';
 import {IAlbumImage} from '../../../models/types';
+import {useTranslation} from 'react-i18next';
 
 const SelectAlbum: FC<SelectAlbumProps> = ({
   bottomSheetRef,
@@ -29,6 +30,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
 }) => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
+  const {t: getLabel} = useTranslation();
   const {bottom} = useSafeAreaInsets();
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
@@ -39,16 +41,18 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
     handleContentLayout,
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
-  const [curData, setCurData] = useState<IFilterType[]>(data);
+  const [curData, setCurData] = useState<IFilterType[] | undefined>(data);
 
   const handleItem = (item: IFilterType) => {
-    const newData = curData.map(itemCur => {
-      if (item.value === itemCur.value) {
-        return {...itemCur, isSelected: !itemCur.isSelected};
-      } else {
-        return itemCur;
-      }
-    });
+    const newData =
+      curData &&
+      curData.map(itemCur => {
+        if (item.value === itemCur.value) {
+          return {...itemCur, isSelected: !itemCur.isSelected};
+        } else {
+          return itemCur;
+        }
+      });
     setCurData(newData);
   };
 
@@ -131,28 +135,29 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   const ListAlbumSelected = () => {
     return (
       <View style={styles.listAlbumStyle}>
-        {curData
-          .filter(item => item.isSelected)
-          .map((item, index) => {
-            return (
-              <Button
-                key={index}
-                onPress={() => {
-                  handleItem(item);
-                }}
-                style={{backgroundColor: theme.colors.bg_neutral}}
-                contentStyle={{flexDirection: 'row-reverse'}}
-                mode={'contained-tonal'}
-                labelStyle={{
-                  color: theme.colors.text_primary,
-                  fontWeight: '400',
-                  fontSize: 13,
-                }}
-                icon={'close'}>
-                {item.label}
-              </Button>
-            );
-          })}
+        {curData &&
+          curData
+            .filter(item => item.isSelected)
+            .map((item, index) => {
+              return (
+                <Button
+                  key={index}
+                  onPress={() => {
+                    handleItem(item);
+                  }}
+                  style={{backgroundColor: theme.colors.bg_neutral}}
+                  contentStyle={{flexDirection: 'row-reverse'}}
+                  mode={'contained-tonal'}
+                  labelStyle={{
+                    color: theme.colors.text_primary,
+                    fontWeight: '400',
+                    fontSize: 13,
+                  }}
+                  icon={'close'}>
+                  {item.label}
+                </Button>
+              );
+            })}
       </View>
     );
   };
@@ -176,23 +181,40 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
                   bottomSheetRef.current?.close();
                 }}
                 style={styles.cancelTxt}>
-                Hủy
+                {getLabel('cancel')}
               </Text>
               <Text style={styles.albumTxt}>Album</Text>
               <Text
                 onPress={() => {
-                  setData(curData);
-                  handleAlbum(curData);
+                  if (curData) {
+                    setData(curData);
+                    handleAlbum(curData);
+                  }
                   bottomSheetRef.current?.close();
                 }}
                 style={styles.confirmTxt}>
-                Xác nhận
+                {getLabel('confirm')}
               </Text>
             </View>
-            <ListAlbumSelected />
-            {curData.map((item, index) => {
-              return <ItemAlbum key={index} item={item} />;
-            })}
+            {data ? (
+              <>
+                <ListAlbumSelected />
+                {curData &&
+                  curData.map((item, index) => {
+                    return <ItemAlbum key={index} item={item} />;
+                  })}
+              </>
+            ) : (
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: theme.colors.text_primary,
+                  textAlign: 'center',
+                  padding: 16,
+                }}>
+                {getLabel('noAlbum')}
+              </Text>
+            )}
           </View>
         </BottomSheetScrollView>
       </AppBottomSheet>
@@ -201,7 +223,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
 };
 interface SelectAlbumProps {
   bottomSheetRef: any;
-  data: IFilterType[];
+  data: IFilterType[] | undefined;
   setData: (data: IFilterType[]) => void;
   setAlbumImageData: React.Dispatch<React.SetStateAction<IAlbumImage[]>>;
   albumImageData: IAlbumImage[];
@@ -226,6 +248,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       color: theme.colors.text_disable,
       fontSize: 16,
       fontWeight: '500',
+      width: 100,
     } as TextStyle,
     albumTxt: {
       color: theme.colors.text_primary,
@@ -236,6 +259,8 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       color: theme.colors.action,
       fontSize: 16,
       fontWeight: '500',
+      width: 100,
+      textAlign: 'right',
     } as TextStyle,
     listAlbumStyle: {
       flexDirection: 'row',

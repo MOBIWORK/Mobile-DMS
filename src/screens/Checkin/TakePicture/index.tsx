@@ -183,7 +183,7 @@ const TakePicture = () => {
       <>
         <SvgIcon source={'EmptyImg'} size={90} />
         <Text style={{color: theme.colors.text_secondary}}>
-          Thêm album để chụp ảnh
+          {getLabel('addAlbumToTakePicture')}
         </Text>
         <Button
           style={{marginTop: 16, borderColor: theme.colors.action}}
@@ -193,7 +193,7 @@ const TakePicture = () => {
           onPress={() =>
             bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
           }>
-          Thêm album
+          {getLabel('addAlbum')}
         </Button>
       </>
     );
@@ -317,15 +317,16 @@ const TakePicture = () => {
           onPress={handlePushImageData}
         />
       </View>
-      {albumBottomSheet && (
-        <SelectAlbum
-          bottomSheetRef={bottomSheetRef}
-          data={albumBottomSheet}
-          setData={setAlbumBottomSheet}
-          albumImageData={albumImageData}
-          setAlbumImageData={setAlbumImageData}
-        />
-      )}
+      {/*{albumBottomSheet && (*/}
+      {/* */}
+      {/*)}*/}
+      <SelectAlbum
+        bottomSheetRef={bottomSheetRef}
+        data={albumBottomSheet}
+        setData={setAlbumBottomSheet}
+        albumImageData={albumImageData}
+        setAlbumImageData={setAlbumImageData}
+      />
 
       <Modal visible={loading} style={styles.modal}>
         <Block
