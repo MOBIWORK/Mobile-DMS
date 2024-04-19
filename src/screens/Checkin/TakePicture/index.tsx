@@ -120,6 +120,8 @@ const TakePicture = () => {
   };
 
   const handleCamera = async (item: IAlbumImage) => {
+    // console.log('albumImageData', albumImageData);
+    // console.log('item', item);
     await CameraUtils.openImagePickerCamera((img, base64) => {
       const newListImage = [
         ...item.image,
@@ -129,25 +131,28 @@ const TakePicture = () => {
         ...item,
         image: newListImage,
       };
-
-      setAlbumImageData(prevState => {
-        const updatedState = [
-          ...prevState.filter(itemPre => itemPre.label !== newItem.label),
-          newItem,
-        ];
-
-        return updatedState;
+      const updatedState = albumImageData.map(itemState => {
+        if (itemState.id === newItem.id) {
+          return newItem;
+        } else {
+          return itemState;
+        }
       });
+      setAlbumImageData(updatedState);
     });
   };
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
     const newListImage = itemSelected.image.filter(item => item.url !== img);
     const newItem: IAlbumImage = {...itemSelected, image: newListImage};
-    setAlbumImageData(prevState => [
-      ...prevState.filter(itemPre => itemPre.label !== newItem.label),
-      newItem,
-    ]);
+    const updatedState = albumImageData.map(itemState => {
+      if (itemState.id === newItem.id) {
+        return newItem;
+      } else {
+        return itemState;
+      }
+    });
+    setAlbumImageData(updatedState);
   };
 
   const onDeleteAlbum = (id: string) => {
@@ -178,7 +183,7 @@ const TakePicture = () => {
       <>
         <SvgIcon source={'EmptyImg'} size={90} />
         <Text style={{color: theme.colors.text_secondary}}>
-          Thêm album để chụp ảnh
+          {getLabel('addAlbumToTakePicture')}
         </Text>
         <Button
           style={{marginTop: 16, borderColor: theme.colors.action}}
@@ -188,7 +193,7 @@ const TakePicture = () => {
           onPress={() =>
             bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
           }>
-          Thêm album
+          {getLabel('addAlbum')}
         </Button>
       </>
     );
@@ -266,17 +271,11 @@ const TakePicture = () => {
     [handleCamera, albumBottomSheet],
   );
 
-  useEffect(() => {
-    if (albumImageData.length > 0) {
-      console.log('album', albumImageData);
-    }
-  }, [albumImageData]);
-
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <AppHeader
         style={styles.header}
-        label={'Chụp ảnh'}
+        label={getLabel('takePicture')}
         onBack={() => navigation.goBack()}
       />
       <View style={[styles.row, {width: '100%'}]}>
@@ -318,15 +317,16 @@ const TakePicture = () => {
           onPress={handlePushImageData}
         />
       </View>
-      {albumBottomSheet && (
-        <SelectAlbum
-          bottomSheetRef={bottomSheetRef}
-          data={albumBottomSheet}
-          setData={setAlbumBottomSheet}
-          albumImageData={albumImageData}
-          setAlbumImageData={setAlbumImageData}
-        />
-      )}
+      {/*{albumBottomSheet && (*/}
+      {/* */}
+      {/*)}*/}
+      <SelectAlbum
+        bottomSheetRef={bottomSheetRef}
+        data={albumBottomSheet}
+        setData={setAlbumBottomSheet}
+        albumImageData={albumImageData}
+        setAlbumImageData={setAlbumImageData}
+      />
 
       <Modal visible={loading} style={styles.modal}>
         <Block

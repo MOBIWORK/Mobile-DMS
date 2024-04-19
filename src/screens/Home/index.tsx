@@ -6,6 +6,7 @@ import {
   Linking,
   Platform,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
@@ -531,7 +532,9 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={{flex: 1}} edges={['top']}>
       <Block block>
-        <View style={[styles.shadow, styles.header]}>
+        <Pressable
+          style={[styles.shadow, styles.header]}
+          onPress={() => navigation.navigate(ScreenConstant.PROFILE)}>
           <View style={{flexDirection: 'row'}}>
             {Object.keys(userProfile).length > 0 && userProfile?.image ? (
               <AppAvatar url={userProfile.image} size={48} />
@@ -539,7 +542,7 @@ const HomeScreen = () => {
               <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
             )}
             <View style={[styles.containerIfU]}>
-              <Text style={[styles.userName]}> Xin chào,</Text>
+              <Text style={[styles.userName]}>{getLabel('welcome')},</Text>
               <Text style={[styles.userName]}>
                 {Object.keys(userProfile) &&
                 Object.keys(userProfile!)?.length > 0
@@ -562,7 +565,7 @@ const HomeScreen = () => {
               }}
             />
           </View>
-        </View>
+        </Pressable>
         <AppContainer style={{marginBottom: 100}}>
           <View style={styles.mainLayout}>
             <View style={[styles.shadow, styles.containerTimekeep]}>
