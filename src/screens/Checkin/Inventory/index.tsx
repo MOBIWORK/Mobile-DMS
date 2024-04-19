@@ -22,12 +22,13 @@ import { CheckinService } from '../../../services';
 import FilterListComponent, { IFilterType } from '../../../components/common/FilterListComponent';
 import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 import { AppTheme, useTheme } from '../../../layouts/theme';
+import { DatePickerModal } from 'react-native-paper-dates';
 
 const CheckinInventory = () => {
 
     const { colors } = useTheme();
     const navigation = useNavigation<NavigationProp>();
-    const { t: getLabel } = useTranslation();
+    const { t: getLabel, i18n } = useTranslation();
     const bottomSheetRef = useRef<BottomSheet>(null);
     const bottomSheetRefDetail = useRef<BottomSheet>(null);
     const bottomSheetData = useRef<BottomSheet>(null);
@@ -41,9 +42,10 @@ const CheckinInventory = () => {
     const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
     const [dataBottomSheet, setDataBottomSheet] = useState<IFilterType[]>([])
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    const [openDate, setOpenDate] = useState<boolean>(false);
 
     const onBackScreen = () => {
-        dispatch(productActions.setProductSelected([]))
+        dispatch(productActions.updateProductSelect([]))
         navigation.goBack()
     }
 
@@ -64,7 +66,7 @@ const CheckinInventory = () => {
             case "unit": {
                 setLabelBottonSheet("unit")
                 if (detailProduct) {
-                    const units = detailProduct.details;
+                    const units = detailProduct.unit;
                     const newUnits: IFilterType[] = units.map((item1: any) => {
                         return detailProduct.stock_uom === item1.uom ? { label: item1.uom, value: detailProduct.item_code, isSelected: true } : { label: item1.uom, value: detailProduct.item_code, isSelected: false }
                     });
@@ -225,6 +227,7 @@ const CheckinInventory = () => {
                             label={getLabel("expired")}
                             value={detailProduct?.end_of_life ? CommonUtils.convertDate(detailProduct.end_of_life) : ""}
                             editable={false}
+                            onPress={()=> setOpenDate(true)}
                             rightIcon={
                                 <TextInput.Icon
                                     icon={'calendar-month-outline'}
@@ -242,7 +245,7 @@ const CheckinInventory = () => {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
                                 alignItems: 'flex-end',
-                                marginBottom :30
+                                marginBottom: 30
                             }}>
                             <AppButton
                                 style={{ width: '45%', backgroundColor: colors.bg_neutral, height: 38 }}
@@ -270,6 +273,16 @@ const CheckinInventory = () => {
         navigation.goBack();
     }
 
+    const onDismissSingle = () => {
+        setOpenDate(false);
+    }
+
+    const onConfirmSingle = (params:any) => {
+            setOpenDate(false);
+            const newDate = new Date(params.date ?? '');
+            const newProduct :IProduct | any = {...detailProduct,end_of_life: newDate.toISOString() }
+            setDetailProduct(newProduct)
+    }
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -391,6 +404,17 @@ const CheckinInventory = () => {
                     handleItem={onChangeData}
                 />
             </AppBottomSheet>
+
+            <DatePickerModal
+                locale={i18n.language ?? 'vi'}
+                mode="single"
+                startYear={1900}
+                visible={openDate}
+                label={getLabel('selectDate')}
+                onDismiss={onDismissSingle}
+                date={new Date()}
+                onConfirm={onConfirmSingle}
+            />
         </MainLayout>
     )
 }
