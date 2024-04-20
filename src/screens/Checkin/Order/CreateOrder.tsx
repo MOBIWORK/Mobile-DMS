@@ -540,7 +540,7 @@ const CreateOrder = () => {
   const handlerRemoveItemProduct = (id: string) => {
     const newProducts = products.filter(item => item.item_code !== id);
     setProducts(newProducts);
-    dispatch(productActions.setProductSelected(newProducts))
+    dispatch(productActions.updateProductSelect(newProducts))
   };
 
   const updateProductOrder = () => {
