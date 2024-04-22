@@ -120,8 +120,6 @@ const TakePicture = () => {
   };
 
   const handleCamera = async (item: IAlbumImage) => {
-    // console.log('albumImageData', albumImageData);
-    // console.log('item', item);
     await CameraUtils.openImagePickerCamera((img, base64) => {
       const newListImage = [
         ...item.image,
@@ -155,9 +153,17 @@ const TakePicture = () => {
     setAlbumImageData(updatedState);
   };
 
-  const onDeleteAlbum = (id: string) => {
-    const newAlbum = albumImageData.filter(item => item.id !== id);
+  const onDeleteAlbum = (label: string) => {
+    const newAlbum = albumImageData.filter(item => item.label !== label);
+    const newAlbumBottomSheet = albumBottomSheet?.map(item => {
+      if (item.label === label) {
+        return {...item, isSelected: false};
+      } else {
+        return item;
+      }
+    });
     setAlbumImageData(newAlbum);
+    setAlbumBottomSheet(newAlbumBottomSheet);
   };
 
   useEffect(() => {
@@ -210,7 +216,7 @@ const TakePicture = () => {
             <SvgIcon
               source={'TrashIcon'}
               size={25}
-              onPress={() => onDeleteAlbum(itemAlbum.id)}
+              onPress={() => onDeleteAlbum(itemAlbum.label)}
             />
           </View>
           <View style={styles.imgContainer}>
@@ -317,10 +323,8 @@ const TakePicture = () => {
           onPress={handlePushImageData}
         />
       </View>
-      {/*{albumBottomSheet && (*/}
-      {/* */}
-      {/*)}*/}
       <SelectAlbum
+        key={albumBottomSheet?.length}
         bottomSheetRef={bottomSheetRef}
         data={albumBottomSheet}
         setData={setAlbumBottomSheet}
@@ -452,37 +456,5 @@ const createStyleSheet = (theme: ExtendedTheme) =>
 //     label: 'album6',
 //     value: 7,
 //     isSelected: false,
-//   },
-// ];
-// const AlbumImageFake: IAlbumImage[] = [
-//   {
-//     id: 1,
-//     label: 'Album 1',
-//     image: [
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//     ],
-//   },
-//   {
-//     id: 2,
-//     label: 'Album 2',
-//     image: [
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//     ],
-//   },
-//   {
-//     id: 3,
-//     label: 'Album 3',
-//     image: [
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//       ImageAssets.ImgAppWatch,
-//     ],
 //   },
 // ];

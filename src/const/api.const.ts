@@ -28,6 +28,8 @@ export const POST_USER_ORGANIZATION =
 export const POST_RESET_PASSWORD = URL_PREFIX + '.auth.reset_password';
 export const GET_CURRENT_SHIT =
   '/api/method/mbw_service_v2.api.ess.checkin.get_shift_now';
+export const PUT_USER_CHANGE_PASSWORD =
+  '/api/method/mbw_dms.api.user.change_password';
 
 // Profile
 export const PUT_USER_PROFILE =

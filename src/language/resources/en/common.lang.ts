@@ -279,4 +279,5 @@ export default {
   noAlbum: 'No albums',
   addAlbum: 'Add album',
   addAlbumToTakePicture: 'Add albums to take photos',
+  currentPassword: 'Current password',
 };

@@ -46,7 +46,6 @@ import {
   UserInfoScreen,
   EditAccount,
   AccountSetting,
-  CurrentPassword,
   ChangePassword,
   NotifySetting,
 } from '../screens';
@@ -206,10 +205,6 @@ const AuthNavigation = () => {
       <Stack.Screen
         name={ScreenConstant.ACCOUNT_SETTING}
         component={AccountSetting}
-      />
-      <Stack.Screen
-        name={ScreenConstant.CURRENT_PASSWORD}
-        component={CurrentPassword}
       />
       <Stack.Screen
         name={ScreenConstant.CHANGE_PASSWORD}

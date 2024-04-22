@@ -83,24 +83,25 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
     });
 
     if (selectedData.length > 0) {
-      setAlbumImageData([
-        ...selectedData.map(item => ({
-          id: item.id, // Adjust this based on your actual structure
-          label: item.label,
-          image: item.image.map(image => ({url: image})),
-        })),
-      ]);
-      // if (albumImageData.length > 0) {
-      //   console.log('albumImageData', albumImageData);
-      // } else {
-      //   setAlbumImageData([
-      //     ...selectedData.map(item => ({
-      //       id: item.id, // Adjust this based on your actual structure
-      //       label: item.label,
-      //       image: item.image.map(image => ({url: image})),
-      //     })),
-      //   ]);
-      // }
+      if (albumImageData.length > 0) {
+        setAlbumImageData([
+          ...selectedData.map((item, index) => ({
+            id: item.id, // Adjust this based on your actual structure
+            label: item.label,
+            image: albumImageData[index]?.image
+              ? albumImageData[index]?.image
+              : item.image.map(image => ({url: image})),
+          })),
+        ]);
+      } else {
+        setAlbumImageData([
+          ...selectedData.map(item => ({
+            id: item.id, // Adjust this based on your actual structure
+            label: item.label,
+            image: item.image.map(image => ({url: image})),
+          })),
+        ]);
+      }
     } else {
       setAlbumImageData([]);
     }
@@ -177,7 +178,15 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
             <View style={styles.row}>
               <Text
                 onPress={() => {
-                  setCurData([]);
+                  if (albumImageData?.length === 0) {
+                    setCurData(
+                      prevState =>
+                        prevState &&
+                        prevState.map(item => {
+                          return {...item, isSelected: false};
+                        }),
+                    );
+                  }
                   bottomSheetRef.current?.close();
                 }}
                 style={styles.cancelTxt}>
@@ -196,13 +205,12 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
                 {getLabel('confirm')}
               </Text>
             </View>
-            {data ? (
+            {curData && curData?.length > 0 ? (
               <>
                 <ListAlbumSelected />
-                {curData &&
-                  curData.map((item, index) => {
-                    return <ItemAlbum key={index} item={item} />;
-                  })}
+                {curData.map((item, index) => {
+                  return <ItemAlbum key={index} item={item} />;
+                })}
               </>
             ) : (
               <Text

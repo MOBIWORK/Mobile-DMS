@@ -284,4 +284,5 @@ export default {
   noAlbum: 'Không có album nào',
   addAlbum: 'Thêm album',
   addAlbumToTakePicture: 'Thêm album để chụp ảnh',
+  currentPassword: 'Mật khẩu hiện tại',
 };

@@ -80,7 +80,7 @@ const AppInput: FC<AppInputProps> = ({
         editable={editable}
         disabled={disable}
         secureTextEntry={isPassword && !showPassword}
-        clearTextOnFocus={isPassword}
+        clearTextOnFocus={false}
       />
     </TouchableOpacity>
   );

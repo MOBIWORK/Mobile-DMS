@@ -124,13 +124,15 @@ const CheckInLocation = () => {
         country: 'Việt Nam',
       };
       const response: any = await CheckinService.updateCustomerAddress(params);
+      console.log('resss', response);
       if (response?.status === ApiConstant.STT_OK) {
+        await completeCheckin();
         navigation.goBack();
       }
     } else {
+      await completeCheckin();
       navigation.goBack();
     }
-    completeCheckin();
     dispatch(setProcessingStatus(false));
   };
 
@@ -139,7 +141,6 @@ const CheckInLocation = () => {
       item.key === 'location' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    navigation.goBack();
   };
 
   useLayoutEffect(() => {

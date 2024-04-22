@@ -29,7 +29,7 @@ const handleErrorResponse = (
 ) => {
   if (response.status) {
     const isSuccessRequest = /^2\d{2}/g.test(response.status?.toString());
-    if (isSuccessRequest && response.data?.result) {
+    if (isSuccessRequest) {
       return;
     } else if (
       throwErrorIfFailed ||
