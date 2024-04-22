@@ -53,6 +53,6 @@ export const get = (params ?: PramsTypeProduct) => createApi().get(ApiConstant.G
 export const getBrand = () => createApi().get(ApiConstant.GET_BRAND_PRODUCT);
 export const getIndustry = () => createApi().get(ApiConstant.GET_INDUSTRY_PRODUCT);
 export const getGroup = () => createApi().get(ApiConstant.GET_GROUP_PRODUCT);
-export const getWarehouse = () => createApi().get(ApiConstant.GET_WAREHOUSES);
+export const getWarehouse = (company : string) => createApi().get(ApiConstant.GET_WAREHOUSES,{company});
 export const getPromotionalProducts = (data : GET_PRODUCT_PROMOTION) => createApi().post(ApiConstant.GET_PRODUCT_PROMOTION,data);
 export const getPriceListProducts = (data : GET_PRICE_LIST) => createApi().post(ApiConstant.GET_PRICE_PRODUCT,data);
