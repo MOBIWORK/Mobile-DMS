@@ -2,16 +2,14 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MainLayout } from '../../../layouts';
 import { AppBottomSheet, AppButton, AppContainer, AppHeader, AppIcons, AppInput } from '../../../components/common';
 import { useNavigation } from '@react-navigation/native';
-import { ImageStyle, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { ImageStyle, Keyboard, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { Image, TouchableOpacity } from 'react-native';
 import { ImageAssets } from '../../../assets';
 import { Button, IconButton, TextInput } from 'react-native-paper';
 import { NavigationProp } from '../../../navigation/screen-type';
 import { ICON_TYPE } from '../../../const/app.const';
-import SwipeableItem from './components/SwipeableItem';
 import { ApiConstant, AppConstant, ScreenConstant } from '../../../const';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-
 import { useTranslation } from 'react-i18next';
 import { useSelector } from '../../../config/function';
 import { IProduct } from '../../../models/types';
@@ -107,11 +105,12 @@ const CheckinInventory = () => {
                     item_code: item.item_code,
                     item_unit: item.stock_uom,
                     quantity: item.quantity,
-                    exp_time: new Date(item.end_of_life).getTime() / 1000,
+                    exp_time: item.expiry ? new Date(item.expiry).getTime() / 1000 :null,
                     item_price: price?.price_list_rate
                 }
             })
             const objectData = {
+                "checkin_id": dataCheckin.checkin_id,
                 "customer_code": dataCheckin.item.customer_code,//id khách hàng
                 "customer_id": dataCheckin.item.customer_name,//mã khách hàng
                 "customer_name": dataCheckin.item.name,//tên khách hàng
@@ -119,9 +118,12 @@ const CheckinInventory = () => {
                 "inventory_items": newItems
             }
             const { status }: any = await CheckinService.checkinInventory(objectData);
-            if (status === ApiConstant.STT_OK) onBackScreen();
+            if (status === ApiConstant.STT_CREATED){
+                dispatch(productActions.updateProductSelect([]));
+                navigation.goBack()
+                completeCheckin();
+            } 
         }
-        completeCheckin();
     }
 
     const removeItem = (id: string) => {
@@ -148,7 +150,7 @@ const CheckinInventory = () => {
                         <Text style={[styles.dateProduct]}>x{item.quantity}{`(${item.stock_uom})`}</Text>
                     </View>
                     <View style={{ paddingTop: 12, borderTopWidth: 1, borderColor: colors.divider, borderStyle: "dashed", marginTop: 8 }}>
-                        <Text style={[styles.dateProduct]}>Hạn sử dụng :{item.end_of_life ? CommonUtils.convertDate(item.end_of_life) : ""}</Text>
+                        <Text style={[styles.dateProduct]}>Hạn sử dụng :{item.expiry ? CommonUtils.convertDate(item.expiry) : ""}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={[styles.removeIcon]}
@@ -225,7 +227,7 @@ const CheckinInventory = () => {
                         />
                         <AppInput
                             label={getLabel("expired")}
-                            value={detailProduct?.end_of_life ? CommonUtils.convertDate(detailProduct.end_of_life) : ""}
+                            value={detailProduct?.expiry ? CommonUtils.convertDate(detailProduct.expiry) : ""}
                             editable={false}
                             onPress={()=> setOpenDate(true)}
                             rightIcon={
@@ -280,7 +282,7 @@ const CheckinInventory = () => {
     const onConfirmSingle = (params:any) => {
             setOpenDate(false);
             const newDate = new Date(params.date ?? '');
-            const newProduct :IProduct | any = {...detailProduct,end_of_life: newDate.toISOString() }
+            const newProduct :IProduct | any = {...detailProduct,expiry: newDate.toISOString() }
             setDetailProduct(newProduct)
     }
 
