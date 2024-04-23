@@ -546,7 +546,7 @@ export type IProduct = {
   price: number;
   unit: DataUnit[];
   isSelected?: boolean;
-
+  expiry? : string;
 };
 
 export type IOrderList = {

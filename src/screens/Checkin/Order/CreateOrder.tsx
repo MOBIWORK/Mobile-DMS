@@ -96,7 +96,7 @@ const CreateOrder = () => {
   const [labelBottonSheet, setLabelBottonSheet] = useState<string>("");
 
   const [warehouse, setWarehouse] = useState<IFilterType>();
-  const [vat, setVat] = useState<object | any>({ label: "", value: 0, rate: 0 });
+  const [vat, setVat] = useState<object | any>({ label: "", value: "", rate: 0 });
   const [discount, setDiscount] = useState<any>({
     label: 'Grand Total',
     value: 'grand',
@@ -225,7 +225,7 @@ const CreateOrder = () => {
             {products.map((item, i) => (
               <Pressable key={i} onPress={() => showDetailProdcut(item)}>
                 <ItemProduct
-                  onRemove={(id) => handlerRemoveItemProduct(id)}
+                  onRemove={() => handlerRemoveItemProduct(item.item_code)}
                   name={item.item_name}
                   code={item.item_code}
                   dvt={item.stock_uom}
@@ -539,7 +539,6 @@ const CreateOrder = () => {
 
   const handlerRemoveItemProduct = (id: string) => {
     const newProducts = products.filter(item => item.item_code !== id);
-    setProducts(newProducts);
     dispatch(productActions.updateProductSelect(newProducts))
   };
 
@@ -623,6 +622,8 @@ const CreateOrder = () => {
         break;
       case "RETURN_ORDER":
         objectData["grand_total"] = grandTotalPrice - (grandTotalPrice * 2);
+        console.log(objectData);
+        
         status = (await OrderService.createdReturnOrder(objectData)).status;
         break
       default:
@@ -681,7 +682,7 @@ const CreateOrder = () => {
               )}
 
               <AppInput
-                label={getLabel("eXwarehouse")}
+                label={type == "ORDER"? getLabel("eXwarehouse") : getLabel("imwarehouse")}
                 value={warehouse?.label ? warehouse.label : ''}
                 editable={false}
                 onPress={() => onOpenBottonSheetData("warehouse")}
