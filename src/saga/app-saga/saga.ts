@@ -8,17 +8,21 @@ import {
 import {PayloadAction} from '@reduxjs/toolkit';
 import {
   createImageCheckinApi,
+  DMSConfigMobile,
   getListCity,
   getListDistrict,
-  getListNoteApi,
   getListWard,
   getSystemConfig,
   postChecking,
 } from '../../services/appService';
-import {all, call, fork, put} from 'typed-redux-saga';
-import {showSnack} from '../../components/common';
+import {all, call, put} from 'typed-redux-saga';
 import {navigate} from '../../navigation/navigation-service';
 import {ScreenConstant} from '../../const';
+import {
+  categoriesCheckinList,
+  IItemCheckIn,
+} from '../../redux-store/checkin-reducer/type';
+import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 
 export const checkKeyInObject = (T: any, key: string) => {
   return Object.keys(T).includes(key);
@@ -77,7 +81,24 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         action.payload,
       );
       if (response.message === 'Thành công') {
-        yield put(appActions.setSystemConfig(response.result));
+        const systemData: DMSConfigMobile = response.result;
+        const newCategoriesCheckin: IItemCheckIn[] = categoriesCheckinList.map(
+          item => {
+            if (item.key === 'camera' && systemData.batbuoc_chupanh) {
+              return {...item, isRequire: true};
+            } else if (item.key === 'inventory' && systemData.batbuoc_kiemton) {
+              return {...item, isRequire: true};
+            } else if (item.key === 'note' && systemData.batbuoc_ghichu) {
+              return {...item, isRequire: true};
+            } else {
+              return {...item, isRequire: false};
+            }
+          },
+        );
+        yield put(appActions.setSystemConfig(systemData));
+        yield put(
+          checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
+        );
       } else {
         console.log('app System err');
       }
@@ -97,12 +118,6 @@ export function* onGetListCity(action: PayloadAction) {
       );
       if (response.message === 'Thành công') {
         yield put(appActions.setDataCity(response.data));
-      } else {
-        showSnack({
-          msg: 'Đã có lỗi xảy ra, hãy thử lại',
-          interval: 2000,
-          type: 'error',
-        });
       }
     } catch (err) {
       console.error('[err]: ', err);
@@ -118,12 +133,6 @@ export function* onGetListDistrict(action: PayloadAction) {
       );
       if (response.message === 'Thành công') {
         yield put(appActions.setDataDistrict(response.data));
-      } else {
-        showSnack({
-          msg: 'Đã có lỗi xảy ra, hãy thử lại',
-          interval: 2000,
-          type: 'error',
-        });
       }
     } catch (err) {
       console.error('[err]: ', err);
@@ -139,12 +148,6 @@ export function* onGetListWard(action: PayloadAction) {
       );
       if (response.message === 'Thành công') {
         yield put(appActions.setDataWard(response.data));
-      } else {
-        showSnack({
-          msg: 'Đã có lỗi xảy ra, hãy thử lại',
-          interval: 2000,
-          type: 'error',
-        });
       }
     } catch (err) {
       console.error('[err]: ', err);

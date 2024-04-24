@@ -432,6 +432,7 @@ const HomeScreen = () => {
       onResetSearchValueOfVisit();
       //get Data
       getLocation();
+      getSystemConfig();
       getProfile();
       getCurrentShit();
       getReportKPI();
@@ -442,19 +443,12 @@ const HomeScreen = () => {
   }, [isFocus]);
 
   useEffect(() => {
-    getSystemConfig();
     getWidget();
     getCustomer();
   }, []);
 
   const getSystemConfig = () => {
-    const {systemConfig} = getState('app');
-    console.log('getSystemConfig', systemConfig);
-    if (Object.keys(systemConfig).length > 0) {
-      return;
-    } else {
-      dispatch(appActions.onGetSystemConfig());
-    }
+    dispatch(appActions.onGetSystemConfig());
   };
 
   const onSyncStatusChanged = React.useCallback(

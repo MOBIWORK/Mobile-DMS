@@ -13,6 +13,7 @@ import {navigationRef} from './navigation-service';
 
 import RootNavigation from './root-navigation';
 import HandlingError from '../components/HandlingError';
+import {SnackBar} from '../components/common/AppSnack';
 
 const AppNavigationContainer: FC<AppNavigationContainerProps> = ({}) => {
   const theme = useSelector(state => state.app.theme);
@@ -25,6 +26,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({}) => {
       <StatusBar backgroundColor={'transparent'} translucent />
       <>
         <RootNavigation />
+        <SnackBar />
         <HandlingError />
         <PortalHost name={'Bottom-Sheet'} />
       </>
