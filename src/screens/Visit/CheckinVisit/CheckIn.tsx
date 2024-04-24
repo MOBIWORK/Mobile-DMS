@@ -29,7 +29,7 @@ import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import {goBack} from '../../../navigation/navigation-service';
 import {AppService} from '../../../services';
-import {ApiConstant, ScreenConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
 // @ts-ignore
 import StringFormat from 'string-format';
@@ -163,7 +163,27 @@ const CheckIn = () => {
     function isNote(categoriesItem: IItemCheckIn) {
       return categoriesItem.key === 'note';
     }
-    if (
+
+    if (!systemConfig.checkout_ngoaisaiso) {
+      let location: LocationProps = JSON.parse(
+        params.item.customer_location_primary,
+      );
+      CommonUtils.getCurrentLocation(currentLocation => {
+        let distance = calculateDistance(
+          currentLocation.coords.latitude,
+          currentLocation.coords.longitude,
+          location?.lat,
+          location?.long,
+        );
+        if (distance * 1000 > AppConstant.additional_distance) {
+          setMsgCheckOutErr({
+            type: 'distance',
+            title: getLabel('errDistance'),
+            msg: getLabel('mgsDistanceErr'),
+          });
+        }
+      });
+    } else if (
       systemConfig.checkout_ngoaisaiso &&
       systemConfig.saiso_chophep_checkout_ngoaisaiso > 0
     ) {
@@ -177,7 +197,11 @@ const CheckIn = () => {
           location?.lat,
           location?.long,
         );
-        if (distance * 1000 > systemConfig.saiso_chophep_checkout_ngoaisaiso) {
+        if (
+          distance * 1000 >
+          systemConfig.saiso_chophep_checkout_ngoaisaiso +
+            AppConstant.additional_distance
+        ) {
           setMsgCheckOutErr({
             type: 'distance',
             title: getLabel('errDistance'),

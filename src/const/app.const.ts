@@ -53,6 +53,8 @@ export const ICON_TYPE = {
 };
 
 //const
+export const additional_distance = 150; //sai số checkin/checkOut (m)
+
 export const BiometricType = {
   FaceID: 'FaceID',
   TouchID: 'TouchID',
