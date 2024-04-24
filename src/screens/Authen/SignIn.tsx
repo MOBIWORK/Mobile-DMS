@@ -236,12 +236,11 @@ const SignIn = () => {
 export default SignIn;
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
+    marginTop: 16,
     justifyContent: 'center',
   } as ViewStyle,
   body: {
     marginTop: 32,
-    flex: 3,
     justifyContent: 'flex-start',
   } as ViewStyle,
   footer: {
@@ -249,7 +248,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     alignSelf: 'center',
-    flex: 3,
   } as ViewStyle,
   input: {
     marginVertical: 20,

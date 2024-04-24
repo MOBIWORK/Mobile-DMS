@@ -3,7 +3,6 @@ import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY} from '@env';
 import {client} from '../config/client';
 import {VisitListItemType} from '../models/types';
-import {PUT_USER_CHANGE_PASSWORD} from '../const/api.const';
 
 export type ILogin = {
   usr: string;
@@ -57,7 +56,7 @@ export type CheckinData = {
   item: VisitListItemType;
 };
 
-export interface DMSConfigMobile {
+export type DMSConfigMobile = {
   name: string;
   owner: string;
   modified: string;
@@ -78,7 +77,7 @@ export interface DMSConfigMobile {
   soluong_anh: number;
   batbuoc_ghichu: number;
   doctype: string;
-}
+};
 
 export type ICheckFakeGPS = {
   datetime_fake: number;

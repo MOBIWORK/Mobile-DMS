@@ -1,8 +1,9 @@
 import {PayloadAction, createAction, createSlice} from '@reduxjs/toolkit';
-import {TypeState, categoriesCheckinList} from './type';
+import {TypeState, categoriesCheckinList, IItemCheckIn} from './type';
 import * as Actions from './type';
 import {SLICE_NAME} from '../app-reducer/type';
 import {Platform} from 'react-native';
+import {getState} from '../../utils/redux';
 
 const initState: TypeState = {
   dataNote: [],
@@ -44,7 +45,11 @@ const checkinSlice = createSlice({
       }
     },
     resetData: state => {
-      state.categoriesCheckin = categoriesCheckinList;
+      state.categoriesCheckin = getState('checkin').categoriesCheckin.map(
+        (item: IItemCheckIn) => {
+          return {...item, isDone: false};
+        },
+      );
       state.dataNote = [];
       state.orderDetail = null;
     },

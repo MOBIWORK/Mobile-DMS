@@ -23,12 +23,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {
-  ExtendedTheme,
-  useIsFocused,
-  useNavigation,
-  useTheme,
-} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {
   ListCustomerRoute,
@@ -53,6 +48,7 @@ import {
 } from '../../../redux-store/customer-reducer/reducer';
 
 import {
+  CheckinData,
   getCustomerType,
   getCustomerVisit,
   IListVisitParams,
@@ -85,6 +81,11 @@ const ListVisit = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
   const searchVisit = useSelector(state => state.app.searchVisitValue);
+
+  const dataCheckIn: CheckinData = useSelector(
+    state => state.app.dataCheckIn,
+    shallowEqual,
+  );
 
   const listCustomer: VisitListItemResult = useSelector(
     state => state.customer.listCustomerVisit,
@@ -444,7 +445,7 @@ const ListVisit = () => {
   };
 
   useLayoutEffect(() => {
-    if (Object.keys(systemConfig).length < 0) {
+    if (Object.keys(systemConfig).length === 0) {
       dispatch(appActions.onGetSystemConfig());
     }
     CommonUtils.getCurrentLocation(locations => setLocation(locations));
@@ -668,7 +669,7 @@ const ListVisit = () => {
     return () => {
       mounted.current = false;
     };
-  }, [searchVisit]);
+  }, [searchVisit, dataCheckIn]);
 
   useEffect(() => {
     sortDataCustomer(distanceFilterValue);

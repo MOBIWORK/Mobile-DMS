@@ -1,4 +1,3 @@
-import {showSnack} from '../../components/common';
 import {
   customerActions,
   setCustomer,
@@ -41,11 +40,11 @@ export function* onGetCustomer(action: PayloadAction) {
       yield put(onLoadApp());
       const response: ResponseGenerator = yield call(getCustomer);
       if (response.message === 'ok') {
-        console.log('run this shit ')
+        console.log('run this shit ');
         yield put(setCustomer(response.result));
       }
     } catch (err) {
-      console.log('errCustomer: ',err)
+      console.log('errCustomer: ', err);
     } finally {
       yield put(onLoadAppEnd());
     }
@@ -58,12 +57,6 @@ export function* onGetCustomerType(action: PayloadAction) {
       const response: ResponseGenerator = yield call(getCustomerType);
       if (response.message === 'Thành công') {
         yield put(setListCustomerType(response.result));
-      } else {
-        showSnack({
-          msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
-          interval: 2000,
-          type: 'error',
-        });
       }
     } catch (err) {
       console.error('err: ', err);
@@ -76,7 +69,7 @@ export function* getCustomerVisitSaga(action: PayloadAction) {
   if (customerActions.onGetCustomerVisit.match(action)) {
     try {
       const response: ResponseGenerator = yield call(getCustomerVisit);
-      console.log(response,'response visit')
+      console.log(response, 'response visit');
       if (Object.keys(response.result?.length > 0)) {
         yield put(setCustomerVisit(response.result.data));
       }
@@ -133,12 +126,6 @@ export function* getMoreDataCustomer(action: PayloadAction) {
       if (response.message === 'ok') {
         yield put(customerActions.addingListCustomer(response.result?.data));
         yield put(customerActions.setPage(response.result?.page_number));
-      } else {
-        showSnack({
-          msg: 'Có lỗi xảy ra, vui lòng thử lại sau',
-          interval: 2000,
-          type: 'error',
-        });
       }
     } catch (err) {
       console.log(err, 'error');

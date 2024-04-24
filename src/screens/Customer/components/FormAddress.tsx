@@ -16,7 +16,6 @@ import {
   AppText,
   Block,
   SvgIcon,
-  showSnack,
 } from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {AppTheme, useTheme} from '../../../layouts/theme';
@@ -112,12 +111,6 @@ const FormAddress = (props: Props) => {
         },
       ];
       setAddressSelectedData(newData);
-    } else {
-      showSnack({
-        msg: getLabel('error:haveError'),
-        type: 'error',
-        interval: 1000,
-      });
     }
   };
 

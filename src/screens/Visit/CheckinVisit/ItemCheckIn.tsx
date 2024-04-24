@@ -2,12 +2,10 @@ import {TouchableOpacity} from 'react-native';
 import React from 'react';
 import {IItemCheckIn} from './ultil';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import {useNavigation} from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation/screen-type';
 import {useTheme} from '../../../layouts/theme';
 import isEqual from 'react-fast-compare';
-import { CheckinData } from '../../../services/appService';
-import { navigate } from '../../../navigation/navigation-service';
+import {CheckinData} from '../../../services/appService';
+import {navigate} from '../../../navigation/navigation-service';
 
 type Props = {
   item: IItemCheckIn;
@@ -19,11 +17,12 @@ const ItemCheckIn = ({item, navData}: Props) => {
   return (
     <Block>
       <TouchableOpacity
-        onPress={() =>
-          navigate(item.screenName, {
-            type: item.type ? item.type : '',
-            data: navData,
-          })
+        onPress={
+          () =>
+            navigate(item.screenName, {
+              type: item.type ? item.type : '',
+              data: navData,
+            })
           // console.log(item.screenName,'screen name')
         }>
         <Block
@@ -57,6 +56,4 @@ const ItemCheckIn = ({item, navData}: Props) => {
   );
 };
 
-export default React.memo(ItemCheckIn,isEqual);
-
-
+export default React.memo(ItemCheckIn, isEqual);

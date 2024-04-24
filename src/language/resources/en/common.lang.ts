@@ -281,4 +281,10 @@ export default {
   addAlbum: 'Add album',
   addAlbumToTakePicture: 'Add albums to take photos',
   currentPassword: 'Current password',
+  checkOutTimeErr: 'Visit time must be greater than {time} minutes',
+  inventoryNotComplete: 'You have not performed an inventory yet',
+  cameraNotComplete: "You haven't taken photos yet",
+  noteNotComplete: "You haven't written a note yet",
+  errDistance: 'Distance error',
+  mgsDistanceErr: 'You need to move to a suitable location to perform CheckOut',
 };

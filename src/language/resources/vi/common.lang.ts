@@ -286,4 +286,10 @@ export default {
   addAlbum: 'Thêm album',
   addAlbumToTakePicture: 'Thêm album để chụp ảnh',
   currentPassword: 'Mật khẩu hiện tại',
+  checkOutTimeErr: 'Thời gian viếng thăm phải lớn hơn {time} phút',
+  inventoryNotComplete: 'Bạn chưa thực hiện kiểm tồn',
+  cameraNotComplete: 'Bạn chưa thực hiện chụp ảnh',
+  noteNotComplete: 'Bạn chưa viết ghi chú',
+  errDistance: 'Sai số khoảng cách',
+  mgsDistanceErr: 'Bạn cần di chuyển đến vị trí phù hợp để thực hiện CheckOut',
 };

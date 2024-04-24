@@ -5,8 +5,9 @@ import {
   AppText as Text,
   AppSwitch as Switch,
   SvgIcon,
+  showSnack,
 } from '../../../components/common/';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {RouterProp} from '../../../navigation/screen-type';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -15,6 +16,7 @@ import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
+  calculateDistance,
   decimalMinutesToTime,
   useDisableBackHandler,
   useSelector,
@@ -27,8 +29,14 @@ import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import {goBack} from '../../../navigation/navigation-service';
 import {AppService} from '../../../services';
-import {ApiConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
+// @ts-ignore
+import StringFormat from 'string-format';
+import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
+import {AppDialog} from '../../../components/common';
+import {LocationProps} from '../VisitList/VisitItem';
+import {CommonUtils} from '../../../utils';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -51,6 +59,7 @@ const CheckIn = () => {
   const {t: getLabel} = useTranslation();
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState<string>(getLabel('openDoor'));
+  const navigation = useNavigation<any>();
   const batteryLevel = useBatteryLevel();
 
   const dataCheckIn: CheckinData = useSelector(
@@ -64,7 +73,7 @@ const CheckIn = () => {
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const [status, setStatus] = useState(
     dataCheckIn?.checkin_trangthaicuahang
-      ? dataCheckIn?.checkin_trangthaicuahang
+      ? dataCheckIn.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
 
@@ -75,9 +84,20 @@ const CheckIn = () => {
     shallowEqual,
   );
   const timeCheckin = useRef(
-    decimalMinutesToTime(systemConfig.thoigian_toithieu),
+    decimalMinutesToTime(systemConfig.thoigian_toithieu - 3),
   );
   useDisableBackHandler(true);
+
+  const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
+    type: string;
+    msg: string;
+    title?: string;
+  }>({
+    type: '',
+    msg: '',
+  });
+  const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
+
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
     const hours = Math.floor(seconds / 3600);
@@ -111,28 +131,148 @@ const CheckIn = () => {
     return totalSeconds;
   };
 
-  const onCheckout = useCallback(async () => {
-    try {
-      dispatch(
-        appActions.onCheckIn({
-          ...dataCheckIn,
-          checkin_pinra:
-            batteryLevel > 0
-              ? Math.round(batteryLevel * 10000) / 100
-              : -Math.round(batteryLevel * 10000) / 100,
-          checkin_giora: new Date().getTime() / 1000,
-        }),
-      );
-    } catch (e) {
-      console.log('err', e);
-    } finally {
-      dispatch(checkinActions.resetData());
-      dispatch(appActions.setDataCheckIn({}));
+  const onSubmitErrDialog = () => {
+    switch (msgCheckOutErr.type) {
+      case 'inventory':
+        return navigation.navigate(ScreenConstant.CHECKIN_INVENTORY, {
+          type: '',
+          data: params,
+        });
+      case 'camera':
+        return navigation.navigate(ScreenConstant.TAKE_PICTURE_VISIT, {
+          type: '',
+          data: params,
+        });
+      case 'note':
+        return navigation.navigate(ScreenConstant.CHECKIN_NOTE_VISIT, {
+          type: '',
+          data: params,
+        });
+      case 'distance':
+        return setOpenDialogErr(false);
     }
-    // console.log('dataCheckIn', {
-    //   ...dataCheckIn,
-    //   checkin_giora: new Date().getTime() / 1000,
-    // });
+  };
+
+  const isValidCheckOut = () => {
+    function isCamera(categoriesItem: IItemCheckIn) {
+      return categoriesItem.key === 'camera';
+    }
+    function isInventory(categoriesItem: IItemCheckIn) {
+      return categoriesItem.key === 'inventory';
+    }
+    function isNote(categoriesItem: IItemCheckIn) {
+      return categoriesItem.key === 'note';
+    }
+
+    if (!systemConfig.checkout_ngoaisaiso) {
+      let location: LocationProps = JSON.parse(
+        params.item.customer_location_primary,
+      );
+      CommonUtils.getCurrentLocation(currentLocation => {
+        let distance = calculateDistance(
+          currentLocation.coords.latitude,
+          currentLocation.coords.longitude,
+          location?.lat,
+          location?.long,
+        );
+        if (distance * 1000 > AppConstant.additional_distance) {
+          setMsgCheckOutErr({
+            type: 'distance',
+            title: getLabel('errDistance'),
+            msg: getLabel('mgsDistanceErr'),
+          });
+        }
+      });
+    } else if (
+      systemConfig.checkout_ngoaisaiso &&
+      systemConfig.saiso_chophep_checkout_ngoaisaiso > 0
+    ) {
+      let location: LocationProps = JSON.parse(
+        params.item.customer_location_primary,
+      );
+      CommonUtils.getCurrentLocation(currentLocation => {
+        let distance = calculateDistance(
+          currentLocation.coords.latitude,
+          currentLocation.coords.longitude,
+          location?.lat,
+          location?.long,
+        );
+        if (
+          distance * 1000 >
+          systemConfig.saiso_chophep_checkout_ngoaisaiso +
+            AppConstant.additional_distance
+        ) {
+          setMsgCheckOutErr({
+            type: 'distance',
+            title: getLabel('errDistance'),
+            msg: getLabel('mgsDistanceErr'),
+          });
+        }
+      });
+    } else if (
+      systemConfig.batbuoc_kiemton &&
+      !categoriesCheckin.find(isInventory).isDone
+    ) {
+      setMsgCheckOutErr({
+        type: 'inventory',
+        msg: getLabel('inventoryNotComplete'),
+      });
+      setOpenDialogErr(true);
+      return false;
+    } else if (
+      systemConfig.batbuoc_chupanh &&
+      !categoriesCheckin.find(isCamera).isDone
+    ) {
+      setMsgCheckOutErr({
+        type: 'camera',
+        msg: getLabel('cameraNotComplete'),
+      });
+      setOpenDialogErr(true);
+      return false;
+    } else if (
+      systemConfig.batbuoc_ghichu &&
+      !categoriesCheckin.find(isNote).isDone
+    ) {
+      setMsgCheckOutErr({
+        type: 'note',
+        msg: getLabel('noteNotComplete'),
+      });
+      setOpenDialogErr(true);
+      return false;
+    } else {
+      setMsgCheckOutErr({
+        type: '',
+        msg: '',
+      });
+      setOpenDialogErr(false);
+      return true;
+    }
+  };
+
+  const onCheckout = useCallback(async () => {
+    if (!isValidCheckOut()) {
+      return;
+    } else {
+      try {
+        dispatch(
+          appActions.onCheckIn({
+            ...dataCheckIn,
+            checkin_trangthaicuahang: status,
+            checkin_pinra:
+              batteryLevel > 0
+                ? Math.round(batteryLevel * 10000) / 100
+                : -Math.round(batteryLevel * 10000) / 100,
+            checkin_giora: new Date().getTime() / 1000,
+          }),
+        );
+      } catch (e) {
+        console.log('err', e);
+      } finally {
+        dispatch(checkinActions.resetData());
+        dispatch(appActions.setDataCheckIn({}));
+      }
+    }
+
     setShow(false);
   }, [dataCheckIn]);
 
@@ -222,33 +362,46 @@ const CheckIn = () => {
             })}
         </Block>
       </Block>
-      {isCurrentTimeGreaterOrEqual(timeCheckin.current) ? (
-        <TouchableOpacity
-          style={styles.containContainerButton}
-          onPress={onCheckout}>
-          <Block
-            // borderColor="primary"
-            marginLeft={16}
-            borderColor={theme.colors.primary}
-            marginRight={16}
-            colorTheme="bg_default"
-            // style={{borderColor:theme.colors.primary} as ViewStyle}
-            alignItems="center"
-            height={40}
-            justifyContent="center"
-            borderWidth={1}
-            borderRadius={20}>
-            <Text
-              colorTheme="primary"
-              fontSize={16}
-              lineHeight={21}
-              fontWeight="500">
-              Check out
-            </Text>
-          </Block>
-        </TouchableOpacity>
-      ) : null}
-
+      <TouchableOpacity
+        style={styles.containContainerButton}
+        onPress={() =>
+          isCurrentTimeGreaterOrEqual(timeCheckin.current)
+            ? onCheckout()
+            : showSnack({
+                msg: StringFormat(getLabel('checkOutTimeErr'), {
+                  time: systemConfig.thoigian_toithieu,
+                }),
+                type: 'warn',
+                interval: 2000,
+              })
+        }>
+        <Block
+          marginLeft={16}
+          borderColor={
+            isCurrentTimeGreaterOrEqual(timeCheckin.current)
+              ? theme.colors.primary
+              : theme.colors.bg_disable
+          }
+          marginRight={16}
+          colorTheme="bg_default"
+          alignItems="center"
+          height={40}
+          justifyContent="center"
+          borderWidth={1}
+          borderRadius={20}>
+          <Text
+            colorTheme={
+              isCurrentTimeGreaterOrEqual(timeCheckin.current)
+                ? 'primary'
+                : 'text_disable'
+            }
+            fontSize={16}
+            lineHeight={21}
+            fontWeight="500">
+            Check out
+          </Text>
+        </Block>
+      </TouchableOpacity>
       <Modal
         visible={show}
         onDismiss={() => setShow(false)}
@@ -274,7 +427,7 @@ const CheckIn = () => {
               onPress={() => setShow(false)}
               style={styles.containButton('cancel')}>
               <Text fontSize={14} colorTheme="text_secondary" fontWeight="500">
-                Hủy
+                {getLabel('cancel')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -287,6 +440,22 @@ const CheckIn = () => {
           </Block>
         </Block>
       </Modal>
+      <AppDialog
+        open={openDialogErr}
+        errorType
+        modalType={{width: '90%'}}
+        title={msgCheckOutErr?.title}
+        message={msgCheckOutErr.msg}
+        showButton
+        viewOnly={msgCheckOutErr.type === 'distance'}
+        closeLabel={msgCheckOutErr.type !== 'distance' ? 'Hủy' : undefined}
+        onClose={() => setOpenDialogErr(false)}
+        submitLabel={'Thực hiện'}
+        onSubmit={() => {
+          setOpenDialogErr(false);
+          onSubmitErrDialog();
+        }}
+      />
     </SafeAreaView>
   );
 };
