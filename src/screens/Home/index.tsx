@@ -449,6 +449,7 @@ const HomeScreen = () => {
 
   const getSystemConfig = () => {
     const {systemConfig} = getState('app');
+    console.log('getSystemConfig', systemConfig);
     if (Object.keys(systemConfig).length > 0) {
       return;
     } else {

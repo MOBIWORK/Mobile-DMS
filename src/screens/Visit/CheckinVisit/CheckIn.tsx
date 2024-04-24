@@ -28,6 +28,7 @@ import isEqual from 'react-fast-compare';
 import {goBack} from '../../../navigation/navigation-service';
 import {AppService} from '../../../services';
 import {ApiConstant} from '../../../const';
+import {useBatteryLevel} from 'expo-battery';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -50,6 +51,8 @@ const CheckIn = () => {
   const {t: getLabel} = useTranslation();
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState<string>(getLabel('openDoor'));
+  const batteryLevel = useBatteryLevel();
+
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -113,6 +116,10 @@ const CheckIn = () => {
       dispatch(
         appActions.onCheckIn({
           ...dataCheckIn,
+          checkin_pinra:
+            batteryLevel > 0
+              ? Math.round(batteryLevel * 10000) / 100
+              : -Math.round(batteryLevel * 10000) / 100,
           checkin_giora: new Date().getTime() / 1000,
         }),
       );
@@ -122,6 +129,10 @@ const CheckIn = () => {
       dispatch(checkinActions.resetData());
       dispatch(appActions.setDataCheckIn({}));
     }
+    // console.log('dataCheckIn', {
+    //   ...dataCheckIn,
+    //   checkin_giora: new Date().getTime() / 1000,
+    // });
     setShow(false);
   }, [dataCheckIn]);
 

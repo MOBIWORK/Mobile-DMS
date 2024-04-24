@@ -90,7 +90,9 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
           kh_lat: distanceCal?.location?.lat ?? '',
           checkin_giovao: new Date().getTime() / 1000,
           checkin_pinvao:
-            batteryLevel > 0 ? batteryLevel * 100 : -batteryLevel * 100,
+            batteryLevel > 0
+              ? Math.round(batteryLevel * 10000) / 100
+              : -Math.round(batteryLevel * 10000) / 100,
           checkin_khoangcach: distanceCal.distance,
           createdDate: moment(new Date()).valueOf(),
           checkin_timegps: moment(new Date(location.timestamp * 1000)).format(
