@@ -27,6 +27,7 @@ export type IResOrganization = {
   email_id?: string;
   mobile_no?: string;
   status?: string;
+  logo?: string;
 };
 
 export type ILoginResponse = {
@@ -808,7 +809,7 @@ export type IUser = {
   designation: string;
   cell_number: string;
   current_address: string;
-  company : string
+  company: string;
 };
 
 export type EditAccountInfo = {

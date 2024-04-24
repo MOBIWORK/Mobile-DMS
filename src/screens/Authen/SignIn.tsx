@@ -9,12 +9,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {
-  AppButton,
-  AppDialog,
-  AppHeader,
-  AppInput,
-} from '../../components/common';
+import {AppButton, AppDialog, AppInput} from '../../components/common';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../navigation/screen-type';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
@@ -32,13 +27,12 @@ import {AppService} from '../../services';
 
 import {useTranslation} from 'react-i18next';
 import {setProcessingStatus} from '../../redux-store/app-reducer/reducer';
-import {dispatch, getState} from '../../utils/redux';
+import {dispatch} from '../../utils/redux';
 
 const SignIn = () => {
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-  const app = getState('checkin');
   const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
   const [isLogOut] = useMMKVBoolean(AppConstant.isLogOut);
   const [organiztion] = useMMKVObject<IResOrganization>(
@@ -68,8 +62,6 @@ const SignIn = () => {
   const disable = useMemo(() => {
     return !(userName && password);
   }, [userName, password]);
-
-  console.log(app, 'app');
 
   const handleLogin = async () => {
     //TODO: call API
@@ -148,17 +140,23 @@ const SignIn = () => {
 
   return (
     <MainLayout>
-      <AppHeader
-        hiddenBackButton
-        label={organiztion?.company_name}
-        labelStyle={{fontSize: 16, color: colors.text_secondary}}
-      />
-      <View style={{marginTop: 32}}>
+      <View style={styles.header}>
+        <Image
+          source={
+            organiztion?.logo ? {uri: organiztion.logo} : ImageAssets.LogoMBW
+          }
+          style={{width: 80, height: 80, alignSelf: 'center'}}
+          resizeMode={'cover'}
+        />
+      </View>
+      <View style={styles.body}>
         <Text
           style={{
             color: colors.text_primary,
             fontSize: 24,
             fontWeight: '700',
+            textAlign: 'center',
+            marginBottom: 24,
           }}>
           {getLabel('signIn')}
         </Text>
@@ -197,13 +195,7 @@ const SignIn = () => {
           {getLabel('anotherOrganization')}
         </Text>
       </View>
-      <View
-        style={{
-          marginTop: 32,
-          width: 44,
-          height: 44,
-          alignSelf: 'center',
-        }}>
+      <View style={styles.footer}>
         {biometricType !== AppConstant.BiometricType.null &&
           biometricObject &&
           loginFirst && (
@@ -243,6 +235,22 @@ const SignIn = () => {
 };
 export default SignIn;
 const styles = StyleSheet.create({
+  header: {
+    flex: 1,
+    justifyContent: 'center',
+  } as ViewStyle,
+  body: {
+    marginTop: 32,
+    flex: 3,
+    justifyContent: 'flex-start',
+  } as ViewStyle,
+  footer: {
+    marginTop: 32,
+    width: 44,
+    height: 44,
+    alignSelf: 'center',
+    flex: 3,
+  } as ViewStyle,
   input: {
     marginVertical: 20,
   },

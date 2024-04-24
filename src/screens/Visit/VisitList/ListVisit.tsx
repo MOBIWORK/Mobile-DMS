@@ -67,7 +67,6 @@ import {shallowEqual, useDispatch} from 'react-redux';
 import StringFormat from 'string-format';
 import MarkerItem from '../../../components/common/MarkerItem';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {dispatch} from '../../../utils/redux';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -78,7 +77,6 @@ const ListVisit = () => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
-  const isFocus = useIsFocused();
   const dispatch = useDispatch();
 
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);

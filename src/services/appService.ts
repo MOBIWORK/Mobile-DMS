@@ -3,6 +3,7 @@ import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY} from '@env';
 import {client} from '../config/client';
 import {VisitListItemType} from '../models/types';
+import {PUT_USER_CHANGE_PASSWORD} from '../const/api.const';
 
 export type ILogin = {
   usr: string;
@@ -102,6 +103,13 @@ export type IListVisitParams = {
   customer_group?: string;
   customer_type?: string;
   search_key?: string;
+};
+
+export type Account = {
+  user: string;
+  current_password: string;
+  new_password: string;
+  new_pass_again: string;
 };
 
 export const login = (data: ILogin, deleteHeader: boolean) =>
@@ -220,3 +228,6 @@ export const createImageCheckinApi = (data: any) =>
   createApi()
     .post(ApiConstant.CREATE_IMAGE_CHECKIN, data)
     .then(res => res.data);
+
+export const changePassword = (data: Account) =>
+  createApi().put(ApiConstant.PUT_USER_CHANGE_PASSWORD, data);

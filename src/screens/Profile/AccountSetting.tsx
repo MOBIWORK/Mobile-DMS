@@ -67,7 +67,11 @@ const AccountSetting = () => {
         <ProfileItem
           label={getLabel('changePassword')}
           image={ImageAssets.SettingIcon}
-          onPress={() => navigation.navigate(ScreenConstant.CURRENT_PASSWORD)}
+          onPress={() =>
+            navigation.navigate(ScreenConstant.CHANGE_PASSWORD, {
+              isForgotPassword: false,
+            })
+          }
         />
         <ProfileItem
           label={getLabel('notifySetting')}

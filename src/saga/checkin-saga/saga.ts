@@ -57,7 +57,6 @@ export function* getListProgramData(action: PayloadAction) {
         CheckinService.getListProgram,
         action.payload,
       );
-      console.log(response, 'response campaign');
       if (response?.message === 'ok') {
         yield put(checkinActions.setDataListProgram(response.result?.data));
       } else {

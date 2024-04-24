@@ -50,7 +50,6 @@ import TakePictureScore from './Checkin/TakePictureScore';
 import UserInfoScreen from './Profile/UserInfoScreen';
 import EditAccount from './Profile/EditAccount';
 import AccountSetting from './Profile/AccountSetting';
-import CurrentPassword from './Profile/CurrentPassword';
 import ChangePassword from './Authen/ChangePassword';
 import NotifySetting from './Profile/NotifySetting';
 export {
@@ -106,7 +105,6 @@ export {
   UserInfoScreen,
   EditAccount,
   AccountSetting,
-  CurrentPassword,
   ChangePassword,
   NotifySetting,
 };
