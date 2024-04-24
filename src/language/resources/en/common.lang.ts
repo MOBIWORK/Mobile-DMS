@@ -131,6 +131,7 @@ export default {
   exchange: 'Conversation',
   deliveryDate: 'Delivery date',
   eXwarehouse: 'Export warehouse',
+  imwarehouse: 'Warehouse',
   orderInfor: 'Order information',
   intoMoney: 'Total price',
   formVat: 'VAT Form',

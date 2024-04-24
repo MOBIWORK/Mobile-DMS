@@ -134,6 +134,7 @@ export default {
   exchange: 'Trao đổi',
   deliveryDate: 'Ngày giao',
   eXwarehouse: 'Kho xuất',
+  imwarehouse: 'Kho nhập',
   orderInfor: 'Thông tin đơn hàng',
   intoMoney: 'Thành tiền',
   formVat: 'Biểu mẫu VAT',

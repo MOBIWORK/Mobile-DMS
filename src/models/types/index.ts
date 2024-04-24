@@ -547,6 +547,7 @@ export type IProduct = {
   price: number;
   unit: DataUnit[];
   isSelected?: boolean;
+  expiry? : string;
 };
 
 export type IOrderList = {
@@ -570,6 +571,7 @@ export type ItemProductOrder = {
   qty: number;
   uom: string;
   amount: number;
+  rate: number;
   discount_percentage: number;
 };
 

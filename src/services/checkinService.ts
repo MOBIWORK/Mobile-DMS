@@ -19,7 +19,7 @@ export interface checkinItemProduct {
   item_code: string;
   item_unit: string;
   quantity?: number;
-  exp_time: number;
+  exp_time: number | null;
 }
 
 export type POST_DATA = {
@@ -37,10 +37,7 @@ type POST_NOTE_CHECKIN = {
   email: string[];
 };
 
-export const checkinInventory = (data: POST_DATA) =>
-  createApi()
-    .post(ApiConstant.POST_CHECKIN_INVENTORY, data)
-    .then(res => res.data);
+export const checkinInventory = (data: POST_DATA) =>createApi().post(ApiConstant.POST_CHECKIN_INVENTORY, data)
 export const updateCustomerAddress = (data: IUpdateAddress) =>
   createApi()
     .patch(ApiConstant.UPDATE_CUSTOMER_ADDRESS, data)

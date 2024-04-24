@@ -91,7 +91,7 @@ android {
         applicationId 'mbw.next.dms'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
+        versionCode 27
         versionName "0.2.3"
         multiDexEnabled true
     }

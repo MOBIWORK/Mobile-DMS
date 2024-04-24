@@ -309,7 +309,7 @@ const TabOverview = ({ data }: PropsType) => {
                                                 name={item.item_name}
                                                 code={item.item_code}
                                                 quantity={item.qty}
-                                                price={item.amount}
+                                                price={item.rate}
                                                 percentage_discount={item.discount_percentage}
                                                 discount={(
                                                     item.amount *
