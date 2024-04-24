@@ -43,7 +43,7 @@ import NotificationScreen from './Notification';
 import Mapbox from '@rnmapbox/maps';
 import {rootStyles} from './styles';
 
-import {dispatch, getState} from '../../utils/redux';
+import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';

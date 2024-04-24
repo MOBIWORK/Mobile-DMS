@@ -84,7 +84,7 @@ const CheckIn = () => {
     shallowEqual,
   );
   const timeCheckin = useRef(
-    decimalMinutesToTime(systemConfig.tgcheckin_toithieu - 2),
+    decimalMinutesToTime(systemConfig.thoigian_toithieu - 3),
   );
   useDisableBackHandler(true);
 
@@ -345,7 +345,7 @@ const CheckIn = () => {
             ? onCheckout()
             : showSnack({
                 msg: StringFormat(getLabel('checkOutTimeErr'), {
-                  time: systemConfig.tgcheckin_toithieu,
+                  time: systemConfig.thoigian_toithieu,
                 }),
                 type: 'warn',
                 interval: 2000,

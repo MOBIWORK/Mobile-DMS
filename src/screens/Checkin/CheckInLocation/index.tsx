@@ -124,7 +124,6 @@ const CheckInLocation = () => {
         country: 'Việt Nam',
       };
       const response: any = await CheckinService.updateCustomerAddress(params);
-      console.log('resss', response);
       if (response?.status === ApiConstant.STT_OK) {
         await completeCheckin();
         navigation.goBack();
