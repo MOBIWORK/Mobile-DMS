@@ -37,6 +37,7 @@ import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
 import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -84,7 +85,7 @@ const CheckIn = () => {
     shallowEqual,
   );
   const timeCheckin = useRef(
-    decimalMinutesToTime(systemConfig.thoigian_toithieu - 3),
+    decimalMinutesToTime(systemConfig.thoigian_toithieu - 1),
   );
   useDisableBackHandler(true);
 
@@ -153,7 +154,7 @@ const CheckIn = () => {
     }
   };
 
-  const isValidCheckOut = () => {
+  const isValidCheckOut = (currentLocation: GeolocationResponse) => {
     function isCamera(categoriesItem: IItemCheckIn) {
       return categoriesItem.key === 'camera';
     }
@@ -168,47 +169,48 @@ const CheckIn = () => {
       let location: LocationProps = JSON.parse(
         params.item.customer_location_primary,
       );
-      CommonUtils.getCurrentLocation(currentLocation => {
-        let distance = calculateDistance(
-          currentLocation.coords.latitude,
-          currentLocation.coords.longitude,
-          location?.lat,
-          location?.long,
-        );
-        if (distance * 1000 > AppConstant.additional_distance) {
-          setMsgCheckOutErr({
-            type: 'distance',
-            title: getLabel('errDistance'),
-            msg: getLabel('mgsDistanceErr'),
-          });
-        }
-      });
+      let distance = calculateDistance(
+        currentLocation.coords.latitude,
+        currentLocation.coords.longitude,
+        location?.lat,
+        location?.long,
+      );
+      if (distance * 1000 > AppConstant.additional_distance) {
+        setMsgCheckOutErr({
+          type: 'distance',
+          title: getLabel('errDistance'),
+          msg: getLabel('mgsDistanceErr'),
+        });
+        setOpenDialogErr(true);
+        return false;
+      }
     } else if (
       systemConfig.checkout_ngoaisaiso &&
       systemConfig.saiso_chophep_checkout_ngoaisaiso > 0
     ) {
+      console.log('2222');
       let location: LocationProps = JSON.parse(
         params.item.customer_location_primary,
       );
-      CommonUtils.getCurrentLocation(currentLocation => {
-        let distance = calculateDistance(
-          currentLocation.coords.latitude,
-          currentLocation.coords.longitude,
-          location?.lat,
-          location?.long,
-        );
-        if (
-          distance * 1000 >
-          systemConfig.saiso_chophep_checkout_ngoaisaiso +
-            AppConstant.additional_distance
-        ) {
-          setMsgCheckOutErr({
-            type: 'distance',
-            title: getLabel('errDistance'),
-            msg: getLabel('mgsDistanceErr'),
-          });
-        }
-      });
+      let distance = calculateDistance(
+        currentLocation.coords.latitude,
+        currentLocation.coords.longitude,
+        location?.lat,
+        location?.long,
+      );
+      if (
+        distance * 1000 >
+        systemConfig.saiso_chophep_checkout_ngoaisaiso +
+          AppConstant.additional_distance
+      ) {
+        setMsgCheckOutErr({
+          type: 'distance',
+          title: getLabel('errDistance'),
+          msg: getLabel('mgsDistanceErr'),
+        });
+        setOpenDialogErr(true);
+        return false;
+      }
     } else if (
       systemConfig.batbuoc_kiemton &&
       !categoriesCheckin.find(isInventory).isDone
@@ -245,34 +247,35 @@ const CheckIn = () => {
         msg: '',
       });
       setOpenDialogErr(false);
-      return true;
     }
+    return true;
   };
 
   const onCheckout = useCallback(async () => {
-    if (!isValidCheckOut()) {
-      return;
-    } else {
-      try {
-        dispatch(
-          appActions.onCheckIn({
-            ...dataCheckIn,
-            checkin_trangthaicuahang: status,
-            checkin_pinra:
-              batteryLevel > 0
-                ? Math.round(batteryLevel * 10000) / 100
-                : -Math.round(batteryLevel * 10000) / 100,
-            checkin_giora: new Date().getTime() / 1000,
-          }),
-        );
-      } catch (e) {
-        console.log('err', e);
-      } finally {
-        dispatch(checkinActions.resetData());
-        dispatch(appActions.setDataCheckIn({}));
+    CommonUtils.getCurrentLocation(locations => {
+      if (!isValidCheckOut(locations)) {
+        return;
+      } else {
+        try {
+          dispatch(
+            appActions.onCheckIn({
+              ...dataCheckIn,
+              checkin_trangthaicuahang: status,
+              checkin_pinra:
+                batteryLevel > 0
+                  ? Math.round(batteryLevel * 10000) / 100
+                  : -Math.round(batteryLevel * 10000) / 100,
+              checkin_giora: new Date().getTime() / 1000,
+            }),
+          );
+        } catch (e) {
+          console.log('err', e);
+        } finally {
+          dispatch(checkinActions.resetData());
+          dispatch(appActions.setDataCheckIn({}));
+        }
       }
-    }
-
+    });
     setShow(false);
   }, [dataCheckIn]);
 
