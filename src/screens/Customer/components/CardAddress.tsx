@@ -168,7 +168,7 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.white,
       shadowColor: theme.colors.text_disable,
       borderRadius: 16,
-      borderWidth: 0.1,
+      // borderWidth: 0.1,
       paddingVertical: 12,
       marginHorizontal: 2,
       marginVertical: 10,
@@ -217,7 +217,6 @@ const rootStyles = (theme: AppTheme) =>
       paddingHorizontal: 10,
       // borderWidth: 1,
       borderColor: theme.colors.border,
-      // borderRadius: 16,
       paddingVertical: 3,
     } as ViewStyle,
     containMain: {
