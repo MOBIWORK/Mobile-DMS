@@ -215,9 +215,9 @@ const rootStyles = (theme: AppTheme) =>
       marginRight: 8,
       backgroundColor: theme.colors.bg_default,
       paddingHorizontal: 10,
-      borderWidth: 1,
+      // borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: 16,
+      // borderRadius: 16,
       paddingVertical: 3,
     } as ViewStyle,
     containMain: {

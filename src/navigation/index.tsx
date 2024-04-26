@@ -28,6 +28,7 @@ const AppNavigationContainer: FC<AppNavigationContainerProps> = ({}) => {
         <RootNavigation />
         <SnackBar />
         <HandlingError />
+        <SnackBar/>
         <PortalHost name={'Bottom-Sheet'} />
       </>
       <RXStore />
