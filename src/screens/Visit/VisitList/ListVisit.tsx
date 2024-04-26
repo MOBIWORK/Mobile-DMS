@@ -733,7 +733,7 @@ const ListVisit = () => {
               style={styles.buttonModal}
               onPress={onGetCurrentPositionAgain}>
               <Text colorTheme="white" fontSize={16} fontWeight="500">
-                Thử lại
+                {getLabel('tryAgain')}
               </Text>
             </TouchableOpacity>
           </Block>
