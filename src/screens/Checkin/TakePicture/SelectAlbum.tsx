@@ -12,7 +12,6 @@ import {
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {
   BottomSheetScrollView,
-  useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
 import {AppBottomSheet} from '../../../components/common';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -34,12 +33,6 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   const {bottom} = useSafeAreaInsets();
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
   const [curData, setCurData] = useState<IFilterType[] | undefined>(data);
 
@@ -167,13 +160,11 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
     <>
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
-        snapPointsCustom={animatedSnapPoints}
+
         // @ts-ignore
-        handleHeight={animatedHandleHeight}
-        contentHeight={animatedContentHeight}>
+      >
         <BottomSheetScrollView
-          style={{paddingBottom: bottom + 16, paddingHorizontal: 16}}
-          onLayout={handleContentLayout}>
+          style={{paddingBottom: bottom + 16, paddingHorizontal: 16}}>
           <View>
             <View style={styles.row}>
               <Text

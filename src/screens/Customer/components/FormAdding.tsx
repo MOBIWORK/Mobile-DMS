@@ -3,7 +3,6 @@ import {
   Text,
   TextStyle,
   View,
-  ScrollView,
   ViewStyle,
   TouchableOpacity,
   ImageStyle,
@@ -19,7 +18,7 @@ import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
 import {ApiConstant, AppConstant} from '../../../const';
 import {Colors, ImageAssets} from '../../../assets';
-import {AppIcons, AppInput, SvgIcon} from '../../../components/common';
+import {AppIcons, AppInput, Block, SvgIcon} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
 import {IDataCustomer, KeyAbleProps} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
@@ -33,7 +32,8 @@ import {AppService} from '../../../services';
 import {CommonUtils} from '../../../utils';
 import isEqual from 'react-fast-compare';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-
+import {Gesture, GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
+import DragComponent from './DragComponent';
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
   setTypeFilter: React.Dispatch<React.SetStateAction<string>>;
@@ -148,6 +148,8 @@ const FormAdding = (props: Props) => {
 
   return (
     <ScrollView
+      // disableScrollViewPanResponder={true}
+      nestedScrollEnabled={false}
       style={styles.root}
       showsVerticalScrollIndicator={false}
       decelerationRate={'fast'}>
@@ -401,26 +403,30 @@ const FormAdding = (props: Props) => {
         )}
       </View>
 
-      <Pressable>
+      <Block zIndex={999999} position='relative'  onResponderStart={() => console.log('rin')}  > 
         <Text style={styles.titleText}>{translate('location')}</Text>
-        <View style={[styles.contentView, {height: 320}]}>
+        <Block style={[styles.contentView, {height: 320}]}>
           {location && (
-            <View style={styles.mapView}>
+            <Block style={styles.mapView}>
               <Mapbox.MapView
+                pointerEvents="none"
                 pitchEnabled={false}
                 attributionEnabled={false}
                 scaleBarEnabled={false}
                 styleURL={Mapbox.StyleURL.Street}
                 logoEnabled={false}
                 style={{flex: 1}}
-                onPress={feature =>
-                  handleMarkerMap(
-                    // @ts-ignore
-                    feature.geometry.coordinates[1],
-                    // @ts-ignore
-                    feature.geometry.coordinates[0],
-                  )
-                }>
+                zoomEnabled={true}
+                // onPointerMove={(eve) => console.log(eve,'eve')}
+                onPress={feature => {
+                  console.log('run');
+                  // handleMarkerMap(
+                  //   // @ts-ignore
+                  //   feature.geometry.coordinates[1],
+                  //   // @ts-ignore
+                  //   feature.geometry.coordinates[0],
+                  // );
+                }}>
                 <Mapbox.RasterSource
                   id="adminmap"
                   tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
@@ -479,10 +485,10 @@ const FormAdding = (props: Props) => {
                   {translate('currentPosition')}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </Block>
           )}
-        </View>
-      </Pressable>
+        </Block>
+      </Block>
     </ScrollView>
   );
 };

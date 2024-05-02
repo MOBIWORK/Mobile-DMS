@@ -37,7 +37,7 @@ const onRequestError = (error: AxiosError): Promise<AxiosError> => {
 };
 
 const onResponse = (response: AxiosResponse): AxiosResponse => {
-  console.info(`[response]: `, response);
+  // console.info(`[response]: `, response);
   return response;
 };
 

@@ -116,11 +116,12 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
           item: item,
           ...item,
         };
-        dispatch(appActions.setDataCheckIn(data));
+
         if (isDetail) {
           navigate(ScreenConstant.VISIT_DETAIL, {data: data});
         } else {
           navigate(ScreenConstant.CHECKIN, {item: data});
+          dispatch(appActions.setDataCheckIn(data));
         }
       },
       error => backgroundErrorListener(error.code),
