@@ -30,7 +30,7 @@ import {
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
-import {AppConstant} from '../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation/screen-type';
 import {IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
@@ -40,7 +40,7 @@ import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
-import {CustomerService} from '../../services';
+import {AppService, CustomerService} from '../../services';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {useSelector} from '../../config/function';
 import {MainAddress, MainContactAddress} from './components/CardAddress';
@@ -48,6 +48,10 @@ import {MainAddress, MainContactAddress} from './components/CardAddress';
 import {CommonUtils} from '../../utils';
 import {useTranslation} from 'react-i18next';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import {
+  setNewCustomer,
+  setProcessingStatus,
+} from '../../redux-store/app-reducer/reducer';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -154,21 +158,21 @@ const AddingNewCustomer = () => {
         ? newListData.custom_birthday / 1000
         : new Date().getTime() / 1000,
     };
-    // dispatch(setNewCustomer(newListData));
-    // dispatch(setProcessingStatus(true));
-    // await CommonUtils.CheckNetworkState();
-    // const response: any = await CustomerService.addNewCustomer(updateListData);
-    // if (response?.status === ApiConstant.STT_CREATED) {
-    //   const cusRes: any = await AppService.getCustomer();
-    //   if (Object.keys(cusRes?.result).length > 0) {
-    //     await dispatch(customerActions.setCustomer(cusRes.result));
-    //   }
-    //   navigation.navigate(ScreenConstant.MAIN_TAB, {
-    //     screen: ScreenConstant.CUSTOMER,
-    //   });
-    // }
-    // dispatch(setProcessingStatus(false));
-    console.log('updateListData', updateListData);
+    dispatch(setNewCustomer(newListData));
+    dispatch(setProcessingStatus(true));
+    await CommonUtils.CheckNetworkState();
+    const response: any = await CustomerService.addNewCustomer(updateListData);
+    if (response?.status === ApiConstant.STT_CREATED) {
+      const cusRes: any = await AppService.getCustomer();
+      if (Object.keys(cusRes?.result).length > 0) {
+        await dispatch(customerActions.setCustomer(cusRes.result));
+      }
+      navigation.navigate(ScreenConstant.MAIN_TAB, {
+        screen: ScreenConstant.CUSTOMER,
+      });
+    }
+    dispatch(setProcessingStatus(false));
+    // console.log('updateListData', updateListData);
   };
 
   const onDismissSingle = React.useCallback(() => {
