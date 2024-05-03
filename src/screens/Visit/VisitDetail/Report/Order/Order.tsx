@@ -15,6 +15,7 @@ import {ReportOrderItemType} from '../../../../../models/types';
 import StatisticalItem from '../../StatisticalItem';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../../../utils';
+import isEqual from 'react-fast-compare';
 const Order: FC<OrderProps> = ({
   orderData,
   handleItem,
@@ -83,7 +84,7 @@ interface OrderProps {
   orderData: ReportOrderItemType[];
   handleItem: (item: ReportOrderItemType) => void;
 }
-export default Order;
+export default React.memo(Order,isEqual);
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
     itemContainer: {

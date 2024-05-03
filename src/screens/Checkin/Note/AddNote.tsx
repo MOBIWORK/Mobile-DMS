@@ -26,7 +26,7 @@ import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {useSelector} from '../../../config/function';
+import {useEffectOnce, useSelector} from '../../../config/function';
 import {CheckinService} from '../../../services';
 import {ApiConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
@@ -79,6 +79,7 @@ const AddNote = () => {
   }, [title]);
 
   const renderItem = (item: StaffType) => {
+   
     return (
       <View style={styles.viewItem}>
         <View style={styles.flex}>
@@ -136,7 +137,6 @@ const AddNote = () => {
         isSelected: false,
       }));
       dispatch(checkinActions.setData({typeData: 'note_type', data: result}));
-
       setDataType(newData);
     }
   };
@@ -152,7 +152,7 @@ const AddNote = () => {
   };
 
   useEffect(() => {
-    if (noteTypes.length == 0) {
+    if (noteTypes.length === 0) {
       fetchDataNoteType();
     } else {
       const newData = noteTypes.map((item: any) => ({
@@ -164,9 +164,9 @@ const AddNote = () => {
     }
   }, []);
 
-  useEffect(() => {
+  useEffectOnce(() => {
     fetchDataStaff();
-  }, []);
+  });
 
   const renderBottomSheetStaff = () => {
     return (
@@ -309,8 +309,11 @@ const AddNote = () => {
 
           {sentEmail && (
             <View style={{marginTop: 24}}>
+              {/* <Block>
+                <Text>dm lng hi</Text>
+              </Block> */}
               <InputViewCompoment
-                data={selectPersonal}
+                data={staffData}
                 label={getLabel('userNote')}
                 onPress={() => onOpenBottonSheet()}
                 backgroundColor={colors.bg_default}

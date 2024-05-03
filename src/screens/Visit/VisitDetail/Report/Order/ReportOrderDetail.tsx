@@ -12,10 +12,14 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../../../navigation/screen-type';
+import {
+  NavigationProp,
+  RouterProp,
+} from '../../../../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import {ImageAssets} from '../../../../../assets';
 import {
+  CellRendererProps,
   Image,
   ImageStyle,
   StyleSheet,
@@ -23,13 +27,15 @@ import {
   TextStyle,
   View,
   ViewStyle,
+  VirtualizedList,
 } from 'react-native';
 import {CommonUtils} from '../../../../../utils';
 import {IOrderDetailItem} from '../../../../../models/types';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import ProductOrderItem from './ProductOrderItem';
 import {OrderService} from '../../../../../services';
 import {ApiConstant} from '../../../../../const';
+import isEqual from 'react-fast-compare';
 
 const ReportOrderDetail = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -66,7 +72,7 @@ const ReportOrderDetail = () => {
   };
 
   useEffect(() => {
-    getData().then();
+    getData();
   }, [item]);
 
   const RowItem: FC<RowItemProps> = ({
@@ -142,7 +148,7 @@ const ReportOrderDetail = () => {
   };
 
   const _renderOrderInfo = () => {
-    const OrderInfoItem = () => {
+    const OrderInfoItem = React.memo(() => {
       return (
         <Block
           colorTheme="bg_default"
@@ -169,7 +175,7 @@ const ReportOrderDetail = () => {
           />
         </Block>
       );
-    };
+    },isEqual);
     return (
       <Accordion type="nested" title={getLabel('orderInfor')}>
         <OrderInfoItem />
@@ -278,16 +284,76 @@ const ReportOrderDetail = () => {
     );
   };
 
+  const getItemList = (data: any, index: number) => {
+    switch (index) {
+      case 0: {
+        return (
+          <AppCustomHeader
+            styles={{flex: 1.5, paddingHorizontal: 16, marginBottom: 12}}
+            onBack={() => navigation.goBack()}
+            title={item.name}
+            icon={ImageAssets.CalenderIcon}
+            description={CommonUtils.convertDate(item.transaction_date)}
+          />
+        );
+      }
+      case 1: {
+        return <Block color={colors.bg_neutral}>{_renderCustomer()}</Block>;
+      }
+      case 2: {
+        return _renderOrderInfo();
+      }
+      case 3: {
+        return (
+          <ProductOrderItem
+            productData={productData as any}
+            promotionalData={promotionalData as any}
+          />
+        );
+      }
+      case 4: {
+        return _renderVAT();
+      }
+      case 5: {
+        return _renderDiscount();
+      }
+      case 6: {
+        return _renderPayment();
+      }
+
+      default: {
+        return null;
+      }
+    }
+  };
+
+  const renderItemCount = (data: any): number => 8;
+  const cellRender: React.ComponentType<
+    CellRendererProps<React.JSX.Element | null>
+  > = React.useCallback(({item}) => item, []);
+
   return (
-    <MainLayout style={{paddingHorizontal: 0}}>
-      <AppCustomHeader
+    <SafeAreaView style={{flex: 1}} edges={['top', 'bottom']}>
+      {/* <AppCustomHeader
         styles={{flex: 1.5, paddingHorizontal: 16, marginBottom: 12}}
         onBack={() => navigation.goBack()}
         title={item.name}
         icon={ImageAssets.CalenderIcon}
         description={CommonUtils.convertDate(item.transaction_date)}
+      /> */}
+      <VirtualizedList
+        getItem={getItemList}
+        getItemCount={renderItemCount}
+        data={[]}
+        renderItem={() => null}
+        bounces={false}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps={'never'}
+        keyboardDismissMode={'on-drag'}
+        CellRendererComponent={cellRender}
       />
-      <Block flex={9} style={{backgroundColor: colors.bg_neutral}}>
+
+      {/* <Block flex={9} style={{backgroundColor: colors.bg_neutral}}>
         <AppContainer style={{marginBottom: bottom}}>
           <View
             style={{
@@ -307,8 +373,8 @@ const ReportOrderDetail = () => {
             {_renderPayment()}
           </View>
         </AppContainer>
-      </Block>
-    </MainLayout>
+      </Block> */}
+    </SafeAreaView>
   );
 };
 interface RowItemProps {
@@ -320,7 +386,7 @@ interface RowItemProps {
   titleStyle?: TextStyle;
   iconStyles?: ImageStyle;
 }
-export default ReportOrderDetail;
+export default React.memo(ReportOrderDetail,isEqual);
 
 const createSheetStyles = (theme: ExtendedTheme) =>
   StyleSheet.create({

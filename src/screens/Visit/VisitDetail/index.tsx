@@ -15,9 +15,10 @@ import {
   AppBottomSheet,
   AppContainer,
   AppHeader,
+  Block,
 } from '../../../components/common';
 import Detail from './Detail';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Report from './Report/Report';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {AppConstant} from '../../../const';
@@ -124,14 +125,14 @@ const Index = () => {
   };
 
   const DetailScreen = () => (
-    <AppContainer style={{marginBottom: bottom}}>
+    <Block block style={{marginBottom: bottom}}>
       <View style={{flex: 1, padding: 16}}>
         <Detail
           item={route.params && route.params.data}
           otherInfo={detailData}
         />
       </View>
-    </AppContainer>
+    </Block>
   );
 
   const ReportScreen = () => (
@@ -194,7 +195,7 @@ const Index = () => {
   }, []);
 
   return (
-    <MainLayout style={{paddingHorizontal: 0}}>
+    <SafeAreaView style={{flex:1}}>
       <AppHeader
         style={{paddingHorizontal: 16}}
         label={getLabel('visitDetail')}
@@ -230,7 +231,7 @@ const Index = () => {
         date={date}
         onConfirm={onConfirmSingle}
       />
-    </MainLayout>
+    </SafeAreaView>
   );
 };
 export default Index;
