@@ -127,6 +127,8 @@ const DetailCustomer = () => {
             setShow(false);
           }}
           typeFilter={typeFilter}
+          listData={[] as any}
+          setData={() =>{}}
         />
       </AppBottomSheet>
     </SafeAreaView>
