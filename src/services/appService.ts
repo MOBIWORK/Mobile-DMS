@@ -54,7 +54,6 @@ export type CheckinData = {
   createdByEmail?: string;
   createByName?: string;
   item: VisitListItemType;
-  isVisitDetail?: boolean;
 };
 
 export type DMSConfigMobile = {

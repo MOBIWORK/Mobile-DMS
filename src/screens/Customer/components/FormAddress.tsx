@@ -1,9 +1,7 @@
 import {
-  Image,
   Keyboard,
   ScrollView,
   StyleSheet,
-  Text,
   TextStyle,
   TouchableOpacity,
   View,
@@ -26,7 +24,11 @@ import {MainLayout} from '../../../layouts';
 
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
-import {KeyAbleProps, RootEkMapResponse} from '../../../models/types';
+import {
+  IDataCustomer,
+  KeyAbleProps,
+  RootEkMapResponse,
+} from '../../../models/types';
 import {dispatch} from '../../../utils/redux';
 import SelectedAddress from './SelectedAddress';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
@@ -34,13 +36,14 @@ import {MainAddress, MainContactAddress} from './CardAddress';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
-import {ImageAssets} from '../../../assets';
 import {AppService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
+  listData: IDataCustomer;
+  setData: (item: IDataCustomer) => void;
 };
 
 export const AddressType = {
@@ -56,7 +59,7 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter} = props;
+  const {onPressClose, typeFilter, listData, setData} = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -87,7 +90,6 @@ const FormAddress = (props: Props) => {
   const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-  const [isCurrentLocation, setIsCurrentLocation] = useState<boolean>(false);
 
   const listCheckBox = useRef([
     {
@@ -195,7 +197,11 @@ const FormAddress = (props: Props) => {
         }),
       );
     }
-
+    setData({
+      ...listData,
+      latitude: location?.coords.latitude,
+      longitude: location?.coords.longitude,
+    });
     onPressClose();
   };
 
@@ -672,7 +678,7 @@ const FormAddress = (props: Props) => {
                     );
                     onPressClose();
                   }}>
-                  <AppText style={styles.applyText}>Lưu</AppText>
+                  <AppText style={styles.applyText}>{getLabel('save')}</AppText>
                 </TouchableOpacity>
               </View>
             </View>
