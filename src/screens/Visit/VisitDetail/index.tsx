@@ -31,6 +31,8 @@ import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calenda
 import {useMMKVString} from 'react-native-mmkv';
 import {CustomerService} from '../../../services';
 import {IVisitRouteDetail} from '../../../models/types';
+import { useSelector } from '../../../config/function';
+import { shallowEqual } from 'react-redux';
 
 const Index = () => {
   const {t: getLabel} = useTranslation();
@@ -40,7 +42,6 @@ const Index = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'VISIT_DETAIL'>>();
   const snapPoints = useMemo(() => ['30%'], []);
-
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const [languageCode] = useMMKVString(AppConstant.Language_Code);
@@ -56,6 +57,10 @@ const Index = () => {
   );
 
   const [detailData, setDetailData] = useState<IVisitRouteDetail>();
+
+
+  
+
 
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);

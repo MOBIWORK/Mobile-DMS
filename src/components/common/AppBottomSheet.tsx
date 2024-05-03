@@ -43,6 +43,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   return (
   <Portal hostName={'Bottom-Sheet'}>
     <BottomSheet
+    enableDynamicSizing={true}
       snapPoints={snapPointsCustom ?? snapPoints}
       onClose={onClose}
       ref={bottomSheetRef}

@@ -10,14 +10,16 @@ import React, {
 import {
   AppBottomSheet,
   AppHeader,
+  Block,
   FilterView,
+  AppImage,
+  AppText as Text,
 } from '../../../components/common';
 import {
   FlatList,
   Image,
   RefreshControl,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -40,7 +42,7 @@ import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {calculateDistance, useSelector} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
-
+import Modal from 'react-native-modal';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {
   customerActions,
@@ -65,7 +67,6 @@ import MarkerItem from '../../../components/common/MarkerItem';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 
 //config Mapbox
-Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const ListVisit = () => {
   const {colors} = useTheme();
@@ -123,25 +124,31 @@ const ListVisit = () => {
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [error, setError] = useState<string>('');
+  const [modalError, setModalError] = useState(false);
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
 
-  const backgroundErrorListener = useCallback((errorCode: number) => {
-    // Handle background location errors
-    switch (errorCode) {
-      case 0:
-        setError(
-          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-        );
-        break;
-      case 1:
-        setError('GPS đã bị tắt. Vui lòng bật lại.');
-        break;
-      default:
-        setError('Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại');
-    }
-  }, []);
+  const backgroundErrorListener = useCallback(
+    (errorCode: number) => {
+      // Handle background location errors
+      switch (errorCode) {
+        case 0:
+          setError(
+            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+          );
+          break;
+        case 1:
+          setError('GPS đã bị tắt. Vui lòng bật lại.');
+          break;
+        default:
+          setError(
+            'Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại',
+          );
+      }
+    },
+    [error],
+  );
 
   const customerCheckinCount = useMemo(() => {
     if (listCustomer && customerDataSort && customerDataSort.length > 0) {
@@ -150,6 +157,11 @@ const ListVisit = () => {
       return '';
     }
   }, [listCustomer, customerDataSort]);
+
+  const onGetCurrentPositionAgain = () => {
+    setModalError(false);
+    handleRegainLocation();
+  };
 
   const onRefreshData = useCallback(async () => {
     dispatch(appActions.setSearchVisitValue(''));
@@ -231,7 +243,7 @@ const ListVisit = () => {
 
   const _renderHeader = () => {
     return (
-      <View style={{paddingHorizontal: 16}}>
+      <Block paddingHorizontal={16}>
         <AppHeader
           hiddenBackButton
           label={getLabel('visit')}
@@ -266,27 +278,16 @@ const ListVisit = () => {
             </View>
           }
         />
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            marginTop: 16,
-          }}>
+        <Block
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-start"
+          marginTop={16}>
           <TouchableOpacity
             onPress={() =>
               distanceRef.current && distanceRef.current.snapToIndex(0)
             }
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              padding: 8,
-              borderRadius: 16,
-              borderWidth: 1,
-              borderColor: colors.border,
-              maxWidth: 180,
-            }}>
+            style={styles.touchableButton}>
             <Text style={{color: colors.text_secondary}}>
               {getLabel('distance')}:
             </Text>
@@ -300,14 +301,14 @@ const ListVisit = () => {
               bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
             }
           />
-        </View>
-      </View>
+        </Block>
+      </Block>
     );
   };
 
   const _renderContent = () => {
     return (
-      <View style={{marginTop: 8}}>
+      <Block marginTop={8}>
         {isShowListVisit ? (
           <View style={{marginTop: 16, paddingHorizontal: 16}}>
             <Text style={{color: colors.text_secondary}}>
@@ -326,7 +327,7 @@ const ListVisit = () => {
                 keyExtractor={(item, index) =>
                   `${item.customer_code} - ${index}`
                 }
-                decelerationRate={'fast'}
+                decelerationRate={'normal'}
                 // bounces={false}
                 initialNumToRender={5}
                 refreshControl={
@@ -425,22 +426,20 @@ const ListVisit = () => {
               </Text>
             </TouchableOpacity>
             {visitItemSelected && (
-              <View
-                style={{
-                  position: 'absolute',
-                  bottom: bottom + 70,
-                  left: 24,
-                  right: 24,
-                }}>
+              <Block
+                position="absolute"
+                bottom={bottom + 70}
+                left={24}
+                right={24}>
                 <VisitItem
                   item={visitItemSelected}
                   handleClose={() => setVisitItemSelected(null)}
                 />
-              </View>
+              </Block>
             )}
           </View>
         )}
-      </View>
+      </Block>
     );
   };
 
@@ -677,6 +676,7 @@ const ListVisit = () => {
 
   return (
     <SafeAreaView
+      edges={['bottom', 'top']}
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
       {_renderContent()}
@@ -697,6 +697,48 @@ const ListVisit = () => {
           handleItem={handleItemDistanceFilter}
         />
       </AppBottomSheet>
+      <Modal
+        isVisible={modalError}
+        backdropOpacity={0.5}
+        onBackButtonPress={() => {}}
+        style={{marginHorizontal: 0}}
+        onBackdropPress={() => {}}
+        animationIn="slideInUp"
+        animationOut="slideOutDown">
+        <Block
+          colorTheme="bg_default"
+          height={230}
+          marginLeft={16}
+          marginRight={16}
+          borderRadius={16}>
+          <Block justifyContent="center" alignItems="center" marginTop={8}>
+            <AppImage source="ErrorApiIcon" size={100} />
+          </Block>
+          <Block justifyContent="center" paddingVertical={8}>
+            <Text
+              textAlign="center"
+              fontSize={16}
+              fontWeight="500"
+              lineHeight={27}
+              colorTheme="text_primary">
+              {error}
+            </Text>
+          </Block>
+          <Block
+            paddingHorizontal={16}
+            justifyContent="center"
+            alignItems="center"
+            direction="row">
+            <TouchableOpacity
+              style={styles.buttonModal}
+              onPress={onGetCurrentPositionAgain}>
+              <Text colorTheme="white" fontSize={16} fontWeight="500">
+                {getLabel('tryAgain')}
+              </Text>
+            </TouchableOpacity>
+          </Block>
+        </Block>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -733,5 +775,25 @@ const rootStyles = (theme: ExtendedTheme) =>
       top: 16,
       right: 0,
       zIndex: 99999999,
+    } as ViewStyle,
+    touchableButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: 8,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      maxWidth: 180,
+    } as ViewStyle,
+    buttonModal: {
+      flex: 1,
+      backgroundColor: theme.colors.primary,
+      height: 40,
+      borderRadius: 8,
+      marginRight: 8,
+      marginTop: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
     } as ViewStyle,
   });
