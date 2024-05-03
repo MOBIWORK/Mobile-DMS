@@ -135,6 +135,7 @@ const CheckinInventory = () => {
   };
 
   const onSubmit = async () => {
+    console.log('run this ?')
     if (products.length > 0) {
       const newItems = products.map(item => {
         const price = item.details.find(item2 => item2.uom == item.stock_uom);
@@ -154,6 +155,7 @@ const CheckinInventory = () => {
         customer_address: dataCheckin.item.customer_primary_address,
         inventory_items: newItems,
       };
+      console.log(objectData,'objectData')
       const {status}: any = await CheckinService.checkinInventory(objectData);
       if (status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));
