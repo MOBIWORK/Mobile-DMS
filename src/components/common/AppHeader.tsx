@@ -40,7 +40,7 @@ const AppHeader: FC<AppHeaderProps> = ({
           ) : (
             <Image
               source={ImageAssets.ArrowLeftIcon}
-              style={[{width: 34, height: 34}]}
+              style={[{width: 24, height: 24}]}
               resizeMode={'cover'}
               tintColor={colors.text_primary}
             />
@@ -57,7 +57,7 @@ const AppHeader: FC<AppHeaderProps> = ({
           {label}
         </Text>
       )}
-      {rightButton ? rightButton : <View style={{width: 32}} />}
+      {rightButton ? rightButton : <View style={{width: 56}} />}
     </View>
   );
 };
@@ -98,10 +98,8 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'relative',
     left: 0,
-    // backgroundColor:'red',
-    width:48,
-    height:48,
-    justifyContent:'center'
-    
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 8,
   } as ViewStyle,
 });

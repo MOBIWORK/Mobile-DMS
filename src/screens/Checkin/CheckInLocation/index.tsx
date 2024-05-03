@@ -34,6 +34,7 @@ import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import {MainLayout} from '../../../layouts';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -158,9 +159,10 @@ const CheckInLocation = () => {
   }, []);
 
   return (
-    <SafeAreaView
-      edges={['bottom']}
-      style={{backgroundColor: theme.colors.bg_default, paddingHorizontal: 0}}>
+    // <SafeAreaView
+    //   edges={['bottom', 'top']}
+    //   style={{backgroundColor: theme.colors.bg_default, paddingHorizontal: 0}}>
+    <MainLayout style={{paddingHorizontal: 0}}>
       <AppHeader
         style={{paddingHorizontal: 16}}
         onBack={() => navigation.goBack()}
@@ -251,7 +253,8 @@ const CheckInLocation = () => {
           <AppButton label={getLabel('completed')} onPress={handleComplete} />
         </View>
       </View>
-    </SafeAreaView>
+    </MainLayout>
+    // </SafeAreaView>
   );
 };
 export default CheckInLocation;

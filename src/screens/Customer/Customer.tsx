@@ -110,7 +110,7 @@ const Customer = () => {
   const totalPage = useRef<number>(
     Math.ceil(listCustomerResult.total / listCustomerResult.page_size),
   );
-
+ 
   const onPressType1 = () => {
     bottomRef.current?.snapToIndex(0);
   };
@@ -170,6 +170,7 @@ const Customer = () => {
 
   React.useEffect(() => {
     mounted.current = true;
+    
     if (mounted.current) {
       handleBackgroundLocation();
       if (listCustomer && listCustomer.length > 0) {

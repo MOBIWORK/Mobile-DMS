@@ -5,6 +5,7 @@ import {CommonUtils} from '../../../utils';
 import {useTheme} from '@react-navigation/native';
 import {Block} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
+import isEqual from 'react-fast-compare';
 
 const StatisticalItem: FC<StatisticalItemProps> = ({
   orderCount,
@@ -14,7 +15,7 @@ const StatisticalItem: FC<StatisticalItemProps> = ({
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
 
-  const Item: FC<ItemProps> = ({isRevenue, count}) => {
+  const Item: FC<ItemProps> = React.memo(({isRevenue, count}) => {
     return (
       <Block
         width="45%"
@@ -38,7 +39,7 @@ const StatisticalItem: FC<StatisticalItemProps> = ({
         </Text>
       </Block>
     );
-  };
+  },isEqual);
 
   return (
     <Block

@@ -1,7 +1,14 @@
-import React, {useRef, useState, useMemo, useEffect} from 'react';
+import React, {
+  useRef,
+  useState,
+  useMemo,
+  useEffect,
+  useTransition,
+} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   useWindowDimensions,
@@ -15,9 +22,10 @@ import {
   AppBottomSheet,
   AppContainer,
   AppHeader,
+  Block,
 } from '../../../components/common';
 import Detail from './Detail';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Report from './Report/Report';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {AppConstant} from '../../../const';
@@ -31,8 +39,13 @@ import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calenda
 import {useMMKVString} from 'react-native-mmkv';
 import {CustomerService} from '../../../services';
 import {IVisitRouteDetail} from '../../../models/types';
-import { useSelector } from '../../../config/function';
-import { shallowEqual } from 'react-redux';
+import {
+  useDeepCompareEffect,
+  useEffectOnce,
+  useSelector,
+} from '../../../config/function';
+
+import isEqual from 'react-fast-compare';
 
 const Index = () => {
   const {t: getLabel} = useTranslation();
@@ -43,6 +56,7 @@ const Index = () => {
   const route = useRoute<RouterProp<'VISIT_DETAIL'>>();
   const snapPoints = useMemo(() => ['30%'], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const [isPending, startEffect] = useTransition();
 
   const [languageCode] = useMMKVString(AppConstant.Language_Code);
 
@@ -57,10 +71,6 @@ const Index = () => {
   );
 
   const [detailData, setDetailData] = useState<IVisitRouteDetail>();
-
-
-  
-
 
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);
@@ -123,27 +133,33 @@ const Index = () => {
     }
   };
 
-  const DetailScreen = () => (
-    <AppContainer style={{marginBottom: bottom}}>
-      <View style={{flex: 1, padding: 16}}>
-        <Detail
-          item={route.params && route.params.data}
-          otherInfo={detailData}
-        />
-      </View>
-    </AppContainer>
+  const DetailScreen = React.memo(
+    () => (
+      <Block block style={{marginBottom: bottom}}>
+        <View style={{flex: 1, padding: 16}}>
+          <Detail
+            item={route.params && route.params.data}
+            otherInfo={detailData}
+          />
+        </View>
+      </Block>
+    ),
+    isEqual,
   );
 
-  const ReportScreen = () => (
-    <View style={{flex: 1, padding: 16}}>
-      <Report
-        onOpenReportFilter={() =>
-          bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
-        }
-        timeLabel={filterTime}
-        itemData={route.params.data}
-      />
-    </View>
+  const ReportScreen = React.memo(
+    () => (
+      <View style={{flex: 1, padding: 16}}>
+        <Report
+          onOpenReportFilter={() =>
+            bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
+          }
+          timeLabel={filterTime}
+          itemData={route.params.data}
+        />
+      </View>
+    ),
+    isEqual,
   );
 
   const renderScene = SceneMap({
@@ -157,7 +173,7 @@ const Index = () => {
     {key: 'second', title: getLabel('report')},
   ]);
 
-  const renderTabBar = (props: any) => {
+  const renderTabBar = React.useCallback((props: any) => {
     return (
       <TabBar
         {...props}
@@ -179,9 +195,9 @@ const Index = () => {
         style={[styles.tabBar, {borderColor: colors.bg_default}]}
       />
     );
-  };
+  }, []);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     const getDetail = async (customer_name: string) => {
       const response: any = await CustomerService.getVisitRouteDetail(
         customer_name,
@@ -190,24 +206,38 @@ const Index = () => {
         setDetailData(response.result);
       }
     };
-    getDetail(route.params.data.customer_name).then();
+    startEffect(() => {
+      getDetail(route.params.data.customer_name);
+    });
   }, []);
 
   return (
-    <MainLayout style={{paddingHorizontal: 0}}>
+    <SafeAreaView style={{flex: 1}}>
       <AppHeader
         style={{paddingHorizontal: 16}}
         label={getLabel('visitDetail')}
         onBack={() => navigation.goBack()}
       />
-      <TabView
-        style={{backgroundColor: colors.bg_neutral}}
-        onIndexChange={setIndex}
-        navigationState={{index, routes}}
-        renderScene={renderScene}
-        initialLayout={{width: layout.width}}
-        renderTabBar={renderTabBar}
-      />
+      {isPending ? (
+        <Block
+          block
+          justifyContent="center"
+          alignItems="center"
+          colorTheme="primary">
+          {' '}
+          <ActivityIndicator size="large" color={colors.primary} />{' '}
+        </Block>
+      ) : (
+        <TabView
+          style={{backgroundColor: colors.bg_neutral}}
+          onIndexChange={setIndex}
+          navigationState={{index, routes}}
+          renderScene={renderScene}
+          initialLayout={{width: layout.width}}
+          renderTabBar={renderTabBar}
+        />
+      )}
+
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
         snapPointsCustom={snapPoints}>
@@ -230,10 +260,10 @@ const Index = () => {
         date={date}
         onConfirm={onConfirmSingle}
       />
-    </MainLayout>
+    </SafeAreaView>
   );
 };
-export default Index;
+export default React.memo(Index, isEqual);
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: '#ffffff',

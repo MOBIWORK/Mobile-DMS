@@ -19,6 +19,7 @@ import FormAddress from '../Customer/components/FormAddress';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {AppConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
+import isEqual from 'react-fast-compare';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -91,13 +92,6 @@ const DetailCustomer = () => {
         <AppHeader
           label={getLabel('customerDetail')}
           style={{backgroundColor: theme.colors.bg_default}}
-          backButtonIcon={
-            <SvgIcon
-              source="arrowLeft"
-              size={20}
-              onPress={() => navigation.goBack()}
-            />
-          }
           rightButton={
             <View style={styles.containIcon}>
               <SvgIcon source="IconKebab" size={20} />
@@ -132,7 +126,7 @@ const DetailCustomer = () => {
   );
 };
 
-export default React.memo(DetailCustomer);
+export default React.memo(DetailCustomer,isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

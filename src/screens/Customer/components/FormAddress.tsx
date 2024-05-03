@@ -1,9 +1,7 @@
 import {
-  Image,
   Keyboard,
   ScrollView,
   StyleSheet,
-  Text,
   TextStyle,
   TouchableOpacity,
   View,
@@ -26,7 +24,11 @@ import {MainLayout} from '../../../layouts';
 
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
-import {KeyAbleProps, RootEkMapResponse} from '../../../models/types';
+import {
+  IDataCustomer,
+  KeyAbleProps,
+  RootEkMapResponse,
+} from '../../../models/types';
 import {dispatch} from '../../../utils/redux';
 import SelectedAddress from './SelectedAddress';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
@@ -34,13 +36,15 @@ import {MainAddress, MainContactAddress} from './CardAddress';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
-import {ImageAssets} from '../../../assets';
 import {AppService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import isEqual from 'react-fast-compare';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
+  listData: IDataCustomer;
+  setData: (item: IDataCustomer) => void;
 };
 
 export const AddressType = {
@@ -56,7 +60,7 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter} = props;
+  const {onPressClose, typeFilter, listData, setData} = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -87,7 +91,6 @@ const FormAddress = (props: Props) => {
   const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-  const [isCurrentLocation, setIsCurrentLocation] = useState<boolean>(false);
 
   const listCheckBox = useRef([
     {
@@ -159,26 +162,23 @@ const FormAddress = (props: Props) => {
       !addressValue.district?.id ||
       !addressValue.ward?.id
     ) {
-      const provinceRes: any = await AppService.getIDProvince(
-        addressValue.city?.value,
-      );
-      const districtRes: any = await AppService.getIDDistrict(
-        addressValue.district?.value,
-      );
-      const wardRes: any = await AppService.getIDWard(addressValue.ward?.value);
-      if (
-        provinceRes?.status === ApiConstant.STT_OK &&
-        districtRes?.status === ApiConstant.STT_OK &&
-        wardRes?.status === ApiConstant.STT_OK
-      ) {
+      const locationIDRes: any = await AppService.getIDLocation({
+        province_name: addressValue.city?.value ?? '',
+        district_name: addressValue.district?.value ?? '',
+        ward_name: addressValue.ward?.value ?? '',
+      });
+      if (locationIDRes?.status === ApiConstant.STT_OK) {
         const newAddressValue: MainAddress = {
           ...addressValue,
-          city: {...addressValue.city, id: provinceRes.data.result.province_id},
+          city: {
+            ...addressValue.city,
+            id: locationIDRes.data.result.province_id,
+          },
           district: {
             ...addressValue.district,
-            id: districtRes.data.result.district_id,
+            id: locationIDRes.data.result.district_id,
           },
-          ward: {...addressValue.ward, id: wardRes.data.result.ward_id},
+          ward: {...addressValue.ward, id: locationIDRes.data.result.ward_id},
         };
         dispatch(
           customerActions.setMainAddress({
@@ -195,7 +195,11 @@ const FormAddress = (props: Props) => {
         }),
       );
     }
-
+    setData({
+      ...listData,
+      latitude: location?.coords.latitude,
+      longitude: location?.coords.longitude,
+    });
     onPressClose();
   };
 
@@ -303,7 +307,7 @@ const FormAddress = (props: Props) => {
             location?.coords.latitude ?? 21.0564114,
           ]}
           animationMode={'flyTo'}
-          animationDuration={500}
+          animationDuration={10}
           zoomLevel={13}
         />
         {location?.coords && (
@@ -672,7 +676,7 @@ const FormAddress = (props: Props) => {
                     );
                     onPressClose();
                   }}>
-                  <AppText style={styles.applyText}>Lưu</AppText>
+                  <AppText style={styles.applyText}>{getLabel('save')}</AppText>
                 </TouchableOpacity>
               </View>
             </View>

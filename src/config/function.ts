@@ -188,11 +188,14 @@ function decimalMinutesToTime(decimalMinutes: any) {
 
   return formattedTime;
 }
-
+const useEffectOnce = (cb: React.EffectCallback) => {
+  useEffect(cb, []);
+};
 export {
   formatPhoneNumber,
   formatMoney,
   useDeepCompareEffect,
+  useEffectOnce,
   randomUniqueId,
   useDisableBackHandler,
   onCheckType,

@@ -1,11 +1,13 @@
 import React, {
   memo,
+  startTransition,
   useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
+  useTransition,
 } from 'react';
 import {
   AppBottomSheet,
@@ -65,6 +67,7 @@ import {shallowEqual, useDispatch} from 'react-redux';
 import StringFormat from 'string-format';
 import MarkerItem from '../../../components/common/MarkerItem';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import isEqual from 'react-fast-compare';
 
 //config Mapbox
 
@@ -82,7 +85,7 @@ const ListVisit = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const systemConfig = useSelector(state => state.app.systemConfig);
   const searchVisit = useSelector(state => state.app.searchVisitValue);
-
+  const [isPending, startEffect] = useTransition();
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -191,7 +194,7 @@ const ListVisit = () => {
     const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
     if (listCustomer.page_number <= totalPage && listCustomer.data.length > 3) {
       if (Object.keys(filterDataRef.current).length > 0) {
-        await getCustomer(
+        getCustomer(
           {
             ...filterDataRef.current,
             page_number: listCustomer.page_number + 1,
@@ -199,7 +202,7 @@ const ListVisit = () => {
           true,
         );
       } else {
-        await getCustomer(
+        getCustomer(
           {
             ...filterParams,
             router: filterParams?.router?.channel_code,
@@ -211,7 +214,7 @@ const ListVisit = () => {
     } else {
       return null;
     }
-  }, [listCustomer, dispatch]);
+  }, [dispatch]);
 
   const handleItemDistanceFilter = (itemData: IFilterType) => {
     distanceRef.current?.close();
@@ -306,6 +309,95 @@ const ListVisit = () => {
     );
   };
 
+  const renderMapView = React.useCallback(() => {
+    return (
+      <Block style={styles.map as ViewStyle}>
+        <Mapbox.MapView
+          pitchEnabled={false}
+          attributionEnabled={false}
+          scaleBarEnabled={false}
+          styleURL={Mapbox.StyleURL.Street}
+          logoEnabled={false}
+          style={{flex: 1}}>
+          <Mapbox.RasterSource
+            id="adminmap"
+            tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+            <Mapbox.RasterLayer
+              id={'adminmap'}
+              sourceID={'admin'}
+              style={{visibility: 'visible'}}
+            />
+          </Mapbox.RasterSource>
+          {location?.coords && (
+            <Mapbox.Camera
+              ref={mapboxCameraRef}
+              centerCoordinate={[
+                location?.coords.longitude,
+                location?.coords.latitude,
+              ]}
+              animationMode={'flyTo'}
+              animationDuration={500}
+              zoomLevel={12}
+            />
+          )}
+          {customerDataSort &&
+            customerDataSort.map((item, index) => {
+              if (item.customer_location_primary) {
+                const newLocation: LocationProps = JSON.parse(
+                  item.customer_location_primary!,
+                );
+                return (
+                  <Mapbox.MarkerView
+                    key={index}
+                    coordinate={[
+                      Number(newLocation.long),
+                      Number(newLocation.lat),
+                    ]}>
+                    <MarkerItem
+                      item={item}
+                      index={index}
+                      onPress={() => setVisitItemSelected(item)}
+                    />
+                  </Mapbox.MarkerView>
+                );
+              } else {
+                return null;
+              }
+            })}
+          <Mapbox.UserLocation
+            visible={true}
+            animated
+            androidRenderMode="gps"
+            showsUserHeadingIndicator={true}
+          />
+        </Mapbox.MapView>
+        <TouchableOpacity
+          onPress={handleRegainLocation}
+          style={styles.regainPosition}>
+          <Image
+            source={ImageAssets.MapIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+            tintColor={colors.bg_default}
+          />
+          <Text style={{color: colors.bg_default, marginLeft: 4}}>
+            {getLabel('currentPosition')}
+          </Text>
+        </TouchableOpacity>
+        {visitItemSelected && (
+          <Block position="absolute" bottom={bottom + 70} left={24} right={24}>
+            <VisitItem
+              item={visitItemSelected}
+              handleClose={() => setVisitItemSelected(null)}
+            />
+          </Block>
+        )}
+      </Block>
+    );
+  }, []);
+
+  
+
   const _renderContent = () => {
     return (
       <Block marginTop={8}>
@@ -317,7 +409,7 @@ const ListVisit = () => {
                 allCustomer: customerDataSort?.length,
               })}
             </Text>
-            {loading ? (
+            {isPending ? (
               <SkeletonLoading />
             ) : (
               <FlatList
@@ -328,8 +420,8 @@ const ListVisit = () => {
                   `${item.customer_code} - ${index}`
                 }
                 decelerationRate={'normal'}
-                // bounces={false}
-                initialNumToRender={5}
+                bounces={false}
+                initialNumToRender={4}
                 refreshControl={
                   <RefreshControl
                     refreshing={loading}
@@ -342,7 +434,9 @@ const ListVisit = () => {
                 renderItem={({item}) => (
                   <VisitItem
                     item={item}
-                    handleOpenMap={() => presentMap(item)}
+                    handleOpenMap={() =>
+                      startTransition(() => presentMap(item))
+                    }
                     // onPress={handleBackground}
                   />
                 )}
@@ -352,92 +446,7 @@ const ListVisit = () => {
             )}
           </View>
         ) : (
-          <View style={styles.map as ViewStyle}>
-            <Mapbox.MapView
-              pitchEnabled={false}
-              attributionEnabled={false}
-              scaleBarEnabled={false}
-              styleURL={Mapbox.StyleURL.Street}
-              logoEnabled={false}
-              style={{flex: 1}}>
-              <Mapbox.RasterSource
-                id="adminmap"
-                tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-                <Mapbox.RasterLayer
-                  id={'adminmap'}
-                  sourceID={'admin'}
-                  style={{visibility: 'visible'}}
-                />
-              </Mapbox.RasterSource>
-              {location?.coords && (
-                <Mapbox.Camera
-                  ref={mapboxCameraRef}
-                  centerCoordinate={[
-                    location?.coords.longitude,
-                    location?.coords.latitude,
-                  ]}
-                  animationMode={'flyTo'}
-                  animationDuration={500}
-                  zoomLevel={12}
-                />
-              )}
-              {customerDataSort &&
-                customerDataSort.map((item, index) => {
-                  if (item.customer_location_primary) {
-                    const newLocation: LocationProps = JSON.parse(
-                      item.customer_location_primary!,
-                    );
-                    return (
-                      <Mapbox.MarkerView
-                        key={index}
-                        coordinate={[
-                          Number(newLocation.long),
-                          Number(newLocation.lat),
-                        ]}>
-                        <MarkerItem
-                          item={item}
-                          index={index}
-                          onPress={() => setVisitItemSelected(item)}
-                        />
-                      </Mapbox.MarkerView>
-                    );
-                  } else {
-                    return null;
-                  }
-                })}
-              <Mapbox.UserLocation
-                visible={true}
-                animated
-                androidRenderMode="gps"
-                showsUserHeadingIndicator={true}
-              />
-            </Mapbox.MapView>
-            <TouchableOpacity
-              onPress={handleRegainLocation}
-              style={styles.regainPosition}>
-              <Image
-                source={ImageAssets.MapIcon}
-                style={{width: 16, height: 16}}
-                resizeMode={'cover'}
-                tintColor={colors.bg_default}
-              />
-              <Text style={{color: colors.bg_default, marginLeft: 4}}>
-                {getLabel('currentPosition')}
-              </Text>
-            </TouchableOpacity>
-            {visitItemSelected && (
-              <Block
-                position="absolute"
-                bottom={bottom + 70}
-                left={24}
-                right={24}>
-                <VisitItem
-                  item={visitItemSelected}
-                  handleClose={() => setVisitItemSelected(null)}
-                />
-              </Block>
-            )}
-          </View>
+          renderMapView()
         )}
       </Block>
     );
@@ -473,42 +482,50 @@ const ListVisit = () => {
   };
 
   const sortDataCustomer = (distanceLabel: string) => {
-    if (listCustomer && listCustomer?.data?.length > 0) {
-      const filteredData = listCustomer.data.filter(
-        item => item.customer_location_primary != null,
-      );
-      const noLocationCustomer = listCustomer.data.filter(
-        item => item.customer_location_primary === null,
-      );
-      const sortedData = () => {
-        return filteredData.slice().sort((a, b) => {
-          const locationA: LocationProps = JSON.parse(
-            a.customer_location_primary,
-          );
-          const locationB: LocationProps = JSON.parse(
-            b.customer_location_primary,
-          );
-          const distance1 = calculateDistance(
-            currentLocation.coords.latitude,
-            currentLocation.coords.longitude,
-            locationA.lat,
-            locationA.long,
-          );
-          const distance2 = calculateDistance(
-            currentLocation.coords.latitude,
-            currentLocation.coords.longitude,
-            locationB.lat,
-            locationB.long,
-          );
-          return distanceLabel === getLabel('nearest')
-            ? distance1 - distance2
-            : distance2 - distance1;
+    startEffect(() => {
+      if (listCustomer && listCustomer?.data?.length > 0) {
+        const filteredData = listCustomer.data.filter(
+          item => item.customer_location_primary != null,
+        );
+        const noLocationCustomer = listCustomer.data.filter(
+          item => item.customer_location_primary === null,
+        );
+        const sortedData = () => {
+          return filteredData.slice().sort((a, b) => {
+            const locationA: LocationProps = JSON.parse(
+              a.customer_location_primary,
+            );
+            const locationB: LocationProps = JSON.parse(
+              b.customer_location_primary,
+            );
+            const distance1 = calculateDistance(
+              currentLocation?.coords?.latitude
+                ? currentLocation?.coords?.latitude
+                : 0,
+              currentLocation?.coords?.longitude
+                ? currentLocation?.coords?.longitude
+                : 0,
+              locationA.lat,
+              locationA.long,
+            );
+            const distance2 = calculateDistance(
+              currentLocation.coords.latitude,
+              currentLocation.coords.longitude,
+              locationB.lat,
+              locationB.long,
+            );
+            return distanceLabel === getLabel('nearest')
+              ? distance1 - distance2
+              : distance2 - distance1;
+          });
+        };
+        setCustomerData([...sortedData(), ...noLocationCustomer]);
+      } else {
+        startEffect(() => {
+          getCustomer();
         });
-      };
-      setCustomerData([...sortedData(), ...noLocationCustomer]);
-    } else {
-      getCustomer();
-    }
+      }
+    });
   };
 
   const getCustomerRoute = async () => {
@@ -663,7 +680,9 @@ const ListVisit = () => {
     if (searchVisit) {
       handleSearchVisit();
     } else {
-      getData();
+      startEffect(() => {
+        getData();
+      });
     }
     return () => {
       mounted.current = false;
@@ -678,6 +697,8 @@ const ListVisit = () => {
     <SafeAreaView
       edges={['bottom', 'top']}
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
+        
+        
       {_renderHeader()}
       {_renderContent()}
       <FilterContainer
@@ -742,7 +763,7 @@ const ListVisit = () => {
     </SafeAreaView>
   );
 };
-export default memo(ListVisit);
+export default memo(ListVisit, isEqual);
 
 const rootStyles = (theme: ExtendedTheme) =>
   StyleSheet.create({

@@ -1,4 +1,4 @@
-import React, {FC, useMemo} from 'react';
+import React, {FC, useMemo, useTransition} from 'react';
 import {VisitListItemType} from '../../../models/types';
 import {
   Image,
@@ -43,7 +43,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const batteryLevel = useBatteryLevel();
-
+  const [isPending, startTransition] = useTransition();
   const currentCustomerCheckin = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -71,10 +71,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
   //   handleBackground(item);
   // };
 
-  const handleBackground = async (
-    item: VisitListItemType,
-    isDetail: boolean,
-  ) => {
+  const handleBackground = (item: VisitListItemType, isDetail: boolean) => {
     CommonUtils.getCurrentLocation(
       location => {
         let data: CheckinData = {
@@ -116,13 +113,13 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
           item: item,
           ...item,
         };
+
         if (isDetail) {
-          dispatch(appActions.setDataCheckIn({...data, isVisitDetail: true}));
           navigate(ScreenConstant.VISIT_DETAIL, {
             data: data,
           });
         } else {
-          dispatch(appActions.setDataCheckIn({...data, isVisitDetail: false}));
+          dispatch(appActions.setDataCheckIn(data));
           navigate(ScreenConstant.CHECKIN, {
             item: data,
           });
@@ -151,7 +148,12 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
-      <Pressable onPress={() => handleBackground(item, true)}>
+      <TouchableOpacity
+        onPress={() =>
+          startTransition(() => {
+            handleBackground(item, true);
+          })
+        }>
         <View style={styles.viewContainer}>
           <View style={styles.user}>
             <View style={styles.userLeft}>
@@ -205,7 +207,9 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
               }}
             />
             <TouchableOpacity
-              onPress={() => handleOpenMap && handleOpenMap(item)}
+              onPress={() =>
+                typeof handleOpenMap === 'function' && handleOpenMap(item)
+              }
               style={styles.content}
               disabled={!distanceCal.distance}>
               <Image
@@ -243,7 +247,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
             </TouchableOpacity>
           )}
         </View>
-      </Pressable>
+      </TouchableOpacity>
     </ErrorBoundary>
   );
 };

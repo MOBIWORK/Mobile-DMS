@@ -26,7 +26,7 @@ import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {useSelector} from '../../../config/function';
+import {useEffectOnce, useSelector} from '../../../config/function';
 import {CheckinService} from '../../../services';
 import {ApiConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
@@ -79,6 +79,7 @@ const AddNote = () => {
   }, [title]);
 
   const renderItem = (item: StaffType) => {
+   
     return (
       <View style={styles.viewItem}>
         <View style={styles.flex}>
@@ -136,7 +137,6 @@ const AddNote = () => {
         isSelected: false,
       }));
       dispatch(checkinActions.setData({typeData: 'note_type', data: result}));
-
       setDataType(newData);
     }
   };
@@ -152,7 +152,7 @@ const AddNote = () => {
   };
 
   useEffect(() => {
-    if (noteTypes.length == 0) {
+    if (noteTypes.length === 0) {
       fetchDataNoteType();
     } else {
       const newData = noteTypes.map((item: any) => ({
@@ -164,9 +164,6 @@ const AddNote = () => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchDataStaff();
-  }, []);
 
   const renderBottomSheetStaff = () => {
     return (
@@ -240,6 +237,8 @@ const AddNote = () => {
                 data={staffData && staffData.length > 0 ? staffData : []}
                 showsVerticalScrollIndicator={false}
                 initialNumToRender={4}
+                maxToRenderPerBatch={4}
+                bounces={false}
                 renderItem={({item, index}) => {
                   return <Block key={index}>{renderItem(item)}</Block>;
                 }}
@@ -291,7 +290,7 @@ const AddNote = () => {
             />
           </View>
           <TouchableOpacity
-            onPress={() => setSendEmail(!sentEmail)}
+            onPress={() => {setSendEmail(!sentEmail);fetchDataStaff()}}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -300,7 +299,7 @@ const AddNote = () => {
             }}>
             <AppCheckBox
               status={sentEmail}
-              onChangeValue={() => setSendEmail(!sentEmail)}
+              onChangeValue={() => {setSendEmail(!sentEmail);fetchDataStaff()}}
             />
             <Text style={{color: theme.colors.text_primary, marginLeft: 8}}>
               {getLabel('sendEmailToEveryone')}
@@ -309,8 +308,11 @@ const AddNote = () => {
 
           {sentEmail && (
             <View style={{marginTop: 24}}>
+              {/* <Block>
+                <Text>dm lng hi</Text>
+              </Block> */}
               <InputViewCompoment
-                data={selectPersonal}
+                data={staffData}
                 label={getLabel('userNote')}
                 onPress={() => onOpenBottonSheet()}
                 backgroundColor={colors.bg_default}

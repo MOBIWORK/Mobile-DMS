@@ -6,6 +6,7 @@ import {MainLayout} from '../../../layouts';
 import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
+import isEqual from 'react-fast-compare';
 
 type Props = {
   onPressAdding: () => void;
@@ -36,7 +37,7 @@ const Contact = (props: Props) => {
   );
 };
 
-export default Contact;
+export default React.memo(Contact,isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

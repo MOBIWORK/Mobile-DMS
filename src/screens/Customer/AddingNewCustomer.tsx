@@ -37,10 +37,6 @@ import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
 import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
-import {
-  setNewCustomer,
-  setProcessingStatus,
-} from '../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
@@ -52,6 +48,10 @@ import {MainAddress, MainContactAddress} from './components/CardAddress';
 import {CommonUtils} from '../../utils';
 import {useTranslation} from 'react-i18next';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import {
+  setNewCustomer,
+  setProcessingStatus,
+} from '../../redux-store/app-reducer/reducer';
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
@@ -241,14 +241,6 @@ const AddingNewCustomer = () => {
       <AppHeader
         label={getLabel('customer')}
         onBack={() => navigation.goBack()}
-        backButtonIcon={
-          <AppIcons
-            iconType={AppConstant.ICON_TYPE.EntypoIcon}
-            name="chevron-thin-left"
-            size={24}
-            color={Colors.gray_600}
-          />
-        }
       />
       <View style={[styles.containContentView, {marginBottom: bottom + 60}]}>
         <FormAdding
@@ -299,6 +291,8 @@ const AddingNewCustomer = () => {
             addingAddress.current?.close();
           }}
           typeFilter={typeFilter}
+          listData={listData}
+          setData={setListData}
         />
       </AppBottomSheet>
       <AppBottomSheet

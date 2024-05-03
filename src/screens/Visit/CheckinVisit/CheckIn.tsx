@@ -85,7 +85,7 @@ const CheckIn = () => {
     shallowEqual,
   );
   const timeCheckin = useRef(
-    decimalMinutesToTime(systemConfig.thoigian_toithieu - 1),
+    decimalMinutesToTime(systemConfig.thoigian_toithieu),
   );
   useDisableBackHandler(true);
 
@@ -165,53 +165,7 @@ const CheckIn = () => {
       return categoriesItem.key === 'note';
     }
 
-    if (!systemConfig.checkout_ngoaisaiso) {
-      let location: LocationProps = JSON.parse(
-        params.item.customer_location_primary,
-      );
-      let distance = calculateDistance(
-        currentLocation.coords.latitude,
-        currentLocation.coords.longitude,
-        location?.lat,
-        location?.long,
-      );
-      if (distance * 1000 > AppConstant.additional_distance) {
-        setMsgCheckOutErr({
-          type: 'distance',
-          title: getLabel('errDistance'),
-          msg: getLabel('mgsDistanceErr'),
-        });
-        setOpenDialogErr(true);
-        return false;
-      }
-    } else if (
-      systemConfig.checkout_ngoaisaiso &&
-      systemConfig.saiso_chophep_checkout_ngoaisaiso > 0
-    ) {
-      console.log('2222');
-      let location: LocationProps = JSON.parse(
-        params.item.customer_location_primary,
-      );
-      let distance = calculateDistance(
-        currentLocation.coords.latitude,
-        currentLocation.coords.longitude,
-        location?.lat,
-        location?.long,
-      );
-      if (
-        distance * 1000 >
-        systemConfig.saiso_chophep_checkout_ngoaisaiso +
-          AppConstant.additional_distance
-      ) {
-        setMsgCheckOutErr({
-          type: 'distance',
-          title: getLabel('errDistance'),
-          msg: getLabel('mgsDistanceErr'),
-        });
-        setOpenDialogErr(true);
-        return false;
-      }
-    } else if (
+    if (
       systemConfig.batbuoc_kiemton &&
       !categoriesCheckin.find(isInventory).isDone
     ) {
@@ -241,6 +195,56 @@ const CheckIn = () => {
       });
       setOpenDialogErr(true);
       return false;
+    } else if (!systemConfig.checkout_ngoaisaiso) {
+      let location: LocationProps = JSON.parse(
+        params.item.customer_location_primary,
+      );
+      let distance = calculateDistance(
+        currentLocation.coords.latitude,
+        currentLocation.coords.longitude,
+        location?.lat,
+        location?.long,
+      );
+      if (distance * 1000 > AppConstant.additional_distance) {
+        setMsgCheckOutErr({
+          type: 'distance',
+          title: getLabel('errDistance'),
+          msg: getLabel('mgsDistanceErr'),
+        });
+        setOpenDialogErr(true);
+        return false;
+      } else {
+        return true;
+      }
+    } else if (
+      systemConfig.checkout_ngoaisaiso &&
+      systemConfig.saiso_chophep_checkout_ngoaisaiso > 0
+    ) {
+      console.log('2222');
+      let location: LocationProps = JSON.parse(
+        params.item.customer_location_primary,
+      );
+      let distance = calculateDistance(
+        currentLocation.coords.latitude,
+        currentLocation.coords.longitude,
+        location?.lat,
+        location?.long,
+      );
+      if (
+        distance * 1000 >
+        systemConfig.saiso_chophep_checkout_ngoaisaiso +
+          AppConstant.additional_distance
+      ) {
+        setMsgCheckOutErr({
+          type: 'distance',
+          title: getLabel('errDistance'),
+          msg: getLabel('mgsDistanceErr'),
+        });
+        setOpenDialogErr(true);
+        return false;
+      } else {
+        return true;
+      }
     } else {
       setMsgCheckOutErr({
         type: '',
@@ -304,11 +308,11 @@ const CheckIn = () => {
             marginLeft={16}
             marginRight={16}>
             <Block>
-              <SvgIcon
-                source="arrowLeft"
-                size={24}
-                onPress={() => setShow(true)}
-              />
+              <TouchableOpacity
+                style={{padding: 8}}
+                onPress={() => setShow(true)}>
+                <SvgIcon source="arrowLeft" size={24} />
+              </TouchableOpacity>
             </Block>
             <Text fontSize={14} colorTheme="text" fontWeight="400">
               {' '}
