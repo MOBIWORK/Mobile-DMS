@@ -39,8 +39,7 @@ export function* onGetCustomer(action: PayloadAction) {
     try {
       yield put(onLoadApp());
       const response: ResponseGenerator = yield call(getCustomer);
-      if (response.message === 'ok') {
-        console.log('run this shit ');
+      if (Object.keys(response.result).length > 0) {
         yield put(setCustomer(response.result));
       }
     } catch (err) {

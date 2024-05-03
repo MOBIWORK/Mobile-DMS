@@ -1,9 +1,5 @@
 import React, {FC} from 'react';
-import {
-  ItemNoteVisitDetail,
-  IVisitRouteDetail,
-  VisitListItemType,
-} from '../../../models/types';
+import {ItemNoteVisitDetail, IVisitRouteDetail} from '../../../models/types';
 import {
   FlatList,
   Image,
@@ -21,11 +17,15 @@ import {NavigationProp} from '../../../navigation/screen-type';
 import {ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
+import {useDispatch} from 'react-redux';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
+  const dispatch = useDispatch();
 
   const styles = StyleSheet.create({
     viewContainer: {
@@ -247,7 +247,12 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
             alignSelf: 'center',
           }}
           label={'Checkin'}
-          onPress={() => navigation.navigate(ScreenConstant.CHECKIN, {item})}
+          onPress={() => {
+            navigation.navigate(ScreenConstant.CHECKIN, {item});
+            dispatch(
+              appActions.setDataCheckIn({...item, isVisitDetail: false}),
+            );
+          }}
         />
       ) : (
         <View style={{marginTop: 16}}>

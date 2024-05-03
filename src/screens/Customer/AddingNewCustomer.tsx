@@ -114,21 +114,16 @@ const AddingNewCustomer = () => {
     const updateListData: IDataCustomer = {
       ...newListData,
       frequency: newListData?.frequency
-        ? newListData.frequency.toString().replace(',', ';')
+        ? newListData.frequency.toString().replaceAll(',', ';')
         : '',
       customer_type:
         newListData.customer_type === getLabel('individual')
           ? 'Individual'
           : 'Company',
-      address_title_cus:
-        Object.keys(address).length > 0
-          ? `${newListData.customer_name} address`
-          : '',
+      address_title_cus: `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`,
       address_type_cus: Object.keys(address).length > 0 ? 'Billing' : '',
       detail_address_cus:
-        Object.keys(address).length > 0
-          ? `${address.ward?.value}/${address.district?.value}/${address.city?.value}`
-          : '',
+        Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
       ward_cus:
         Object.keys(address).length > 0 ? String(address?.ward?.id) : '',
       district_cus:
@@ -157,8 +152,8 @@ const AddingNewCustomer = () => {
       first_name: contact?.nameContact ?? '',
       router_name: newListData?.router_name?.[1] ?? '',
       website: newListData.website ?? '',
-      longitude: newListData.longitude ?? 0,
-      latitude: newListData.latitude ?? 0,
+      longitude: newListData.longitude ?? 105.782548,
+      latitude: newListData.latitude ?? 21.058045,
       custom_birthday: newListData.custom_birthday
         ? newListData.custom_birthday / 1000
         : new Date().getTime() / 1000,
@@ -177,6 +172,7 @@ const AddingNewCustomer = () => {
       });
     }
     dispatch(setProcessingStatus(false));
+    // console.log('updateListData', updateListData);
   };
 
   const onDismissSingle = React.useCallback(() => {

@@ -9,6 +9,7 @@ import AuthNavigation from './AuthNavigation';
 import UnAuthorNavigation from './UnAuthorNavigation';
 import {navigate} from './navigation-service';
 import {useSelector} from '../config/function';
+import {CheckinData} from '../services/appService';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -16,44 +17,14 @@ const RootNavigation = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
   const isLogout = CommonUtils.storage.getBoolean(AppConstant.isLogOut);
-  const [appState, setAppState] = useState<any>(AppState.currentState);
-  const dataCheckIn = useSelector(state => state.app.dataCheckIn);
-
-  // const [loginFirst] = useMMKVBoolean(AppConstant.FirstLogin);
-
-  // useEffect(() => {
-  //   PushNotification.configure({
-  //     onNotification: notification => {
-  //       if (notification.userInteraction) {
-  //         console.log('312');
-  //       }
-  //     },
-  //   });
-  // }, []);
-
-  // const handleAppStateChange = (nextAppState: AppStateStatus) => {
-  //   if (appState.match(/inactive|background/) && nextAppState === 'active') {
-  //     if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
-  //       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
-  //     } else {
-  //       return;
-  //     }
-  //   }
-  //   setAppState(nextAppState);
-  // };
-  //
-  // useEffect(() => {
-  //   const appStateEvent = AppState.addEventListener(
-  //     'change',
-  //     handleAppStateChange,
-  //   );
-  //   return () => {
-  //     appStateEvent.remove();
-  //   };
-  // }, [appState]);
+  const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
 
   useEffect(() => {
-    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+    if (
+      dataCheckIn &&
+      Object.keys(dataCheckIn)?.length > 0 &&
+      !dataCheckIn.isVisitDetail
+    ) {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
     } else {
       return;

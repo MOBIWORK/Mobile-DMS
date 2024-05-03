@@ -88,6 +88,11 @@ export const GET_LIST_DISTRICT =
   '/api/method/mbw_dms.api.location.list_district?ma_tinh=';
 export const GET_LIST_WARD =
   '/api/method/mbw_dms.api.location.list_ward?ma_quan_huyen=';
+export const GET_ID_PROVINCE =
+  '/api/method/mbw_dms.api.location.get_id_province';
+export const GET_ID_DISTRICT =
+  '/api/method/mbw_dms.api.location.get_id_district';
+export const GET_ID_WARD = '/api/method/mbw_dms.api.location.get_id_ward';
 
 // Inventory
 export const POST_CHECKIN_INVENTORY =

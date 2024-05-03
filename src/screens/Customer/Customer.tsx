@@ -44,6 +44,7 @@ import isEqual from 'react-fast-compare';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
+import {dispatch} from '../../utils/redux';
 
 export type IValueType = {
   customerType: string;
@@ -463,7 +464,11 @@ const Customer = () => {
         />
       </AppBottomSheet>
       <TouchableOpacity
-        onPress={() => navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER)}
+        onPress={() => {
+          dispatch(customerActions.setMainAddress({}));
+          dispatch(customerActions.setMainContactAddress({}));
+          navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER);
+        }}
         style={styles.fab}>
         <AppIcons
           iconType="IonIcon"
