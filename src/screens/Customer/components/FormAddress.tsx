@@ -508,7 +508,7 @@ const FormAddress = (props: Props) => {
               <MapView />
             </MainLayout>
           </ScrollView>
-          <View style={styles.containButtonBottom}>
+          <View style={styles.containButtonBottom(typeFilter)}>
             <View style={styles.containContentButton}>
               <TouchableOpacity
                 style={styles.buttonRestart}
@@ -654,7 +654,7 @@ const FormAddress = (props: Props) => {
               onChangeValue={setTxtContactDetail}
               hiddenRightIcon={true}
             />
-            <View style={styles.containButtonBottom}>
+            <View style={styles.containButtonBottom(typeFilter)}>
               <View style={styles.containContentButton}>
                 <TouchableOpacity
                   style={styles.buttonRestart}
@@ -769,13 +769,13 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
     checkBoxView: {
       flexDirection: 'row',
     } as ViewStyle,
-    containButtonBottom: {
-      // flex: 1,
+    containButtonBottom:(typeFilter:string) =>( {
+      flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 1 :0,
       padding: 16,
       flexDirection: 'column',
       justifyContent: 'flex-end',
       marginHorizontal: 16,
-    } as ViewStyle,
+    }) as ViewStyle,
     containContentButton: {
       flexDirection: 'row',
       justifyContent: 'space-around',

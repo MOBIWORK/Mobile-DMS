@@ -6,6 +6,7 @@ import {
   ViewStyle,
   TextStyle,
   ImageStyle,
+  ActivityIndicator,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import React, {useRef, useMemo, useCallback, useTransition} from 'react';
@@ -376,14 +377,19 @@ const Customer = () => {
           </Text>
           {getLabel('customer')}
         </Text>
-
-        <ListCard
-          data={customerData.current}
-          loading={isPending}
-          onRefresh={onRefreshData}
-          // listFooter={listFooter}
-          onLoadData={onEndReachedThreshold}
-        />
+        {isPending ? (
+          <Block block justifyContent="center" alignItems="center">
+            <ActivityIndicator size={'large'} color={theme.colors.primary} />
+          </Block>
+        ) : (
+          <ListCard
+            data={customerData.current}
+            loading={isPending}
+            onRefresh={onRefreshData}
+            // listFooter={listFooter}
+            onLoadData={onEndReachedThreshold}
+          />
+        )}
       </Block>
 
       <AppBottomSheet

@@ -19,8 +19,6 @@ const Overview = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
-  console.log(props.data.cre_limid,'data address')
   return (
     <MainLayout style={styles.containLayout}>
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
