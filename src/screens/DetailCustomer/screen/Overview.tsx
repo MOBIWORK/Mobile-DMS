@@ -4,7 +4,7 @@ import {AppText} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import CardContactOverview from '../component/CardView';
-import {IDataCustomer, IDataCustomers} from '../../../models/types';
+import { IDataCustomers} from '../../../models/types';
 import CardAddress from '../../Customer/components/CardAddress';
 
 import InforView from '../component/InforView';
@@ -20,6 +20,7 @@ const Overview = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
+  console.log(props.data.cre_limid,'data address')
   return (
     <MainLayout style={styles.containLayout}>
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
@@ -29,7 +30,7 @@ const Overview = (props: Props) => {
           </AppText>
           <CardContactOverview data={props.data} />
         </View>
-        {props.data.address && Object.keys(props.data.address).length > 0 ? (
+        {props.data.address != null && Object.keys(props.data.address).length > 0 ? (
           <View>
             <AppText fontSize={14} fontWeight="500" lineHeight={21}>
               {getLabel('mainAddress')}

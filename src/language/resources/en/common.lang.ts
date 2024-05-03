@@ -287,5 +287,6 @@ export default {
   noteNotComplete: "You haven't written a note yet",
   errDistance: 'Distance error',
   mgsDistanceErr: 'You need to move to a suitable location to perform CheckOut',
-  tryAgain:'Try Again'
+  tryAgain:'Try Again',
+  staff:'Staff'
 };

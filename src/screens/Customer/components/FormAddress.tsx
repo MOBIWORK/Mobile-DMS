@@ -162,32 +162,24 @@ const FormAddress = (props: Props) => {
       !addressValue.district?.id ||
       !addressValue.ward?.id
     ) {
-      const provinceRes: any = await AppService.getIDProvince(
-        addressValue.city?.value as string,
-      );
-      const districtRes: any = await AppService.getIDDistrict(
-        addressValue.district?.value as string,
-      );
-      const wardRes: any = await AppService.getIDWard(
-        addressValue.ward?.value as string,
-      );
-      if (
-        provinceRes?.status === ApiConstant.STT_OK &&
-        districtRes?.status === ApiConstant.STT_OK &&
-        wardRes?.status === ApiConstant.STT_OK
-      ) {
+      const locationIDRes: any = await AppService.getIDLocation({
+        province_name: addressValue.city?.value ?? '',
+        district_name: addressValue.district?.value ?? '',
+        ward_name: addressValue.ward?.value ?? '',
+      });
+      if (locationIDRes?.status === ApiConstant.STT_OK) {
         const newAddressValue: MainAddress = {
           ...addressValue,
           city: {
             ...addressValue.city,
-            id: provinceRes.data.result.province_id,
+            id: locationIDRes.data.result.province_id,
           } as any,
           district: {
             ...addressValue.district,
-            id: districtRes.data.result.district_id,
+            id: locationIDRes.data.result.district_id,
           } as any,
-          ward: {...addressValue.ward, id: wardRes.data.result.ward_id} as any,
-        };
+          ward: {...addressValue.ward, id: locationIDRes.data.result.ward_id} as any,
+        } ;
         dispatch(
           customerActions.setMainAddress({
             ...newAddressValue,

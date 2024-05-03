@@ -1,13 +1,14 @@
 import {StyleSheet, View, Platform, ViewStyle, TextStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {IDataCustomer} from '../../../models/types';
+import {IDataCustomer, IDataCustomers} from '../../../models/types';
 import {AppText, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
+import isEqual from 'react-fast-compare';
 
 type Props = {
-  data: IDataCustomer;
+  data: IDataCustomers;
 };
 
 const CardContactOverview = (props: Props) => {
@@ -28,8 +29,8 @@ const CardContactOverview = (props: Props) => {
           <SvgIcon source="MapPin" size={18} />
           <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
             {' '}
-            {props.data?.address?.address
-              ? props.data?.address?.address
+            {props.data?.customer_primary_address
+              ? props.data?.customer_primary_address
               : '---'}
           </AppText>
         </View>
@@ -37,8 +38,8 @@ const CardContactOverview = (props: Props) => {
           <SvgIcon source="Phone" size={18} />
           <AppText numberOfLines={1}>
             {' '}
-            {props.data?.contact?.phone
-              ? formatPhoneNumber(props.data?.contact?.phone)
+            {props.data?.customer_primary_contact != null
+              ? formatPhoneNumber(props.data?.customer_primary_contact)
               : '---'}
           </AppText>
         </View>
@@ -55,7 +56,7 @@ const CardContactOverview = (props: Props) => {
   );
 };
 
-export default CardContactOverview;
+export default React.memo(CardContactOverview,isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

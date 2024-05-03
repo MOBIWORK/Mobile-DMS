@@ -292,5 +292,6 @@ export default {
   noteNotComplete: 'Bạn chưa viết ghi chú',
   errDistance: 'Sai số khoảng cách',
   mgsDistanceErr: 'Bạn cần di chuyển đến vị trí phù hợp để thực hiện CheckOut',
-  tryAgain:'Thử lại'
+  tryAgain:'Thử lại',
+  staff:"Nhân viên"
 };

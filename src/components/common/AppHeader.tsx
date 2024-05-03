@@ -30,9 +30,7 @@ const AppHeader: FC<AppHeaderProps> = ({
         <TouchableOpacity
           onPress={() => {
             Keyboard.dismiss();
-            CommonUtils.sleep(100).then(() => {
-              onBack && onBack();
-            });
+            typeof onBack === 'function' && onBack()
           }}
           style={styles.backButton as any}>
           {backButtonIcon ? (
@@ -40,7 +38,7 @@ const AppHeader: FC<AppHeaderProps> = ({
           ) : (
             <Image
               source={ImageAssets.ArrowLeftIcon}
-              style={[{width: 38, height: 38}]}
+              style={[{width: 24, height: 24,alignSelf:'center'}]}
               resizeMode={'cover'}
               tintColor={colors.text_primary}
             />
@@ -99,7 +97,8 @@ const styles = StyleSheet.create({
     position: 'relative',
     left: 0,
     justifyContent: 'center',
-    paddingVertical: 16,
+    alignItems:'center',
+    // paddingVertical: 16,
     paddingHorizontal: 8,
   } as ViewStyle,
 });

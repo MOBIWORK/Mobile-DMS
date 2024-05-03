@@ -198,7 +198,11 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
               {marginTop: 8, justifyContent: 'space-between'},
             ]}>
             <AppButton
-              onPress={() => handleBackground(item, false)}
+              onPress={() =>
+                startTransition(() => {
+                  handleBackground(item, false);
+                })
+              }
               style={createStyleSheet(theme).button(false)}
               label={'Checkin'}
               styleLabel={{

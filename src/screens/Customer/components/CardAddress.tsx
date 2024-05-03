@@ -39,6 +39,9 @@ const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+
+  // console.log(props.mainAddress,'bccc')
+
   return (
     <View style={styles.card}>
       {props.type === 'address' ? (

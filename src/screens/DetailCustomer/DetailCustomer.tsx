@@ -6,7 +6,7 @@ import {
   ViewStyle,
   useWindowDimensions,
 } from 'react-native';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../navigation/screen-type';
 import {AppBottomSheet, AppHeader, SvgIcon} from '../../components/common';
@@ -20,6 +20,7 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {AppConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
+import { goBack } from '../../navigation/navigation-service';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -71,7 +72,7 @@ const DetailCustomer = () => {
     addingAddress.current?.snapToIndex(0);
   };
 
-  const renderTabBar = (props: any) => {
+  const renderTabBar = useCallback((props: any) => {
     return (
       <TabBar
         {...props}
@@ -84,7 +85,7 @@ const DetailCustomer = () => {
         style={styles.tabBar}
       />
     );
-  };
+  },[]);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -92,13 +93,7 @@ const DetailCustomer = () => {
         <AppHeader
           label={getLabel('customerDetail')}
           style={{backgroundColor: theme.colors.bg_default}}
-          backButtonIcon={
-            <SvgIcon
-              source="arrowLeft"
-              size={24}
-              onPress={() => navigation.goBack()}
-            />
-          }
+          onBack={() => goBack()}
           rightButton={
             <View style={styles.containIcon}>
               <SvgIcon source="IconKebab" size={20} />

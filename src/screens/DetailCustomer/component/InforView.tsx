@@ -9,6 +9,9 @@ import {useTranslation} from 'react-i18next';
 import {AppConstant} from '../../../const';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import {formatCash} from '../../../utils/commom.utils';
+import {formatMoney} from '../../../config/function';
+import moment from 'moment';
 
 type Props = {
   data: IDataCustomers;
@@ -19,7 +22,6 @@ const InforBlock = (props: Props) => {
   const styles = rootStyles(theme);
   const ref = useRef<Mapbox.Camera>(null);
   const {t: translate} = useTranslation();
-  console.log(props);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
 
@@ -146,8 +148,8 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_birthday != null
-              ? props.data.customer_birthday
+            {props.data.custom_birthday != null
+              ? moment(props.data.custom_birthday * 1000).format('DD/MM/YYYY')
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />
@@ -165,7 +167,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.router_name != null ? props.data.router_name : ' ---'}
+            {props.data.territory != null ? props.data.territory : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -177,16 +179,6 @@ const InforBlock = (props: Props) => {
             lineHeight={24}>
             {translate('frequency')}
           </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            {props.data.frequency && props.data.frequency?.length > 0
-              ? props.data.frequency.join(',')
-              : '---'}
-          </AppText>
-          <Block style={styles.divider} />
         </Block>
         <Block>
           <AppText
@@ -201,8 +193,8 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.credit_limid && props.data.credit_limid.length > 0
-              ? props.data.credit_limid.join(',')
+            {props.data.cre_limid && props.data.cre_limid.length > 0
+              ? formatMoney(props.data.cre_limid[0].credit_limit)
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />
@@ -215,16 +207,6 @@ const InforBlock = (props: Props) => {
             lineHeight={24}>
             {translate('describe')}
           </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            {props.data?.description && props.data?.description != ''
-              ? props.data.description
-              : ' ---'}
-          </AppText>
-          <Block style={styles.divider} />
         </Block>
         <Block>
           <AppText
