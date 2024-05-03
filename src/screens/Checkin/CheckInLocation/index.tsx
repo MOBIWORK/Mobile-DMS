@@ -57,6 +57,7 @@ const CheckInLocation = () => {
     route.params?.data && route.params.data.item.customer_primary_address,
   );
   const mapboxCameraRef = useRef<CameraRef>(null);
+  const zoomLevelRef = useRef<number>(15);
 
   const handleRegainLocation = () => {
     CommonUtils.getCurrentLocation(newLocation => {
@@ -172,6 +173,9 @@ const CheckInLocation = () => {
           height: AppConstant.HEIGHT,
         }}>
         <Mapbox.MapView
+          onCameraChanged={state =>
+            (zoomLevelRef.current = state.properties.zoom)
+          }
           pitchEnabled={false}
           attributionEnabled={false}
           scaleBarEnabled={false}
@@ -203,7 +207,7 @@ const CheckInLocation = () => {
             ]}
             animationMode={'flyTo'}
             animationDuration={500}
-            zoomLevel={12}
+            zoomLevel={zoomLevelRef.current}
           />
           {location?.coords && (
             <Mapbox.MarkerView

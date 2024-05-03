@@ -1,6 +1,9 @@
 import {
+  Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
+  Text,
   TextStyle,
   TouchableOpacity,
   View,
@@ -17,19 +20,23 @@ import {
   Block,
   SvgIcon,
 } from '../../../components/common';
-import {AppConstant} from '../../../const';
+import {ApiConstant, AppConstant} from '../../../const';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {MainLayout} from '../../../layouts';
 
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
-import {RootEkMapResponse} from '../../../models/types';
+import {KeyAbleProps, RootEkMapResponse} from '../../../models/types';
 import {dispatch} from '../../../utils/redux';
 import SelectedAddress from './SelectedAddress';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import {MainAddress, MainContactAddress} from './CardAddress';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
+import Mapbox from '@rnmapbox/maps';
+import {ImageAssets} from '../../../assets';
+import {AppService} from '../../../services';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 
 type Props = {
   onPressClose: () => void;
@@ -77,6 +84,11 @@ const FormAddress = (props: Props) => {
   const [txtAddressDetail, setTxtAddressDetail] = useState<string>('');
   const [txtContactDetail, setTxtContactDetail] = useState<string>('');
 
+  const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
+
+  const [location, setLocation] = useState<GeolocationResponse | null>(null);
+  const [isCurrentLocation, setIsCurrentLocation] = useState<boolean>(false);
+
   const listCheckBox = useRef([
     {
       id: '1',
@@ -89,6 +101,7 @@ const FormAddress = (props: Props) => {
   ]);
 
   const fetchData = async (lat: any, lon: any) => {
+    await setTxtAddressDetail('');
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
     if (data.status === 'OK' && data.results.length > 0) {
       setAddressValue(prev => ({
@@ -111,6 +124,7 @@ const FormAddress = (props: Props) => {
         },
       ];
       setAddressSelectedData(newData);
+      setTxtAddressDetail(addressSplit[0] ?? '');
     }
   };
 
@@ -119,6 +133,98 @@ const FormAddress = (props: Props) => {
       fetchData(locations.coords.latitude, locations.coords.longitude);
     });
   };
+
+  const autoCompleteGeo = async (address: string) => {
+    if (address) {
+      await CommonUtils.CheckNetworkState();
+      const response: KeyAbleProps = await AppService.autocompleteGeoLocation(
+        address,
+      );
+      if (response.status === ApiConstant.STT_OK || 'OK') {
+        const geometry: any = response.results[0].geometry;
+        setLocation({
+          // @ts-ignore
+          coords: {
+            longitude: geometry.location.lng,
+            latitude: geometry.location.lat,
+          },
+        });
+      }
+    }
+  };
+
+  const handleSaveMainAddress = async () => {
+    if (
+      !addressValue.city?.id ||
+      !addressValue.district?.id ||
+      !addressValue.ward?.id
+    ) {
+      const provinceRes: any = await AppService.getIDProvince(
+        addressValue.city?.value,
+      );
+      const districtRes: any = await AppService.getIDDistrict(
+        addressValue.district?.value,
+      );
+      const wardRes: any = await AppService.getIDWard(addressValue.ward?.value);
+      if (
+        provinceRes?.status === ApiConstant.STT_OK &&
+        districtRes?.status === ApiConstant.STT_OK &&
+        wardRes?.status === ApiConstant.STT_OK
+      ) {
+        const newAddressValue: MainAddress = {
+          ...addressValue,
+          city: {...addressValue.city, id: provinceRes.data.result.province_id},
+          district: {
+            ...addressValue.district,
+            id: districtRes.data.result.district_id,
+          },
+          ward: {...addressValue.ward, id: wardRes.data.result.ward_id},
+        };
+        dispatch(
+          customerActions.setMainAddress({
+            ...newAddressValue,
+            detailAddress: txtAddressDetail,
+          }),
+        );
+      }
+    } else {
+      dispatch(
+        customerActions.setMainAddress({
+          ...addressValue,
+          detailAddress: txtAddressDetail,
+        }),
+      );
+    }
+
+    onPressClose();
+  };
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisitAble(true);
+    });
+
+    Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisitAble(false);
+    });
+
+    return () => {
+      Keyboard.removeAllListeners('keyboardDidShow');
+      Keyboard.removeAllListeners('keyboardDidHide');
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      addressSelectedData.length === 3 &&
+      txtAddressDetail &&
+      !keyboardVisitAble
+    ) {
+      autoCompleteGeo(
+        `${txtAddressDetail}, ${addressSelectedData[2].value}, ${addressSelectedData[1].value}, ${addressSelectedData[0].value}`,
+      );
+    }
+  }, [addressSelectedData, txtAddressDetail, keyboardVisitAble]);
 
   useEffect(() => {
     if (addressSelectedData.length === 3) {
@@ -171,6 +277,47 @@ const FormAddress = (props: Props) => {
       }));
     }
   }, [contactSelectedData]);
+
+  const MapView = () => (
+    <View style={styles.mapView}>
+      <Mapbox.MapView
+        pitchEnabled={false}
+        attributionEnabled={false}
+        scaleBarEnabled={false}
+        styleURL={Mapbox.StyleURL.Street}
+        logoEnabled={false}
+        style={{flex: 1}}>
+        <Mapbox.RasterSource
+          id="adminmap"
+          tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+          <Mapbox.RasterLayer
+            id={'adminmap'}
+            sourceID={'admin'}
+            style={{visibility: 'visible'}}
+          />
+        </Mapbox.RasterSource>
+        <Mapbox.Camera
+          // ref={mapboxCameraRef}
+          centerCoordinate={[
+            location?.coords.longitude ?? 105.7750996,
+            location?.coords.latitude ?? 21.0564114,
+          ]}
+          animationMode={'flyTo'}
+          animationDuration={500}
+          zoomLevel={13}
+        />
+        {location?.coords && (
+          <Mapbox.MarkerView
+            coordinate={[
+              Number(location?.coords.longitude),
+              Number(location?.coords.latitude),
+            ]}>
+            <SvgIcon source={'LocationCheckIn'} size={40} />
+          </Mapbox.MarkerView>
+        )}
+      </Mapbox.MapView>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
@@ -354,6 +501,7 @@ const FormAddress = (props: Props) => {
                   );
                 })}
               </View>
+              <MapView />
             </MainLayout>
           </ScrollView>
           <View style={styles.containButtonBottom}>
@@ -369,15 +517,7 @@ const FormAddress = (props: Props) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonApply}
-                onPress={() => {
-                  dispatch(
-                    customerActions.setMainAddress({
-                      ...addressValue,
-                      detailAddress: txtAddressDetail,
-                    }),
-                  );
-                  onPressClose();
-                }}>
+                onPress={handleSaveMainAddress}>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </View>
@@ -584,7 +724,9 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
     contentStyle: (text: string, label: string) =>
       ({
         color:
-          text != label ? theme.colors.text_primary : theme.colors.text_disable,
+          text !== label
+            ? theme.colors.text_primary
+            : theme.colors.text_disable,
         fontSize: 16,
         fontWeight: '400',
         lineHeight: 24,
@@ -624,7 +766,8 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       flexDirection: 'row',
     } as ViewStyle,
     containButtonBottom: {
-      flex: 1,
+      // flex: 1,
+      padding: 16,
       flexDirection: 'column',
       justifyContent: 'flex-end',
       marginHorizontal: 16,
@@ -633,7 +776,6 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       flexDirection: 'row',
       justifyContent: 'space-around',
       alignItems: 'center',
-      marginBottom: 20,
     } as ViewStyle,
     buttonApply: {
       backgroundColor: theme.colors.primary,
@@ -666,4 +808,24 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       lineHeight: 24,
       color: Colors.white,
     } as TextStyle,
+    mapView: {
+      overflow: 'hidden',
+      width: '100%',
+      borderRadius: 16,
+      height: 350,
+    } as ViewStyle,
+    regainPosition: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.action,
+      alignSelf: 'flex-end',
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 30,
+      right: 0,
+    } as ViewStyle,
   });

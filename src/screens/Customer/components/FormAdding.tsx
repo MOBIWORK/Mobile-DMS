@@ -3,6 +3,7 @@ import {
   Text,
   TextStyle,
   View,
+  ScrollView,
   ViewStyle,
   TouchableOpacity,
   ImageStyle,
@@ -18,7 +19,7 @@ import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
 import {ApiConstant, AppConstant} from '../../../const';
 import {Colors, ImageAssets} from '../../../assets';
-import {AppIcons, AppInput, Block, SvgIcon} from '../../../components/common';
+import {AppIcons, AppInput, SvgIcon} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
 import {IDataCustomer, KeyAbleProps} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
@@ -32,8 +33,7 @@ import {AppService} from '../../../services';
 import {CommonUtils} from '../../../utils';
 import isEqual from 'react-fast-compare';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {Gesture, GestureHandlerRootView, ScrollView} from 'react-native-gesture-handler';
-import DragComponent from './DragComponent';
+
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
   setTypeFilter: React.Dispatch<React.SetStateAction<string>>;
@@ -71,11 +71,6 @@ const FormAdding = (props: Props) => {
 
   const [value, setValue] = useState<string>('');
   const mapboxCameraRef = useRef<CameraRef>(null);
-
-  const converArr = (arr: any[]) => {
-    const newArr = arr.map(item => item.title);
-    return newArr.join(',');
-  };
 
   const handleMarkerMap = async (lat: number, lng: number) => {
     setLocation({
@@ -148,8 +143,6 @@ const FormAdding = (props: Props) => {
 
   return (
     <ScrollView
-      // disableScrollViewPanResponder={true}
-      nestedScrollEnabled={false}
       style={styles.root}
       showsVerticalScrollIndicator={false}
       decelerationRate={'fast'}>
@@ -403,92 +396,88 @@ const FormAdding = (props: Props) => {
         )}
       </View>
 
-      <Block zIndex={999999} position='relative'  onResponderStart={() => console.log('rin')}  > 
-        <Text style={styles.titleText}>{translate('location')}</Text>
-        <Block style={[styles.contentView, {height: 320}]}>
-          {location && (
-            <Block style={styles.mapView}>
-              <Mapbox.MapView
-                pointerEvents="none"
-                pitchEnabled={false}
-                attributionEnabled={false}
-                scaleBarEnabled={false}
-                styleURL={Mapbox.StyleURL.Street}
-                logoEnabled={false}
-                style={{flex: 1}}
-                zoomEnabled={true}
-                // onPointerMove={(eve) => console.log(eve,'eve')}
-                onPress={feature => {
-                  console.log('run');
-                  // handleMarkerMap(
-                  //   // @ts-ignore
-                  //   feature.geometry.coordinates[1],
-                  //   // @ts-ignore
-                  //   feature.geometry.coordinates[0],
-                  // );
-                }}>
-                <Mapbox.RasterSource
-                  id="adminmap"
-                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-                  <Mapbox.RasterLayer
-                    id={'adminmap'}
-                    sourceID={'admin'}
-                    style={{visibility: 'visible'}}
-                  />
-                </Mapbox.RasterSource>
-                <Mapbox.Camera
-                  ref={mapboxCameraRef}
-                  centerCoordinate={[
-                    location?.coords.longitude ?? 0,
-                    location?.coords.latitude ?? 0,
-                  ]}
-                  animationMode={'flyTo'}
-                  animationDuration={500}
-                  zoomLevel={12}
-                />
-                {location?.coords && (
-                  <Mapbox.MarkerView
-                    coordinate={[
-                      Number(location?.coords.longitude),
-                      Number(location?.coords.latitude),
-                    ]}>
-                    <SvgIcon source={'LocationCheckIn'} size={40} />
-                  </Mapbox.MarkerView>
-                )}
-              </Mapbox.MapView>
-              <View style={styles.searchContainer}>
-                <Image
-                  source={ImageAssets.MapPinFillIcon}
-                  style={{width: 24, height: 24}}
-                  resizeMode={'cover'}
-                  tintColor={theme.colors.text_secondary}
-                />
-                <TextInput2
-                  style={styles.textInput}
-                  numberOfLines={1}
-                  value={value}
-                  onChangeText={setValue}
-                  onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}
-                  onBlur={() => handleSearchText(value)}
-                />
-              </View>
-              <TouchableOpacity
-                onPress={handleRegainLocation}
-                style={styles.regainPosition}>
-                <Image
-                  source={ImageAssets.MapIcon}
-                  style={{width: 16, height: 16}}
-                  resizeMode={'cover'}
-                  tintColor={theme.colors.bg_default}
-                />
-                <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
-                  {translate('currentPosition')}
-                </Text>
-              </TouchableOpacity>
-            </Block>
-          )}
-        </Block>
-      </Block>
+      {/*<Pressable>*/}
+      {/*  <Text style={styles.titleText}>{translate('location')}</Text>*/}
+      {/*  <View style={[styles.contentView, {height: 320}]}>*/}
+      {/*    {location && (*/}
+      {/*      <View style={styles.mapView}>*/}
+      {/*        <Mapbox.MapView*/}
+      {/*          pitchEnabled={false}*/}
+      {/*          attributionEnabled={false}*/}
+      {/*          scaleBarEnabled={false}*/}
+      {/*          styleURL={Mapbox.StyleURL.Street}*/}
+      {/*          logoEnabled={false}*/}
+      {/*          style={{flex: 1}}*/}
+      {/*          onPress={feature =>*/}
+      {/*            handleMarkerMap(*/}
+      {/*              // @ts-ignore*/}
+      {/*              feature.geometry.coordinates[1],*/}
+      {/*              // @ts-ignore*/}
+      {/*              feature.geometry.coordinates[0],*/}
+      {/*            )*/}
+      {/*          }>*/}
+      {/*          <Mapbox.RasterSource*/}
+      {/*            id="adminmap"*/}
+      {/*            tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>*/}
+      {/*            <Mapbox.RasterLayer*/}
+      {/*              id={'adminmap'}*/}
+      {/*              sourceID={'admin'}*/}
+      {/*              style={{visibility: 'visible'}}*/}
+      {/*            />*/}
+      {/*          </Mapbox.RasterSource>*/}
+      {/*          <Mapbox.Camera*/}
+      {/*            ref={mapboxCameraRef}*/}
+      {/*            centerCoordinate={[*/}
+      {/*              location?.coords.longitude ?? 0,*/}
+      {/*              location?.coords.latitude ?? 0,*/}
+      {/*            ]}*/}
+      {/*            animationMode={'flyTo'}*/}
+      {/*            animationDuration={500}*/}
+      {/*            zoomLevel={12}*/}
+      {/*          />*/}
+      {/*          {location?.coords && (*/}
+      {/*            <Mapbox.MarkerView*/}
+      {/*              coordinate={[*/}
+      {/*                Number(location?.coords.longitude),*/}
+      {/*                Number(location?.coords.latitude),*/}
+      {/*              ]}>*/}
+      {/*              <SvgIcon source={'LocationCheckIn'} size={40} />*/}
+      {/*            </Mapbox.MarkerView>*/}
+      {/*          )}*/}
+      {/*        </Mapbox.MapView>*/}
+      {/*        <View style={styles.searchContainer}>*/}
+      {/*          <Image*/}
+      {/*            source={ImageAssets.MapPinFillIcon}*/}
+      {/*            style={{width: 24, height: 24}}*/}
+      {/*            resizeMode={'cover'}*/}
+      {/*            tintColor={theme.colors.text_secondary}*/}
+      {/*          />*/}
+      {/*          <TextInput2*/}
+      {/*            style={styles.textInput}*/}
+      {/*            numberOfLines={1}*/}
+      {/*            value={value}*/}
+      {/*            onChangeText={setValue}*/}
+      {/*            onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}*/}
+      {/*            onBlur={() => handleSearchText(value)}*/}
+      {/*          />*/}
+      {/*        </View>*/}
+      {/*        <TouchableOpacity*/}
+      {/*          onPress={handleRegainLocation}*/}
+      {/*          style={styles.regainPosition}>*/}
+      {/*          <Image*/}
+      {/*            source={ImageAssets.MapIcon}*/}
+      {/*            style={{width: 16, height: 16}}*/}
+      {/*            resizeMode={'cover'}*/}
+      {/*            tintColor={theme.colors.bg_default}*/}
+      {/*          />*/}
+      {/*          <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>*/}
+      {/*            {translate('currentPosition')}*/}
+      {/*          </Text>*/}
+      {/*        </TouchableOpacity>*/}
+      {/*      </View>*/}
+      {/*    )}*/}
+      {/*  </View>*/}
+      {/*</Pressable>*/}
     </ScrollView>
   );
 };

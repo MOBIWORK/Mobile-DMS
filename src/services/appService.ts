@@ -54,6 +54,7 @@ export type CheckinData = {
   createdByEmail?: string;
   createByName?: string;
   item: VisitListItemType;
+  isVisitDetail?: boolean;
 };
 
 export type DMSConfigMobile = {
@@ -201,9 +202,15 @@ export const getSystemConfig = () =>
 export const getListCity = () => createApi().get(ApiConstant.GET_LIST_CITY);
 export const getListDistrict = (ma_tinh_thanh: any) =>
   createApi().get(ApiConstant.GET_LIST_DISTRICT + `${ma_tinh_thanh}`);
-
 export const getListWard = (ma_quan_huyen: any) =>
   createApi().get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`);
+
+export const getIDProvince = (province_name: string) =>
+  createApi().get(ApiConstant.GET_ID_PROVINCE, {province_name});
+export const getIDDistrict = (district_name: string) =>
+  createApi().get(ApiConstant.GET_ID_DISTRICT, {district_name});
+export const getIDWard = (ward_name: string) =>
+  createApi().get(ApiConstant.GET_ID_WARD, {ward_name});
 
 export const addFakeGPS = (data: ICheckFakeGPS) =>
   createApi().post(ApiConstant.CHECK_FAKE_GPS, data);
