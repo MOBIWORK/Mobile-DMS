@@ -654,7 +654,7 @@ const HomeScreen = () => {
       case 2: {
         return (
           <>
-            <Block style={[styles.shadow, styles.containerTimekeep]}></Block>
+            <Block style={[styles.shadow, styles.containerTimekeep]} />
             {renderUiWidget()}
           </>
         );
@@ -890,7 +890,7 @@ const HomeScreen = () => {
             progress={updatePercent}
             onPress={() => {
               startCompare(() => {
-                handleUpdateApp();
+                handleUpdateApp().then();
               });
             }}
           />
