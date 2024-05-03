@@ -12,6 +12,8 @@ import Chevron from './AnimatedArrow';
 import {Block} from '../Block';
 import {AppText as Text} from '../AppText';
 import {useTheme, AppTheme} from '../../../layouts/theme';
+import isEqual from 'react-fast-compare';
+import {useEffectOnce } from '../../../config/function';
 
 type Regular = {
   children: ReactElement | ReactElement[];
@@ -44,19 +46,23 @@ const Accordion = (props: Props) => {
     height: heightValue.value,
   }));
 
-  useEffect(() => {
+
+   useEffectOnce (() => {
     setTimeout(() => {
       if (heightValue.value === 0) {
         runOnUI(() => {
           'worklet';
-          heightValue.value = withTiming(measure(listRef)!.height);
+          const measuredHeight = measure(listRef)?.height;
+          if (measuredHeight) {
+            heightValue.value = withTiming(measuredHeight);
+          }
         })();
       } else {
         heightValue.value = withTiming(0);
       }
       setShow(!show);
     }, 500);
-  }, []);
+  });
 
   return props.type === 'regular' ? (
     <Block
@@ -80,8 +86,8 @@ const Accordion = (props: Props) => {
         </Text>
         <Chevron show={show} />
       </Pressable>
-      <Animated.View style={heightAnimationStyle}>
-        <Animated.View style={styles.contentContainer} ref={listRef}>
+      <Animated.View style={heightAnimationStyle} collapsable={false} >
+        <Animated.View style={styles.contentContainer} ref={listRef}  collapsable={false}>
           {props.type === 'regular' && <>{props.children}</>}
         </Animated.View>
       </Animated.View>
@@ -106,8 +112,8 @@ const Accordion = (props: Props) => {
         </Text>
         <Chevron show={show} />
       </Pressable>
-      <Animated.View style={[heightAnimationStyle]}>
-        <Animated.View style={[styles.contentContainer,props.contentStyle]} ref={listRef}>
+      <Animated.View style={[heightAnimationStyle]} collapsable={false} >
+        <Animated.View style={[styles.contentContainer,props.contentStyle]} ref={listRef}  collapsable={false}>
           {props.children}
         </Animated.View>
       </Animated.View>
@@ -115,7 +121,7 @@ const Accordion = (props: Props) => {
   );
 };
 
-export default Accordion;
+export default React.memo(Accordion,isEqual);
 
 const rootStyle = (theme: AppTheme) =>
   StyleSheet.create({

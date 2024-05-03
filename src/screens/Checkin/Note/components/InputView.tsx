@@ -1,15 +1,9 @@
 import React from 'react';
-import {
-  Text,
-  View,
-  Pressable,
-  StyleSheet,
-  TextStyle,
-  ViewStyle,
-} from 'react-native';
+import {View, Pressable, StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import {AppTheme, useTheme} from '../../../../layouts/theme';
 import {IStaff, StaffType} from '../../../../models/types';
+import {Block, AppText as Text} from '../../../../components/common';
 
 const InputViewCompoment = ({
   oulineColor,
@@ -21,9 +15,11 @@ const InputViewCompoment = ({
   const {colors} = useTheme();
   const styles = createStyles(useTheme());
 
+  console.log(data, 'data ');
+
   return (
     <Pressable onPress={onPress}>
-      <View
+      <Block
         style={[
           styles.contairAvatar,
           {
@@ -31,18 +27,37 @@ const InputViewCompoment = ({
             borderColor: oulineColor || colors.border,
           },
         ]}>
-        {data &&
-          data.map(item => (
+        {data && data.length > 0 ? (
+          data?.map(item => (
             <View key={item.user_id} style={styles.containerAv}>
-              <Avatar.Image
-                source={{uri: item.image}}
-                size={24}
-                style={{marginRight: 5}}
-              />
+              {item.image != null ? (
+                <Avatar.Image
+                  source={{uri: item.image}}
+                  size={24}
+                  style={{marginRight: 5}}
+                />
+              ) : (
+                <Block
+                  width={40}
+                  height={40}
+                  colorTheme="action"
+                  borderRadius={20}
+                  justifyContent="center"
+                  alignItems="center">
+                  <Text numberOfLines={1}>{item.first_name}</Text>
+                </Block>
+              )}
+
               <Text style={styles.name}>{item.first_name}</Text>
             </View>
-          ))}
-      </View>
+          ))
+        ) : (
+          <Block>
+            <Text colorTheme="text_disable">Chưa có dữ liệu nhân viên</Text>
+          </Block>
+        )}
+      </Block>
+
       <Text style={[styles.textLabel]}>{label}</Text>
       <Text
         style={{

@@ -489,8 +489,8 @@ const ListVisit = () => {
             b.customer_location_primary,
           );
           const distance1 = calculateDistance(
-            currentLocation.coords.latitude,
-            currentLocation.coords.longitude,
+            currentLocation?.coords?.latitude ? currentLocation?.coords?.latitude  :0 ,
+            currentLocation?.coords?.longitude ? currentLocation?.coords?.longitude :0,
             locationA.lat,
             locationA.long,
           );
