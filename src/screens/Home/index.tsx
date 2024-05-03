@@ -1,4 +1,12 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import {
   View,
   Text,
@@ -7,6 +15,9 @@ import {
   Platform,
   TouchableOpacity,
   Pressable,
+  ActivityIndicator,
+  VirtualizedList,
+  CellRendererProps,
 } from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
@@ -45,7 +56,7 @@ import {rootStyles} from './styles';
 
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
-import {useSelector} from '../../config/function';
+import {useDeepCompareEffect, useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
@@ -60,6 +71,7 @@ import Geolocation, {
 } from '@react-native-community/geolocation';
 import {CommonUtils} from '../../utils';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
+import isEqual from 'react-fast-compare';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -76,7 +88,7 @@ const HomeScreen = () => {
   const listCustomerVisit: VisitListItemType[] = useSelector(
     state => state.customer.listCustomerVisit,
   );
-
+  const [isPending, startCompare] = useTransition();
   const [updatePercent, setUpdatePercentage] = React.useState<number>(0);
   const [showModalHotUpdate, setShowModalHotUpdate] = useState(false);
   const [error, setError] = useState(
@@ -426,7 +438,7 @@ const HomeScreen = () => {
     );
   };
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (isFocus) {
       //delete search visit value in ListVisit.tsx
       onResetSearchValueOfVisit();
@@ -440,9 +452,9 @@ const HomeScreen = () => {
       getReportRevenue();
       getReportVisit();
     }
-  }, [isFocus]);
+  }, []);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     getWidget();
     getCustomer();
   }, []);
@@ -505,12 +517,14 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    // Kiểm tra xem có phiên bản mới không
-    codePush.checkForUpdate().then(update => {
-      if (update) {
-        setShowModalHotUpdate(true);
-      }
+    startCompare(() => {
+      codePush.checkForUpdate().then(update => {
+        if (update) {
+          setShowModalHotUpdate(true);
+        }
+      });
     });
+    // Kiểm tra xem có phiên bản mới không
   }, []);
 
   const handleUpdateApp = async () => {
@@ -524,167 +538,197 @@ const HomeScreen = () => {
     );
   };
 
-  return (
-    <SafeAreaView style={{flex: 1}} edges={['top']}>
-      <Block block>
-        <Pressable
-          style={[styles.shadow, styles.header]}
-          onPress={() => navigation.navigate(ScreenConstant.PROFILE)}>
-          <View style={{flexDirection: 'row'}}>
-            {Object.keys(userProfile).length > 0 && userProfile?.image ? (
-              <AppAvatar url={userProfile.image} size={48} />
-            ) : (
-              <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
-            )}
-            <View style={[styles.containerIfU]}>
-              <Text style={[styles.userName]}>{getLabel('welcome')},</Text>
-              <Text style={[styles.userName]}>
-                {Object.keys(userProfile) &&
-                Object.keys(userProfile!)?.length > 0
-                  ? userProfile?.employee_name
-                  : '---'}
-              </Text>
-            </View>
-          </View>
-          <View>
-            <IconButton
-              icon="bell-outline"
-              iconColor={colors.text_primary}
-              size={20}
-              mode="contained"
-              containerColor={colors.border}
-              onPress={() => {
-                bottomSheetNotification.current &&
-                  bottomSheetNotification.current.snapToIndex(0);
-                // dispatch(AppActions.setShowModal(!showModal));
-              }}
-            />
-          </View>
-        </Pressable>
-        <AppContainer style={{marginBottom: 100}}>
-          <View style={styles.mainLayout}>
-            <View style={[styles.shadow, styles.containerTimekeep]}>
-              <View>
-                <Text style={[styles.userName]}>
-                  {currentShit?.shift_status ||
-                  currentShit?.shift_status === 'Vào'
-                    ? getLabel('timeKeepOut')
-                    : getLabel('timeKeepIn')}
-                </Text>
-                <View style={[styles.flex, {marginTop: 8}]}>
-                  <AppIcons
-                    iconType={
-                      currentShit?.shift_type_now
-                        ? AppConstant.ICON_TYPE.AntIcon
-                        : AppConstant.ICON_TYPE.MateriallIcon
-                    }
-                    name={
-                      currentShit?.shift_type_now
-                        ? 'clockcircleo'
-                        : 'report-problem'
-                    }
-                    size={16}
-                    color={
-                      currentShit?.shift_type_now
-                        ? colors.text_secondary
-                        : colors.error
-                    }
-                  />
-                  <Text
-                    style={{
-                      marginLeft: 5,
-                      fontSize: 16,
-                      color: currentShit?.shift_type_now
-                        ? colors.text_secondary
-                        : colors.error,
-                    }}>
-                    {currentShit?.shift_type_now
-                      ? `${currentShit.shift_type_now.start_time} - ${currentShit.shift_type_now.end_time}`
-                      : getLabel('noShirtNow')}
+  const getItemCount = (data: any): number => 10;
+  const cellRender: React.ComponentType<
+    CellRendererProps<React.JSX.Element | null>
+  > = React.useCallback(({item}) => item, []);
+
+  const getItem = (data: any, index: number) => {
+    switch (index) {
+      case 0: {
+        return (
+          <Block block>
+            <Pressable
+              style={[styles.shadow, styles.header]}
+              onPress={() => navigation.navigate(ScreenConstant.PROFILE)}>
+              <View style={{flexDirection: 'row'}}>
+                {Object.keys(userProfile).length > 0 && userProfile?.image ? (
+                  <AppAvatar url={userProfile.image} size={48} />
+                ) : (
+                  <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
+                )}
+                <View style={[styles.containerIfU]}>
+                  <Text style={[styles.userName]}>{getLabel('welcome')},</Text>
+                  <Text style={[styles.userName]}>
+                    {Object.keys(userProfile) &&
+                    Object.keys(userProfile!)?.length > 0
+                      ? userProfile?.employee_name
+                      : '---'}
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity
-                style={[
-                  styles.btnTimekeep,
-                  {
-                    backgroundColor: !currentShit?.shift_type_now
-                      ? colors.bg_disable
-                      : currentShit?.shift_status ||
-                        currentShit?.shift_status === 'Vào'
-                      ? colors.error
-                      : colors.success,
-                  },
-                ]}
-                onPress={openToDeeplink}
-                disabled={currentShit?.shift_type_now === false}>
-                <Image
-                  source={ImageAssets.Usercheckin}
-                  resizeMode={'cover'}
-                  style={styles.iconBtnTk}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View>{renderUiWidget()}</View>
-
-            <View>{renderUiStatistical()}</View>
-
-            <View>
-              <View style={[styles.flexSpace]}>
-                <Text style={[styles.tilteSection]}>{getLabel('sales')}</Text>
-              </View>
               <View>
-                <BarChartStatistical
-                  color={colors.action}
-                  isSales
-                  data={salesValue}
+                <IconButton
+                  icon="bell-outline"
+                  iconColor={colors.text_primary}
+                  size={20}
+                  mode="contained"
+                  containerColor={colors.border}
+                  onPress={() => {
+                    bottomSheetNotification.current &&
+                      bottomSheetNotification.current.snapToIndex(0);
+                    // dispatch(AppActions.setShowModal(!showModal));
+                  }}
                 />
               </View>
-            </View>
-
+            </Pressable>
+          </Block>
+        );
+      }
+      case 1: {
+        return (
+          <Block style={[styles.shadow, styles.containerTimekeep]}>
             <View>
-              <View style={[styles.flexSpace]}>
-                <Text style={[styles.tilteSection]}>{getLabel('revenue')}</Text>
-              </View>
-              <View>
-                <BarChartStatistical
-                  isSales={false}
-                  color={colors.main}
-                  data={revenueValue}
+              <Text style={[styles.userName]}>
+                {currentShit?.shift_status ||
+                currentShit?.shift_status === 'Vào'
+                  ? getLabel('timeKeepOut')
+                  : getLabel('timeKeepIn')}
+              </Text>
+              <View style={[styles.flex, {marginTop: 8}]}>
+                <AppIcons
+                  iconType={
+                    currentShit?.shift_type_now
+                      ? AppConstant.ICON_TYPE.AntIcon
+                      : AppConstant.ICON_TYPE.MateriallIcon
+                  }
+                  name={
+                    currentShit?.shift_type_now
+                      ? 'clockcircleo'
+                      : 'report-problem'
+                  }
+                  size={16}
+                  color={
+                    currentShit?.shift_type_now
+                      ? colors.text_secondary
+                      : colors.error
+                  }
                 />
-              </View>
-            </View>
-
-            <View>
-              <View style={[styles.flexSpace]}>
-                <Text style={[styles.tilteSection]}>{getLabel('visit')}</Text>
-              </View>
-              <View style={[styles.containerCheckin]}>
-                <ProgressCircle
-                  percent={visitValue ? visitValue.phan_tram_thuc_hien : 0}
-                  radius={80}
-                  borderWidth={30}
-                  color={colors.action}
-                  shadowColor={colors.bg_disable}
-                  bgColor={colors.bg_default}>
-                  <View>
-                    <Text style={[styles.textProcess]}>
-                      {visitValue?.dat_duoc}/{visitValue?.chi_tieu}
-                    </Text>
-                    <Text style={[styles.textProcessDesc]}>
-                      {' '}
-                      (Đạt {visitValue?.phan_tram_thuc_hien}
-                      %)
-                    </Text>
-                  </View>
-                </ProgressCircle>
-                <Text style={[styles.checkinDesc]}>
-                  {getLabel('visitPerMonth')}
+                <Text
+                  style={{
+                    marginLeft: 5,
+                    fontSize: 16,
+                    color: currentShit?.shift_type_now
+                      ? colors.text_secondary
+                      : colors.error,
+                  }}>
+                  {currentShit?.shift_type_now
+                    ? `${currentShit.shift_type_now.start_time} - ${currentShit.shift_type_now.end_time}`
+                    : getLabel('noShirtNow')}
                 </Text>
               </View>
             </View>
-
+            <TouchableOpacity
+              style={[
+                styles.btnTimekeep,
+                {
+                  backgroundColor: !currentShit?.shift_type_now
+                    ? colors.bg_disable
+                    : currentShit?.shift_status ||
+                      currentShit?.shift_status === 'Vào'
+                    ? colors.error
+                    : colors.success,
+                },
+              ]}
+              onPress={openToDeeplink}
+              disabled={currentShit?.shift_type_now === false}>
+              <Image
+                source={ImageAssets.Usercheckin}
+                resizeMode={'cover'}
+                style={styles.iconBtnTk}
+              />
+            </TouchableOpacity>
+          </Block>
+        );
+      }
+      case 2: {
+        return (
+          <>
+            <Block style={[styles.shadow, styles.containerTimekeep]}></Block>
+            {renderUiWidget()}
+          </>
+        );
+      }
+      case 3: {
+        return renderUiStatistical();
+      }
+      case 4: {
+        return (
+          <Block>
+            <Block style={[styles.flexSpace]}>
+              <Text style={[styles.tilteSection]}>{getLabel('sales')}</Text>
+            </Block>
+            <Block>
+              <BarChartStatistical
+                color={colors.action}
+                isSales
+                data={salesValue}
+              />
+            </Block>
+          </Block>
+        );
+      }
+      case 5: {
+        return (
+          <Block>
+            <Block style={[styles.flexSpace]}>
+              <Text style={[styles.tilteSection]}>{getLabel('revenue')}</Text>
+            </Block>
+            <Block>
+              <BarChartStatistical
+                isSales={false}
+                color={colors.main}
+                data={revenueValue}
+              />
+            </Block>
+          </Block>
+        );
+      }
+      case 6: {
+        return (
+          <View>
+            <View style={[styles.flexSpace]}>
+              <Text style={[styles.tilteSection]}>{getLabel('visit')}</Text>
+            </View>
+            <View style={[styles.containerCheckin]}>
+              <ProgressCircle
+                percent={visitValue ? visitValue.phan_tram_thuc_hien : 0}
+                radius={80}
+                borderWidth={30}
+                color={colors.action}
+                shadowColor={colors.bg_disable}
+                bgColor={colors.bg_default}>
+                <View>
+                  <Text style={[styles.textProcess]}>
+                    {visitValue?.dat_duoc}/{visitValue?.chi_tieu}
+                  </Text>
+                  <Text style={[styles.textProcessDesc]}>
+                    {' '}
+                    (Đạt {visitValue?.phan_tram_thuc_hien}
+                    %)
+                  </Text>
+                </View>
+              </ProgressCircle>
+              <Text style={[styles.checkinDesc]}>
+                {getLabel('visitPerMonth')}
+              </Text>
+            </View>
+          </View>
+        );
+      }
+      case 7: {
+        return (
+          <Block>
             <View style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>{getLabel('visitMap')}</Text>
             </View>
@@ -768,58 +812,97 @@ const HomeScreen = () => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <View>
-              <View style={[styles.flexSpace]}>
-                <Text style={[styles.tilteSection]}>
-                  {getLabel('internalNotifi')}
+          </Block>
+        );
+      }
+      case 8: {
+        return (
+          <Block>
+            <Block style={[styles.flexSpace]}>
+              <Text style={[styles.tilteSection]}>
+                {getLabel('internalNotifi')}
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(ScreenConstant.NOTIFYCATION)
+                }>
+                <Text style={[styles.tilteSection, {color: colors.action}]}>
+                  {getLabel('all')}
                 </Text>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate(ScreenConstant.NOTIFYCATION)
-                  }>
-                  <Text style={[styles.tilteSection, {color: colors.action}]}>
-                    {getLabel('all')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.containerNtf}>
-                {notifiCations?.map((item, i) => (
-                  <View key={i}>
-                    <ItemNotification
-                      isSend={true}
-                      title={item.name}
-                      time={item.time}
-                      description={item.description}
-                      avatar={
-                        'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
-                      }
-                    />
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-        </AppContainer>
-        <NotificationScreen
-          bottomSheetRef={bottomSheetNotification}
-          snapPointsCustom={snapPoint}
-        />
-      </Block>
+              </TouchableOpacity>
+            </Block>
+            <Block style={styles.containerNtf}>
+              {notifiCations?.map((item, i) => (
+                <Block key={i}>
+                  <ItemNotification
+                    isSend={true}
+                    title={item.name}
+                    time={item.time}
+                    description={item.description}
+                    avatar={
+                      'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
+                    }
+                  />
+                </Block>
+              ))}
+            </Block>
+          </Block>
+        );
+      }
+      case 9: {
+        return (
+          <NotificationScreen
+            bottomSheetRef={bottomSheetNotification}
+            snapPointsCustom={snapPoint}
+          />
+        );
+      }
+      default: {
+        return null;
+      }
+    }
+  };
 
-      <ModalUpdate
-        show={showModalHotUpdate}
-        progress={updatePercent}
-        onPress={() => {
-          handleUpdateApp();
-        }}
-      />
-      <ModalErrorLocation
-        show={enabled}
-        text={error}
-        onPress={() => setEnabled(false)}
-      />
+  return (
+    <SafeAreaView style={{flex: 1}} edges={['top']}>
+      {isPending ? (
+        <Block block justifyContent="center" alignItems="center">
+          {' '}
+          <ActivityIndicator size="large" color={colors.primary} />{' '}
+        </Block>
+      ) : (
+        <React.Fragment>
+          <VirtualizedList
+            data={[]}
+            renderItem={() => null}
+            getItemCount={getItemCount}
+            bounces={false}
+            // style={styles.root}
+            getItem={getItem}
+            contentContainerStyle={styles.root}
+            showsVerticalScrollIndicator={false}
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="never"
+            CellRendererComponent={cellRender}
+          />
+          <ModalUpdate
+            show={showModalHotUpdate}
+            progress={updatePercent}
+            onPress={() => {
+              startCompare(() => {
+                handleUpdateApp();
+              });
+            }}
+          />
+          <ModalErrorLocation
+            show={enabled}
+            text={error}
+            onPress={() => setEnabled(false)}
+          />
+        </React.Fragment>
+      )}
     </SafeAreaView>
   );
 };
 
-export default HomeScreen;
+export default React.memo(HomeScreen, isEqual);

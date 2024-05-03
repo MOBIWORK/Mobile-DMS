@@ -9,6 +9,9 @@ export const rootStyles = (theme: AppTheme) =>
       rowGap: 20,
       paddingHorizontal: 16,
     } as ViewStyle,
+    root:{
+        paddingHorizontal:16
+    } as ViewStyle,
     flexSpace: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -53,7 +56,6 @@ export const rootStyles = (theme: AppTheme) =>
       justifyContent: 'space-between',
       alignItems: 'flex-start',
       padding: 16,
-
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.bg_disable,
       overflow: 'hidden',

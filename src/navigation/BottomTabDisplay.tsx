@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ImageStyle,
 } from 'react-native';
-import React, {createRef} from 'react';
+import React, {createRef, useTransition} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {NavigationContainerRef} from '@react-navigation/native';
@@ -25,25 +25,28 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
   const {t: getLabel} = useTranslation();
   const styles = bottomStyles(theme);
   const navigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
+  const [isPending, startEffect] = useTransition();
   const pressNavigator = React.useCallback(
     (curTab: any) => {
       const previousRouteName = navigationRef?.current?.getCurrentRoute()?.name;
       const currentRouteName = state.routes[curTab].name;
-      if (curTab === 0 || curTab === 1 || curTab === 2) {
-        navigation.emit({
-          type: 'tabPress',
-          target: state.routes[curTab].name,
-          canPreventDefault: true,
-        });
-        navigation.navigate(state.routes[curTab].name);
-        if (curTab === 0) {
-          if (previousRouteName != currentRouteName) {
-            navigation.navigate(ScreenConstant.HOME_SCREEN);
+      startEffect(() => {
+        if (curTab === 0 || curTab === 1 || curTab === 2) {
+          navigation.emit({
+            type: 'tabPress',
+            target: state.routes[curTab].name,
+            canPreventDefault: true,
+          });
+          navigation.navigate(state.routes[curTab].name);
+          if (curTab === 0) {
+            if (previousRouteName != currentRouteName) {
+              navigation.navigate(ScreenConstant.HOME_SCREEN);
+            }
           }
+        } else {
+          navigation.navigate(ScreenConstant.WIDGET_SCREEN);
         }
-      } else {
-        navigation.navigate(ScreenConstant.WIDGET_SCREEN);
-      }
+      });
     },
     [navigation, state],
   );

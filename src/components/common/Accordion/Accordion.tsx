@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {Platform, Pressable, StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import React, {ReactElement, useEffect, useState} from 'react';
 import Animated, {
   useAnimatedRef,
@@ -112,7 +112,7 @@ const Accordion = (props: Props) => {
         </Text>
         <Chevron show={show} />
       </Pressable>
-      <Animated.View style={[heightAnimationStyle]} collapsable={false} >
+      <Animated.View style={[heightAnimationStyle]} collapsable={ Platform.OS === 'android' &&  false} >
         <Animated.View style={[styles.contentContainer,props.contentStyle]} ref={listRef}  collapsable={false}>
           {props.children}
         </Animated.View>

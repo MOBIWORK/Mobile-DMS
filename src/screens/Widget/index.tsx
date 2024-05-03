@@ -6,6 +6,7 @@ import {AppConstant, DataConstant} from '../../const';
 import ItemWidget from '../../components/Widget/ItemWidget';
 import {useIsFocused} from '@react-navigation/native';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
+import isEqual from 'react-fast-compare';
 
 const WidgetScreen = () => {
   const theme = useTheme();
@@ -46,7 +47,7 @@ const WidgetScreen = () => {
   );
 };
 
-export default WidgetScreen;
+export default React.memo(WidgetScreen,isEqual);
 
 const createStyleSheet = (theme: AppTheme) =>
   StyleSheet.create({
