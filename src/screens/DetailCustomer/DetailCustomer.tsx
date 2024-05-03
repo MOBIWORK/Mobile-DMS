@@ -19,6 +19,7 @@ import FormAddress from '../Customer/components/FormAddress';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {AppConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
+import isEqual from 'react-fast-compare';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -125,7 +126,7 @@ const DetailCustomer = () => {
   );
 };
 
-export default React.memo(DetailCustomer);
+export default React.memo(DetailCustomer,isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
