@@ -5,8 +5,8 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {View} from 'react-native';
-import { SharedValue } from 'react-native-reanimated';
-import { Portal } from './portal';
+import {SharedValue} from 'react-native-reanimated';
+import {Portal} from './portal';
 import isEqual from 'react-fast-compare';
 
 const AppBottomSheet: FC<AppBottomSheetProps> = ({
@@ -21,10 +21,9 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   backgroundColor,
   handleHeight,
   onChange,
-  index=-1,
+  index = -1,
   onAnimated,
   ...otherProps
-
 }) => {
   const snapPoints = useMemo(() => ['20%'], []);
   const {colors} = useTheme();
@@ -35,7 +34,6 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         {...props}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
-        
       />
     ),
     [],
@@ -112,13 +110,13 @@ interface AppBottomSheetProps {
   useBottomSheetView?: boolean;
   onClose?: () => void;
   footer?: boolean;
-  children?: ReactElement | ReactElement[] ;
+  children?: ReactElement | ReactElement[];
   backgroundColor?: any;
-  onChange?:(index:number) => void,
-  contentHeight?:number | SharedValue<number>,
-  handleHeight?:number | SharedValue<number>,
-  index?:number,
-  onAnimated?:(fromIndex?:number,toIndex?:number) => void
+  onChange?: (index: number) => void;
+  contentHeight?: number | SharedValue<number>;
+  handleHeight?: number | SharedValue<number>;
+  index?: number;
+  onAnimated?: (fromIndex?: number, toIndex?: number) => void;
 }
 
-export default React.memo(AppBottomSheet,isEqual);
+export default React.memo(AppBottomSheet, isEqual);

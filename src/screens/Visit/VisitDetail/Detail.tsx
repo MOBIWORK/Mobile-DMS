@@ -18,7 +18,6 @@ import {ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import {useDispatch} from 'react-redux';
-import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
@@ -249,9 +248,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
           label={'Checkin'}
           onPress={() => {
             navigation.navigate(ScreenConstant.CHECKIN, {item});
-            dispatch(
-              appActions.setDataCheckIn({...item, isVisitDetail: false}),
-            );
+            dispatch(appActions.setDataCheckIn(item));
           }}
         />
       ) : (
