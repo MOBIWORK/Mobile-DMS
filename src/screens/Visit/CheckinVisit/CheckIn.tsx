@@ -85,7 +85,7 @@ const CheckIn = () => {
     shallowEqual,
   );
   const timeCheckin = useRef(
-    decimalMinutesToTime(systemConfig.thoigian_toithieu),
+    decimalMinutesToTime(systemConfig.thoigian_toithieu - 2),
   );
   useDisableBackHandler(true);
 
@@ -281,7 +281,7 @@ const CheckIn = () => {
       }
     });
     setShow(false);
-  }, [dataCheckIn]);
+  }, [dataCheckIn, categoriesCheckin]);
 
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
