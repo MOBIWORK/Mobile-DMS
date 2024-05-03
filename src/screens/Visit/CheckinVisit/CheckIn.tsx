@@ -308,11 +308,11 @@ const CheckIn = () => {
             marginLeft={16}
             marginRight={16}>
             <Block>
-              <SvgIcon
-                source="arrowLeft"
-                size={24}
-                onPress={() => setShow(true)}
-              />
+              <TouchableOpacity
+                style={{padding: 8}}
+                onPress={() => setShow(true)}>
+                <SvgIcon source="arrowLeft" size={24} />
+              </TouchableOpacity>
             </Block>
             <Text fontSize={14} colorTheme="text" fontWeight="400">
               {' '}

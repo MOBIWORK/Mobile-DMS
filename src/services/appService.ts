@@ -3,6 +3,7 @@ import {ApiConstant} from '../const';
 import {BASE_URL, BASE_URL_MAP, API_EK_KEY} from '@env';
 import {client} from '../config/client';
 import {VisitListItemType} from '../models/types';
+import {GET_ID_LOCATION} from '../const/api.const';
 
 export type ILogin = {
   usr: string;
@@ -111,6 +112,12 @@ export type Account = {
   new_pass_again: string;
 };
 
+export type IDLocation = {
+  province_name: string;
+  district_name: string;
+  ward_name: string;
+};
+
 export const login = (data: ILogin, deleteHeader: boolean) =>
   createApi(deleteHeader).post(ApiConstant.POST_USER_LOGIN, data);
 
@@ -204,12 +211,8 @@ export const getListDistrict = (ma_tinh_thanh: any) =>
 export const getListWard = (ma_quan_huyen: any) =>
   createApi().get(ApiConstant.GET_LIST_WARD + `${ma_quan_huyen}`);
 
-export const getIDProvince = (province_name: string) =>
-  createApi().get(ApiConstant.GET_ID_PROVINCE, {province_name});
-export const getIDDistrict = (district_name: string) =>
-  createApi().get(ApiConstant.GET_ID_DISTRICT, {district_name});
-export const getIDWard = (ward_name: string) =>
-  createApi().get(ApiConstant.GET_ID_WARD, {ward_name});
+export const getIDLocation = (data: IDLocation) =>
+  createApi().get(ApiConstant.GET_ID_LOCATION, data);
 
 export const addFakeGPS = (data: ICheckFakeGPS) =>
   createApi().post(ApiConstant.CHECK_FAKE_GPS, data);

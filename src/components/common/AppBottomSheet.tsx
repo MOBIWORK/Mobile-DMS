@@ -118,4 +118,4 @@ interface AppBottomSheetProps {
   onAnimated?: (fromIndex?: number, toIndex?: number) => void;
 }
 
-export default React.memo(AppBottomSheet, isEqual);
+export default AppBottomSheet;
