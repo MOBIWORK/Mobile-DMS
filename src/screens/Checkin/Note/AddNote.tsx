@@ -164,9 +164,6 @@ const AddNote = () => {
     }
   }, []);
 
-  useEffectOnce(() => {
-    fetchDataStaff();
-  });
 
   const renderBottomSheetStaff = () => {
     return (
@@ -240,6 +237,8 @@ const AddNote = () => {
                 data={staffData && staffData.length > 0 ? staffData : []}
                 showsVerticalScrollIndicator={false}
                 initialNumToRender={4}
+                maxToRenderPerBatch={4}
+                bounces={false}
                 renderItem={({item, index}) => {
                   return <Block key={index}>{renderItem(item)}</Block>;
                 }}
@@ -291,7 +290,7 @@ const AddNote = () => {
             />
           </View>
           <TouchableOpacity
-            onPress={() => setSendEmail(!sentEmail)}
+            onPress={() => {setSendEmail(!sentEmail);fetchDataStaff()}}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -300,7 +299,7 @@ const AddNote = () => {
             }}>
             <AppCheckBox
               status={sentEmail}
-              onChangeValue={() => setSendEmail(!sentEmail)}
+              onChangeValue={() => {setSendEmail(!sentEmail);fetchDataStaff()}}
             />
             <Text style={{color: theme.colors.text_primary, marginLeft: 8}}>
               {getLabel('sendEmailToEveryone')}

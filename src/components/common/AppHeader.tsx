@@ -40,7 +40,7 @@ const AppHeader: FC<AppHeaderProps> = ({
           ) : (
             <Image
               source={ImageAssets.ArrowLeftIcon}
-              style={[{width: 34, height: 34}]}
+              style={[{width: 38, height: 38}]}
               resizeMode={'cover'}
               tintColor={colors.text_primary}
             />

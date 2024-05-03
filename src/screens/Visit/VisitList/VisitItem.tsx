@@ -71,10 +71,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
   //   handleBackground(item);
   // };
 
-  const handleBackground = async (
-    item: VisitListItemType,
-    isDetail: boolean,
-  ) => {
+  const handleBackground = (item: VisitListItemType, isDetail: boolean) => {
     CommonUtils.getCurrentLocation(
       location => {
         let data: CheckinData = {
@@ -211,7 +208,9 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
               }}
             />
             <TouchableOpacity
-              onPress={() => typeof handleOpenMap === 'function' && handleOpenMap(item)}
+              onPress={() =>
+                typeof handleOpenMap === 'function' && handleOpenMap(item)
+              }
               style={styles.content}
               disabled={!distanceCal.distance}>
               <Image
