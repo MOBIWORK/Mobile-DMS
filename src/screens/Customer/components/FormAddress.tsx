@@ -38,6 +38,7 @@ import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
 import {AppService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import isEqual from 'react-fast-compare';
 
 type Props = {
   onPressClose: () => void;
@@ -314,7 +315,7 @@ const FormAddress = (props: Props) => {
             location?.coords.latitude ?? 21.0564114,
           ]}
           animationMode={'flyTo'}
-          animationDuration={500}
+          animationDuration={10}
           zoomLevel={13}
         />
         {location?.coords && (
