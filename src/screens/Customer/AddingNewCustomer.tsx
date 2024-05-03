@@ -241,14 +241,6 @@ const AddingNewCustomer = () => {
       <AppHeader
         label={getLabel('customer')}
         onBack={() => navigation.goBack()}
-        backButtonIcon={
-          <AppIcons
-            iconType={AppConstant.ICON_TYPE.EntypoIcon}
-            name="chevron-thin-left"
-            size={24}
-            color={Colors.gray_600}
-          />
-        }
       />
       <View style={[styles.containContentView, {marginBottom: bottom + 60}]}>
         <FormAdding

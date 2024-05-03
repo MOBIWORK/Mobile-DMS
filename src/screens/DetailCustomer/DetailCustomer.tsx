@@ -91,13 +91,6 @@ const DetailCustomer = () => {
         <AppHeader
           label={getLabel('customerDetail')}
           style={{backgroundColor: theme.colors.bg_default}}
-          backButtonIcon={
-            <SvgIcon
-              source="arrowLeft"
-              size={20}
-              onPress={() => navigation.goBack()}
-            />
-          }
           rightButton={
             <View style={styles.containIcon}>
               <SvgIcon source="IconKebab" size={20} />
