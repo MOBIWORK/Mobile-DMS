@@ -38,7 +38,6 @@ import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
 import {AppService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import isEqual from 'react-fast-compare';
 
 type Props = {
   onPressClose: () => void;
@@ -104,7 +103,6 @@ const FormAddress = (props: Props) => {
   ]);
 
   const fetchData = async (lat: any, lon: any) => {
-    await setTxtAddressDetail('');
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
     if (data.status === 'OK' && data.results.length > 0) {
       setAddressValue(prev => ({
@@ -178,8 +176,11 @@ const FormAddress = (props: Props) => {
             ...addressValue.district,
             id: locationIDRes.data.result.district_id,
           } as any,
-          ward: {...addressValue.ward, id: locationIDRes.data.result.ward_id} as any,
-        } ;
+          ward: {
+            ...addressValue.ward,
+            id: locationIDRes.data.result.ward_id,
+          } as any,
+        };
         dispatch(
           customerActions.setMainAddress({
             ...newAddressValue,
@@ -282,47 +283,6 @@ const FormAddress = (props: Props) => {
     }
   }, [contactSelectedData]);
 
-  const MapView = () => (
-    <View style={styles.mapView}>
-      <Mapbox.MapView
-        pitchEnabled={false}
-        attributionEnabled={false}
-        scaleBarEnabled={false}
-        styleURL={Mapbox.StyleURL.Street}
-        logoEnabled={false}
-        style={{flex: 1}}>
-        <Mapbox.RasterSource
-          id="adminmap"
-          tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-          <Mapbox.RasterLayer
-            id={'adminmap'}
-            sourceID={'admin'}
-            style={{visibility: 'visible'}}
-          />
-        </Mapbox.RasterSource>
-        <Mapbox.Camera
-          // ref={mapboxCameraRef}
-          centerCoordinate={[
-            location?.coords.longitude ?? 105.7750996,
-            location?.coords.latitude ?? 21.0564114,
-          ]}
-          animationMode={'flyTo'}
-          animationDuration={10}
-          zoomLevel={13}
-        />
-        {location?.coords && (
-          <Mapbox.MarkerView
-            coordinate={[
-              Number(location?.coords.longitude),
-              Number(location?.coords.latitude),
-            ]}>
-            <SvgIcon source={'LocationCheckIn'} size={40} />
-          </Mapbox.MarkerView>
-        )}
-      </Mapbox.MapView>
-    </View>
-  );
-
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       {(screen === 'Adding' || screen === 'AddingContact') &&
@@ -364,7 +324,7 @@ const FormAddress = (props: Props) => {
           <View style={styles.buttonView}>
             <TouchableOpacity
               style={styles.buttonStyle}
-              onPress={onPressButtonGetLocation}>
+              onPress={() => onPressButtonGetLocation()}>
               <SvgIcon source="iconMap" size={20} colorTheme="action" />
               <AppText
                 style={styles.marginText}
@@ -505,7 +465,47 @@ const FormAddress = (props: Props) => {
                   );
                 })}
               </View>
-              <MapView />
+              <View style={styles.mapView}>
+                <Mapbox.MapView
+                  pitchEnabled={false}
+                  attributionEnabled={false}
+                  scaleBarEnabled={false}
+                  styleURL={Mapbox.StyleURL.Street}
+                  logoEnabled={false}
+                  style={{flex: 1}}>
+                  <Mapbox.RasterSource
+                    id="adminmap"
+                    tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                    <Mapbox.RasterLayer
+                      id={'adminmap'}
+                      sourceID={'admin'}
+                      style={{visibility: 'visible'}}
+                    />
+                  </Mapbox.RasterSource>
+
+                  {location?.coords && (
+                    <>
+                      <Mapbox.Camera
+                        // ref={mapboxCameraRef}
+                        centerCoordinate={[
+                          location?.coords.longitude ?? 105.7750996,
+                          location?.coords.latitude ?? 21.0564114,
+                        ]}
+                        animationMode={'flyTo'}
+                        animationDuration={300}
+                        zoomLevel={13}
+                      />
+                      <Mapbox.MarkerView
+                        coordinate={[
+                          Number(location?.coords.longitude),
+                          Number(location?.coords.latitude),
+                        ]}>
+                        <SvgIcon source={'LocationCheckIn'} size={40} />
+                      </Mapbox.MarkerView>
+                    </>
+                  )}
+                </Mapbox.MapView>
+              </View>
             </MainLayout>
           </ScrollView>
           <View style={styles.containButtonBottom(typeFilter)}>
@@ -769,13 +769,14 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
     checkBoxView: {
       flexDirection: 'row',
     } as ViewStyle,
-    containButtonBottom:(typeFilter:string) =>( {
-      flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 1 :0,
-      padding: 16,
-      flexDirection: 'column',
-      justifyContent: 'flex-end',
-      marginHorizontal: 16,
-    }) as ViewStyle,
+    containButtonBottom: (typeFilter: string) =>
+      ({
+        flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 1 : 0,
+        padding: 16,
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        marginHorizontal: 16,
+      } as ViewStyle),
     containContentButton: {
       flexDirection: 'row',
       justifyContent: 'space-around',
