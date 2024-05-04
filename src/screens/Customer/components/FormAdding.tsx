@@ -12,7 +12,7 @@ import {
   TextInput as TextInput2,
   Keyboard,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useTransition} from 'react';
 
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
@@ -41,7 +41,7 @@ type Props = {
   setData: React.Dispatch<React.SetStateAction<IDataCustomer>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   valueDate: Date | any;
-  addingBottomRef: React.RefObject<BottomSheetMethods>;
+  setModalShow:React.Dispatch<React.SetStateAction<boolean>>;
   cameraBottomRef: React.RefObject<BottomSheetMethods>;
   imageSource: any;
   location: GeolocationResponse | null;
@@ -56,7 +56,7 @@ const FormAdding = (props: Props) => {
     setData,
     setOpen,
     valueDate,
-    addingBottomRef,
+    setModalShow,
     imageSource,
     location,
     setLocation,
@@ -69,9 +69,9 @@ const FormAdding = (props: Props) => {
     state => state.customer.mainContactAddress,
   );
 
-  const [value, setValue] = useState<string>('');
+  const [_, setValue] = useState<string>('');
   const mapboxCameraRef = useRef<CameraRef>(null);
-
+  const [isPending, startTransition] = useTransition();
   const handleMarkerMap = async (lat: number, lng: number) => {
     setLocation({
       // @ts-ignore
@@ -170,9 +170,11 @@ const FormAdding = (props: Props) => {
         isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
-        onChangeValue={text => {
-          setData(prev => ({...prev, customer_name: text}));
-        }}
+        onChangeValue={text =>
+          startTransition(() => {
+            setData(prev => ({...prev, customer_name: text}));
+          })
+        }
       />
       <AppInput
         label={translate('customerCode')}
@@ -182,9 +184,11 @@ const FormAdding = (props: Props) => {
         isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
-        onChangeValue={text => {
-          setData(prev => ({...prev, customer_code: text}));
-        }}
+        onChangeValue={text =>
+          startTransition(() => {
+            setData(prev => ({...prev, customer_code: text}));
+          })
+        }
       />
       <AppInput
         label={translate('customerType')}
@@ -312,7 +316,9 @@ const FormAdding = (props: Props) => {
         }}
         hiddenRightIcon={true}
         onChangeValue={text =>
-          setData(prev => ({...prev, customer_details: text}))
+          startTransition(() => {
+            setData(prev => ({...prev, customer_details: text}));
+          })
         }
       />
       <AppInput
@@ -323,7 +329,11 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         hiddenRightIcon={true}
-        onChangeValue={text => setData(prev => ({...prev, website: text}))}
+        onChangeValue={text =>
+          startTransition(() => {
+            setData(prev => ({...prev, website: text}));
+          })
+        }
       />
       <Pressable>
         <View style={styles.contentLabelAddingStyle}>
@@ -343,7 +353,7 @@ const FormAdding = (props: Props) => {
             <TouchableOpacity
               style={styles.directionViewButton}
               onPress={() => {
-                addingBottomRef.current?.snapToIndex(0);
+                setModalShow(true)
                 setTypeFilter(AppConstant.CustomerFilterType.dia_chi);
               }}>
               <View style={styles.containIcon}>
@@ -379,7 +389,7 @@ const FormAdding = (props: Props) => {
             <TouchableOpacity
               style={styles.directionViewButton}
               onPress={() => {
-                addingBottomRef.current?.snapToIndex(0);
+                setModalShow(true)
                 setTypeFilter(AppConstant.CustomerFilterType.nguoi_lien_he);
               }}>
               <View style={styles.containIcon}>

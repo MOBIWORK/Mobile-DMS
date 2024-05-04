@@ -79,7 +79,6 @@ const AddNote = () => {
   }, [title]);
 
   const renderItem = (item: StaffType) => {
-   
     return (
       <View style={styles.viewItem}>
         <View style={styles.flex}>
@@ -143,14 +142,16 @@ const AddNote = () => {
 
   const fetchDataStaff = async () => {
     const {status, data}: any = await CheckinService.getListStaff();
+    console.log(status,'data response')
     if (status === ApiConstant.STT_OK) {
+     
       setStaffData(data?.result?.data);
       dispatch(
         checkinActions.setData({typeData: 'staff', data: data.result?.data}),
       );
     }
   };
-
+console.log(staffData,'staffData')
   useEffect(() => {
     if (noteTypes.length === 0) {
       fetchDataNoteType();
@@ -163,7 +164,6 @@ const AddNote = () => {
       setDataType(newData);
     }
   }, []);
-
 
   const renderBottomSheetStaff = () => {
     return (
@@ -290,7 +290,14 @@ const AddNote = () => {
             />
           </View>
           <TouchableOpacity
-            onPress={() => {setSendEmail(!sentEmail);fetchDataStaff()}}
+            onPress={() => {
+              setSendEmail(!sentEmail);
+              if (staffData && staffData.length === 0 && sentEmail === true) {
+                fetchDataStaff();
+              } else {
+                return null;
+              }
+            }}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -299,7 +306,14 @@ const AddNote = () => {
             }}>
             <AppCheckBox
               status={sentEmail}
-              onChangeValue={() => {setSendEmail(!sentEmail);fetchDataStaff()}}
+              onChangeValue={() => {
+                setSendEmail(!sentEmail);
+                if (staffData && staffData.length === 0 && sentEmail === false) {
+                  fetchDataStaff();
+                } else {
+                  return null;
+                }
+              }}
             />
             <Text style={{color: theme.colors.text_primary, marginLeft: 8}}>
               {getLabel('sendEmailToEveryone')}
