@@ -6,9 +6,10 @@ import {
   ViewStyle,
   TextStyle,
   ImageStyle,
+  ActivityIndicator,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import React, {useRef, useMemo, useCallback} from 'react';
+import React, {useRef, useMemo, useCallback, useTransition} from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
@@ -99,8 +100,8 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
+  const [isPending, startTransition] = useTransition();
   const customerData = React.useRef<IDataCustomers[]>(listCustomer);
-
   const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
@@ -110,7 +111,7 @@ const Customer = () => {
   const totalPage = useRef<number>(
     Math.ceil(listCustomerResult.total / listCustomerResult.page_size),
   );
- 
+
   const onPressType1 = () => {
     bottomRef.current?.snapToIndex(0);
   };
@@ -170,32 +171,33 @@ const Customer = () => {
 
   React.useEffect(() => {
     mounted.current = true;
-    
-    if (mounted.current) {
-      handleBackgroundLocation();
-      if (listCustomer && listCustomer.length > 0) {
-        const filteredData = listCustomer.filter(
-          item => item.customer_location_primary != null,
-        );
-        const noLocationCustomer = listCustomer.filter(
-          item => item.customer_location_primary === null,
-        );
+    startTransition(() => {
+      if (mounted.current) {
+        handleBackgroundLocation();
+        if (listCustomer && listCustomer.length > 0) {
+          const filteredData = listCustomer.filter(
+            item => item.customer_location_primary != null,
+          );
+          const noLocationCustomer = listCustomer.filter(
+            item => item.customer_location_primary === null,
+          );
 
-        customerData.current = [
-          ...sortedData(filteredData),
-          ...noLocationCustomer,
-        ];
-      } else {
-        dispatch(customerActions.onGetCustomer());
-        onRefreshData();
+          customerData.current = [
+            ...sortedData(filteredData),
+            ...noLocationCustomer,
+          ];
+        } else {
+          dispatch(customerActions.onGetCustomer());
+          onRefreshData();
+        }
+
+        const getDataType = () => {
+          dispatch(customerActions.getCustomerType());
+        };
+        getDataType();
       }
-
-      const getDataType = () => {
-        dispatch(customerActions.getCustomerType());
-      };
-      getDataType();
-    }
-    mounted.current = false;
+      mounted.current = false;
+    });
     return () => {
       mounted.current = false;
     };
@@ -347,6 +349,7 @@ const Customer = () => {
       </MainLayout>
     );
   }, []);
+  // console.log(customerData.current,'customerData')
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
@@ -374,14 +377,19 @@ const Customer = () => {
           </Text>
           {getLabel('customer')}
         </Text>
-
-        <ListCard
-          data={customerData.current}
-          loading={appLoading!}
-          onRefresh={onRefreshData}
-          // listFooter={listFooter}
-          onLoadData={onEndReachedThreshold}
-        />
+        {isPending ? (
+          <Block block justifyContent="center" alignItems="center">
+            <ActivityIndicator size={'large'} color={theme.colors.primary} />
+          </Block>
+        ) : (
+          <ListCard
+            data={customerData.current}
+            loading={isPending}
+            onRefresh={onRefreshData}
+            // listFooter={listFooter}
+            onLoadData={onEndReachedThreshold}
+          />
+        )}
       </Block>
 
       <AppBottomSheet

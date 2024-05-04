@@ -1,9 +1,9 @@
 import React, {FC, ReactNode, useState} from 'react';
-import {useTheme} from '@react-navigation/native';
-import {Text, TextInput, TextInputProps} from 'react-native-paper';
-import {TextStyle, TouchableOpacity, ViewStyle} from 'react-native';
+import {TextInput, TextInputProps} from 'react-native-paper';
+import {StyleSheet, TextStyle, TouchableOpacity, ViewStyle} from 'react-native';
 import isEqual from 'react-fast-compare';
-
+import {AppTheme, useTheme} from '../../layouts/theme';
+import {AppText as Text} from './AppText';
 const AppInput: FC<AppInputProps> = ({
   styles,
   label,
@@ -24,33 +24,22 @@ const AppInput: FC<AppInputProps> = ({
   const {colors} = useTheme();
   const [isFocus, setFocus] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const theme = useTheme();
+  const inputStyle = rootStyles(theme);
   return (
     <TouchableOpacity disabled={disable} onPress={onPress}>
       <TextInput
         onPressIn={onPress}
-        contentStyle={{
-          color: colors.text_primary,
-          fontSize: 16,
-          ...contentStyle,
-        }}
-        style={{
-          backgroundColor: colors.bg_default,
-          ...styles,
-        }}
-        outlineStyle={{
-          borderColor: !isFocus ? colors.text_disable : 'rgba(99, 79, 145, 1)',
-          borderRadius: 8,
-        }}
+        contentStyle={[inputStyle.contentStyle, contentStyle]}
+        style={[inputStyle.rootStyle, styles]}
+        outlineStyle={inputStyle.outlineStyle(isFocus)}
         mode={'outlined'}
         label={
           <Text
-            style={{
-              color: isFocus || value ? undefined : colors.text_disable,
-              fontWeight: isFocus || value ? '600' : '400',
-              fontSize: 16,
-              ...labelStyle,
-            }}>
+            color={isFocus || value ? undefined : colors.text_disable}
+            fontWeight={isFocus || value ? '600' : '400'}
+            fontSize={16}
+            style={labelStyle}>
             {label} {isRequire ? <Text style={{color: 'red'}}>*</Text> : null}
           </Text>
         }
@@ -113,3 +102,19 @@ type AppInputPropsNonEditable = {
 } & AppInputPropsBase;
 type AppInputProps = AppInputPropsEditable | AppInputPropsNonEditable;
 export default React.memo(AppInput, isEqual);
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    contentStyle: {
+      color: theme.colors.text_primary,
+      fontSize: 16,
+    } as TextStyle,
+    rootStyle: {
+      backgroundColor: theme.colors.bg_default,
+    } as ViewStyle,
+    outlineStyle: (isFocus: boolean) => ({
+      borderColor: !isFocus
+        ? theme.colors.text_disable
+        : 'rgba(99, 79, 145, 1)',
+      borderRadius: 8,
+    }),
+  });

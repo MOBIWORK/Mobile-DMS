@@ -95,7 +95,7 @@ export default {
   October: 'Tháng 10',
   November: 'Tháng 11',
   December: 'Tháng 12',
-  brand: 'Thương hiệu',
+  brand: 'Nhãn hiệu',
   groupProduct: 'Nhóm sản phẩm',
   searchGroupProduct: 'Tìm kiếm nhóm sản phẩm',
   searchIndustryProduct: 'Tìm kiếm ngành hàng',
@@ -292,5 +292,6 @@ export default {
   noteNotComplete: 'Bạn chưa viết ghi chú',
   errDistance: 'Sai số khoảng cách',
   mgsDistanceErr: 'Bạn cần di chuyển đến vị trí phù hợp để thực hiện CheckOut',
-  tryAgain:'Thử lại'
+  tryAgain:'Thử lại',
+  staff:"Nhân viên"
 };

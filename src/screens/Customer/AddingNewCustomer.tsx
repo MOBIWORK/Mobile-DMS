@@ -26,6 +26,7 @@ import {
   AppHeader,
   AppIcons,
   AppText,
+  Block,
   SvgIcon,
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
@@ -52,7 +53,8 @@ import {
   setNewCustomer,
   setProcessingStatus,
 } from '../../redux-store/app-reducer/reducer';
-
+import isEqual from 'react-fast-compare';
+import Modal from 'react-native-modal';
 const AddingNewCustomer = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
@@ -66,7 +68,7 @@ const AddingNewCustomer = () => {
   });
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-
+  const [modalAddress, setModalAddress] = useState(false);
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
   const [listData, setListData] = useState<IDataCustomer>({
@@ -237,116 +239,127 @@ const AddingNewCustomer = () => {
   }, []);
 
   return (
-    <MainLayout>
-      <AppHeader
-        label={getLabel('customer')}
-        onBack={() => navigation.goBack()}
-      />
-      <View style={[styles.containContentView, {marginBottom: bottom + 60}]}>
-        <FormAdding
-          filterRef={filterRef}
-          setTypeFilter={setTypeFilter}
-          valueFilter={listData}
-          valueDate={moment(date).format('DD/MM/YYYY')}
-          setOpen={setOpenDate}
-          setData={setListData}
-          addingBottomRef={addingAddress}
-          imageSource={imageSource}
-          cameraBottomRef={cameraBottomRef}
-          location={location}
-          setLocation={setLocation}
+    <>
+      <MainLayout>
+        <AppHeader
+          label={getLabel('customer')}
+          onBack={() => navigation.goBack()}
         />
-        <TouchableOpacity
-          style={styles.buttonAddingNew}
-          onPress={() => onPressAdding(listData)}>
-          <Text style={styles.textButtonStyle}>Thêm mới</Text>
-        </TouchableOpacity>
-      </View>
-      <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
-        <BottomSheetScrollView showsVerticalScrollIndicator={false}>
-          <ListFilterAdding
-            type={typeFilter}
+        <View style={[styles.containContentView, {marginBottom: bottom + 60}]}>
+          <FormAdding
             filterRef={filterRef}
-            setValueFilter={setValueFilter}
-            valueFilter={valueFilter}
+            setTypeFilter={setTypeFilter}
+            valueFilter={listData}
+            valueDate={moment(date).format('DD/MM/YYYY')}
+            setOpen={setOpenDate}
             setData={setListData}
-            data={listData}
+            setModalShow={setModalAddress}
+            imageSource={imageSource}
+            cameraBottomRef={cameraBottomRef}
+            location={location}
+            setLocation={setLocation}
           />
-        </BottomSheetScrollView>
-      </AppBottomSheet>
-      <DatePickerModal
-        locale="vi"
-        mode="single"
-        visible={openDate}
-        label={getLabel('chooseBirthday')}
-        onDismiss={onDismissSingle}
-        date={date}
-        onConfirm={onConfirmSingle}
-      />
-      <AppBottomSheet
-        bottomSheetRef={addingAddress}
-        snapPointsCustom={snapPointAdding}>
-        <FormAddress
-          onPressClose={() => {
-            addingAddress.current?.close();
-          }}
-          typeFilter={typeFilter}
-          listData={listData}
-          setData={setListData}
-        />
-      </AppBottomSheet>
-      <AppBottomSheet
-        bottomSheetRef={cameraBottomRef}
-        snapPointsCustom={['28%']}>
-        <MainLayout style={styles.mainLayout}>
-          <View>
-            <AppHeader
-              label={getLabel('chooseImage')}
-              onBack={() => {}}
-              backButtonIcon={
-                <AppIcons
-                  iconType={AppConstant.ICON_TYPE.IonIcon}
-                  name="close"
-                  size={26}
-                  color={theme.colors.black}
-                  onPress={() => cameraBottomRef.current?.close()}
-                />
-              }
+          <TouchableOpacity
+            style={styles.buttonAddingNew}
+            onPress={() => onPressAdding(listData)}>
+            <Text style={styles.textButtonStyle}>Thêm mới</Text>
+          </TouchableOpacity>
+        </View>
+        <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
+          <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+            <ListFilterAdding
+              type={typeFilter}
+              filterRef={filterRef}
+              setValueFilter={setValueFilter}
+              valueFilter={valueFilter}
+              setData={setListData}
+              data={listData}
             />
-          </View>
-          <View>
-            <TouchableOpacity
-              style={styles.containButton}
-              onPress={handleCameraPicker}>
-              <View style={styles.containIconView}>
-                <SvgIcon source="IconCamera" size={24} />
-                <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                  {'  '} {getLabel('takePicture')}
-                </AppText>
-              </View>
+          </BottomSheetScrollView>
+        </AppBottomSheet>
+        <DatePickerModal
+          locale="vi"
+          mode="single"
+          visible={openDate}
+          label={getLabel('chooseBirthday')}
+          onDismiss={onDismissSingle}
+          date={date}
+          onConfirm={onConfirmSingle}
+        />
 
-              <SvgIcon source="arrowRight" size={20} />
-            </TouchableOpacity>
+        <AppBottomSheet
+          bottomSheetRef={cameraBottomRef}
+          snapPointsCustom={['28%']}>
+          <MainLayout style={styles.mainLayout}>
+            <View>
+              <AppHeader
+                label={getLabel('chooseImage')}
+                onBack={() => {}}
+                backButtonIcon={
+                  <AppIcons
+                    iconType={AppConstant.ICON_TYPE.IonIcon}
+                    name="close"
+                    size={26}
+                    color={theme.colors.black}
+                    onPress={() => cameraBottomRef.current?.close()}
+                  />
+                }
+              />
+            </View>
+            <View>
+              <TouchableOpacity
+                style={styles.containButton}
+                onPress={handleCameraPicker}>
+                <View style={styles.containIconView}>
+                  <SvgIcon source="IconCamera" size={24} />
+                  <AppText fontSize={16} fontWeight="500" colorTheme="black">
+                    {'  '} {getLabel('takePicture')}
+                  </AppText>
+                </View>
 
-            <TouchableOpacity
-              style={styles.containButton}
-              onPress={handleImagePicker}>
-              <View style={styles.containIconView}>
-                <SvgIcon source="IconImage" size={24} />
-                <AppText fontSize={16} fontWeight="500" colorTheme="black">
-                  {'  '} {getLabel('chooseFromLibrary')}
-                </AppText>
-              </View>
-              <SvgIcon source="arrowRight" size={20} />
-            </TouchableOpacity>
-          </View>
-        </MainLayout>
-      </AppBottomSheet>
-    </MainLayout>
+                <SvgIcon source="arrowRight" size={20} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.containButton}
+                onPress={handleImagePicker}>
+                <View style={styles.containIconView}>
+                  <SvgIcon source="IconImage" size={24} />
+                  <AppText fontSize={16} fontWeight="500" colorTheme="black">
+                    {'  '} {getLabel('chooseFromLibrary')}
+                  </AppText>
+                </View>
+                <SvgIcon source="arrowRight" size={20} />
+              </TouchableOpacity>
+            </View>
+          </MainLayout>
+        </AppBottomSheet>
+        <Modal
+          isVisible={modalAddress}
+          animationIn="slideInUp"
+          animationOut="slideOutDown"
+          style={styles.modal}
+          backdropColor="white"
+          backdropOpacity={1}
+          onBackButtonPress={() => setModalAddress(false)}
+          onBackdropPress={() => setModalAddress(false)}>
+          <Block block>
+            <FormAddress
+              onPressClose={() => {
+                setModalAddress(false);
+              }}
+              typeFilter={typeFilter}
+              listData={listData}
+              setData={setListData}
+            />
+          </Block>
+        </Modal>
+      </MainLayout>
+    </>
   );
 };
 
-export default React.memo(AddingNewCustomer);
+export default React.memo(AddingNewCustomer, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -386,5 +399,12 @@ const rootStyles = (theme: AppTheme) =>
     containIconView: {
       flexDirection: 'row',
       alignItems: 'center',
+    } as ViewStyle,
+    modal: {
+      marginHorizontal: 0,
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      marginVertical: 0,
     } as ViewStyle,
   });

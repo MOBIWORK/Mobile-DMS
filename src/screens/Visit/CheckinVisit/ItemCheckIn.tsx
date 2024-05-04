@@ -1,5 +1,5 @@
 import {TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useTransition} from 'react';
 import {IItemCheckIn} from './ultil';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
 import {useTheme} from '../../../layouts/theme';
@@ -14,14 +14,17 @@ type Props = {
 
 const ItemCheckIn = ({item, navData}: Props) => {
   const {colors} = useTheme();
+  const [isPending, startTrans] = useTransition();
   return (
     <Block>
       <TouchableOpacity
         onPress={
           () =>
-            navigate(item.screenName, {
-              type: item.type ? item.type : '',
-              data: navData,
+            startTrans(() => {
+              navigate(item.screenName, {
+                type: item.type ? item.type : '',
+                data: navData,
+              });
             })
           // console.log(item.screenName,'screen name')
         }>
