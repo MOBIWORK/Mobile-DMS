@@ -90,7 +90,7 @@ const ItemNotificationCompo = (data: any) => {
       style={[
         styles.flex,
         {
-          paddingVertical: 12,
+          paddingVertical: 16,
           backgroundColor: data.isSend
             ? 'rgba(0, 184, 217, 0.08)'
             : colors.bg_default,

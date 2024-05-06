@@ -9,13 +9,11 @@ export const rootStyles = (theme: AppTheme) =>
       rowGap: 20,
       paddingHorizontal: 16,
     } as ViewStyle,
-    root: {
-      paddingHorizontal: 0,
-      paddingBottom: 86,
+    root:{
+        paddingHorizontal:16,
+        paddingVertical:16
     } as ViewStyle,
     flexSpace: {
-      marginTop: 16,
-      marginHorizontal: 16,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -50,7 +48,6 @@ export const rootStyles = (theme: AppTheme) =>
       }),
     } as ViewStyle,
     widgetView: {
-      marginHorizontal: 16,
       flexDirection: 'row',
       justifyContent: 'space-between',
     } as ViewStyle,
@@ -75,17 +72,14 @@ export const rootStyles = (theme: AppTheme) =>
       color: theme.colors.text_primary,
     } as TextStyle,
     containerTimekeep: {
-      marginHorizontal: 16,
       flexDirection: 'row',
       justifyContent: 'space-between',
       padding: 16,
       borderRadius: 16,
       backgroundColor: theme.colors.bg_default,
       marginTop: 20,
-      marginBottom: 16,
     } as ViewStyle,
     containerCheckin: {
-      marginHorizontal: 16,
       marginBottom: 8,
       flex: 1,
       alignItems: 'center',
@@ -113,7 +107,6 @@ export const rootStyles = (theme: AppTheme) =>
       tintColor: theme.colors.bg_default,
     },
     containerNtf: {
-      marginHorizontal: 16,
       marginBottom: 8,
       paddingVertical: 16,
       backgroundColor: theme.colors.bg_default,
@@ -151,7 +144,6 @@ export const rootStyles = (theme: AppTheme) =>
       alignItems: 'center',
       marginTop: 8,
       paddingVertical: 4,
-      borderRadius: 16,
     } as ViewStyle,
     worksheetDt: {
       fontSize: 18,
@@ -160,18 +152,15 @@ export const rootStyles = (theme: AppTheme) =>
       marginLeft: 8,
     } as TextStyle,
     map: {
-      marginHorizontal: 16,
-      width: AppConstant.WIDTH - 32,
+      width: '100%',
       height: 360,
       borderRadius: 16,
       overflow: 'hidden',
-      position: 'relative',
+      position:'relative'
     } as ViewStyle,
     editView: {
-      marginHorizontal: 16,
       backgroundColor: theme.colors.bg_default,
       borderRadius: 16,
-      marginBottom: 16,
     } as ViewStyle,
     containWidgetView: {
       marginLeft: -16,
@@ -185,7 +174,6 @@ export const rootStyles = (theme: AppTheme) =>
       width: (AppConstant.WIDTH - 80) / 4,
     } as ViewStyle,
     containProgressView: {
-      marginHorizontal: 16,
       flexDirection: 'row',
       flexWrap: 'wrap',
     } as ViewStyle,

@@ -94,6 +94,7 @@ const CheckIn = () => {
     decimalMinutesToTime(systemConfig.thoigian_toithieu),
   );
   useDisableBackHandler(true);
+  // console.log(params,'params passed')
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
     type: string;
@@ -159,6 +160,7 @@ const CheckIn = () => {
         return setOpenDialogErr(false);
     }
   };
+  // console.log(systemConfig,'systemConfig')
 
   const isValidCheckOut = (currentLocation: GeolocationResponse) => {
     function isCamera(categoriesItem: IItemCheckIn) {
@@ -288,7 +290,7 @@ const CheckIn = () => {
     });
     setShow(false);
   }, [dataCheckIn, categoriesCheckin]);
-
+ 
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
     const res: any = await AppService.checkOut(dataCheckIn.checkin_id);

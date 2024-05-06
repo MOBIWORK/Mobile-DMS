@@ -42,7 +42,11 @@ import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
-import {calculateDistance, useSelector} from '../../../config/function';
+import {
+  calculateDistance,
+  generateRandomObjectId,
+  useSelector,
+} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import Modal from 'react-native-modal';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
@@ -68,8 +72,18 @@ import StringFormat from 'string-format';
 import MarkerItem from '../../../components/common/MarkerItem';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
+import ModalAlert from './Component/ModalAlert';
+import {navigate} from '../../../navigation/navigation-service';
+import moment from 'moment';
+import {useBatteryLevel} from 'expo-battery';
 
 //config Mapbox
+
+export interface ModalType {
+  status: boolean;
+  type: 'warn' | 'loading';
+  cal?: number;
+}
 
 const ListVisit = () => {
   const {colors} = useTheme();
@@ -109,7 +123,10 @@ const ListVisit = () => {
   );
 
   const [customerDataSort, setCustomerData] = useState<VisitListItemType[]>();
-
+  const [modalAlert, setModalAlert] = useState<ModalType>({
+    status: false,
+    type: 'warn',
+  });
   const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
     getLabel('nearest'),
   );
@@ -118,6 +135,7 @@ const ListVisit = () => {
   );
 
   const routeTodayRef = useRef<any>();
+  const batteryLevel = useBatteryLevel();
 
   //refresh data
   const filterDataRef = useRef<IListVisitParams>({});
@@ -131,7 +149,7 @@ const ListVisit = () => {
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
-
+  const [currentSelect, setCurrentSelect] = useState<VisitListItemType>();
   const backgroundErrorListener = useCallback(
     (errorCode: number) => {
       // Handle background location errors
@@ -388,6 +406,8 @@ const ListVisit = () => {
           <Block position="absolute" bottom={bottom + 70} left={24} right={24}>
             <VisitItem
               item={visitItemSelected}
+              handlePressDetail={onPressToDetail}
+              handlePressing={handleCompareDistance}
               handleClose={() => setVisitItemSelected(null)}
             />
           </Block>
@@ -432,6 +452,8 @@ const ListVisit = () => {
                 renderItem={({item}) => (
                   <VisitItem
                     item={item}
+                    handlePressDetail={onPressToDetail}
+                    handlePressing={handleCompareDistance}
                     handleOpenMap={() =>
                       startTransition(() => presentMap(item))
                     }
@@ -673,6 +695,180 @@ const ListVisit = () => {
     }
   };
 
+  const handleCompareDistance = useCallback(
+    (item: VisitListItemType, isDetail: boolean) => {
+      let location: LocationProps = JSON.parse(item.customer_location_primary!);
+      setModalAlert({
+        type: 'loading',
+        status: true,
+      });
+      setTimeout(() => {
+        startEffect(() => {
+          CommonUtils.getCurrentLocation(curLocation => {
+            let data = calculateDistance(
+              curLocation.coords.latitude,
+              curLocation.coords.longitude,
+              location?.lat,
+              location.long,
+            );
+            if (
+              data >
+                (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                  AppConstant.additional_distance) /
+                  1000 &&
+              isDetail === false
+            ) {
+              setCurrentSelect(item);
+              setModalAlert(prev => ({
+                ...prev,
+                type: 'warn',
+                cal:
+                  data -
+                  (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                    AppConstant.additional_distance) /
+                    1000,
+              }));
+            } else {
+              setModalAlert(prev => ({
+                ...prev,
+                status: false,
+              }));
+
+              handleBackground(item);
+            }
+          });
+        });
+      }, 1000);
+    },
+    [],
+  );
+
+  const handleBackground = useCallback((item: VisitListItemType) => {
+    let log: LocationProps = JSON.parse(item.customer_location_primary!);
+    setModalAlert({status: true, type: 'loading'});
+    let uniqueID = generateRandomObjectId();
+    CommonUtils.getCurrentLocation(
+      location => {
+        let distanceCal = calculateDistance(
+          location.coords.latitude,
+          location.coords.longitude,
+          log?.lat,
+          log.long,
+        );
+        let data: CheckinData = {
+          checkin_id:
+            dataCheckIn &&
+            dataCheckIn?.kh_ma === item.customer_code &&
+            dataCheckIn.checkin_id !== undefined
+              ? dataCheckIn.checkin_id
+              : uniqueID,
+          kh_ma: item.customer_code,
+          kh_ten: item.customer_name,
+          kh_diachi: item.customer_primary_address,
+          kh_long: log.long ?? '',
+          kh_lat: log.lat ?? '',
+          checkin_giovao: new Date().getTime() / 1000,
+          checkin_pinvao:
+            batteryLevel > 0
+              ? Math.round(batteryLevel * 10000) / 100
+              : -Math.round(batteryLevel * 10000) / 100,
+          checkin_khoangcach: distanceCal,
+          createdDate: moment(new Date()).valueOf(),
+          checkin_timegps: moment(new Date(location.timestamp * 1000)).format(
+            'hh:mm',
+          ),
+          checkin_dochinhxac: location.coords.accuracy,
+          checkinvalidate_khoangcachcheckin:
+            systemConfig.saiso_chophep_kb_vitringoaisaiso,
+          checkinvalidate_khoangcachcheckout:
+            systemConfig.saiso_chophep_checkout_ngoaisaiso,
+          checkin_trangthaicuahang: true,
+          checkin_donhang: '',
+          checkin_giora: null,
+          checkin_hinhanh: [],
+          checkin_lat: location.coords.latitude,
+          checkin_long: location.coords.longitude,
+          checkin_pinra: 0,
+          checkout_khoangcach: 0,
+          createByName: '',
+          createdByEmail: '',
+          item: item,
+          ...item,
+        };
+        setModalAlert(prev => ({...prev, status: false}));
+        dispatch(appActions.setDataCheckIn(data));
+        navigate(ScreenConstant.CHECKIN, {
+          item: data,
+        });
+      },
+      error => backgroundErrorListener(error.code),
+    );
+  }, []);
+  //  console.log(dataCheckIn.checkin_id,'checkinId')
+
+  const onPressToDetail = useCallback((item: VisitListItemType) => {
+    let log: LocationProps = JSON.parse(item.customer_location_primary!);
+    setModalAlert({status: true, type: 'loading'});
+    let uniqueID = generateRandomObjectId();
+    CommonUtils.getCurrentLocation(
+      location => {
+        let distanceCal = calculateDistance(
+          location.coords.latitude,
+          location.coords.longitude,
+          log?.lat,
+          log.long,
+        );
+        let data: CheckinData = {
+          checkin_id:
+            dataCheckIn &&
+            dataCheckIn?.kh_ma === item.customer_code &&
+            dataCheckIn.checkin_id !== undefined
+              ? dataCheckIn.checkin_id
+              : uniqueID,
+          kh_ma: item.customer_code,
+          kh_ten: item.customer_name,
+          kh_diachi: item.customer_primary_address,
+          kh_long: log.long ?? '',
+          kh_lat: log.lat ?? '',
+          checkin_giovao: new Date().getTime() / 1000,
+          checkin_pinvao:
+            batteryLevel > 0
+              ? Math.round(batteryLevel * 10000) / 100
+              : -Math.round(batteryLevel * 10000) / 100,
+          checkin_khoangcach: distanceCal,
+          createdDate: moment(new Date()).valueOf(),
+          checkin_timegps: moment(new Date(location.timestamp * 1000)).format(
+            'hh:mm',
+          ),
+          checkin_dochinhxac: location.coords.accuracy,
+          checkinvalidate_khoangcachcheckin:
+            systemConfig.saiso_chophep_kb_vitringoaisaiso,
+          checkinvalidate_khoangcachcheckout:
+            systemConfig.saiso_chophep_checkout_ngoaisaiso,
+          checkin_trangthaicuahang: true,
+          checkin_donhang: '',
+          checkin_giora: null,
+          checkin_hinhanh: [],
+          checkin_lat: location.coords.latitude,
+          checkin_long: location.coords.longitude,
+          checkin_pinra: 0,
+          checkout_khoangcach: 0,
+          createByName: '',
+          createdByEmail: '',
+          item: item,
+          ...item,
+        };
+
+        setModalAlert(prev => ({...prev, status: false}));
+
+        navigate(ScreenConstant.VISIT_DETAIL, {
+          data: data,
+        });
+      },
+      error => backgroundErrorListener(error.code),
+    );
+  }, []);
+
   useEffect(() => {
     mounted.current = true;
     if (searchVisit) {
@@ -756,6 +952,13 @@ const ListVisit = () => {
           </Block>
         </Block>
       </Modal>
+      <ModalAlert
+        show={modalAlert}
+        handleCheckin={handleBackground}
+        setShow={setModalAlert}
+        item={currentSelect}
+        currentLocation={currentLocation}
+      />
     </SafeAreaView>
   );
 };

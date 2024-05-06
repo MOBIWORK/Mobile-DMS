@@ -51,6 +51,7 @@ import {
 } from '../screens';
 import MainTab from './MainTab';
 import {CommonUtils} from '../utils';
+import BeforeCheckin from '../screens/BeforeCheckin';
 
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
@@ -213,6 +214,10 @@ const AuthNavigation = () => {
       <Stack.Screen
         name={ScreenConstant.NOTIFY_SETTING}
         component={NotifySetting}
+      />
+      <Stack.Screen
+        name={ScreenConstant.BEFORE_CHECKIN}
+        component={BeforeCheckin}
       />
     </Stack.Navigator>
   );

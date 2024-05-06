@@ -9,9 +9,7 @@ import {useTranslation} from 'react-i18next';
 import {AppConstant} from '../../../const';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {formatCash} from '../../../utils/commom.utils';
 import {formatMoney} from '../../../config/function';
-import moment from 'moment';
 
 type Props = {
   data: IDataCustomers;
