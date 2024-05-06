@@ -519,7 +519,7 @@ const HomeScreen = () => {
     // Kiểm tra xem có phiên bản mới không
   }, []);
 
-  const handleUpdateApp = async () => {
+  const handleUpdateApp = () => {
     codePush.sync(
       {
         installMode: codePush.InstallMode.IMMEDIATE,
@@ -717,7 +717,7 @@ const HomeScreen = () => {
             progress={updatePercent}
             onPress={() => {
               startCompare(() => {
-                handleUpdateApp().then();
+                handleUpdateApp();
               });
             }}
           />
