@@ -1,5 +1,4 @@
 import React, {
-  startTransition,
   useCallback,
   useEffect,
   useMemo,
@@ -10,7 +9,6 @@ import React, {
 import {
   View,
   Text,
-  Image,
   Linking,
   Platform,
   TouchableOpacity,
@@ -26,16 +24,11 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {ImageAssets} from '../../assets';
+
 import {AppConstant, ScreenConstant} from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import BarChartStatistical from './BarChart';
-import {
-  AppAvatar,
-  AppContainer,
-  AppIcons,
-  Block,
-} from '../../components/common';
+import {AppAvatar, Block} from '../../components/common';
 import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
 
@@ -60,8 +53,6 @@ import {useDeepCompareEffect, useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
-import {LocationProps} from '../Visit/VisitList/VisitItem';
-import MarkerItem from '../../components/common/MarkerItem';
 import {NavigationProp} from '../../navigation/screen-type';
 import ModalErrorLocation from './components/ModalErrorLocation';
 import {getCustomerVisit, IListVisitParams} from '../../services/appService';
@@ -72,6 +63,9 @@ import Geolocation, {
 import {CommonUtils} from '../../utils';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import isEqual from 'react-fast-compare';
+import TimeKeep from './components/TimeKeep';
+import MapView from './components/MapView';
+import CircleChartView from './components/CircleChartView';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -101,7 +95,7 @@ const HomeScreen = () => {
 
   const [currentShit, setCurrentShit] = useState<any>(null);
 
-  const [notifiCations, setNotifications] = useState([
+  const notifiCations = useRef([
     {
       id: 1,
       name: 'Thông báo nghỉ lễ Quốc Khánh 02/09',
@@ -122,7 +116,7 @@ const HomeScreen = () => {
         'Phòng KT-TC, phòng HCNS và nhân viên/trưởng nhóm có tên trong danh sách có trách nhiệm thi hành theo quyết định này.',
       time: '17:00 - 20/09/2023',
     },
-  ]);
+  ]).current;
 
   const [KpiValue, setKpiValue] = useState<IKpi | null>(null);
   const [salesValue, setSaleValue] = useState<IReportSales | null>(null);
@@ -137,7 +131,7 @@ const HomeScreen = () => {
 
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
   const [passwordStore] = useMMKVString(AppConstant.passwordStore);
-
+  // console.log(userProfile)
   const getWidget = () => {
     if (!widgets) {
       const arrWg = DataConstant.DataWidget.slice(0, 4);
@@ -147,7 +141,7 @@ const HomeScreen = () => {
 
   const renderUiWidget = useCallback(() => {
     return (
-      <View>
+      <Block marginTop={16} marginBottom={16}>
         <View style={styles.widgetView}>
           <Text style={[styles.tilteSection]}>{getLabel('utilities')}</Text>
           <TouchableOpacity
@@ -175,7 +169,7 @@ const HomeScreen = () => {
             </View>
           </View>
         </View>
-      </View>
+      </Block>
     );
   }, [widgets]);
 
@@ -207,7 +201,7 @@ const HomeScreen = () => {
 
   const renderUiStatistical = useCallback(() => {
     return (
-      <View>
+      <Block marginTop={16} marginBottom={16}>
         <View style={[styles.flexSpace]}>
           <Text style={[styles.tilteSection]}>{getLabel('statistical')}</Text>
         </View>
@@ -321,7 +315,7 @@ const HomeScreen = () => {
             </View>
           </View>
         </View>
-      </View>
+      </Block>
     );
   }, [KpiValue]);
 
@@ -547,7 +541,7 @@ const HomeScreen = () => {
     switch (index) {
       case 0: {
         return (
-          <Block block>
+          <Block block >
             <Pressable
               style={[styles.shadow, styles.header]}
               onPress={() => navigation.navigate(ScreenConstant.PROFILE)}>
@@ -587,74 +581,16 @@ const HomeScreen = () => {
       }
       case 1: {
         return (
-          <Block style={[styles.shadow, styles.containerTimekeep]}>
-            <View>
-              <Text style={[styles.userName]}>
-                {currentShit?.shift_status ||
-                currentShit?.shift_status === 'Vào'
-                  ? getLabel('timeKeepOut')
-                  : getLabel('timeKeepIn')}
-              </Text>
-              <View style={[styles.flex, {marginTop: 8}]}>
-                <AppIcons
-                  iconType={
-                    currentShit?.shift_type_now
-                      ? AppConstant.ICON_TYPE.AntIcon
-                      : AppConstant.ICON_TYPE.MateriallIcon
-                  }
-                  name={
-                    currentShit?.shift_type_now
-                      ? 'clockcircleo'
-                      : 'report-problem'
-                  }
-                  size={16}
-                  color={
-                    currentShit?.shift_type_now
-                      ? colors.text_secondary
-                      : colors.error
-                  }
-                />
-                <Text
-                  style={{
-                    marginLeft: 5,
-                    fontSize: 16,
-                    color: currentShit?.shift_type_now
-                      ? colors.text_secondary
-                      : colors.error,
-                  }}>
-                  {currentShit?.shift_type_now
-                    ? `${currentShit.shift_type_now.start_time} - ${currentShit.shift_type_now.end_time}`
-                    : getLabel('noShirtNow')}
-                </Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={[
-                styles.btnTimekeep,
-                {
-                  backgroundColor: !currentShit?.shift_type_now
-                    ? colors.bg_disable
-                    : currentShit?.shift_status ||
-                      currentShit?.shift_status === 'Vào'
-                    ? colors.error
-                    : colors.success,
-                },
-              ]}
-              onPress={openToDeeplink}
-              disabled={currentShit?.shift_type_now === false}>
-              <Image
-                source={ImageAssets.Usercheckin}
-                resizeMode={'cover'}
-                style={styles.iconBtnTk}
-              />
-            </TouchableOpacity>
-          </Block>
+          <TimeKeep
+            onPressDeepLink={openToDeeplink}
+            currentShit={currentShit}
+          />
         );
       }
       case 2: {
         return (
           <>
-            <Block style={[styles.shadow, styles.containerTimekeep]} />
+            {/* <Block style={[styles.shadow, styles.containerTimekeep]} /> */}
             {renderUiWidget()}
           </>
         );
@@ -664,7 +600,7 @@ const HomeScreen = () => {
       }
       case 4: {
         return (
-          <Block>
+          <Block marginTop={16} marginBottom={16}>
             <Block style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>{getLabel('sales')}</Text>
             </Block>
@@ -680,7 +616,7 @@ const HomeScreen = () => {
       }
       case 5: {
         return (
-          <Block>
+          <Block marginTop={16} marginBottom={16}>
             <Block style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>{getLabel('revenue')}</Text>
             </Block>
@@ -695,129 +631,21 @@ const HomeScreen = () => {
         );
       }
       case 6: {
-        return (
-          <View>
-            <View style={[styles.flexSpace]}>
-              <Text style={[styles.tilteSection]}>{getLabel('visit')}</Text>
-            </View>
-            <View style={[styles.containerCheckin]}>
-              <ProgressCircle
-                percent={visitValue ? visitValue.phan_tram_thuc_hien : 0}
-                radius={80}
-                borderWidth={30}
-                color={colors.action}
-                shadowColor={colors.bg_disable}
-                bgColor={colors.bg_default}>
-                <View>
-                  <Text style={[styles.textProcess]}>
-                    {visitValue?.dat_duoc}/{visitValue?.chi_tieu}
-                  </Text>
-                  <Text style={[styles.textProcessDesc]}>
-                    {' '}
-                    (Đạt {visitValue?.phan_tram_thuc_hien}
-                    %)
-                  </Text>
-                </View>
-              </ProgressCircle>
-              <Text style={[styles.checkinDesc]}>
-                {getLabel('visitPerMonth')}
-              </Text>
-            </View>
-          </View>
-        );
+        return <CircleChartView visitValue={visitValue} />;
       }
       case 7: {
         return (
-          <Block>
-            <View style={[styles.flexSpace]}>
-              <Text style={[styles.tilteSection]}>{getLabel('visitMap')}</Text>
-            </View>
-
-            <View style={styles.map}>
-              <Mapbox.MapView
-                pitchEnabled={false}
-                attributionEnabled={false}
-                scaleBarEnabled={false}
-                zoomEnabled
-                scrollEnabled
-                logoEnabled={false}
-                styleURL={Mapbox.StyleURL.Street}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  zIndex: 10,
-                  position: 'absolute',
-                }}>
-                <Mapbox.RasterSource
-                  id="adminmap"
-                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-                  <Mapbox.RasterLayer
-                    id={'adminmap'}
-                    sourceID={'admin'}
-                    style={{visibility: 'visible'}}
-                  />
-                </Mapbox.RasterSource>
-                <Mapbox.Camera
-                  ref={mapboxCameraRef}
-                  centerCoordinate={[
-                    location.current !== null
-                      ? location.current.coords.longitude
-                      : 0,
-                    location.current !== null
-                      ? location.current.coords.latitude
-                      : 0,
-                  ]}
-                  animationMode={'flyTo'}
-                  animationDuration={500}
-                  zoomLevel={11}
-                />
-                {listCustomerVisit.length > 0 &&
-                  listCustomerVisit.map((item, index) => {
-                    if (item.customer_location_primary) {
-                      const newLocation: LocationProps = JSON.parse(
-                        item.customer_location_primary!,
-                      );
-                      return (
-                        <Mapbox.MarkerView
-                          key={index}
-                          coordinate={[
-                            Number(newLocation.long),
-                            Number(newLocation.lat),
-                          ]}>
-                          <MarkerItem item={item} index={index} />
-                        </Mapbox.MarkerView>
-                      );
-                    } else {
-                      return null;
-                    }
-                  })}
-                <Mapbox.UserLocation
-                  visible={true}
-                  animated
-                  androidRenderMode="gps"
-                  showsUserHeadingIndicator={true}
-                />
-              </Mapbox.MapView>
-              <TouchableOpacity
-                onPress={handleRegainLocation}
-                style={styles.regainPosition}>
-                <Image
-                  source={ImageAssets.MapIcon}
-                  style={{width: 16, height: 16}}
-                  resizeMode={'cover'}
-                  tintColor={colors.bg_default}
-                />
-                <Text style={{color: colors.bg_default, marginLeft: 4}}>
-                  {getLabel('currentPosition')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </Block>
+          <MapView
+            mapboxCameraRef={mapboxCameraRef}
+            handleRegainPosition={handleRegainLocation}
+            location={location}
+            listCustomerVisit={listCustomerVisit}
+          />
         );
       }
       case 8: {
         return (
-          <Block>
+          <Block marginTop={16} marginBottom={16}>
             <Block style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>
                 {getLabel('internalNotifi')}
@@ -864,7 +692,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}} edges={['top']}>
+    <SafeAreaView style={{flex: 1}} edges={['top','bottom']}>
       {isPending ? (
         <Block block justifyContent="center" alignItems="center">
           {' '}
@@ -876,8 +704,10 @@ const HomeScreen = () => {
             data={[]}
             renderItem={() => null}
             getItemCount={getItemCount}
-            bounces={false}
+            
+            bounces={true}
             // style={styles.root}
+            decelerationRate={'fast'}
             getItem={getItem}
             contentContainerStyle={styles.root}
             showsVerticalScrollIndicator={false}

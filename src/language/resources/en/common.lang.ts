@@ -288,5 +288,8 @@ export default {
   errDistance: 'Distance error',
   mgsDistanceErr: 'You need to move to a suitable location to perform CheckOut',
   tryAgain:'Try Again',
-  staff:'Staff'
+  staff:'Staff',
+  close:'Close',
+  regainPosition:'Regain Position',
+  
 };

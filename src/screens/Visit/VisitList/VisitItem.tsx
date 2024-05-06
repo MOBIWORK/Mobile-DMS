@@ -1,59 +1,52 @@
-import React, {FC, useMemo, useTransition} from 'react';
+import React, {FC,  useMemo,useTransition} from 'react';
 import {VisitListItemType} from '../../../models/types';
 import {
   Image,
-  Pressable,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {AppButton} from '../../../components/common';
+import {AppButton, Block, AppText as Text} from '../../../components/common';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {navigate} from '../../../navigation/navigation-service';
-import {ScreenConstant} from '../../../const';
+
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorBoundary';
 import {
-  backgroundErrorListener,
+
   calculateDistance,
-  generateRandomObjectId,
+
   useSelector,
 } from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {dispatch} from '../../../utils/redux';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {CheckinData, DMSConfigMobile} from '../../../services/appService';
-import moment from 'moment';
+
 import isEquals from 'react-fast-compare';
-import {CommonUtils} from '../../../utils';
-import {useBatteryLevel} from 'expo-battery';
+
 
 export interface LocationProps {
   long: number;
   lat: number;
 }
 
-const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
+const VisitItem: FC<VisitItemProps> = ({
+  item,
+  handleOpenMap,
+  handleClose,
+handlePressDetail,
+  handlePressing
+}) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
-  const batteryLevel = useBatteryLevel();
+  // const batteryLevel = useBatteryLevel();
   const [isPending, startTransition] = useTransition();
-  const currentCustomerCheckin = useSelector(
-    state => state.app.dataCheckIn,
-    shallowEqual,
-  );
+  
   const currentLocation = useSelector(
     state => state.app.currentLocation,
     shallowEqual,
-  );
-  const systemConfig: DMSConfigMobile = useSelector(
-    state => state.app.systemConfig,
   );
 
   const distanceCal = useMemo(() => {
@@ -67,82 +60,17 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
     return {location, distance};
   }, [item, currentLocation]);
 
-  // const onPressCheckIn = (item: VisitListItemType) => {
-  //   handleBackground(item);
-  // };
-
-  const handleBackground = (item: VisitListItemType, isDetail: boolean) => {
-    CommonUtils.getCurrentLocation(
-      location => {
-        let data: CheckinData = {
-          checkin_id:
-            currentCustomerCheckin &&
-            currentCustomerCheckin?.kh_ma === item.customer_code
-              ? currentCustomerCheckin.checkin_id
-              : generateRandomObjectId(),
-          kh_ma: item.customer_code,
-          kh_ten: item.customer_name,
-          kh_diachi: item.customer_primary_address,
-          kh_long: distanceCal?.location?.long ?? '',
-          kh_lat: distanceCal?.location?.lat ?? '',
-          checkin_giovao: new Date().getTime() / 1000,
-          checkin_pinvao:
-            batteryLevel > 0
-              ? Math.round(batteryLevel * 10000) / 100
-              : -Math.round(batteryLevel * 10000) / 100,
-          checkin_khoangcach: distanceCal.distance,
-          createdDate: moment(new Date()).valueOf(),
-          checkin_timegps: moment(new Date(location.timestamp * 1000)).format(
-            'hh:mm',
-          ),
-          checkin_dochinhxac: location.coords.accuracy,
-          checkinvalidate_khoangcachcheckin:
-            systemConfig.saiso_chophep_kb_vitringoaisaiso,
-          checkinvalidate_khoangcachcheckout:
-            systemConfig.saiso_chophep_checkout_ngoaisaiso,
-          checkin_trangthaicuahang: true,
-          checkin_donhang: '',
-          checkin_giora: null,
-          checkin_hinhanh: [],
-          checkin_lat: location.coords.latitude,
-          checkin_long: location.coords.longitude,
-          checkin_pinra: 0,
-          checkout_khoangcach: 0,
-          createByName: '',
-          createdByEmail: '',
-          item: item,
-          ...item,
-        };
-
-        if (isDetail) {
-          navigate(ScreenConstant.VISIT_DETAIL, {
-            data: data,
-          });
-        } else {
-          dispatch(appActions.setDataCheckIn(data));
-          navigate(ScreenConstant.CHECKIN, {
-            item: data,
-          });
-        }
-      },
-      error => backgroundErrorListener(error.code),
-    );
-  };
 
   const statusItem = (status: boolean) => {
     return (
-      <View
-        style={{
-          padding: 8,
-          borderRadius: 10,
-          backgroundColor: status
-            ? 'rgba(34, 197, 94, 0.08)'
-            : 'rgba(255, 171, 0, 0.08)',
-        }}>
+      <Block
+        padding={8}
+        borderRadius={8}
+        color={status ? 'rgba(34, 197, 94, 0.08)' : 'rgba(255, 171, 0, 0.08)'}>
         <Text style={{color: status ? colors.success : colors.warning}}>
           {status ? getLabel('visited') : getLabel('notVisited')}
         </Text>
-      </View>
+      </Block>
     );
   };
 
@@ -151,12 +79,12 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
       <TouchableOpacity
         onPress={() =>
           startTransition(() => {
-            handleBackground(item, true);
+            handlePressDetail(item)
           })
         }>
-        <View style={styles.viewContainer}>
-          <View style={styles.user}>
-            <View style={styles.userLeft}>
+        <Block style={styles.viewContainer}>
+          <Block style={styles.user}>
+            <Block style={styles.userLeft}>
               <Image
                 source={ImageAssets.UserGroupIcon}
                 style={{width: 24, height: 24}}
@@ -164,10 +92,10 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
                 tintColor={item.is_checkin ? colors.success : colors.warning}
               />
               <Text style={styles.userTextLeft}>{item.customer_name}</Text>
-            </View>
+            </Block>
             {statusItem(item.is_checkin)}
-          </View>
-          <View style={styles.content}>
+          </Block>
+          <Block style={styles.content}>
             <Image
               source={ImageAssets.MapPinIcon}
               style={{width: 16, height: 16}}
@@ -180,7 +108,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
               ellipsizeMode={'tail'}>
               {item.customer_primary_address}
             </Text>
-          </View>
+          </Block>
           <View style={styles.content}>
             <Image
               source={ImageAssets.PhoneIcon}
@@ -192,15 +120,14 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
               {item.mobile_no ?? '---'}
             </Text>
           </View>
-          <View
-            style={[
-              styles.content,
-              {marginTop: 8, justifyContent: 'space-between'},
-            ]}>
+          <Block
+            marginTop={8}
+            justifyContent="space-between"
+            style={[styles.content]}>
             <AppButton
               onPress={() =>
                 startTransition(() => {
-                  handleBackground(item, false);
+                  handlePressing(item, false);
                 })
               }
               style={createStyleSheet(theme).button(false)}
@@ -225,10 +152,10 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
                 }
               />
               <Text
+                color={
+                  distanceCal.distance ? colors.action : colors.text_secondary
+                }
                 style={{
-                  color: distanceCal.distance
-                    ? colors.action
-                    : colors.text_secondary,
                   textDecorationLine: distanceCal.distance
                     ? 'underline'
                     : 'none',
@@ -238,7 +165,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
                   : getLabel('unknown')}
               </Text>
             </TouchableOpacity>
-          </View>
+          </Block>
           {handleClose && (
             <TouchableOpacity
               onPress={handleClose}
@@ -250,7 +177,7 @@ const VisitItem: FC<VisitItemProps> = ({item, handleOpenMap, handleClose}) => {
               />
             </TouchableOpacity>
           )}
-        </View>
+        </Block>
       </TouchableOpacity>
     </ErrorBoundary>
   );
@@ -260,6 +187,8 @@ interface VisitItemProps {
   handleOpenMap?: (item: VisitListItemType) => void;
   handleClose?: () => void;
   onPress?: () => void;
+  handlePressDetail:(item:VisitListItemType) => void
+  handlePressing:(item: VisitListItemType, isDetail: boolean) => void
 }
 
 export default React.memo(VisitItem, isEquals);
@@ -295,7 +224,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       marginRight: 8,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'flex-start',
+      // justifyContent: 'flex-start',
     } as ViewStyle,
     button: (itemStatus: boolean) =>
       ({

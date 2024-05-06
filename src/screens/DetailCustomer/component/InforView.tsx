@@ -9,9 +9,7 @@ import {useTranslation} from 'react-i18next';
 import {AppConstant} from '../../../const';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {formatCash} from '../../../utils/commom.utils';
 import {formatMoney} from '../../../config/function';
-import moment from 'moment';
 
 type Props = {
   data: IDataCustomers;
@@ -149,7 +147,7 @@ const InforBlock = (props: Props) => {
             colorTheme="text_primary"
             lineHeight={24}>
             {props.data.custom_birthday != null
-              ? moment(props.data.custom_birthday * 1000).format('DD/MM/YYYY')
+              ? props.data.custom_birthday
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />

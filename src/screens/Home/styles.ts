@@ -10,7 +10,8 @@ export const rootStyles = (theme: AppTheme) =>
       paddingHorizontal: 16,
     } as ViewStyle,
     root:{
-        paddingHorizontal:16
+        paddingHorizontal:16,
+        paddingVertical:16
     } as ViewStyle,
     flexSpace: {
       flexDirection: 'row',

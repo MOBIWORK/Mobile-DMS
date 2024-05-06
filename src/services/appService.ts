@@ -30,7 +30,7 @@ export type CustomerParams = {
 };
 
 export type CheckinData = {
-  checkin_id: string;
+  checkin_id: string | any;
   kh_ma: string;
   kh_ten: string;
   kh_diachi: string;
@@ -78,6 +78,34 @@ export type DMSConfigMobile = {
   soluong_anh: number;
   batbuoc_ghichu: number;
   doctype: string;
+  config_map_by_vgm:VGMType[]
+};
+
+type VGMType = {
+  id: string;
+  group: boolean;
+  visible: boolean;
+  label: string;
+  children: VGMChildren[];
+};
+type VGMChildren = {
+  id: string;
+  label: string;
+  source: {
+    hex_general_2020: {
+      maxzoom: number;
+      type: string;
+      title: string[];
+    };
+  };
+  layers: {
+    id: string;
+    type: string;
+    source: string;
+    layout: {visible: string};
+  }[];
+  visible: boolean;
+  legend: string;
 };
 
 export type ICheckFakeGPS = {
