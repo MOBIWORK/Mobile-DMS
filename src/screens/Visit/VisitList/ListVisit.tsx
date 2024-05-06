@@ -438,7 +438,7 @@ const ListVisit = () => {
                   `${item.customer_code} - ${index}`
                 }
                 decelerationRate={'normal'}
-                bounces={false}
+                bounces={true}
                 initialNumToRender={4}
                 refreshControl={
                   <RefreshControl

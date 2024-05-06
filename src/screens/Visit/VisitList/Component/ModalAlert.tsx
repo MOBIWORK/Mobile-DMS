@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, { useRef} from 'react';
+import React, {useRef} from 'react';
 import Modal from 'react-native-modal';
 import {Block, AppText as Text} from '../../../../components/common';
 import {ModalType} from '../ListVisit';
@@ -31,10 +31,16 @@ type Props = {
   setShow: React.Dispatch<React.SetStateAction<ModalType>>;
   currentLocation: any;
   item?: VisitListItemType;
-  handleCheckin:(item:VisitListItemType) => void
+  handleCheckin: (item: VisitListItemType) => void;
 };
 
-const ModalAlert = ({show, setShow, item, currentLocation,handleCheckin}: Props) => {
+const ModalAlert = ({
+  show,
+  setShow,
+  item,
+  currentLocation,
+  handleCheckin,
+}: Props) => {
   const theme = useTheme();
   const location: LocationProps =
     item?.customer_location_primary != null &&
@@ -44,6 +50,7 @@ const ModalAlert = ({show, setShow, item, currentLocation,handleCheckin}: Props)
   const systemConfig: DMSConfigMobile = useSelector(
     state => state.app.systemConfig,
   );
+  const curLocation = useRef<any>(currentLocation);
 
   const {t: getLabel} = useTranslation();
 
@@ -60,7 +67,7 @@ const ModalAlert = ({show, setShow, item, currentLocation,handleCheckin}: Props)
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
       locations => {
-        dispatch(appActions.onSetCurrentLocation(location));
+        curLocation.current = location;
         mapboxCameraRef.current &&
           mapboxCameraRef.current.moveTo(
             [locations.coords.longitude, locations.coords.latitude],
@@ -142,10 +149,10 @@ const ModalAlert = ({show, setShow, item, currentLocation,handleCheckin}: Props)
                     animationMode={'flyTo'}
                     animationDuration={0}
                     centerCoordinate={
-                      currentLocation &&
-                      Object.keys(currentLocation.coords).length > 0 && [
-                        currentLocation.coords.longitude,
-                        currentLocation.coords.latitude,
+                      curLocation.current &&
+                      Object.keys(curLocation.current.coords).length > 0 && [
+                        curLocation.current.coords.longitude,
+                        curLocation.current.coords.latitude,
                       ]
                     }
                     zoomLevel={
@@ -195,7 +202,9 @@ const ModalAlert = ({show, setShow, item, currentLocation,handleCheckin}: Props)
                     </Text>
                   </TouchableOpacity>
                   {systemConfig.kb_vitringoaisaiso === 1 && (
-                    <TouchableOpacity style={styles.checkinButton} onPress={() => handleCheckin(item!) }>
+                    <TouchableOpacity
+                      style={styles.checkinButton}
+                      onPress={() => handleCheckin(item!)}>
                       <Text
                         fontSize={14}
                         lineHeight={21}
