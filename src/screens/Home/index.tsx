@@ -1,5 +1,4 @@
 import React, {
-  startTransition,
   useCallback,
   useEffect,
   useMemo,
@@ -30,12 +29,7 @@ import {ImageAssets} from '../../assets';
 import {AppConstant, ScreenConstant} from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import BarChartStatistical from './BarChart';
-import {
-  AppAvatar,
-  AppContainer,
-  AppIcons,
-  Block,
-} from '../../components/common';
+import {AppAvatar, AppIcons, Block} from '../../components/common';
 import {useTheme} from '../../layouts/theme';
 import {DataConstant} from '../../const';
 
@@ -139,10 +133,8 @@ const HomeScreen = () => {
   const [passwordStore] = useMMKVString(AppConstant.passwordStore);
 
   const getWidget = () => {
-    if (!widgets) {
-      const arrWg = DataConstant.DataWidget.slice(0, 4);
-      setWidgets(JSON.stringify(arrWg));
-    }
+    const arrWg = DataConstant.DataWidget.slice(0, 4);
+    setWidgets(JSON.stringify(arrWg));
   };
 
   const renderUiWidget = useCallback(() => {
@@ -652,12 +644,7 @@ const HomeScreen = () => {
         );
       }
       case 2: {
-        return (
-          <>
-            <Block style={[styles.shadow, styles.containerTimekeep]} />
-            {renderUiWidget()}
-          </>
-        );
+        return renderUiWidget();
       }
       case 3: {
         return renderUiStatistical();
@@ -668,7 +655,7 @@ const HomeScreen = () => {
             <Block style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>{getLabel('sales')}</Text>
             </Block>
-            <Block>
+            <Block style={{marginHorizontal: 16}}>
               <BarChartStatistical
                 color={colors.action}
                 isSales
@@ -684,7 +671,7 @@ const HomeScreen = () => {
             <Block style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>{getLabel('revenue')}</Text>
             </Block>
-            <Block>
+            <Block style={{marginHorizontal: 16}}>
               <BarChartStatistical
                 isSales={false}
                 color={colors.main}
@@ -738,10 +725,8 @@ const HomeScreen = () => {
                 pitchEnabled={false}
                 attributionEnabled={false}
                 scaleBarEnabled={false}
-                zoomEnabled
-                scrollEnabled
-                logoEnabled={false}
                 styleURL={Mapbox.StyleURL.Street}
+                logoEnabled={false}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -864,7 +849,12 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}} edges={['top']}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.bg_neutral,
+      }}
+      edges={['top']}>
       {isPending ? (
         <Block block justifyContent="center" alignItems="center">
           {' '}
@@ -877,7 +867,6 @@ const HomeScreen = () => {
             renderItem={() => null}
             getItemCount={getItemCount}
             bounces={false}
-            // style={styles.root}
             getItem={getItem}
             contentContainerStyle={styles.root}
             showsVerticalScrollIndicator={false}

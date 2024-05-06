@@ -46,24 +46,44 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   const handleItem = (item: IFilterType) => {
     const newData =
       curData &&
-      curData.map(itemCur => {
+      curData.map((itemCur, index) => {
         if (item.value === itemCur.value) {
-          return {...itemCur, isSelected: !itemCur.isSelected};
+          return {
+            ...itemCur,
+            id: index,
+            isSelected: !itemCur.isSelected,
+          };
         } else {
           return itemCur;
         }
       });
+    if (newData) {
+      const selectedItem = newData.find(
+        item => item.value === item.value && item.isSelected,
+      );
+      if (selectedItem) {
+        const selectedIndex = newData.indexOf(selectedItem);
+        newData.splice(selectedIndex, 1); // Remove selected item
+        newData.unshift(selectedItem); // Add it to the beginning of the array
+      }
+    }
     setCurData(newData);
   };
 
   const handleAlbum = (selectedItem: IFilterType[]) => {
+    console.log(
+      'hehe',
+      selectedItem.filter(item => item.isSelected),
+    );
     const selectedData = selectedItem
       .filter(item => item.isSelected)
       .map((selected, selectedIdx) => ({
-        id: selectedIdx,
+        id: selected.id,
         label: selected.label,
         image: ['IconCamera'],
       }));
+
+    // console.log('selectedItem1', selectedData);
 
     const albumImageDataCopy = [...albumImageData];
 
@@ -82,11 +102,13 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
       }
     });
 
+    // console.log('selectedItem2', selectedData);
+
     if (selectedData.length > 0) {
       if (albumImageData.length > 0) {
         setAlbumImageData([
           ...selectedData.map((item, index) => ({
-            id: item.id, // Adjust this based on your actual structure
+            id: index, // Adjust this based on your actual structure
             label: item.label,
             image: albumImageData[index]?.image
               ? albumImageData[index]?.image

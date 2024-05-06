@@ -1,5 +1,11 @@
 import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {useCallback, useState, useEffect, useRef,useTransition} from 'react';
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+  useTransition,
+} from 'react';
 import {
   Block,
   AppText as Text,
@@ -85,7 +91,7 @@ const CheckIn = () => {
     shallowEqual,
   );
   const timeCheckin = useRef(
-    decimalMinutesToTime(systemConfig.thoigian_toithieu - 2),
+    decimalMinutesToTime(systemConfig.thoigian_toithieu),
   );
   useDisableBackHandler(true);
 

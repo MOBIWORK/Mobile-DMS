@@ -396,8 +396,6 @@ const ListVisit = () => {
     );
   }, []);
 
-  
-
   const _renderContent = () => {
     return (
       <Block marginTop={8}>
@@ -413,14 +411,14 @@ const ListVisit = () => {
               <SkeletonLoading />
             ) : (
               <FlatList
-                style={{height: '85%'}}
+                style={{height: '85%', marginTop: 16}}
                 showsVerticalScrollIndicator={false}
                 data={customerDataSort ?? listCustomer.data}
                 keyExtractor={(item, index) =>
                   `${item.customer_code} - ${index}`
                 }
                 decelerationRate={'normal'}
-                bounces={false}
+                bounces={true}
                 initialNumToRender={4}
                 refreshControl={
                   <RefreshControl
@@ -697,8 +695,6 @@ const ListVisit = () => {
     <SafeAreaView
       edges={['bottom', 'top']}
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
-        
-        
       {_renderHeader()}
       {_renderContent()}
       <FilterContainer
