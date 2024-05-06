@@ -613,7 +613,7 @@ const HomeScreen = () => {
             <Block style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>{getLabel('revenue')}</Text>
             </Block>
-            <Block>
+            <Block style={{marginHorizontal: 16}}>
               <BarChartStatistical
                 isSales={false}
                 color={colors.main}
@@ -685,12 +685,13 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView
+    <Block
       style={{
         flex: 1,
         backgroundColor: colors.bg_neutral,
       }}
-      edges={['top']}>
+      // edges={['top']}
+    >
       {isPending ? (
         <Block block justifyContent="center" alignItems="center">
           {' '}
@@ -727,7 +728,7 @@ const HomeScreen = () => {
           />
         </React.Fragment>
       )}
-    </SafeAreaView>
+    </Block>
   );
 };
 

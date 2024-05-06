@@ -36,6 +36,7 @@ const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
         padding: 16,
         backgroundColor: colors.bg_default,
         borderRadius: 16,
+        // marginHorizontal: 16,
       }}>
       <View>
         <Text style={[styles.title]}>
@@ -76,7 +77,7 @@ interface PropTypes {
   data: any;
 }
 
-export default React.memo(BarChartStatistical,isEqual);
+export default React.memo(BarChartStatistical, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
