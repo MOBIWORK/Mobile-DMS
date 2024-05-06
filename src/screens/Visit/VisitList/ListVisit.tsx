@@ -716,7 +716,7 @@ const ListVisit = () => {
                 (systemConfig.saiso_chophep_kb_vitringoaisaiso +
                   AppConstant.additional_distance) /
                   1000 &&
-              isDetail === false
+              isDetail === false 
             ) {
               setCurrentSelect(item);
               setModalAlert(prev => ({
