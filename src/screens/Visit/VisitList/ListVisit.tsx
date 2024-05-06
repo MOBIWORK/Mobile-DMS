@@ -702,41 +702,43 @@ const ListVisit = () => {
         type: 'loading',
         status: true,
       });
-      startEffect(() => {
-        CommonUtils.getCurrentLocation(curLocation => {
-          let data = calculateDistance(
-            curLocation.coords.latitude,
-            curLocation.coords.longitude,
-            location?.lat,
-            location.long,
-          );
-          if (
-            data >
-              (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-                AppConstant.additional_distance) /
-                1000 &&
-            isDetail === false
-          ) {
-            setCurrentSelect(item);
-            setModalAlert(prev => ({
-              ...prev,
-              type: 'warn',
-              cal:
-                data -
+      setTimeout(() => {
+        startEffect(() => {
+          CommonUtils.getCurrentLocation(curLocation => {
+            let data = calculateDistance(
+              curLocation.coords.latitude,
+              curLocation.coords.longitude,
+              location?.lat,
+              location.long,
+            );
+            if (
+              data >
                 (systemConfig.saiso_chophep_kb_vitringoaisaiso +
                   AppConstant.additional_distance) /
-                  1000,
-            }));
-          } else {
-            setModalAlert(prev => ({
-              ...prev,
-              status: false,
-            }));
+                  1000 &&
+              isDetail === false
+            ) {
+              setCurrentSelect(item);
+              setModalAlert(prev => ({
+                ...prev,
+                type: 'warn',
+                cal:
+                  data -
+                  (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                    AppConstant.additional_distance) /
+                    1000,
+              }));
+            } else {
+              setModalAlert(prev => ({
+                ...prev,
+                status: false,
+              }));
 
-            handleBackground(item);
-          }
+              handleBackground(item);
+            }
+          });
         });
-      });
+      }, 1000);
     },
     [],
   );
