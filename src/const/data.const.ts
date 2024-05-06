@@ -15,30 +15,30 @@ export const DataWidget: IWidget[] = [
     icon: 'iconContainer',
     navigate: ScreenConstant.LIST_PRODUCT,
   },
-  {
-    id: 3,
-    name: 'Khuyến mại',
-    icon: 'iconTicket',
-    navigate: "",
-  },
+  // {
+  //   id: 3,
+  //   name: 'Khuyến mại',
+  //   icon: 'iconTicket',
+  //   navigate: "",
+  // },
   {
     id: 4,
     name: 'Thông báo nội bộ',
     icon: 'iconBell',
     navigate: '',
   },
-  {
-    id: 5,
-    name: 'Nhắc nhở',
-    icon: 'iconClock',
-    navigate: '',
-  },
-  {
-    id: 6,
-    name: 'Quản lý hình ảnh',
-    icon: 'iconImage',
-    navigate: '',
-  },
+  // {
+  //   id: 5,
+  //   name: 'Nhắc nhở',
+  //   icon: 'iconClock',
+  //   navigate: '',
+  // },
+  // {
+  //   id: 6,
+  //   name: 'Quản lý hình ảnh',
+  //   icon: 'iconImage',
+  //   navigate: '',
+  // },
   {
     id: 7,
     name: 'Đơn hàng',

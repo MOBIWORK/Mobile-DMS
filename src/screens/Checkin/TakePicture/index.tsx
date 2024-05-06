@@ -171,8 +171,9 @@ const TakePicture = () => {
       const res: any = await CheckinService.getListAlbum();
       if (res?.result?.length > 0) {
         const listAlbumResult: ListAlbumType[] = res.result;
-        const listAlbum = listAlbumResult.map(item => {
+        const listAlbum = listAlbumResult.map((item, index) => {
           return {
+            id: index,
             label: item.ten_album,
             value: item.ma_album,
             isSelected: false,
@@ -420,41 +421,3 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       justifyContent: 'center',
     } as ViewStyle,
   });
-
-// const ListAlbumFake: any[] = [
-//   {
-//     label: 'Album 91',
-//     value: 1,
-//     isSelected: false,
-//   },
-//   {
-//     label: 'Hình ảnh cửa hàng 1',
-//     value: 2,
-//     isSelected: false,
-//   },
-//   {
-//     label: 'Album 2',
-//     value: 3,
-//     isSelected: false,
-//   },
-//   {
-//     label: 'Hình ảnh công ty',
-//     value: 4,
-//     isSelected: false,
-//   },
-//   {
-//     label: 'Tình trạng viếng thăm',
-//     value: 5,
-//     isSelected: false,
-//   },
-//   {
-//     label: 'Báo cáo khách hàng',
-//     value: 6,
-//     isSelected: false,
-//   },
-//   {
-//     label: 'album6',
-//     value: 7,
-//     isSelected: false,
-//   },
-// ];

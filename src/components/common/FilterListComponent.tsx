@@ -16,7 +16,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import { AppTheme, useTheme } from '../../layouts/theme';
+import {AppTheme, useTheme} from '../../layouts/theme';
 
 const FilterListComponent: FC<FilterListComponentProps> = ({
   title,
@@ -30,9 +30,9 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
   screenName,
   isSearch = false,
 }) => {
-  const {colors} =useTheme() ;
+  const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-  const styles = rootStyles(useTheme())
+  const styles = rootStyles(useTheme());
   return (
     <MainLayout
       style={{
@@ -128,18 +128,20 @@ interface FilterListComponentProps {
 }
 export default FilterListComponent;
 
-const rootStyles = (theme:AppTheme) => StyleSheet.create({
-  touchableItem:{
-    marginVertical: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-  } as ViewStyle
-})
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    touchableItem: {
+      marginVertical: 5,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+    } as ViewStyle,
+  });
 
 export type IFilterType = {
   label: string;
   value?: string | number;
+  id?: string | number;
   isSelected: boolean;
 };

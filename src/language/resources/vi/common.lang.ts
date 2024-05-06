@@ -293,5 +293,7 @@ export default {
   errDistance: 'Sai số khoảng cách',
   mgsDistanceErr: 'Bạn cần di chuyển đến vị trí phù hợp để thực hiện CheckOut',
   tryAgain:'Thử lại',
-  staff:"Nhân viên"
+  staff:"Nhân viên",
+  close:'Đóng',
+  regainPosition:'Lấy lại vị trí',
 };

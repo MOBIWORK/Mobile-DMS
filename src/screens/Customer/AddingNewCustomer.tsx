@@ -122,7 +122,10 @@ const AddingNewCustomer = () => {
         newListData.customer_type === getLabel('individual')
           ? 'Individual'
           : 'Company',
-      address_title_cus: `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`,
+      address_title_cus:
+        Object.keys(address).length > 0
+          ? `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`
+          : '',
       address_type_cus: Object.keys(address).length > 0 ? 'Billing' : '',
       detail_address_cus:
         Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
@@ -174,7 +177,7 @@ const AddingNewCustomer = () => {
       });
     }
     dispatch(setProcessingStatus(false));
-    // console.log('updateListData', updateListData);
+    console.log('updateListData', updateListData);
   };
 
   const onDismissSingle = React.useCallback(() => {

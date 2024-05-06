@@ -9,6 +9,7 @@ import {CommonUtils} from '../../utils';
 import {useTranslation} from 'react-i18next';
 // @ts-ignore
 import StringFormat from 'string-format';
+import isEqual from 'react-fast-compare';
 
 const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
   const {colors} = useTheme();
@@ -35,6 +36,7 @@ const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
         padding: 16,
         backgroundColor: colors.bg_default,
         borderRadius: 16,
+        // marginHorizontal: 16,
       }}>
       <View>
         <Text style={[styles.title]}>
@@ -75,7 +77,7 @@ interface PropTypes {
   data: any;
 }
 
-export default BarChartStatistical;
+export default React.memo(BarChartStatistical, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
