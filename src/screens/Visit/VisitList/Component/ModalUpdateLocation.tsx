@@ -128,7 +128,7 @@ const ModalUpdateLocation = ({
 
     const response: any = await CheckinService.updateCustomerAddress(params);
     if (response?.status === ApiConstant.STT_OK) {
-      completeCheckin();
+    //   completeCheckin();
       handleCheckin(item!, isVisible.isDetail);
       onBackButtonPress()
     }

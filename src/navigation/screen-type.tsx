@@ -45,7 +45,7 @@ export type AuthorizeParamsList = {
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
-  [ScreenConstant.CHECKIN]: {item: CheckinData};
+  [ScreenConstant.CHECKIN]: {item: CheckinData,isLocation?:any};
   [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: {data: any};
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;

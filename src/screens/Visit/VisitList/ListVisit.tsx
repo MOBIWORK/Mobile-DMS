@@ -707,6 +707,75 @@ const ListVisit = () => {
     }
   };
 
+  const handleCheckin = useCallback(
+    (item: VisitListItemType, isDetail: boolean) => {
+      let log: LocationProps = JSON.parse(item.customer_location_primary!);
+      let uniqueID = generateRandomObjectId();
+      CommonUtils.getCurrentLocation(
+        location => {
+          let distanceCal = calculateDistance(
+            location.coords.latitude,
+            location.coords.longitude,
+            log?.lat,
+            log.long,
+          );
+          let data: CheckinData = {
+            checkin_id:
+              dataCheckIn &&
+              dataCheckIn?.kh_ma === item.customer_code &&
+              dataCheckIn.checkin_id !== undefined
+                ? dataCheckIn.checkin_id
+                : uniqueID,
+            kh_ma: item.customer_code,
+            kh_ten: item.customer_name,
+            kh_diachi: item.customer_primary_address,
+            kh_long: log.long ?? '',
+            kh_lat: log.lat ?? '',
+            checkin_giovao: new Date().getTime() / 1000,
+            checkin_pinvao:
+              batteryLevel > 0
+                ? Math.round(batteryLevel * 10000) / 100
+                : -Math.round(batteryLevel * 10000) / 100,
+            checkin_khoangcach: distanceCal,
+            createdDate: moment(new Date()).valueOf(),
+            checkin_timegps: moment(new Date(location.timestamp * 1000)).format(
+              'hh:mm',
+            ),
+            checkin_dochinhxac: location.coords.accuracy,
+            checkinvalidate_khoangcachcheckin:
+              systemConfig.saiso_chophep_kb_vitringoaisaiso,
+            checkinvalidate_khoangcachcheckout:
+              systemConfig.saiso_chophep_checkout_ngoaisaiso,
+            checkin_trangthaicuahang: true,
+            checkin_donhang: '',
+            checkin_giora: null,
+            checkin_hinhanh: [],
+            checkin_lat: location.coords.latitude,
+            checkin_long: location.coords.longitude,
+            checkin_pinra: 0,
+            checkout_khoangcach: 0,
+            createByName: '',
+            createdByEmail: '',
+            item: item,
+            ...item,
+          };
+          setModalAlert(prev => ({...prev, status: false}));
+          dispatch(appActions.setDataCheckIn(data));
+          if (isDetail) {
+            navigate(ScreenConstant.VISIT_DETAIL, {data});
+          } else {
+            navigate(ScreenConstant.CHECKIN, {
+              item: data,
+              isLocation: false,
+            });
+          }
+        },
+        error => backgroundErrorListener(error.code),
+      );
+    },
+    [],
+  );
+
   const handleCompareDistance = useCallback(
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
@@ -725,7 +794,7 @@ const ListVisit = () => {
                 location?.lat,
                 location.long,
               );
-              console.log(data,'data distance')
+              console.log(data, 'data distance');
               if (
                 data >
                   (systemConfig.saiso_chophep_kb_vitringoaisaiso +
@@ -997,7 +1066,7 @@ const ListVisit = () => {
       />
       <ModalUpdateLocation
         isVisible={modalUpdateLocation}
-        handleCheckin={handleCompareDistance}
+        handleCheckin={handleCheckin}
         // setVisible={setModalUpdateLocation}
         item={currentSelect.current}
         currentLocation={currentLocation}
