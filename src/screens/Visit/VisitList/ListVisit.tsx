@@ -18,6 +18,7 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import {
+  Alert,
   FlatList,
   Image,
   RefreshControl,
@@ -76,6 +77,7 @@ import ModalAlert from './Component/ModalAlert';
 import {navigate} from '../../../navigation/navigation-service';
 import moment from 'moment';
 import {useBatteryLevel} from 'expo-battery';
+import ModalUpdateLocation from './Component/ModalUpdateLocation';
 
 //config Mapbox
 
@@ -83,6 +85,10 @@ export interface ModalType {
   status: boolean;
   type: 'warn' | 'loading';
   cal?: number;
+}
+export interface ModalUpdateType {
+  status: boolean;
+  isDetail: boolean;
 }
 
 const ListVisit = () => {
@@ -127,6 +133,11 @@ const ListVisit = () => {
     status: false,
     type: 'warn',
   });
+  const [modalUpdateLocation, setModalUpdateLocation] =
+    useState<ModalUpdateType>({
+      status: false,
+      isDetail: false,
+    });
   const [distanceFilterValue, setDistanceFilterValue] = useState<string>(
     getLabel('nearest'),
   );
@@ -149,7 +160,7 @@ const ListVisit = () => {
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
-  const [currentSelect, setCurrentSelect] = useState<VisitListItemType>();
+  const currentSelect = useRef<VisitListItemType>();
   const backgroundErrorListener = useCallback(
     (errorCode: number) => {
       // Handle background location errors
@@ -170,6 +181,7 @@ const ListVisit = () => {
     },
     [error],
   );
+  // console.log(customerDataSort,'sort')
 
   const customerCheckinCount = useMemo(() => {
     if (listCustomer && customerDataSort && customerDataSort.length > 0) {
@@ -695,50 +707,128 @@ const ListVisit = () => {
     }
   };
 
+  const handleCheckin = useCallback(
+    (item: VisitListItemType, isDetail: boolean,coords:any) => {
+      let log: LocationProps = JSON.parse(item.customer_location_primary!);
+      let uniqueID = generateRandomObjectId();
+      CommonUtils.getCurrentLocation(
+        location => {
+          let distanceCal = calculateDistance(
+            location.coords.latitude,
+            location.coords.longitude,
+            coords.lat,
+            coords.lon,
+          );
+          let data: CheckinData = {
+            checkin_id:
+              dataCheckIn &&
+              dataCheckIn?.kh_ma === item.customer_code &&
+              dataCheckIn.checkin_id !== undefined
+                ? dataCheckIn.checkin_id
+                : uniqueID,
+            kh_ma: item.customer_code,
+            kh_ten: item.customer_name,
+            kh_diachi: item.customer_primary_address,
+            kh_long: coords.lon || '',
+            kh_lat: coords.lat || '',
+            checkin_giovao: new Date().getTime() / 1000,
+            checkin_pinvao:
+              batteryLevel > 0
+                ? Math.round(batteryLevel * 10000) / 100
+                : -Math.round(batteryLevel * 10000) / 100,
+            checkin_khoangcach: distanceCal,
+            createdDate: moment(new Date()).valueOf(),
+            checkin_timegps: moment(new Date(location.timestamp * 1000)).format(
+              'hh:mm',
+            ),
+            checkin_dochinhxac: location.coords.accuracy,
+            checkinvalidate_khoangcachcheckin:
+              systemConfig.saiso_chophep_kb_vitringoaisaiso,
+            checkinvalidate_khoangcachcheckout:
+              systemConfig.saiso_chophep_checkout_ngoaisaiso,
+            checkin_trangthaicuahang: true,
+            checkin_donhang: '',
+            checkin_giora: null,
+            checkin_hinhanh: [],
+            checkin_lat: location.coords.latitude,
+            checkin_long: location.coords.longitude,
+            checkin_pinra: 0,
+            checkout_khoangcach: 0,
+            createByName: '',
+            createdByEmail: '',
+            item: item,
+            ...item,
+          };
+          setModalAlert(prev => ({...prev, status: false}));
+          dispatch(appActions.setDataCheckIn(data));
+          if (isDetail) {
+            navigate(ScreenConstant.VISIT_DETAIL, {data});
+          } else {
+            navigate(ScreenConstant.CHECKIN, {
+              item: data,
+              isLocation: false,
+            });
+          }
+        },
+        error => backgroundErrorListener(error.code),
+      );
+    },
+    [],
+  );
+
   const handleCompareDistance = useCallback(
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
-      setModalAlert({
-        type: 'loading',
-        status: true,
-      });
-      setTimeout(() => {
-        startEffect(() => {
-          CommonUtils.getCurrentLocation(curLocation => {
-            let data = calculateDistance(
-              curLocation.coords.latitude,
-              curLocation.coords.longitude,
-              location?.lat,
-              location.long,
-            );
-            if (
-              data >
-                (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-                  AppConstant.additional_distance) /
-                  1000 &&
-              isDetail === false
-            ) {
-              setCurrentSelect(item);
-              setModalAlert(prev => ({
-                ...prev,
-                type: 'warn',
-                cal:
-                  data -
+      currentSelect.current = item;
+      if (item.customer_location_primary != null) {
+        setTimeout(() => {
+          setModalAlert({
+            type: 'loading',
+            status: true,
+          });
+          startEffect(() => {
+            CommonUtils.getCurrentLocation(curLocation => {
+              let data = calculateDistance(
+                curLocation.coords.latitude,
+                curLocation.coords.longitude,
+                location?.lat,
+                location.long,
+              );
+              console.log(data, 'data distance');
+              if (
+                data >
                   (systemConfig.saiso_chophep_kb_vitringoaisaiso +
                     AppConstant.additional_distance) /
-                    1000,
-              }));
-            } else {
-              setModalAlert(prev => ({
-                ...prev,
-                status: false,
-              }));
+                    1000 &&
+                isDetail === false
+              ) {
+                currentSelect.current = item;
+                setModalAlert(prev => ({
+                  ...prev,
+                  type: 'warn',
+                  cal:
+                    data -
+                    (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                      AppConstant.additional_distance) /
+                      1000,
+                }));
+              } else {
+                setModalAlert(prev => ({
+                  ...prev,
+                  status: false,
+                }));
 
-              handleBackground(item);
-            }
+                handleBackground(item);
+              }
+            });
           });
+        }, 1000);
+      } else {
+        setModalUpdateLocation({
+          status: true,
+          isDetail: false,
         });
-      }, 1000);
+      }
     },
     [],
   );
@@ -807,66 +897,81 @@ const ListVisit = () => {
   //  console.log(dataCheckIn.checkin_id,'checkinId')
 
   const onPressToDetail = useCallback((item: VisitListItemType) => {
-    let log: LocationProps = JSON.parse(item.customer_location_primary!);
-    setModalAlert({status: true, type: 'loading'});
-    let uniqueID = generateRandomObjectId();
-    CommonUtils.getCurrentLocation(
-      location => {
-        let distanceCal = calculateDistance(
-          location.coords.latitude,
-          location.coords.longitude,
-          log?.lat,
-          log.long,
+    if (item.customer_location_primary != null) {
+      currentSelect.current = item;
+      let log: LocationProps = JSON.parse(item.customer_location_primary!);
+      setModalAlert({status: true, type: 'loading'});
+      let uniqueID = generateRandomObjectId();
+      startEffect(() => {
+        CommonUtils.getCurrentLocation(
+          location => {
+            let distanceCal = calculateDistance(
+              location.coords.latitude,
+              location.coords.longitude,
+              log?.lat,
+              log.long,
+            );
+            let data: CheckinData = {
+              checkin_id:
+                dataCheckIn &&
+                dataCheckIn?.kh_ma === item.customer_code &&
+                dataCheckIn.checkin_id !== undefined
+                  ? dataCheckIn.checkin_id
+                  : uniqueID,
+              kh_ma: item.customer_code,
+              kh_ten: item.customer_name,
+              kh_diachi: item.customer_primary_address,
+              kh_long: log.long ?? '',
+              kh_lat: log.lat ?? '',
+              checkin_giovao: new Date().getTime() / 1000,
+              checkin_pinvao:
+                batteryLevel > 0
+                  ? Math.round(batteryLevel * 10000) / 100
+                  : -Math.round(batteryLevel * 10000) / 100,
+              checkin_khoangcach: distanceCal,
+              createdDate: moment(new Date()).valueOf(),
+              checkin_timegps: moment(
+                new Date(location.timestamp * 1000),
+              ).format('hh:mm'),
+              checkin_dochinhxac: location.coords.accuracy,
+              checkinvalidate_khoangcachcheckin:
+                systemConfig.saiso_chophep_kb_vitringoaisaiso,
+              checkinvalidate_khoangcachcheckout:
+                systemConfig.saiso_chophep_checkout_ngoaisaiso,
+              checkin_trangthaicuahang: true,
+              checkin_donhang: '',
+              checkin_giora: null,
+              checkin_hinhanh: [],
+              checkin_lat: location.coords.latitude,
+              checkin_long: location.coords.longitude,
+              checkin_pinra: 0,
+              checkout_khoangcach: 0,
+              createByName: '',
+              createdByEmail: '',
+              item: item,
+              ...item,
+            };
+
+            setModalAlert(prev => ({...prev, status: false}));
+
+            navigate(ScreenConstant.VISIT_DETAIL, {
+              data: data,
+            });
+          },
+          error => backgroundErrorListener(error.code),
         );
-        let data: CheckinData = {
-          checkin_id:
-            dataCheckIn &&
-            dataCheckIn?.kh_ma === item.customer_code &&
-            dataCheckIn.checkin_id !== undefined
-              ? dataCheckIn.checkin_id
-              : uniqueID,
-          kh_ma: item.customer_code,
-          kh_ten: item.customer_name,
-          kh_diachi: item.customer_primary_address,
-          kh_long: log.long ?? '',
-          kh_lat: log.lat ?? '',
-          checkin_giovao: new Date().getTime() / 1000,
-          checkin_pinvao:
-            batteryLevel > 0
-              ? Math.round(batteryLevel * 10000) / 100
-              : -Math.round(batteryLevel * 10000) / 100,
-          checkin_khoangcach: distanceCal,
-          createdDate: moment(new Date()).valueOf(),
-          checkin_timegps: moment(new Date(location.timestamp * 1000)).format(
-            'hh:mm',
-          ),
-          checkin_dochinhxac: location.coords.accuracy,
-          checkinvalidate_khoangcachcheckin:
-            systemConfig.saiso_chophep_kb_vitringoaisaiso,
-          checkinvalidate_khoangcachcheckout:
-            systemConfig.saiso_chophep_checkout_ngoaisaiso,
-          checkin_trangthaicuahang: true,
-          checkin_donhang: '',
-          checkin_giora: null,
-          checkin_hinhanh: [],
-          checkin_lat: location.coords.latitude,
-          checkin_long: location.coords.longitude,
-          checkin_pinra: 0,
-          checkout_khoangcach: 0,
-          createByName: '',
-          createdByEmail: '',
-          item: item,
-          ...item,
-        };
+      });
+    } else {
+      setModalUpdateLocation({
+        status: true,
+        isDetail: true,
+      });
+    }
+  }, []);
 
-        setModalAlert(prev => ({...prev, status: false}));
-
-        navigate(ScreenConstant.VISIT_DETAIL, {
-          data: data,
-        });
-      },
-      error => backgroundErrorListener(error.code),
-    );
+  const onBackButtonPress = useCallback(() => {
+    setModalUpdateLocation(prev => ({...prev, status: false}));
+    sortDataCustomer(distanceFilterValue);
   }, []);
 
   useEffect(() => {
@@ -956,8 +1061,16 @@ const ListVisit = () => {
         show={modalAlert}
         handleCheckin={handleBackground}
         setShow={setModalAlert}
-        item={currentSelect}
+        item={currentSelect.current}
         currentLocation={currentLocation}
+      />
+      <ModalUpdateLocation
+        isVisible={modalUpdateLocation}
+        handleCheckin={handleCheckin}
+        // setVisible={setModalUpdateLocation}
+        item={currentSelect.current}
+        currentLocation={currentLocation}
+        onBackButtonPress={onBackButtonPress}
       />
     </SafeAreaView>
   );

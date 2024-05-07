@@ -24,6 +24,7 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   calculateDistance,
   decimalMinutesToTime,
+  useDeepCompareEffect,
   useDisableBackHandler,
   useSelector,
 } from '../../../config/function';
@@ -33,7 +34,7 @@ import {dispatch} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
-import {goBack} from '../../../navigation/navigation-service';
+import {goBack, navigate} from '../../../navigation/navigation-service';
 import {AppService} from '../../../services';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
@@ -78,6 +79,7 @@ const CheckIn = () => {
     shallowEqual,
   );
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
+  const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
   const [status, setStatus] = useState(
     dataCheckIn?.checkin_trangthaicuahang
       ? dataCheckIn.checkin_trangthaicuahang
@@ -290,7 +292,7 @@ const CheckIn = () => {
     });
     setShow(false);
   }, [dataCheckIn, categoriesCheckin]);
- 
+
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
     const res: any = await AppService.checkOut(dataCheckIn.checkin_id);
@@ -300,6 +302,17 @@ const CheckIn = () => {
       goBack();
     }
   }, [dataCheckIn]);
+
+  useDeepCompareEffect(() => {
+    if (route === false) {
+      navigate(ScreenConstant.CHECKIN_LOCATION, {
+        type: '',
+        data: params,
+      });
+    } else {
+      return;
+    }
+  }, [route]);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>

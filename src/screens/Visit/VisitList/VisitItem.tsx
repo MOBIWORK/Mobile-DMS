@@ -49,8 +49,9 @@ handlePressDetail,
     shallowEqual,
   );
 
+
   const distanceCal = useMemo(() => {
-    let location: LocationProps = JSON.parse(item.customer_location_primary!);
+    let location: LocationProps = JSON.parse(item.customer_location_primary!)  ;
     let distance = calculateDistance(
       currentLocation.coords.latitude,
       currentLocation.coords.longitude,
@@ -58,7 +59,8 @@ handlePressDetail,
       location?.long,
     );
     return {location, distance};
-  }, [item, currentLocation]);
+  }, [item.customer_location_primary, currentLocation]);
+console.log(distanceCal,'cal')
 
 
   const statusItem = (status: boolean) => {
@@ -148,19 +150,19 @@ handlePressDetail,
                 style={{width: 16, height: 16}}
                 resizeMode={'cover'}
                 tintColor={
-                  distanceCal.distance ? colors.action : colors.text_secondary
+                  !Number.isNaN(distanceCal.distance) ? colors.action : colors.text_secondary
                 }
               />
               <Text
                 color={
-                  distanceCal.distance ? colors.action : colors.text_secondary
+                  !Number.isNaN(distanceCal.distance) ? colors.action : colors.text_secondary
                 }
                 style={{
                   textDecorationLine: distanceCal.distance
                     ? 'underline'
                     : 'none',
                 }}>
-                {distanceCal.distance
+                {!Number.isNaN(distanceCal.distance)
                   ? `${Math.floor(distanceCal.distance)}km`
                   : getLabel('unknown')}
               </Text>

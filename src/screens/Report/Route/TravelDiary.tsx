@@ -1,47 +1,55 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
-import { MainLayout } from '../../../layouts';
+import React, {FC, useEffect, useRef, useState} from 'react';
+import {MainLayout} from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
-import {Image,StyleSheet,Text,TextStyle,TouchableOpacity,View,ViewStyle} from 'react-native';
-import { ImageAssets } from '../../../assets';
-import { ExtendedTheme, useTheme } from '@react-navigation/native';
-import { AppContainer, SvgIcon } from '../../../components/common';
-import { KeyAbleProps, ReportTravelDiaryType } from '../../../models/types';
-import { CommonUtils } from '../../../utils';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
+import {ImageAssets} from '../../../assets';
+import {ExtendedTheme, useTheme} from '@react-navigation/native';
+import {AppContainer, SvgIcon} from '../../../components/common';
+import {KeyAbleProps, ReportTravelDiaryType} from '../../../models/types';
+import {CommonUtils} from '../../../utils';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { IFilterType } from '../../../components/common/FilterListComponent';
+import {IFilterType} from '../../../components/common/FilterListComponent';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
-import { ReportService } from '../../../services';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-
+import {ReportService} from '../../../services';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const TravelDiary = () => {
-
   const theme = useTheme();
   const styles = createStyle(theme);
-  const { bottom } = useSafeAreaInsets();
-  const { t: getLabel } = useTranslation();
+  const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
   const [data, setData] = useState<ReportTravelDiaryType[]>([]);
   const [headerDate, setHeaderDate] = useState<string>(
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
-  const [from_date,setFromDate] = useState<number>(new Date().getTime());
-  const [to_date,setToDate] = useState<number>(new Date().getTime());
+  const [from_date, setFromDate] = useState<number>(new Date().getTime());
+  const [to_date, setToDate] = useState<number>(new Date().getTime());
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-      setFromDate(Number(item.value))
-      setToDate(Number(item.value))
+      setFromDate(Number(item.value));
+      setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      const {from_date ,to_date} = CommonUtils.dateToDate(item.value?.toString() || "");
+      const {from_date, to_date} = CommonUtils.dateToDate(
+        item.value?.toString() || '',
+      );
       setFromDate(new Date(from_date).getTime());
       setToDate(new Date(to_date).getTime());
       setHeaderDate(getLabel(String(item.label)));
@@ -52,72 +60,84 @@ const TravelDiary = () => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
 
-  const Item: FC<ItemProps> = ({ item }) => {
-    const customer = JSON.parse(item.ext)
+  const Item: FC<ItemProps> = ({item}) => {
+    const customer = JSON.parse(item.ext);
     return (
       <>
         <View style={styles.rowFlexStart}>
-          <View style={{ alignSelf: 'flex-start', rowGap: 4 }}>
+          <View style={{alignSelf: 'flex-start', rowGap: 4}}>
             <Text style={styles.txtTime}>{item.createddate}</Text>
             <Text style={styles.txtDate}>
               {CommonUtils.convertDate(item.createddate)}
             </Text>
           </View>
-          <View style={{ marginHorizontal: 8 }}>
+          <View style={{marginHorizontal: 8}}>
             <View style={styles.rowFlexStart}>
               <SvgIcon source={'Dot'} size={16} color={theme.colors.success} />
               <Text style={styles.txtStatus}>Checkin</Text>
             </View>
             <View style={styles.content}>
-              <Text style={styles.txtName}>{customer ? customer.customer_name : ""}</Text>
-              <Text style={styles.txtAddress}>{customer ? customer.address : ""}</Text>
+              <Text style={styles.txtName}>
+                {customer ? customer.customer_name : ''}
+              </Text>
+              <Text style={styles.txtAddress}>
+                {customer ? customer.address : ''}
+              </Text>
             </View>
           </View>
         </View>
-        {item.time_checkout != "" && (
+        {item.time_checkout != '' && (
           <View style={styles.rowFlexStart}>
-            <View style={{ alignSelf: 'flex-start', rowGap: 4 }}>
+            <View style={{alignSelf: 'flex-start', rowGap: 4}}>
               <Text style={styles.txtTime}>{item.createddate}</Text>
               <Text style={styles.txtDate}>
                 {CommonUtils.convertDate(item.createddate)}
               </Text>
             </View>
-            <View style={{ marginHorizontal: 8 }}>
+            <View style={{marginHorizontal: 8}}>
               <View style={styles.rowFlexStart}>
-                <SvgIcon source={'Dot'} size={16} color={theme.colors.primary} />
+                <SvgIcon
+                  source={'Dot'}
+                  size={16}
+                  color={theme.colors.primary}
+                />
                 <Text style={styles.txtStatus}>Checkout</Text>
               </View>
               <View style={styles.content}>
-                <Text style={styles.txtName}>{customer ? customer.customer_name : ""}</Text>
-                <Text style={styles.txtAddress}>{customer ? customer.address : ""}</Text>
+                <Text style={styles.txtName}>
+                  {customer ? customer.customer_name : ''}
+                </Text>
+                <Text style={styles.txtAddress}>
+                  {customer ? customer.address : ''}
+                </Text>
               </View>
             </View>
           </View>
         )}
-
       </>
     );
   };
 
   const fetchData = async () => {
-    dispatch(appActions.setProcessingStatus(true))
-    const { status, data }: KeyAbleProps = await ReportService.getTravelLogReport({
+    dispatch(appActions.setProcessingStatus(true));
+    const response: any = await ReportService.getTravelLogReport({
       fromdate: new Date(from_date).setHours(0, 0),
-      todate: new Date(to_date).setHours(23, 59)
-    })
-    dispatch(appActions.setProcessingStatus(false))
-    setData(data.result)
-  }
+      todate: new Date(to_date).setHours(23, 59),
+    });
+    if (response?.result?.length > 0) {
+      setData(response.result);
+    }
+    dispatch(appActions.setProcessingStatus(false));
+  };
 
   useEffect(() => {
-    fetchData()
-  }, [from_date,to_date])
-
+    fetchData();
+  }, [from_date, to_date]);
 
   return (
-    <MainLayout style={{ backgroundColor: theme.colors.bg_neutral }}>
+    <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
-        title={getLabel("logTravel")}
+        title={getLabel('logTravel')}
         date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&
@@ -125,20 +145,29 @@ const TravelDiary = () => {
         }
         rightIcon={
           <TouchableOpacity onPress={() => console.log('123')}>
-            <Image source={ImageAssets.MapIcon} style={{ width: 28, height: 28 }} tintColor={theme.colors.text_secondary} resizeMode={'cover'}
+            <Image
+              source={ImageAssets.MapIcon}
+              style={{width: 28, height: 28}}
+              tintColor={theme.colors.text_secondary}
+              resizeMode={'cover'}
             />
           </TouchableOpacity>
         }
       />
-      <AppContainer style={{ marginBottom: bottom }}>
+      <AppContainer style={{marginBottom: bottom}}>
         {data.length > 0 && (
-          <View style={{ marginTop: 24,borderRadius: 16,backgroundColor: theme.colors.bg_default,padding: 16}}>
+          <View
+            style={{
+              marginTop: 24,
+              borderRadius: 16,
+              backgroundColor: theme.colors.bg_default,
+              padding: 16,
+            }}>
             {data.map((item, index) => {
-                return <Item key={index} item={item} />
+              return <Item key={index} item={item} />;
             })}
           </View>
         )}
-
       </AppContainer>
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
@@ -170,7 +199,7 @@ const createStyle = (theme: ExtendedTheme) =>
       fontWeight: '500',
       color: theme.colors.text_primary,
     } as TextStyle,
-    txtDate: { color: theme.colors.text_secondary, fontSize: 12 } as TextStyle,
+    txtDate: {color: theme.colors.text_secondary, fontSize: 12} as TextStyle,
     content: {
       marginVertical: 4,
       marginLeft: 8,
@@ -181,6 +210,6 @@ const createStyle = (theme: ExtendedTheme) =>
       borderColor: theme.colors.border,
       rowGap: 8,
     } as ViewStyle,
-    txtName: { width: '65%', color: theme.colors.text_primary } as TextStyle,
-    txtAddress: { width: '65%', color: theme.colors.text_secondary } as TextStyle,
+    txtName: {width: '65%', color: theme.colors.text_primary} as TextStyle,
+    txtAddress: {width: '65%', color: theme.colors.text_secondary} as TextStyle,
   });

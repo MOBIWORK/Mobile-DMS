@@ -7,16 +7,20 @@ import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {CommonUtils} from '../../../utils';
-import {KeyAbleProps, VisitCheckinReport, VisitReportNoCheckin, VisitedItemType} from '../../../models/types';
+import {
+  KeyAbleProps,
+  VisitCheckinReport,
+  VisitReportNoCheckin,
+  VisitedItemType,
+} from '../../../models/types';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import {useTranslation} from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {IFilterType} from '../../../components/common/FilterListComponent';
-import { ReportService } from '../../../services';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-import { ApiConstant } from '../../../const';
-
+import {ReportService} from '../../../services';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {ApiConstant} from '../../../const';
 
 const VisitResult = () => {
   const theme = useTheme();
@@ -30,25 +34,29 @@ const VisitResult = () => {
   const [selectedValue, setSelectedValue] = useState<number | string>(
     dataSeg[0].value,
   );
-  const [from_date,setFromDate] = useState<number>(new Date().getTime());
-  const [to_date,setToDate] = useState<number>(new Date().getTime());
-  
-  const [data, setData] = useState<VisitCheckinReport>()
+  const [from_date, setFromDate] = useState<number>(new Date().getTime());
+  const [to_date, setToDate] = useState<number>(new Date().getTime());
+
+  const [data, setData] = useState<VisitCheckinReport>();
   const [visitedData, setVisitedData] = useState<VisitedItemType[]>([]);
   const [notVisitData, setNotVisitData] = useState<VisitReportNoCheckin[]>([]);
 
-  const [headerDate, setHeaderDate] = useState<string>(`${getLabel('today')}, ${CommonUtils.convertDate(from_date)}`,);
+  const [headerDate, setHeaderDate] = useState<string>(
+    `${getLabel('today')}, ${CommonUtils.convertDate(from_date)}`,
+  );
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-      setFromDate(Number(item.value))
-      setToDate(Number(item.value))
+      setFromDate(Number(item.value));
+      setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      const {from_date ,to_date} = CommonUtils.dateToDate(item.value?.toString() || "");
+      const {from_date, to_date} = CommonUtils.dateToDate(
+        item.value?.toString() || '',
+      );
       setFromDate(new Date(from_date).getTime());
       setToDate(new Date(to_date).getTime());
       setHeaderDate(getLabel(String(item.label)));
@@ -117,12 +125,12 @@ const VisitResult = () => {
       <View style={styles.totalContainer}>
         <View style={styles.itemTotal}>
           <SvgIcon source={'Visited'} size={40} />
-          <Text style={styles.txt12}>{getLabel("visit")}</Text>
+          <Text style={styles.txt12}>{getLabel('visit')}</Text>
           <Text style={styles.txt18}>{data?.so_kh_da_vt}</Text>
         </View>
         <View style={styles.itemTotal}>
           <SvgIcon source={'NotVisit'} size={40} />
-          <Text style={styles.txt12}>{getLabel("notVisited")}</Text>
+          <Text style={styles.txt12}>{getLabel('notVisited')}</Text>
           <Text style={styles.txt18}>{data?.so_kh_chua_vt}</Text>
         </View>
       </View>
@@ -134,7 +142,7 @@ const VisitResult = () => {
       <View style={styles.saleContainer}>
         <SvgIcon source={'Money'} size={40} />
         <View style={{rowGap: 4, marginLeft: 8}}>
-          <Text style={styles.txt12}>Tổng doanh thu</Text>
+          <Text style={styles.txt12}>{getLabel('totalRevenue')}</Text>
           <Text style={styles.txt18}>
             {CommonUtils.convertNumber(data?.doanh_so || 0)}
           </Text>
@@ -148,26 +156,40 @@ const VisitResult = () => {
       return (
         <View style={styles.visitContainer}>
           <View style={styles.titleVisit}>
-            <Text style={styles.txtTitleName}>{item.name}</Text>
-            <Text style={{color: theme.colors.text_primary}}>KH - 1233</Text>
+            <Text style={styles.txtTitleName}>{item.kh_ten}</Text>
+            <Text style={{color: theme.colors.text_primary}}>{item.kh_ma}</Text>
           </View>
-          <VisitedRowItem label={getLabel("time")} content={item.checkin_giovao} />
+          <VisitedRowItem
+            label={getLabel('time')}
+            content={item.checkin_giovao}
+          />
           <VisitedRowItem
             label={''}
-            content={CommonUtils.convertDate(item.checkin_giovao || "")}
+            content={CommonUtils.convertDate(item.checkin_giovao || '')}
           />
           <VisitedRowItem
-            label={getLabel("gland")}
-            content={item.checkin_dungtuyen > 0 ? getLabel("inRoute") : getLabel("outRoute")}
-            contentColor={item.checkin_dungtuyen > 0 ? theme.colors.text_primary : theme.colors.primary}
+            label={getLabel('gland')}
+            content={
+              item.checkin_dungtuyen > 0
+                ? getLabel('inRoute')
+                : getLabel('outRoute')
+            }
+            contentColor={
+              item.checkin_dungtuyen > 0
+                ? theme.colors.text_primary
+                : theme.colors.primary
+            }
           />
-          <VisitedRowItem label={getLabel("image")} content={item.checkin_hinhanh} />
           <VisitedRowItem
-            label={getLabel("putOrder")}
-            content={item.checkin_donhang > 0 ? getLabel("ys") : getLabel("no")}
+            label={getLabel('image')}
+            content={item.checkin_hinhanh}
           />
           <VisitedRowItem
-            label={getLabel("sales")}
+            label={getLabel('putOrder')}
+            content={item.checkin_donhang > 0 ? getLabel('ys') : getLabel('no')}
+          />
+          <VisitedRowItem
+            label={getLabel('sales')}
             content={CommonUtils.convertNumber(item.doanh_so || 0)}
           />
         </View>
@@ -188,11 +210,13 @@ const VisitResult = () => {
         <View style={styles.visitContainer}>
           <View style={styles.titleVisit}>
             <Text style={styles.txtTitleName}>{item.customer_name}</Text>
-            <Text style={{color: theme.colors.text_primary}}>{item.customer_code}</Text>
+            <Text style={{color: theme.colors.text_primary}}>
+              {item.customer_code}
+            </Text>
           </View>
           <NotVisitRowItem iconName={'MapPin'} content={item.display_address} />
           <NotVisitRowItem iconName={'Phone'} content={item.phone_number} />
-          <NotVisitRowItem iconName={'Folder'} content={""} />
+          <NotVisitRowItem iconName={'Folder'} content={''} />
         </View>
       );
     };
@@ -205,29 +229,32 @@ const VisitResult = () => {
     );
   };
 
-  useEffect(()=>{
-      const getData = async ()=>{
-      dispatch(appActions.setProcessingStatus(true))
-        const {data,status} :KeyAbleProps = await ReportService.getVisitReoprt({
-          from_date : from_date / 1000 ,
-          to_date : to_date / 1000
-        })
-      dispatch(appActions.setProcessingStatus(false))
-        if(status == ApiConstant.STT_OK){
-          const result = data.result
-          setData(result.data);
-          setVisitedData(result.has_checkin);
-          setNotVisitData(result.not_checkin);
+  useEffect(() => {
+    const getData = async () => {
+      dispatch(appActions.setProcessingStatus(true));
+      const {data, status}: KeyAbleProps = await ReportService.getVisitReoprt({
+        from_date: from_date / 1000,
+        to_date: to_date / 1000,
+      });
+      console.log({
+        from_date: from_date / 1000,
+        to_date: to_date / 1000,
+      });
+      dispatch(appActions.setProcessingStatus(false));
+      if (status == ApiConstant.STT_OK) {
+        const result = data.result;
+        setData(result.data);
+        setVisitedData(result.has_checkin);
+        setNotVisitData(result.not_checkin);
       }
-
-      }
-      getData();
-  },[from_date,to_date])
+    };
+    getData();
+  }, [from_date, to_date]);
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
-        title={getLabel("reportVisit")}
+        title={getLabel('reportVisit')}
         date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&
