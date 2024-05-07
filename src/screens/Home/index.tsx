@@ -133,8 +133,10 @@ const HomeScreen = () => {
   const [passwordStore] = useMMKVString(AppConstant.passwordStore);
 
   const getWidget = () => {
-    const arrWg = DataConstant.DataWidget.slice(0, 4);
-    setWidgets(JSON.stringify(arrWg));
+    if (!widgets) {
+      const arrWg = DataConstant.DataWidget.slice(0, 4);
+      setWidgets(JSON.stringify(arrWg));
+    }
   };
 
   const renderUiWidget = useCallback(() => {

@@ -13,10 +13,15 @@ import {useTranslation} from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {CommonUtils} from '../../../utils';
 import {IFilterType} from '../../../components/common/FilterListComponent';
-import { KeyAbleProps, StatisticsOrder, StatisticsOrderCustomer, StatisticsOrderProduct } from '../../../models/types';
-import { ReportService } from '../../../services';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
+import {
+  KeyAbleProps,
+  StatisticsOrder,
+  StatisticsOrderCustomer,
+  StatisticsOrderProduct,
+} from '../../../models/types';
+import {ReportService} from '../../../services';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 type Tabs = {
   id: number;
@@ -44,24 +49,26 @@ const Statistical = () => {
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
   const [selectTab, setSelectTab] = useState<number>(0);
-  
-  const [data,setData] = useState<StatisticsOrder>();
-  const [products,setProducts] = useState<StatisticsOrderProduct[]>([]);
-  const [customers,setCustomers] = useState<StatisticsOrderCustomer[]>([]);
 
-  const [from_date,setFromDate] = useState<number>(new Date().getTime());
-  const [to_date,setToDate] = useState<number>(new Date().getTime());
+  const [data, setData] = useState<StatisticsOrder>();
+  const [products, setProducts] = useState<StatisticsOrderProduct[]>([]);
+  const [customers, setCustomers] = useState<StatisticsOrderCustomer[]>([]);
+
+  const [from_date, setFromDate] = useState<number>(new Date().getTime());
+  const [to_date, setToDate] = useState<number>(new Date().getTime());
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-      setFromDate(Number(item.value))
-      setToDate(Number(item.value))
+      setFromDate(Number(item.value));
+      setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      const {from_date ,to_date} = CommonUtils.dateToDate(item.value?.toString() || "");
+      const {from_date, to_date} = CommonUtils.dateToDate(
+        item.value?.toString() || '',
+      );
       setFromDate(new Date(from_date).getTime());
       setToDate(new Date(to_date).getTime());
       setHeaderDate(getLabel(String(item.label)));
@@ -72,25 +79,26 @@ const Statistical = () => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
 
-  useEffect(()=>{
+  useEffect(() => {
+    const getData = async () => {
+      dispatch(appActions.setProcessingStatus(true));
 
-    const getData = async ()=>{
-      dispatch(appActions.setProcessingStatus(true))
-
-      const {data,status} :KeyAbleProps = await ReportService.getReoprtOrderStatistics({
-        from_date : from_date / 1000 ,
-        to_date : to_date / 1000
-      });
-      dispatch(appActions.setProcessingStatus(false))
-
-      const result = data.result;
-      setData(result.data);
-      setCustomers(result.details);
-      setProducts(result.detail_items);
-    }
+      const {data}: KeyAbleProps = await ReportService.getReoprtOrderStatistics(
+        {
+          from_date: from_date / 1000,
+          to_date: to_date / 1000,
+        },
+      );
+      if (data?.result) {
+        const result = data.result;
+        setData(result.data);
+        setCustomers(result.details);
+        setProducts(result.detail_items);
+      }
+      dispatch(appActions.setProcessingStatus(false));
+    };
     getData();
-
-},[from_date,to_date])
+  }, [from_date, to_date]);
 
   return (
     <MainLayout style={styles.root}>
@@ -131,7 +139,11 @@ const Statistical = () => {
           );
         })}
       </Block>
-      {selectTab === 0 ? <Customer data={customers} dataStatistics={data} /> : <Products data={products} dataStatistics={data} />}
+      {selectTab === 0 ? (
+        <Customer data={customers} dataStatistics={data} />
+      ) : (
+        <Products data={products} dataStatistics={data} />
+      )}
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
         onChange={onChangeHeaderDate}

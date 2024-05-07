@@ -1,7 +1,8 @@
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
+import {GET_REPORT_ROUTER_RESULT} from '../const/api.const';
 
-type getTravelLogReport = {
+type getTravelLogReportType = {
   fromdate: number;
   todate: number;
 };
@@ -10,11 +11,13 @@ type getReportResultRouter = {
   to_date: number;
 };
 
-export const getTravelLogReport = (params: getTravelLogReport) =>
-  createApi().get(ApiConstant.GET_TRAVEL_LOG_REPORT, params);
+export const getTravelLogReport = (params: getTravelLogReportType) =>
+  createApi()
+    .get(ApiConstant.GET_TRAVEL_LOG_REPORT, params)
+    .then(res => res.data);
 
 export const getRouterResult = (params: getReportResultRouter) =>
-  createApi().get(ApiConstant.GET_TRAVEL_LOG_REPORT, params);
+  createApi().get(ApiConstant.GET_REPORT_ROUTER_RESULT, params);
 export const getKpi = () =>
   createApi()
     .get(ApiConstant.GET_REPORT_KPI)
@@ -37,5 +40,5 @@ export const getVisitReoprt = (params: getReportResultRouter) =>
   createApi().get(ApiConstant.GET_REPORT_VISIT_DETAIL, params);
 export const getReoprtOrderStatistics = (params: getReportResultRouter) =>
   createApi().get(ApiConstant.GET_REPORT_ORDER_STATISTICS, params);
-export const getReoprtTagertKpi = (params: {month : number , year : number}) =>
+export const getReoprtTagertKpi = (params: {month: number; year: number}) =>
   createApi().get(ApiConstant.GET_REPORT_TARGETS_KPI, params);
