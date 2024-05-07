@@ -101,6 +101,8 @@ const appSlice = createSlice({
       }
       state.dataCheckIn.listImage.push(...action.payload);
     },
+    clearListImage: (state, action: PayloadAction<any>) =>
+      (state.dataCheckIn.listImage = action.payload),
     setImageError: (state, action: PayloadAction<any>) => {
       if (!state.dataCheckIn.imageError) {
         state.dataCheckIn.imageError = [];
