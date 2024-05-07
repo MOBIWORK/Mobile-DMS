@@ -708,7 +708,7 @@ const ListVisit = () => {
   };
 
   const handleCheckin = useCallback(
-    (item: VisitListItemType, isDetail: boolean) => {
+    (item: VisitListItemType, isDetail: boolean,coords:any) => {
       let log: LocationProps = JSON.parse(item.customer_location_primary!);
       let uniqueID = generateRandomObjectId();
       CommonUtils.getCurrentLocation(
@@ -716,8 +716,8 @@ const ListVisit = () => {
           let distanceCal = calculateDistance(
             location.coords.latitude,
             location.coords.longitude,
-            log?.lat,
-            log.long,
+            coords.lat,
+            coords.lon,
           );
           let data: CheckinData = {
             checkin_id:
@@ -729,8 +729,8 @@ const ListVisit = () => {
             kh_ma: item.customer_code,
             kh_ten: item.customer_name,
             kh_diachi: item.customer_primary_address,
-            kh_long: log.long ?? '',
-            kh_lat: log.lat ?? '',
+            kh_long: coords.lon || '',
+            kh_lat: coords.lat || '',
             checkin_giovao: new Date().getTime() / 1000,
             checkin_pinvao:
               batteryLevel > 0

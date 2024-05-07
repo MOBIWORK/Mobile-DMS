@@ -40,7 +40,7 @@ type Props = {
   onBackButtonPress: () => void;
   currentLocation: any;
   item?: VisitListItemType;
-  handleCheckin: (item: VisitListItemType, isDetail: boolean) => void;
+  handleCheckin: (item: VisitListItemType, isDetail: boolean,coords:any) => void;
 };
 
 interface MarkingAddress {
@@ -98,7 +98,7 @@ const ModalUpdateLocation = ({
         setIsPending(false);
       }
     },
-    [curLocation.current, markingLocation.current],
+    [curLocation.current, markingLocation.current.coords,markingLocation.current.detailAdd],
   );
 
   const completeCheckin = () => {
@@ -114,24 +114,25 @@ const ModalUpdateLocation = ({
         curLocation.current?.coords?.longitude,
       );
     });
-    let split = markingLocation.current.detailAdd.split(',', 4);
-    let params: IUpdateAddress = {
-      customer: item?.customer_code || '',
-      long: markingLocation.current.coords.lon || 0,
-      lat: markingLocation.current.coords.lat || 0,
-      address_line1: split[0] ?? '',
-      state: split[1] ?? '',
-      county: split[2] ?? '',
-      city: split[3] ?? '',
-      country: 'Việt Nam',
-    };
+    
+    // let split = markingLocation.current.detailAdd.split(',', 4);
+    // let params: IUpdateAddress = {
+    //   customer: item?.customer_code || '',
+    //   long: markingLocation.current.coords.lon || 0,
+    //   lat: markingLocation.current.coords.lat || 0,
+    //   address_line1: split[0] ?? '',
+    //   state: split[1] ?? '',
+    //   county: split[2] ?? '',
+    //   city: split[3] ?? '',
+    //   country: 'Việt Nam',
+    // };
 
-    const response: any = await CheckinService.updateCustomerAddress(params);
-    if (response?.status === ApiConstant.STT_OK) {
+    // const response: any = await CheckinService.updateCustomerAddress(params);
+    // if (response?.status === ApiConstant.STT_OK) {
     //   completeCheckin();
-      handleCheckin(item!, isVisible.isDetail);
+      handleCheckin(item!, isVisible.isDetail,markingLocation.current.coords);
       onBackButtonPress()
-    }
+    // }
   };
 
   const handleRegainLocation = async () => {
