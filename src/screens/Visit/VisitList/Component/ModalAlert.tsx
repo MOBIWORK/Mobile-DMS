@@ -27,7 +27,7 @@ import {CommonUtils} from '../../../../utils';
 import {dispatch} from '../../../../utils/redux';
 import {appActions} from '../../../../redux-store/app-reducer/reducer';
 import {DMSConfigMobile} from '../../../../services/appService';
-import { AppConstant } from '../../../../const';
+import {AppConstant} from '../../../../const';
 type Props = {
   show: ModalType;
   setShow: React.Dispatch<React.SetStateAction<ModalType>>;
@@ -66,15 +66,15 @@ const ModalAlert = ({
       return;
     }
   });
-  const data = React.useMemo(() =>{
+  const data = React.useMemo(() => {
     let res = calculateDistance(
-      curLocation?.current?.coords.latitude,
-      curLocation?.current?.coords.longitude,
+      curLocation?.current?.coords ? curLocation?.current?.coords.latitude : 0,
+      curLocation?.current?.coords ? curLocation?.current?.coords.longitude : 0,
       location?.lat,
       location.long,
     );
-    return res
-  },[curLocation]) 
+    return res;
+  }, [curLocation]);
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
       locations => {
@@ -160,18 +160,20 @@ const ModalAlert = ({
                     animationMode={'flyTo'}
                     animationDuration={0}
                     centerCoordinate={
-                      curLocation.current && curLocation.current.coords&&
-                      Object.keys(curLocation.current.coords).length > 0 ?  [
-                        curLocation.current.coords.longitude,
-                        curLocation.current.coords.latitude,
-                      ] : undefined
+                      curLocation.current &&
+                      curLocation.current.coords &&
+                      Object.keys(curLocation.current.coords).length > 0
+                        ? [
+                            curLocation.current.coords.longitude,
+                            curLocation.current.coords.latitude,
+                          ]
+                        : undefined
                     }
                     zoomLevel={
                       show.cal && show.cal != undefined && show.cal > 1
                         ? 11
                         : 13
                     }
-                    
                   />
                   <Mapbox.LocationPuck
                     visible={true}
@@ -193,7 +195,13 @@ const ModalAlert = ({
                   justifyContent="space-between">
                   <TouchableOpacity
                     style={styles.touchableContain}
-                    onPress={() => setShow(prev => ({...prev, status: false,type:'loading'}))}>
+                    onPress={() =>
+                      setShow(prev => ({
+                        ...prev,
+                        status: false,
+                        type: 'loading',
+                      }))
+                    }>
                     <Text>{getLabel('close')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -207,20 +215,23 @@ const ModalAlert = ({
                       {getLabel('regainPosition')}
                     </Text>
                   </TouchableOpacity>
-                  {systemConfig.kb_vitringoaisaiso === 1 &&  data*1000 <= (systemConfig.saiso_chophep_kb_vitringoaisaiso + AppConstant.additional_distance)  &&(
-                    <TouchableOpacity
-                      style={styles.checkinButton}
-                      onPress={() => handleCheckin(item!)}>
-                      <Text
-                        fontSize={14}
-                        lineHeight={21}
-                        fontWeight="bold"
-                        style={styles.textCheckin}
-                        colorTheme="bg_default">
-                        Checkin
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                  {systemConfig.kb_vitringoaisaiso === 1 &&
+                    data * 1000 <=
+                      systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                        AppConstant.additional_distance && (
+                      <TouchableOpacity
+                        style={styles.checkinButton}
+                        onPress={() => handleCheckin(item!)}>
+                        <Text
+                          fontSize={14}
+                          lineHeight={21}
+                          fontWeight="bold"
+                          style={styles.textCheckin}
+                          colorTheme="bg_default">
+                          Checkin
+                        </Text>
+                      </TouchableOpacity>
+                    )}
                 </Block>
               </Block>
             </Block>
