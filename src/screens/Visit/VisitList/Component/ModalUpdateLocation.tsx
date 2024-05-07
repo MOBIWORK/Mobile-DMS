@@ -26,11 +26,10 @@ import {
 } from '../../../../config/function';
 import {CommonUtils} from '../../../../utils';
 import {VisitListItemType} from '../../../../models/types';
-import {ResponseGenerator} from '../../../../saga/app-saga/saga';
-import {AppService, CheckinService} from '../../../../services';
+
+import {AppService} from '../../../../services';
 import {ApiConstant} from '../../../../const';
 import MarkerItem from '../../../../components/common/MarkerItem';
-import {IUpdateAddress} from '../../../../services/checkinService';
 import {dispatch} from '../../../../utils/redux';
 import {checkinActions} from '../../../../redux-store/checkin-reducer/reducer';
 import {ModalUpdateType} from '../ListVisit';
@@ -40,7 +39,7 @@ type Props = {
   onBackButtonPress: () => void;
   currentLocation: any;
   item?: VisitListItemType;
-  handleCheckin: (item: VisitListItemType, isDetail: boolean,coords:any) => void;
+  handleCheckin: (item: VisitListItemType, isDetail: boolean,coords:any,detailAdd?:any) => void;
 };
 
 interface MarkingAddress {
@@ -130,7 +129,7 @@ const ModalUpdateLocation = ({
     // const response: any = await CheckinService.updateCustomerAddress(params);
     // if (response?.status === ApiConstant.STT_OK) {
     //   completeCheckin();
-      handleCheckin(item!, isVisible.isDetail,markingLocation.current.coords);
+      handleCheckin(item!, isVisible.isDetail,markingLocation.current.coords,markingLocation.current.detailAdd);
       onBackButtonPress()
     // }
   };

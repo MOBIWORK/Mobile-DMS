@@ -291,6 +291,10 @@ export default {
   staff:'Staff',
   close:'Close',
   regainPosition:'Regain Position',
-  marking:"Mark"
+  marking:"Mark",
+  listContact:"List Contact",
+  addressGet:"Delivery Address",
+  addressOrder:"Order Address",
+
   
 };

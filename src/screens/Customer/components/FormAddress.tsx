@@ -336,7 +336,6 @@ const FormAddress = (props: Props) => {
             </TouchableOpacity>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <MainLayout>
               <AppInput
                 label={`${getLabel('province')}/${getLabel('city')}`}
                 contentStyle={styles.contentStyle(
@@ -423,7 +422,7 @@ const FormAddress = (props: Props) => {
                 hiddenRightIcon={true}
                 onChangeValue={setTxtAddressDetail}
               />
-              <View style={styles.checkBoxRootView}>
+              <Block style={styles.checkBoxRootView}>
                 {listCheckBox.current.map(item => {
                   return (
                     <View key={item.id}>
@@ -464,12 +463,13 @@ const FormAddress = (props: Props) => {
                     </View>
                   );
                 })}
-              </View>
-              <View style={styles.mapView}>
+              </Block>
+              <Block style={styles.mapView}>
                 <Mapbox.MapView
                   pitchEnabled={false}
                   attributionEnabled={false}
                   scaleBarEnabled={false}
+                  scrollEnabled={true}
                   styleURL={Mapbox.StyleURL.Street}
                   logoEnabled={false}
                   style={{flex: 1}}>
@@ -505,8 +505,8 @@ const FormAddress = (props: Props) => {
                     </>
                   )}
                 </Mapbox.MapView>
-              </View>
-            </MainLayout>
+              </Block>
+            
           </ScrollView>
           <View style={styles.containButtonBottom(typeFilter)}>
             <View style={styles.containContentButton}>

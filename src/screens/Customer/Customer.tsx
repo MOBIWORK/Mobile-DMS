@@ -6,7 +6,6 @@ import {
   ViewStyle,
   TextStyle,
   ImageStyle,
-  ActivityIndicator,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import React, {useRef, useMemo, useCallback, useTransition} from 'react';
@@ -46,6 +45,7 @@ import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import {dispatch} from '../../utils/redux';
+import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
   customerType: string;
@@ -146,7 +146,7 @@ const Customer = () => {
           : distance2 - distance1;
       });
     },
-    [listCustomer],
+    [listCustomer.length],
   );
 
   const onRefreshData = useCallback(async () => {
@@ -377,16 +377,13 @@ const Customer = () => {
           </Text>
           {getLabel('customer')}
         </Text>
-        {isPending ? (
-          <Block block justifyContent="center" alignItems="center">
-            <ActivityIndicator size={'large'} color={theme.colors.primary} />
-          </Block>
+        {mounted.current === true ? (
+          <SkeletonLoading />
         ) : (
           <ListCard
             data={customerData.current}
             loading={isPending}
             onRefresh={onRefreshData}
-            // listFooter={listFooter}
             onLoadData={onEndReachedThreshold}
           />
         )}
@@ -395,18 +392,6 @@ const Customer = () => {
       <AppBottomSheet
         bottomSheetRef={bottomRef}
         useBottomSheetView={show.firstModal}
-        // onAnimated={(index, toIndex) => {
-        //   if (index != undefined && toIndex != undefined) {
-        //     let cal = index - toIndex;
-        //     if (cal > 0) {
-        //       setShow(prev => ({...prev, firstModal: false}));
-        //       //  dispatch(appActions.setShowModal(false))
-        //     } else {
-        //       setShow(prev => ({...prev, firstModal: true}));
-        //       //  dispatch(appActions.setShowModal(true))
-        //     }
-        //   }
-        // }}
         enablePanDownToClose={true}>
         <View>
           <View style={styles.tittleHeader}>

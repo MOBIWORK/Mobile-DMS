@@ -40,7 +40,7 @@ const TextComponent = (props: TextProps) => {
     letterSpacing,
     lineHeight,
     numberOfLines,
-    colorTheme,
+    colorTheme='text_primary',
     style: styleOverride = {},
     ...rest
   } = props;

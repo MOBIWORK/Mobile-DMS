@@ -71,7 +71,7 @@ const Index = () => {
   );
 
   const [detailData, setDetailData] = useState<IVisitRouteDetail>();
-
+  const [isPendin, startTrans] = useTransition();
   const onDismissSingle = React.useCallback(() => {
     setOpenDate(false);
   }, [setOpenDate]);
@@ -135,13 +135,18 @@ const Index = () => {
 
   const DetailScreen = React.memo(
     () => (
-      <Block block style={{marginBottom: bottom}}>
-        <View style={{flex: 1, padding: 16}}>
+      <Block block style={{marginBottom: bottom}} padding={16} >
+        {isPendin ? (
+          <Block block justifyContent="center" alignItems="center">
+            {' '}
+            <ActivityIndicator size={'large'} color={colors.primary} />{' '}
+          </Block>
+        ) : (
           <Detail
             item={route.params && route.params.data}
             otherInfo={detailData}
           />
-        </View>
+        )}
       </Block>
     ),
     isEqual,
@@ -149,7 +154,7 @@ const Index = () => {
 
   const ReportScreen = React.memo(
     () => (
-      <View style={{flex: 1, padding: 16}}>
+      <Block block padding={16}>
         <Report
           onOpenReportFilter={() =>
             bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
@@ -157,7 +162,7 @@ const Index = () => {
           timeLabel={filterTime}
           itemData={route.params.data}
         />
-      </View>
+      </Block>
     ),
     isEqual,
   );
@@ -167,11 +172,11 @@ const Index = () => {
     second: ReportScreen,
   });
 
-  const [index, setIndex] = useState<number>(0);
-  const [routes] = React.useState([
+  const index = useRef<number>(0);
+  const routes = React.useRef([
     {key: 'first', title: getLabel('detail')},
     {key: 'second', title: getLabel('report')},
-  ]);
+  ]).current;
 
   const renderTabBar = React.useCallback((props: any) => {
     return (
@@ -211,6 +216,15 @@ const Index = () => {
     });
   }, []);
 
+  const onIndexChange = React.useCallback(
+    (indx: number) => {
+      startTrans(() => {
+        index.current = indx;
+      });
+    },
+    [index.current],
+  );
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <AppHeader
@@ -230,10 +244,12 @@ const Index = () => {
       ) : (
         <TabView
           style={{backgroundColor: colors.bg_neutral}}
-          onIndexChange={setIndex}
-          navigationState={{index, routes}}
+          onIndexChange={onIndexChange}
+          navigationState={{index: index.current, routes}}
           renderScene={renderScene}
           initialLayout={{width: layout.width}}
+          lazy
+          lazyPreloadDistance={1}
           renderTabBar={renderTabBar}
         />
       )}

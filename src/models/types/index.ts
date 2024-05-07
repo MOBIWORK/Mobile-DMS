@@ -128,6 +128,7 @@ export type VisitListItemType = {
   is_checkin: boolean;
   total?: number;
   page_size?: number;
+  is_route?:boolean
 };
 
 export type VisitListItemResult = {
@@ -398,13 +399,13 @@ export interface Southwest {
   lng: number;
 }
 
-interface Address {
+export interface Address {
   address: string;
   isSetAddressGet: boolean;
   isSetAddressTake: boolean;
 }
 
-interface Contact {
+export interface Contact {
   address: string;
   name: string;
   phoneNumber: string;

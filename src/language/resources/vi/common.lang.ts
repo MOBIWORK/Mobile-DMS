@@ -296,5 +296,8 @@ export default {
   staff:"Nhân viên",
   close:'Đóng',
   regainPosition:'Lấy lại vị trí',
-  marking:'Cắm mốc'
+  marking:'Cắm mốc',
+  listContact:"Danh sách liên hệ",
+  addressGet:"Địa chỉ giao hàng",
+  addressOrder:"Địa chỉ đặt hàng",
 };

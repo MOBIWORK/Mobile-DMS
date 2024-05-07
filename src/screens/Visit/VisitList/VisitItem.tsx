@@ -1,4 +1,4 @@
-import React, {FC,  useMemo,useTransition} from 'react';
+import React, {FC, useMemo, useTransition} from 'react';
 import {VisitListItemType} from '../../../models/types';
 import {
   Image,
@@ -13,17 +13,12 @@ import {ExtendedTheme, useTheme} from '@react-navigation/native';
 
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorBoundary';
-import {
-
-  calculateDistance,
-
-  useSelector,
-} from '../../../config/function';
+import {calculateDistance, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 
 import isEquals from 'react-fast-compare';
-
+import {DMSConfigMobile} from '../../../services/appService';
 
 export interface LocationProps {
   long: number;
@@ -34,8 +29,8 @@ const VisitItem: FC<VisitItemProps> = ({
   item,
   handleOpenMap,
   handleClose,
-handlePressDetail,
-  handlePressing
+  handlePressDetail,
+  handlePressing,
 }) => {
   const {colors} = useTheme();
   const styles = createStyleSheet(useTheme());
@@ -43,15 +38,18 @@ handlePressDetail,
   const {t: getLabel} = useTranslation();
   // const batteryLevel = useBatteryLevel();
   const [isPending, startTransition] = useTransition();
-  
+
   const currentLocation = useSelector(
     state => state.app.currentLocation,
     shallowEqual,
   );
-
+  const systemConfig: DMSConfigMobile = useSelector(
+    state => state.app.systemConfig,
+    shallowEqual,
+  );
 
   const distanceCal = useMemo(() => {
-    let location: LocationProps = JSON.parse(item.customer_location_primary!)  ;
+    let location: LocationProps = JSON.parse(item.customer_location_primary!);
     let distance = calculateDistance(
       currentLocation.coords.latitude,
       currentLocation.coords.longitude,
@@ -60,28 +58,31 @@ handlePressDetail,
     );
     return {location, distance};
   }, [item.customer_location_primary, currentLocation]);
-console.log(distanceCal,'cal')
 
-
-  const statusItem = (status: boolean) => {
-    return (
-      <Block
-        padding={8}
-        borderRadius={8}
-        color={status ? 'rgba(34, 197, 94, 0.08)' : 'rgba(255, 171, 0, 0.08)'}>
-        <Text style={{color: status ? colors.success : colors.warning}}>
-          {status ? getLabel('visited') : getLabel('notVisited')}
-        </Text>
-      </Block>
-    );
-  };
+  const statusItem = React.useCallback(
+    (status: boolean) => {
+      return (
+        <Block
+          padding={8}
+          borderRadius={8}
+          color={
+            status ? 'rgba(34, 197, 94, 0.08)' : 'rgba(255, 171, 0, 0.08)'
+          }>
+          <Text style={{color: status ? colors.success : colors.warning}}>
+            {status ? getLabel('visited') : getLabel('notVisited')}
+          </Text>
+        </Block>
+      );
+    },
+    [item],
+  );
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
       <TouchableOpacity
         onPress={() =>
           startTransition(() => {
-            handlePressDetail(item)
+            handlePressDetail(item);
           })
         }>
         <Block style={styles.viewContainer}>
@@ -126,19 +127,25 @@ console.log(distanceCal,'cal')
             marginTop={8}
             justifyContent="space-between"
             style={[styles.content]}>
-            <AppButton
-              onPress={() =>
-                startTransition(() => {
-                  handlePressing(item, false);
-                })
-              }
-              style={createStyleSheet(theme).button(false)}
-              label={'Checkin'}
-              styleLabel={{
-                color: colors.action,
-                fontWeight: '400',
-              }}
-            />
+            {item.is_route === true ? (
+              <AppButton
+                onPress={() =>
+                  startTransition(() => {
+                    handlePressing(item, false);
+                  })
+                }
+                disabled={item.is_route === true ? false : true}
+                style={createStyleSheet(theme).button(!item.is_route)}
+                label={'Checkin'}
+                styleLabel={{
+                  color: colors.action,
+                  fontWeight: '400',
+                }}
+              />
+            ) : (
+              <Block />
+            )}
+
             <TouchableOpacity
               onPress={() =>
                 typeof handleOpenMap === 'function' && handleOpenMap(item)
@@ -150,12 +157,16 @@ console.log(distanceCal,'cal')
                 style={{width: 16, height: 16}}
                 resizeMode={'cover'}
                 tintColor={
-                  !Number.isNaN(distanceCal.distance) ? colors.action : colors.text_secondary
+                  !Number.isNaN(distanceCal.distance)
+                    ? colors.action
+                    : colors.text_secondary
                 }
               />
               <Text
                 color={
-                  !Number.isNaN(distanceCal.distance) ? colors.action : colors.text_secondary
+                  !Number.isNaN(distanceCal.distance)
+                    ? colors.action
+                    : colors.text_secondary
                 }
                 style={{
                   textDecorationLine: distanceCal.distance
@@ -189,8 +200,8 @@ interface VisitItemProps {
   handleOpenMap?: (item: VisitListItemType) => void;
   handleClose?: () => void;
   onPress?: () => void;
-  handlePressDetail:(item:VisitListItemType) => void
-  handlePressing:(item: VisitListItemType, isDetail: boolean) => void
+  handlePressDetail: (item: VisitListItemType) => void;
+  handlePressing: (item: VisitListItemType, isDetail: boolean) => void;
 }
 
 export default React.memo(VisitItem, isEquals);

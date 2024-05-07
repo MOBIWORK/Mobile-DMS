@@ -1,4 +1,10 @@
-import {StyleSheet, TouchableOpacity, View, ViewStyle} from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 
@@ -7,9 +13,14 @@ import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
+import {IDataCustomer, IDataCustomers} from '../../../models/types';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import CardAddress from '../../Customer/components/CardAddress';
+import CardContactOverview from '../component/CardView';
 
 type Props = {
   onPressAdding: () => void;
+  data: IDataCustomers;
 };
 
 const Contact = (props: Props) => {
@@ -19,10 +30,10 @@ const Contact = (props: Props) => {
   const {t: getLabel} = useTranslation();
 
   return (
-    <MainLayout style={styles.root}>
+    <SafeAreaView style={styles.root} edges={['bottom']}>
       <View style={styles.containLabel}>
         <AppText fontSize={14} fontWeight="400" colorTheme="text_secondary">
-          {getLabel('listAddress')}
+          {getLabel('listContact')}
         </AppText>
         <TouchableOpacity style={styles.containButton} onPress={onPressAdding}>
           <AppIcons
@@ -33,16 +44,41 @@ const Contact = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-    </MainLayout>
+      {props.data.contact &&
+      props.data.contact != null &&
+      props.data.contact.length > 0 ? (
+        <FlatList
+          data={props.data.contact}
+          keyExtractor={(item, index) => item.address}
+          showsVerticalScrollIndicator={false}
+          initialNumToRender={10}
+          windowSize={11}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          decelerationRate={'fast'}
+          renderItem={({item}) => {
+            return (
+              <CardAddress type="contact" mainContactAddress={item as any} />
+            );
+          }}
+        />
+      ) : (
+        <CardContactOverview data={props.data} />
+      )}
+    </SafeAreaView>
   );
 };
 
-export default React.memo(Contact,isEqual);
+export default React.memo(Contact, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     root: {
-      paddingTop: 10,
+      paddingHorizontal: 16,
+      backgroundColor:theme.colors.bg_neutral,
+      flex:1,
+      // backgroundColor:'red',
+      // flex:1
     } as ViewStyle,
     containLabel: {
       flexDirection: 'row',

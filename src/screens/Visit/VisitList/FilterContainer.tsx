@@ -5,6 +5,7 @@ import {
   AppButton,
   AppHeader,
   AppIcons,
+  SvgIcon,
 } from '../../../components/common';
 import {AppConstant, DataConstant} from '../../../const';
 import {useTheme} from '@react-navigation/native';
@@ -76,9 +77,9 @@ const FilterContainer: FC<FilterContainerProps> = ({
             bottomSheetRef.current && bottomSheetRef.current.close()
           }
           backButtonIcon={
-            <AppIcons
-              iconType={AppConstant.ICON_TYPE.IonIcon}
-              name={'close'}
+            <SvgIcon
+              source='Close'
+              // name={'close'}
               size={24}
               color={colors.text_primary}
             />
