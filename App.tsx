@@ -21,6 +21,7 @@ import codePush from 'react-native-code-push';
 import {store} from './src/redux-store/';
 import {isIos} from './src/config/function';
 import {PortalProvider} from './src/components/common/portal';
+import React from 'react';
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.MANUAL,

@@ -292,4 +292,5 @@ export default {
   close: 'Close',
   regainPosition: 'Regain Position',
   totalRevenue: 'Total revenue',
+  marking: 'Mark',
 };

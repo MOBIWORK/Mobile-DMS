@@ -297,4 +297,5 @@ export default {
   close: 'Đóng',
   regainPosition: 'Lấy lại vị trí',
   totalRevenue: 'Tổng doanh thu',
+  marking: 'Cắm mốc',
 };
