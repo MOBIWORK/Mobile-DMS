@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   ImageStyle,
 } from 'react-native';
-import React from 'react';
+import React, {useTransition} from 'react';
 import {Colors} from '../../../assets';
 import {Platform} from 'react-native';
 import AppImage from '../../../components/common/AppImage';
@@ -19,27 +19,34 @@ import {IDataCustomers} from '../../../models/types';
 import {Block, AppText as Text} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import { dispatch } from '../../../utils/redux';
-import { orderAction } from '../../../redux-store/order-reducer/reducer';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
+import {dispatch} from '../../../utils/redux';
+import {orderAction} from '../../../redux-store/order-reducer/reducer';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const CardView = (props: IDataCustomers) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const {t: translate} = useTranslation();
+  const [isPending, startEffect] = useTransition();
 
-  const navigateOrder = ()=>{
-    dispatch(orderAction.setCustomerOder(props));
-    dispatch(appActions.setDataCheckIn(null));
-    navigation.navigate(ScreenConstant.CHECKIN_ORDER_CREATE,{type:"ORDER"})
-  }
+  const navigateOrder = () => {
+    startEffect(() => {
+      dispatch(orderAction.setCustomerOder(props));
+      dispatch(appActions.setDataCheckIn(null));
+      navigation.navigate(ScreenConstant.CHECKIN_ORDER_CREATE, {type: 'ORDER'});
+    });
+  };
 
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigate(ScreenConstant.DETAIL_CUSTOMER, {data: props})}>
+      onPress={() =>
+        startEffect(() => {
+          navigate(ScreenConstant.DETAIL_CUSTOMER, {data: props});
+        })
+      }>
       <View style={styles.containContentView}>
         <Block
           direction="row"

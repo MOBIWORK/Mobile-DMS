@@ -35,6 +35,7 @@ import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {MainLayout} from '../../../layouts';
+import isEqual from 'react-fast-compare';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -257,7 +258,7 @@ const CheckInLocation = () => {
     // </SafeAreaView>
   );
 };
-export default CheckInLocation;
+export default React.memo(CheckInLocation,isEqual);
 const createStyle = (theme: ExtendedTheme) =>
   StyleSheet.create({
     searchContainer: {

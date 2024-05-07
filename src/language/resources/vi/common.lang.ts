@@ -296,4 +296,5 @@ export default {
   staff:"Nhân viên",
   close:'Đóng',
   regainPosition:'Lấy lại vị trí',
+  marking:'Cắm mốc'
 };

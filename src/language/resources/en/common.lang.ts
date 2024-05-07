@@ -291,5 +291,6 @@ export default {
   staff:'Staff',
   close:'Close',
   regainPosition:'Regain Position',
+  marking:"Mark"
   
 };

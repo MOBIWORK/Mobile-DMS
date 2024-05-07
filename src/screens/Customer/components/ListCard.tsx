@@ -19,9 +19,7 @@ const ListCard = (props: Props) => {
   );
   const memorizedValue = useMemo(() => renderItem, [props.data]);
 
-  return props.loading ? (
-    <SkeletonLoading />
-  ) : (
+  return (
     // <SafeAreaView edges={['bottom']}>
 
     <FlatList

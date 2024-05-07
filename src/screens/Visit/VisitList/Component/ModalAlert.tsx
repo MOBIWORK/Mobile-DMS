@@ -24,8 +24,6 @@ import {
 } from '../../../../config/function';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../../utils';
-import {dispatch} from '../../../../utils/redux';
-import {appActions} from '../../../../redux-store/app-reducer/reducer';
 import {DMSConfigMobile} from '../../../../services/appService';
 import {AppConstant} from '../../../../const';
 type Props = {
@@ -75,10 +73,11 @@ const ModalAlert = ({
     );
     return res;
   }, [curLocation]);
+
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
       locations => {
-        curLocation.current = location;
+        curLocation.current = locations;
         mapboxCameraRef.current &&
           mapboxCameraRef.current.moveTo(
             [locations.coords.longitude, locations.coords.latitude],

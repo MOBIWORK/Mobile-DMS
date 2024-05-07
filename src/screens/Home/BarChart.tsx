@@ -17,7 +17,7 @@ const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
   const {t: getLabel} = useTranslation();
 
   const barCharData = useMemo(() => {
-    if (data?.sales_invoice.length! > 0) {
+    if ( data && data?.sales_invoice && data?.sales_invoice?.length > 0) {
       const newData: any = data?.sales_invoice.map((item: any) => {
         return {
           label: moment(item.ngay).format('DD'),
