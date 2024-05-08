@@ -44,7 +44,6 @@ import isEqual from 'react-fast-compare';
 import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
-import {dispatch} from '../../utils/redux';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 
 export type IValueType = {
@@ -101,7 +100,9 @@ const Customer = () => {
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const [isPending, startTransition] = useTransition();
-  const customerData = React.useRef<IDataCustomers[]>(listCustomer);
+  // const customerData = React.useRef<IDataCustomers[]>(listCustomer);
+  const [customerData, setCustomerData] =
+    React.useState<IDataCustomers[]>(listCustomer);
   const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
@@ -169,6 +170,7 @@ const Customer = () => {
     }
   }, [isFocus]);
 
+// console.log(customerData,'data')
   React.useEffect(() => {
     mounted.current = true;
     startTransition(() => {
@@ -182,10 +184,7 @@ const Customer = () => {
             item => item.customer_location_primary === null,
           );
 
-          customerData.current = [
-            ...sortedData(filteredData),
-            ...noLocationCustomer,
-          ];
+          setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
         } else {
           dispatch(customerActions.onGetCustomer());
           onRefreshData();
@@ -218,7 +217,7 @@ const Customer = () => {
       const newData1 = listCustomer?.filter(
         item => item.customer_type === valueFilter.customerType,
       );
-      customerData.current = newData1;
+      setCustomerData(newData1);
       bottomRef2.current?.close();
     } else if (
       valueFilter.customerGroupType !== getLabel('all') &&
@@ -230,7 +229,7 @@ const Customer = () => {
           item.customer_group === valueFilter.customerGroupType &&
           item.customer_type === valueFilter.customerType,
       );
-      customerData.current = newData2;
+      setCustomerData(newData2);
     } else if (
       valueFilter.customerGroupType !== getLabel('all') &&
       valueFilter.customerType === getLabel('all') &&
@@ -239,7 +238,7 @@ const Customer = () => {
       const newData3 = listCustomer?.filter(
         item => item.customer_group === valueFilter.customerGroupType,
       );
-      customerData.current = newData3;
+      setCustomerData(newData3);
       bottomRef2.current?.close();
     } else {
       console.log('fuck ?');
@@ -381,7 +380,7 @@ const Customer = () => {
           <SkeletonLoading />
         ) : (
           <ListCard
-            data={customerData.current}
+            data={customerData}
             loading={isPending}
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}

@@ -4,7 +4,7 @@ import {AppText} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import CardContactOverview from '../component/CardView';
-import { IDataCustomers} from '../../../models/types';
+import { DetailCustomerType, IDataCustomers} from '../../../models/types';
 import CardAddress from '../../Customer/components/CardAddress';
 
 import InforView from '../component/InforView';
@@ -12,13 +12,16 @@ import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 
 type Props = {
-  data: IDataCustomers;
+  data: DetailCustomerType;
 };
 
 const Overview = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+
+
+
   return (
     <MainLayout style={styles.containLayout}>
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>

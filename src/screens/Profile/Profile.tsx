@@ -59,6 +59,7 @@ const Profile = () => {
     dispatch(noteActions.setLogoutNote());
     dispatch(customerActions.resetDataCustomer());
     dispatch(orderAction.setLogoutData());
+
     CommonUtils.storage.set(AppConstant.isLogOut, true);
     navigation.reset({
       index: 0,

@@ -128,7 +128,7 @@ export type VisitListItemType = {
   is_checkin: boolean;
   total?: number;
   page_size?: number;
-  is_route?:boolean
+  is_route?: boolean;
 };
 
 export type VisitListItemResult = {
@@ -334,6 +334,62 @@ export interface IDataCustomers {
   cre_limid: CreLimid[];
 }
 
+export interface DetailCustomerType {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  has_sales_order: number;
+  custom_sales_manager: string;
+  device_id: any;
+  salutation: any;
+  customer_code: string;
+  customer_name: string;
+  customer_type: string;
+  customer_group: string;
+  territory: string;
+  gender: any;
+  lead_name: any;
+  opportunity_name: any;
+  account_manager: any;
+  image: string | any;
+  default_currency: any;
+  custom_birthday: any;
+  default_bank_account: any;
+  default_price_list: string;
+  represents_company: any;
+  market_segment: any;
+  industry: any;
+  customer_pos_id: any;
+  website: any;
+  customer_details: any;
+  location: any;
+  customer_primary_address: string;
+  customer_location_primary: string;
+  primary_address: string;
+  customer_primary_contact: string;
+  mobile_no: string;
+  email_id: string;
+  tax_id: any;
+  tax_category: any;
+  tax_withholding_category: any;
+  payment_terms: any;
+  loyalty_program: any;
+  loyalty_program_tier: any;
+  default_sales_partner: any;
+  default_commission_rate: number;
+  accounts: any[];
+  portal_users: any[];
+  sales_team: any[];
+  credit_limits: any[];
+  companies: any[];
+  address: Address[];
+  contacts: Contact[];
+  routers: any[];
+  frequency:any[]
+}
+
 export interface ContactCustomer {
   first_name: string;
   phone: string;
@@ -400,21 +456,21 @@ export interface Southwest {
 }
 
 export interface Address {
-  name: string
-  address_line1: string
-  address_line2: any
-  city: string
-  state: any
-  is_primary_address: number
-  is_shipping_address: number
-  county: any
+  name: string;
+  address_line1: string;
+  address_line2: any;
+  city: string;
+  state: any;
+  is_primary_address: number;
+  is_shipping_address: number;
+  county: any;
 }
 
 export interface Contact {
-  first_name: string
-  phone: string
-  is_primary_contact: number
-  is_billing_contact: number
+  first_name: string;
+  phone: string;
+  is_primary_contact: number;
+  is_billing_contact: number;
 }
 
 export interface IDataItem {
@@ -554,7 +610,7 @@ export type IProduct = {
   price: number;
   unit: DataUnit[];
   isSelected?: boolean;
-  expiry? : string;
+  expiry?: string;
 };
 
 export type IOrderList = {

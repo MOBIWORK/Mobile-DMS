@@ -5,7 +5,7 @@ export type IProduct = {
     page_number: number;
     page_size: number;
     total: number;
-  };
+  } | any;
   newCustomer: any[];
   listCustomerType: any[];
   mainAddress: any;

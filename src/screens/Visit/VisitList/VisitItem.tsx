@@ -127,7 +127,7 @@ const VisitItem: FC<VisitItemProps> = ({
             marginTop={8}
             justifyContent="space-between"
             style={[styles.content]}>
-            {item.is_route === true || systemConfig.vt_ngoaituyen === 1 ? (
+            {(item.is_route === true && systemConfig.vt_ngoaituyen === 1 ||  systemConfig.vt_ngoaituyen === 0 ) || (item.is_route === false && systemConfig.vt_ngoaituyen === 1) ? (
               <AppButton
                 onPress={() =>
                   startTransition(() => {
@@ -135,7 +135,7 @@ const VisitItem: FC<VisitItemProps> = ({
                   })
                 }
                 disabled={item.is_route === true ? false : true}
-                style={createStyleSheet(theme).button(!item.is_route)}
+                style={createStyleSheet(theme).button(!((item.is_route === true && systemConfig.vt_ngoaituyen === 1 ||  systemConfig.vt_ngoaituyen === 0 ) || (item.is_route === false && systemConfig.vt_ngoaituyen === 1)))}
                 label={'Checkin'}
                 styleLabel={{
                   color: colors.action,

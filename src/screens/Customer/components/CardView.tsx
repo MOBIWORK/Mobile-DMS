@@ -77,8 +77,8 @@ const CardView = (props: IDataCustomers) => {
         <View style={styles.contentContainLayout}>
           <AppImage source={'IconPhone'} style={styles.iconStyle} />
           <Text style={styles.contentText}>
-            {props?.contact?.[0]?.phoneNumber
-              ? props?.contact?.[0]?.phoneNumber
+            {props?.contact?.[0]?.phone
+              ? props?.contact?.[0]?.phone
               : '---'}
           </Text>
         </View>

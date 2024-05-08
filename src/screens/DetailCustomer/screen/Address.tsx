@@ -14,8 +14,7 @@ import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {IDataCustomers} from '../../../models/types';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import CardAddress from '../../Customer/components/CardAddress';
-import CardContactOverview from '../component/CardView';
+
 import CardAddressView from '../component/CardAddressView';
 
 type Props = {
@@ -49,7 +48,7 @@ const Address = (props: Props) => {
       props.data.address.length > 0 ? (
         <FlatList
           data={props.data.address}
-          keyExtractor={(item, index) => item.address}
+          keyExtractor={(item, index) => item.name}
           showsVerticalScrollIndicator={false}
           decelerationRate={'fast'}
           initialNumToRender={10}
