@@ -1,14 +1,14 @@
 import {StyleSheet, View, Platform, ViewStyle, TextStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {IDataCustomer, IDataCustomers} from '../../../models/types';
+import {DetailCustomerType, IDataCustomer, IDataCustomers} from '../../../models/types';
 import {AppText, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 
 type Props = {
-  data: IDataCustomers;
+  data: DetailCustomerType;
 };
 
 const CardContactOverview = (props: Props) => {

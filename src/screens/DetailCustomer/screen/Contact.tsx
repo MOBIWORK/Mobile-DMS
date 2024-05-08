@@ -13,14 +13,14 @@ import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import { IDataCustomers} from '../../../models/types';
+import { DetailCustomerType, IDataCustomers} from '../../../models/types';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CardContactOverview from '../component/CardView';
 import CardContactView from '../component/CardContactView';
 
 type Props = {
   onPressAdding: () => void;
-  data: IDataCustomers;
+  data: DetailCustomerType;
 };
 
 const Contact = (props: Props) => {
@@ -44,11 +44,11 @@ const Contact = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {props.data.contact &&
-      props.data.contact != null &&
-      props.data.contact.length > 0 ? (
+      {props.data.contacts &&
+      props.data.contacts != null &&
+      props.data.contacts.length > 0 ? (
         <FlatList
-          data={props.data.contact}
+          data={props.data.contacts}
           keyExtractor={(item, index) => item.first_name}
           showsVerticalScrollIndicator={false}
           initialNumToRender={10}

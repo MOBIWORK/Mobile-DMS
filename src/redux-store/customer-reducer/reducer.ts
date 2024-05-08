@@ -58,7 +58,16 @@ const customerSlice = createSlice({
     setPage: (state, action: PayloadAction<any>) => {
       state.listCustomer.page_number = action.payload;
     },
-    resetDataCustomer: (state: any) => (state = undefined),
+    resetDataCustomer: state => {
+     
+      state.listCustomer = {};
+      state.listCustomerRoute = [];
+      state.listCustomerVisit = {};
+      state.listCustomerTerritory = [];
+      state.mainContactAddress = null;
+      state.listCustomerType = [];
+      state.mainAddress = null;
+    },
   },
 });
 

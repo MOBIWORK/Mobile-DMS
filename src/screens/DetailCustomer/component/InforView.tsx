@@ -1,6 +1,6 @@
 import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {IDataCustomers} from '../../../models/types';
+import {DetailCustomerType, IDataCustomers} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {AppText, Block, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
@@ -12,7 +12,7 @@ import {GeolocationResponse} from '@react-native-community/geolocation';
 import {formatMoney} from '../../../config/function';
 
 type Props = {
-  data: IDataCustomers;
+  data: DetailCustomerType;
 };
 
 const InforBlock = (props: Props) => {
@@ -26,6 +26,7 @@ const InforBlock = (props: Props) => {
   useEffect(() => {
     CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
+  console.log(props.data, 'routers?');
 
   return (
     <Block style={styles.root}>
@@ -165,7 +166,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.territory != null ? props.data.territory : ' ---'}
+            {props.data.routers.length > 0  ? props.data.routers.toString() : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -177,6 +178,17 @@ const InforBlock = (props: Props) => {
             lineHeight={24}>
             {translate('frequency')}
           </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            {props.data.frequency &&
+            (props.data.frequency != null || props.data.frequency != undefined)
+              ? props.data.frequency
+              : ' ---'}
+          </AppText>
+          <Block style={styles.divider} />
         </Block>
         <Block>
           <AppText
@@ -191,8 +203,8 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.cre_limid && props.data.cre_limid.length > 0
-              ? formatMoney(props.data.cre_limid[0].credit_limit)
+            {props.data.credit_limits && props.data.credit_limits.length > 0
+              ? formatMoney(props.data.credit_limits[0].credit_limit)
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />

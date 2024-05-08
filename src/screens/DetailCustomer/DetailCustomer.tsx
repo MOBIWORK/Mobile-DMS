@@ -33,6 +33,11 @@ import {AppConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {goBack} from '../../navigation/navigation-service';
+import {useSelector} from '../../config/function';
+import {shallowEqual} from 'react-redux';
+import {dispatch} from '../../utils/redux';
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import {CustomerService} from '../../services';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -48,6 +53,8 @@ const DetailCustomer = () => {
   );
   const [show, setShow] = useState(false);
   const [isPending, startTrans] = useTransition();
+  const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
+  const data = useRef<any>(null);
 
   const snapPointAdding = useMemo(
     () =>
@@ -64,12 +71,36 @@ const DetailCustomer = () => {
     {key: 'third', title: getLabel('contact')},
   ]).current;
 
+  React.useEffect(() => {
+    let mounted = true;
+    dispatch(appActions.onLoadApp());
+    const getDetailCustomer = async () => {
+      let res: any = await CustomerService.getCustomerDetail(
+        params.data.customer_name,
+      );
+      if (res.message === 'ok' || Object.keys(res.result).length > 0) {
+        data.current = res.result;
+      }
+    };
 
-  
+    getDetailCustomer();
+    dispatch(appActions.onLoadAppEnd());
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const renderScene = React.useCallback(
     SceneMap({
-      first: () => <Overview data={params.data} />,
+      first: () => (
+        <Overview
+          data={
+            data.current != null && Object.keys(data.current).length > 0
+              ? data.current
+              : params.data
+          }
+        />
+      ),
       second: () =>
         isPending ? (
           <Block block justifyContent="center" alignItems="center">
@@ -77,7 +108,14 @@ const DetailCustomer = () => {
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </Block>
         ) : (
-          <Address onPressAdding={onPressAdding} data={params.data} />
+          <Address
+            onPressAdding={onPressAdding}
+            data={
+              data.current != null && Object.keys(data.current).length > 0
+                ? data.current
+                : params.data
+            }
+          />
         ),
       third: () =>
         isPending ? (
@@ -86,10 +124,17 @@ const DetailCustomer = () => {
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </Block>
         ) : (
-          <Contact onPressAdding={onPressAddingContact} data={params.data} />
+          <Contact
+            onPressAdding={onPressAddingContact}
+            data={
+              data.current != null && Object.keys(data.current).length > 0
+                ? data.current
+                : params.data
+            }
+          />
         ),
     }),
-    [params],
+    [data.current],
   );
 
   const indexView = useRef<number>(0);
@@ -119,12 +164,14 @@ const DetailCustomer = () => {
     );
   }, []);
 
-
-  const onIndexChange = useCallback((index:number) =>{
-          startTrans(() =>{
-            indexView.current = index
-          })
-  },[indexView.current])
+  const onIndexChange = useCallback(
+    (index: number) => {
+      startTrans(() => {
+        indexView.current = index;
+      });
+    },
+    [indexView.current],
+  );
 
   return (
     <SafeAreaView style={styles.root}>
@@ -140,22 +187,30 @@ const DetailCustomer = () => {
           }
         />
       </View>
+      {appLoading ? (
+        <Block block justifyContent="center" alignItems="center">
+          {' '}
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </Block>
+      ) : (
+        <>
+          <TabView
+            onIndexChange={onIndexChange}
+            navigationState={{
+              index: indexView.current,
+              routes: routes,
+            }}
+            swipeEnabled={true}
+            renderScene={renderScene}
+            renderTabBar={renderTabBar}
+            lazyPreloadDistance={2}
+            lazy={true}
+            animationEnabled={true}
+            initialLayout={{width: layout.width}}
+          />
+        </>
+      )}
 
-      <TabView
-        onIndexChange={onIndexChange}
-        navigationState={{
-          index: indexView.current,
-          routes: routes,
-        }}
-        swipeEnabled={true}
-        renderScene={renderScene}
-        renderTabBar={renderTabBar}
-        lazyPreloadDistance={2}
-        lazy={true}
-        animationEnabled={true}
-      
-        initialLayout={{width: layout.width}}
-      />
       <AppBottomSheet
         bottomSheetRef={addingAddress}
         snapPointsCustom={snapPointAdding}>
