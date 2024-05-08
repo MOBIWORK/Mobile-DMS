@@ -1,9 +1,14 @@
 import React, {FC, ReactNode, useState} from 'react';
 import {TextInput, TextInputProps} from 'react-native-paper';
-import {StyleSheet, TextStyle, TouchableOpacity, ViewStyle} from 'react-native';
+import {
+  StyleSheet,
+  TextStyle,
+  TouchableOpacity,
+  ViewStyle,
+  Text,
+} from 'react-native';
 import isEqual from 'react-fast-compare';
 import {AppTheme, useTheme} from '../../layouts/theme';
-import {AppText as Text} from './AppText';
 const AppInput: FC<AppInputProps> = ({
   styles,
   label,
@@ -36,10 +41,12 @@ const AppInput: FC<AppInputProps> = ({
         mode={'outlined'}
         label={
           <Text
-            color={isFocus || value ? undefined : colors.text_disable}
-            fontWeight={isFocus || value ? '600' : '400'}
-            fontSize={16}
-            style={labelStyle}>
+            style={{
+              color: isFocus || value ? undefined : colors.text_disable,
+              fontWeight: isFocus || value ? '600' : '400',
+              fontSize: 16,
+              ...labelStyle,
+            }}>
             {label} {isRequire ? <Text style={{color: 'red'}}>*</Text> : null}
           </Text>
         }
