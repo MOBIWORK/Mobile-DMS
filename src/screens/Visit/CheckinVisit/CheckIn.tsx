@@ -13,8 +13,8 @@ import {
   SvgIcon,
   showSnack,
 } from '../../../components/common/';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {RouterProp} from '../../../navigation/screen-type';
+import {NavigationProp, useNavigation, useRoute} from '@react-navigation/native';
+import {AuthorizeParamsList, RouterProp} from '../../../navigation/screen-type';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Modal} from 'react-native-paper';
@@ -26,6 +26,7 @@ import {
   decimalMinutesToTime,
   useDeepCompareEffect,
   useDisableBackHandler,
+  useEffectOnce,
   useSelector,
 } from '../../../config/function';
 import {shallowEqual} from 'react-redux';
@@ -67,7 +68,7 @@ const CheckIn = () => {
   const {t: getLabel} = useTranslation();
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState<string>(getLabel('openDoor'));
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<AuthorizeParamsList,'CHECKIN'>>();
   const batteryLevel = useBatteryLevel();
 
   const dataCheckIn: CheckinData = useSelector(
@@ -86,6 +87,7 @@ const CheckIn = () => {
       : params.checkin_trangthaicuahang,
   );
 
+  
   const elapsedTime = useTimer();
 
   const systemConfig: DMSConfigMobile = useSelector(
@@ -147,17 +149,17 @@ const CheckIn = () => {
         return navigation.navigate(ScreenConstant.CHECKIN_INVENTORY, {
           type: '',
           data: params,
-        });
+        } as any) ;
       case 'camera':
         return navigation.navigate(ScreenConstant.TAKE_PICTURE_VISIT, {
           type: '',
           data: params,
-        });
+        } as any);
       case 'note':
         return navigation.navigate(ScreenConstant.CHECKIN_NOTE_VISIT, {
           type: '',
           data: params,
-        });
+        }as any);
       case 'distance':
         return setOpenDialogErr(false);
     }
@@ -303,16 +305,20 @@ const CheckIn = () => {
     }
   }, [dataCheckIn]);
 
-  useDeepCompareEffect(() => {
+// console.log(params.kh_diachi,'route')
+
+  useEffectOnce(() => {
     if (route === false) {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
         type: '',
         data: params,
       });
+      navigation.setParams({isLocation:true})
+      
     } else {
       return;
     }
-  }, [route]);
+  });
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -359,7 +365,7 @@ const CheckIn = () => {
           <Block paddingTop={8}>
             <Block direction="row" alignItems="center" marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
-              <Text numberOfLines={1}> {params.kh_diachi} </Text>
+              <Text numberOfLines={1}   > {params.kh_diachi} </Text>
             </Block>
             <Block
               direction="row"

@@ -2,13 +2,14 @@ import React, {useLayoutEffect, useRef, useState} from 'react';
 import {AppButton, AppHeader, SvgIcon} from '../../../components/common';
 import {
   ExtendedTheme,
+  NavigationProp,
   useNavigation,
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
+import { AuthorizeParamsList, RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
-import {ApiConstant, AppConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {
   Image,
   Keyboard,
@@ -41,8 +42,10 @@ import isEqual from 'react-fast-compare';
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const CheckInLocation = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<any>();
+
   const route = useRoute<RouterProp<'CHECKIN_LOCATION'>>();
+  const paramsCheckin = useRoute<RouterProp<'CHECKIN'>>().params;
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const styles = createStyle(theme);
@@ -63,7 +66,7 @@ const CheckInLocation = () => {
 
   const handleRegainLocation = () => {
     CommonUtils.getCurrentLocation(newLocation => {
-      setLocation(location);
+      setLocation(newLocation);
       mapboxCameraRef.current &&
         mapboxCameraRef.current.moveTo(
           [newLocation.coords.longitude, newLocation.coords.latitude],
@@ -114,6 +117,7 @@ const CheckInLocation = () => {
   const handleComplete = async () => {
     if (value !== route.params.data.item.customer_primary_address) {
       dispatch(setProcessingStatus(true));
+      let newParams = route.params;
       await CommonUtils.CheckNetworkState();
       const split = value.split(',', 4);
       const params: IUpdateAddress = {
@@ -126,13 +130,20 @@ const CheckInLocation = () => {
         city: split[3] ?? '',
         country: 'Việt Nam',
       };
+      newParams.data.kh_diachi = params.address_line1;
       const response: any = await CheckinService.updateCustomerAddress(params);
       if (response?.status === ApiConstant.STT_OK) {
-        await completeCheckin();
-        navigation.goBack();
+        completeCheckin();
+        // navigation.goBack();
+        navigation.navigate({
+          name:ScreenConstant.CHECKIN,
+          params:{item:newParams.data,isLocation:true},
+          merge:true
+        });
+        // navigation.setParams({data:newParams.data,type:newParams.type})
       }
     } else {
-      await completeCheckin();
+      completeCheckin();
       navigation.goBack();
     }
     dispatch(setProcessingStatus(false));
@@ -163,7 +174,7 @@ const CheckInLocation = () => {
     // <SafeAreaView
     //   edges={['bottom', 'top']}
     //   style={{backgroundColor: theme.colors.bg_default, paddingHorizontal: 0}}>
-    <MainLayout style={{paddingHorizontal: 0}}>
+    <SafeAreaView style={{paddingHorizontal: 0}}>
       <AppHeader
         style={{paddingHorizontal: 16}}
         onBack={() => navigation.goBack()}
@@ -182,6 +193,7 @@ const CheckInLocation = () => {
           pitchEnabled={false}
           attributionEnabled={false}
           scaleBarEnabled={false}
+          
           styleURL={Mapbox.StyleURL.Street}
           logoEnabled={false}
           style={{flex: 1}}
@@ -254,11 +266,11 @@ const CheckInLocation = () => {
           <AppButton label={getLabel('completed')} onPress={handleComplete} />
         </View>
       </View>
-    </MainLayout>
+    </SafeAreaView>
     // </SafeAreaView>
   );
 };
-export default React.memo(CheckInLocation,isEqual);
+export default React.memo(CheckInLocation, isEqual);
 const createStyle = (theme: ExtendedTheme) =>
   StyleSheet.create({
     searchContainer: {

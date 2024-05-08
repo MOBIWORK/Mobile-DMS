@@ -214,8 +214,11 @@ const ModalAlert = ({
                       {getLabel('regainPosition')}
                     </Text>
                   </TouchableOpacity>
-                  {systemConfig.kb_vitringoaisaiso === 1 &&
+                  {(systemConfig.kb_vitringoaisaiso === 1 &&
                     data * 1000 <=
+                      systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                        AppConstant.additional_distance) ||
+                    (data * 1000 <=
                       systemConfig.saiso_chophep_kb_vitringoaisaiso +
                         AppConstant.additional_distance && (
                       <TouchableOpacity
@@ -230,7 +233,7 @@ const ModalAlert = ({
                           Checkin
                         </Text>
                       </TouchableOpacity>
-                    )}
+                    ))}
                 </Block>
               </Block>
             </Block>

@@ -301,4 +301,7 @@ export default {
   marking: 'Cắm mốc',
   channel: 'Kênh',
   collectionDate: 'Ngày thu thập',
+  listContact: 'Danh sách liên hệ',
+  addressGet: 'Địa chỉ giao hàng',
+  addressOrder: 'Địa chỉ đặt hàng',
 };

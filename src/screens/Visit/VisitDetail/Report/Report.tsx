@@ -22,16 +22,15 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
   const navigation = useNavigation<NavigationProp>();
   const [segData, setSegData] = useState<AppSegmentedButtonsType[]>([]);
   const index = React.useRef<number>(1);
-  const [indexPage, setIndexPage] = useState<number>(1);
   const [isPending, startTransition] = useTransition();
   const theme = useTheme();
   const [reportData, setReportData] = useState<IReportVisitDetail>();
   const inventoryData = useRef<any>(reportData?.ton_kho);
 
-  const changeReportIndex = (value: string | number) => {
+  const changeReportIndex = React.useCallback((value: string | number) => {
     // setIndexPage(Number(value));
-    index.current = Number(value);
     startTransition(() => {
+    index.current = Number(value);
       const newSegData = segData.map(item => {
         if (value === item.value) {
           return {...item, isSelected: true};
@@ -41,7 +40,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
       });
       setSegData(newSegData);
     });
-  };
+  },[index.current]);
 
   const getData = async () => {
     const response: any = await CustomerService.getReportOrder({

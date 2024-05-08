@@ -296,4 +296,7 @@ export default {
   marking: 'Mark',
   channel: 'Channel',
   collectionDate: 'Collection date',
+  listContact: 'List Contact',
+  addressGet: 'Delivery Address',
+  addressOrder: 'Order Address',
 };

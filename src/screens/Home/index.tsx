@@ -66,6 +66,7 @@ import isEqual from 'react-fast-compare';
 import TimeKeep from './components/TimeKeep';
 import MapView from './components/MapView';
 import CircleChartView from './components/CircleChartView';
+import { shallowEqual } from 'react-redux';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -78,7 +79,7 @@ const HomeScreen = () => {
 
   const location = useRef<GeolocationResponse | null>(null);
   const [enabled, setEnabled] = React.useState(false);
-  const userProfile: IUser = useSelector(state => state.app.userProfile);
+  const userProfile: IUser = useSelector(state => state.app.userProfile,shallowEqual);
   const listCustomerVisit: VisitListItemType[] = useSelector(
     state => state.customer.listCustomerVisit,
   );
@@ -459,42 +460,42 @@ const HomeScreen = () => {
 
   const onSyncStatusChanged = React.useCallback(
     (syncStatus: number) => {
-      // switch (syncStatus) {
-      //   case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
-      //     // Đang kiểm tra bản cập nhật...
-      //     break;
-      //   }
-      //   case codePush.SyncStatus.DOWNLOADING_PACKAGE: {
-      //     //Đang tải xuống bản cập nhật...
-      //     break;
-      //   }
-      //   case codePush.SyncStatus.INSTALLING_UPDATE: {
-      //     //Đang cài đặt bản cập nhật...
-      //     break;
-      //   }
-      //   case codePush.SyncStatus.UPDATE_INSTALLED: {
-      //     setShowModalHotUpdate(false);
-      //     codePush.notifyAppReady();
-      //     //'Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!'
-      //     break;
-      //   }
-      //   case codePush.SyncStatus.UNKNOWN_ERROR: {
-      //     //Cập nhật thất bại!
-      //     setShowModalHotUpdate(false);
+      switch (syncStatus) {
+        case codePush.SyncStatus.CHECKING_FOR_UPDATE: {
+          // Đang kiểm tra bản cập nhật...
+          break;
+        }
+        case codePush.SyncStatus.DOWNLOADING_PACKAGE: {
+          //Đang tải xuống bản cập nhật...
+          break;
+        }
+        case codePush.SyncStatus.INSTALLING_UPDATE: {
+          //Đang cài đặt bản cập nhật...
+          break;
+        }
+        case codePush.SyncStatus.UPDATE_INSTALLED: {
+          setShowModalHotUpdate(false);
+          codePush.notifyAppReady();
+          //'Hoàn tất cập nhật. Xin vui lòng đợi trong giây lát!'
+          break;
+        }
+        case codePush.SyncStatus.UNKNOWN_ERROR: {
+          //Cập nhật thất bại!
+          setShowModalHotUpdate(false);
 
-      //     // setTimeout(() => {
-      //     //   codePush.restartApp();
-      //     // }, 800);
-      //     break;
-      //   }
-      //   case codePush.SyncStatus.UP_TO_DATE: {
-      //     codePush.notifyAppReady();
-      //     break;
-      //   }
-      //   default: {
-      //     break;
-      //   }
-      // }
+          // setTimeout(() => {
+          //   codePush.restartApp();
+          // }, 800);
+          break;
+        }
+        case codePush.SyncStatus.UP_TO_DATE: {
+          codePush.notifyAppReady();
+          break;
+        }
+        default: {
+          break;
+        }
+      }
     },
     [syncWithCodePush],
   );
@@ -510,16 +511,16 @@ const HomeScreen = () => {
     );
   };
 
-  // useEffect(() => {
-  //   startCompare(() => {
-  //     codePush.checkForUpdate().then(update => {
-  //       if (update) {
-  //         setShowModalHotUpdate(true);
-  //       }
-  //     });
-  //   });
-  //   // Kiểm tra xem có phiên bản mới không
-  // }, []);
+  useEffect(() => {
+    startCompare(() => {
+      codePush.checkForUpdate().then(update => {
+        if (update) {
+          setShowModalHotUpdate(true);
+        }
+      });
+    });
+    // Kiểm tra xem có phiên bản mới không
+  }, []);
 
   const handleUpdateApp =  () => {
     codePush.sync(

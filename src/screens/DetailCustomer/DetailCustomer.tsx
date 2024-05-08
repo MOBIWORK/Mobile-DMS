@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TextStyle,
@@ -6,10 +7,21 @@ import {
   ViewStyle,
   useWindowDimensions,
 } from 'react-native';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../navigation/screen-type';
-import {AppBottomSheet, AppHeader, SvgIcon} from '../../components/common';
+import {
+  AppBottomSheet,
+  AppHeader,
+  Block,
+  SvgIcon,
+} from '../../components/common';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
 import {AppTheme, useTheme} from '../../layouts/theme';
@@ -20,7 +32,7 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {AppConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import { goBack } from '../../navigation/navigation-service';
+import {goBack} from '../../navigation/navigation-service';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -35,6 +47,7 @@ const DetailCustomer = () => {
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const [show, setShow] = useState(false);
+  const [isPending, startTrans] = useTransition();
 
   const snapPointAdding = useMemo(
     () =>
@@ -45,22 +58,41 @@ const DetailCustomer = () => {
         : ['40%'],
     [typeFilter],
   );
-  const [routes] = useState([
+  const routes = useRef([
     {key: 'first', title: getLabel('overview')},
     {key: 'second', title: getLabel('address')},
     {key: 'third', title: getLabel('contact')},
-  ]);
+  ]).current;
+
+
+  
 
   const renderScene = React.useCallback(
     SceneMap({
       first: () => <Overview data={params.data} />,
-      second: () => <Address onPressAdding={onPressAdding} />,
-      third: () => <Contact onPressAdding={onPressAddingContact} />,
+      second: () =>
+        isPending ? (
+          <Block block justifyContent="center" alignItems="center">
+            {' '}
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+          </Block>
+        ) : (
+          <Address onPressAdding={onPressAdding} data={params.data} />
+        ),
+      third: () =>
+        isPending ? (
+          <Block block justifyContent="center" alignItems="center">
+            {' '}
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+          </Block>
+        ) : (
+          <Contact onPressAdding={onPressAddingContact} data={params.data} />
+        ),
     }),
-    [],
+    [params],
   );
 
-  const [currentIndexView, setCurrentIndexView] = useState(0);
+  const indexView = useRef<number>(0);
 
   const onPressAdding = () => {
     setTypeFilter(AppConstant.CustomerFilterType.dia_chi);
@@ -85,7 +117,14 @@ const DetailCustomer = () => {
         style={styles.tabBar}
       />
     );
-  },[]);
+  }, []);
+
+
+  const onIndexChange = useCallback((index:number) =>{
+          startTrans(() =>{
+            indexView.current = index
+          })
+  },[indexView.current])
 
   return (
     <SafeAreaView style={styles.root}>
@@ -103,14 +142,18 @@ const DetailCustomer = () => {
       </View>
 
       <TabView
-        onIndexChange={setCurrentIndexView}
+        onIndexChange={onIndexChange}
         navigationState={{
-          index: currentIndexView,
+          index: indexView.current,
           routes: routes,
         }}
         swipeEnabled={true}
         renderScene={renderScene}
         renderTabBar={renderTabBar}
+        lazyPreloadDistance={2}
+        lazy={true}
+        animationEnabled={true}
+      
         initialLayout={{width: layout.width}}
       />
       <AppBottomSheet
@@ -123,14 +166,14 @@ const DetailCustomer = () => {
           }}
           typeFilter={typeFilter}
           listData={[] as any}
-          setData={() =>{}}
+          setData={() => {}}
         />
       </AppBottomSheet>
     </SafeAreaView>
   );
 };
 
-export default React.memo(DetailCustomer,isEqual);
+export default React.memo(DetailCustomer, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

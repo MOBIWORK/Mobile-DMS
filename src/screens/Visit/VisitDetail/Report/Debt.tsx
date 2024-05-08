@@ -5,6 +5,7 @@ import {CommonUtils} from '../../../../utils';
 import {ImageAssets} from '../../../../assets';
 import {ReportDebtListType, ReportDebtType} from '../../../../models/types';
 import {useTranslation} from 'react-i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Debt: FC<DebtProps> = ({debtData}) => {
   const theme = useTheme();
@@ -42,7 +43,7 @@ const Debt: FC<DebtProps> = ({debtData}) => {
   };
 
   return (
-    <View style={{marginTop: 32}}>
+    <SafeAreaView style={{marginTop: 32}} edges={['top','bottom']}>
       <View style={styles.headerContainer as any}>
         <Text style={{color: theme.colors.text_primary}}>
           {getLabel('totalDebt')}
@@ -58,7 +59,7 @@ const Debt: FC<DebtProps> = ({debtData}) => {
           renderItem={({item, index}) => renderDebtItem(item, index)}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 interface DebtProps {

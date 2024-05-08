@@ -58,6 +58,7 @@ import {
 
 import {
   CheckinData,
+  DMSConfigMobile,
   getCustomerType,
   getCustomerVisit,
   IListVisitParams,
@@ -103,7 +104,7 @@ const ListVisit = () => {
   const filterRef = useRef<BottomSheet>(null);
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const systemConfig = useSelector(state => state.app.systemConfig);
+  const systemConfig:DMSConfigMobile = useSelector(state => state.app.systemConfig);
   const searchVisit = useSelector(state => state.app.searchVisitValue);
   const [isPending, startEffect] = useTransition();
   const dataCheckIn: CheckinData = useSelector(
@@ -430,20 +431,20 @@ const ListVisit = () => {
 
   const _renderContent = () => {
     return (
-      <Block marginTop={8}>
+      <Block marginTop={8} >
         {isShowListVisit ? (
-          <View style={{marginTop: 16, paddingHorizontal: 16}}>
+          <Block  marginTop={16} paddingHorizontal={16} >
             <Text style={{color: colors.text_secondary}}>
               {StringFormat(getLabel('customerVisitedCount'), {
                 customerCheckinCount: customerCheckinCount,
-                allCustomer: customerDataSort?.length,
+                allCustomer: customerDataSort?.length != undefined ? customerDataSort?.length : 0,
               })}
             </Text>
             {isPending ? (
               <SkeletonLoading />
             ) : (
               <FlatList
-                style={{height: '85%', marginTop: 16}}
+                style={{height: '85%',paddingVertical:8}}
                 showsVerticalScrollIndicator={false}
                 data={customerDataSort ?? listCustomer.data}
                 keyExtractor={(item, index) =>
@@ -476,7 +477,7 @@ const ListVisit = () => {
                 onEndReachedThreshold={0.5}
               />
             )}
-          </View>
+          </Block>
         ) : (
           renderMapView()
         )}
@@ -708,7 +709,7 @@ const ListVisit = () => {
   };
 
   const handleCheckin = useCallback(
-    (item: VisitListItemType, isDetail: boolean,coords:any) => {
+    (item: VisitListItemType, isDetail: boolean,coords:any,detailAdd?:any) => {
       let log: LocationProps = JSON.parse(item.customer_location_primary!);
       let uniqueID = generateRandomObjectId();
       CommonUtils.getCurrentLocation(
@@ -728,7 +729,7 @@ const ListVisit = () => {
                 : uniqueID,
             kh_ma: item.customer_code,
             kh_ten: item.customer_name,
-            kh_diachi: item.customer_primary_address,
+            kh_diachi: item.customer_primary_address === null ? detailAdd : item.customer_primary_address,
             kh_long: coords.lon || '',
             kh_lat: coords.lat || '',
             checkin_giovao: new Date().getTime() / 1000,
@@ -897,6 +898,7 @@ const ListVisit = () => {
   //  console.log(dataCheckIn.checkin_id,'checkinId')
 
   const onPressToDetail = useCallback((item: VisitListItemType) => {
+  
     if (item.customer_location_primary != null) {
       currentSelect.current = item;
       let log: LocationProps = JSON.parse(item.customer_location_primary!);
