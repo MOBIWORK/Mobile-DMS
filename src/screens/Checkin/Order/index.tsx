@@ -178,7 +178,7 @@ const CheckinOrder = () => {
                         name={item.item_name}
                         code={item.item_code}
                         quantity={item.qty}
-                        price={item.rate}
+                        price={item.amount}
                         percentage_discount={item.discount_percentage}
                         discount={(
                           item.amount *
