@@ -1,15 +1,22 @@
-import {ScrollView, StyleSheet, View, ViewStyle} from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
-import {AppText} from '../../../components/common';
+import {AppText, Block} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import CardContactOverview from '../component/CardView';
-import { DetailCustomerType, IDataCustomers} from '../../../models/types';
+import {DetailCustomerType, IDataCustomers} from '../../../models/types';
 import CardAddress from '../../Customer/components/CardAddress';
 
 import InforView from '../component/InforView';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
+import CardOverView from '../component/CardOverView';
 
 type Props = {
   data: DetailCustomerType;
@@ -20,27 +27,36 @@ const Overview = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
-
-
   return (
-    <MainLayout style={styles.containLayout}>
+    <Block block>
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
-        <View>
-          <AppText fontSize={14} fontWeight="500" lineHeight={21}>
-            {getLabel('contactName')}
-          </AppText>
-          <CardContactOverview data={props.data} />
-        </View>
-        {props.data.address != null && Object.keys(props.data.address).length > 0 ? (
-          <View>
-            <AppText fontSize={14} fontWeight="500" lineHeight={21}>
-              {getLabel('mainAddress')}
-            </AppText>
-            <CardAddress type="address" mainAddress={props.data.address as any} />
-          </View>
-        ) : null}
+        {props.data != null &&
+          props.data.contacts.length > 0 &&
+          props.data.contacts != null && (
+            <Block>
+              <AppText fontSize={14} fontWeight="500" lineHeight={21}>
+                {getLabel('contactName')}
+              </AppText>
+              {/* <CardContactOverview data={props.data} /> */}
+              <CardAddress
+                type="contact"
+                mainContactAddress={props.data.contacts[0]}
+              />
+            </Block>
+          )}
 
-        <View>
+        {props.data != null &&
+          props.data.address.length > 0 &&
+          props.data.address != null && (
+            <Block paddingHorizontal={16}>
+              <AppText fontSize={14} fontWeight="500" lineHeight={21}>
+                {getLabel('mainAddress')}
+              </AppText>
+              <CardAddress type="address" mainAddress={props.data.address[0]} />
+            </Block>
+          )}
+
+        <Block paddingHorizontal={16}>
           <AppText
             fontSize={14}
             fontWeight="500"
@@ -48,22 +64,24 @@ const Overview = (props: Props) => {
             colorTheme="text_secondary">
             {getLabel('customerInfo')}
           </AppText>
-          <InforView data={props.data} />
-        </View>
+          {props.data !== null && <InforView data={props.data} />}
+        </Block>
       </ScrollView>
-    </MainLayout>
+    </Block>
   );
 };
 
-export default React.memo(Overview,isEqual);
+export default React.memo(Overview, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     containLayout: {
       paddingTop: 16,
       backgroundColor: theme.colors.bg_neutral,
+      
     } as ViewStyle,
     root: {
       flex: 1,
-    },
+     
+    } as ViewStyle,
   });

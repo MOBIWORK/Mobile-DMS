@@ -31,13 +31,13 @@ const CardContactView = (props: Props) => {
           <SvgIcon source="Phone" size={18} />
           <Text numberOfLines={1}>
             {' '}
-            {props.data?.phone != null
-              ? formatPhoneNumber(props.data?.phone)
+            {props.data?.mobile_no != null
+              ? formatPhoneNumber(props.data?.mobile_no)
               : '---'}
           </Text>
         </Block>
       </Block>
-      {props.data.is_billing_contact && (
+      {props.data.is_billing_contact === 1&& (
         <Block style={styles.containAddress}>
           <Block style={styles.mainContact}>
             <Text fontSize={14} fontWeight="400" colorTheme="primary">
@@ -46,7 +46,7 @@ const CardContactView = (props: Props) => {
           </Block>
         </Block>
       )}
-      {props.data.is_primary_contact && (
+      {props.data.is_primary_contact ===1 && (
         <Block style={styles.containAddress}>
           <Block style={styles.mainContact}>
             <Text fontSize={14} fontWeight="400" colorTheme="primary">

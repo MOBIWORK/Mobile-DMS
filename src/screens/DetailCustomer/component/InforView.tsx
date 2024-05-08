@@ -26,7 +26,7 @@ const InforBlock = (props: Props) => {
   useEffect(() => {
     CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
-  console.log(props.data, 'routers?');
+  console.log(props.data,'data')
 
   return (
     <Block style={styles.root}>
@@ -55,7 +55,9 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_name != '' ? props.data.customer_name : ' ---'}
+            {props.data?.customer_name && props.data.customer_name != null
+              ? props.data.customer_name
+              : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -72,8 +74,8 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_code != null
-              ? props.data.customer_code
+            {props.data?.customer_code != null
+              ? props.data?.customer_code
               : '---'}
           </AppText>
           <Block style={styles.divider} />
@@ -153,43 +155,7 @@ const InforBlock = (props: Props) => {
           </AppText>
           <Block style={styles.divider} />
         </Block>
-        <Block>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            {translate('gland')}
-          </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            {props.data?.routers?.length > 0  ? props.data.routers.toString() : ' ---'}
-          </AppText>
-          <Block style={styles.divider} />
-        </Block>
-        <Block>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            {translate('frequency')}
-          </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            {props.data.frequency &&
-            (props.data.frequency != null || props.data.frequency != undefined)
-              ? props.data.frequency
-              : ' ---'}
-          </AppText>
-          <Block style={styles.divider} />
-        </Block>
+
         <Block>
           <AppText
             fontSize={16}
@@ -217,6 +183,16 @@ const InforBlock = (props: Props) => {
             lineHeight={24}>
             {translate('describe')}
           </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            {props.data.customer_details != null
+              ? props.data.customer_details
+              : ' ---'}
+          </AppText>
+          <Block style={styles.divider} />
         </Block>
         <Block>
           <AppText

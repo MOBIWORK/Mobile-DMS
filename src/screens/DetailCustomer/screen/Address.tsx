@@ -43,12 +43,13 @@ const Address = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {props.data.address &&
+      {props.data != null &&
+      props.data.address &&
       props.data.address != null &&
       props.data.address.length > 0 ? (
         <FlatList
           data={props.data.address}
-          keyExtractor={(item, index) => item.name}
+          keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           decelerationRate={'fast'}
           initialNumToRender={10}
@@ -62,7 +63,7 @@ const Address = (props: Props) => {
       ) : (
         <CardAddressView
           type="single"
-          data={props.data.customer_primary_address}
+          data={ props.data != null && props.data?.customer_primary_address != null ? props.data.customer_primary_address : ''}
         />
       )}
     </SafeAreaView>
@@ -75,9 +76,9 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     root: {
       // paddingTop: 10,
-      flex:1,
+      flex: 1,
       paddingHorizontal: 16,
-      backgroundColor:theme.colors.bg_neutral
+      backgroundColor: theme.colors.bg_neutral,
     } as ViewStyle,
     containLabel: {
       flexDirection: 'row',

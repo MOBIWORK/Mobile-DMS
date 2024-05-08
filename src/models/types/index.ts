@@ -456,19 +456,18 @@ export interface Southwest {
 }
 
 export interface Address {
-  name: string;
-  address_line1: string;
-  address_line2: any;
-  city: string;
-  state: any;
+ 
   is_primary_address: number;
   is_shipping_address: number;
-  county: any;
+  address_title:string,
+  address_location:string
 }
 
 export interface Contact {
   first_name: string;
-  phone: string;
+  mobile_no: string;
+  address:string;
+  last_name:string;
   is_primary_contact: number;
   is_billing_contact: number;
 }

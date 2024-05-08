@@ -21,27 +21,32 @@ const CardAddressView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+
+  console.log(props.data)
+
+
   return props.type === 'list' ? (
     <Block style={styles.card}>
       <Block style={styles.rootLayout}>
-      
         <Block style={styles.labelView}>
           <SvgIcon source="MapPin" size={18} />
           <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
-            {' '}
-            {props.data?.address_line1 ? props.data?.address_line1 : '---'}
+            {props.data?.address_title ? props.data?.address_title : '---'}
           </AppText>
         </Block>
         <Block style={styles.labelView}>
           <AppText numberOfLines={1}>
-            {' '}
-            {props.data?.address_line2 != null
-              ? formatPhoneNumber(props.data?.address_line2)
-              : '---'}
+            {props?.data?.address_title
+              ? props?.data?.address_title.split(',', 4)[1] +
+                ',' +
+                props?.data?.address_title.split(',', 4)[2] +
+                ',' +
+                props?.data?.address_title.split(',', 4)[3]
+              : '___'}
           </AppText>
         </Block>
       </Block>
-      {props.data.is_primary_address && (
+      {props.data.is_primary_address === 1 && (
         <Block style={styles.containAddress}>
           <View style={styles.mainContact}>
             <AppText fontSize={14} fontWeight="400" colorTheme="primary">
@@ -50,7 +55,7 @@ const CardAddressView = (props: Props) => {
           </View>
         </Block>
       )}
-      {props.data.is_shipping_address && (
+      {props.data.is_shipping_address === 1 && (
         <Block style={styles.containAddress}>
           <View style={styles.mainContact}>
             <AppText fontSize={14} fontWeight="400" colorTheme="primary">
@@ -71,14 +76,12 @@ const CardAddressView = (props: Props) => {
         <Block style={styles.labelView}>
           <SvgIcon source="MapPin" size={18} />
           <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
-            {' '}
-            {props.data ? props.data.split(',', 4)[0] : '---'}
+            {/* {props.data ? props.data.split(',', 4)[0] : '---'} */}
           </AppText>
         </Block>
         <Block style={styles.labelView} paddingLeft={8}>
           <AppText numberOfLines={2}>
-            {' '}
-            {props.data != null ? props.data : '---'}
+            {props?.data != null ? props.data : '---'}
           </AppText>
         </Block>
       </Block>
