@@ -29,8 +29,9 @@ const ListCard = (props: Props) => {
       onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}
       onEndReachedThreshold={0.5}
-      maxToRenderPerBatch={2}
-      updateCellsBatchingPeriod={20}
+      maxToRenderPerBatch={10}
+      updateCellsBatchingPeriod={5}
+      windowSize={21}
       initialNumToRender={5}
       refreshControl={
         <RefreshControl

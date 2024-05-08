@@ -1,4 +1,10 @@
-import {StyleSheet, TouchableOpacity, View, ViewStyle} from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {MainLayout} from '../../../layouts';
@@ -6,9 +12,15 @@ import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
+import {IDataCustomers} from '../../../models/types';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import CardAddress from '../../Customer/components/CardAddress';
+import CardContactOverview from '../component/CardView';
+import CardAddressView from '../component/CardAddressView';
 
 type Props = {
   onPressAdding: () => void;
+  data: IDataCustomers;
 };
 
 const Address = (props: Props) => {
@@ -18,34 +30,55 @@ const Address = (props: Props) => {
   const {t: getLabel} = useTranslation();
 
   return (
-    <>
-      <MainLayout style={styles.root}>
-        <View style={styles.containLabel}>
-          <AppText fontSize={14} fontWeight="400" colorTheme="text_secondary">
-            {getLabel('listAddress')}
-          </AppText>
-          <TouchableOpacity
-            style={styles.containButton}
-            onPress={onPressAdding}>
-            <AppIcons
-              iconType={AppConstant.ICON_TYPE.AntIcon}
-              name="plus"
-              size={16}
-              color={theme.colors.action}
-            />
-          </TouchableOpacity>
-        </View>
-      </MainLayout>
-    </>
+    <SafeAreaView style={styles.root} edges={['bottom']}>
+      <View style={styles.containLabel}>
+        <AppText fontSize={14} fontWeight="400" colorTheme="text_secondary">
+          {getLabel('listAddress')}
+        </AppText>
+        <TouchableOpacity style={styles.containButton} onPress={onPressAdding}>
+          <AppIcons
+            iconType={AppConstant.ICON_TYPE.AntIcon}
+            name="plus"
+            size={16}
+            color={theme.colors.action}
+          />
+        </TouchableOpacity>
+      </View>
+      {props.data.address &&
+      props.data.address != null &&
+      props.data.address.length > 0 ? (
+        <FlatList
+          data={props.data.address}
+          keyExtractor={(item, index) => item.address}
+          showsVerticalScrollIndicator={false}
+          decelerationRate={'fast'}
+          initialNumToRender={10}
+          windowSize={11}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          renderItem={({item}) => {
+            return <CardAddressView type="list" data={item as any} />;
+          }}
+        />
+      ) : (
+        <CardAddressView
+          type="single"
+          data={props.data.customer_primary_address}
+        />
+      )}
+    </SafeAreaView>
   );
 };
 
-export default React.memo(Address,isEqual);
+export default React.memo(Address, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     root: {
-      paddingTop: 10,
+      // paddingTop: 10,
+      flex:1,
+      paddingHorizontal: 16,
+      backgroundColor:theme.colors.bg_neutral
     } as ViewStyle,
     containLabel: {
       flexDirection: 'row',

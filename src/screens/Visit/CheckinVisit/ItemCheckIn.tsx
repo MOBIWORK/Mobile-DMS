@@ -45,7 +45,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
               <SvgIcon source={item.icon} size={20} color={colors.border} />
             </Block>
             <Block direction="row" alignItems="center">
-              <Text> {item.name}</Text>
+              <Text fontSize={14} colorTheme='text_primary' > {item.name}</Text>
               {item.isRequire ? <SvgIcon source="Alert" size={16} /> : null}
             </Block>
           </Block>

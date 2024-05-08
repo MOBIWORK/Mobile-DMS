@@ -1,4 +1,4 @@
-import { StyleSheet, View, ViewStyle, FlatList } from 'react-native';
+import { StyleSheet, View, ViewStyle, FlatList, Animated } from 'react-native';
 import React from 'react';
 import { AppTheme, useTheme } from '../../layouts/theme';
 import { SkeletonLoading } from '../../components/common';
@@ -31,8 +31,8 @@ const LoadingSkeleton = () => {
   }
 
   return (
-    <View>
-      <FlatList
+    
+      <Animated.FlatList
         data={data.current}
         showsVerticalScrollIndicator={false}
         keyExtractor={(item,index) => index.toString()}
@@ -40,7 +40,7 @@ const LoadingSkeleton = () => {
         renderItem={() => renderItem()}
         contentContainerStyle={{ rowGap: 20 }}
       />
-    </View>
+    
   );
 };
 

@@ -229,6 +229,7 @@ export default {
   sales: 'Sales',
   statistical: 'Statistical',
   newCustomer: 'New customer',
+  totalNewCustomer: 'Total new customer',
   timeKeepIn: 'Timekeeping In',
   timeKeepOut: 'Timekeeping Out',
   visitPerMonth: 'Number of customer visits per month',
@@ -293,4 +294,9 @@ export default {
   regainPosition: 'Regain Position',
   totalRevenue: 'Total revenue',
   marking: 'Mark',
+  channel: 'Channel',
+  collectionDate: 'Collection date',
+  listContact: 'List Contact',
+  addressGet: 'Delivery Address',
+  addressOrder: 'Order Address',
 };

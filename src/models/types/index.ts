@@ -128,6 +128,7 @@ export type VisitListItemType = {
   is_checkin: boolean;
   total?: number;
   page_size?: number;
+  is_route?:boolean
 };
 
 export type VisitListItemResult = {
@@ -398,13 +399,13 @@ export interface Southwest {
   lng: number;
 }
 
-interface Address {
+export interface Address {
   address: string;
   isSetAddressGet: boolean;
   isSetAddressTake: boolean;
 }
 
-interface Contact {
+export interface Contact {
   address: string;
   name: string;
   phoneNumber: string;
@@ -464,7 +465,7 @@ export type VisitedItemType = {
 
 export type ReportCustomerType = {
   name: string;
-  code: string;
+  code?: string;
   address: string | null;
   lastOrder?: string;
   customerType?: string;
@@ -547,7 +548,7 @@ export type IProduct = {
   price: number;
   unit: DataUnit[];
   isSelected?: boolean;
-  expiry? : string;
+  expiry?: string;
 };
 
 export type IOrderList = {
@@ -967,4 +968,9 @@ export type ListAlbumType = {
   ten_album: string;
   so_anh_toi_thieu: string;
   trang_thai: string;
+};
+
+export type IReportNewCustomer = {
+  total_new_cus: number;
+  list_customer: ReportCustomerType[];
 };

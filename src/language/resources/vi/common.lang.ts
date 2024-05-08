@@ -234,6 +234,7 @@ export default {
   sales: 'Doanh số',
   statistical: 'Thống kê',
   newCustomer: 'Khách hàng mới',
+  totalNewCustomer: 'Tổng khách hàng mới',
   timeKeepIn: 'Chấm công vào',
   timeKeepOut: 'Chấm công ra',
   visitPerMonth: 'Số lượt viếng thăm khách hàng/tháng',
@@ -298,4 +299,9 @@ export default {
   regainPosition: 'Lấy lại vị trí',
   totalRevenue: 'Tổng doanh thu',
   marking: 'Cắm mốc',
+  channel: 'Kênh',
+  collectionDate: 'Ngày thu thập',
+  listContact: 'Danh sách liên hệ',
+  addressGet: 'Địa chỉ giao hàng',
+  addressOrder: 'Địa chỉ đặt hàng',
 };

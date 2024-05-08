@@ -88,7 +88,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     justifyContent: 'space-between',
     height: 32,
-  },
+    // backgroundColor:'red'
+  } as ViewStyle,
   label: {
     fontSize: 20,
     fontWeight: '500',
@@ -102,5 +103,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 16,
     paddingHorizontal: 8,
+    // backgroundColor:'black'
   } as ViewStyle,
 });
