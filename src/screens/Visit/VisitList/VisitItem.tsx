@@ -127,7 +127,7 @@ const VisitItem: FC<VisitItemProps> = ({
             marginTop={8}
             justifyContent="space-between"
             style={[styles.content]}>
-            {item.is_route === true ? (
+            {item.is_route === true || systemConfig.vt_ngoaituyen === 1 ? (
               <AppButton
                 onPress={() =>
                   startTransition(() => {
