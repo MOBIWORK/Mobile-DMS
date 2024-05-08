@@ -78,7 +78,7 @@ const ModalUpdateLocation = ({
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme);
   const [isPending, setIsPending] = useState<boolean>(false);
-  console.log(item,'item updatelocation')
+  
 
   useEffectOnce(() => {
     if (currentLocation && Object.keys(currentLocation).length > 0) {
