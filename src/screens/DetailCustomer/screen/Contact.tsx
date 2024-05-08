@@ -8,15 +8,15 @@ import {
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 
-import {MainLayout} from '../../../layouts';
+
 import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import {IDataCustomer, IDataCustomers} from '../../../models/types';
+import { IDataCustomers} from '../../../models/types';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import CardAddress from '../../Customer/components/CardAddress';
 import CardContactOverview from '../component/CardView';
+import CardContactView from '../component/CardContactView';
 
 type Props = {
   onPressAdding: () => void;
@@ -49,7 +49,7 @@ const Contact = (props: Props) => {
       props.data.contact.length > 0 ? (
         <FlatList
           data={props.data.contact}
-          keyExtractor={(item, index) => item.address}
+          keyExtractor={(item, index) => item.first_name}
           showsVerticalScrollIndicator={false}
           initialNumToRender={10}
           windowSize={11}
@@ -57,9 +57,7 @@ const Contact = (props: Props) => {
           maxToRenderPerBatch={10}
           decelerationRate={'fast'}
           renderItem={({item}) => {
-            return (
-              <CardAddress type="contact" mainContactAddress={item as any} />
-            );
+            return <CardContactView data={item} />;
           }}
         />
       ) : (
@@ -75,8 +73,8 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     root: {
       paddingHorizontal: 16,
-      backgroundColor:theme.colors.bg_neutral,
-      flex:1,
+      backgroundColor: theme.colors.bg_neutral,
+      flex: 1,
       // backgroundColor:'red',
       // flex:1
     } as ViewStyle,

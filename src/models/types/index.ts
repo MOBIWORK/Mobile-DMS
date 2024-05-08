@@ -400,15 +400,21 @@ export interface Southwest {
 }
 
 export interface Address {
-  address: string;
-  isSetAddressGet: boolean;
-  isSetAddressTake: boolean;
+  name: string
+  address_line1: string
+  address_line2: any
+  city: string
+  state: any
+  is_primary_address: number
+  is_shipping_address: number
+  county: any
 }
 
 export interface Contact {
-  address: string;
-  name: string;
-  phoneNumber: string;
+  first_name: string
+  phone: string
+  is_primary_contact: number
+  is_billing_contact: number
 }
 
 export interface IDataItem {
