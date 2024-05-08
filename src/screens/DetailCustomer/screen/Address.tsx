@@ -12,14 +12,14 @@ import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import {IDataCustomers} from '../../../models/types';
+import {DetailCustomerType, IDataCustomers} from '../../../models/types';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import CardAddressView from '../component/CardAddressView';
 
 type Props = {
   onPressAdding: () => void;
-  data: IDataCustomers;
+  data: DetailCustomerType;
 };
 
 const Address = (props: Props) => {
@@ -27,6 +27,7 @@ const Address = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>

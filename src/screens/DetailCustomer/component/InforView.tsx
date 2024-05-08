@@ -26,8 +26,6 @@ const InforBlock = (props: Props) => {
   useEffect(() => {
     CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
-  console.log(props.data,'data')
-
   return (
     <Block style={styles.root}>
       <Block style={styles.containImage}>
@@ -86,15 +84,15 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Loại khách hàng
+            {translate('customerType')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_group != ''
-              ? props.data.customer_group
+             {props.data.customer_type != null
+              ? translate(props.data.customer_type.toLowerCase())
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />
@@ -112,8 +110,8 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_type != ''
-              ? translate(props.data.customer_type)
+            {props.data.customer_group != null
+              ? translate(props.data.customer_group.toLowerCase())
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />

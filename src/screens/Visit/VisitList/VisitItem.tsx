@@ -12,7 +12,7 @@ import {AppButton, Block, AppText as Text} from '../../../components/common';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 
 import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallback from '../../../layouts/ErrorBoundary';
+import ErrorFallback from '../../../layouts/ErrorFallBack';
 import {calculateDistance, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';

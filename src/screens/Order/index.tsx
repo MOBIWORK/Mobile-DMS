@@ -32,7 +32,7 @@ import {orderAction} from '../../redux-store/order-reducer/reducer';
 import {dispatch} from '../../utils/redux';
 import {useSelector} from '../../config/function';
 import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallback from '../../layouts/ErrorBoundary';
+import ErrorFallback from '../../layouts/ErrorFallBack';
 
 const OrderList = () => {
   const {t: getLabel} = useTranslation();

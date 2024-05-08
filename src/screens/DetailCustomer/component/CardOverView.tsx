@@ -5,6 +5,8 @@ import {Block, SvgIcon, AppText as Text} from '../../../components/common';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
+import {ErrorBoundary} from 'react-error-boundary';
+import ErrorFallBack from '../../../layouts/ErrorFallBack';
 
 type Props = {
   data: DetailCustomerType;
@@ -16,28 +18,28 @@ const CardOverView = (props: Props) => {
   const {t: getLabel} = useTranslation();
   const {data} = props;
 
-
-
   return (
-    <Block style={styles.card}>
-      <Block paddingHorizontal={16}>
-        <Block style={styles.containAddressLabel}>
-          <Block style={styles.containIcon}>
-            <SvgIcon source="MapPin" size={16} />
+    <ErrorBoundary fallbackRender={ErrorFallBack}>
+      <Block style={styles.card}>
+        <Block paddingHorizontal={16}>
+          <Block style={styles.containAddressLabel}>
+            <Block style={styles.containIcon}>
+              <SvgIcon source="MapPin" size={16} />
+            </Block>
+            <Text
+              numberOfLines={2}
+              fontSize={16}
+              fontWeight="300"
+              colorTheme="black"
+              lineHeight={21}>
+              {data && data.customer_primary_address
+                ? data.customer_primary_address.split(',', 4)[0]
+                : '___'}
+            </Text>
           </Block>
-          <Text
-            numberOfLines={2}
-            fontSize={16}
-            fontWeight="300"
-            colorTheme="black"
-            lineHeight={21}>
-            {data && data.customer_primary_address
-              ? data.customer_primary_address.split(',', 4)[0]
-              : '___'}
-          </Text>
         </Block>
       </Block>
-    </Block>
+    </ErrorBoundary>
   );
 };
 
