@@ -6,6 +6,8 @@ import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {formatPhoneNumber} from '../../../config/function';
 import {Contact} from '../../../models/types';
+import {ErrorBoundary} from 'react-error-boundary';
+import ErrorFallBack from '../../../layouts/ErrorFallBack';
 
 type Props = {
   data: Contact;
@@ -17,45 +19,61 @@ const CardContactView = (props: Props) => {
   const {t: getLabel} = useTranslation();
 
   return (
-    <Block style={styles.card}>
-      <Block style={styles.rootLayout}>
-        <Text
-          fontSize={16}
-          fontWeight="500"
-          lineHeight={24}
-          style={styles.labelText}>
-          {props.data.first_name}
-        </Text>
-
-        <Block style={styles.labelView}>
-          <SvgIcon source="Phone" size={18} />
-          <Text numberOfLines={1}>
-            {' '}
-            {props.data?.mobile_no != null
-              ? formatPhoneNumber(props.data?.mobile_no)
-              : '---'}
+    <ErrorBoundary fallbackRender={ErrorFallBack}>
+      <Block style={styles.card}>
+        <Block style={styles.rootLayout}>
+          <Text
+            fontSize={16}
+            fontWeight="500"
+            lineHeight={24}
+            style={styles.labelText}>
+            {props.data.first_name}
           </Text>
+
+          <Block style={styles.labelView}>
+            <SvgIcon source="Phone" size={18} />
+            <Text numberOfLines={1}>
+              {' '}
+              {props.data?.mobile_no != null
+                ? formatPhoneNumber(props.data?.mobile_no)
+                : '---'}
+            </Text>
+          </Block>
+          <Block
+            style={styles.labelView}
+            justifyContent="center"
+            alignItems="center">
+            <SvgIcon source="MapPin" size={18} />
+            <Text
+              numberOfLines={1}
+              style={{maxWidth: '90%', marginLeft: 8}}
+              fontSize={14}
+              fontWeight="500"
+              colorTheme="text_primary">
+              {props.data?.address ? props.data?.address : '---'}
+            </Text>
+          </Block>
         </Block>
+        {props.data.is_billing_contact === 1 && (
+          <Block style={styles.containAddress}>
+            <Block style={styles.mainContact}>
+              <Text fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('addressDelivery')}
+              </Text>
+            </Block>
+          </Block>
+        )}
+        {props.data.is_primary_contact === 1 && (
+          <Block style={styles.containAddress}>
+            <Block style={styles.mainContact}>
+              <Text fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('mainContact')}
+              </Text>
+            </Block>
+          </Block>
+        )}
       </Block>
-      {props.data.is_billing_contact === 1&& (
-        <Block style={styles.containAddress}>
-          <Block style={styles.mainContact}>
-            <Text fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('addressDelivery')}
-            </Text>
-          </Block>
-        </Block>
-      )}
-      {props.data.is_primary_contact ===1 && (
-        <Block style={styles.containAddress}>
-          <Block style={styles.mainContact}>
-            <Text fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('mainContact')}
-            </Text>
-          </Block>
-        </Block>
-      )}
-    </Block>
+    </ErrorBoundary>
   );
 };
 

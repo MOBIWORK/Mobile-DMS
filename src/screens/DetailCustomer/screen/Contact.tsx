@@ -8,12 +8,11 @@ import {
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 
-
 import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import { DetailCustomerType, IDataCustomers} from '../../../models/types';
+import {DetailCustomerType, IDataCustomers} from '../../../models/types';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CardContactOverview from '../component/CardView';
 import CardContactView from '../component/CardContactView';
@@ -28,6 +27,7 @@ const Contact = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
@@ -44,7 +44,8 @@ const Contact = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {/* {props.data != null && props.data.contacts &&
+      {props.data != null &&
+      props.data.contacts &&
       props.data.contacts != null &&
       props.data.contacts.length > 0 ? (
         <FlatList
@@ -60,10 +61,9 @@ const Contact = (props: Props) => {
             return <CardContactView data={item} />;
           }}
         />
-      ) : (
-        // <CardContactOverview data={props.data} />
-        null
-      )} */}
+      ) : props.data != null && props.data?.customer_primary_contact != null ? (
+        <CardContactOverview data={props.data} />
+      ) : null}
     </SafeAreaView>
   );
 };

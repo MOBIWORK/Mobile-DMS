@@ -6,6 +6,8 @@ import {AppText, Block, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
+import {ErrorBoundary} from 'react-error-boundary';
+import ErrorFallback from '../../../layouts/ErrorFallBack';
 
 type SingleAddress = {
   type: 'single';
@@ -22,87 +24,100 @@ const CardAddressView = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
-  console.log(props.data)
-
-
   return props.type === 'list' ? (
-    <Block style={styles.card}>
-      <Block style={styles.rootLayout}>
-        <Block style={styles.labelView}>
-          <SvgIcon source="MapPin" size={18} />
-          <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
-            {props.data?.address_title ? props.data?.address_title : '---'}
-          </AppText>
+    <ErrorBoundary fallbackRender={ErrorFallback}>
+      <Block style={styles.card}>
+        <Block style={styles.rootLayout}>
+          <Block
+            style={styles.labelView}
+            justifyContent="center"
+            alignItems="center">
+            <SvgIcon source="MapPin" size={18} />
+            <AppText
+              numberOfLines={1}
+              style={{maxWidth: '90%', marginLeft: 8}}
+              fontSize={14}
+              fontWeight="500"
+              colorTheme="text_primary">
+              {props.data?.address_title ? props.data?.address_title : '---'}
+            </AppText>
+          </Block>
+          <Block style={styles.labelView} marginLeft={28}>
+            <AppText
+              numberOfLines={1}
+              fontSize={14}
+              fontWeight="500"
+              colorTheme="text_primary">
+              {props?.data?.address_title
+                ? props?.data?.address_title.split(',', 4)[1] +
+                  ',' +
+                  props?.data?.address_title.split(',', 4)[2] +
+                  ',' +
+                  props?.data?.address_title.split(',', 4)[3]
+                : '___'}
+            </AppText>
+          </Block>
         </Block>
-        <Block style={styles.labelView}>
-          <AppText numberOfLines={1}>
-            {props?.data?.address_title
-              ? props?.data?.address_title.split(',', 4)[1] +
-                ',' +
-                props?.data?.address_title.split(',', 4)[2] +
-                ',' +
-                props?.data?.address_title.split(',', 4)[3]
-              : '___'}
-          </AppText>
-        </Block>
+        {props.data.is_primary_address === 1 && (
+          <Block style={styles.containAddress}>
+            <View style={styles.mainContact}>
+              <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('addressGet')}
+              </AppText>
+            </View>
+          </Block>
+        )}
+        {props.data.is_shipping_address === 1 && (
+          <Block style={styles.containAddress}>
+            <View style={styles.mainContact}>
+              <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('addressOrder')}
+              </AppText>
+            </View>
+          </Block>
+        )}
       </Block>
-      {props.data.is_primary_address === 1 && (
-        <Block style={styles.containAddress}>
-          <View style={styles.mainContact}>
-            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('addressGet')}
-            </AppText>
-          </View>
-        </Block>
-      )}
-      {props.data.is_shipping_address === 1 && (
-        <Block style={styles.containAddress}>
-          <View style={styles.mainContact}>
-            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('addressOrder')}
-            </AppText>
-          </View>
-        </Block>
-      )}
-    </Block>
+    </ErrorBoundary>
   ) : (
-    <Block
-      colorTheme="bg_default"
-      paddingVertical={12}
-      paddingHorizontal={16}
-      borderRadius={16}
-      marginTop={10}>
-      <Block style={styles.rootLayout}>
-        <Block style={styles.labelView}>
-          <SvgIcon source="MapPin" size={18} />
-          <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
-            {/* {props.data ? props.data.split(',', 4)[0] : '---'} */}
-          </AppText>
-        </Block>
-        <Block style={styles.labelView} paddingLeft={8}>
-          <AppText numberOfLines={2}>
-            {props?.data != null ? props.data : '---'}
-          </AppText>
-        </Block>
-      </Block>
-      <Block direction="row" alignItems="center" marginBottom={8}>
-        <Block style={styles.containAddress}>
-          <Block style={styles.mainContact}>
-            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('addressGet')}
+    <ErrorBoundary fallbackRender={ErrorFallback}>
+      <Block
+        colorTheme="bg_default"
+        paddingVertical={12}
+        paddingHorizontal={16}
+        borderRadius={16}
+        marginTop={10}>
+        <Block style={styles.rootLayout}>
+          <Block style={styles.labelView}>
+            <SvgIcon source="MapPin" size={18} />
+            <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
+              {props.data ? props.data.split(',', 4)[0] : '---'}
+            </AppText>
+          </Block>
+          <Block style={styles.labelView} paddingLeft={8}>
+            <AppText numberOfLines={2}>
+              {props?.data ? props.data : '---'}
             </AppText>
           </Block>
         </Block>
+        <Block direction="row" alignItems="center" marginBottom={8}>
+          <Block style={styles.containAddress}>
+            <Block style={styles.mainContact}>
+              <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('addressGet')}
+              </AppText>
+            </Block>
+          </Block>
 
-        <Block style={styles.containAddress}>
-          <Block style={styles.mainContact}>
-            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('addressOrder')}
-            </AppText>
+          <Block style={styles.containAddress}>
+            <Block style={styles.mainContact}>
+              <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('addressOrder')}
+              </AppText>
+            </Block>
           </Block>
         </Block>
       </Block>
-    </Block>
+    </ErrorBoundary>
   );
 };
 

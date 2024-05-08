@@ -23,7 +23,7 @@ import { CheckinOrderDetail, KeyAbleProps } from '../../../models/types';
 import { dispatch } from '../../../utils/redux';
 import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 import { ErrorBoundary } from 'react-error-boundary';
-import ErrorFallback from '../../../layouts/ErrorBoundary';
+import ErrorFallback from '../../../layouts/ErrorFallBack';
 import { CommonUtils } from '../../../utils';
 import { TouchableOpacity } from 'react-native';
 import { ICON_TYPE } from '../../../const/app.const';

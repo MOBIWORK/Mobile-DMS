@@ -1,11 +1,17 @@
 import {StyleSheet, View, Platform, ViewStyle, TextStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {DetailCustomerType, IDataCustomer, IDataCustomers} from '../../../models/types';
+import {
+  DetailCustomerType,
+  IDataCustomer,
+  IDataCustomers,
+} from '../../../models/types';
 import {AppText, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
+import {ErrorBoundary} from 'react-error-boundary';
+import ErrorFallBack from '../../../layouts/ErrorFallBack';
 
 type Props = {
   data: DetailCustomerType;
@@ -16,47 +22,50 @@ const CardContactOverview = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   return (
-    <View style={styles.card}>
-      {/* <View style={styles.rootLayout}>
-        <AppText
-          fontSize={16}
-          fontWeight="500"
-          lineHeight={24}
-          style={styles.labelText}>
-          {props.data.customer_name != null ? props.data.customer_name : '___'}
-        </AppText>
-        <View style={styles.labelView}>
-          <SvgIcon source="MapPin" size={18} />
-          <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
-            {' '}
-            {props.data?.customer_primary_address
-              ? props.data?.customer_primary_address
-              : '---'}
+    <ErrorBoundary fallbackRender={ErrorFallBack}>
+      <View style={styles.card}>
+        <View style={styles.rootLayout}>
+          <AppText
+            fontSize={16}
+            fontWeight="500"
+            lineHeight={24}
+            style={styles.labelText}>
+            {props.data.customer_name != null
+              ? props.data.customer_name
+              : '___'}
           </AppText>
+          <View style={styles.labelView}>
+            <SvgIcon source="MapPin" size={18} />
+            <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
+              {' '}
+              {props.data?.customer_primary_address
+                ? props.data?.customer_primary_address
+                : '---'}
+            </AppText>
+          </View>
+          <View style={styles.labelView}>
+            <SvgIcon source="Phone" size={18} />
+            <AppText numberOfLines={1}>
+              {' '}
+              {props.data?.customer_primary_contact != null
+                ? formatPhoneNumber(props.data?.customer_primary_contact)
+                : '---'}
+            </AppText>
+          </View>
         </View>
-        <View style={styles.labelView}>
-          <SvgIcon source="Phone" size={18} />
-          <AppText numberOfLines={1}>
-            {' '}
-            {props.data?.customer_primary_contact != null
-              ? formatPhoneNumber(props.data?.customer_primary_contact)
-              : '---'}
-          </AppText>
+        <View style={styles.containAddress}>
+          <View style={styles.mainContact}>
+            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+              {getLabel('mainContact')}
+            </AppText>
+          </View>
         </View>
       </View>
-
-      <View style={styles.containAddress}>
-        <View style={styles.mainContact}>
-          <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-            {getLabel('mainContact')}
-          </AppText>
-        </View>
-      </View> */}
-    </View>
+    </ErrorBoundary>
   );
 };
 
-export default React.memo(CardContactOverview,isEqual);
+export default React.memo(CardContactOverview, isEqual);
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({

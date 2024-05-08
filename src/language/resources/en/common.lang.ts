@@ -296,6 +296,7 @@ export default {
   addressGet:"Delivery Address",
   addressOrder:"Order Address",
   mainAddress:"Main Address",
+  
 
   
 };

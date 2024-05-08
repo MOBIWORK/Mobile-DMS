@@ -39,6 +39,8 @@ import {shallowEqual} from 'react-redux';
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {CustomerService} from '../../services';
+import {ErrorBoundary} from 'react-error-boundary';
+import ErrorFallBack from '../../layouts/ErrorFallBack';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -100,12 +102,20 @@ const DetailCustomer = () => {
 
   const renderScene = React.useCallback(
     SceneMap({
-      first: () => <Overview data={data as any} />,
+      first: () => (
+        <ErrorBoundary fallbackRender={ErrorFallBack}>
+          <Overview data={data as any} />
+        </ErrorBoundary>
+      ),
       second: () => (
-        <Address onPressAdding={onPressAdding} data={data as any} />
+        <ErrorBoundary fallbackRender={ErrorFallBack}>
+          <Address onPressAdding={onPressAdding} data={data as any} />
+        </ErrorBoundary>
       ),
       third: () => (
-        <Contact onPressAdding={onPressAddingContact} data={data as any} />
+        <ErrorBoundary fallbackRender={ErrorFallBack}>
+          <Contact onPressAdding={onPressAddingContact} data={data as any} />
+        </ErrorBoundary>
       ),
     }),
     [data],
@@ -146,7 +156,7 @@ const DetailCustomer = () => {
     },
     [indexView.current],
   );
-// console.log(mounted.current,'mounted')
+  // console.log(mounted.current,'mounted')
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.labelHeader}>

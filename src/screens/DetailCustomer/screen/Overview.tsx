@@ -33,7 +33,7 @@ const Overview = (props: Props) => {
         {props.data != null &&
           props.data.contacts.length > 0 &&
           props.data.contacts != null && (
-            <Block>
+            <Block paddingTop={16} paddingHorizontal={16}>
               <AppText fontSize={14} fontWeight="500" lineHeight={21}>
                 {getLabel('contactName')}
               </AppText>
@@ -48,7 +48,7 @@ const Overview = (props: Props) => {
         {props.data != null &&
           props.data.address.length > 0 &&
           props.data.address != null && (
-            <Block paddingHorizontal={16}>
+            <Block paddingHorizontal={16} paddingTop={16}>
               <AppText fontSize={14} fontWeight="500" lineHeight={21}>
                 {getLabel('mainAddress')}
               </AppText>
