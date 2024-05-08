@@ -166,7 +166,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.routers.length > 0  ? props.data.routers.toString() : ' ---'}
+            {props.data?.routers?.length > 0  ? props.data.routers.toString() : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>

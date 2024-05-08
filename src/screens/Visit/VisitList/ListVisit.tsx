@@ -46,6 +46,7 @@ import SkeletonLoading from '../SkeletonLoading';
 import {
   calculateDistance,
   generateRandomObjectId,
+  useEffectOnce,
   useSelector,
 } from '../../../config/function';
 import {useTranslation} from 'react-i18next';
@@ -249,7 +250,7 @@ const ListVisit = () => {
     }
   }, [dispatch]);
 
-  const handleItemDistanceFilter = (itemData: IFilterType) => {
+  const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
     distanceRef.current?.close();
     setDistanceFilterValue(getLabel(itemData.label));
     const newData = distanceFilterData.map(item => {
@@ -261,7 +262,7 @@ const ListVisit = () => {
     });
     setDistanceFilterData(newData);
     sortDataCustomer(getLabel(itemData.label));
-  };
+  }, []);
 
   const presentMap = (item: VisitListItemType) => {
     const item_location: any = JSON.parse(item.customer_location_primary);
@@ -992,11 +993,16 @@ const ListVisit = () => {
 
   const onBackButtonPress = useCallback(() => {
     setModalUpdateLocation(prev => ({...prev, status: false}));
-    sortDataCustomer(distanceFilterValue);
+    // sortDataCustomer(distanceFilterValue);
   }, []);
+
+  useEffectOnce(() => {
+    dispatch(appActions.onGetSystemConfig());
+  });
 
   useEffect(() => {
     mounted.current = true;
+
     if (searchVisit) {
       handleSearchVisit();
     } else {

@@ -77,6 +77,8 @@ const VisitItem: FC<VisitItemProps> = ({
     [item],
   );
 
+  console.log(systemConfig.vt_ngoaituyen,item.is_route,'vt ngoai tuyen')
+
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
       <TouchableOpacity
@@ -127,15 +129,15 @@ const VisitItem: FC<VisitItemProps> = ({
             marginTop={8}
             justifyContent="space-between"
             style={[styles.content]}>
-            {(item.is_route === true && systemConfig.vt_ngoaituyen === 1 ||  systemConfig.vt_ngoaituyen === 0 ) || (item.is_route === false && systemConfig.vt_ngoaituyen === 1) ? (
+            {((item.is_route === true && systemConfig.vt_ngoaituyen === 1) ||  (item.is_route === true &&  systemConfig.vt_ngoaituyen === 0 )) || (item.is_route === false && systemConfig.vt_ngoaituyen === 1) ? (
               <AppButton
                 onPress={() =>
                   startTransition(() => {
                     handlePressing(item, false);
                   })
                 }
-                disabled={item.is_route === true ? false : true}
-                style={createStyleSheet(theme).button(!((item.is_route === true && systemConfig.vt_ngoaituyen === 1 ||  systemConfig.vt_ngoaituyen === 0 ) || (item.is_route === false && systemConfig.vt_ngoaituyen === 1)))}
+                
+                style={createStyleSheet(theme).button(!(((item.is_route === true && systemConfig.vt_ngoaituyen === 1) || (item.is_route === true  &&systemConfig.vt_ngoaituyen === 0 )) || (item.is_route === false && systemConfig.vt_ngoaituyen === 1)))}
                 label={'Checkin'}
                 styleLabel={{
                   color: colors.action,
