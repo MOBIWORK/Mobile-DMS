@@ -46,7 +46,7 @@ const DetailCustomer = () => {
   const {t: getLabel} = useTranslation();
 
   const params = useRoute<RouterProp<'DETAIL_CUSTOMER'>>().params;
-  const navigation = useNavigation<NavigationProp>();
+ 
   const addingAddress = useRef<BottomSheetMethods>();
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,

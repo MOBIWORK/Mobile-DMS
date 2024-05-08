@@ -39,7 +39,12 @@ type Props = {
   onBackButtonPress: () => void;
   currentLocation: any;
   item?: VisitListItemType;
-  handleCheckin: (item: VisitListItemType, isDetail: boolean,coords:any,detailAdd?:any) => void;
+  handleCheckin: (
+    item: VisitListItemType,
+    isDetail: boolean,
+    coords: any,
+    detailAdd?: any,
+  ) => void;
 };
 
 interface MarkingAddress {
@@ -73,6 +78,7 @@ const ModalUpdateLocation = ({
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme);
   const [isPending, setIsPending] = useState<boolean>(false);
+  console.log(item,'item updatelocation')
 
   useEffectOnce(() => {
     if (currentLocation && Object.keys(currentLocation).length > 0) {
@@ -97,40 +103,30 @@ const ModalUpdateLocation = ({
         setIsPending(false);
       }
     },
-    [curLocation.current, markingLocation.current.coords,markingLocation.current.detailAdd],
+    [
+      curLocation.current,
+      markingLocation.current.coords,
+      markingLocation.current.detailAdd,
+    ],
   );
 
-  const completeCheckin = () => {
-    const newData = categoriesCheckin.map(item =>
-      item.key === 'location' ? {...item, isDone: true} : item,
-    );
-    dispatch(checkinActions.setDataCategoriesCheckin(newData));
-  };
-  const handleUpdateLocation = async () => {
+  const handleUpdateLocation = async (item: VisitListItemType | undefined) => {
     startTransition(() => {
       handleMarkerMap(
         curLocation.current?.coords?.latitude,
         curLocation.current?.coords?.longitude,
       );
     });
-    
-    // let split = markingLocation.current.detailAdd.split(',', 4);
-    // let params: IUpdateAddress = {
-    //   customer: item?.customer_code || '',
-    //   long: markingLocation.current.coords.lon || 0,
-    //   lat: markingLocation.current.coords.lat || 0,
-    //   address_line1: split[0] ?? '',
-    //   state: split[1] ?? '',
-    //   county: split[2] ?? '',
-    //   city: split[3] ?? '',
-    //   country: 'Việt Nam',
-    // };
+    if (item && Object.keys(item).length > 0) {
+      onBackButtonPress();
+      handleCheckin(
+        item!,
+        isVisible.isDetail,
+        markingLocation.current.coords,
+        markingLocation.current.detailAdd,
+      );
+    }
 
-    // const response: any = await CheckinService.updateCustomerAddress(params);
-    // if (response?.status === ApiConstant.STT_OK) {
-    //   completeCheckin();
-      handleCheckin(item!, isVisible.isDetail,markingLocation.current.coords,markingLocation.current.detailAdd);
-      onBackButtonPress()
     // }
   };
 
@@ -256,7 +252,7 @@ const ModalUpdateLocation = ({
               <TouchableOpacity
                 style={styles.checkinButton}
                 disabled={isPending}
-                onPress={() => handleUpdateLocation()}>
+                onPress={() => handleUpdateLocation(item)}>
                 {isPending ? (
                   <ActivityIndicator size="large" color={theme.colors.white} />
                 ) : (
