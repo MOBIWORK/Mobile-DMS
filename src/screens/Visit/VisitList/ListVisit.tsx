@@ -884,6 +884,7 @@ const ListVisit = () => {
           createByName: '',
           createdByEmail: '',
           item: item,
+          isDetail:false,
           ...item,
         };
         setModalAlert(prev => ({...prev, status: false}));
@@ -951,6 +952,7 @@ const ListVisit = () => {
               createByName: '',
               createdByEmail: '',
               item: item,
+              isDetail:true,
               ...item,
             };
 
@@ -959,6 +961,7 @@ const ListVisit = () => {
             navigate(ScreenConstant.VISIT_DETAIL, {
               data: data,
             });
+            dispatch(appActions.setDataCheckIn(data))
           },
           error => backgroundErrorListener(error.code),
         );

@@ -24,30 +24,24 @@ const CardAddressView = (props: Props) => {
   return props.type === 'list' ? (
     <Block style={styles.card}>
       <Block style={styles.rootLayout}>
-        <AppText
-          fontSize={16}
-          fontWeight="500"
-          lineHeight={24}
-          style={styles.labelText}>
-          {props.data.address}
-        </AppText>
+      
         <Block style={styles.labelView}>
           <SvgIcon source="MapPin" size={18} />
           <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
             {' '}
-            {props.data?.address ? props.data?.address : '---'}
+            {props.data?.address_line1 ? props.data?.address_line1 : '---'}
           </AppText>
         </Block>
         <Block style={styles.labelView}>
           <AppText numberOfLines={1}>
             {' '}
-            {props.data?.address != null
-              ? formatPhoneNumber(props.data?.address)
+            {props.data?.address_line2 != null
+              ? formatPhoneNumber(props.data?.address_line2)
               : '---'}
           </AppText>
         </Block>
       </Block>
-      {props.data.isSetAddressGet && (
+      {props.data.is_primary_address && (
         <Block style={styles.containAddress}>
           <View style={styles.mainContact}>
             <AppText fontSize={14} fontWeight="400" colorTheme="primary">
@@ -56,7 +50,7 @@ const CardAddressView = (props: Props) => {
           </View>
         </Block>
       )}
-      {props.data.isSetAddressTake && (
+      {props.data.is_shipping_address && (
         <Block style={styles.containAddress}>
           <View style={styles.mainContact}>
             <AppText fontSize={14} fontWeight="400" colorTheme="primary">
