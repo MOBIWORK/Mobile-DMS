@@ -237,7 +237,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
     [item],
   );
 
-  const onPressToDetail = React.useCallback((item: any) => {}, []);
+
 
   const distance = React.useMemo(() => {
     let res: any;
@@ -247,7 +247,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
           curLocation.coords.latitude,
           curLocation.coords.longitude,
           location?.lat,
-          location.long,
+          location?.long,
         );
       });
     });
