@@ -134,3 +134,7 @@ export const GET_VISIT_ROUTE_DETAIL =
   '/api/method/mbw_dms.api.kpi.report_visit_orders_invoices';
 export const GET_REPORT_ORDER =
   '/api/method/mbw_dms.api.kpi.report_detail_visit';
+export const GET_REPORT_NEW_CUSTOMER =
+  '/api/method/mbw_dms.api.kpi.new_customer_report';
+export const GET_REPORT_NON_CUSTOMER_ORDER =
+  '/api/method/mbw_dms.api.kpi.customer_not_order';

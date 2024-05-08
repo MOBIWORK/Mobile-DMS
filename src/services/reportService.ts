@@ -1,6 +1,10 @@
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
-import {GET_REPORT_ROUTER_RESULT} from '../const/api.const';
+import {
+  GET_REPORT_NEW_CUSTOMER,
+  GET_REPORT_NON_CUSTOMER_ORDER,
+  GET_REPORT_ROUTER_RESULT,
+} from '../const/api.const';
 
 type getTravelLogReportType = {
   fromdate: number;
@@ -42,3 +46,11 @@ export const getReoprtOrderStatistics = (params: getReportResultRouter) =>
   createApi().get(ApiConstant.GET_REPORT_ORDER_STATISTICS, params);
 export const getReoprtTagertKpi = (params: {month: number; year: number}) =>
   createApi().get(ApiConstant.GET_REPORT_TARGETS_KPI, params);
+export const getReportNewCustomer = (data: getReportResultRouter) =>
+  createApi()
+    .get(ApiConstant.GET_REPORT_NEW_CUSTOMER, data)
+    .then(res => res.data);
+export const getNonCustomerOrder = (data: getReportResultRouter) =>
+  createApi()
+    .get(ApiConstant.GET_REPORT_NON_CUSTOMER_ORDER, data)
+    .then(res => res.data);

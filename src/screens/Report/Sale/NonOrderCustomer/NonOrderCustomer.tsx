@@ -25,6 +25,9 @@ const NonOrderCustomer = () => {
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
 
+  const [from_date, setFromDate] = useState<number>(new Date().getTime());
+  const [to_date, setToDate] = useState<number>(new Date().getTime());
+
   const generateFakeData = useCallback(() => {
     const fakeData: IDataNonOrderCustomer[] = [];
 
@@ -69,12 +72,19 @@ const NonOrderCustomer = () => {
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
+      setFromDate(Number(item.value));
+      setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      setHeaderDate(getLabel(String(item.value)));
+      const {from_date, to_date} = CommonUtils.dateToDate(
+        item.value?.toString() || '',
+      );
+      setFromDate(new Date(from_date).getTime());
+      setToDate(new Date(to_date).getTime());
+      setHeaderDate(getLabel(String(item.label)));
     }
   };
 
