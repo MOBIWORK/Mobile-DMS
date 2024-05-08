@@ -44,7 +44,7 @@ const Contact = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {props.data.contacts &&
+      {/* {props.data != null && props.data.contacts &&
       props.data.contacts != null &&
       props.data.contacts.length > 0 ? (
         <FlatList
@@ -61,8 +61,9 @@ const Contact = (props: Props) => {
           }}
         />
       ) : (
-        <CardContactOverview data={props.data} />
-      )}
+        // <CardContactOverview data={props.data} />
+        null
+      )} */}
     </SafeAreaView>
   );
 };

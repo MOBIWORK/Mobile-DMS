@@ -17,13 +17,13 @@ const CardContactOverview = (props: Props) => {
   const {t: getLabel} = useTranslation();
   return (
     <View style={styles.card}>
-      <View style={styles.rootLayout}>
+      {/* <View style={styles.rootLayout}>
         <AppText
           fontSize={16}
           fontWeight="500"
           lineHeight={24}
           style={styles.labelText}>
-          {props.data.customer_name}
+          {props.data.customer_name != null ? props.data.customer_name : '___'}
         </AppText>
         <View style={styles.labelView}>
           <SvgIcon source="MapPin" size={18} />
@@ -51,7 +51,7 @@ const CardContactOverview = (props: Props) => {
             {getLabel('mainContact')}
           </AppText>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };

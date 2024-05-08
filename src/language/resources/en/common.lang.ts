@@ -295,6 +295,7 @@ export default {
   listContact:"List Contact",
   addressGet:"Delivery Address",
   addressOrder:"Order Address",
+  mainAddress:"Main Address",
 
   
 };

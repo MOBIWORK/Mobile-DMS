@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import React, {
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -46,15 +47,41 @@ const DetailCustomer = () => {
   const {t: getLabel} = useTranslation();
 
   const params = useRoute<RouterProp<'DETAIL_CUSTOMER'>>().params;
- 
+
   const addingAddress = useRef<BottomSheetMethods>();
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const [show, setShow] = useState(false);
   const [isPending, startTrans] = useTransition();
-  const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
-  const data = useRef<any>(null);
+  const [data, setData] = useState<any>(null);
+  const mounted = useRef<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const getDetailCustomer = async () => {
+      try {
+        let res: any = await CustomerService.getCustomerDetail(
+          params.data.customer_name,
+        );
+        if (res.message === 'ok' || Object.keys(res.result).length > 0) {
+          setData(res.result);
+        }
+      } catch (err) {
+        console.log('[error]: ', err);
+      } finally {
+        // mounted.current = false;
+        setLoading(false);
+      }
+    };
+
+    getDetailCustomer();
+
+    return () => {
+      // mounted.current = false;
+    };
+  }, []);
 
   const snapPointAdding = useMemo(
     () =>
@@ -71,70 +98,17 @@ const DetailCustomer = () => {
     {key: 'third', title: getLabel('contact')},
   ]).current;
 
-  React.useEffect(() => {
-    let mounted = true;
-    dispatch(appActions.onLoadApp());
-    const getDetailCustomer = async () => {
-      let res: any = await CustomerService.getCustomerDetail(
-        params.data.customer_name,
-      );
-      if (res.message === 'ok' || Object.keys(res.result).length > 0) {
-        data.current = res.result;
-      }
-    };
-
-    getDetailCustomer();
-    dispatch(appActions.onLoadAppEnd());
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
   const renderScene = React.useCallback(
     SceneMap({
-      first: () => (
-        <Overview
-          data={
-            data.current != null && Object.keys(data.current).length > 0
-              ? data.current
-              : params.data
-          }
-        />
+      first: () => <Overview data={data as any} />,
+      second: () => (
+        <Address onPressAdding={onPressAdding} data={data as any} />
       ),
-      second: () =>
-        isPending ? (
-          <Block block justifyContent="center" alignItems="center">
-            {' '}
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-          </Block>
-        ) : (
-          <Address
-            onPressAdding={onPressAdding}
-            data={
-              data.current != null && Object.keys(data.current).length > 0
-                ? data.current
-                : params.data
-            }
-          />
-        ),
-      third: () =>
-        isPending ? (
-          <Block block justifyContent="center" alignItems="center">
-            {' '}
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-          </Block>
-        ) : (
-          <Contact
-            onPressAdding={onPressAddingContact}
-            data={
-              data.current != null && Object.keys(data.current).length > 0
-                ? data.current
-                : params.data
-            }
-          />
-        ),
+      third: () => (
+        <Contact onPressAdding={onPressAddingContact} data={data as any} />
+      ),
     }),
-    [data.current],
+    [data],
   );
 
   const indexView = useRef<number>(0);
@@ -172,7 +146,7 @@ const DetailCustomer = () => {
     },
     [indexView.current],
   );
-
+// console.log(mounted.current,'mounted')
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.labelHeader}>
@@ -187,28 +161,25 @@ const DetailCustomer = () => {
           }
         />
       </View>
-      {appLoading ? (
+      {!!loading ? (
         <Block block justifyContent="center" alignItems="center">
-          {' '}
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </Block>
       ) : (
-        <>
-          <TabView
-            onIndexChange={onIndexChange}
-            navigationState={{
-              index: indexView.current,
-              routes: routes,
-            }}
-            swipeEnabled={true}
-            renderScene={renderScene}
-            renderTabBar={renderTabBar}
-            lazyPreloadDistance={2}
-            lazy={true}
-            animationEnabled={true}
-            initialLayout={{width: layout.width}}
-          />
-        </>
+        <TabView
+          onIndexChange={onIndexChange}
+          navigationState={{
+            index: indexView.current,
+            routes: routes,
+          }}
+          swipeEnabled={true}
+          renderScene={renderScene}
+          renderTabBar={renderTabBar}
+          lazyPreloadDistance={2}
+          lazy={true}
+          animationEnabled={true}
+          initialLayout={{width: layout.width}}
+        />
       )}
 
       <AppBottomSheet

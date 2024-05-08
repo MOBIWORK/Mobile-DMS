@@ -706,6 +706,7 @@ const HomeScreen = () => {
             getItemCount={getItemCount}
             bounces={true}
             decelerationRate={'fast'}
+            keyExtractor={(item,index) => index.toString()}
             getItem={getItem}
             contentContainerStyle={styles.root}
             showsVerticalScrollIndicator={false}
