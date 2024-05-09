@@ -3,29 +3,24 @@ import {MainLayout} from '../../../layouts';
 import {
   AppBottomSheet,
   AppButton,
-  AppCheckBox,
   AppHeader,
   AppIcons,
   AppInput,
-  SvgIcon,
 } from '../../../components/common';
 import {ApiConstant, AppConstant} from '../../../const';
 import {useNavigation} from '@react-navigation/native';
 import {
   Text,
-  TextInput as Input,
   TextStyle,
   View,
   ViewStyle,
   TouchableOpacity,
   FlatList,
-  Pressable,
   Animated,
 } from 'react-native';
 import {StyleSheet} from 'react-native';
 import {Searchbar, TextInput} from 'react-native-paper';
 import {ImageAssets} from '../../../assets';
-import {ICON_TYPE} from '../../../const/app.const';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import FilterListComponent, {
   IFilterType,
@@ -39,7 +34,8 @@ import {ProductService} from '../../../services';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import ItemSkeleton from './ItemSkeleton';
+import ItemSkeleton from './components/ItemSkeleton';
+import ItemProductOrderComponent from './components/ItemProductOrderComponent';
 
 const initFilterValue = {
   label: '',
@@ -60,8 +56,6 @@ const SelectProducts = () => {
   );
   const [dataBrandProduct, setDataBrandProduct] = useState<IFilterType[]>([]);
   const [dataIndustry, setDataIndustry] = useState<IFilterType[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(20);
   const {
     totalItem,
     data: products,
@@ -118,173 +112,6 @@ const SelectProducts = () => {
     if (bottomSheetRefData.current) {
       bottomSheetRefData.current.snapToIndex(0);
     }
-  };
-
-  const renderUiItem = (item: IProduct) => {
-    return (
-      <View
-        style={[
-          styles.itemProduct,
-          {
-            backgroundColor: item.isSelected
-              ? 'rgba(196, 22, 28, 0.08)'
-              : colors.bg_default,
-          },
-        ]}>
-        <View
-          style={[
-            styles.flex as any,
-            {alignItems: 'flex-start', columnGap: 6},
-          ]}>
-          <View style={{flex: 1}}>
-            <View style={[styles.flex, {justifyContent: 'space-between'}]}>
-              <View style={{width: '65%'}}>
-                <View
-                  style={[
-                    styles.flex as any,
-                    {justifyContent: 'flex-start', columnGap: 16},
-                  ]}>
-                  <AppCheckBox
-                    status={item.isSelected ? true : false}
-                    onChangeValue={() =>
-                      onSelectProduct(
-                        item.item_code,
-                        item.isSelected ? item.isSelected : false,
-                      )
-                    }
-                  />
-                  <View style={[styles.flex as any]}>
-                    <AppIcons
-                      iconType={ICON_TYPE.IonIcon}
-                      name="barcode-outline"
-                      size={18}
-                      color={colors.text_secondary}
-                    />
-                    <Text
-                      style={[
-                        styles.labelIfPrd as TextStyle,
-                        {
-                          marginLeft: 4,
-                          color: colors.text_secondary,
-                          fontWeight: '500',
-                        },
-                      ]}>
-                      {item.item_code}
-                    </Text>
-                  </View>
-                </View>
-                <Text
-                  style={[
-                    styles.labelIfPrd as TextStyle,
-                    {color: colors.text_primary, marginLeft: 4},
-                  ]}>
-                  {item.item_name}
-                </Text>
-              </View>
-              <TouchableOpacity
-                activeOpacity={0.6}
-                onPress={() => openBottomSheetDataFilter('unit', item)}>
-                <View style={[styles.flex as any, styles.containerUnit]}>
-                  <Text style={[styles.filter, {marginHorizontal: 20}]}>
-                    {item.stock_uom}
-                  </Text>
-                  <AppIcons
-                    iconType={ICON_TYPE.Feather}
-                    name="chevron-down"
-                    size={18}
-                    color={colors.text_primary}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            <View
-              style={[
-                styles.flex as any,
-                styles.itemRowIf,
-                {paddingVertical: 4},
-              ]}>
-              <Text
-                style={[
-                  styles.labelIfPrd as TextStyle,
-                  {color: colors.text_primary, marginLeft: 4},
-                ]}>
-                {CommonUtils.formatCash(item.price.toString())} đ
-              </Text>
-              <View style={[styles.flex as any]}>
-                <TouchableOpacity
-                  style={{paddingHorizontal: 10}}
-                  onPress={() =>
-                    onChangeQuantityProduct(
-                      item.item_code,
-                      item.quantity && item.quantity > item.min_order_qty
-                        ? item.quantity - 1
-                        : item.min_order_qty,
-                    )
-                  }>
-                  <AppIcons
-                    iconType={ICON_TYPE.AntIcon}
-                    name="minus"
-                    size={22}
-                    color={colors.text_primary}
-                  />
-                </TouchableOpacity>
-
-                <Input
-                  value={item.quantity ? item.quantity.toString() : ''}
-                  onChangeText={(qty: string) =>
-                    onChangeQuantityProduct(item.item_code, parseInt(qty))
-                  }
-                  keyboardType="numeric"
-                  style={[
-                    styles.labelIfPrd as any,
-                    {width: 50, textAlign: 'center'},
-                  ]}
-                />
-
-                <TouchableOpacity
-                  style={{paddingHorizontal: 10}}
-                  onPress={() =>
-                    onChangeQuantityProduct(
-                      item.item_code,
-                      item.quantity ? item.quantity + 1 : 2,
-                    )
-                  }>
-                  <AppIcons
-                    iconType={ICON_TYPE.IonIcon}
-                    name="add"
-                    size={22}
-                    color={colors.text_primary}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View
-              style={[
-                styles.flex as any,
-                styles.itemRowIf,
-                {
-                  borderTopWidth: 1,
-                  borderColor: colors.divider,
-                  borderStyle: 'dashed',
-                },
-              ]}>
-              <Text style={[styles.labelIfPrd]}>{getLabel('intoMoney')}:</Text>
-              <Text
-                style={[
-                  styles.labelIfPrd as TextStyle,
-                  {color: colors.text_primary, marginLeft: 4},
-                ]}>
-                {CommonUtils.formatCash(
-                  (item.price * item?.quantity!).toString() ,
-                )}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    );
   };
 
   const onSubmitFilter = () => {
@@ -451,24 +278,23 @@ const SelectProducts = () => {
     const numberSelect = newData.filter(item => item.isSelected == true);
     setCountSelect(numberSelect.length);
     setData(newData);
+    console.log('itemm', newData);
   };
 
-  const isSelected = useMemo(() => {
+  const isSelectedAll = useMemo(() => {
     const dataSelect = data.filter(item => item.isSelected);
-    return dataSelect.length > 0 ? false : true;
+    return dataSelect.length > 0;
   }, [data]);
 
   const onSelectAllProduct = () => {
-    const newData = data.map(item => ({...item, isSelected: isSelected}));
-    setCountSelect(data.length);
-    setData(newData);
-  };
-
-  const onScrollPage = () => {
-    const number_page = (totalItem / pageSize).toFixed();
-    if (Number(number_page) > page) {
-      setPage(page + 1);
+    const newData = data.map(item => ({...item, isSelected: !isSelectedAll}));
+    if (isSelectedAll) {
+      setCountSelect(0);
+    } else {
+      setCountSelect(data.length);
     }
+
+    setData(newData);
   };
 
   const onChangeQuantityProduct = (idItem: string, qty: number) => {
@@ -545,7 +371,6 @@ const SelectProducts = () => {
     }).start();
   };
   const debouncedSearch = CommonUtils.debounce(function (query: string) {
-    setPage(1);
     setProductName(query);
   }, 1000);
 
@@ -570,16 +395,12 @@ const SelectProducts = () => {
         brand: filterProduct.brand,
         industry: filterProduct.industry,
         item_name: productName,
-        page: page,
-        page_size: pageSize,
       }),
     );
   }, [
     filterProduct.brand,
     filterProduct.group,
     filterProduct.industry,
-    page,
-    pageSize,
     productName,
   ]);
 
@@ -598,15 +419,7 @@ const SelectProducts = () => {
         <View style={styles.container}>
           <AppHeader
             label={getLabel('product')}
-            // hiddenBackButton
-            // onBack={() => navigation.goBack()}
-            backButtonIcon={
-              <SvgIcon
-                source={'Close'}
-                size={24}
-                onPress={() => navigation.goBack()}
-              />
-            }
+            onBack={() => navigation.goBack()}
             rightButton={
               <View style={[styles.flex, {columnGap: 16}]}>
                 <TouchableOpacity
@@ -671,7 +484,7 @@ const SelectProducts = () => {
         <View style={[styles.flex as any, styles.titleContent]}>
           <TouchableOpacity onPress={() => onSelectAllProduct()}>
             <Text style={[styles.action]}>
-              {isSelected ? getLabel('selectAll') : getLabel('deselectAll')}
+              {!isSelectedAll ? getLabel('selectAll') : getLabel('deselectAll')}
             </Text>
           </TouchableOpacity>
           <Text style={[styles.filter as any, {color: colors.text_secondary}]}>
@@ -696,11 +509,16 @@ const SelectProducts = () => {
               <FlatList
                 data={data}
                 renderItem={({item}) => (
-                  <Pressable>{renderUiItem(item)}</Pressable>
+                  // <Pressable>
+                  <ItemProductOrderComponent
+                    item={item}
+                    onSelectProduct={onSelectProduct}
+                    openBottomSheetDataFilter={openBottomSheetDataFilter}
+                    onChangeQuantityProduct={onChangeQuantityProduct}
+                  />
+                  // </Pressable>
                 )}
-                onEndReachedThreshold={0.1}
-                initialNumToRender={pageSize}
-                onEndReached={onScrollPage}
+                initialNumToRender={10}
                 contentContainerStyle={{rowGap: 16}}
                 showsVerticalScrollIndicator={false}
                 style={{flex: 1}}
@@ -801,21 +619,6 @@ const createStyles = (theme: AppTheme) =>
       fontWeight: '500',
       color: theme.colors.action,
     } as TextStyle,
-    labelIfPrd: {
-      fontSize: 16,
-      lineHeight: 24,
-      fontWeight: '400',
-      color: theme.colors.text_disable,
-    } as TextStyle,
-    itemProduct: {
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      borderRadius: 16,
-    },
-    itemRowIf: {
-      paddingVertical: 12,
-      justifyContent: 'space-between',
-    } as ViewStyle,
     containerButton: {
       justifyContent: 'space-between',
       flexDirection: 'row',

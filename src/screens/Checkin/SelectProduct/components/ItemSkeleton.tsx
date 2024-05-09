@@ -1,10 +1,10 @@
 import React from 'react'
 import { StyleSheet, View, ViewStyle } from 'react-native'
-import { SkeletonLoading } from '../../../components/common'
-import { AppTheme, useTheme } from '../../../layouts/theme'
+import { SkeletonLoading } from '../../../../components/common'
+import { AppTheme, useTheme } from '../../../../layouts/theme'
 
 const ItemSkeleton = () => {
-    
+
     const {colors} = useTheme();
     const styles = createStyles(useTheme());
 

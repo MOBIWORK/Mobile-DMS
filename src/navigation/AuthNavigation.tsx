@@ -18,7 +18,6 @@ import {
   Inventory,
   CheckinSelectProdct,
   AddingNewCustomer,
-  CheckinOrder,
   CheckinOrderCreated,
   AddNote,
   Index,
@@ -119,10 +118,6 @@ const AuthNavigation = () => {
       <Stack.Screen
         name={ScreenConstant.ADDING_NEW_CUSTOMER}
         component={AddingNewCustomer}
-      />
-      <Stack.Screen
-        name={ScreenConstant.CHECKIN_ORDER}
-        component={CheckinOrder}
       />
       <Stack.Screen
         name={ScreenConstant.CHECKIN_ORDER_CREATE}
