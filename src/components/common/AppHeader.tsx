@@ -14,6 +14,8 @@ import {ImageAssets} from '../../assets';
 import {CommonUtils} from '../../utils';
 import {useTheme} from '@react-navigation/native';
 import isEqual from 'react-fast-compare';
+import {AppConstant} from '../../const';
+import {AppIcons} from './AppIcons';
 
 const AppHeader: FC<AppHeaderProps> = ({
   label,
@@ -78,7 +80,7 @@ interface AppHeaderProps {
   backButtonIcon?: JSX.Element;
 }
 
-export default React.memo(AppHeader,isEqual);
+export default React.memo(AppHeader, isEqual);
 
 const styles = StyleSheet.create({
   header: {
