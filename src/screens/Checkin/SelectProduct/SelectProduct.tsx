@@ -24,6 +24,7 @@ import {
   TouchableOpacity,
   FlatList,
   Animated,
+  Pressable,
 } from 'react-native';
 import {StyleSheet} from 'react-native';
 import {Searchbar, TextInput} from 'react-native-paper';
@@ -303,7 +304,9 @@ const SelectProducts = () => {
             : item;
         });
       });
-      const numberSelect = newData.filter((item:any) => item.isSelected == true);
+      const numberSelect = newData.filter(
+        (item: any) => item.isSelected == true,
+      );
       setCountSelect(numberSelect.length);
       setData(newData);
     },
@@ -541,14 +544,14 @@ const SelectProducts = () => {
               <FlatList
                 data={data}
                 renderItem={({item}) => (
-                  // <Pressable>
-                  <ItemProductOrderComponent
-                    item={item}
-                    onSelectProduct={onSelectProduct}
-                    openBottomSheetDataFilter={openBottomSheetDataFilter}
-                    onChangeQuantityProduct={onChangeQuantityProduct}
-                  />
-                  // </Pressable>
+                  <Pressable>
+                    <ItemProductOrderComponent
+                      item={item}
+                      onSelectProduct={onSelectProduct}
+                      openBottomSheetDataFilter={openBottomSheetDataFilter}
+                      onChangeQuantityProduct={onChangeQuantityProduct}
+                    />
+                  </Pressable>
                 )}
                 initialNumToRender={10}
                 maxToRenderPerBatch={4}
