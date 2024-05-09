@@ -54,8 +54,8 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
 
   useEffect(() => {
     setSegData(dataSeg);
-    getData()
-  }, []); 
+    getData();
+  }, []);
   // console.log(dataSeg,'seg')
 
   return (
