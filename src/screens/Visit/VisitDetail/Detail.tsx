@@ -1,5 +1,9 @@
-import React, {FC} from 'react';
-import {ItemNoteVisitDetail, IVisitRouteDetail} from '../../../models/types';
+import React, {FC, useTransition} from 'react';
+import {
+  ItemNoteVisitDetail,
+  IVisitRouteDetail,
+  VisitListItemType,
+} from '../../../models/types';
 import {
   CellRendererProps,
   FlatList,
@@ -16,14 +20,17 @@ import {ImageAssets} from '../../../assets';
 import {AppButton, Block, AppText as Text} from '../../../components/common';
 import StatisticalItem from './StatisticalItem';
 import {NavigationProp} from '../../../navigation/screen-type';
-import {ScreenConstant} from '../../../const';
+import {AppConstant, ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
-import {useDispatch} from 'react-redux';
+import {shallowEqual, useDispatch} from 'react-redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import isEqual from 'react-fast-compare';
 import {AppTheme, useTheme} from '../../../layouts/theme';
+import {DMSConfigMobile} from '../../../services/appService';
+import {calculateDistance, useSelector} from '../../../config/function';
+import {LocationProps} from '../VisitList/VisitItem';
 
 const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   const {colors} = useTheme();
@@ -32,6 +39,15 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   const {t: getLabel} = useTranslation();
   const dispatch = useDispatch();
   const styles = rootStyles(theme);
+  const [isPending, startEffect] = useTransition();
+  let location = React.useRef<LocationProps>(
+    JSON.parse(item.customer_location_primary!),
+  ).current;
+
+  const systemConfig: DMSConfigMobile = useSelector(
+    state => state.app.systemConfig,
+    shallowEqual,
+  );
   const NoteData = React.useRef<ItemNoteVisitDetail[]>([
     {
       noteType: 'Loại ghi chú',
@@ -116,11 +132,11 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
               source={ImageAssets.UserGroupIcon}
               style={{width: 24, height: 24}}
               resizeMode={'cover'}
-              tintColor={item.is_checkin ? colors.success : colors.warning}
+              tintColor={item?.is_checkin ? colors.success : colors.warning}
             />
             <Text style={styles.userTextLeft}>{item.customer_name}</Text>
           </Block>
-          {statusItem(item.is_checkin)}
+          {statusItem(item?.is_checkin)}
         </Block>
         <Block style={styles.content}>
           <Image
@@ -183,46 +199,65 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
         )}
       </Block>
     );
-  },[otherInfo]);
+  }, [otherInfo]);
 
-  const _renderNoteItem = React.useCallback((item: ItemNoteVisitDetail, index: number) => {
-    return (
-      <Block
-        paddingVertical={16}
-        borderBottomWidth={index !== NoteData.length - 1 ? 1 : 0}
-        borderColor={colors.border}>
-        <Text colorTheme="text_primary" fontSize={16} fontWeight="500">
-          {item.noteType}
-        </Text>
-        <Block style={[styles.infoContainer]} marginVertical={4}>
-          <Image
-            source={ImageAssets.NoticeIcon}
-            style={{width: 16, height: 16}}
-            resizeMode={'cover'}
-          />
-          <Text style={{color: colors.text_secondary, marginLeft: 4}}>
-            {item.description}
+  const _renderNoteItem = React.useCallback(
+    (item: ItemNoteVisitDetail, index: number) => {
+      return (
+        <Block
+          paddingVertical={16}
+          borderBottomWidth={index !== NoteData.length - 1 ? 1 : 0}
+          borderColor={colors.border}>
+          <Text colorTheme="text_primary" fontSize={16} fontWeight="500">
+            {item.noteType}
           </Text>
+          <Block style={[styles.infoContainer]} marginVertical={4}>
+            <Image
+              source={ImageAssets.NoticeIcon}
+              style={{width: 16, height: 16}}
+              resizeMode={'cover'}
+            />
+            <Text style={{color: colors.text_secondary, marginLeft: 4}}>
+              {item.description}
+            </Text>
+          </Block>
+          <Block style={styles.infoContainer}>
+            <Image
+              source={ImageAssets.ClockIcon}
+              style={{width: 16, height: 16}}
+              resizeMode={'cover'}
+            />
+            <Text style={{color: colors.text_secondary, marginLeft: 4}}>
+              {item.time}, {item.date}
+            </Text>
+          </Block>
         </Block>
-        <Block style={styles.infoContainer}>
-          <Image
-            source={ImageAssets.ClockIcon}
-            style={{width: 16, height: 16}}
-            resizeMode={'cover'}
-          />
-          <Text style={{color: colors.text_secondary, marginLeft: 4}}>
-            {item.time}, {item.date}
-          </Text>
-        </Block>
-      </Block>
-    );
-  },[item]);
+      );
+    },
+    [item],
+  );
 
+
+
+  const distance = React.useMemo(() => {
+    let res: any;
+    startEffect(() => {
+      CommonUtils.getCurrentLocation(curLocation => {
+        res = calculateDistance(
+          curLocation.coords.latitude,
+          curLocation.coords.longitude,
+          location?.lat,
+          location?.long,
+        );
+      });
+    });
+    return res;
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1}} edges={['top', 'bottom']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {item.is_checkin && (
+        {item?.is_checkin && (
           <StatisticalItem
             orderCount={otherInfo?.so_don_trong_thang ?? 0}
             payment={otherInfo?.doanh_thu_thang ?? 0}
@@ -230,14 +265,12 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
         )}
         {_renderCustomer()}
         {_renderInfo()}
-        {!item.is_checkin ? (
+        {!item.is_checkin &&
+        distance * 1000 <=
+          systemConfig.saiso_chophep_kb_vitringoaisaiso +
+            AppConstant.additional_distance ? (
           <AppButton
-            style={{
-              backgroundColor: colors.action,
-              width: '30%',
-              marginTop: 16,
-              alignSelf: 'center',
-            }}
+            style={styles.button as any}
             label={'Checkin'}
             onPress={() => {
               navigation.navigate(ScreenConstant.CHECKIN, {item});
@@ -251,12 +284,10 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
             </Text>
             <View style={[styles.viewContainer, {paddingVertical: 0}]}>
               {NoteData.map((item, index) => _renderNoteItem(item, index))}
-             
             </View>
           </View>
         )}
       </ScrollView>
-     
     </SafeAreaView>
   );
 };
@@ -313,4 +344,10 @@ const rootStyles = (theme: AppTheme) =>
       fontWeight: '500',
     } as TextStyle,
     root: {},
+    button: {
+      backgroundColor: theme.colors.action,
+      width: '30%',
+      marginTop: 16,
+      alignSelf: 'center',
+    },
   });

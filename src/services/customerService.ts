@@ -13,6 +13,7 @@ export const getCustomerTerritory = () =>
     .get(ApiConstant.GET_CUSTOMER_TERRITORY)
     .then(res => res.data);
 
+export const getCustomerDetail = (customer_name:string) => createApi().get(ApiConstant.GET_CUSTOMER_DETAIL + customer_name).then(res => res.data)
 export const getCustomerRoute = () =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER_ROUTE)

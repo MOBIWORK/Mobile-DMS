@@ -56,7 +56,7 @@ export const GET_TYPE_CUSTOMER =
   '/api/method/mbw_dms.api.selling.customer.list_customer_type';
 export const GET_SYSTEM_CONFIG =
   '/api/method/mbw_dms.api.config_mobile.get_list_config';
-
+export const  GET_CUSTOMER_DETAIL ='/api/method/mbw_dms.api.selling.customer.customer_detail?name='
 export const GET_CUSTOMER_VISIT =
   '/api/method/mbw_dms.api.router.get_customer_router';
 export const UPDATE_CUSTOMER_ADDRESS =

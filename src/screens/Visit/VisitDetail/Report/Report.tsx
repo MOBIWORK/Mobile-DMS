@@ -40,7 +40,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
       });
       setSegData(newSegData);
     });
-  },[index.current]);
+  },[]);
 
   const getData = async () => {
     const response: any = await CustomerService.getReportOrder({
@@ -56,6 +56,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
     setSegData(dataSeg);
     getData()
   }, []); 
+  // console.log(dataSeg,'seg')
 
   return (
     <>

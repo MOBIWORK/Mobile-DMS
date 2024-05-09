@@ -46,6 +46,7 @@ import SkeletonLoading from '../SkeletonLoading';
 import {
   calculateDistance,
   generateRandomObjectId,
+  useEffectOnce,
   useSelector,
 } from '../../../config/function';
 import {useTranslation} from 'react-i18next';
@@ -104,7 +105,9 @@ const ListVisit = () => {
   const filterRef = useRef<BottomSheet>(null);
   const distanceRef = useRef<BottomSheet>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const systemConfig:DMSConfigMobile = useSelector(state => state.app.systemConfig);
+  const systemConfig: DMSConfigMobile = useSelector(
+    state => state.app.systemConfig,
+  );
   const searchVisit = useSelector(state => state.app.searchVisitValue);
   const [isPending, startEffect] = useTransition();
   const dataCheckIn: CheckinData = useSelector(
@@ -247,7 +250,7 @@ const ListVisit = () => {
     }
   }, [dispatch]);
 
-  const handleItemDistanceFilter = (itemData: IFilterType) => {
+  const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
     distanceRef.current?.close();
     setDistanceFilterValue(getLabel(itemData.label));
     const newData = distanceFilterData.map(item => {
@@ -259,7 +262,7 @@ const ListVisit = () => {
     });
     setDistanceFilterData(newData);
     sortDataCustomer(getLabel(itemData.label));
-  };
+  }, []);
 
   const presentMap = (item: VisitListItemType) => {
     const item_location: any = JSON.parse(item.customer_location_primary);
@@ -431,20 +434,23 @@ const ListVisit = () => {
 
   const _renderContent = () => {
     return (
-      <Block marginTop={8} >
+      <Block marginTop={8}>
         {isShowListVisit ? (
-          <Block  marginTop={16} paddingHorizontal={16} >
+          <Block marginTop={16} paddingHorizontal={16}>
             <Text style={{color: colors.text_secondary}}>
               {StringFormat(getLabel('customerVisitedCount'), {
                 customerCheckinCount: customerCheckinCount,
-                allCustomer: customerDataSort?.length != undefined ? customerDataSort?.length : 0,
+                allCustomer:
+                  customerDataSort?.length != undefined
+                    ? customerDataSort?.length
+                    : 0,
               })}
             </Text>
             {isPending ? (
               <SkeletonLoading />
             ) : (
               <FlatList
-                style={{height: '85%',paddingVertical:8}}
+                style={{height: '85%', paddingVertical: 8}}
                 showsVerticalScrollIndicator={false}
                 data={customerDataSort ?? listCustomer.data}
                 keyExtractor={(item, index) =>
@@ -709,8 +715,14 @@ const ListVisit = () => {
   };
 
   const handleCheckin = useCallback(
-    (item: VisitListItemType, isDetail: boolean,coords:any,detailAdd?:any) => {
-      let log: LocationProps = JSON.parse(item.customer_location_primary!);
+    (
+      item: VisitListItemType,
+      isDetail: boolean,
+      coords: any,
+      detailAdd?: any,
+    ) => {
+      // let log: LocationProps = JSON.parse(item.customer_location_primary!);
+      console.log(item.customer_name, 'name');
       let uniqueID = generateRandomObjectId();
       CommonUtils.getCurrentLocation(
         location => {
@@ -729,7 +741,10 @@ const ListVisit = () => {
                 : uniqueID,
             kh_ma: item.customer_code,
             kh_ten: item.customer_name,
-            kh_diachi: item.customer_primary_address === null ? detailAdd : item.customer_primary_address,
+            kh_diachi:
+              item.customer_primary_address === null
+                ? detailAdd
+                : item.customer_primary_address,
             kh_long: coords.lon || '',
             kh_lat: coords.lat || '',
             checkin_giovao: new Date().getTime() / 1000,
@@ -884,6 +899,7 @@ const ListVisit = () => {
           createByName: '',
           createdByEmail: '',
           item: item,
+          isDetail: false,
           ...item,
         };
         setModalAlert(prev => ({...prev, status: false}));
@@ -898,86 +914,95 @@ const ListVisit = () => {
   //  console.log(dataCheckIn.checkin_id,'checkinId')
 
   const onPressToDetail = useCallback((item: VisitListItemType) => {
-  
-    if (item.customer_location_primary != null) {
-      currentSelect.current = item;
-      let log: LocationProps = JSON.parse(item.customer_location_primary!);
-      setModalAlert({status: true, type: 'loading'});
-      let uniqueID = generateRandomObjectId();
-      startEffect(() => {
-        CommonUtils.getCurrentLocation(
-          location => {
-            let distanceCal = calculateDistance(
-              location.coords.latitude,
-              location.coords.longitude,
-              log?.lat,
-              log.long,
-            );
-            let data: CheckinData = {
-              checkin_id:
-                dataCheckIn &&
-                dataCheckIn?.kh_ma === item.customer_code &&
-                dataCheckIn.checkin_id !== undefined
-                  ? dataCheckIn.checkin_id
-                  : uniqueID,
-              kh_ma: item.customer_code,
-              kh_ten: item.customer_name,
-              kh_diachi: item.customer_primary_address,
-              kh_long: log.long ?? '',
-              kh_lat: log.lat ?? '',
-              checkin_giovao: new Date().getTime() / 1000,
-              checkin_pinvao:
-                batteryLevel > 0
-                  ? Math.round(batteryLevel * 10000) / 100
-                  : -Math.round(batteryLevel * 10000) / 100,
-              checkin_khoangcach: distanceCal,
-              createdDate: moment(new Date()).valueOf(),
-              checkin_timegps: moment(
-                new Date(location.timestamp * 1000),
-              ).format('hh:mm'),
-              checkin_dochinhxac: location.coords.accuracy,
-              checkinvalidate_khoangcachcheckin:
-                systemConfig.saiso_chophep_kb_vitringoaisaiso,
-              checkinvalidate_khoangcachcheckout:
-                systemConfig.saiso_chophep_checkout_ngoaisaiso,
-              checkin_trangthaicuahang: true,
-              checkin_donhang: '',
-              checkin_giora: null,
-              checkin_hinhanh: [],
-              checkin_lat: location.coords.latitude,
-              checkin_long: location.coords.longitude,
-              checkin_pinra: 0,
-              checkout_khoangcach: 0,
-              createByName: '',
-              createdByEmail: '',
-              item: item,
-              ...item,
-            };
+    console.log(item, 'item checkin');
+    currentSelect.current = item;
+    startEffect(() => {
+      if (item.customer_location_primary != null) {
+        let log: LocationProps = JSON.parse(item.customer_location_primary!);
+        setModalAlert({status: true, type: 'loading'});
+        let uniqueID = generateRandomObjectId();
+        startEffect(() => {
+          CommonUtils.getCurrentLocation(
+            location => {
+              let distanceCal = calculateDistance(
+                location.coords.latitude,
+                location.coords.longitude,
+                log?.lat,
+                log.long,
+              );
+              let data: CheckinData = {
+                checkin_id:
+                  dataCheckIn &&
+                  dataCheckIn?.kh_ma === item.customer_code &&
+                  dataCheckIn.checkin_id !== undefined
+                    ? dataCheckIn.checkin_id
+                    : uniqueID,
+                kh_ma: item.customer_code,
+                kh_ten: item.customer_name,
+                kh_diachi: item.customer_primary_address,
+                kh_long: log.long ?? '',
+                kh_lat: log.lat ?? '',
+                checkin_giovao: new Date().getTime() / 1000,
+                checkin_pinvao:
+                  batteryLevel > 0
+                    ? Math.round(batteryLevel * 10000) / 100
+                    : -Math.round(batteryLevel * 10000) / 100,
+                checkin_khoangcach: distanceCal,
+                createdDate: moment(new Date()).valueOf(),
+                checkin_timegps: moment(
+                  new Date(location.timestamp * 1000),
+                ).format('hh:mm'),
+                checkin_dochinhxac: location.coords.accuracy,
+                checkinvalidate_khoangcachcheckin:
+                  systemConfig.saiso_chophep_kb_vitringoaisaiso,
+                checkinvalidate_khoangcachcheckout:
+                  systemConfig.saiso_chophep_checkout_ngoaisaiso,
+                checkin_trangthaicuahang: true,
+                checkin_donhang: '',
+                checkin_giora: null,
+                checkin_hinhanh: [],
+                checkin_lat: location.coords.latitude,
+                checkin_long: location.coords.longitude,
+                checkin_pinra: 0,
+                checkout_khoangcach: 0,
+                createByName: '',
+                createdByEmail: '',
+                item: item,
+                isDetail: true,
+                ...item,
+              };
 
-            setModalAlert(prev => ({...prev, status: false}));
+              setModalAlert(prev => ({...prev, status: false}));
 
-            navigate(ScreenConstant.VISIT_DETAIL, {
-              data: data,
-            });
-          },
-          error => backgroundErrorListener(error.code),
-        );
-      });
-    } else {
-      setModalUpdateLocation({
-        status: true,
-        isDetail: true,
-      });
-    }
+              navigate(ScreenConstant.VISIT_DETAIL, {
+                data: data,
+              });
+              dispatch(appActions.setDataCheckIn(data));
+            },
+            error => backgroundErrorListener(error.code),
+          );
+        });
+      } else {
+        setModalUpdateLocation({
+          status: true,
+          isDetail: true,
+        });
+      }
+    });
   }, []);
 
   const onBackButtonPress = useCallback(() => {
     setModalUpdateLocation(prev => ({...prev, status: false}));
-    sortDataCustomer(distanceFilterValue);
+    // sortDataCustomer(distanceFilterValue);
   }, []);
+
+  useEffectOnce(() => {
+    dispatch(appActions.onGetSystemConfig());
+  });
 
   useEffect(() => {
     mounted.current = true;
+
     if (searchVisit) {
       handleSearchVisit();
     } else {

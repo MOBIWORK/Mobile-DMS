@@ -29,7 +29,7 @@ const MarkerItem: FC<MarkerItemProps> = ({item, index, onPress}) => {
       <Image
         source={ImageAssets.MapPinFillIcon}
         style={{width: 32, height: 32}}
-        tintColor={item.is_checkin ? colors.success : colors.warning}
+        tintColor={item &&  item?.is_checkin ? colors.success : colors.warning}
         resizeMode={'cover'}
       />
     </TouchableOpacity>

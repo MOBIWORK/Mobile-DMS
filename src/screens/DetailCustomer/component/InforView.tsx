@@ -1,6 +1,6 @@
 import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {IDataCustomers} from '../../../models/types';
+import {DetailCustomerType, IDataCustomers} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {AppText, Block, SvgIcon} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
@@ -12,7 +12,7 @@ import {GeolocationResponse} from '@react-native-community/geolocation';
 import {formatMoney} from '../../../config/function';
 
 type Props = {
-  data: IDataCustomers;
+  data: DetailCustomerType;
 };
 
 const InforBlock = (props: Props) => {
@@ -26,7 +26,6 @@ const InforBlock = (props: Props) => {
   useEffect(() => {
     CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
-
   return (
     <Block style={styles.root}>
       <Block style={styles.containImage}>
@@ -54,7 +53,9 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_name != '' ? props.data.customer_name : ' ---'}
+            {props.data?.customer_name && props.data.customer_name != null
+              ? props.data.customer_name
+              : ' ---'}
           </AppText>
           <Block style={styles.divider} />
         </Block>
@@ -71,8 +72,8 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_code != null
-              ? props.data.customer_code
+            {props.data?.customer_code != null
+              ? props.data?.customer_code
               : '---'}
           </AppText>
           <Block style={styles.divider} />
@@ -83,15 +84,15 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_secondary"
             lineHeight={24}>
-            Loại khách hàng
+            {translate('customerType')}
           </AppText>
           <AppText
             fontSize={16}
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_group != ''
-              ? props.data.customer_group
+             {props.data.customer_type != null
+              ? translate(props.data.customer_type.toLowerCase())
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />
@@ -109,8 +110,8 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.customer_type != ''
-              ? translate(props.data.customer_type)
+            {props.data.customer_group != null
+              ? translate(props.data.customer_group.toLowerCase())
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />
@@ -152,32 +153,7 @@ const InforBlock = (props: Props) => {
           </AppText>
           <Block style={styles.divider} />
         </Block>
-        <Block>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            {translate('gland')}
-          </AppText>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_primary"
-            lineHeight={24}>
-            {props.data.territory != null ? props.data.territory : ' ---'}
-          </AppText>
-          <Block style={styles.divider} />
-        </Block>
-        <Block>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            {translate('frequency')}
-          </AppText>
-        </Block>
+
         <Block>
           <AppText
             fontSize={16}
@@ -191,8 +167,8 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data.cre_limid && props.data.cre_limid.length > 0
-              ? formatMoney(props.data.cre_limid[0].credit_limit)
+            {props.data.credit_limits && props.data.credit_limits.length > 0
+              ? formatMoney(props.data.credit_limits[0].credit_limit)
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />
@@ -205,6 +181,16 @@ const InforBlock = (props: Props) => {
             lineHeight={24}>
             {translate('describe')}
           </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            {props.data.customer_details != null
+              ? props.data.customer_details
+              : ' ---'}
+          </AppText>
+          <Block style={styles.divider} />
         </Block>
         <Block>
           <AppText
