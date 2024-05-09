@@ -1,9 +1,8 @@
 import {StyleSheet, View, Platform, ViewStyle, TextStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {Address, IDataCustomers} from '../../../models/types';
+import {Address} from '../../../models/types';
 import {AppText, Block, SvgIcon} from '../../../components/common';
-import {formatPhoneNumber} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {ErrorBoundary} from 'react-error-boundary';
