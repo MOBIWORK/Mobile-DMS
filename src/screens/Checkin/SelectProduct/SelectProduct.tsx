@@ -13,7 +13,6 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
-  SvgIcon,
 } from '../../../components/common';
 import {ApiConstant, AppConstant} from '../../../const';
 import {useNavigation} from '@react-navigation/native';
