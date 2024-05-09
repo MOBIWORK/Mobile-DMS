@@ -69,7 +69,8 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
       )}
       {isPending ? (
         <Block justifyContent="center" alignItems="center" block>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          {' '}
+          <ActivityIndicator size="large" color={theme.colors.primary} />{' '}
         </Block>
       ) : (
         <>

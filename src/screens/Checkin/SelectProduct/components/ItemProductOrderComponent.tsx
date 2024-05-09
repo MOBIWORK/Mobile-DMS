@@ -11,7 +11,6 @@ import {
 import {AppCheckBox, AppIcons, Block} from '../../../../components/common';
 import {ICON_TYPE} from '../../../../const/app.const';
 import {CommonUtils} from '../../../../utils';
-
 import {AppTheme, useTheme} from '../../../../layouts/theme';
 import {IProduct} from '../../../../models/types';
 import {useTranslation} from 'react-i18next';
