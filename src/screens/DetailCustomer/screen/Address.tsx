@@ -12,15 +12,14 @@ import {AppIcons, AppText} from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import {IDataCustomers} from '../../../models/types';
+import {DetailCustomerType, IDataCustomers} from '../../../models/types';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import CardAddress from '../../Customer/components/CardAddress';
-import CardContactOverview from '../component/CardView';
+
 import CardAddressView from '../component/CardAddressView';
 
 type Props = {
   onPressAdding: () => void;
-  data: IDataCustomers;
+  data: DetailCustomerType;
 };
 
 const Address = (props: Props) => {
@@ -28,6 +27,7 @@ const Address = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
@@ -44,12 +44,13 @@ const Address = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {props.data.address &&
+      {props.data != null &&
+      props.data.address &&
       props.data.address != null &&
       props.data.address.length > 0 ? (
         <FlatList
           data={props.data.address}
-          keyExtractor={(item, index) => item.address}
+          keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           decelerationRate={'fast'}
           initialNumToRender={10}
@@ -63,7 +64,7 @@ const Address = (props: Props) => {
       ) : (
         <CardAddressView
           type="single"
-          data={props.data.customer_primary_address}
+          data={ props.data != null && props.data?.customer_primary_address != null ? props.data.customer_primary_address : ''}
         />
       )}
     </SafeAreaView>
@@ -76,9 +77,9 @@ const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     root: {
       // paddingTop: 10,
-      flex:1,
+      flex: 1,
       paddingHorizontal: 16,
-      backgroundColor:theme.colors.bg_neutral
+      backgroundColor: theme.colors.bg_neutral,
     } as ViewStyle,
     containLabel: {
       flexDirection: 'row',

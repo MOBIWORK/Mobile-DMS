@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import React, {
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -33,6 +34,13 @@ import {AppConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {goBack} from '../../navigation/navigation-service';
+import {useSelector} from '../../config/function';
+import {shallowEqual} from 'react-redux';
+import {dispatch} from '../../utils/redux';
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import {CustomerService} from '../../services';
+import {ErrorBoundary} from 'react-error-boundary';
+import ErrorFallBack from '../../layouts/ErrorFallBack';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -41,13 +49,41 @@ const DetailCustomer = () => {
   const {t: getLabel} = useTranslation();
 
   const params = useRoute<RouterProp<'DETAIL_CUSTOMER'>>().params;
-  const navigation = useNavigation<NavigationProp>();
+
   const addingAddress = useRef<BottomSheetMethods>();
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const [show, setShow] = useState(false);
   const [isPending, startTrans] = useTransition();
+  const [data, setData] = useState<any>(null);
+  const mounted = useRef<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const getDetailCustomer = async () => {
+      try {
+        let res: any = await CustomerService.getCustomerDetail(
+          params.data.customer_name,
+        );
+        if (res.message === 'ok' || Object.keys(res.result).length > 0) {
+          setData(res.result);
+        }
+      } catch (err) {
+        console.log('[error]: ', err);
+      } finally {
+        // mounted.current = false;
+        setLoading(false);
+      }
+    };
+
+    getDetailCustomer();
+
+    return () => {
+      // mounted.current = false;
+    };
+  }, []);
 
   const snapPointAdding = useMemo(
     () =>
@@ -64,32 +100,25 @@ const DetailCustomer = () => {
     {key: 'third', title: getLabel('contact')},
   ]).current;
 
-
-  
-
   const renderScene = React.useCallback(
     SceneMap({
-      first: () => <Overview data={params.data} />,
-      second: () =>
-        isPending ? (
-          <Block block justifyContent="center" alignItems="center">
-            {' '}
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-          </Block>
-        ) : (
-          <Address onPressAdding={onPressAdding} data={params.data} />
-        ),
-      third: () =>
-        isPending ? (
-          <Block block justifyContent="center" alignItems="center">
-            {' '}
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-          </Block>
-        ) : (
-          <Contact onPressAdding={onPressAddingContact} data={params.data} />
-        ),
+      first: () => (
+        <ErrorBoundary fallbackRender={ErrorFallBack}>
+          <Overview data={data as any} />
+        </ErrorBoundary>
+      ),
+      second: () => (
+        <ErrorBoundary fallbackRender={ErrorFallBack}>
+          <Address onPressAdding={onPressAdding} data={data as any} />
+        </ErrorBoundary>
+      ),
+      third: () => (
+        <ErrorBoundary fallbackRender={ErrorFallBack}>
+          <Contact onPressAdding={onPressAddingContact} data={data as any} />
+        </ErrorBoundary>
+      ),
     }),
-    [params],
+    [data],
   );
 
   const indexView = useRef<number>(0);
@@ -119,13 +148,15 @@ const DetailCustomer = () => {
     );
   }, []);
 
-
-  const onIndexChange = useCallback((index:number) =>{
-          startTrans(() =>{
-            indexView.current = index
-          })
-  },[indexView.current])
-
+  const onIndexChange = useCallback(
+    (index: number) => {
+      startTrans(() => {
+        indexView.current = index;
+      });
+    },
+    [indexView.current],
+  );
+  // console.log(mounted.current,'mounted')
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.labelHeader}>
@@ -140,22 +171,27 @@ const DetailCustomer = () => {
           }
         />
       </View>
+      {!!loading ? (
+        <Block block justifyContent="center" alignItems="center">
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </Block>
+      ) : (
+        <TabView
+          onIndexChange={onIndexChange}
+          navigationState={{
+            index: indexView.current,
+            routes: routes,
+          }}
+          swipeEnabled={true}
+          renderScene={renderScene}
+          renderTabBar={renderTabBar}
+          lazyPreloadDistance={2}
+          lazy={true}
+          animationEnabled={true}
+          initialLayout={{width: layout.width}}
+        />
+      )}
 
-      <TabView
-        onIndexChange={onIndexChange}
-        navigationState={{
-          index: indexView.current,
-          routes: routes,
-        }}
-        swipeEnabled={true}
-        renderScene={renderScene}
-        renderTabBar={renderTabBar}
-        lazyPreloadDistance={2}
-        lazy={true}
-        animationEnabled={true}
-      
-        initialLayout={{width: layout.width}}
-      />
       <AppBottomSheet
         bottomSheetRef={addingAddress}
         snapPointsCustom={snapPointAdding}>

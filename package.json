@@ -87,7 +87,6 @@
     "@react-native/metro-config": "^0.72.11",
     "@tsconfig/react-native": "^3.0.0",
     "@types/react": "^18.0.24",
-    "@types/react-native-vector-icons": "^6.4.18",
     "@types/react-native-version-check": "^3.4.8",
     "@types/react-redux": "^7.1.33",
     "@types/react-test-renderer": "^18.0.0",

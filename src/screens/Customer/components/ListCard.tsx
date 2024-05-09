@@ -18,7 +18,7 @@ const ListCard = (props: Props) => {
     <CardView {...item} key={index} />
   );
   const memorizedValue = useMemo(() => renderItem, [props.data]);
-
+// console.log(props.data,'data')
   return (
     // <SafeAreaView edges={['bottom']}>
 

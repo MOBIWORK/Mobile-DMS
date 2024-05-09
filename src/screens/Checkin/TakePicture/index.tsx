@@ -102,7 +102,7 @@ const TakePicture = () => {
     } finally {
       console.log(`Done processing ${totalItemsProcessed} items`);
       dispatch(appActions.clearListImage([]));
-      completeCheckin()
+      completeCheckin();
       setMessage(totalItemsProcessed);
       setLoading(false);
     }
@@ -121,7 +121,7 @@ const TakePicture = () => {
   };
 
   const handleCamera = async (item: IAlbumImage) => {
-    await CameraUtils.openImagePicker((img, base64) => {
+    await CameraUtils.openImagePickerCamera((img, base64) => {
       const newListImage = [
         ...item.image,
         {url: img || '', base64: base64 || ''},

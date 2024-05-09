@@ -8,9 +8,10 @@ export function* getDataProducts(action: PayloadAction) {
   if (productActions.onGetData.match(action)) {
     try {
       yield put(productActions.setLoading(true));
+      console.log('13333', action.payload);
       const {status, data} = yield call(ProductService.get, action.payload);
       if (status === ApiConstant.STT_OK) {
-        console.log(data, 'data product');
+        // console.log(data.result, 'data product');
         yield put(
           productActions.setDataProduct({
             data: data.result.data,

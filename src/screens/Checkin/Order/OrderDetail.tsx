@@ -18,7 +18,7 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {CheckinOrderDetail, ItemProductOrder} from '../../../models/types';
 import {useTranslation} from 'react-i18next';
 import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallback from '../../../layouts/ErrorBoundary';
+import ErrorFallback from '../../../layouts/ErrorFallBack';
 import {CommonUtils} from '../../../utils';
 import ItemProduct from '../../../components/Order/ItemProduct';
 

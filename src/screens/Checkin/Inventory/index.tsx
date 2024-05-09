@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
   AppBottomSheet,
@@ -134,8 +134,7 @@ const CheckinInventory = () => {
     }
   };
 
-  const onSubmit = async () => {
-    console.log('run this ?');
+  const onSubmit = useCallback(async () => {
     if (products.length > 0) {
       const newItems = products.map(item => {
         const price = item.details.find(item2 => item2.uom == item.stock_uom);
@@ -155,14 +154,14 @@ const CheckinInventory = () => {
         customer_address: dataCheckin.item.customer_primary_address,
         inventory_items: newItems,
       };
-      console.log(objectData, 'objectData');
+      // console.log(objectData, 'objectData');
       const {status}: any = await CheckinService.checkinInventory(objectData);
       if (status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));
         completeCheckin();
       }
     }
-  };
+  }, [dataCheckin, products]);
 
   const removeItem = (id: string) => {
     const newProducts = products.filter(item => item.item_code !== id);
@@ -349,7 +348,6 @@ const CheckinInventory = () => {
     const newData = categoriesCheckin.map(item =>
       item.key === 'inventory' ? {...item, isDone: true} : item,
     );
-    console.log('newww', newData);
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
     dispatch(productActions.setProductSelected([]));
     navigation.goBack();
@@ -494,7 +492,7 @@ const CheckinInventory = () => {
           marginBottom: 35,
           backgroundColor: isDisabled ? colors.bg_disable : colors.primary,
         }}
-        onPress={onSubmit}
+        onPress={() => onSubmit()}
       />
       <AppBottomSheet
         bottomSheetRef={bottomSheetRefDetail}

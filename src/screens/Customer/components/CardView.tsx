@@ -23,6 +23,8 @@ import {dispatch} from '../../../utils/redux';
 import {orderAction} from '../../../redux-store/order-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {ErrorBoundary} from 'react-error-boundary';
+import ErrorFallBack from '../../../layouts/ErrorFallBack';
 
 const CardView = (props: IDataCustomers) => {
   const theme = useTheme();
@@ -40,56 +42,63 @@ const CardView = (props: IDataCustomers) => {
   };
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() =>
-        startEffect(() => {
-          navigate(ScreenConstant.DETAIL_CUSTOMER, {data: props});
-        })
-      }>
-      <View style={styles.containContentView}>
-        <Block
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center">
-          <Block block>
-            <Text style={styles.textName}>{props.customer_name}</Text>
-            <Text style={styles.textName}>{props.customer_code}</Text>
-          </Block>
+    <ErrorBoundary fallbackRender={ErrorFallBack}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() =>
+          startEffect(() => {
+            navigate(ScreenConstant.DETAIL_CUSTOMER, {data: props});
+          })
+        }>
+        <View style={styles.containContentView}>
+          <Block
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center">
+            <Block block>
+              <Text style={styles.textName}>{props.customer_name}</Text>
+              <Text style={styles.textName}>{props.customer_code}</Text>
+            </Block>
 
-          <View style={styles.containButton}>
-            <TouchableOpacity
-              style={styles.containButtonBuy}
-              onPress={navigateOrder}>
-              <Text style={styles.textOrder}>{translate('putOrder')}</Text>
-            </TouchableOpacity>
+            <View style={styles.containButton}>
+              <TouchableOpacity
+                style={styles.containButtonBuy}
+                onPress={navigateOrder}>
+                <Text style={styles.textOrder}>{translate('putOrder')}</Text>
+              </TouchableOpacity>
+            </View>
+          </Block>
+          <Block
+            height={1}
+            colorTheme="border"
+            marginTop={4}
+            marginBottom={4}
+          />
+          <View style={styles.contentContainLayout}>
+            <AppImage source={'IconAddress'} style={styles.iconStyle} />
+            <Text numberOfLines={1} style={styles.contentText}>
+              {props?.customer_primary_address
+                ? props.customer_primary_address
+                : '---'}
+            </Text>
           </View>
-        </Block>
-        <Block height={1} colorTheme="border" marginTop={4} marginBottom={4} />
-        <View style={styles.contentContainLayout}>
-          <AppImage source={'IconAddress'} style={styles.iconStyle} />
-          <Text numberOfLines={1} style={styles.contentText}>
-            {props?.customer_primary_address
-              ? props.customer_primary_address
-              : '---'}
-          </Text>
+          <View style={styles.contentContainLayout}>
+            <AppImage source={'IconPhone'} style={styles.iconStyle} />
+            <Text style={styles.contentText}>
+              {props?.contact?.[0]?.mobile_no
+                ? props?.contact?.[0]?.mobile_no
+                : '---'}
+            </Text>
+          </View>
+          <View style={styles.contentContainLayout}>
+            <AppImage source={'IconType'} style={styles.iconStyle} />
+            <Text style={styles.contentText}>
+              {translate(props?.customer_type)}
+            </Text>
+          </View>
         </View>
-        <View style={styles.contentContainLayout}>
-          <AppImage source={'IconPhone'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>
-            {props?.contact?.[0]?.phoneNumber
-              ? props?.contact?.[0]?.phoneNumber
-              : '---'}
-          </Text>
-        </View>
-        <View style={styles.contentContainLayout}>
-          <AppImage source={'IconType'} style={styles.iconStyle} />
-          <Text style={styles.contentText}>
-            {translate(props?.customer_type)}
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </ErrorBoundary>
   );
 };
 

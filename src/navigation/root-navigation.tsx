@@ -20,7 +20,11 @@ const RootNavigation = () => {
   const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
 
   useEffect(() => {
-    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+    if (
+      dataCheckIn &&
+      Object.keys(dataCheckIn)?.length > 0 &&
+      dataCheckIn.isDetail === false
+    ) {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
     } else {
       return;
