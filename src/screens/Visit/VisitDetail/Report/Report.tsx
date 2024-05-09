@@ -40,7 +40,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
       });
       setSegData(newSegData);
     });
-  },[]);
+  },[segData]);
 
   const getData = async () => {
     const response: any = await CustomerService.getReportOrder({
@@ -69,8 +69,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
       )}
       {isPending ? (
         <Block justifyContent="center" alignItems="center" block>
-          {' '}
-          <ActivityIndicator size="large" color={theme.colors.primary} />{' '}
+          <ActivityIndicator size="large" color={theme.colors.primary} />
         </Block>
       ) : (
         <>

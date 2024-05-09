@@ -19,6 +19,8 @@ export type ResponseGenerator = {
 };
 
 export function* onGetOrders(action: PayloadAction) {
+  console.log('run get orders')
+
   if (orderAction.onGetData.match(action)) {
     try {
       yield put(appActions.setProcessingStatus(true));
@@ -45,6 +47,7 @@ export function* onGetOrders(action: PayloadAction) {
 }
 
 export function* onGetDetailOrder(action: PayloadAction<string>) {
+  console.log('run order detail saga')
   if (orderAction.onGetDetailData.match(action)) {
     try {
       const {status, data}: KeyAbleProps = yield call(
