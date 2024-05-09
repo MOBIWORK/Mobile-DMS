@@ -8,9 +8,10 @@ import {
   ViewStyle,
   TextInput as Input,
 } from 'react-native';
-import {AppCheckBox, AppIcons} from '../../../../components/common';
+import {AppCheckBox, AppIcons, Block} from '../../../../components/common';
 import {ICON_TYPE} from '../../../../const/app.const';
 import {CommonUtils} from '../../../../utils';
+
 import {AppTheme, useTheme} from '../../../../layouts/theme';
 import {IProduct} from '../../../../models/types';
 import {useTranslation} from 'react-i18next';
@@ -32,20 +33,17 @@ const ItemProductOrderComponent = ({
   const {t: getLabel} = useTranslation();
 
   return (
-    <View
-      style={[
-        styles.itemProduct,
-        {
-          backgroundColor: item.isSelected
-            ? 'rgba(196, 22, 28, 0.08)'
-            : theme.colors.bg_default,
-        },
-      ]}>
-      <View
-        style={[styles.flex as any, {alignItems: 'flex-start', columnGap: 6}]}>
-        <View style={{flex: 1}}>
-          <View style={[styles.flex, {justifyContent: 'space-between'}]}>
-            <View style={{width: '65%'}}>
+    <Block
+      style={[styles.itemProduct]}
+      color={
+        item.isSelected ? 'rgba(196, 22, 28, 0.08)' : theme.colors.bg_default
+      }>
+      <Block
+        style={[styles.flex, {columnGap: 6} as ViewStyle]}
+        alignItems="flex-start">
+        <Block block>
+          <Block style={[styles.flex]} justifyContent="space-between">
+            <Block width="65%">
               <View
                 style={[
                   styles.flex as any,
@@ -60,7 +58,7 @@ const ItemProductOrderComponent = ({
                     )
                   }
                 />
-                <View style={[styles.flex as any]}>
+                <Block style={styles.flex}>
                   <AppIcons
                     iconType={ICON_TYPE.IonIcon}
                     name="barcode-outline"
@@ -78,7 +76,7 @@ const ItemProductOrderComponent = ({
                     ]}>
                     {item.item_code}
                   </Text>
-                </View>
+                </Block>
               </View>
               <Text
                 style={[
@@ -87,7 +85,7 @@ const ItemProductOrderComponent = ({
                 ]}>
                 {item.item_name}
               </Text>
-            </View>
+            </Block>
             <TouchableOpacity
               activeOpacity={0.6}
               onPress={() => openBottomSheetDataFilter('unit', item)}>
@@ -103,7 +101,7 @@ const ItemProductOrderComponent = ({
                 />
               </View>
             </TouchableOpacity>
-          </View>
+          </Block>
 
           <View
             style={[
@@ -189,9 +187,9 @@ const ItemProductOrderComponent = ({
                 : 0}
             </Text>
           </View>
-        </View>
-      </View>
-    </View>
+        </Block>
+      </Block>
+    </Block>
   );
 };
 

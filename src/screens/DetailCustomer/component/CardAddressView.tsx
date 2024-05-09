@@ -1,9 +1,8 @@
 import {StyleSheet, View, Platform, ViewStyle, TextStyle} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {Address, IDataCustomers} from '../../../models/types';
+import {Address} from '../../../models/types';
 import {AppText, Block, SvgIcon} from '../../../components/common';
-import {formatPhoneNumber} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {ErrorBoundary} from 'react-error-boundary';
@@ -16,6 +15,7 @@ type SingleAddress = {
 type ListAddress = {
   data: Address;
   type: 'list';
+  primary_address: string;
 };
 type Props = SingleAddress | ListAddress;
 
@@ -49,20 +49,28 @@ const CardAddressView = (props: Props) => {
               fontWeight="500"
               colorTheme="text_primary">
               {props?.data?.address_title
-                ? props?.data?.address_title.split(',', 4)[1] +
-                  ',' +
-                  props?.data?.address_title.split(',', 4)[2] +
-                  ',' +
-                  props?.data?.address_title.split(',', 4)[3]
+                ? props?.data?.address_title.split(',', 4)[1] === undefined
+                  ? ''
+                  : props?.data?.address_title.split(',', 4)[1] +
+                      ',' +
+                      props?.data?.address_title.split(',', 4)[2] ===
+                    undefined
+                  ? ''
+                  : props?.data?.address_title.split(',', 4)[2] +
+                      ',' +
+                      props?.data?.address_title.split(',', 4)[3] ===
+                    undefined
+                  ? ''
+                  : props?.data?.address_title.split(',', 4)[3]
                 : '___'}
             </AppText>
           </Block>
         </Block>
-        {props.data.is_primary_address === 1 && (
+        {props.primary_address.includes(props.data.address_title) && (
           <Block style={styles.containAddress}>
             <View style={styles.mainContact}>
               <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-                {getLabel('addressGet')}
+                {getLabel('mainAddress')}
               </AppText>
             </View>
           </Block>

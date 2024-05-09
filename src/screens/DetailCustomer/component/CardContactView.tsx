@@ -27,7 +27,7 @@ const CardContactView = (props: Props) => {
             fontWeight="500"
             lineHeight={24}
             style={styles.labelText}>
-            {props.data.first_name}
+            {props.data.first_name + ' ' + props.data.last_name}
           </Text>
 
           <Block style={styles.labelView}>

@@ -1,49 +1,163 @@
-import {Platform, StyleSheet, ViewStyle} from 'react-native';
+import {StyleSheet, View, ViewStyle} from 'react-native';
 import React from 'react';
-import {DetailCustomerType} from '../../../models/types';
-import {Block, SvgIcon, AppText as Text} from '../../../components/common';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {useTranslation} from 'react-i18next';
-import isEqual from 'react-fast-compare';
-import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallBack from '../../../layouts/ErrorFallBack';
+import {Platform} from 'react-native';
+import {AppText as Text, SvgIcon, Block} from '../../../components/common';
+import {formatPhoneNumber} from '../../../config/function';
 
-type Props = {
-  data: DetailCustomerType;
+import {useTranslation} from 'react-i18next';
+import {Address, Contact} from '../../../models/types';
+
+type Props = CardAddressType | CardContactType;
+
+type CardAddressType = {
+  type: 'address';
+  mainAddress: Address;
+  priAdd?: string;
+};
+type CardContactType = {
+  type: 'contact';
+  mainContactAddress: Contact;
+  priContact?: string;
 };
 
-const CardOverView = (props: Props) => {
+
+
+const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-  const {data} = props;
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
-      <Block style={styles.card}>
+    <Block style={styles.card}>
+      {props.type === 'address' ? (
+        <>
+          <Block>
+            <Block style={styles.containAddressLabel}>
+              <Block style={styles.containIcon}>
+                <SvgIcon source="MapPin" size={16} />
+              </Block>
+              <Block>
+                <Text
+                  numberOfLines={2}
+                  fontSize={16}
+                  fontWeight="300"
+                  colorTheme="black"
+                  lineHeight={21}>
+                  {props.mainAddress.address_title
+                    ? props.mainAddress.address_title.split(',', 4)[0]
+                    : '___'}
+                </Text>
+              </Block>
+            </Block>
+            <Block paddingLeft={28}>
+              <Text
+                numberOfLines={2}
+                fontSize={14}
+                fontWeight="300"
+                style={{maxWidth: '90%'}}
+                colorTheme="black"
+                lineHeight={21}>
+                {props.mainAddress.address_title
+                  ? props.mainAddress.address_title.split(',', 4)[1] +
+                    ',' +
+                    props.mainAddress.address_title.split(',', 4)[2] +
+                    ',' +
+                    props.mainAddress.address_title.split(',', 4)[3]
+                  : '___'}
+                {/* {`${props.mainAddress.state?.value}, ${props.mainAddress.city}, ${props.mainAddress.county}`} */}
+              </Text>
+            </Block>
+          </Block>
+          <Block style={styles.containAddress}>
+            {props.priAdd &&
+              props.priAdd?.includes(props.mainAddress.address_title) && (
+                <Block style={styles.addressGetAndOrder}>
+                  <Text
+                    fontSize={14}
+                    lineHeight={21}
+                    fontWeight="400"
+                    colorTheme="primary">
+                    {getLabel('deliveryAddress')}
+                  </Text>
+                </Block>
+              )}
+            {props.mainAddress.is_shipping_address === 1 && (
+              <Block style={styles.addressGetAndOrder}>
+                <Text
+                  fontSize={14}
+                  lineHeight={21}
+                  fontWeight="400"
+                  colorTheme="primary">
+                  {getLabel('orderAddress')}
+                </Text>
+              </Block>
+            )}
+          </Block>
+        </>
+      ) : (
         <Block paddingHorizontal={16}>
           <Block style={styles.containAddressLabel}>
+            <Text
+              fontSize={16}
+              fontWeight="400"
+              colorTheme="black"
+              lineHeight={21}>
+              {props.mainContactAddress.first_name
+                ? props.mainContactAddress.first_name
+                : '---'}
+            </Text>
+          </Block>
+          <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <Block style={styles.containIcon}>
               <SvgIcon source="MapPin" size={16} />
             </Block>
             <Text
               numberOfLines={2}
-              fontSize={16}
+              fontSize={14}
               fontWeight="300"
               colorTheme="black"
               lineHeight={21}>
-              {data && data.customer_primary_address
-                ? data.customer_primary_address.split(',', 4)[0]
-                : '___'}
+              {/* {`${
+                props.mainContactAddress.first_name
+                  ? `${props.mainContactAddress.first_name}, `
+                  : ''
+              }`} */}
             </Text>
           </Block>
+          <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
+            <Block style={styles.containIcon}>
+              <SvgIcon source="Phone" size={16} />
+            </Block>
+            <Text
+              numberOfLines={2}
+              fontSize={14}
+              fontWeight="300"
+              colorTheme="black"
+              lineHeight={21}>
+              {props.mainContactAddress.mobile_no != null
+                ? formatPhoneNumber(props.mainContactAddress.mobile_no)
+                : '---'}
+            </Text>
+          </Block>
+          <Block style={styles.containMain}>
+            <Block style={styles.addressGetAndOrder}>
+              <Text
+                fontSize={14}
+                lineHeight={21}
+                fontWeight="400"
+                colorTheme="primary">
+                {getLabel('mainContact')}
+              </Text>
+            </Block>
+          </Block>
         </Block>
-      </Block>
-    </ErrorBoundary>
+      )}
+    </Block>
   );
 };
 
-export default React.memo(CardOverView, isEqual);
+export default CardAddress;
 
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -51,9 +165,7 @@ const rootStyles = (theme: AppTheme) =>
       backgroundColor: theme.colors.white,
       shadowColor: theme.colors.text_disable,
       borderRadius: 16,
-      // borderWidth: 0.1,
       paddingVertical: 12,
-      marginHorizontal: 2,
       marginVertical: 10,
       marginBottom: 20,
       ...Platform.select({
@@ -82,6 +194,7 @@ const rootStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       alignContent: 'center',
       marginBottom: 4,
+      paddingHorizontal: 16,
     } as ViewStyle,
     marginContainText: {
       marginLeft: 4,
@@ -98,9 +211,10 @@ const rootStyles = (theme: AppTheme) =>
       marginRight: 8,
       backgroundColor: theme.colors.bg_default,
       paddingHorizontal: 10,
-      // borderWidth: 1,
+      borderWidth: 1,
       borderColor: theme.colors.border,
       paddingVertical: 3,
+      borderRadius:16
     } as ViewStyle,
     containMain: {
       marginLeft: 8,

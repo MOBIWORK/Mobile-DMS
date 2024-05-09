@@ -3,11 +3,13 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import {useTheme} from '@react-navigation/native';
-import {View} from 'react-native';
+
+import {StyleSheet, View, ViewStyle} from 'react-native';
 import {SharedValue} from 'react-native-reanimated';
 import {Portal} from './portal';
 import isEqual from 'react-fast-compare';
+import {Block} from './Block';
+import {AppTheme, useTheme} from '../../layouts/theme';
 
 const AppBottomSheet: FC<AppBottomSheetProps> = ({
   bottomSheetRef,
@@ -27,6 +29,8 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
 }) => {
   const snapPoints = useMemo(() => ['20%'], []);
   const {colors} = useTheme();
+  const theme = useTheme();
+  const styles = rootStyles(theme);
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -52,49 +56,23 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         handleIndicatorStyle={{
           backgroundColor: backgroundColor ?? colors.bg_default,
         }}
-        handleStyle={{
-          // display: 'none',
-          backgroundColor: backgroundColor ?? colors.bg_default,
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
-          // backgroundColor:'red'
-        }}
+        handleStyle={styles.handleStyle(backgroundColor)}
         backdropComponent={hiddenBackdrop ? null : renderBackdrop}
         enablePanDownToClose={enablePanDownToClose ?? true}
         enableHandlePanningGesture={false}
         enableContentPanningGesture={true}
         enableOverDrag={false}
         index={index}
-        style={{
-          // backgroundColor: 'transparent',
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 0,
-            height: 12,
-          },
-          shadowOpacity: 0.58,
-          shadowRadius: 16.0,
-          // backgroundColor:'red',
-          elevation: 24,
-        }}
+        style={styles.shadowStyle}
         {...otherProps}>
         {useBottomSheetView ? (
-          <BottomSheetView
-            style={{
-              backgroundColor: colors.bg_default,
-              width: '100%',
-              height: '100%',
-            }}>
+          <BottomSheetView style={styles.bottomSheetStyle}>
             {children}
           </BottomSheetView>
         ) : (
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: backgroundColor ?? colors.bg_default,
-            }}>
+          <Block block color={backgroundColor ?? colors.bg_default}>
             {children}
-          </View>
+          </Block>
         )}
       </BottomSheet>
     </Portal>
@@ -119,3 +97,32 @@ interface AppBottomSheetProps {
 }
 
 export default AppBottomSheet;
+
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    shadowStyle: {
+      // backgroundColor: 'transparent',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 12,
+      },
+      shadowOpacity: 0.58,
+      shadowRadius: 16.0,
+      // backgroundColor:'red',
+      elevation: 24,
+    },
+    bottomSheetStyle: {
+      backgroundColor: theme.colors.bg_default,
+      width: '100%',
+      height: '100%',
+    } as ViewStyle,
+    handleStyle: (backgroundColor: any) =>
+      ({
+        // display: 'none',
+        backgroundColor: backgroundColor ?? theme.colors.bg_default,
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8,
+        // backgroundColor:'red'
+      } as ViewStyle),
+  });

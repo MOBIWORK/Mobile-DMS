@@ -5,6 +5,7 @@ import {ProductService} from '../../services';
 import {ApiConstant} from '../../const';
 
 export function* getDataProducts(action: PayloadAction) {
+  console.log('run data product saga')
   if (productActions.onGetData.match(action)) {
     try {
       yield put(productActions.setLoading(true));

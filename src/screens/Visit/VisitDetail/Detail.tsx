@@ -205,6 +205,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
     (item: ItemNoteVisitDetail, index: number) => {
       return (
         <Block
+        key={index}
           paddingVertical={16}
           borderBottomWidth={index !== NoteData.length - 1 ? 1 : 0}
           borderColor={colors.border}>

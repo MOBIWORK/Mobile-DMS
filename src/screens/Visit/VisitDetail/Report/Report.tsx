@@ -27,23 +27,20 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
   const [reportData, setReportData] = useState<IReportVisitDetail>();
   const inventoryData = useRef<any>(reportData?.ton_kho);
 
-  const changeReportIndex = React.useCallback(
-    (value: string | number) => {
-      // setIndexPage(Number(value));
-      startTransition(() => {
-        index.current = Number(value);
-        const newSegData = segData.map(item => {
-          if (value === item.value) {
-            return {...item, isSelected: true};
-          } else {
-            return {...item, isSelected: false};
-          }
-        });
-        setSegData(newSegData);
+  const changeReportIndex = React.useCallback((value: string | number) => {
+    // setIndexPage(Number(value));
+    startTransition(() => {
+    index.current = Number(value);
+      const newSegData = segData.map(item => {
+        if (value === item.value) {
+          return {...item, isSelected: true};
+        } else {
+          return {...item, isSelected: false};
+        }
       });
-    },
-    [segData],
-  );
+      setSegData(newSegData);
+    });
+  },[segData]);
 
   const getData = async () => {
     const response: any = await CustomerService.getReportOrder({
@@ -57,8 +54,8 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
 
   useEffect(() => {
     setSegData(dataSeg);
-    getData();
-  }, []);
+    getData()
+  }, []); 
   // console.log(dataSeg,'seg')
 
   return (
@@ -72,8 +69,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
       )}
       {isPending ? (
         <Block justifyContent="center" alignItems="center" block>
-          {' '}
-          <ActivityIndicator size="large" color={theme.colors.primary} />{' '}
+          <ActivityIndicator size="large" color={theme.colors.primary} />
         </Block>
       ) : (
         <>
