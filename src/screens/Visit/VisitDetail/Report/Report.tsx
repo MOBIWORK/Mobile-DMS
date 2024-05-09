@@ -27,20 +27,23 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
   const [reportData, setReportData] = useState<IReportVisitDetail>();
   const inventoryData = useRef<any>(reportData?.ton_kho);
 
-  const changeReportIndex = React.useCallback((value: string | number) => {
-    // setIndexPage(Number(value));
-    startTransition(() => {
-    index.current = Number(value);
-      const newSegData = segData.map(item => {
-        if (value === item.value) {
-          return {...item, isSelected: true};
-        } else {
-          return {...item, isSelected: false};
-        }
+  const changeReportIndex = React.useCallback(
+    (value: string | number) => {
+      // setIndexPage(Number(value));
+      startTransition(() => {
+        index.current = Number(value);
+        const newSegData = segData.map(item => {
+          if (value === item.value) {
+            return {...item, isSelected: true};
+          } else {
+            return {...item, isSelected: false};
+          }
+        });
+        setSegData(newSegData);
       });
-      setSegData(newSegData);
-    });
-  },[]);
+    },
+    [segData],
+  );
 
   const getData = async () => {
     const response: any = await CustomerService.getReportOrder({
@@ -54,8 +57,8 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
 
   useEffect(() => {
     setSegData(dataSeg);
-    getData()
-  }, []); 
+    getData();
+  }, []);
   // console.log(dataSeg,'seg')
 
   return (

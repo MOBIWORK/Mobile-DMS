@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
+  TextInput as Input,
 } from 'react-native';
 import {AppCheckBox, AppIcons} from '../../../../components/common';
 import {ICON_TYPE} from '../../../../const/app.const';
 import {CommonUtils} from '../../../../utils';
-import {TextInput as Input} from 'react-native/Libraries/Components/TextInput/TextInput';
 import {AppTheme, useTheme} from '../../../../layouts/theme';
 import {IProduct} from '../../../../models/types';
 import {useTranslation} from 'react-i18next';
@@ -30,6 +30,7 @@ const ItemProductOrderComponent = ({
   const theme = useTheme();
   const styles = createStyles(theme);
   const {t: getLabel} = useTranslation();
+
   return (
     <View
       style={[
