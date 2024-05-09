@@ -7,7 +7,7 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import { AuthorizeParamsList, RouterProp} from '../../../navigation/screen-type';
+import {AuthorizeParamsList, RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {
@@ -30,13 +30,19 @@ import {KeyAbleProps} from '../../../models/types';
 import {CommonUtils} from '../../../utils';
 import {AppService, CheckinService} from '../../../services';
 import {IUpdateAddress} from '../../../services/checkInService';
-import {setProcessingStatus} from '../../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  setProcessingStatus,
+} from '../../../redux-store/app-reducer/reducer';
 import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {MainLayout} from '../../../layouts';
 import isEqual from 'react-fast-compare';
+import {CheckinData} from '../../../services/appService';
+import {shallowEqual} from 'react-redux';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -50,6 +56,12 @@ const CheckInLocation = () => {
   const {bottom} = useSafeAreaInsets();
   const styles = createStyle(theme);
   const {t: getLabel} = useTranslation();
+
+  const dataCheckIn: CheckinData = useSelector(
+    state => state.app.dataCheckIn,
+    shallowEqual,
+  );
+
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );
@@ -133,12 +145,21 @@ const CheckInLocation = () => {
       newParams.data.kh_diachi = params.address_line1;
       const response: any = await CheckinService.updateCustomerAddress(params);
       if (response?.status === ApiConstant.STT_OK) {
+        dispatch(
+          appActions.setDataCheckIn({
+            ...dataCheckIn,
+            item: {
+              ...dataCheckIn.item,
+              customer_primary_address: value,
+            },
+          }),
+        );
         completeCheckin();
         // navigation.goBack();
         navigation.navigate({
-          name:ScreenConstant.CHECKIN,
-          params:{item:newParams.data,isLocation:true},
-          merge:true
+          name: ScreenConstant.CHECKIN,
+          params: {item: newParams.data, isLocation: true},
+          merge: true,
         });
         // navigation.setParams({data:newParams.data,type:newParams.type})
       }
@@ -165,8 +186,15 @@ const CheckInLocation = () => {
           latitude: customer_location.lat,
         },
       });
+      handleMarkerMap(customer_location.lat, customer_location.long);
     } else {
-      CommonUtils.getCurrentLocation(locations => setLocation(locations));
+      CommonUtils.getCurrentLocation(locations => {
+        setLocation(locations);
+        handleMarkerMap(
+          locations?.coords.latitude,
+          locations?.coords.longitude,
+        );
+      });
     }
   }, []);
 
@@ -193,7 +221,6 @@ const CheckInLocation = () => {
           pitchEnabled={false}
           attributionEnabled={false}
           scaleBarEnabled={false}
-          
           styleURL={Mapbox.StyleURL.Street}
           logoEnabled={false}
           style={{flex: 1}}

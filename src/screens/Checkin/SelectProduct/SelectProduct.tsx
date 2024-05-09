@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
   AppBottomSheet,
@@ -7,6 +7,7 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
+  SvgIcon,
 } from '../../../components/common';
 import {ApiConstant, AppConstant} from '../../../const';
 import {useNavigation} from '@react-navigation/native';
@@ -39,7 +40,6 @@ import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import ItemSkeleton from './ItemSkeleton';
-import {useAnimatedStyle, useSharedValue} from 'react-native-reanimated';
 
 const initFilterValue = {
   label: '',
@@ -460,6 +460,7 @@ const SelectProducts = () => {
 
   const onSelectAllProduct = () => {
     const newData = data.map(item => ({...item, isSelected: isSelected}));
+    setCountSelect(data.length);
     setData(newData);
   };
 
@@ -597,13 +598,13 @@ const SelectProducts = () => {
         <View style={styles.container}>
           <AppHeader
             label={getLabel('product')}
-            onBack={() => navigation.goBack()}
+            // hiddenBackButton
+            // onBack={() => navigation.goBack()}
             backButtonIcon={
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name={'close'}
+              <SvgIcon
+                source={'Close'}
                 size={24}
-                color={colors.text_primary}
+                onPress={() => navigation.goBack()}
               />
             }
             rightButton={
@@ -752,7 +753,7 @@ const SelectProducts = () => {
   );
 };
 
-export default SelectProducts;
+export default memo(SelectProducts);
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
