@@ -33,6 +33,7 @@ import {AppService} from '../../../services';
 import {CommonUtils} from '../../../utils';
 import isEqual from 'react-fast-compare';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import { shallowEqual } from 'react-redux';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -64,9 +65,9 @@ const FormAdding = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: translate} = useTranslation();
-  const mainAddress = useSelector(state => state.customer.mainAddress);
+  const mainAddress = useSelector(state => state.customer.mainAddress,shallowEqual);
   const mainContactAddress = useSelector(
-    state => state.customer.mainContactAddress,
+    state => state.customer.mainContactAddress,shallowEqual
   );
 
   const [_, setValue] = useState<string>('');
@@ -128,6 +129,8 @@ const FormAdding = (props: Props) => {
     }
   };
 
+  
+console.log(mainAddress,mainContactAddress,'v')
   useEffect(() => {
     if (location?.coords) {
       AppService.getDetailLocation(

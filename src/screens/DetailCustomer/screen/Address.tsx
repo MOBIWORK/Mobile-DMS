@@ -28,7 +28,6 @@ const Address = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
-
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <View style={styles.containLabel}>
@@ -58,13 +57,28 @@ const Address = (props: Props) => {
           removeClippedSubviews={true}
           maxToRenderPerBatch={10}
           renderItem={({item}) => {
-            return <CardAddressView type="list" data={item as any} />;
+            return (
+              <CardAddressView
+                type="list"
+                data={item as any}
+                primary_address={
+                  props.data != null &&
+                  props.data?.customer_primary_address != null
+                    ? props.data.customer_primary_address
+                    : ''
+                }
+              />
+            );
           }}
         />
       ) : (
         <CardAddressView
           type="single"
-          data={ props.data != null && props.data?.customer_primary_address != null ? props.data.customer_primary_address : ''}
+          data={
+            props.data != null && props.data?.customer_primary_address != null
+              ? props.data.customer_primary_address
+              : ''
+          }
         />
       )}
     </SafeAreaView>

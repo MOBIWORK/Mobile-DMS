@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View, ViewStyle } from 'react-native'
 import { SkeletonLoading } from '../../../../components/common'
 import { AppTheme, useTheme } from '../../../../layouts/theme'
+import isEqual from 'react-fast-compare'
 
 const ItemSkeleton = () => {
 
@@ -29,7 +30,7 @@ const ItemSkeleton = () => {
     )
 }
 
-export default ItemSkeleton;
+export default React.memo(ItemSkeleton,isEqual);
 
 const createStyles = (theme : AppTheme)=> StyleSheet.create({
     container :{

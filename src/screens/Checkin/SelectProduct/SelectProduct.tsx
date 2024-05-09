@@ -1,4 +1,11 @@
-import React, {memo, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
   AppBottomSheet,
@@ -17,6 +24,7 @@ import {
   TouchableOpacity,
   FlatList,
   Animated,
+  Pressable,
 } from 'react-native';
 import {StyleSheet} from 'react-native';
 import {Searchbar, TextInput} from 'react-native-paper';
@@ -51,6 +59,7 @@ const SelectProducts = () => {
   const bottomSheetRefData = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['85%'], []);
   const styles = createStyles(useTheme());
+  const [isPending, startEffect] = useTransition();
   const [dataCategoryProduct, setdDtaCategoryProduct] = useState<IFilterType[]>(
     [],
   );
@@ -78,41 +87,44 @@ const SelectProducts = () => {
     industry: '',
   });
 
-  const openBottomSheetDataFilter = (type: string, item?: IProduct) => {
-    setDataFilter([]);
-    const defautItem = {label: 'all', value: '', isSelected: false};
-    switch (type) {
-      case 'category':
-        setLabel('groupProduct');
-        setDataFilter([defautItem, ...dataCategoryProduct]);
-        break;
-      case 'brand':
-        setLabel('trademark');
-        setDataFilter([defautItem, ...dataBrandProduct]);
-        break;
-      case 'industry':
-        setLabel('industry');
-        setDataFilter([defautItem, ...dataIndustry]);
-        break;
-      case 'unit':
-        setLabel('unit');
-        if (item) {
-          const units = item.details;
-          const newData = units.map(item1 => {
-            return item.stock_uom === item1.uom
-              ? {label: item1.uom, value: item.item_code, isSelected: true}
-              : {label: item1.uom, value: item.item_code, isSelected: false};
-          });
-          setDataFilter(newData);
-        }
-        break;
-      default:
-        break;
-    }
-    if (bottomSheetRefData.current) {
-      bottomSheetRefData.current.snapToIndex(0);
-    }
-  };
+  const openBottomSheetDataFilter = React.useCallback(
+    (type: string, item?: IProduct) => {
+      setDataFilter([]);
+      const defautItem = {label: 'all', value: '', isSelected: false};
+      switch (type) {
+        case 'category':
+          setLabel('groupProduct');
+          setDataFilter([defautItem, ...dataCategoryProduct]);
+          break;
+        case 'brand':
+          setLabel('trademark');
+          setDataFilter([defautItem, ...dataBrandProduct]);
+          break;
+        case 'industry':
+          setLabel('industry');
+          setDataFilter([defautItem, ...dataIndustry]);
+          break;
+        case 'unit':
+          setLabel('unit');
+          if (item) {
+            const units = item.details;
+            const newData = units.map(item1 => {
+              return item.stock_uom === item1.uom
+                ? {label: item1.uom, value: item.item_code, isSelected: true}
+                : {label: item1.uom, value: item.item_code, isSelected: false};
+            });
+            setDataFilter(newData);
+          }
+          break;
+        default:
+          break;
+      }
+      if (bottomSheetRefData.current) {
+        bottomSheetRefData.current.snapToIndex(0);
+      }
+    },
+    [bottomSheetRefData.current],
+  );
 
   const onSubmitFilter = () => {
     setFilterProduct({
@@ -131,7 +143,7 @@ const SelectProducts = () => {
     setIndustry(initFilterValue);
   };
 
-  const bottomSheetFilter = () => {
+  const bottomSheetFilter = React.useCallback(() => {
     return (
       <View
         style={{padding: 16, paddingTop: 0, height: '100%', marginTop: -25}}>
@@ -208,58 +220,69 @@ const SelectProducts = () => {
         </View>
       </View>
     );
-  };
+  }, [label, dataFilter]);
 
   const onChangeData = (item: IFilterType) => {
+    let newData: any;
     switch (label) {
       case 'groupProduct': {
-        const newData = dataCategoryProduct.map(itemRes => {
-          if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
-          } else {
-            return {...itemRes, isSelected: false};
-          }
+        startEffect(() => {
+          newData = dataCategoryProduct.map(itemRes => {
+            if (item.label === itemRes.label) {
+              return {...itemRes, isSelected: true};
+            } else {
+              return {...itemRes, isSelected: false};
+            }
+          });
         });
         setCategory(item);
         setdDtaCategoryProduct(newData);
         break;
       }
       case 'trademark': {
-        const newData = dataBrandProduct.map(itemRes => {
-          if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
-          } else {
-            return {...itemRes, isSelected: false};
-          }
+        startEffect(() => {
+          newData = dataBrandProduct.map(itemRes => {
+            if (item.label === itemRes.label) {
+              return {...itemRes, isSelected: true};
+            } else {
+              return {...itemRes, isSelected: false};
+            }
+          });
         });
         setBrand(item);
         setDataBrandProduct(newData);
         break;
       }
       case 'industry': {
-        const newData = dataIndustry.map(itemRes => {
-          if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
-          } else {
-            return {...itemRes, isSelected: false};
-          }
+        startEffect(() => {
+          newData = dataIndustry.map(itemRes => {
+            if (item.label === itemRes.label) {
+              return {...itemRes, isSelected: true};
+            } else {
+              return {...itemRes, isSelected: false};
+            }
+          });
         });
         setIndustry(item);
         setDataIndustry(newData);
         break;
       }
       case 'unit': {
-        const newProducts = data.map(item1 => {
-          let priceUom = item1.details.find(item2 => item2.uom === item.label);
-          return item1.item_code === item.value
-            ? {
-                ...item1,
-                stock_uom: item.label,
-                price: priceUom ? priceUom.price_list_rate : 0,
-              }
-            : item1;
+        startEffect(() => {
+          const newProducts = data.map(item1 => {
+            let priceUom = item1.details.find(
+              item2 => item2.uom === item.label,
+            );
+            return item1.item_code === item.value
+              ? {
+                  ...item1,
+                  stock_uom: item.label,
+                  price: priceUom ? priceUom.price_list_rate : 0,
+                }
+              : item1;
+          });
+          setData(newProducts);
         });
-        setData(newProducts);
         break;
       }
       default:
@@ -271,15 +294,24 @@ const SelectProducts = () => {
     }
   };
 
-  const onSelectProduct = (id: string, isSelected: boolean) => {
-    const newData = data.map(item => {
-      return item.item_code === id ? {...item, isSelected: !isSelected} : item;
-    });
-    const numberSelect = newData.filter(item => item.isSelected == true);
-    setCountSelect(numberSelect.length);
-    setData(newData);
-    console.log('itemm', newData);
-  };
+  const onSelectProduct = React.useCallback(
+    (id: string, isSelected: boolean) => {
+      let newData: any;
+      startEffect(() => {
+        newData = data.map(item => {
+          return item.item_code === id
+            ? {...item, isSelected: !isSelected}
+            : item;
+        });
+      });
+      const numberSelect = newData.filter(
+        (item: any) => item.isSelected == true,
+      );
+      setCountSelect(numberSelect.length);
+      setData(newData);
+    },
+    [data],
+  );
 
   const isSelectedAll = useMemo(() => {
     const dataSelect = data.filter(item => item.isSelected);
@@ -297,12 +329,15 @@ const SelectProducts = () => {
     setData(newData);
   };
 
-  const onChangeQuantityProduct = (idItem: string, qty: number) => {
-    const newData = data.map(item =>
-      item.item_code === idItem ? {...item, quantity: qty} : item,
-    );
-    setData(newData);
-  };
+  const onChangeQuantityProduct = React.useCallback(
+    (idItem: string, qty: number) => {
+      const newData = data.map(item =>
+        item.item_code === idItem ? {...item, quantity: qty} : item,
+      );
+      setData(newData);
+    },
+    [data],
+  );
 
   const onSubmitProductSelect = async () => {
     const dataSelect = data.filter(item => item.isSelected);
@@ -509,16 +544,21 @@ const SelectProducts = () => {
               <FlatList
                 data={data}
                 renderItem={({item}) => (
-                  // <Pressable>
-                  <ItemProductOrderComponent
-                    item={item}
-                    onSelectProduct={onSelectProduct}
-                    openBottomSheetDataFilter={openBottomSheetDataFilter}
-                    onChangeQuantityProduct={onChangeQuantityProduct}
-                  />
-                  // </Pressable>
+                  <Pressable>
+                    <ItemProductOrderComponent
+                      item={item}
+                      onSelectProduct={onSelectProduct}
+                      openBottomSheetDataFilter={openBottomSheetDataFilter}
+                      onChangeQuantityProduct={onChangeQuantityProduct}
+                    />
+                  </Pressable>
                 )}
                 initialNumToRender={10}
+                maxToRenderPerBatch={4}
+                windowSize={11}
+                decelerationRate={'fast'}
+                removeClippedSubviews={true}
+                keyExtractor={(item, index) => index.toString()}
                 contentContainerStyle={{rowGap: 16}}
                 showsVerticalScrollIndicator={false}
                 style={{flex: 1}}

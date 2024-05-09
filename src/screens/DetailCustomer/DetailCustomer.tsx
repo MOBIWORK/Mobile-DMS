@@ -60,6 +60,8 @@ const DetailCustomer = () => {
   const mounted = useRef<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
+  console.log(data,'data')
+
   useEffect(() => {
     setLoading(true);
     const getDetailCustomer = async () => {

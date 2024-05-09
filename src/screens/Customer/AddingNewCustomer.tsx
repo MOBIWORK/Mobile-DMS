@@ -96,23 +96,14 @@ const AddingNewCustomer = () => {
   );
 
   const snapPoint = useMemo(() => ['40%'], []);
-  const snapPointAdding = useMemo(
-    () =>
-      typeFilter === AppConstant.CustomerFilterType.dia_chi
-        ? ['100%']
-        : typeFilter === AppConstant.CustomerFilterType.nguoi_lien_he
-        ? ['100%']
-        : ['40%'],
-    [typeFilter],
-  );
-
   const filterRef = useRef<BottomSheetMethods>(null);
-  const addingAddress = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
+  console.log(mainAddress,'mainAddress')
+
   const onPressAdding = async (newListData: IDataCustomer) => {
-    const address: MainAddress = mainAddress;
-    const contact: MainContactAddress = mainContactAddress;
+    let address: MainAddress = mainAddress;
+    let contact: MainContactAddress = mainContactAddress;
     const updateListData: IDataCustomer = {
       ...newListData,
       frequency: newListData?.frequency
@@ -163,6 +154,8 @@ const AddingNewCustomer = () => {
         ? newListData.custom_birthday / 1000
         : new Date().getTime() / 1000,
     };
+    console.log('updateListData', updateListData);
+
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
@@ -269,7 +262,7 @@ const AddingNewCustomer = () => {
           </TouchableOpacity>
         </View>
         <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
-          <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+          <BottomSheetScrollView showsVerticalScrollIndicator={false}  removeClippedSubviews={true}  >
             <ListFilterAdding
               type={typeFilter}
               filterRef={filterRef}
@@ -344,6 +337,7 @@ const AddingNewCustomer = () => {
           style={styles.modal}
           backdropColor="white"
           backdropOpacity={1}
+          
           onBackButtonPress={() => setModalAddress(false)}
           onBackdropPress={() => setModalAddress(false)}>
           <Block block>
@@ -409,5 +403,6 @@ const rootStyles = (theme: AppTheme) =>
       width: '100%',
       height: '100%',
       marginVertical: 0,
+      paddingHorizontal:16
     } as ViewStyle,
   });
