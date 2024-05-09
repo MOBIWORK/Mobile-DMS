@@ -76,7 +76,7 @@ const productSlice = createSlice({
         state.dataSelected,
         action.payload,
       );
-      state.dataSelected = newData;
+      state.dataSelected = newData as any;
     },
     updateProductSelect: (state, action: PayloadAction<IProduct[]>) => {
       state.dataSelected = action.payload;

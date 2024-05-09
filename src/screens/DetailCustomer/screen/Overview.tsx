@@ -38,7 +38,7 @@ const Overview = (props: Props) => {
                 {getLabel('contactName')}
               </AppText>
               {/* <CardContactOverview data={props.data} /> */}
-              <CardAddress
+              <CardOverView
                 type="contact"
                 mainContactAddress={props.data.contacts[0]}
               />
@@ -52,7 +52,20 @@ const Overview = (props: Props) => {
               <AppText fontSize={14} fontWeight="500" lineHeight={21}>
                 {getLabel('mainAddress')}
               </AppText>
-              <CardAddress type="address" mainAddress={props.data.address[0]} />
+              {props.data.address.map((item, index) => {
+                return (
+                  props.data.customer_primary_address.includes(
+                    item.address_title,
+                  ) && (
+                    <CardOverView
+                      type="address"
+                      mainAddress={item}
+                      key={index.toString()}
+                      priAdd={props.data.customer_primary_address != null ? props.data.customer_primary_address : ''}
+                    />
+                  )
+                );
+              })}
             </Block>
           )}
 
@@ -78,10 +91,8 @@ const rootStyles = (theme: AppTheme) =>
     containLayout: {
       paddingTop: 16,
       backgroundColor: theme.colors.bg_neutral,
-      
     } as ViewStyle,
     root: {
       flex: 1,
-     
     } as ViewStyle,
   });

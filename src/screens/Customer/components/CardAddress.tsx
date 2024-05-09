@@ -6,17 +6,16 @@ import {AppText as Text, SvgIcon, Block} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
 import {AddressSelected} from './FormAddress';
 import {useTranslation} from 'react-i18next';
-import {Address, Contact} from '../../../models/types';
 
 type Props = CardAddressType | CardContactType;
 
 type CardAddressType = {
   type: 'address';
-  mainAddress: Address;
+  mainAddress: MainAddress;
 };
 type CardContactType = {
   type: 'contact';
-  mainContactAddress: Contact;
+  mainContactAddress: MainContactAddress;
 };
 
 export type MainAddress = {
@@ -40,51 +39,40 @@ const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
   return (
     <Block style={styles.card}>
       {props.type === 'address' ? (
         <>
-          <Block>
+          <Block paddingHorizontal={16}>
             <Block style={styles.containAddressLabel}>
               <Block style={styles.containIcon}>
                 <SvgIcon source="MapPin" size={16} />
               </Block>
               <Block>
+                {props.mainAddress.detailAddress && (
+                  <Text
+                    numberOfLines={2}
+                    fontSize={16}
+                    fontWeight="300"
+                    colorTheme="black"
+                    lineHeight={21}>
+                    {props.mainAddress.detailAddress}
+                  </Text>
+                )}
                 <Text
                   numberOfLines={2}
-                  fontSize={16}
+                  fontSize={14}
                   fontWeight="300"
+                  style={{maxWidth: '90%'}}
                   colorTheme="black"
                   lineHeight={21}>
-                  {props.mainAddress.address_title
-                    ? props.mainAddress.address_title.split(',', 4)[0]
-                    : '___'}
+                  {`${props.mainAddress.ward?.value}, ${props.mainAddress.district?.value}, ${props.mainAddress.city?.value}`}
                 </Text>
               </Block>
             </Block>
-            <Block paddingLeft={28}>
-            <Text
-              numberOfLines={2}
-              fontSize={14}
-              fontWeight="300"
-              style={{maxWidth: '90%'}}
-              colorTheme="black"
-              lineHeight={21}>
-              {props.mainAddress.address_title
-                ? props.mainAddress.address_title.split(',', 4)[1] +
-                  ',' +
-                  props.mainAddress.address_title.split(',', 4)[2] +
-                  ',' +
-                  props.mainAddress.address_title.split(',', 4)[3]
-                : '___'}
-              {/* {`${props.mainAddress.state?.value}, ${props.mainAddress.city}, ${props.mainAddress.county}`} */}
-            </Text>
-            </Block>
-            
           </Block>
           <Block style={styles.containAddress}>
-            {props.mainAddress.is_primary_address === 1 && (
+            {props.mainAddress.addressGet && (
               <Block style={styles.addressGetAndOrder}>
                 <Text
                   fontSize={14}
@@ -95,7 +83,7 @@ const CardAddress = (props: Props) => {
                 </Text>
               </Block>
             )}
-            {props.mainAddress.is_shipping_address === 1 && (
+            {props.mainAddress.addressOrder && (
               <Block style={styles.addressGetAndOrder}>
                 <Text
                   fontSize={14}
@@ -109,15 +97,15 @@ const CardAddress = (props: Props) => {
           </Block>
         </>
       ) : (
-        <Block style={{paddingHorizontal: 16}}>
+        <Block paddingHorizontal={16}>
           <Block style={styles.containAddressLabel}>
             <Text
               fontSize={16}
               fontWeight="400"
               colorTheme="black"
               lineHeight={21}>
-              {props.mainContactAddress.first_name
-                ? props.mainContactAddress.first_name
+              {props.mainContactAddress.nameContact
+                ? props.mainContactAddress.nameContact
                 : '---'}
             </Text>
           </Block>
@@ -131,11 +119,13 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="black"
               lineHeight={21}>
-              {/* {`${
-                props.mainContactAddress.first_name
-                  ? `${props.mainContactAddress.first_name}, `
+              {`${
+                props.mainContactAddress.addressContact
+                  ? `${props.mainContactAddress.addressContact}, `
                   : ''
-              }`} */}
+              }${props.mainContactAddress.ward?.value}, ${
+                props.mainContactAddress.district?.value
+              }, ${props.mainContactAddress.city?.value}`}
             </Text>
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
@@ -148,8 +138,8 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="black"
               lineHeight={21}>
-              {props.mainContactAddress.mobile_no != null
-                ? formatPhoneNumber(props.mainContactAddress.mobile_no)
+              {props.mainContactAddress.phoneNumber
+                ? formatPhoneNumber(props.mainContactAddress.phoneNumber)
                 : '---'}
             </Text>
           </Block>
@@ -179,6 +169,7 @@ const rootStyles = (theme: AppTheme) =>
       shadowColor: theme.colors.text_disable,
       borderRadius: 16,
       paddingVertical: 12,
+      marginHorizontal: 2,
       marginVertical: 10,
       marginBottom: 20,
       ...Platform.select({
@@ -192,8 +183,8 @@ const rootStyles = (theme: AppTheme) =>
           elevation: 1,
         },
         android: {
-          elevation: 12,
-          shadowRadius: 6.4,
+          elevation: 8,
+          shadowRadius: 1.4,
         },
       }),
     } as ViewStyle,
@@ -207,7 +198,6 @@ const rootStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       alignContent: 'center',
       marginBottom: 4,
-      paddingHorizontal: 16,
     } as ViewStyle,
     marginContainText: {
       marginLeft: 4,
@@ -224,9 +214,10 @@ const rootStyles = (theme: AppTheme) =>
       marginRight: 8,
       backgroundColor: theme.colors.bg_default,
       paddingHorizontal: 10,
-      // borderWidth: 1,
+      borderWidth: 1,
       borderColor: theme.colors.border,
       paddingVertical: 3,
+      borderRadius:16
     } as ViewStyle,
     containMain: {
       marginLeft: 8,

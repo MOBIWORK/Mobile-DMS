@@ -16,6 +16,7 @@ type SingleAddress = {
 type ListAddress = {
   data: Address;
   type: 'list';
+  primary_address: string;
 };
 type Props = SingleAddress | ListAddress;
 
@@ -49,20 +50,28 @@ const CardAddressView = (props: Props) => {
               fontWeight="500"
               colorTheme="text_primary">
               {props?.data?.address_title
-                ? props?.data?.address_title.split(',', 4)[1] +
-                  ',' +
-                  props?.data?.address_title.split(',', 4)[2] +
-                  ',' +
-                  props?.data?.address_title.split(',', 4)[3]
+                ? props?.data?.address_title.split(',', 4)[1] === undefined
+                  ? ''
+                  : props?.data?.address_title.split(',', 4)[1] +
+                      ',' +
+                      props?.data?.address_title.split(',', 4)[2] ===
+                    undefined
+                  ? ''
+                  : props?.data?.address_title.split(',', 4)[2] +
+                      ',' +
+                      props?.data?.address_title.split(',', 4)[3] ===
+                    undefined
+                  ? ''
+                  : props?.data?.address_title.split(',', 4)[3]
                 : '___'}
             </AppText>
           </Block>
         </Block>
-        {props.data.is_primary_address === 1 && (
+        {props.primary_address.includes(props.data.address_title) && (
           <Block style={styles.containAddress}>
             <View style={styles.mainContact}>
               <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-                {getLabel('addressGet')}
+                {getLabel('mainAddress')}
               </AppText>
             </View>
           </Block>

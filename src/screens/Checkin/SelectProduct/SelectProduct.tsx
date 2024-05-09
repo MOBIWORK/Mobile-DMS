@@ -277,7 +277,7 @@ const SelectProducts = () => {
                   {color: colors.text_primary, marginLeft: 4},
                 ]}>
                 {CommonUtils.formatCash(
-                  (item.price * item.quantity).toString(),
+                  (item.price * item?.quantity!).toString() ,
                 )}
               </Text>
             </View>

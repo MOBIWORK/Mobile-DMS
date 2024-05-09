@@ -38,6 +38,7 @@ import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
 import {AppService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import isEqual from 'react-fast-compare';
 
 type Props = {
   onPressClose: () => void;
@@ -687,7 +688,7 @@ const FormAddress = (props: Props) => {
   );
 };
 
-export default React.memo(FormAddress);
+export default React.memo(FormAddress,isEqual);
 
 const rootStyles = (theme: AppTheme, getLabel: any) =>
   StyleSheet.create({
