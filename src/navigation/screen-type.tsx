@@ -35,7 +35,6 @@ export type AuthorizeParamsList = {
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_INVENTORY]: undefined;
   [ScreenConstant.CHECKIN_SELECT_PRODUCT]: undefined;
-  [ScreenConstant.CHECKIN_ORDER]: {type: string};
   [ScreenConstant.CHECKIN_ORDER_CREATE]: {type: string};
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
@@ -45,7 +44,7 @@ export type AuthorizeParamsList = {
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
-  [ScreenConstant.CHECKIN]: {item: CheckinData,isLocation?:any};
+  [ScreenConstant.CHECKIN]: {item: CheckinData; isLocation?: any};
   [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: {data: any};
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
@@ -53,7 +52,6 @@ export type AuthorizeParamsList = {
   [ScreenConstant.ADD_NOTE]: undefined;
   [ScreenConstant.CHECKIN_LOCATION]: {type: string; data: CheckinData};
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
-  [ScreenConstant.CHECKIN_ORDER]: {type: string};
   [ScreenConstant.REPORT_SCREEN]: undefined;
   [ScreenConstant.STATISTICAL]: undefined;
   [ScreenConstant.NON_ORDER_CUSTOMER]: undefined;
@@ -78,7 +76,7 @@ export type AuthorizeParamsList = {
   [ScreenConstant.CURRENT_PASSWORD]: undefined;
   [ScreenConstant.CHANGE_PASSWORD]: {isForgotPassword: boolean};
   [ScreenConstant.NOTIFY_SETTING]: undefined;
-  [ScreenConstant.BEFORE_CHECKIN]:{item: CheckinData}
+  [ScreenConstant.BEFORE_CHECKIN]: {item: CheckinData};
 };
 
 export type RootStackParamList = {

@@ -29,15 +29,14 @@ export type TypeState = {
   listProgramImage: any;
 };
 export type DataSendMarkScore = {
-  customer_code: string
-  e_name: string
-  campaign_code: string
-  category: string
-  images_time: any
-  images: any
-  setting_score_audit: any
-}
-
+  customer_code: string;
+  e_name: string;
+  campaign_code: string;
+  category: string;
+  images_time: any;
+  images: any;
+  setting_score_audit: any;
+};
 
 export const newCategoriesCheckinList: IItemCheckIn[] = [
   {
@@ -131,7 +130,7 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: true,
     name: 'Đặt hàng',
-    screenName: 'CHECKIN_ORDER',
+    screenName: 'CHECKIN_ORDER_CREATE',
     backgroundColor: 'blueBackground',
     type: 'ORDER',
     key: 'order',
@@ -182,7 +181,7 @@ export enum Action {
   GET_NOTE_TYPE = 'GET_NOTE_TYPE_',
   GET_LIST_PROGRAM_CAMPAIGN = 'GET_LIST_PROGRAM_CAMPAIGN_',
   POST_IMAGE_SCORE = 'POST_IMAGE_SCORE_',
-  CREATE_REPORT_MARK_SCORE = 'CREATE_REPORT_MARK_SCORE_'
+  CREATE_REPORT_MARK_SCORE = 'CREATE_REPORT_MARK_SCORE_',
 }
 
 export const GET_NOTE_ACTIONS = Action.GET_NOTE + 'GET_NOTE';
@@ -191,5 +190,4 @@ export const GET_NOTE_TYPE_ACTIONS = Action.GET_NOTE_TYPE + 'GET_NOTE_TYPE';
 export const GET_LIST_PROGRAM_CAMPAIGN =
   Action.GET_LIST_PROGRAM_CAMPAIGN + 'GET_LIST_PROGRAM_CAMPAIGN';
 export const POST_IMAGE_SCORE = Action.POST_IMAGE_SCORE + 'POST_IMAGE_SCORE';
-export const CREATE_REPORT_MARK_SCORE =Action.CREATE_REPORT_MARK_SCORE
-
+export const CREATE_REPORT_MARK_SCORE = Action.CREATE_REPORT_MARK_SCORE;

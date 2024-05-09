@@ -13,7 +13,11 @@ import {
   SvgIcon,
   showSnack,
 } from '../../../components/common/';
-import {NavigationProp, useNavigation, useRoute} from '@react-navigation/native';
+import {
+  NavigationProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {AuthorizeParamsList, RouterProp} from '../../../navigation/screen-type';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -68,7 +72,8 @@ const CheckIn = () => {
   const {t: getLabel} = useTranslation();
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState<string>(getLabel('openDoor'));
-  const navigation = useNavigation<NavigationProp<AuthorizeParamsList,'CHECKIN'>>();
+  const navigation =
+    useNavigation<NavigationProp<AuthorizeParamsList, 'CHECKIN'>>();
   const batteryLevel = useBatteryLevel();
 
   const dataCheckIn: CheckinData = useSelector(
@@ -87,7 +92,6 @@ const CheckIn = () => {
       : params.checkin_trangthaicuahang,
   );
 
-  
   const elapsedTime = useTimer();
 
   const systemConfig: DMSConfigMobile = useSelector(
@@ -149,7 +153,7 @@ const CheckIn = () => {
         return navigation.navigate(ScreenConstant.CHECKIN_INVENTORY, {
           type: '',
           data: params,
-        } as any) ;
+        } as any);
       case 'camera':
         return navigation.navigate(ScreenConstant.TAKE_PICTURE_VISIT, {
           type: '',
@@ -159,7 +163,7 @@ const CheckIn = () => {
         return navigation.navigate(ScreenConstant.CHECKIN_NOTE_VISIT, {
           type: '',
           data: params,
-        }as any);
+        } as any);
       case 'distance':
         return setOpenDialogErr(false);
     }
@@ -232,7 +236,6 @@ const CheckIn = () => {
       systemConfig.checkout_ngoaisaiso &&
       systemConfig.saiso_chophep_checkout_ngoaisaiso > 0
     ) {
-      console.log('2222');
       let location: LocationProps = JSON.parse(
         params.item.customer_location_primary,
       );
@@ -305,16 +308,13 @@ const CheckIn = () => {
     }
   }, [dataCheckIn]);
 
-// console.log(params.kh_diachi,'route')
-
   useEffectOnce(() => {
     if (route === false) {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
         type: '',
         data: params,
       });
-      navigation.setParams({isLocation:true})
-      
+      navigation.setParams({isLocation: true});
     } else {
       return;
     }
@@ -343,7 +343,7 @@ const CheckIn = () => {
             </Block>
             <Text fontSize={14} colorTheme="text" fontWeight="400">
               {' '}
-              Viếng thăm {formatTime(elapsedTime)}
+              {getLabel('visit')} {formatTime(elapsedTime)}
             </Text>
           </Block>
           <Switch
@@ -365,7 +365,7 @@ const CheckIn = () => {
           <Block paddingTop={8}>
             <Block direction="row" alignItems="center" marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
-              <Text numberOfLines={1}   > {params.kh_diachi} </Text>
+              <Text numberOfLines={1}> {params.kh_diachi} </Text>
             </Block>
             <Block
               direction="row"
