@@ -90,21 +90,18 @@ const styles = StyleSheet.create({
     marginTop: 16,
     justifyContent: 'space-between',
     height: 32,
-    // backgroundColor:'red'
   } as ViewStyle,
   label: {
     fontSize: 20,
     fontWeight: '500',
     // flex: 1,
     textAlign: 'center',
-    marginLeft: 17,
+    marginLeft: 30,
   },
   backButton: {
     position: 'relative',
-    left: 0,
-    justifyContent: 'center',
     paddingVertical: 16,
-    paddingHorizontal: 8,
-    // backgroundColor:'black'
+    marginRight: 8,
+    alignItems: 'center',
   } as ViewStyle,
 });

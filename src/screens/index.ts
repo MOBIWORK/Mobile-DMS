@@ -23,7 +23,6 @@ import Visits from './Visit/Visits';
 import LookingMore from './LookingMore/LookingMore';
 import Inventory from './Checkin/Inventory';
 import CheckinSelectProdct from './Checkin/SelectProduct/SelectProduct';
-import CheckinOrder from './Checkin/Order';
 import CheckinOrderCreated from './Checkin/Order/CreateOrder';
 import DropDrag from './TestDropDrag/DropDrag';
 import Profile from './Profile/Profile';
@@ -78,7 +77,6 @@ export {
   WidgetScreen,
   WidgetFavouriteScreen,
   NotificationScreen,
-  CheckinOrder,
   CheckinOrderCreated,
   DropDrag,
   Profile,
