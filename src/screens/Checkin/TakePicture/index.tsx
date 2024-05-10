@@ -110,7 +110,7 @@ const TakePicture = () => {
 
   const completeCheckin = () => {
     try {
-      const newData = categoriesCheckin.map(item =>
+      const newData = categoriesCheckin.map((item:any) =>
         item.key === 'camera' ? {...item, isDone: true} : item,
       );
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
@@ -141,7 +141,7 @@ const TakePicture = () => {
     });
   };
   // const obje = {...data.current}
-  console.log(listImage, 'listImage');
+ 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
     const newListImage = itemSelected.image.filter(item => item.url !== img);
     const newItem: IAlbumImage = {...itemSelected, image: newListImage};
