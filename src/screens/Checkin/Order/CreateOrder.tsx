@@ -346,12 +346,10 @@ const CreateOrder = () => {
           name: 'new-sales-order-hnnkmtrehm',
           transaction_date: CommonUtils.taskDate(date),
         };
-        console.log('objecData', objecData);
         const {data: res, status}: KeyAbleProps =
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
           const result: any = res.result;
-          console.log('result', result);
           const newDataSelected = dataProductSelected.map((item, index) => {
             const element = result[index];
             if (item.item_code === element.item_code) {
@@ -426,12 +424,8 @@ const CreateOrder = () => {
   }, [productDetail]);
 
   const isDisabled = useMemo(() => {
-    if (!warehouse || warehouse?.value === '' || products.length === 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [warehouse]);
+    return !warehouse || warehouse?.value === '' || products.length === 0;
+  }, [warehouse, products]);
 
   const onConfirmSingle = React.useCallback<SingleChange>(
     params => {
@@ -455,6 +449,7 @@ const CreateOrder = () => {
       rate: item.price,
       uom: item.stock_uom,
       discount_percentage: item.discount_item_percent,
+      item_tax_template: item.rate_tax_item,
     }));
     const objectData: any = {
       set_warehouse: warehouse?.value,

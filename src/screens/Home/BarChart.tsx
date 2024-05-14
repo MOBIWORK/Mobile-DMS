@@ -17,13 +17,23 @@ const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
   const {t: getLabel} = useTranslation();
 
   const barCharData = useMemo(() => {
-    if (data && data?.sales_invoice && data?.sales_invoice?.length > 0) {
-      const newData: any = data?.sales_invoice.map((item: any) => {
-        return {
-          label: moment(item.ngay).format('DD'),
-          value: isSales ? item.doanh_so / 1e6 : item.doanh_thu / 1e6,
-        };
-      });
+    if (
+      (data && data?.sales_invoice && data?.sales_invoice?.length > 0) ||
+      data?.sales_order?.length > 0
+    ) {
+      const newData: any = isSales
+        ? data?.sales_order.map((item: any) => {
+            return {
+              label: moment(item.ngay).format('DD'),
+              value: isSales ? item.doanh_so / 1e6 : item.doanh_thu / 1e6,
+            };
+          })
+        : data?.sales_invoice.map((item: any) => {
+            return {
+              label: moment(item.ngay).format('DD'),
+              value: isSales ? item.doanh_so / 1e6 : item.doanh_thu / 1e6,
+            };
+          });
       return newData.slice(-6);
     } else {
       return null;
