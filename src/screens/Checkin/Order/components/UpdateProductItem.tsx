@@ -1,0 +1,141 @@
+import {useTranslation} from 'react-i18next';
+import {AppInput} from '../../../../components/common';
+import {Keyboard, View} from 'react-native';
+import {TextInput} from 'react-native-paper';
+import {useTheme} from '@react-navigation/native';
+import {IProduct} from '../../../../models/types';
+import {FC, useState} from 'react';
+import {CommonUtils} from '../../../../utils';
+
+const UpdateProductItem: FC<UpdateProductItemProps> = ({
+  productDetail,
+  setProductDetail,
+  onOpenBottonSheetData,
+}) => {
+  const {t: getLabel} = useTranslation();
+  const {colors} = useTheme();
+
+  const [discount_percent, setDiscountPercent] = useState<string>(
+    productDetail?.discount_item_percent.toString(),
+  );
+  const [discount_amount, setDiscountAmount] = useState<string>(
+    productDetail?.discount_item_amount.toString(),
+  );
+
+  return (
+    <View style={{marginTop: 24, rowGap: 20}}>
+      <AppInput
+        label={getLabel('productCode')}
+        value={productDetail?.item_code || ''}
+        hiddenRightIcon
+        disable
+        styles={{backgroundColor: colors.bg_neutral}}
+        onPress={() => Keyboard.dismiss()}
+      />
+      <AppInput
+        label={getLabel('unit')}
+        onPress={() => onOpenBottonSheetData('unit')}
+        value={productDetail?.stock_uom || ''}
+        hiddenRightIcon
+        editable={false}
+        rightIcon={
+          <TextInput.Icon
+            onPress={() => {
+              Keyboard.dismiss();
+              onOpenBottonSheetData('unit');
+            }}
+            icon={'chevron-down'}
+            color={colors.text_secondary}
+          />
+        }
+      />
+
+      <AppInput
+        label={getLabel('unitPrice')}
+        value={
+          productDetail?.price
+            ? CommonUtils.formatCash(productDetail.price.toString())
+            : ''
+        }
+        hiddenRightIcon
+        editable={false}
+        styles={{backgroundColor: colors.bg_neutral}}
+        rightIcon={
+          <TextInput.Affix
+            text="VND"
+            textStyle={{color: colors.text_secondary, fontSize: 12}}
+          />
+        }
+        onPress={() => Keyboard.dismiss()}
+      />
+      <AppInput
+        label={getLabel('quantity')}
+        value={productDetail?.quantity?.toString() || ''}
+        onChangeValue={(txt: string) =>
+          setProductDetail({
+            ...productDetail,
+            quantity: txt === '' ? 0 : parseInt(txt, 10),
+          })
+        }
+        hiddenRightIcon
+        inputProp={{
+          keyboardType: 'numeric',
+        }}
+      />
+      {/*<AppInput*/}
+      {/*  label={getLabel('discountPercentage')}*/}
+      {/*  value={discount_percent}*/}
+      {/*  onChangeValue={(txt: string) => setDiscountPercent(txt)}*/}
+      {/*  hiddenRightIcon*/}
+      {/*  editable={!productDetail?.has_pricing_rule}*/}
+      {/*  styles={{*/}
+      {/*    backgroundColor: productDetail?.has_pricing_rule*/}
+      {/*      ? colors.bg_neutral*/}
+      {/*      : colors.bg_default,*/}
+      {/*  }}*/}
+      {/*  inputProp={{*/}
+      {/*    keyboardType: 'numeric',*/}
+      {/*    returnKeyType: 'done',*/}
+      {/*    onSubmitEditing: event =>*/}
+      {/*      setProductDetail({*/}
+      {/*        ...productDetail,*/}
+      {/*        new_discount_item_percent:*/}
+      {/*          event.nativeEvent.text === ''*/}
+      {/*            ? 0*/}
+      {/*            : parseFloat(event.nativeEvent.text),*/}
+      {/*      }),*/}
+      {/*  }}*/}
+      {/*/>*/}
+      {/*<AppInput*/}
+      {/*  label={getLabel('discountAmount')}*/}
+      {/*  value={discount_amount}*/}
+      {/*  onChangeValue={(txt: string) => setDiscountAmount(txt)}*/}
+      {/*  hiddenRightIcon*/}
+      {/*  editable={!productDetail?.has_pricing_rule}*/}
+      {/*  styles={{*/}
+      {/*    backgroundColor: productDetail?.has_pricing_rule*/}
+      {/*      ? colors.bg_neutral*/}
+      {/*      : colors.bg_default,*/}
+      {/*  }}*/}
+      {/*  inputProp={{*/}
+      {/*    keyboardType: 'numeric',*/}
+      {/*    returnKeyType: 'done',*/}
+      {/*    onSubmitEditing: event =>*/}
+      {/*      setProductDetail({*/}
+      {/*        ...productDetail,*/}
+      {/*        new_discount_item_percent:*/}
+      {/*          event.nativeEvent.text === ''*/}
+      {/*            ? 0*/}
+      {/*            : parseFloat(event.nativeEvent.text),*/}
+      {/*      }),*/}
+      {/*  }}*/}
+      {/*/>*/}
+    </View>
+  );
+};
+interface UpdateProductItemProps {
+  productDetail: IProduct;
+  setProductDetail: (item: IProduct) => void;
+  onOpenBottonSheetData: (type: string) => void;
+}
+export default UpdateProductItem;

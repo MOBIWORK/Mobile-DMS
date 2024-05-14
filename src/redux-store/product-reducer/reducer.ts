@@ -14,41 +14,25 @@ const initState: StateType = {
   message: '',
 };
 
-function mergeArrays(arr1: any[], arr2: any[]) {
-  let result = arr1.slice();
-  arr2.forEach(obj2 => {
-    let existingObjIndex = result.findIndex(
-      obj1 => obj1.item_code === obj2.item_code,
-    );
-    if (existingObjIndex !== -1) {
-      result[existingObjIndex] = obj2;
-    } else {
-      result.push(obj2);
-    }
-  });
-
-  return result;
-}
-
 function mergeArraysSelectProduct(arr1: IProduct[], arr2: IProduct[]) {
-  const productMap :any= {};
+  const productMap: any = {};
   arr1 = arr1.filter(product => product?.quantity! > 0);
   arr2 = arr2.filter(product => product?.quantity! > 0);
   arr1.forEach(product => {
-      if (product.item_code in productMap) {
-          productMap[product.item_code].quantity += product.quantity;
-      } else {
-          productMap[product.item_code] = { ...product };
-      }
+    if (product.item_code in productMap) {
+      productMap[product.item_code].quantity += product.quantity;
+    } else {
+      productMap[product.item_code] = {...product};
+    }
   });
   arr2.forEach(product => {
-      if (product.item_code in productMap) {
-          productMap[product.item_code].quantity += product.quantity;
-      } else {
-          productMap[product.item_code] = { ...product };
-      }
+    if (product.item_code in productMap) {
+      productMap[product.item_code].quantity += product.quantity;
+    } else {
+      productMap[product.item_code] = {...product};
+    }
   });
-  
+
   return Object.values(productMap);
 }
 
@@ -57,19 +41,19 @@ const productSlice = createSlice({
   initialState: initState,
   reducers: {
     setDataProduct: (state, action: PayloadAction<DataType>) => {
-      const newDaata = action.payload.data.map(item => {
-        let priceUom = item.details.find(item2 => item2.uom === item.stock_uom);
+      state.totalItem = action.payload.total;
+      state.data = action.payload.data.map(item => {
+        let priceUom = item.details.find(
+          itemDetails => itemDetails.uom === item.stock_uom,
+        );
         let neItem = {...item, price: priceUom ? priceUom.price_list_rate : 0};
         return item.min_order_qty === 0
-          ? {...neItem, quantity: 1, discount: 0}
-          : {...neItem, quantity: item.min_order_qty, discount: 0};
+          ? {...neItem, quantity: 1}
+          : {...neItem, quantity: item.min_order_qty};
       });
-      state.data = mergeArrays(state.data, newDaata);
-      state.totalItem = action.payload.total;
-      state.isLoading = false;
     },
-    resetDataProduct : (state,action: PayloadAction)=>{
-      state.data = []
+    resetDataProduct: (state, action: PayloadAction) => {
+      state.data = [];
     },
     setProductSelected: (state, action: PayloadAction<IProduct[]>) => {
       const newData = mergeArraysSelectProduct(
@@ -84,7 +68,7 @@ const productSlice = createSlice({
     setMessage: (state, action: PayloadAction<string>) => {
       state.message = action.payload;
     },
-    setLoading: (state,action:PayloadAction<any>) => {
+    setLoading: (state, action: PayloadAction<any>) => {
       state.isLoading = action.payload;
     },
     setLogoutData: (state: any) => (state = undefined),

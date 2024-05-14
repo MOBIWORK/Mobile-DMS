@@ -49,7 +49,7 @@ const ItemProductOrderComponent = ({
                   {justifyContent: 'flex-start', columnGap: 16},
                 ]}>
                 <AppCheckBox
-                  status={item.isSelected ? true : false}
+                  status={!!item.isSelected}
                   onChangeValue={() =>
                     onSelectProduct(
                       item.item_code,

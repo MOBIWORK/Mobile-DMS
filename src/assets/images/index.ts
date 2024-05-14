@@ -58,6 +58,7 @@ const CameraSelect = require('./cameraSelect.png');
 const ImageLibrary = require('./imageLibrary.png');
 const SettingIcon = require('./setting.png');
 const NotifyIcon = require('./notify.png');
+const CloseIcon = require('./closeButton.png');
 
 export {
   IconBill,
@@ -119,4 +120,5 @@ export {
   ImageLibrary,
   SettingIcon,
   NotifyIcon,
+  CloseIcon,
 };
