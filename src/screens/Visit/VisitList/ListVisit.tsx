@@ -18,6 +18,7 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   Image,
@@ -157,6 +158,7 @@ const ListVisit = () => {
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [bottomLoading,setBottomLoading] = useState<boolean>(true)
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [error, setError] = useState<string>('');
@@ -224,7 +226,8 @@ const ListVisit = () => {
     }
   }, [dispatch, filterParams, filterDataRef.current]);
 
-  const onEndReachedThreshold = useCallback(async () => {
+  const onEndReachedThreshold = () => {
+    setBottomLoading(true)
     const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
     if (listCustomer.page_number <= totalPage && listCustomer.data.length > 3) {
       if (Object.keys(filterDataRef.current).length > 0) {
@@ -235,6 +238,7 @@ const ListVisit = () => {
           },
           true,
         );
+        setBottomLoading(false)
       } else {
         getCustomer(
           {
@@ -244,11 +248,14 @@ const ListVisit = () => {
           },
           true,
         );
+        setBottomLoading(false)
       }
     } else {
+      setBottomLoading(false)
       return null;
     }
-  }, [dispatch]);
+    setBottomLoading(false)
+  };
 
   const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
     distanceRef.current?.close();
@@ -457,8 +464,10 @@ const ListVisit = () => {
                   `${item.customer_code} - ${index}`
                 }
                 decelerationRate={'normal'}
+                // onMomentumScrollEnd={eve => console.log(eve.nativeEvent.layoutMeasurement,'layout')}
                 bounces={true}
                 initialNumToRender={4}
+                ListFooterComponent={() => (bottomLoading && <ActivityIndicator size='large' color={colors.primary} />)}
                 refreshControl={
                   <RefreshControl
                     refreshing={loading}
@@ -466,7 +475,7 @@ const ListVisit = () => {
                   />
                 }
                 maxToRenderPerBatch={2}
-                updateCellsBatchingPeriod={20}
+                updateCellsBatchingPeriod={4}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
                   <VisitItem
@@ -480,7 +489,7 @@ const ListVisit = () => {
                   />
                 )}
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0.5}
+                onEndReachedThreshold={0}
               />
             )}
           </Block>
