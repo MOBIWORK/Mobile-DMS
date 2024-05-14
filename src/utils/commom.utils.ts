@@ -20,9 +20,10 @@ import Geolocation, {
 
 export const storage = new MMKV();
 
-export function debounce(func : any, delay : number) {
-  let timeoutId : any;
-  return function(...args :any) {
+export function debounce(func: any, delay: number) {
+  let timeoutId: any;
+  return function (...args: any) {
+    // @ts-ignore
     const context = this;
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
@@ -209,9 +210,48 @@ export const openMaps = async (latitude: number, longitude: number) => {
   await Linking.openURL(`http://maps.${company}.com/maps?daddr=${daddr}`);
 };
 
-//format 1000 to 1,000
+//format 1000 to 1.000
 export const convertNumber = (value: number) => {
   return new Intl.NumberFormat().format(value).replaceAll(',', '.');
+};
+//format 1000,75 to 1.000,75
+export const formatNumber = (number: number) => {
+  const convert = number
+    .toFixed(1)
+    .replace(/\./g, ',')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+  return convert.replace(',0', '');
+};
+
+export const convertToTwoDecimalPlaces = (num: number) => {
+  // Chuyển số thành chuỗi để xử lý phần thập phân
+  let numStr = num.toString();
+
+  let decimalPos2 =
+    numStr.indexOf('.') !== -1 ? numStr.indexOf('.') : numStr.indexOf(',');
+
+  if (decimalPos2 !== -1) {
+    numStr = numStr.slice(0, decimalPos2 + 3); // Lấy hai chữ số thập phân
+    // Nếu có phần thập phân, chia thành phần nguyên và phần thập phân
+    let integerPart = numStr.slice(0, decimalPos2);
+    let decimalPart = numStr.slice(decimalPos2 + 1);
+
+    // Định dạng phần nguyên (thêm dấu chấm phân tách hàng nghìn)
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    decimalPart = decimalPart.replace(/0+$/, '');
+
+    // Tạo lại số đã định dạng
+    if (decimalPart.length > 0) {
+      return `${integerPart},${decimalPart}`;
+    } else {
+      return integerPart;
+    }
+    // // Tạo lại số đã định dạng
+    // return `${integerPart},${decimalPart}`;
+  } else {
+    // Nếu không có phần thập phân, chỉ định dạng phần nguyên
+    return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
 };
 
 export const removeVietnamesePunctuation = (str: string) => {

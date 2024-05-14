@@ -1,12 +1,17 @@
-import React from 'react';
-import {StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
+import React, {useEffect, useMemo} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {AppTheme, useTheme} from '../../../../layouts/theme';
 import {AppIcons} from '../../../../components/common';
-import {Text} from 'react-native';
 import {ICON_TYPE} from '../../../../const/app.const';
 import {CommonUtils} from '../../../../utils';
 import {useTranslation} from 'react-i18next';
-import {TouchableOpacity} from 'react-native';
 
 const ItemProduct = ({
   name,
@@ -15,18 +20,16 @@ const ItemProduct = ({
   quantity,
   price,
   percentage_discount,
+  discount_amount,
+  tax_percentage,
+  tax_amount,
+  totalPrice,
   onRemove,
 }: ProductProps) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
   const styles = createSheetStyle(useTheme());
-  let priceP = price || 0;
-  let totalPrice = priceP * quantity;
-  let discount: number = 0;
-  if (percentage_discount && percentage_discount > 0) {
-    discount = (totalPrice * percentage_discount) / 100;
-    totalPrice = totalPrice - discount;
-  }
+
   return (
     <View style={styles.container}>
       <View style={styles.flex}>
@@ -43,7 +46,7 @@ const ItemProduct = ({
       </View>
       <View style={[styles.flexSpace, {paddingBottom: 8}]}>
         <Text style={styles.textIf(colors.text_primary)}>
-          {CommonUtils.formatCash(price?.toString() || '0')}
+          {price ? CommonUtils.convertToTwoDecimalPlaces(price) : 0}
           {''} đ
         </Text>
         <Text style={styles.textIf(colors.text_primary)}>
@@ -52,7 +55,27 @@ const ItemProduct = ({
       </View>
 
       <View style={styles.contaienrIf}>
-        {percentage_discount?.toString() && (
+        {tax_percentage !== undefined && tax_percentage !== 0 && (
+          <View style={[styles.flexSpace, {paddingVertical: 4}]}>
+            <Text style={styles.textIf(colors.text_secondary)}>
+              {getLabel('VAT')} (%)
+            </Text>
+            <Text style={styles.textIf(colors.text_primary)}>
+              {tax_percentage.toString()} %
+            </Text>
+          </View>
+        )}
+        {tax_amount !== undefined && tax_amount !== 0 && (
+          <View style={[styles.flexSpace, {paddingVertical: 4}]}>
+            <Text style={styles.textIf(colors.text_secondary)}>
+              {getLabel('VAT')}(VND)
+            </Text>
+            <Text style={styles.textIf(colors.text_primary)}>
+              {price && CommonUtils.convertToTwoDecimalPlaces(tax_amount)}
+            </Text>
+          </View>
+        )}
+        {percentage_discount !== undefined && percentage_discount !== 0 && (
           <View style={[styles.flexSpace, {paddingVertical: 4}]}>
             <Text style={styles.textIf(colors.text_secondary)}>
               {getLabel('discount')} (%)
@@ -62,24 +85,24 @@ const ItemProduct = ({
             </Text>
           </View>
         )}
-        {percentage_discount?.toString() && (
+        {discount_amount !== undefined && discount_amount !== 0 && (
           <View style={[styles.flexSpace, {paddingVertical: 4}]}>
             <Text style={styles.textIf(colors.text_secondary)}>
               {getLabel('discount')}(VND)
             </Text>
             <Text style={styles.textIf(colors.text_primary)}>
-              {CommonUtils.formatCash(discount.toString())}
+              {CommonUtils.convertToTwoDecimalPlaces(discount_amount)}
             </Text>
           </View>
         )}
       </View>
-      {price?.toString() && (
+      {totalPrice !== undefined && totalPrice !== 0 && (
         <View style={styles.flexSpace}>
           <Text style={styles.textIf(colors.text_secondary)}>
             {getLabel('intoMoney')}:
           </Text>
           <Text style={styles.name}>
-            {CommonUtils.formatCash(totalPrice.toString())}
+            {CommonUtils.convertToTwoDecimalPlaces(totalPrice)}
           </Text>
         </View>
       )}
@@ -105,9 +128,12 @@ interface ProductProps {
   name: string;
   dvt: string;
   quantity: number;
+  totalPrice?: number;
   price?: number;
   percentage_discount?: number;
-  discount?: number | string;
+  discount_amount?: number;
+  tax_percentage?: number;
+  tax_amount?: number;
   onRemove?: (item_code: string) => void;
 }
 

@@ -5,8 +5,8 @@ import {
   AppButton,
   AppContainer,
   AppHeader,
-  AppIcons,
   AppInput,
+  AppIcons,
 } from '../../../components/common';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
@@ -22,17 +22,16 @@ import {
   Keyboard,
 } from 'react-native';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {Button, TextInput} from 'react-native-paper';
+import {TextInput} from 'react-native-paper';
 import {ICON_TYPE} from '../../../const/app.const';
 import {Image} from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {CommonUtils} from '../../../utils';
-import ItemProduct from './components/ItemProduct';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
+import {ApiConstant, AppConstant} from '../../../const';
 import {OrderService, ProductService} from '../../../services';
 import {
   IProduct,
@@ -49,6 +48,14 @@ import {useMMKVObject} from 'react-native-mmkv';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import {orderAction} from '../../../redux-store/order-reducer/reducer';
+import isEqual from 'react-fast-compare';
+import {
+  BottomSheetScrollView,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
+import ProductList from './components/ProductList';
+import UpdateProductItem from './components/UpdateProductItem';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const defautItem1 = {
   doctype: 'Sales Order Item',
@@ -66,11 +73,18 @@ const CreateOrder = () => {
   const styles = createSheetStyle(useTheme());
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetWh = useRef<BottomSheet>(null);
-  const snapPointDetail = useMemo(() => ['70%'], []);
-  const router = useRoute<RouterProp<'CHECKIN_ORDER'>>();
+  const router = useRoute<RouterProp<'CHECKIN_ORDER_CREATE'>>();
   const type = router.params.type;
   const {t: getLabel, i18n} = useTranslation();
   const userInfo: IUser = useSelector(state => state.app.userProfile);
+
+  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
   const [openDate, setOpenDate] = useState<boolean>(false);
   const [organization, _] = useMMKVObject<IResOrganization>(
@@ -90,8 +104,7 @@ const CreateOrder = () => {
       isSelected: false,
     },
   ]);
-  const [dataVat, setDataVat] = useState<any[]>([]);
-  const data = useSelector(state => state.product.dataSelected);
+  const dataProductSelected = useSelector(state => state.product.dataSelected);
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
   const customer = useSelector(state => state.order.customerOrder);
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -105,16 +118,57 @@ const CreateOrder = () => {
   const [labelBottonSheet, setLabelBottonSheet] = useState<string>('');
 
   const [warehouse, setWarehouse] = useState<IFilterType>();
-  const [vat, setVat] = useState<object | any>({label: '', value: '', rate: 0});
-  const [discount, setDiscount] = useState<any>({
+  const [discount, setDiscount] = useState<{
+    label: string;
+    value: string;
+    discount_percentage: number;
+  }>({
     label: 'Grand Total',
     value: 'grand',
     discount_percentage: 0,
   });
 
-  const [grandTotalPrice, setGrandTotalPrice] = useState<number>(0);
-  const [discountAmount, setDiscountAmout] = useState<number>(0);
-  const [vatAmount, setVatAmount] = useState<number>(0);
+  const [percentageLabel, setPercentageLabel] = useState<string>('');
+
+  const totalPrice = useMemo(() => {
+    let sum: number = 0;
+    if (products.length > 0) {
+      products.forEach(item => {
+        if (item.total_item_money) {
+          sum += item.total_item_money;
+        }
+      });
+    }
+    return sum;
+  }, [products]);
+
+  const total_Discount = useMemo(() => {
+    if (totalPrice > 0 && Number(percentageLabel.replace(',', '.')) > 0) {
+      return (totalPrice * Number(percentageLabel.replace(',', '.'))) / 100;
+    } else {
+      return 0;
+    }
+  }, [totalPrice, percentageLabel]);
+
+  const total_VAT = useMemo(() => {
+    let sum: number = 0;
+    if (products.length > 0) {
+      products.forEach(item => {
+        if (item.total_item_tax) {
+          sum += item.total_item_tax;
+        }
+      });
+    }
+    return sum;
+  }, [products]);
+
+  const total_Money = useMemo(() => {
+    if (totalPrice > 0) {
+      return totalPrice - total_Discount; //bởi vì VAT đã được bao gồm trong tổng giá của sp rồi nên không trừ ở đây nữa.
+    } else {
+      return 0;
+    }
+  }, [totalPrice, total_VAT, total_Discount]);
 
   const onBackScreen = () => {
     dispatch(productActions.updateProductSelect([]));
@@ -122,51 +176,6 @@ const CreateOrder = () => {
       dispatch(orderAction.setCustomerOder(null));
     }
     navigation.goBack();
-  };
-
-  const renderUiNoData = () => {
-    return (
-      <View style={[styles.containerNodata]}>
-        <View style={{marginTop: 70}}>
-          <View style={{alignItems: 'center', rowGap: 8}}>
-            <Image
-              style={styles.iconImage}
-              source={ImageAssets.IconBill}
-              resizeMode="cover"
-            />
-            <Text style={[styles.textDescNoDt]}>
-              {getLabel('selectProduct')}
-            </Text>
-          </View>
-          <View style={[styles.flexSpace as any, {marginTop: 24}]}>
-            <Button
-              style={{
-                width: '48%',
-                marginRight: 16,
-                borderColor: colors.action,
-              }}
-              textColor={colors.action}
-              labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}
-              icon="plus"
-              mode="outlined"
-              onPress={() =>
-                navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT)
-              }>
-              {getLabel('selectProduct')}
-            </Button>
-            <Button
-              style={{width: '48%', borderColor: colors.action}}
-              textColor={colors.action}
-              labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}
-              icon="barcode-scan"
-              mode="outlined"
-              onPress={() => console.log('Pressed')}>
-              {getLabel('scanCode')}
-            </Button>
-          </View>
-        </View>
-      </View>
-    );
   };
 
   const showDetailProdcut = (product: IProduct) => {
@@ -177,20 +186,18 @@ const CreateOrder = () => {
   };
 
   const toggleButtonUi = useCallback((tab: number, productKm: number) => {
-    if (type == 'ORDER') {
+    if (type === 'ORDER') {
       return (
         <View style={[styles.flexSpace, {marginBottom: 20}]}>
           <Pressable
             onPress={() => setToggleTab(1)}
-            style={[styles.toggleBt(tab == 1 ? true : false)]}>
-            <Text style={[styles.txTgBt(tab == 1 ? true : false)]}>
-              Sản phẩm
-            </Text>
+            style={[styles.toggleBt(tab === 1)]}>
+            <Text style={[styles.txTgBt(tab === 1)]}>Sản phẩm</Text>
           </Pressable>
           <Pressable
             onPress={() => setToggleTab(2)}
-            style={[styles.toggleBt(tab == 2 ? true : false)]}>
-            <Text style={[styles.txTgBt(tab == 2 ? true : false)]}>
+            style={[styles.toggleBt(tab === 2)]}>
+            <Text style={[styles.txTgBt(tab === 2)]}>
               Sản phẩm KM ({productKm})
             </Text>
           </Pressable>
@@ -201,162 +208,6 @@ const CreateOrder = () => {
     }
   }, []);
 
-  const renderProduct = (tab: number) => {
-    if (tab == 1) {
-      return (
-        <>
-          {products.length > 0 ? (
-            <View style={[styles.flexSpace]}>
-              <Button
-                onPressIn={() =>
-                  navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT)
-                }
-                style={{
-                  width: '48%',
-                  marginRight: 16,
-                  borderColor: colors.action,
-                }}
-                textColor={colors.action}
-                labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}
-                icon="plus"
-                mode="outlined"
-                onPress={() => console.log('Pressed')}>
-                {getLabel('selectProduct')}
-              </Button>
-              <Button
-                style={{width: '48%', borderColor: colors.action}}
-                textColor={colors.action}
-                labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}
-                icon="barcode-scan"
-                mode="outlined"
-                onPress={() => console.log('Pressed')}>
-                {getLabel('scanCode')}
-              </Button>
-            </View>
-          ) : (
-            renderUiNoData()
-          )}
-          <View style={{marginTop: 20, rowGap: 8}}>
-            {products.map((item, i) => (
-              <Pressable key={i} onPress={() => showDetailProdcut(item)}>
-                <ItemProduct
-                  onRemove={() => handlerRemoveItemProduct(item.item_code)}
-                  name={item.item_name}
-                  code={item.item_code}
-                  dvt={item.stock_uom}
-                  quantity={item.quantity ? item.quantity : 0}
-                  percentage_discount={item.discount}
-                  price={item.price || 0}
-                />
-              </Pressable>
-            ))}
-          </View>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <View>
-            {productsPromotion.map((item, i) => (
-              <Pressable key={i}>
-                <ItemProduct
-                  name={item.item_name}
-                  code={item.item_code}
-                  dvt={item.stock_uom}
-                  quantity={item.qty}
-                />
-              </Pressable>
-            ))}
-          </View>
-        </>
-      );
-    }
-  };
-
-  const renderDetailProduct = () => {
-    let priceTotalOrder = 0;
-    if (productDetail) {
-      priceTotalOrder = productDetail.quantity
-        ? productDetail.price * productDetail.quantity
-        : 0;
-    }
-    return (
-      <View style={{marginTop: 24, rowGap: 20}}>
-        <AppInput
-          label={getLabel('productCode')}
-          value={productDetail?.item_code || ''}
-          hiddenRightIcon
-          disable
-          styles={{backgroundColor: colors.bg_neutral}}
-        />
-        <AppInput
-          label={getLabel('unit')}
-          onPress={() => onOpenBottonSheetData('unit')}
-          value={productDetail?.stock_uom || ''}
-          hiddenRightIcon
-          editable={false}
-          rightIcon={
-            <TextInput.Icon
-              onPress={() => onOpenBottonSheetData('unit')}
-              icon={'chevron-down'}
-              color={colors.text_secondary}
-            />
-          }
-        />
-
-        <AppInput
-          label={getLabel('unitPrice')}
-          value={
-            productDetail?.price
-              ? CommonUtils.formatCash(productDetail.price.toString())
-              : ''
-          }
-          hiddenRightIcon
-          editable={false}
-          styles={{backgroundColor: colors.bg_neutral}}
-          rightIcon={
-            <TextInput.Affix
-              text="VND"
-              textStyle={{color: colors.text_secondary, fontSize: 12}}
-            />
-          }
-        />
-        <AppInput
-          label={getLabel('quantity')}
-          value={productDetail?.quantity?.toString() || ''}
-          onChangeValue={(txt: string) =>
-            setProductDetail({
-              ...productDetail,
-              quantity: txt == '' ? 0 : parseInt(txt),
-            })
-          }
-          hiddenRightIcon
-          inputProp={{
-            keyboardType: 'numeric',
-          }}
-        />
-
-        <AppInput
-          label={getLabel('intoMoney')}
-          value={
-            priceTotalOrder
-              ? CommonUtils.formatCash(priceTotalOrder.toString())
-              : ''
-          }
-          hiddenRightIcon
-          editable={false}
-          styles={{backgroundColor: colors.bg_neutral}}
-          rightIcon={
-            <TextInput.Affix
-              text="VND"
-              textStyle={{color: colors.text_secondary, fontSize: 12}}
-            />
-          }
-        />
-      </View>
-    );
-  };
-
   const onOpenBottonSheetData = (typeData: string) => {
     switch (typeData) {
       case 'discount':
@@ -366,10 +217,6 @@ const CreateOrder = () => {
       case 'warehouse':
         setLabelBottonSheet('warehouse');
         setDataCategorie(DataWarehouse);
-        break;
-      case 'vat':
-        setLabelBottonSheet('typeVat');
-        setDataCategorie(dataVat);
         break;
       case 'unit':
         {
@@ -414,7 +261,7 @@ const CreateOrder = () => {
             value: item.value,
           }));
           const newData = dataDiscount.map(item1 =>
-            item1.value == item.value
+            item1.value === item.value
               ? {...item, isSelected: true}
               : {...item1, isSelected: false},
           );
@@ -430,17 +277,6 @@ const CreateOrder = () => {
               : {...item1, isSelected: false},
           );
           setDataWarehouse(newWhs);
-        }
-        break;
-      case 'typeVat':
-        {
-          setVat(item);
-          const newWhs = dataVat.map(item1 =>
-            item1.value == item.value
-              ? {...item, isSelected: true}
-              : {...item1, isSelected: false},
-          );
-          setDataVat(newWhs);
         }
         break;
       case 'unit':
@@ -467,55 +303,8 @@ const CreateOrder = () => {
     }
   };
 
-  const totalPrice = useMemo(() => {
-    let sum: number = 0;
-    if (products.length > 0) {
-      sum = products.reduce((accumulator, item) => {
-        let total = 0;
-        let discountPrice = 0;
-        let grandTotal = 0;
-        if (item) {
-          if (item.quantity) {
-            total = item.price * item.quantity;
-            discountPrice = (total * item.discount) / 100;
-            grandTotal = total - discountPrice;
-          }
-        }
-
-        return accumulator + grandTotal;
-      }, 0);
-    }
-    return sum;
-  }, [products]);
-
-  const onChangeDiscount = (input: string, txt: string) => {
-    let amount = 0;
-    let percentage = 0;
-    switch (input) {
-      case 'discount':
-        percentage = Number(txt);
-        if (discount.value === 'grand') {
-          amount = (Number(txt) / 100) * (vatAmount + totalPrice);
-        } else {
-          amount = (Number(txt) / 100) * totalPrice;
-        }
-        break;
-      case 'discountAmount':
-        amount = Number(txt);
-        if (discount.value === 'grand') {
-          percentage = (Number(txt) / (totalPrice + vatAmount)) * 100;
-        } else {
-          percentage = (Number(txt) / totalPrice) * 100;
-        }
-        break;
-      default:
-        break;
-    }
-    setDiscount((prev: any) => ({...prev, discount_percentage: percentage}));
-    setDiscountAmout(amount);
-  };
-
   const fetchDataWarehouse = async () => {
+    dispatch(appActions.setProcessingStatus(true));
     const res: KeyAbleProps = await ProductService.getWarehouse(
       userInfo.company,
     );
@@ -532,42 +321,22 @@ const CreateOrder = () => {
       setDataWarehouse(newData);
       setWarehouse(newData[0]);
     }
-  };
-
-  const fetchDataVat = async () => {
-    const {status, data}: KeyAbleProps = await OrderService.getListVat(
-      userInfo.company,
-    );
-    if (status === ApiConstant.STT_OK) {
-      const result = data.result;
-      const newData: any[] = [];
-      for (let i = 0; i < result.length; i++) {
-        const element = result[i];
-        newData.push({
-          value: element.name,
-          label: element.title,
-          rate: element.rate,
-          price: 0,
-          isSelected: false,
-        });
-      }
-      setDataVat(newData);
-    }
+    dispatch(appActions.setProcessingStatus(false));
   };
 
   const fetchProductPromotion = async () => {
     if (type === 'ORDER') {
-      if (data.length > 0) {
-        const newItems = data.map((item: any) => ({
+      if (dataProductSelected.length > 0) {
+        const newItems = dataProductSelected.map((item: any) => ({
           ...defautItem1,
           item_code: item.item_code,
           uom: item.stock_uom,
           qty: item.quantity,
-          stock_qty: item.quantity,
+          stock_qty: item?.stock_qty ? item.stock_qty : item.quantity,
         }));
         const objecData = {
           items: newItems,
-          customer: dataCheckin.item.customer_code, // Khách hàng
+          customer: dataCheckin ? dataCheckin.item.customer_code : '', // Khách hàng
           territory: 'Vietnam',
           currency: 'VND',
           price_list: 'Standard Selling',
@@ -577,40 +346,74 @@ const CreateOrder = () => {
           name: 'new-sales-order-hnnkmtrehm',
           transaction_date: CommonUtils.taskDate(date),
         };
+        console.log('objecData', objecData);
         const {data: res, status}: KeyAbleProps =
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
-          const result = res.result;
-          for (let i = 0; i < result.length; i++) {
-            const element = result[i];
-            if (element.free_item_data && element.free_item_data.length > 0) {
-              setProductsPromotion(element.free_item_data);
+          const result: any = res.result;
+          console.log('result', result);
+          const newDataSelected = dataProductSelected.map((item, index) => {
+            const element = result[index];
+            if (item.item_code === element.item_code) {
+              if (element.free_item_data && element.free_item_data.length > 0) {
+                setProductsPromotion(element.free_item_data);
+              }
+              if (element?.pricing_rule_for === 'Rate') {
+                return {
+                  ...item,
+                  price: element.price_list_rate,
+                  discount_item_percent: 0,
+                  discount_item_amount: 0,
+                  has_pricing_rule: element.has_pricing_rule,
+                };
+              } else if (element?.pricing_rule_for === 'Discount Percentage') {
+                return {
+                  ...item,
+                  discount_item_percent: element.discount_percentage,
+                  discount_item_amount:
+                    (element.discount_percentage / 100) *
+                    item.price *
+                    item.quantity,
+                  price: item.price,
+                  has_pricing_rule: element.has_pricing_rule,
+                };
+              } else if (element?.pricing_rule_for === 'Discount Amount') {
+                return {
+                  ...item,
+                  discount_item_percent:
+                    (element.discount_amount / item.price / item.quantity) *
+                    100,
+                  discount_item_amount: element.discount_amount,
+                  price: item.price,
+                  has_pricing_rule: element.has_pricing_rule,
+                };
+              } else {
+                return {
+                  ...item,
+                  discount_item_percent: 0,
+                  discount_item_amount: 0,
+                  has_pricing_rule: element.has_pricing_rule,
+                };
+              }
+            } else {
+              return item;
             }
-            if (element.discount_percentage) {
-              const newProducts = data.map(item =>
-                item.item_code === element.item_code
-                  ? {...item, discount: element.discount_percentage}
-                  : item,
-              );
-              setProducts(newProducts);
-            }
-          }
+          });
+          updateDataProduct(newDataSelected);
         }
       }
     }
   };
 
-  const onCalculateGrandPriceOrder = () => {
-    const grand_price = totalPrice + vatAmount - discountAmount;
-    setGrandTotalPrice(grand_price);
-  };
-
   const handlerRemoveItemProduct = (id: string) => {
     const newProducts = products.filter(item => item.item_code !== id);
+    console.log(newProducts);
     dispatch(productActions.updateProductSelect(newProducts));
+    setProducts(newProducts);
   };
 
-  const updateProductOrder = () => {
+  const updateProductOrder = useCallback(() => {
+    Keyboard.dismiss();
     if (productDetail) {
       const newProducts = products.map(item =>
         item.item_code === productDetail.item_code ? productDetail : item,
@@ -620,29 +423,10 @@ const CreateOrder = () => {
     if (bottomSheetRef.current) {
       bottomSheetRef.current.close();
     }
-  };
-
-  const recalculateVatorDiscount = () => {
-    let vt = 0;
-    let dsc = 0;
-    switch (discount.value) {
-      case 'net':
-        dsc = (discount.discount_percentage / 100) * totalPrice;
-        vt = (vat.rate / 100) * (totalPrice - dsc);
-        break;
-      case 'grand':
-        vt = (vat.rate / 100) * totalPrice;
-        dsc = (discount.discount_percentage / 100) * (totalPrice + vt);
-        break;
-      default:
-        break;
-    }
-    setVatAmount(vt);
-    setDiscountAmout(dsc);
-  };
+  }, [productDetail]);
 
   const isDisabled = useMemo(() => {
-    if (!warehouse || warehouse?.value === '') {
+    if (!warehouse || warehouse?.value === '' || products.length === 0) {
       return true;
     } else {
       return false;
@@ -663,21 +447,20 @@ const CreateOrder = () => {
   }, [setOpenDate]);
 
   const onCreatedOrder = async () => {
+    dispatch(appActions.setProcessingStatus(true));
     let status: any = 0;
     const arrItems = products.map(item => ({
       item_code: item.item_code,
       qty: item.quantity,
       rate: item.price,
       uom: item.stock_uom,
-      discount_percentage: item.discount,
+      discount_percentage: item.discount_item_percent,
     }));
     const objectData: any = {
       set_warehouse: warehouse?.value,
       apply_discount_on: discount.label,
       additional_discount_percentage: discount.discount_percentage,
-      discount_amount: discountAmount,
-      rate_taxes: vat.rate,
-      taxes_and_charges: vat.value,
+      discount_amount: total_Discount,
       company: organization?.company_name,
       items: arrItems,
     };
@@ -692,18 +475,17 @@ const CreateOrder = () => {
     switch (type) {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
-        objectData.grand_total = grandTotalPrice;
+        objectData.grand_total = total_Money;
         status = (await OrderService.createdOrder(objectData)).status;
         break;
       case 'RETURN_ORDER':
-        objectData.grand_total = grandTotalPrice - grandTotalPrice * 2;
-        console.log(objectData);
-
+        objectData.grand_total = total_Money;
         status = (await OrderService.createdReturnOrder(objectData)).status;
         break;
       default:
         break;
     }
+    dispatch(appActions.setProcessingStatus(false));
     if (status === ApiConstant.STT_CREATED) {
       onBackScreen();
     }
@@ -711,22 +493,69 @@ const CreateOrder = () => {
 
   useEffect(() => {
     fetchDataWarehouse();
-    fetchDataVat();
+    // fetchDataVat();
     Keyboard.dismiss();
   }, []);
 
   useEffect(() => {
-    setProducts(data);
-    fetchProductPromotion();
-  }, [data]);
+    if (dataProductSelected?.length === 0) {
+      setPercentageLabel('');
+    } else {
+      fetchProductPromotion();
+    }
+  }, [dataProductSelected]);
 
   useEffect(() => {
-    onCalculateGrandPriceOrder();
-  }, [totalPrice, vatAmount, discountAmount]);
+    //
+  }, [products, discount]);
 
-  useEffect(() => {
-    recalculateVatorDiscount();
-  }, [products, discount, vat]);
+  const updateDataProduct = useCallback(
+    (data: IProduct[]) => {
+      if (data.length > 0) {
+        const newProduct = data.map(item => {
+          if (item?.rate_tax_item > 0) {
+            if (
+              discount.discount_percentage > 0 &&
+              discount.value === 'grand'
+            ) {
+              const VAT_item_amount =
+                (item.rate_tax_item * item.price * item.quantity) / 100; //VAT = VAT * thành tiền
+              return {
+                ...item,
+                total_item_tax: VAT_item_amount,
+                total_item_money:
+                  item.price * item.quantity +
+                  VAT_item_amount -
+                  item.discount_item_amount,
+              };
+            } else {
+              const VAT_item_amount =
+                (item.rate_tax_item *
+                  (item.price * item.quantity - item.discount_item_amount)) /
+                100; // VAT(sp) = %VAT x (thành tiền - chiết khấu sp)
+              return {
+                ...item,
+                total_item_tax: VAT_item_amount,
+                total_item_money:
+                  item.price * item.quantity +
+                  VAT_item_amount -
+                  item.discount_item_amount,
+              };
+            }
+          } else {
+            return {
+              ...item,
+              total_item_tax: 0,
+              total_item_money:
+                item.price * item.quantity - item.discount_item_amount,
+            };
+          }
+        });
+        setProducts(newProduct);
+      }
+    },
+    [products, discount],
+  );
 
   return (
     <>
@@ -793,54 +622,12 @@ const CreateOrder = () => {
               <View style={[styles.containerSection]}>
                 {productsPromotion.length > 0 &&
                   toggleButtonUi(toggleTab, productsPromotion.length)}
-                {renderProduct(toggleTab)}
-              </View>
-            </View>
-
-            <View>
-              <View style={styles.flexSpace}>
-                <Text style={styles.titleSection}>VAT</Text>
-                <TouchableOpacity>
-                  <AppIcons
-                    name="chevron-down"
-                    size={22}
-                    iconType={ICON_TYPE.Feather}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View
-                style={[
-                  styles.containerSection,
-                  {paddingVertical: 20, rowGap: 20},
-                ]}>
-                <AppInput
-                  value={vat.label}
-                  label={getLabel('formVat')}
-                  editable={false}
-                  onPress={() => onOpenBottonSheetData('vat')}
-                  rightIcon={
-                    <TextInput.Icon
-                      onPress={() => onOpenBottonSheetData('vat')}
-                      icon={'chevron-down'}
-                      color={colors.text_secondary}
-                    />
-                  }
-                />
-                <AppInput
-                  value={vat.rate.toString()}
-                  label="VAT(%)"
-                  editable={false}
-                  styles={{backgroundColor: colors.bg_neutral}}
-                  rightIcon={<TextInput.Affix text="%" />}
-                />
-                <AppInput
-                  value={CommonUtils.formatCash(vatAmount.toString())}
-                  label={getLabel('priceVate')}
-                  editable={false}
-                  styles={{backgroundColor: colors.bg_neutral}}
-                  rightIcon={
-                    <TextInput.Affix text="VND" textStyle={{fontSize: 12}} />
-                  }
+                <ProductList
+                  tab={toggleTab}
+                  products={products}
+                  productsPromotion={productsPromotion}
+                  showDetailProdcut={showDetailProdcut}
+                  handlerRemoveItemProduct={handlerRemoveItemProduct}
                 />
               </View>
             </View>
@@ -875,21 +662,23 @@ const CreateOrder = () => {
                   }
                 />
                 <AppInput
-                  value={discount.discount_percentage.toString()}
+                  value={percentageLabel}
                   label={getLabel('discountPercentage')}
-                  onChangeValue={txt => onChangeDiscount('discount', txt)}
+                  onChangeValue={setPercentageLabel}
                   inputProp={{
                     keyboardType: 'numeric',
+                    returnKeyType: 'done',
                   }}
                   rightIcon={<TextInput.Affix text="%" />}
                 />
                 <AppInput
-                  value={discountAmount.toString()}
+                  value={CommonUtils.convertToTwoDecimalPlaces(total_Discount)}
                   label={getLabel('discountAmount')}
-                  onChangeValue={txt => onChangeDiscount('discountAmount', txt)}
                   inputProp={{
-                    keyboardType: 'numeric',
+                    keyboardType: 'number-pad',
                   }}
+                  styles={{backgroundColor: colors.bg_neutral}}
+                  editable={false}
                   rightIcon={
                     <TextInput.Affix text="VND" textStyle={{fontSize: 12}} />
                   }
@@ -917,25 +706,29 @@ const CreateOrder = () => {
                 <View style={styles.flexSpace}>
                   <Text style={styles.labelPay}>{getLabel('intoMoney')}</Text>
                   <Text style={styles.price}>
-                    {CommonUtils.formatCash(totalPrice.toString())}
+                    {totalPrice
+                      ? CommonUtils.convertToTwoDecimalPlaces(totalPrice)
+                      : 0}
                   </Text>
                 </View>
                 <View style={styles.flexSpace}>
                   <Text style={styles.labelPay}>{getLabel('discount')}</Text>
                   <Text style={styles.price}>
-                    {CommonUtils.formatCash(discountAmount.toString())}
+                    {CommonUtils.convertToTwoDecimalPlaces(total_Discount)}
                   </Text>
                 </View>
                 <View style={styles.flexSpace}>
                   <Text style={styles.labelPay}>VAT</Text>
                   <Text style={styles.price}>
-                    {CommonUtils.formatCash(vatAmount.toString())}
+                    {total_VAT
+                      ? CommonUtils.convertToTwoDecimalPlaces(total_VAT)
+                      : 0}
                   </Text>
                 </View>
                 <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
                   <Text style={styles.labelPay}>{getLabel('totalPrice')}</Text>
                   <Text style={styles.totalPrice}>
-                    {CommonUtils.formatCash(grandTotalPrice.toString())}
+                    {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
                   </Text>
                 </View>
               </View>
@@ -951,7 +744,7 @@ const CreateOrder = () => {
             ]}>
             <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
             <Text style={styles.totalPrice}>
-              {CommonUtils.formatCash(grandTotalPrice.toString())}
+              {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
             </Text>
           </View>
           <AppButton
@@ -965,31 +758,48 @@ const CreateOrder = () => {
 
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
-        snapPointsCustom={snapPointDetail}>
-        <View style={{paddingHorizontal: 16}}>
+        snapPointsCustom={['100%']}>
+        <Pressable
+          onPress={() => Keyboard.dismiss()}
+          style={{paddingHorizontal: 16, flex: 1}}>
           <AppHeader
             label={getLabel('product')}
             backButtonIcon={
-              <AppIcons
-                name="close-sharp"
-                iconType={ICON_TYPE.IonIcon}
-                size={28}
-                color={colors.text_secondary}
-                onPress={() =>
-                  bottomSheetRef.current && bottomSheetRef.current.close()
-                }
-              />
+              <TouchableOpacity
+                onPress={() => {
+                  Keyboard.dismiss();
+                  bottomSheetRef.current?.close();
+                }}>
+                <Image
+                  source={ImageAssets.CloseIcon}
+                  style={{width: 28, height: 28}}
+                />
+              </TouchableOpacity>
             }
           />
-          {renderDetailProduct()}
-          <View style={[styles.flexSpace, {marginTop: 36}]}>
+          <UpdateProductItem
+            productDetail={productDetail}
+            setProductDetail={setProductDetail}
+            onOpenBottonSheetData={onOpenBottonSheetData}
+          />
+          <View
+            style={[
+              styles.flexSpace,
+              {
+                marginTop: 36,
+                position: 'absolute',
+                alignSelf: 'center',
+                bottom: AppConstant.HEIGHT * 0.07,
+              },
+            ]}>
             <AppButton
               style={{width: '49%', backgroundColor: colors.bg_neutral}}
               styleLabel={{color: colors.text_secondary}}
               label={getLabel('cancel')}
-              onPress={() =>
-                bottomSheetRef.current && bottomSheetRef.current.close()
-              }
+              onPress={() => {
+                Keyboard.dismiss();
+                bottomSheetRef.current && bottomSheetRef.current.close();
+              }}
             />
             <AppButton
               style={{width: '49%'}}
@@ -997,22 +807,29 @@ const CreateOrder = () => {
               onPress={() => updateProductOrder()}
             />
           </View>
-        </View>
+        </Pressable>
       </AppBottomSheet>
 
       <AppBottomSheet
         bottomSheetRef={bottomSheetWh}
-        snapPointsCustom={snapPointDetail}>
-        <FilterListComponent
-          title={getLabel(labelBottonSheet)}
-          data={dataCategorie}
-          searchPlaceholder={getLabel('search')}
-          onClose={() => {
-            bottomSheetWh.current && bottomSheetWh.current.close();
-            setDataCategorie([]);
-          }}
-          handleItem={onChangeData}
-        />
+        snapPointsCustom={animatedSnapPoints}
+        // @ts-ignore
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: 50}}
+          onLayout={handleContentLayout}>
+          <FilterListComponent
+            title={getLabel(labelBottonSheet)}
+            data={dataCategorie}
+            searchPlaceholder={getLabel('search')}
+            onClose={() => {
+              bottomSheetWh.current && bottomSheetWh.current.close();
+              setDataCategorie([]);
+            }}
+            handleItem={onChangeData}
+          />
+        </BottomSheetScrollView>
       </AppBottomSheet>
 
       <DatePickerModal
@@ -1029,7 +846,7 @@ const CreateOrder = () => {
   );
 };
 
-export default CreateOrder;
+export default React.memo(CreateOrder, isEqual);
 
 const createSheetStyle = (theme: AppTheme) =>
   StyleSheet.create({

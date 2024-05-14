@@ -387,7 +387,7 @@ export interface DetailCustomerType {
   address: Address[];
   contacts: Contact[];
   routers: any[];
-  frequency:any[]
+  frequency: any[];
 }
 
 export interface ContactCustomer {
@@ -456,18 +456,17 @@ export interface Southwest {
 }
 
 export interface Address {
- 
   is_primary_address: number;
   is_shipping_address: number;
-  address_title:string,
-  address_location:string
+  address_title: string;
+  address_location: string;
 }
 
 export interface Contact {
   first_name: string;
   mobile_no: string;
-  address:string;
-  last_name:string;
+  address: string;
+  last_name: string;
   is_primary_contact: number;
   is_billing_contact: number;
 }
@@ -592,7 +591,8 @@ export type IProduct = {
   item_code: string;
   item_name: string;
   item_group: string;
-  stock_uom: string;
+  stock_uom: string; // đơn vị tính mặc định
+  stock_qty: number;
   min_order_qty: number;
   description: string;
   brand: string;
@@ -603,13 +603,22 @@ export type IProduct = {
   end_of_life: string;
   details: UinitProduct[];
   stock: StockProduct[];
-  quantity?: number;
-  discount_percentage: discountProduct[];
-  discount: number;
-  price: number;
   unit: DataUnit[];
+  has_pricing_rule: number; // 1: không cho phép sửa chiết khấu sản phẩm, ngc lại 0 thì cho sửa
+  // pricing_rule_for: string; // loại chiết khấu: Rate, Discount Amount, Discount Percentage
+  discount_percentage: discountProduct[];
+  discount_item_percent: number; // chiết khấu % của sản phẩm
+  new_discount_item_percent: number; // Chiết khấu % mới của sản phẩm thay đổi khi has_pricing_rule = 0
+  discount_item_amount: number;
+  price: number; // giá của sản phẩm ứng với đơn vị tính mặc định và hệ số = 1
+  quantity: number; // số lượng sản phẩm (thay đổi được)
+  item_tax_template: {item_tax_template: string}[]; // list chiết khấu
+  rate_tax_item: number; //VAT %
+  price_list_rate?: number; // giá của sản phẩm khi đã áp dụng price rule
   isSelected?: boolean;
   expiry?: string;
+  total_item_money: number;
+  total_item_tax: number;
 };
 
 export type IOrderList = {

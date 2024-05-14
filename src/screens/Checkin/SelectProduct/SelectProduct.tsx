@@ -44,6 +44,10 @@ import {CommonUtils} from '../../../utils';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import ItemSkeleton from './components/ItemSkeleton';
 import ItemProductOrderComponent from './components/ItemProductOrderComponent';
+import {
+  BottomSheetScrollView,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
 
 const initFilterValue = {
   label: '',
@@ -57,8 +61,17 @@ const SelectProducts = () => {
   const navigation = useNavigation<NavigationProp>();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetRefData = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['85%'], []);
   const styles = createStyles(useTheme());
+
+  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+
   const [isPending, startEffect] = useTransition();
   const [dataCategoryProduct, setdDtaCategoryProduct] = useState<IFilterType[]>(
     [],
@@ -107,11 +120,18 @@ const SelectProducts = () => {
         case 'unit':
           setLabel('unit');
           if (item) {
-            const units = item.details;
-            const newData = units.map(item1 => {
-              return item.stock_uom === item1.uom
-                ? {label: item1.uom, value: item.item_code, isSelected: true}
-                : {label: item1.uom, value: item.item_code, isSelected: false};
+            const newData = item.unit.map(unitItems => {
+              return item.stock_uom === unitItems.uom
+                ? {
+                    label: unitItems.uom,
+                    value: item.item_code,
+                    isSelected: true,
+                  }
+                : {
+                    label: unitItems.uom,
+                    value: item.item_code,
+                    isSelected: false,
+                  };
             });
             setDataFilter(newData);
           }
@@ -270,14 +290,15 @@ const SelectProducts = () => {
       case 'unit': {
         startEffect(() => {
           const newProducts = data.map(item1 => {
-            let priceUom = item1.details.find(
-              item2 => item2.uom === item.label,
-            );
+            let priceUom = item1.unit.find(item2 => item2.uom === item.label);
             return item1.item_code === item.value
               ? {
                   ...item1,
                   stock_uom: item.label,
-                  price: priceUom ? priceUom.price_list_rate : 0,
+                  price: priceUom
+                    ? Number(priceUom.conversion_factor) * item1.price
+                    : 0,
+                  stock_qty: priceUom ? Number(priceUom.conversion_factor) : 0,
                 }
               : item1;
           });
@@ -420,7 +441,11 @@ const SelectProducts = () => {
   }, [textSearch]);
 
   useEffect(() => {
-    setData(products);
+    if (products?.length > 0) {
+      setData(products);
+    } else {
+      setData([]);
+    }
   }, [products]);
 
   useEffect(() => {
@@ -592,20 +617,34 @@ const SelectProducts = () => {
       </MainLayout>
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
-        snapPointsCustom={snapPoints}>
-        {bottomSheetFilter()}
+        snapPointsCustom={animatedSnapPoints}
+        // @ts-ignore
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: 30}}
+          onLayout={handleContentLayout}>
+          {bottomSheetFilter()}
+        </BottomSheetScrollView>
       </AppBottomSheet>
       <AppBottomSheet
         bottomSheetRef={bottomSheetRefData}
-        snapPointsCustom={snapPoints}>
-        <FilterListComponent
-          title={getLabel(label)}
-          data={dataFilter}
-          handleItem={onChangeData}
-          onClose={() =>
-            bottomSheetRefData.current && bottomSheetRefData.current.close()
-          }
-        />
+        snapPointsCustom={animatedSnapPoints}
+        // @ts-ignore
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: 30}}
+          onLayout={handleContentLayout}>
+          <FilterListComponent
+            title={getLabel(label)}
+            data={dataFilter}
+            handleItem={onChangeData}
+            onClose={() =>
+              bottomSheetRefData.current && bottomSheetRefData.current.close()
+            }
+          />
+        </BottomSheetScrollView>
       </AppBottomSheet>
     </>
   );
