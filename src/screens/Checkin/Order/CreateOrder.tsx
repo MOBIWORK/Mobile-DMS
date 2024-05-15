@@ -8,8 +8,8 @@ import {
   AppIcons,
   AppInput,
 } from '../../../components/common';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
+import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {AuthorizeParamsList} from '../../../navigation/screen-type';
 import {
   ImageStyle,
   Pressable,
@@ -28,7 +28,7 @@ import {Image} from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {CommonUtils} from '../../../utils';
 import ItemProduct from './components/ItemProduct';
-import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
+import BottomSheet from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
@@ -61,13 +61,13 @@ const defautItem1 = {
 };
 
 const CreateOrder = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NavigationProp<AuthorizeParamsList>>();
   const {colors} = useTheme();
   const styles = createSheetStyle(useTheme());
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetWh = useRef<BottomSheet>(null);
   const snapPointDetail = useMemo(() => ['70%'], []);
-  const router = useRoute<RouterProp<'CHECKIN_ORDER'>>();
+  const router = useRoute<RouteProp<AuthorizeParamsList,'CHECKIN_ORDER_CREATE'>>();
   const type = router.params.type;
   const {t: getLabel, i18n} = useTranslation();
   const userInfo: IUser = useSelector(state => state.app.userProfile);
@@ -294,6 +294,7 @@ const CreateOrder = () => {
           onPress={() => onOpenBottonSheetData('unit')}
           value={productDetail?.stock_uom || ''}
           hiddenRightIcon
+
           editable={false}
           rightIcon={
             <TextInput.Icon
@@ -313,6 +314,7 @@ const CreateOrder = () => {
           }
           hiddenRightIcon
           editable={false}
+          
           styles={{backgroundColor: colors.bg_neutral}}
           rightIcon={
             <TextInput.Affix
@@ -332,7 +334,9 @@ const CreateOrder = () => {
           }
           hiddenRightIcon
           inputProp={{
-            keyboardType: 'numeric',
+            keyboardType: 'decimal-pad',
+             returnKeyType:'done',
+             
           }}
         />
 
