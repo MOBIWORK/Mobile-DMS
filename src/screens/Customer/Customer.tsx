@@ -150,7 +150,7 @@ const Customer = () => {
           : distance2 - distance1;
       });
     },
-    [listCustomer.length],
+    [listCustomer?.length],
   );
 
   const onRefreshData = useCallback(async () => {
@@ -176,7 +176,7 @@ const Customer = () => {
     startTransition(() => {
       if (mounted.current) {
         handleBackgroundLocation();
-        if (listCustomer && listCustomer.length > 0) {
+        if (listCustomer && listCustomer?.length > 0) {
           const filteredData = listCustomer.filter(
             item => item.customer_location_primary != null,
           );
