@@ -8,7 +8,12 @@ import {
   AppInput,
   AppIcons,
 } from '../../../components/common';
-import {NavigationProp, RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {AuthorizeParamsList} from '../../../navigation/screen-type';
 import {
   ImageStyle,
@@ -27,7 +32,6 @@ import {ICON_TYPE} from '../../../const/app.const';
 import {Image} from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {CommonUtils} from '../../../utils';
-import ItemProduct from './components/ItemProduct';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
@@ -74,7 +78,8 @@ const CreateOrder = () => {
   const styles = createSheetStyle(useTheme());
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetWh = useRef<BottomSheet>(null);
-  const router = useRoute<RouteProp<AuthorizeParamsList,'CHECKIN_ORDER_CREATE'>>();
+  const router =
+    useRoute<RouteProp<AuthorizeParamsList, 'CHECKIN_ORDER_CREATE'>>();
   const type = router.params.type;
   const {t: getLabel, i18n} = useTranslation();
   const userInfo: IUser = useSelector(state => state.app.userProfile);
@@ -144,17 +149,25 @@ const CreateOrder = () => {
   }, [products]);
 
   const total_Discount = useMemo(() => {
+    // return (totalPrice * discountPercent) / 100;
     const discountPercent = Number(percentageLabel.replace(',', '.'));
-    if (totalPrice > 0 && discountPercent > 0) {
-      setDiscount(prevState => ({
-        ...prevState,
-        discount_percentage: discountPercent,
-      }));
-      return (totalPrice * Number(percentageLabel.replace(',', '.'))) / 100;
+    if (products?.length > 0 && discountPercent > 0) {
+      let sum: number = 0;
+      if (discount.value === 'grand') {
+        products.forEach(item => {
+          sum += item.total_item_money;
+        });
+        return sum / discountPercent;
+      } else {
+        products.forEach(item => {
+          sum += item.price * item.quantity - item.discount_item_amount;
+        });
+        return sum / discountPercent;
+      }
     } else {
       return 0;
     }
-  }, [totalPrice, percentageLabel]);
+  }, [products, discount]);
 
   useEffect(() => {
     updateDataProduct(products);
@@ -513,13 +526,25 @@ const CreateOrder = () => {
     (data: IProduct[]) => {
       if (data.length > 0) {
         const newProduct = data.map(item => {
+          const intoMoney =
+            item.price * item.quantity - item.discount_item_amount;
           if (item?.rate_tax_item > 0) {
             if (
               discount.discount_percentage > 0 &&
               discount.value === 'grand'
             ) {
+              const VAT_item_amount = (item.rate_tax_item * intoMoney) / 100; //VAT = VAT * thành tiền
+              return {
+                ...item,
+                total_item_tax: VAT_item_amount,
+                total_item_money: intoMoney + VAT_item_amount,
+              };
+            } else if (
+              discount.discount_percentage > 0 &&
+              discount.value === 'net'
+            ) {
               const VAT_item_amount =
-                (item.rate_tax_item * item.price * item.quantity) / 100; //VAT = VAT * thành tiền
+                ((intoMoney - total_Discount) * item.rate_tax_item) / 100; // VAT(sp) = %VAT x (thành tiền - chiết khấu sp)
               return {
                 ...item,
                 total_item_tax: VAT_item_amount,
@@ -664,7 +689,15 @@ const CreateOrder = () => {
                 <AppInput
                   value={percentageLabel}
                   label={getLabel('discountPercentage')}
-                  onChangeValue={setPercentageLabel}
+                  onChangeValue={text => {
+                    setPercentageLabel(text);
+                    setDiscount({
+                      ...discount,
+                      discount_percentage: Number(
+                        percentageLabel.replace(',', '.'),
+                      ),
+                    });
+                  }}
                   inputProp={{
                     keyboardType: 'numeric',
                     returnKeyType: 'done',
