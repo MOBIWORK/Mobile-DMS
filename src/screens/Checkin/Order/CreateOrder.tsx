@@ -143,12 +143,21 @@ const CreateOrder = () => {
   }, [products]);
 
   const total_Discount = useMemo(() => {
-    if (totalPrice > 0 && Number(percentageLabel.replace(',', '.')) > 0) {
+    const discountPercent = Number(percentageLabel.replace(',', '.'));
+    if (totalPrice > 0 && discountPercent > 0) {
+      setDiscount(prevState => ({
+        ...prevState,
+        discount_percentage: discountPercent,
+      }));
       return (totalPrice * Number(percentageLabel.replace(',', '.'))) / 100;
     } else {
       return 0;
     }
   }, [totalPrice, percentageLabel]);
+
+  useEffect(() => {
+    updateDataProduct(products);
+  }, [discount]);
 
   const total_VAT = useMemo(() => {
     let sum: number = 0;
@@ -488,7 +497,6 @@ const CreateOrder = () => {
 
   useEffect(() => {
     fetchDataWarehouse();
-    // fetchDataVat();
     Keyboard.dismiss();
   }, []);
 
@@ -499,10 +507,6 @@ const CreateOrder = () => {
       fetchProductPromotion();
     }
   }, [dataProductSelected]);
-
-  useEffect(() => {
-    //
-  }, [products, discount]);
 
   const updateDataProduct = useCallback(
     (data: IProduct[]) => {
