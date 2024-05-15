@@ -772,7 +772,14 @@ const CreateOrder = () => {
                   inputProp={{
                     keyboardType: 'numeric',
                     returnKeyType: 'done',
-                    onEndEditing: event => {
+                    // onEndEditing: event => {
+                    //   const txt = event.nativeEvent.text;
+                    //   setDiscount((prev: any) => ({
+                    //     ...prev,
+                    //     discount_percentage: Number(txt.replace(',', '.')),
+                    //   }));
+                    // },
+                    onBlur: event => {
                       const txt = event.nativeEvent.text;
                       setDiscount((prev: any) => ({
                         ...prev,
