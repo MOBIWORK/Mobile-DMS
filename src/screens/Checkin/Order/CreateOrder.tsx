@@ -455,7 +455,6 @@ const CreateOrder = () => {
 
   const handlerRemoveItemProduct = (id: string) => {
     const newProducts = products.filter(item => item.item_code !== id);
-    console.log(newProducts);
     dispatch(productActions.updateProductSelect(newProducts));
     setProducts(newProducts);
   };
@@ -571,7 +570,9 @@ const CreateOrder = () => {
               discount.value === 'net'
             ) {
               const VAT_item_amount =
-                ((intoMoney - total_Discount) * item.rate_tax_item) / 100; // VAT(sp) = %VAT x (thành tiền - chiết khấu sp)
+                (item.rate_tax_item / 100) *
+                (intoMoney - (intoMoney * discount.discount_percentage) / 100);
+              // VAT(sp) = %VAT x (thành tiền - chiết khấu(net))
               return {
                 ...item,
                 total_item_tax: VAT_item_amount,
@@ -718,16 +719,24 @@ const CreateOrder = () => {
                   label={getLabel('discountPercentage')}
                   onChangeValue={text => {
                     setPercentageLabel(text);
-                    setDiscount({
-                      ...discount,
-                      discount_percentage: Number(
-                        percentageLabel.replace(',', '.'),
-                      ),
-                    });
                   }}
                   inputProp={{
                     keyboardType: 'numeric',
                     returnKeyType: 'done',
+                    // onEndEditing: event => {
+                    //   const txt = event.nativeEvent.text;
+                    //   setDiscount((prev: any) => ({
+                    //     ...prev,
+                    //     discount_percentage: Number(txt.replace(',', '.')),
+                    //   }));
+                    // },
+                    onBlur: event => {
+                      const txt = event.nativeEvent.text;
+                      setDiscount((prev: any) => ({
+                        ...prev,
+                        discount_percentage: Number(txt.replace(',', '.')),
+                      }));
+                    },
                   }}
                   rightIcon={<TextInput.Affix text="%" />}
                 />

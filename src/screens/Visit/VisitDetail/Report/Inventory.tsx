@@ -1,12 +1,7 @@
 import React, {FC} from 'react';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {FlatList, StyleSheet, View} from 'react-native';
-import {
-  Accordion,
-  AppContainer,
-  Block,
-  AppText as Text,
-} from '../../../../components/common';
+import {Accordion, Block, AppText as Text} from '../../../../components/common';
 import {
   ReportInventoryType,
   ReportProductInventoryType,
@@ -39,7 +34,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
               }`}
             </Text>
             <Text style={styles.productRightLabel}>
-              {productItem?.quanity ?? 0}
+              {productItem?.quantity ?? 0}
             </Text>
           </View>
 
@@ -111,7 +106,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
 interface InventoryProps {
   inventoryData: ReportInventoryType[];
 }
-export default Inventory;
+export default React.memo(Inventory);
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
     productItemContainer: {
