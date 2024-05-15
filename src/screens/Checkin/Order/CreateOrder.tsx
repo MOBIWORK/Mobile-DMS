@@ -348,7 +348,6 @@ const CreateOrder = () => {
           name: 'new-sales-order-hnnkmtrehm',
           transaction_date: CommonUtils.taskDate(date),
         };
-        console.log('objecData', objecData);
         const {data: res, status}: KeyAbleProps =
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
