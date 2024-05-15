@@ -25,6 +25,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   onChange,
   index = -1,
   onAnimated,
+  enableDynamicSizing = false,
   ...otherProps
 }) => {
   const snapPoints = useMemo(() => ['20%'], []);
@@ -45,7 +46,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   return (
     <Portal hostName={'Bottom-Sheet'}>
       <BottomSheet
-        // enableDynamicSizing={true}
+        enableDynamicSizing={enableDynamicSizing}
         snapPoints={snapPointsCustom ?? snapPoints}
         onClose={onClose}
         ref={bottomSheetRef}
@@ -94,6 +95,7 @@ interface AppBottomSheetProps {
   handleHeight?: number | SharedValue<number>;
   index?: number;
   onAnimated?: (fromIndex?: number, toIndex?: number) => void;
+  enableDynamicSizing?:boolean
 }
 
 export default AppBottomSheet;
