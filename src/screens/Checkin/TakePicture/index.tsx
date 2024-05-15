@@ -57,6 +57,7 @@ const TakePicture = () => {
     state => state.app.dataCheckIn?.listImage,
     shallowEqual,
   );
+  const listImageLength = listImage?.length   || 1
   const [message, setMessage] = useState<number>(0);
   const data = useRef<ImageCheckIn>({
     album_id: '',
@@ -354,7 +355,7 @@ const TakePicture = () => {
           </Block>
           <Block marginTop={16} marginBottom={16}>
             <ProgressCircle
-              percent={listImage?.length / data.current.image.length}
+              percent={listImageLength/ data.current.image.length}
               radius={50}
               borderWidth={12}
               color={theme.colors.success}

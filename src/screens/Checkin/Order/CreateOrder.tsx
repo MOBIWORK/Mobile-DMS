@@ -74,7 +74,6 @@ const CreateOrder = () => {
   const styles = createSheetStyle(useTheme());
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetWh = useRef<BottomSheet>(null);
-  const snapPointDetail = useMemo(() => ['70%'], []);
   const router = useRoute<RouteProp<AuthorizeParamsList,'CHECKIN_ORDER_CREATE'>>();
   const type = router.params.type;
   const {t: getLabel, i18n} = useTranslation();
