@@ -41,9 +41,6 @@ const ListFilterAdding = (props: Props) => {
   const customerType: ListCustomerType[] = useSelector(
     state => state.customer.listCustomerType,
   );
-  const listTerritory: ListCustomerTerritory[] = useSelector(
-    state => state.customer.listCustomerTerritory,
-  );
 
   const listRoute: ListCustomerRoute[] = useSelector(
     state => state.customer.listCustomerRoute,

@@ -71,63 +71,12 @@ const FormAdding = (props: Props) => {
   );
 
   const [_, setValue] = useState<string>('');
-  const mapboxCameraRef = useRef<CameraRef>(null);
+
   const [isPending, startTransition] = useTransition();
-  const handleMarkerMap = async (lat: number, lng: number) => {
-    setLocation({
-      // @ts-ignore
-      coords: {
-        latitude: lat,
-        longitude: lng,
-      },
-    });
-    setData(prev => ({...prev, latitude: lat, longitude: lng}));
-    const response: KeyAbleProps = await AppService.getDetailLocation(lat, lng);
-    if (response.status === ApiConstant.STT_OK || 'OK') {
-      setValue(response.results[0].formatted_address);
-    }
-  };
+ 
 
-  const handleRegainLocation = () => {
-    CommonUtils.getCurrentLocation(cur_location => {
-      setLocation(cur_location);
-      mapboxCameraRef.current &&
-        mapboxCameraRef.current.moveTo(
-          [cur_location.coords.longitude, cur_location.coords.latitude],
-          1000,
-        );
-      setData(prev => ({
-        ...prev,
-        latitude: cur_location.coords.latitude,
-        longitude: cur_location.coords.longitude,
-      }));
-    });
-  };
 
-  const handleSearchText = async (text: string) => {
-    if (text) {
-      await CommonUtils.CheckNetworkState();
-      const response: KeyAbleProps = await AppService.autocompleteGeoLocation(
-        text,
-      );
-      if (response.status === ApiConstant.STT_OK || 'OK') {
-        const geometry: any = response.results[0].geometry;
-        setLocation({
-          // @ts-ignore
-          coords: {
-            longitude: geometry.location.lng,
-            latitude: geometry.location.lat,
-          },
-        });
-        setValue(response.results[0].formatted_address);
-        setData(prev => ({
-          ...prev,
-          latitude: geometry.location.latitude,
-          longitude: geometry.location.longitude,
-        }));
-      }
-    }
-  };
+  
 
   
 
