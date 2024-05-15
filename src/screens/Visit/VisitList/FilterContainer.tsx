@@ -35,14 +35,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
   const {t: getLabel} = useTranslation();
   const {bottom} = useSafeAreaInsets();
   const snapPoints = useMemo(() => ['100%'], []);
-  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
-
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+  // const initialSnapPoints = useMemo(() => [''], []);
 
   const [filterType, setFilterType] = useState<string>(
     AppConstant.VisitFilterType.channel,
@@ -78,7 +71,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
           }
           backButtonIcon={
             <SvgIcon
-              source='Close'
+              source="Close"
               // name={'close'}
               size={24}
               color={colors.text_primary}
@@ -168,13 +161,11 @@ const FilterContainer: FC<FilterContainerProps> = ({
       </AppBottomSheet>
       <AppBottomSheet
         bottomSheetRef={filterRef}
-        snapPointsCustom={animatedSnapPoints}
+        enableDynamicSizing={true}
+        // snapPointsCustom={animatedSnapPoints}
         // @ts-ignore
-        handleHeight={animatedHandleHeight}
-        contentHeight={animatedContentHeight}>
-        <BottomSheetScrollView
-          style={{paddingBottom: bottom + 16}}
-          onLayout={handleContentLayout}>
+        handleHeight={animatedHandleHeight}>
+        <BottomSheetScrollView style={{paddingBottom: bottom + 16}}>
           <ListFilterItem
             filterRef={filterRef}
             type={filterType}

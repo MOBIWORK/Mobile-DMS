@@ -731,7 +731,6 @@ const ListVisit = () => {
       detailAdd?: any,
     ) => {
       // let log: LocationProps = JSON.parse(item.customer_location_primary!);
-      console.log(item.customer_name, 'name');
       let uniqueID = generateRandomObjectId();
       CommonUtils.getCurrentLocation(
         location => {

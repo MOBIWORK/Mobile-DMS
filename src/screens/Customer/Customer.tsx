@@ -150,7 +150,7 @@ const Customer = () => {
           : distance2 - distance1;
       });
     },
-    [listCustomer.length],
+    [listCustomer?.length],
   );
 
   const onRefreshData = useCallback(async () => {
@@ -176,7 +176,7 @@ const Customer = () => {
     startTransition(() => {
       if (mounted.current) {
         handleBackgroundLocation();
-        if (listCustomer && listCustomer.length > 0) {
+        if (listCustomer && listCustomer?.length > 0) {
           const filteredData = listCustomer.filter(
             item => item.customer_location_primary != null,
           );
@@ -214,6 +214,7 @@ const Customer = () => {
       valueFilter.customerType === getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
+      console.log('run get label 1')
       const newData1 = listCustomer?.filter(
         item => item.customer_type === valueFilter.customerType,
       );
@@ -224,6 +225,8 @@ const Customer = () => {
       valueFilter.customerType !== getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
+      console.log('run get label 2')
+
       const newData2 = listCustomer?.filter(
         item =>
           item.customer_group === valueFilter.customerGroupType &&
@@ -235,6 +238,8 @@ const Customer = () => {
       valueFilter.customerType === getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
+      console.log('run get label 3')
+
       const newData3 = listCustomer?.filter(
         item => item.customer_group === valueFilter.customerGroupType,
       );

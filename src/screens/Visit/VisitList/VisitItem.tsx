@@ -77,7 +77,7 @@ const VisitItem: FC<VisitItemProps> = ({
     [item],
   );
 
-  // console.log(systemConfig.vt_ngoaituyen,item.is_route,'vt ngoai tuyen')
+  console.log(systemConfig.vt_ngoaituyen,item.is_route,'vt ngoai tuyen')
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>

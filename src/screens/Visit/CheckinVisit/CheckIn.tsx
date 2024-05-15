@@ -1,11 +1,5 @@
-import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-  useTransition,
-} from 'react';
+import {AppState, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
   AppText as Text,
@@ -50,17 +44,36 @@ import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-
+import { AppStateStatus } from 'react-native';
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
 
   useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        intervalIdRef.current = setInterval(() => {
+          setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+        }, 1000); // Update every 1 second
+      } else {
+        clearInterval(intervalIdRef.current);
+      }
+    };
+
+    const subcription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+
+    // Start the timer when the component mounts
     intervalIdRef.current = setInterval(() => {
       setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
     }, 1000); // Update every 1 second
 
-    return () => clearInterval(intervalIdRef.current);
+    return () => {
+      clearInterval(intervalIdRef.current);
+      subcription.remove();
+    };
   }, []);
 
   return elapsedTime;
