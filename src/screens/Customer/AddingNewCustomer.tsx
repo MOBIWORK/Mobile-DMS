@@ -10,6 +10,7 @@ import React, {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useReducer,
   useRef,
   useState,
 } from 'react';
@@ -33,7 +34,7 @@ import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation/screen-type';
-import {IDataCustomer} from '../../models/types';
+import {DataCustomersUpdate, IDataCustomer} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
@@ -55,23 +56,27 @@ import {
 } from '../../redux-store/app-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import Modal from 'react-native-modal';
+
+function listDataReducer(newState: any, oldState: any) {
+  return {...newState, ...oldState};
+}
+
 const AddingNewCustomer = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const [valueFilter, setValueFilter] = React.useState<IValueType>({
+  const initValueState = useRef<IValueType>({
     customerType: 'Cá nhân',
     customerGroupType: '',
     customerBirthday: 'Tất cả',
   });
-
-  const [location, setLocation] = useState<GeolocationResponse | null>(null);
-  const [modalAddress, setModalAddress] = useState(false);
-  const [imageSource, setImageSource] = useState<string | undefined>('');
-  const [date, setDate] = useState<Date>();
-  const [listData, setListData] = useState<IDataCustomer>({
+  const [valueFilter, setValueFilter] = useReducer(
+    listDataReducer,
+    initValueState.current,
+  );
+  const initStateData = useRef<IDataCustomer>({
     customer_code: '',
     customer_name: '',
     customer_type: '',
@@ -79,6 +84,14 @@ const AddingNewCustomer = () => {
     territory: '',
     custom_birthday: new Date().getTime(),
   });
+
+  const [location, setLocation] = useState<GeolocationResponse | null>(null);
+  const [modalAddress, setModalAddress] = useState(false);
+  const [imageSource, setImageSource] = useState<string | undefined>('');
+  const [date, setDate] = useState<Date>();
+  const [listData, setListData] = useState<IDataCustomer>(
+    initStateData.current,
+  );
   const [openDate, setOpenDate] = React.useState<boolean>(false);
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
@@ -99,62 +112,56 @@ const AddingNewCustomer = () => {
   const filterRef = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
-  console.log(mainAddress,'mainAddress')
-
   const onPressAdding = async (newListData: IDataCustomer) => {
     let address: MainAddress = mainAddress;
     let contact: MainContactAddress = mainContactAddress;
-    const updateListData: IDataCustomer = {
-      ...newListData,
-      frequency: newListData?.frequency
-        ? newListData.frequency.toString().replaceAll(',', ';')
-        : '',
-      customer_type:
-        newListData.customer_type === getLabel('individual')
-          ? 'Individual'
-          : 'Company',
-      address_title_cus:
-        Object.keys(address).length > 0
+    const updateListData: DataCustomersUpdate = {
+      // ...newListData,
+      router: {
+        frequency: newListData?.frequency
+          ? newListData.frequency.toString().replaceAll(',', ';')
+          : '',
+        router_name: newListData?.router_name?.[1] || '',
+      },
+      address: {
+        longitude: newListData.longitude || 0,
+        latitude: newListData.latitude || 0,
+        address_title: Object.keys(address).length > 0
           ? `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`
           : '',
-      address_type_cus: Object.keys(address).length > 0 ? 'Billing' : '',
-      detail_address_cus:
-        Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
-      ward_cus:
-        Object.keys(address).length > 0 ? String(address?.ward?.id) : '',
-      district_cus:
-        Object.keys(address).length > 0 ? String(address?.district?.id) : '',
-      province_cus:
-        Object.keys(address).length > 0 ? String(address?.city?.id) : '',
-      is_primary_address:
-        Object.keys(address).length > 0 ? address.addressOrder : false,
-      is_shipping_address:
-        Object.keys(address).length > 0 ? address.addressGet : false,
-      phone: contact?.phoneNumber ?? '',
-      adr_title_contact:
-        Object.keys(contact).length > 0
-          ? `${newListData.customer_name} contact`
-          : '',
-      detail_adr_contact:
-        Object.keys(contact).length > 0
+        address_type: 'Billing',
+        address_line1: Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
+        city: Object.keys(address).length > 0 ? String(address?.city?.id) : '',
+        county: Object.keys(address).length > 0 ? String(address?.district?.id) : '',
+        state: Object.keys(address).length > 0 ? String(address?.ward?.id) : '',
+        is_primary_address: Object.keys(address).length > 0 ? address.addressOrder : false,
+        is_shipping_address: Object.keys(address).length > 0 ? address.addressGet : false,
+      },
+      contact: {
+        address_title: Object.keys(contact).length > 0
           ? `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`
           : '',
-      ward_contact:
-        Object.keys(contact).length > 0 ? String(contact?.ward?.id) : '',
-      district_contact:
-        Object.keys(contact).length > 0 ? String(contact?.district?.id) : '',
-      province_contact:
-        Object.keys(contact).length > 0 ? String(contact?.city?.id) : '',
-      first_name: contact?.nameContact ?? '',
-      router_name: newListData?.router_name?.[1] ?? '',
+        address_line1: Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
+        first_name: contact?.nameContact || '',
+        phone: contact?.phoneNumber || '',
+        city: Object.keys(contact).length > 0 ? String(contact?.city?.id) : '',
+        county: Object.keys(contact).length > 0 ? String(contact?.district?.id) : '',
+        state: Object.keys(contact).length > 0 ? String(contact?.ward?.id) : '',
+      },
+
+      customer_type: newListData.customer_type === getLabel('individual')
+        ? 'Individual'
+        : 'Company',
+
       website: newListData.website ?? '',
-      longitude: newListData.longitude ?? 105.782548,
-      latitude: newListData.latitude ?? 21.058045,
+
       custom_birthday: newListData.custom_birthday
         ? newListData.custom_birthday / 1000
         : new Date().getTime() / 1000,
+      customer_code: newListData.customer_code || '',
+      customer_name: newListData.customer_name || '',
+      customer_group: newListData.customer_group || ''
     };
-    console.log('updateListData', updateListData);
 
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
@@ -182,7 +189,7 @@ const AddingNewCustomer = () => {
       // Handle the selected image, e.g., set it to state
       cameraBottomRef.current?.close();
       setImageSource(base64);
-      setListData(prevState => ({...prevState, faceimage: base64}));
+      setListData((prevState: any) => ({...prevState, faceimage: base64}));
     });
   };
 
@@ -191,7 +198,7 @@ const AddingNewCustomer = () => {
       // Handle the selected image, e.g., set it to state
       cameraBottomRef.current?.close();
       setImageSource('data:image/jpeg;base64,' + base64);
-      setListData(prevState => ({
+      setListData((prevState: any) => ({
         ...prevState,
         faceimage: `data:image/jpeg;base64,${base64}`,
       }));
@@ -262,7 +269,9 @@ const AddingNewCustomer = () => {
           </TouchableOpacity>
         </View>
         <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
-          <BottomSheetScrollView showsVerticalScrollIndicator={false}  removeClippedSubviews={true}  >
+          <BottomSheetScrollView
+            showsVerticalScrollIndicator={false}
+            removeClippedSubviews={true}>
             <ListFilterAdding
               type={typeFilter}
               filterRef={filterRef}
@@ -337,7 +346,6 @@ const AddingNewCustomer = () => {
           style={styles.modal}
           backdropColor="white"
           backdropOpacity={1}
-          
           onBackButtonPress={() => setModalAddress(false)}
           onBackdropPress={() => setModalAddress(false)}>
           <Block block>
@@ -403,6 +411,6 @@ const rootStyles = (theme: AppTheme) =>
       width: '100%',
       height: '100%',
       marginVertical: 0,
-      paddingHorizontal:16
+      paddingHorizontal: 16,
     } as ViewStyle,
   });

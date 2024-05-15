@@ -28,7 +28,7 @@ const ListCard = (props: Props) => {
       decelerationRate={'fast'}
       onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}
-      onEndReachedThreshold={0.5}
+      onEndReachedThreshold={0}
       maxToRenderPerBatch={10}
       updateCellsBatchingPeriod={5}
       windowSize={21}

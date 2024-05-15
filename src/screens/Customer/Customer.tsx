@@ -45,6 +45,16 @@ import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
+import {getLabel} from '../../language';
+
+function simpleReducer(currentState: any, newState: any) {
+  return {...currentState, ...newState};
+}
+const initialState: IValueType = {
+  customerType: getLabel('all'),
+  customerGroupType: getLabel('all'),
+  customerBirthday: getLabel('all'),
+};
 
 export type IValueType = {
   customerType: string;
@@ -90,12 +100,11 @@ const Customer = () => {
     firstModal: false,
     secondModal: false,
   });
-  const [valueFilter, setValueFilter] = React.useState<IValueType>({
-    customerType: getLabel('all'),
-    customerGroupType: getLabel('all'),
-    customerBirthday: getLabel('all'),
-  });
-
+  const [valueFilter, setValueFilter] = React.useReducer(
+    simpleReducer,
+    initialState,
+  );
+//  console.log(listCustomerResult,'listCustomer')
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
@@ -151,17 +160,17 @@ const Customer = () => {
   );
 
   const onRefreshData = useCallback(async () => {
-    if (mounted.current) {
-      try {
-        dispatch(onLoadApp());
-        dispatch(customerActions.onGetCustomer());
-      } catch (er) {
-        console.log('errDispatch: ', er);
-      } finally {
-        dispatch(onLoadAppEnd());
-      }
+    console.log('run refresh');
+
+    try {
+      dispatch(onLoadApp());
+      dispatch(customerActions.onGetCustomer());
+    } catch (er) {
+      console.log('errDispatch: ', er);
+    } finally {
+      dispatch(onLoadAppEnd());
     }
-  }, [dispatch, appLoading]);
+  }, [dispatch, appLoading, mounted]);
 
   React.useEffect(() => {
     if (isFocus) {
@@ -170,7 +179,7 @@ const Customer = () => {
     }
   }, [isFocus]);
 
-// console.log(customerData,'data')
+  // console.log(customerData,'data')
   React.useEffect(() => {
     mounted.current = true;
     startTransition(() => {
@@ -254,12 +263,13 @@ const Customer = () => {
   };
 
   const onEndReachedThreshold = useCallback(() => {
+    console.log('end reached', page, totalPage);
     if (page <= totalPage.current) {
       dispatch(customerActions.getCustomerNewPage(page + 1));
     } else {
       return null;
     }
-  }, [listCustomerResult, dispatch]);
+  }, [page]);
 
   const renderBottomView = React.useCallback(() => {
     return (

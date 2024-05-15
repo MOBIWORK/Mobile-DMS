@@ -60,15 +60,14 @@ const DetailCustomer = () => {
   const mounted = useRef<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log(data,'data')
-
   useEffect(() => {
     setLoading(true);
     const getDetailCustomer = async () => {
       try {
         let res: any = await CustomerService.getCustomerDetail(
-          params.data.customer_name,
+          params.data.name,
         );
+        console.log(res,'res detail cust')
         if (res.message === 'ok' || Object.keys(res.result).length > 0) {
           setData(res.result);
         }

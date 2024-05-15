@@ -130,7 +130,7 @@ const FormAdding = (props: Props) => {
   };
 
   
-console.log(mainAddress,mainContactAddress,'v')
+
   useEffect(() => {
     if (location?.coords) {
       AppService.getDetailLocation(
@@ -175,6 +175,7 @@ console.log(mainAddress,mainContactAddress,'v')
         styles={{marginBottom: 20}}
         onChangeValue={text =>
           startTransition(() => {
+            
             setData(prev => ({...prev, customer_name: text}));
           })
         }
