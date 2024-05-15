@@ -257,7 +257,7 @@ export type ReportProductInventoryType = {
   item_name: string;
   item_unit: string;
   item_price: number;
-  quanity: number;
+  quantity: number;
   exp_time: string;
   update_at: string;
   update_byname: string;
@@ -391,49 +391,48 @@ export interface DetailCustomerType {
 }
 
 export type AddressUpdate = {
-  latitude: number
-  longitude: number
-  address_title: string
-  address_type: string
-  address_line1: string
-  city: string
-  county: string
-  state: string
-  is_primary_address: boolean
-  is_shipping_address: boolean
-}
+  latitude: number;
+  longitude: number;
+  address_title: string;
+  address_type: string;
+  address_line1: string;
+  city: string;
+  county: string;
+  state: string;
+  is_primary_address: boolean;
+  is_shipping_address: boolean;
+};
 export type ContactUpdate = {
-  address_title: string
-  address_line1: string
-  first_name: string
-  phone: string
-  city: string
-  county: string
-  state: string
-}
+  address_title: string;
+  address_line1: string;
+  first_name: string;
+  phone: string;
+  city: string;
+  county: string;
+  state: string;
+};
 
 export interface RouterUpdate {
-  router_name: string
-  frequency: string
+  router_name: string;
+  frequency: string;
 }
 export type DataCustomersUpdate = {
-  customer_code: string
-  customer_name: string
-  customer_group: string
-  territory?: string
-  customer_details?: string
-  website?: string
-  custom_birthday: number
-  customer_type: string
+  customer_code: string;
+  customer_name: string;
+  customer_group: string;
+  territory?: string;
+  customer_details?: string;
+  website?: string;
+  custom_birthday: number;
+  customer_type: string;
   // faceimage?: string
-  company?: string
-  credit_limit?: string
-  address: AddressUpdate
-  contact: ContactUpdate
-  router: RouterUpdate,
-  image?:any
-}
-
+  company?: string;
+  credit_limit?: string;
+  address: AddressUpdate;
+  contact: ContactUpdate;
+  router: RouterUpdate;
+  image?: any;
+};
 
 export interface ContactCustomer {
   first_name: string;

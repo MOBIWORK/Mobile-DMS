@@ -159,12 +159,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
           />
         </View>
       </AppBottomSheet>
-      <AppBottomSheet
-        bottomSheetRef={filterRef}
-        enableDynamicSizing={true}
-        // snapPointsCustom={animatedSnapPoints}
-        // @ts-ignore
-        handleHeight={animatedHandleHeight}>
+      <AppBottomSheet bottomSheetRef={filterRef} enableDynamicSizing={true}>
         <BottomSheetScrollView style={{paddingBottom: bottom + 16}}>
           <ListFilterItem
             filterRef={filterRef}
