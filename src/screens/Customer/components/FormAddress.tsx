@@ -7,7 +7,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useMemo} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TextInput} from 'react-native-paper';
 import {
@@ -102,6 +102,11 @@ const FormAddress = (props: Props) => {
       label: getLabel('setOrderAddress'),
     },
   ]);
+
+  const isValidAddress = useMemo(() => {
+    console.log(addressSelectedData.length, txtAddressDetail);
+    return addressSelectedData?.length === 3 && txtAddressDetail !== '';
+  }, [addressSelectedData, txtAddressDetail]);
 
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
@@ -322,7 +327,7 @@ const FormAddress = (props: Props) => {
             />
           </View>
 
-          <View style={styles.buttonView}>
+          <View style={[styles.buttonView, {marginBottom: 24}]}>
             <TouchableOpacity
               style={styles.buttonStyle}
               onPress={() => onPressButtonGetLocation()}>
@@ -337,177 +342,176 @@ const FormAddress = (props: Props) => {
             </TouchableOpacity>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-              <AppInput
-                label={`${getLabel('province')}/${getLabel('city')}`}
-                contentStyle={styles.contentStyle(
-                  addressValue?.city?.value ?? '',
-                  '',
-                )}
-                onPress={() => {
-                  setScreen('Adding');
-                  setAddressSelectedData([]);
-                }}
-                value={addressValue?.city?.value ?? ''}
-                editable={false}
-                hiddenRightIcon={false}
-                styles={styles.marginInputView}
-                rightIcon={
-                  <TextInput.Icon
-                    icon={'chevron-down'}
-                    style={styles.iconStyle}
-                    color={theme.colors.text_secondary}
-                  />
-                }
-              />
-              <AppInput
-                label={getLabel('district')}
-                value={addressValue?.district?.value ?? ''}
-                editable={false}
-                onPress={() => {
-                  setScreen('Adding');
-                  const newData = addressSelectedData.filter(
-                    item => item.type === AddressType.city,
-                  );
-                  setAddressSelectedData(newData);
-                }}
-                contentStyle={styles.contentStyle(
-                  addressValue?.district?.value ?? '',
-                  '',
-                )}
-                styles={styles.marginInputView}
-                rightIcon={
-                  <TextInput.Icon
-                    icon={'chevron-down'}
-                    style={styles.iconStyle}
-                    color={theme.colors.text_secondary}
-                  />
-                }
-              />
-              <AppInput
-                label={getLabel('ward')}
-                value={addressValue?.ward?.value ?? ''}
-                editable={false}
-                contentStyle={styles.contentStyle(
-                  addressValue?.ward?.value ?? '',
-                  '',
-                )}
-                onPress={() => {
-                  setScreen('Adding');
-                  const newData = addressSelectedData.filter(
-                    item => item.type !== AddressType.district,
-                  );
-                  setAddressSelectedData(newData);
-                }}
-                styles={styles.marginInputView}
-                rightIcon={
-                  <TextInput.Icon
-                    icon={'chevron-down'}
-                    style={styles.iconStyle}
-                    color={theme.colors.text_secondary}
-                  />
-                }
-              />
-              <AppInput
-                label={getLabel('address')}
-                value={txtAddressDetail}
-                editable={true}
-                contentStyle={styles.contentStyle(
-                  addressValue.detailAddress ?? '',
-                  '',
-                )}
-                styles={
-                  addressValue.detailAddress === getLabel('addressDetail')
-                    ? styles.marginInputView
-                    : styles.containInput
-                }
-                hiddenRightIcon={true}
-                onChangeValue={setTxtAddressDetail}
-              />
-              <Block style={styles.checkBoxRootView}>
-                {listCheckBox.current.map(item => {
-                  return (
-                    <View key={item.id}>
-                      <TouchableOpacity
-                        onPress={() => {
+            <AppInput
+              label={`${getLabel('province')}/${getLabel('city')}`}
+              contentStyle={styles.contentStyle(
+                addressValue?.city?.value ?? '',
+                '',
+              )}
+              onPress={() => {
+                setScreen('Adding');
+                setAddressSelectedData([]);
+              }}
+              value={addressValue?.city?.value ?? ''}
+              editable={false}
+              hiddenRightIcon={false}
+              styles={styles.marginInputView}
+              rightIcon={
+                <TextInput.Icon
+                  icon={'chevron-down'}
+                  style={styles.iconStyle}
+                  color={theme.colors.text_secondary}
+                />
+              }
+            />
+            <AppInput
+              label={getLabel('district')}
+              value={addressValue?.district?.value ?? ''}
+              editable={false}
+              onPress={() => {
+                setScreen('Adding');
+                const newData = addressSelectedData.filter(
+                  item => item.type === AddressType.city,
+                );
+                setAddressSelectedData(newData);
+              }}
+              contentStyle={styles.contentStyle(
+                addressValue?.district?.value ?? '',
+                '',
+              )}
+              styles={styles.marginInputView}
+              rightIcon={
+                <TextInput.Icon
+                  icon={'chevron-down'}
+                  style={styles.iconStyle}
+                  color={theme.colors.text_secondary}
+                />
+              }
+            />
+            <AppInput
+              label={getLabel('ward')}
+              value={addressValue?.ward?.value ?? ''}
+              editable={false}
+              contentStyle={styles.contentStyle(
+                addressValue?.ward?.value ?? '',
+                '',
+              )}
+              onPress={() => {
+                setScreen('Adding');
+                const newData = addressSelectedData.filter(
+                  item => item.type !== AddressType.district,
+                );
+                setAddressSelectedData(newData);
+              }}
+              styles={styles.marginInputView}
+              rightIcon={
+                <TextInput.Icon
+                  icon={'chevron-down'}
+                  style={styles.iconStyle}
+                  color={theme.colors.text_secondary}
+                />
+              }
+            />
+            <AppInput
+              label={getLabel('address')}
+              value={txtAddressDetail}
+              editable={true}
+              contentStyle={styles.contentStyle(
+                addressValue.detailAddress ?? '',
+                '',
+              )}
+              styles={
+                addressValue.detailAddress === getLabel('addressDetail')
+                  ? styles.marginInputView
+                  : styles.containInput
+              }
+              hiddenRightIcon={true}
+              onChangeValue={setTxtAddressDetail}
+            />
+            <Block style={styles.checkBoxRootView}>
+              {listCheckBox.current.map(item => {
+                return (
+                  <View key={item.id}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        item.id === '1'
+                          ? setAddressValue(prev => ({
+                              ...prev,
+                              addressGet: !addressValue.addressGet,
+                            }))
+                          : setAddressValue(prev => ({
+                              ...prev,
+                              addressOrder: !addressValue.addressOrder,
+                            }));
+                      }}
+                      style={styles.checkBoxView}>
+                      <View
+                        style={
                           item.id === '1'
-                            ? setAddressValue(prev => ({
-                                ...prev,
-                                addressGet: !addressValue.addressGet,
-                              }))
-                            : setAddressValue(prev => ({
-                                ...prev,
-                                addressOrder: !addressValue.addressOrder,
-                              }));
-                        }}
-                        style={styles.checkBoxView}>
-                        <View
-                          style={
-                            item.id === '1'
-                              ? styles.boxIconGo(addressValue.addressGet)
-                              : styles.boxIconOrder(addressValue.addressOrder)
-                          }>
-                          {addressValue.addressGet ||
-                          addressValue.addressOrder ? (
-                            <AppIcons
-                              iconType={AppConstant.ICON_TYPE.EntypoIcon}
-                              size={14}
-                              color={theme.colors.white}
-                              name="check"
-                            />
-                          ) : null}
-                        </View>
-                        <AppText>
-                          {'   '}
-                          {item.label}
-                        </AppText>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })}
-              </Block>
-              <Block style={styles.mapView}>
-                <Mapbox.MapView
-                  pitchEnabled={false}
-                  attributionEnabled={false}
-                  scaleBarEnabled={false}
-                  scrollEnabled={true}
-                  styleURL={Mapbox.StyleURL.Street}
-                  logoEnabled={false}
-                  style={{flex: 1}}>
-                  <Mapbox.RasterSource
-                    id="adminmap"
-                    tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-                    <Mapbox.RasterLayer
-                      id={'adminmap'}
-                      sourceID={'admin'}
-                      style={{visibility: 'visible'}}
-                    />
-                  </Mapbox.RasterSource>
+                            ? styles.boxIconGo(addressValue.addressGet)
+                            : styles.boxIconOrder(addressValue.addressOrder)
+                        }>
+                        {addressValue.addressGet ||
+                        addressValue.addressOrder ? (
+                          <AppIcons
+                            iconType={AppConstant.ICON_TYPE.EntypoIcon}
+                            size={14}
+                            color={theme.colors.white}
+                            name="check"
+                          />
+                        ) : null}
+                      </View>
+                      <AppText>
+                        {'   '}
+                        {item.label}
+                      </AppText>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
+            </Block>
+            <Block style={styles.mapView}>
+              <Mapbox.MapView
+                pitchEnabled={false}
+                attributionEnabled={false}
+                scaleBarEnabled={false}
+                scrollEnabled={true}
+                styleURL={Mapbox.StyleURL.Street}
+                logoEnabled={false}
+                style={{flex: 1}}>
+                <Mapbox.RasterSource
+                  id="adminmap"
+                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                  <Mapbox.RasterLayer
+                    id={'adminmap'}
+                    sourceID={'admin'}
+                    style={{visibility: 'visible'}}
+                  />
+                </Mapbox.RasterSource>
 
-                  {location?.coords && (
-                    <>
-                      <Mapbox.Camera
-                        // ref={mapboxCameraRef}
-                        centerCoordinate={[
-                          location?.coords.longitude ?? 105.7750996,
-                          location?.coords.latitude ?? 21.0564114,
-                        ]}
-                        animationMode={'flyTo'}
-                        animationDuration={300}
-                        zoomLevel={13}
-                      />
-                      <Mapbox.MarkerView
-                        coordinate={[
-                          Number(location?.coords.longitude),
-                          Number(location?.coords.latitude),
-                        ]}>
-                        <SvgIcon source={'LocationCheckIn'} size={40} />
-                      </Mapbox.MarkerView>
-                    </>
-                  )}
-                </Mapbox.MapView>
-              </Block>
-            
+                {location?.coords && (
+                  <>
+                    <Mapbox.Camera
+                      // ref={mapboxCameraRef}
+                      centerCoordinate={[
+                        location?.coords.longitude ?? 105.7750996,
+                        location?.coords.latitude ?? 21.0564114,
+                      ]}
+                      animationMode={'flyTo'}
+                      animationDuration={300}
+                      zoomLevel={13}
+                    />
+                    <Mapbox.MarkerView
+                      coordinate={[
+                        Number(location?.coords.longitude),
+                        Number(location?.coords.latitude),
+                      ]}>
+                      <SvgIcon source={'LocationCheckIn'} size={40} />
+                    </Mapbox.MarkerView>
+                  </>
+                )}
+              </Mapbox.MapView>
+            </Block>
           </ScrollView>
           <View style={styles.containButtonBottom(typeFilter)}>
             <View style={styles.containContentButton}>
@@ -521,7 +525,15 @@ const FormAddress = (props: Props) => {
                 <AppText style={styles.restartText}>Hủy</AppText>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.buttonApply}
+                style={[
+                  styles.buttonApply,
+                  {
+                    backgroundColor: isValidAddress
+                      ? theme.colors.primary
+                      : theme.colors.bg_disable,
+                  },
+                ]}
+                disabled={!isValidAddress}
                 onPress={handleSaveMainAddress}>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
@@ -688,7 +700,7 @@ const FormAddress = (props: Props) => {
   );
 };
 
-export default React.memo(FormAddress,isEqual);
+export default React.memo(FormAddress, isEqual);
 
 const rootStyles = (theme: AppTheme, getLabel: any) =>
   StyleSheet.create({
@@ -728,10 +740,7 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
     } as ViewStyle,
     contentStyle: (text: string, label: string) =>
       ({
-        color:
-          text !== label
-            ? theme.colors.text_primary
-            : theme.colors.text_disable,
+        color: theme.colors.text_primary,
         fontSize: 16,
         fontWeight: '400',
         lineHeight: 24,

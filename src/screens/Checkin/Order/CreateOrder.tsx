@@ -144,12 +144,21 @@ const CreateOrder = () => {
   }, [products]);
 
   const total_Discount = useMemo(() => {
-    if (totalPrice > 0 && Number(percentageLabel.replace(',', '.')) > 0) {
+    const discountPercent = Number(percentageLabel.replace(',', '.'));
+    if (totalPrice > 0 && discountPercent > 0) {
+      setDiscount(prevState => ({
+        ...prevState,
+        discount_percentage: discountPercent,
+      }));
       return (totalPrice * Number(percentageLabel.replace(',', '.'))) / 100;
     } else {
       return 0;
     }
   }, [totalPrice, percentageLabel]);
+
+  useEffect(() => {
+    updateDataProduct(products);
+  }, [discount]);
 
   const total_VAT = useMemo(() => {
     let sum: number = 0;
@@ -351,7 +360,6 @@ const CreateOrder = () => {
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
           const result: any = res.result;
-          console.log('result', result);
           const newDataSelected = dataProductSelected.map((item, index) => {
             const element = result[index];
             if (item.item_code === element.item_code) {
@@ -426,12 +434,8 @@ const CreateOrder = () => {
   }, [productDetail]);
 
   const isDisabled = useMemo(() => {
-    if (!warehouse || warehouse?.value === '' || products.length === 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [warehouse]);
+    return !warehouse || warehouse?.value === '' || products.length === 0;
+  }, [warehouse, products]);
 
   const onConfirmSingle = React.useCallback<SingleChange>(
     params => {
@@ -455,6 +459,7 @@ const CreateOrder = () => {
       rate: item.price,
       uom: item.stock_uom,
       discount_percentage: item.discount_item_percent,
+      item_tax_template: item.rate_tax_item,
     }));
     const objectData: any = {
       set_warehouse: warehouse?.value,
@@ -493,7 +498,6 @@ const CreateOrder = () => {
 
   useEffect(() => {
     fetchDataWarehouse();
-    // fetchDataVat();
     Keyboard.dismiss();
   }, []);
 
@@ -504,10 +508,6 @@ const CreateOrder = () => {
       fetchProductPromotion();
     }
   }, [dataProductSelected]);
-
-  useEffect(() => {
-    //
-  }, [products, discount]);
 
   const updateDataProduct = useCallback(
     (data: IProduct[]) => {

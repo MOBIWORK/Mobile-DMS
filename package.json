@@ -26,7 +26,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@reduxjs/toolkit": "^2.0.1",
-    "@rnmapbox/maps": "^10.1.1",
+    "@rnmapbox/maps": "10.1.23",
     "apisauce": "^3.0.1",
     "appcenter": "5.0.0",
     "appcenter-analytics": "5.0.0",

@@ -271,6 +271,7 @@ const CheckIn = () => {
   };
 
   const onCheckout = useCallback(async () => {
+    dispatch(appActions.setProcessingStatus(true));
     CommonUtils.getCurrentLocation(locations => {
       if (!isValidCheckOut(locations)) {
         return;
@@ -288,10 +289,12 @@ const CheckIn = () => {
             }),
           );
         } catch (e) {
+          dispatch(appActions.setProcessingStatus(false));
           console.log('err', e);
         } finally {
           dispatch(checkinActions.resetData());
           dispatch(appActions.setDataCheckIn({}));
+          dispatch(appActions.setProcessingStatus(false));
         }
       }
     });
