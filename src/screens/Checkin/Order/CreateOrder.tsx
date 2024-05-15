@@ -164,7 +164,6 @@ const CreateOrder = () => {
   }, [products]);
 
   const total_Discount = useMemo(() => {
-    // return (totalPrice * discountPercent) / 100;
     const discountPercent = Number(percentageLabel.replace(',', '.'));
     if (products?.length > 0 && discountPercent > 0) {
       let sum: number = 0;
@@ -172,12 +171,12 @@ const CreateOrder = () => {
         products.forEach(item => {
           sum += item.total_item_money;
         });
-        return sum / discountPercent;
+        return (sum * discountPercent) / 100;
       } else {
         products.forEach(item => {
           sum += item.price * item.quantity - item.discount_item_amount;
         });
-        return sum / discountPercent;
+        return (sum * discountPercent) / 100;
       }
     } else {
       return 0;
