@@ -37,6 +37,7 @@ const ContentItemView = (props: Props) => {
     },
     [i18n.language, appTheme],
   );
+  
 
   return (
     <View style={styles.container}>

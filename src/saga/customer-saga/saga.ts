@@ -122,7 +122,8 @@ export function* getMoreDataCustomer(action: PayloadAction) {
         getPageCustomer,
         action.payload,
       );
-      if (response.message === 'ok') {
+      console.log('response new page',response )
+      if (response.message === 'Thành công') {
         yield put(customerActions.addingListCustomer(response.result?.data));
         yield put(customerActions.setPage(response.result?.page_number));
       }

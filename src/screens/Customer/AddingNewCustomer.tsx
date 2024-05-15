@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -34,7 +35,7 @@ import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation/screen-type';
-import {DataCustomersUpdate, IDataCustomer} from '../../models/types';
+import {DataCustomersUpdate, IDataCustomer, ListCustomerTerritory} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
@@ -56,6 +57,7 @@ import {
 } from '../../redux-store/app-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import Modal from 'react-native-modal';
+import ModalArea from './components/ModalArea';
 
 function listDataReducer(newState: any, oldState: any) {
   return {...newState, ...oldState};
@@ -92,7 +94,11 @@ const AddingNewCustomer = () => {
   const [listData, setListData] = useState<IDataCustomer>(
     initStateData.current,
   );
+  const listTerritory: ListCustomerTerritory[] = useSelector(
+    state => state.customer.listCustomerTerritory,
+  );
   const [openDate, setOpenDate] = React.useState<boolean>(false);
+  const [openModal,setOpenModal] = React.useState<boolean>(false);
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
@@ -108,7 +114,7 @@ const AddingNewCustomer = () => {
     state => state.customer.listCustomerTerritory,
   );
 
-  const snapPoint = useMemo(() => ['40%'], []);
+  const snapPoint = useMemo(() => ['60%'], []);
   const filterRef = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
@@ -126,32 +132,42 @@ const AddingNewCustomer = () => {
       address: {
         longitude: newListData.longitude || 0,
         latitude: newListData.latitude || 0,
-        address_title: Object.keys(address).length > 0
-          ? `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`
-          : '',
+        address_title:
+          Object.keys(address).length > 0
+            ? `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`
+            : '',
         address_type: 'Billing',
-        address_line1: Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
+        address_line1:
+          Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
         city: Object.keys(address).length > 0 ? String(address?.city?.id) : '',
-        county: Object.keys(address).length > 0 ? String(address?.district?.id) : '',
+        county:
+          Object.keys(address).length > 0 ? String(address?.district?.id) : '',
         state: Object.keys(address).length > 0 ? String(address?.ward?.id) : '',
-        is_primary_address: Object.keys(address).length > 0 ? address.addressOrder : false,
-        is_shipping_address: Object.keys(address).length > 0 ? address.addressGet : false,
+        is_primary_address:
+          Object.keys(address).length > 0 ? address.addressOrder : false,
+        is_shipping_address:
+          Object.keys(address).length > 0 ? address.addressGet : false,
       },
       contact: {
-        address_title: Object.keys(contact).length > 0
-          ? `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`
-          : '',
-        address_line1: Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
+        address_title:
+          Object.keys(contact).length > 0
+            ? `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`
+            : '',
+        address_line1:
+          Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
         first_name: contact?.nameContact || '',
         phone: contact?.phoneNumber || '',
         city: Object.keys(contact).length > 0 ? String(contact?.city?.id) : '',
-        county: Object.keys(contact).length > 0 ? String(contact?.district?.id) : '',
+        county:
+          Object.keys(contact).length > 0 ? String(contact?.district?.id) : '',
         state: Object.keys(contact).length > 0 ? String(contact?.ward?.id) : '',
+        
       },
 
-      customer_type: newListData.customer_type === getLabel('individual')
-        ? 'Individual'
-        : 'Company',
+      customer_type:
+        newListData.customer_type === getLabel('individual')
+          ? 'Individual'
+          : 'Company',
 
       website: newListData.website ?? '',
 
@@ -160,7 +176,9 @@ const AddingNewCustomer = () => {
         : new Date().getTime() / 1000,
       customer_code: newListData.customer_code || '',
       customer_name: newListData.customer_name || '',
-      customer_group: newListData.customer_group || ''
+      customer_group: newListData.customer_group || '',
+      credit_limit:newListData.credit_limit || '',
+      image: newListData.faceimage ? newListData.faceimage  : ''
     };
 
     dispatch(setNewCustomer(newListData));
@@ -241,6 +259,10 @@ const AddingNewCustomer = () => {
     }
   }, []);
 
+  const onBackButtonPress = useCallback(() =>{
+    setOpenModal(false)
+  },[openModal])
+
   return (
     <>
       <MainLayout>
@@ -261,6 +283,7 @@ const AddingNewCustomer = () => {
             cameraBottomRef={cameraBottomRef}
             location={location}
             setLocation={setLocation}
+            setModalOpen={setOpenModal}
           />
           <TouchableOpacity
             style={styles.buttonAddingNew}
@@ -269,18 +292,14 @@ const AddingNewCustomer = () => {
           </TouchableOpacity>
         </View>
         <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
-          <BottomSheetScrollView
-            showsVerticalScrollIndicator={false}
-            removeClippedSubviews={true}>
-            <ListFilterAdding
-              type={typeFilter}
-              filterRef={filterRef}
-              setValueFilter={setValueFilter}
-              valueFilter={valueFilter}
-              setData={setListData}
-              data={listData}
-            />
-          </BottomSheetScrollView>
+          <ListFilterAdding
+            type={typeFilter}
+            filterRef={filterRef}
+            setValueFilter={setValueFilter}
+            valueFilter={valueFilter}
+            setData={setListData}
+            data={listData}
+          />
         </AppBottomSheet>
         <DatePickerModal
           locale="vi"
@@ -359,6 +378,14 @@ const AddingNewCustomer = () => {
             />
           </Block>
         </Modal>
+        <ModalArea
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        listTerritory={listTerritory}
+        data={listData as any}
+        setData={setListData as any}
+        onBackButtonPress={onBackButtonPress}
+        />
       </MainLayout>
     </>
   );

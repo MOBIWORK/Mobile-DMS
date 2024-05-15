@@ -425,12 +425,13 @@ export type DataCustomersUpdate = {
   website?: string
   custom_birthday: number
   customer_type: string
-  faceimage?: string
+  // faceimage?: string
   company?: string
   credit_limit?: string
   address: AddressUpdate
   contact: ContactUpdate
-  router: RouterUpdate
+  router: RouterUpdate,
+  image?:any
 }
 
 

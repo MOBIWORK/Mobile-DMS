@@ -25,8 +25,14 @@ import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
+// import { IDataCustomers } from '../../../models/types/index';
 
-const CardView = (props: IDataCustomers) => {
+  interface Props extends IDataCustomers {
+    index:number
+    data:IDataCustomers
+  }
+
+const CardView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const navigation = useNavigation<NavigationProp>();
@@ -56,8 +62,9 @@ const CardView = (props: IDataCustomers) => {
             justifyContent="space-between"
             alignItems="center">
             <Block block>
-              <Text style={styles.textName}>{props.customer_name}</Text>
+              <Text style={styles.textName}>{props.index + 1}. {props.customer_name}</Text>
               <Text style={styles.textName}>{props.customer_code}</Text>
+              {/* <Text style={styles.textName} >{props.index}</Text> */}
             </Block>
 
             <View style={styles.containButton}>

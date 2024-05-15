@@ -19,6 +19,7 @@ import MarkerItem from '../../../../components/common/MarkerItem';
 import {
   backgroundErrorListener,
   calculateDistance,
+  useDeepCompareEffect,
   useEffectOnce,
   useSelector,
 } from '../../../../config/function';
@@ -51,10 +52,12 @@ const ModalAlert = ({
     state => state.app.systemConfig,
   );
   const curLocation = useRef<any>(currentLocation);
-
+  const [distance, setDistance] = React.useState<number>(
+    show.cal ? Math.ceil(show.cal * 1000) : 0,
+  );
   const {t: getLabel} = useTranslation();
 
-  useEffectOnce(() => {
+  useDeepCompareEffect(() => {
     if (currentLocation && Object.keys(currentLocation).length > 0) {
       mapboxCameraRef.current?.flyTo(
         [currentLocation?.coords?.longitude, currentLocation?.coords?.latitude],
@@ -63,7 +66,7 @@ const ModalAlert = ({
     } else {
       return;
     }
-  });
+  }, [curLocation.current]);
   const data = React.useMemo(() => {
     let res = calculateDistance(
       curLocation?.current?.coords ? curLocation?.current?.coords.latitude : 0,
@@ -72,12 +75,17 @@ const ModalAlert = ({
       location.long,
     );
     return res;
-  }, [curLocation]);
-
+  }, [curLocation.current]);
+console.log(data,'data')
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
       locations => {
         curLocation.current = locations;
+        setDistance(
+         Math.ceil( data*1000 -
+            (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+              AppConstant.additional_distance) 
+        ));
         mapboxCameraRef.current &&
           mapboxCameraRef.current.moveTo(
             [locations.coords.longitude, locations.coords.latitude],
@@ -127,9 +135,7 @@ const ModalAlert = ({
               </Block>
               <Text
                 fontSize={14}
-                textAlign="center">{`Vị trí của bạn đang cách vị trí của khách hàng ${Math.ceil(
-                show.cal! * 1000,
-              )}m. Bạn vui lòng lấy lại vị trí hoặc checkin với sai số`}</Text>
+                textAlign="center">{`Vị trí của bạn đang cách vị trí của khách hàng ${distance}m. Bạn vui lòng lấy lại vị trí hoặc checkin với sai số`}</Text>
             </Block>
             <Block marginTop={8}>
               <Block

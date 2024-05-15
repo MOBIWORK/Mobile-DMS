@@ -9,7 +9,6 @@ import {
   ImageStyle,
   Image,
   Pressable,
-  TextInput as TextInput2,
   Keyboard,
 } from 'react-native';
 import React, {useEffect, useRef, useState, useTransition} from 'react';
@@ -18,7 +17,7 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
 import {ApiConstant, AppConstant} from '../../../const';
-import {Colors, ImageAssets} from '../../../assets';
+import {Colors} from '../../../assets';
 import {AppIcons, AppInput, SvgIcon} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
 import {IDataCustomer, KeyAbleProps} from '../../../models/types';
@@ -27,7 +26,6 @@ import {useSelector} from '../../../config/function';
 import CardAddress from './CardAddress';
 import {dispatch} from '../../../utils/redux';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-import Mapbox from '@rnmapbox/maps';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 import {AppService} from '../../../services';
 import {CommonUtils} from '../../../utils';
@@ -47,6 +45,7 @@ type Props = {
   imageSource: any;
   location: GeolocationResponse | null;
   setLocation: (location: GeolocationResponse) => void;
+  setModalOpen:React.Dispatch<React.SetStateAction<boolean>>
 };
 
 const FormAdding = (props: Props) => {
@@ -61,6 +60,7 @@ const FormAdding = (props: Props) => {
     imageSource,
     location,
     setLocation,
+    setModalOpen
   } = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
@@ -175,7 +175,6 @@ const FormAdding = (props: Props) => {
         styles={{marginBottom: 20}}
         onChangeValue={text =>
           startTransition(() => {
-            
             setData(prev => ({...prev, customer_name: text}));
           })
         }
@@ -241,8 +240,7 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
-          setTypeFilter(AppConstant.CustomerFilterType.khu_vuc);
-          filterRef.current?.snapToIndex(0);
+         setModalOpen(true)
         }}
         rightIcon={
           <TextInput.Icon
@@ -306,6 +304,21 @@ const FormAdding = (props: Props) => {
             style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
+        }
+      />
+        <AppInput
+        label={translate('debtLimit')}
+        value={valueFilter.customer_name}
+        editable={true}
+        hiddenRightIcon={true}
+        isRequire={true}
+        contentStyle={styles.contentStyle}
+        styles={{marginBottom: 20}}
+        onChangeValue={text =>
+          startTransition(() => {
+            
+            setData(prev => ({...prev, credit_limit: text}));
+          })
         }
       />
       <AppInput

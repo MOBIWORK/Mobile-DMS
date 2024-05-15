@@ -133,12 +133,18 @@ const ModalUpdateLocation = ({
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
       locations => {
+        startTransition(() =>{
         curLocation.current = locations;
+        handleMarkerMap(
+          curLocation.current?.coords?.latitude,
+          curLocation.current?.coords?.longitude,
+        );
         mapboxCameraRef.current &&
           mapboxCameraRef.current.moveTo(
             [locations.coords.longitude, locations.coords.latitude],
             1000,
           );
+        })
       },
       err => backgroundErrorListener(err.code),
     );
