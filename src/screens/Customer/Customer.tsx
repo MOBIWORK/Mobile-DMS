@@ -14,7 +14,6 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import {AppConstant, ScreenConstant} from '../../const';
 import {Colors} from '../../assets';
-import MainLayout from '../../layouts/MainLayout';
 import AppImage from '../../components/common/AppImage';
 import FilterHandle from './components/FilterHandle';
 import {listFilter} from './components/data';
@@ -45,13 +44,6 @@ import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
-import {getLabel} from '../../language';
-
-const initialState: IValueType = {
-  customerType: getLabel('all'),
-  customerGroupType: getLabel('all'),
-  customerBirthday: getLabel('all'),
-};
 
 export type IValueType = {
   customerType: string;
@@ -97,11 +89,16 @@ const Customer = () => {
     firstModal: false,
     secondModal: false,
   });
-  const [valueFilter, setValueFilter] = React.useState(initialState);
+  const [valueFilter, setValueFilter] = React.useState<IValueType>({
+    customerType: getLabel('all'),
+    customerGroupType: getLabel('all'),
+    customerBirthday: getLabel('all'),
+  });
   //  console.log(listCustomerResult,'listCustomer')
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
+  const [showModal,setShowModal] = React.useState(false)
   const [isPending, startTransition] = useTransition();
   // const customerData = React.useRef<IDataCustomers[]>(listCustomer);
   const [customerData, setCustomerData] =
@@ -202,7 +199,7 @@ const Customer = () => {
     };
   }, [listCustomer]);
 
-  const handleApplyFilter = useCallback(() => {
+  const handleApplyFilter = () => {
     if (
       valueFilter.customerType === getLabel('all') &&
       valueFilter.customerGroupType === getLabel('all') &&
@@ -211,44 +208,60 @@ const Customer = () => {
       bottomRef2.current?.close();
     } else if (
       valueFilter.customerType !== getLabel('all') &&
-      valueFilter.customerType === getLabel('all') &&
+      valueFilter.customerGroupType === getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      console.log('run get label 1')
-      const newData1 = listCustomer?.filter(
-        item => item.customer_type === valueFilter.customerType,
-      );
-      setCustomerData(newData1);
+      startTransition(() => {
+        const newData1 = listCustomer?.filter(
+          item => item.customer_type === valueFilter.customerType,
+        );
+        setCustomerData(newData1);
+      });
+
       bottomRef2.current?.close();
     } else if (
       valueFilter.customerGroupType !== getLabel('all') &&
       valueFilter.customerType !== getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      console.log('run get label 2')
-
-      const newData2 = listCustomer?.filter(
-        item =>
-          item.customer_group === valueFilter.customerGroupType &&
-          item.customer_type === valueFilter.customerType,
-      );
-      setCustomerData(newData2);
+      startTransition(() => {
+        const newData2 = listCustomer?.filter(
+          item =>
+            item.customer_group === valueFilter.customerGroupType &&
+            item.customer_type === valueFilter.customerType,
+        );
+        setCustomerData(newData2);
+      });
     } else if (
       valueFilter.customerGroupType !== getLabel('all') &&
       valueFilter.customerType === getLabel('all') &&
       valueFilter.customerBirthday === getLabel('all')
     ) {
-      console.log('run get label 3')
+      startTransition(() => {
+        const newData3 = listCustomer?.filter(
+          item => item.customer_group === valueFilter.customerGroupType,
+        );
+        setCustomerData(newData3);
+      });
 
-      const newData3 = listCustomer?.filter(
-        item => item.customer_group === valueFilter.customerGroupType,
-      );
-      setCustomerData(newData3);
       bottomRef2.current?.close();
-    } else {
-      console.log('fuck ?');
+    } else if (
+      valueFilter.customerGroupType !== getLabel('all') &&
+      valueFilter.customerType !== getLabel('all') &&
+      valueFilter.customerBirthday !== getLabel('all')
+    ) {
+      startTransition(() => {
+        const newData3 = listCustomer?.filter(
+          item =>
+            item.customer_group === valueFilter.customerGroupType &&
+            item.customer_type != valueFilter.customerType,
+        );
+        setCustomerData(newData3);
+      });
+
+      bottomRef2.current?.close();
     }
-  }, [valueFilter, listCustomer]);
+  };
   const handleCancel = () => {
     bottomRef2.current && bottomRef2.current.close();
     setValueFilter({
@@ -259,12 +272,14 @@ const Customer = () => {
   };
 
   const onEndReachedThreshold = useCallback(() => {
-  console.log('onEndReached')
+    console.log('onEndReached');
     if (page <= totalPage.current) {
-      console.log('run if',page)
-      dispatch(customerActions.getCustomerNewPage(page + 1));
+      console.log('run if', page);
+      startTransition(() => {
+        dispatch(customerActions.getCustomerNewPage(page + 1));
+      });
     } else {
-      console.log('run else')
+      console.log('run else');
       return null;
     }
   }, [page]);
@@ -361,7 +376,7 @@ const Customer = () => {
         </View>
       </Block>
     );
-  }, []);
+  }, [valueFilter]);
   // console.log(customerData.current,'customerData')
 
   return (
@@ -416,7 +431,6 @@ const Customer = () => {
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() =>
-                  // console.log(item,'item')
                   setValue(prev => ({
                     ...prev,
                     first: item.title,
@@ -484,6 +498,9 @@ const Customer = () => {
           color={theme.colors.white}
         />
       </TouchableOpacity>
+
+
+
     </SafeAreaView>
   );
 };

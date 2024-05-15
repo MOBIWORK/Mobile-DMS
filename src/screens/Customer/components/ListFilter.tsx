@@ -31,7 +31,6 @@ const ListFilter = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles();
   const {t: getLabel} = useTranslation();
-
   return (
     <View>
       {type === AppConstant.CustomerFilterType.ngay_sinh_nhat ? (
