@@ -47,9 +47,6 @@ import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 import {getLabel} from '../../language';
 
-function simpleReducer(currentState: any, newState: any) {
-  return {...currentState, ...newState};
-}
 const initialState: IValueType = {
   customerType: getLabel('all'),
   customerGroupType: getLabel('all'),
@@ -100,11 +97,8 @@ const Customer = () => {
     firstModal: false,
     secondModal: false,
   });
-  const [valueFilter, setValueFilter] = React.useReducer(
-    simpleReducer,
-    initialState,
-  );
-//  console.log(listCustomerResult,'listCustomer')
+  const [valueFilter, setValueFilter] = React.useState(initialState);
+  //  console.log(listCustomerResult,'listCustomer')
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
@@ -160,8 +154,6 @@ const Customer = () => {
   );
 
   const onRefreshData = useCallback(async () => {
-    console.log('run refresh');
-
     try {
       dispatch(onLoadApp());
       dispatch(customerActions.onGetCustomer());
@@ -179,7 +171,6 @@ const Customer = () => {
     }
   }, [isFocus]);
 
-  // console.log(customerData,'data')
   React.useEffect(() => {
     mounted.current = true;
     startTransition(() => {
@@ -263,17 +254,19 @@ const Customer = () => {
   };
 
   const onEndReachedThreshold = useCallback(() => {
-    console.log('end reached', page, totalPage);
+  console.log('onEndReached')
     if (page <= totalPage.current) {
+      console.log('run if',page)
       dispatch(customerActions.getCustomerNewPage(page + 1));
     } else {
+      console.log('run else')
       return null;
     }
   }, [page]);
 
   const renderBottomView = React.useCallback(() => {
     return (
-      <MainLayout>
+      <Block block paddingHorizontal={16}>
         <AppHeader
           label={getLabel('customer')}
           onBack={() => bottomRef2.current && bottomRef2.current.close()}
@@ -293,7 +286,9 @@ const Customer = () => {
             editable={false}
             styles={{marginBottom: 24}}
             onPress={() => {
-              setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
+              startTransition(() => {
+                setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
+              });
               filterRef.current?.snapToIndex(0);
             }}
             rightIcon={
@@ -310,7 +305,9 @@ const Customer = () => {
             editable={false}
             styles={{marginBottom: 24}}
             onPress={() => {
-              setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
+              startTransition(() => {
+                setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
+              });
               filterRef.current?.snapToIndex(0);
             }}
             rightIcon={
@@ -326,8 +323,10 @@ const Customer = () => {
             value={valueFilter.customerBirthday}
             editable={false}
             onPress={() => {
+              startTransition(() => {
+                setTypeFilter(AppConstant.CustomerFilterType.ngay_sinh_nhat);
+              });
               filterRef.current?.snapToIndex(0);
-              setTypeFilter(AppConstant.CustomerFilterType.ngay_sinh_nhat);
             }}
             rightIcon={
               <TextInput.Icon
@@ -355,7 +354,7 @@ const Customer = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </MainLayout>
+      </Block>
     );
   }, []);
   // console.log(customerData.current,'customerData')
@@ -457,7 +456,7 @@ const Customer = () => {
       <AppBottomSheet
         bottomSheetRef={filterRef}
         enablePanDownToClose={true}
-        snapPointsCustom={['30%']}>
+        snapPointsCustom={['60%']}>
         <ListFilter
           type={typeFilter}
           filterRef={filterRef}

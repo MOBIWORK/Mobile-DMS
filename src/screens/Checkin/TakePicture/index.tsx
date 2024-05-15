@@ -190,7 +190,7 @@ const TakePicture = () => {
     getListAlbum();
   }, []);
 
-  const EmptyAlbum = () => {
+  const EmptyAlbum = useCallback(() => {
     return (
       <>
         <SvgIcon source={'EmptyImg'} size={90} />
@@ -209,7 +209,7 @@ const TakePicture = () => {
         </Button>
       </>
     );
-  };
+  },[]);
 
   const AlbumItem = useCallback(
     (itemAlbum: IAlbumImage) => {

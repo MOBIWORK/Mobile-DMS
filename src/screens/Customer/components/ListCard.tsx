@@ -15,12 +15,13 @@ type Props = {
 
 const ListCard = (props: Props) => {
   const renderItem = ({item, index}: {item: IDataCustomers; index: number}) => (
-    <CardView {...item} key={index} />
+    <CardView data={item as any} key={index} index={index} {...item} />
   );
-  const memorizedValue = useMemo(() => renderItem, [props.data]);
+  const memorizedValue = useMemo(() => renderItem, [props.data,props.loading]);
 // console.log(props.data,'data')
   return (
     // <SafeAreaView edges={['bottom']}>
+  
 
     <FlatList
       data={props.data}

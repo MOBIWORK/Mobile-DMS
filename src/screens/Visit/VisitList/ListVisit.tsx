@@ -1028,6 +1028,8 @@ const ListVisit = () => {
     sortDataCustomer(distanceFilterValue);
   }, [listCustomer]);
 
+ 
+
   return (
     <SafeAreaView
       edges={['bottom', 'top']}

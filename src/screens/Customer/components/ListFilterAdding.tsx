@@ -1,4 +1,11 @@
-import {StyleSheet, TouchableOpacity, TextStyle, ViewStyle} from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  TextStyle,
+  ViewStyle,
+  ActivityIndicator,
+  FlatList,
+} from 'react-native';
 import React, {useCallback} from 'react';
 import {AppIcons, Block, AppText as Text} from '../../../components/common';
 import {AppConstant} from '../../../const';
@@ -225,58 +232,76 @@ const ListFilterAdding = (props: Props) => {
               );
             })}
         </Block>
-      ) : type === AppConstant.CustomerFilterType.khu_vuc ? (
-        <Block>
-          <Block style={styles.headerBottomSheet}>
-            <TouchableOpacity
-              onPress={() => {
-                filterRef.current?.close();
-              }}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name={'close'}
-                size={24}
-                color={theme.colors.text_primary}
-              />
-            </TouchableOpacity>
+      // ) : type === AppConstant.CustomerFilterType.khu_vuc ? (
+      //   <Block>
+      //     <Block style={styles.headerBottomSheet}>
+      //       <TouchableOpacity
+      //         onPress={() => {
+      //           filterRef.current?.close();
+      //         }}>
+      //         <AppIcons
+      //           iconType={AppConstant.ICON_TYPE.IonIcon}
+      //           name={'close'}
+      //           size={24}
+      //           color={theme.colors.text_primary}
+      //         />
+      //       </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>{getLabel('area')}</Text>
-            <Text style={styles.titleHeaderText} />
-          </Block>
-          {listTerritory &&
-            listTerritory.length > 0 &&
-            listTerritory?.map(item => {
-              return (
-                <TouchableOpacity
-                  style={styles.containItemBottomView}
-                  key={item.name}
-                  onPress={() => {
-                    setData(prev => ({
-                      ...prev,
-                      territory: item.territory_name,
-                    }));
-                    filterRef?.current?.close();
-                  }}>
-                  <Text
-                    style={styles.itemText(
-                      item.territory_name,
-                      data.territory,
-                    )}>
-                    {item.territory_name}
-                  </Text>
-                  {item.territory_name === data.territory && (
-                    <AppIcons
-                      iconType={AppConstant.ICON_TYPE.Feather}
-                      name="check"
-                      size={24}
-                      color={theme.colors.primary}
-                    />
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-        </Block>
-      ) : type === AppConstant.CustomerFilterType.tuyen ? (
+      //       <Text style={styles.titleHeaderText}>{getLabel('area')}</Text>
+      //       <Text style={styles.titleHeaderText} />
+      //     </Block>
+      //     <FlatList
+      //       data={listTerritory || []}
+      //       keyExtractor={(item, index) => index.toString()}
+      //       showsVerticalScrollIndicator={false}
+      //       bounces
+      //       scrollEnabled={true}
+      //       style={{backgroundColor:'red'}}
+      //       renderItem={({item, index}) => {
+      //         return (
+      //           <TouchableOpacity
+      //             style={styles.containItemBottomView}
+      //             key={item.name}
+      //             onPress={() => {
+      //               setData(prev => ({
+      //                 ...prev,
+      //                 territory: item.territory_name,
+      //               }));
+      //               filterRef?.current?.close();
+      //             }}>
+      //             <Text
+      //               style={styles.itemText(
+      //                 item.territory_name,
+      //                 data.territory,
+      //               )}>
+      //               {item.territory_name}
+      //             </Text>
+      //             {item.territory_name === data.territory && (
+      //               <AppIcons
+      //                 iconType={AppConstant.ICON_TYPE.Feather}
+      //                 name="check"
+      //                 size={24}
+      //                 color={theme.colors.primary}
+      //               />
+      //             )}
+      //           </TouchableOpacity>
+      //         );
+      //       }}
+      //     />
+      //     {/* {listTerritory && listTerritory.length > 0 ? (
+      //       listTerritory?.map(item => {
+      //         return (
+              
+      //         );
+      //       })
+      //     ) : (
+      //       <Block justifyContent="center" alignItems="center">
+      //         <ActivityIndicator size="large" color={theme.colors.primary} />
+      //       </Block>
+      //     )} */}
+      //   </Block>
+      ) 
+      : type === AppConstant.CustomerFilterType.tuyen ? (
         <Block>
           <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
