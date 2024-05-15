@@ -626,3 +626,8 @@ export const getStatusColor = (status: string, color: any) => {
     bg: sttBgColor,
   };
 };
+//check chuỗi string có phải số nguyên không
+export const isStringNumber = (str: string) => {
+  const regex = /^\d+(\d+)?$/;
+  return regex.test(str);
+};
