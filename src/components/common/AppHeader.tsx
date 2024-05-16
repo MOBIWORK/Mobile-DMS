@@ -103,5 +103,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     marginRight: 8,
     alignItems: 'center',
+    // backgroundColor:'red',
+    width:32,
+    height:32,
+    justifyContent:'center'
   } as ViewStyle,
 });

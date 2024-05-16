@@ -156,6 +156,9 @@ const Customer = () => {
     try {
       dispatch(onLoadApp());
       dispatch(customerActions.onGetCustomer());
+      totalPage.current = Math.ceil(
+        listCustomerResult.total / listCustomerResult.page_size,
+      );
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
@@ -278,6 +281,8 @@ const Customer = () => {
   }, [showModal]);
 
   const onEndReachedThreshold = useCallback(() => {
+    // console.log(page,console.log(totalPage.current))
+
     if (page <= totalPage.current) {
       console.log('run if', page);
       startTransition(() => {
@@ -463,18 +468,7 @@ const Customer = () => {
         useBottomSheetView={show.secondModal}
         snapPointsCustom={snapPoints}
         // onClose={() => dispatch(appActions.setShowModal(false)) }
-        onAnimated={(index, toIndex) => {
-          if (index != undefined && toIndex != undefined) {
-            let cal = index - toIndex;
-            if (cal > 0) {
-              setShow(prev => ({...prev, secondModal: false}));
-              //  dispatch(appActions.setShowModal(false))
-            } else {
-              setShow(prev => ({...prev, secondModal: true}));
-              //  dispatch(appActions.setShowModal(true))
-            }
-          }
-        }}
+
         enablePanDownToClose={true}>
         {renderBottomView()}
       </AppBottomSheet>

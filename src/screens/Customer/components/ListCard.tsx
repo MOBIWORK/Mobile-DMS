@@ -3,7 +3,6 @@ import React, {useMemo} from 'react';
 import CardView from './CardView';
 import {IDataCustomers} from '../../../models/types';
 import isEqual from 'react-fast-compare';
-import SkeletonLoading from '../../Visit/SkeletonLoading';
 import {Block, AppText as Text} from '../../../components/common';
 
 type Props = {
@@ -25,13 +24,13 @@ const ListCard = (props: Props) => {
     <FlatList
       data={props.data}
       style={{marginBottom: 20}}
-      decelerationRate={'fast'}
+      decelerationRate={'normal'}
       onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}
       onEndReachedThreshold={0}
       maxToRenderPerBatch={10}
       updateCellsBatchingPeriod={5}
-      windowSize={21}
+      windowSize={11}
       initialNumToRender={5}
       refreshControl={
         <RefreshControl
@@ -41,7 +40,7 @@ const ListCard = (props: Props) => {
       }
       removeClippedSubviews={true}
       ListFooterComponent={props.listFooter}
-      keyExtractor={(item, index) => item.name}
+      keyExtractor={(item, index) => index.toString()}
       renderItem={memorizedValue}
     />
   ) : (

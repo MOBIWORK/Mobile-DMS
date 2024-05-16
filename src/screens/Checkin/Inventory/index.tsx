@@ -154,9 +154,12 @@ const CheckinInventory = () => {
         customer_address: dataCheckin.item.customer_primary_address,
         inventory_items: newItems,
       };
+
+      console.log(objectData, 'dataPush');
       // console.log(objectData, 'objectData');
-      const {status}: any = await CheckinService.checkinInventory(objectData);
-      if (status === ApiConstant.STT_CREATED) {
+      const response: any = await CheckinService.checkinInventory(objectData);
+      console.log(response, 'response');
+      if (response.status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));
         completeCheckin();
       }
