@@ -4,6 +4,7 @@ import CardView from './CardView';
 import {IDataCustomers} from '../../../models/types';
 import isEqual from 'react-fast-compare';
 import SkeletonLoading from '../../Visit/SkeletonLoading';
+import {Block, AppText as Text} from '../../../components/common';
 
 type Props = {
   data: IDataCustomers[];
@@ -17,12 +18,10 @@ const ListCard = (props: Props) => {
   const renderItem = ({item, index}: {item: IDataCustomers; index: number}) => (
     <CardView data={item as any} key={index} index={index} {...item} />
   );
-  const memorizedValue = useMemo(() => renderItem, [props.data,props.loading]);
-// console.log(props.data,'data')
-  return (
-    // <SafeAreaView edges={['bottom']}>
-  
-
+  const memorizedValue = useMemo(() => renderItem, [props.data, props.loading]);
+  // console.log(props.data,'data')
+  return props.data && props.data.length > 0 ? (
+    
     <FlatList
       data={props.data}
       style={{marginBottom: 20}}
@@ -45,6 +44,16 @@ const ListCard = (props: Props) => {
       keyExtractor={(item, index) => item.name}
       renderItem={memorizedValue}
     />
+  ) : (
+    <Block block justifyContent="center" alignItems="center">
+      <Text
+        fontSize={16}
+        fontWeight="500"
+        lineHeight={24}
+        colorTheme="text_primary">
+        Không tìm thấy khách hàng
+      </Text>
+    </Block>
   );
   // </SafeAreaView>
 };

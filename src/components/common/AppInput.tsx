@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ViewStyle,
   Text,
+  NativeSyntheticEvent,
+  TextInputEndEditingEventData,
 } from 'react-native';
 import isEqual from 'react-fast-compare';
 import {AppTheme, useTheme} from '../../layouts/theme';
@@ -25,6 +27,8 @@ const AppInput: FC<AppInputProps> = ({
   isRequire = false,
   labelStyle,
   contentStyle,
+  onEndEditing
+  
 }) => {
   const {colors} = useTheme();
   const [isFocus, setFocus] = useState<boolean>(false);
@@ -35,6 +39,7 @@ const AppInput: FC<AppInputProps> = ({
     <TouchableOpacity disabled={disable} onPress={onPress}>
       <TextInput
         onPressIn={onPress}
+        onEndEditing={onEndEditing}
         contentStyle={[inputStyle.contentStyle, contentStyle]}
         style={[inputStyle.rootStyle, styles]}
         outlineStyle={inputStyle.outlineStyle(isFocus)}
@@ -100,10 +105,12 @@ interface AppInputPropsBase {
 }
 type AppInputPropsEditable = {
   editable?: true;
+  onEndEditing?:(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => void
 } & AppInputPropsBase;
 
 type AppInputPropsNonEditable = {
   editable?: false;
+  onEndEditing?:(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => void
   listData?: any; // Adjust the type accordingly
   show?: boolean; // Adjust the type accordingly
 } & AppInputPropsBase;
