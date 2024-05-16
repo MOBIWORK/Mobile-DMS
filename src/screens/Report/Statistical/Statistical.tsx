@@ -59,6 +59,7 @@ const Statistical = () => {
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
+      console.log('run is number')
       setFromDate(Number(item.value));
       setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
@@ -76,6 +77,7 @@ const Statistical = () => {
   };
 
   const onChangeDateCalender = (date: any) => {
+    console.log(date,'data')
     setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
 
@@ -97,7 +99,16 @@ const Statistical = () => {
       }
       dispatch(appActions.setProcessingStatus(false));
     };
-    getData();
+    console.log(isNaN(from_date), isNaN(to_date));
+    if (isNaN(from_date) && isNaN(to_date)) {
+      console.log('run on this')
+    console.log(from_date, to_date);
+
+      return undefined;
+    } else {
+      console.log('run else')
+      getData();
+    }
   }, [from_date, to_date]);
 
   return (
