@@ -35,7 +35,7 @@ const Customer = ({dataStatistics,data}:PropsType) => {
             {getLabel("intoMoney")}
           </Text>
           <Text colorTheme="text_primary" fontSize={14} fontWeight="400" lineHeight={21}>
-            {formatMoney(item.amount)} VNĐ
+            {formatMoney(item.amount) || 0} VNĐ
           </Text>
         </Block>
       </TouchableOpacity>
@@ -53,7 +53,7 @@ const Customer = ({dataStatistics,data}:PropsType) => {
       <Block marginTop={8} marginBottom={8}>
         <Text colorTheme="text_secondary">{getLabel("detail")}</Text>
       </Block>
-      {data.map((item, index) => {
+      { data &&  data?.map((item, index) => {
         return <View key={index}>{renderItem(item)}</View>;
       })}
     </ScrollView>
