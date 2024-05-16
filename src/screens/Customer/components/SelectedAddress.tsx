@@ -1,11 +1,17 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+  useTransition,
+} from 'react';
 import {MainLayout} from '../../../layouts';
-import {Block, SvgIcon} from '../../../components/common';
+import {Block, SvgIcon, AppText as Text} from '../../../components/common';
 import {
   FlatList,
   Pressable,
   StyleSheet,
-  Text,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -35,7 +41,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
 
   const [searchValue, setSearch] = useState<string>('');
   const [listCity, setListCity] = useState<IFilterType[]>([]);
-
+  const [isPending, startTransition] = useTransition();
   const handleItem = (item: IFilterType) => {
     const type =
       data.length === 0
@@ -45,50 +51,77 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         : data.length === 2
         ? AddressType.district
         : '';
-    setData([
-      ...data,
-      {type: type, value: item.label!.toString(), id: item.value},
-    ]);
+    startTransition(() => {
+      setData([
+        ...data,
+        {type: type, value: item.label!.toString(), id: item.value},
+      ]);
+    });
   };
+
+  const onPressTrash = useCallback(
+    (items: AddressSelected) => {
+      if (data.length === 0) {
+        return;
+      } else if (data.length === 1) {
+        setData([]);
+      } else if (data.length === 2) {
+        const newData = data.filter(
+          item => !(item.type === items.type && item.value === items.value),
+        );
+        setData(newData);
+      } else if (data.length === 3) {
+        const newData = data.filter(
+          item => !(item.type === items.value && item.value !== items.value),
+        );
+        setData(newData);
+      }
+    },
+    [data.length],
+  );
 
   const ListAddressSelected = (item: AddressSelected, isBorder: boolean) => {
     return (
-      <View
-        style={{
-          paddingBottom: 8,
-          width: AppConstant.WIDTH,
-          alignSelf: 'center',
-          marginTop: 16,
-          borderBottomWidth: isBorder ? 8 : 0,
-          borderBottomColor: theme.colors.divider,
-          paddingHorizontal: 16,
-        }}>
-        <Text style={{color: theme.colors.text_primary}}>
+      <Block
+        paddingBottom={8}
+        width={AppConstant.WIDTH}
+        alignSelf="center"
+        marginTop={16}
+        borderBottomWidth={isBorder ? 8 : 0}
+        paddingLeft={16}
+        paddingRight={16}
+        borderBottomColor={theme.colors.divider}>
+        <Text color={theme.colors.text_primary} style={styles.textContainStyle}>
           {item.type === AddressType.city
             ? `${getLabel('province')}/${getLabel('city')}`
             : item.type === AddressType.ward
             ? getLabel('district')
             : getLabel('ward')}
         </Text>
-        <Text
-          style={{
-            marginTop: 16,
-            color: theme.colors.action,
-            fontSize: 16,
-            fontWeight: '500',
-          }}>
-          {item.value}
-        </Text>
-      </View>
+        <Block
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center">
+          <Text
+            color={theme.colors.action}
+            fontSize={16}
+            fontWeight="500"
+            style={styles.textContainStyle}>
+            {item.value}
+          </Text>
+          <TouchableOpacity
+            style={styles.containAddress}
+            onPress={() => onPressTrash(item)}>
+            <SvgIcon source="Trash" size={26} color="text_disable" />
+          </TouchableOpacity>
+        </Block>
+      </Block>
     );
   };
 
   const ListAddressContent = () => {
     return (
-      <View
-        style={{
-          marginTop: 16,
-        }}>
+      <Block marginTop={16}>
         <Text style={{color: theme.colors.text_primary}}>
           {data.length === 0
             ? `${getLabel('province')}/${getLabel('city')}`
@@ -102,11 +135,15 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
           <FlatList
             style={{marginTop: 16, height: data.length === 0 ? '80%' : '70%'}}
             data={listCity}
+            initialNumToRender={10}
+            windowSize={21}
+            decelerationRate={'fast'}
+            bounces={true}
             renderItem={({item}) => (
               <Pressable
                 style={{marginVertical: 8}}
                 onPress={() => handleItem(item)}>
-                <Text style={{color: theme.colors.text_primary, fontSize: 16}}>
+                <Text color={theme.colors.text_primary} fontSize={16}>
                   {item.label}
                 </Text>
               </Pressable>
@@ -114,7 +151,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
             showsVerticalScrollIndicator={false}
           />
         )}
-      </View>
+      </Block>
     );
   };
 
@@ -225,5 +262,12 @@ const createStyle = (theme: ExtendedTheme) =>
       borderRadius: 10,
       width: '90%',
       marginLeft: 12,
+    } as ViewStyle,
+    textContainStyle: {
+      marginHorizontal: 16,
+      marginTop: 8,
+    } as TextStyle,
+    containAddress: {
+      marginHorizontal: 16,
     } as ViewStyle,
   });

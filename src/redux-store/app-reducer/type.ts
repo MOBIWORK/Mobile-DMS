@@ -37,11 +37,12 @@ export interface IAppRedux {
   listDataCity: {
     city: ListCity[];
     district: ListDistrict[];
-    ward: ListWard[];
+    ward: ListWard[]; 
   };
   dataCheckIn: any;
   userProfile: any;
   automaticLocation: boolean;
+  listSearch?:any
 }
 
 export enum SLICE_NAME {
