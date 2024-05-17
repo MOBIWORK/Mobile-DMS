@@ -56,7 +56,8 @@ export const GET_TYPE_CUSTOMER =
   '/api/method/mbw_dms.api.selling.customer.list_customer_type';
 export const GET_SYSTEM_CONFIG =
   '/api/method/mbw_dms.api.config_mobile.get_list_config';
-export const  GET_CUSTOMER_DETAIL ='/api/method/mbw_dms.api.selling.customer.customer_detail?name='
+export const GET_CUSTOMER_DETAIL =
+  '/api/method/mbw_dms.api.selling.customer.customer_detail?name=';
 export const GET_CUSTOMER_VISIT =
   '/api/method/mbw_dms.api.router.get_customer_router';
 export const UPDATE_CUSTOMER_ADDRESS =
@@ -70,7 +71,8 @@ export const GET_CUSTOMER_ROUTE =
 export const POST_ADD_NEW_CUSTOMER =
   '/api/method/mbw_dms.api.selling.customer.create_customer';
 // Order
-export const GET_ORDER = URL_PREFIX + '.api.selling.order.get_list_sales_order';
+export const GET_ORDER =
+  URL_PREFIX + '.api.selling.product.list_product_campaign';
 export const GET_ORDER_DETAIL =
   URL_PREFIX + '.api.selling.order.get_sale_order';
 export const GET_VATS = URL_PREFIX + '.api.selling.product.list_vat';

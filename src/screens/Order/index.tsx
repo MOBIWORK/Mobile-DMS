@@ -304,7 +304,7 @@ const OrderList = () => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = () => {
     dispatch(
       orderAction.onGetData({
         from_date: fromDate > 0 ? fromDate / 1000 : undefined,
