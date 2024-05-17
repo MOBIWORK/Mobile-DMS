@@ -7,7 +7,7 @@ import {Block} from '../../Block';
 
 interface Props {
   initialMonth?: string;
-  dayHeadings: string[];
+  dayHeadings?: string[];
   availableDates?: string[];
   maxMonth?: number;
   buttonColor?: string;
@@ -252,7 +252,7 @@ const RangeDatePicker = (props: Props) => {
         </Block>
       )}
       <Block style={styles.dayHeader}>
-        {props.dayHeadings.map((day, i) => {
+        { props?.dayHeadings && props?.dayHeadings?.map((day, i) => {
           return (
             <Text style={{width: '14.28%', textAlign: 'center'}} key={i}>
               {day}

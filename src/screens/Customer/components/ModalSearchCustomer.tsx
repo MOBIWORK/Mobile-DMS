@@ -66,7 +66,7 @@ const ModalSearchCustomer = (props: Props) => {
       );
     });
 
-    return filteredItems?.length > 0 ? filteredItems : [];
+    return  data && filteredItems?.length > 0  ? filteredItems : [];
   }, [filterText]);
 
   const handleItem = (text: any) => {

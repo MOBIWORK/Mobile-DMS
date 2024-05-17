@@ -58,7 +58,6 @@ const VisitItem: FC<VisitItemProps> = ({
     );
     return {location, distance};
   }, [item.customer_location_primary, currentLocation]);
-  // console.log(distanceCal.distance*1000,'checkin ')
   const statusItem = React.useCallback(
     (status: boolean) => {
       return (

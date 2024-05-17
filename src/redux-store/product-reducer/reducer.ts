@@ -12,6 +12,7 @@ const initState: StateType = {
   dataSelected: [],
   isLoading: true,
   message: '',
+  listProductSelect: [],
 };
 
 function mergeArraysSelectProduct(arr1: IProduct[], arr2: IProduct[]) {
@@ -71,7 +72,10 @@ const productSlice = createSlice({
     setLoading: (state, action: PayloadAction<any>) => {
       state.isLoading = action.payload;
     },
-    setLogoutData: (state: any) => (state = undefined),
+    setLogoutData: (state: any) => void (state = undefined),
+    setListProductSelect: (state, action: PayloadAction<any>) => {
+      state.listProductSelect = [...state.listProductSelect, action.payload];
+    },
   },
 });
 

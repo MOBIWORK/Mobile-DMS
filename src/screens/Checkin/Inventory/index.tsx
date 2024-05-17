@@ -7,6 +7,7 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
+  Block,
 } from '../../../components/common';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -203,7 +204,10 @@ const CheckinInventory = () => {
               {`(${item.stock_uom})`}
             </Text>
           </View>
-          <View
+          <Block
+          paddingTop={12}
+          borderTopWidth={1}
+          borderColor={colors.divider}
             style={{
               paddingTop: 12,
               borderTopWidth: 1,
@@ -215,7 +219,7 @@ const CheckinInventory = () => {
               Hạn sử dụng :
               {item.expiry ? CommonUtils.convertDate(item.expiry) : ''}
             </Text>
-          </View>
+          </Block>
         </View>
         <TouchableOpacity
           style={[styles.removeIcon]}

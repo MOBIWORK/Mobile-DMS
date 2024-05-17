@@ -135,14 +135,14 @@ const Customer = () => {
         const distance1 = calculateDistance(
           location.coords.latitude,
           location.coords.longitude,
-          locationA.lat,
-          locationA.long,
+          locationA?.lat || 0 ,
+          locationA?.long || 0,
         );
         const distance2 = calculateDistance(
           location.coords.latitude,
           location.coords.longitude,
-          locationB.lat,
-          locationB.long,
+          locationB?.lat || 0,
+          locationB?.long || 0,
         );
         return value.first === getLabel('nearest')
           ? distance1 - distance2
@@ -180,10 +180,10 @@ const Customer = () => {
         handleBackgroundLocation();
         if (listCustomer && listCustomer?.length > 0) {
           const filteredData = listCustomer.filter(
-            item => item.customer_location_primary != null,
+            item => item.customer_location_primary,
           );
           const noLocationCustomer = listCustomer.filter(
-            item => item.customer_location_primary === null,
+            item => !item.customer_location_primary,
           );
 
           setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
@@ -281,9 +281,7 @@ const Customer = () => {
   }, [showModal]);
 
   const onEndReachedThreshold = useCallback(() => {
-    // console.log(page,console.log(totalPage.current))
-
-    if (page <= totalPage.current) {
+    if (page <= Math.ceil(listCustomerResult.total / listCustomerResult.page_size)) {
       console.log('run if', page);
       startTransition(() => {
         dispatch(customerActions.getCustomerNewPage(page + 1));

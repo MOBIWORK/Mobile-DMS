@@ -13,6 +13,7 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
+  Block,
   SvgIcon,
 } from '../../../components/common';
 import {ApiConstant, AppConstant} from '../../../const';
@@ -361,9 +362,13 @@ const SelectProducts = () => {
     [data],
   );
 
-  const onSubmitProductSelect = async () => {
+  const onSubmitProductSelect = async (data: IProduct[]) => {
+    console.log(data, 'data select');
     const dataSelect = data.filter(item => item.isSelected);
-    dispatch(productActions.setProductSelected(dataSelect));
+    startEffect(() => {
+      dispatch(productActions.setProductSelected(dataSelect));
+      dispatch(productActions.setListProductSelect(dataSelect));
+    });
     navigation.goBack();
   };
 
@@ -570,14 +575,14 @@ const SelectProducts = () => {
               <FlatList
                 data={data}
                 renderItem={({item}) => (
-                  <Pressable>
+                  <Block>
                     <ItemProductOrderComponent
                       item={item}
                       onSelectProduct={onSelectProduct}
                       openBottomSheetDataFilter={openBottomSheetDataFilter}
                       onChangeQuantityProduct={onChangeQuantityProduct}
                     />
-                  </Pressable>
+                  </Block>
                 )}
                 initialNumToRender={10}
                 maxToRenderPerBatch={4}
@@ -594,7 +599,7 @@ const SelectProducts = () => {
 
           {countSelect > 0 && (
             <TouchableOpacity
-              onPress={onSubmitProductSelect}
+              onPress={() => onSubmitProductSelect(data)}
               style={[{position: 'absolute', left: 16, bottom: 50, right: 16}]}>
               <View style={[styles.flex, styles.actionSubmit]}>
                 <Text style={[styles.action, {color: colors.bg_default}]}>

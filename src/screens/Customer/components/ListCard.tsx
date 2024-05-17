@@ -1,5 +1,5 @@
 import {FlatList, RefreshControl} from 'react-native';
-import React, {useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import CardView from './CardView';
 import {IDataCustomers} from '../../../models/types';
 import isEqual from 'react-fast-compare';
@@ -14,10 +14,10 @@ type Props = {
 };
 
 const ListCard = (props: Props) => {
-  const renderItem = ({item, index}: {item: IDataCustomers; index: number}) => (
+  const renderItem = useCallback(({item, index}: {item: IDataCustomers; index: number}) => (
     <CardView data={item as any} key={index} index={index} {...item} />
-  );
-  const memorizedValue = useMemo(() => renderItem, [props.data, props.loading]);
+  ),[props.data,props.loading]);
+  // const memorizedValue = useCallback(() => renderItem, [props.data, props.loading]);
   // console.log(props.data,'data')
   return props.data && props.data.length > 0 ? (
     
@@ -29,8 +29,9 @@ const ListCard = (props: Props) => {
       showsVerticalScrollIndicator={false}
       onEndReachedThreshold={0}
       maxToRenderPerBatch={10}
-      updateCellsBatchingPeriod={5}
-      windowSize={11}
+      updateCellsBatchingPeriod={50}
+      scrollEventThrottle={100}
+      windowSize={21}
       initialNumToRender={5}
       refreshControl={
         <RefreshControl
@@ -41,7 +42,7 @@ const ListCard = (props: Props) => {
       removeClippedSubviews={true}
       ListFooterComponent={props.listFooter}
       keyExtractor={(item, index) => index.toString()}
-      renderItem={memorizedValue}
+      renderItem={renderItem}
     />
   ) : (
     <Block block justifyContent="center" alignItems="center">

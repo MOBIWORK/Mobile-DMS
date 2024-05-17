@@ -23,7 +23,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
   );
 
   return (
-    <View style={{marginTop: 24, rowGap: 20}}>
+    <View style={{marginTop: 24, rowGap: 20,flex:1}}>
       <AppInput
         label={getLabel('productCode')}
         value={productDetail?.item_code || ''}

@@ -13,6 +13,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import CalendarPicker from 'react-native-calendar-picker';
 import {useTheme} from '@react-navigation/native';
 import {getLabel} from '../../../language';
+import isEqual from 'react-fast-compare';
 
 const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   filerBottomSheetRef,
@@ -22,14 +23,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
 }) => {
   const {bottom} = useSafeAreaInsets();
   const theme = useTheme();
-  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
-
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+  // const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
   const [data, setData] = useState<IFilterType[]>(
     isKPI ? AppConstant.ReportFilterKPIData : AppConstant.ReportFilterData,
@@ -64,7 +58,6 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   };
 
   const handleItem = (item: IFilterType) => {
-    
     const newData = data.map(newItem => {
       if (item.value === newItem.value) {
         return {...newItem, isSelected: true};
@@ -90,14 +83,12 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   return (
     <AppBottomSheet
       bottomSheetRef={filerBottomSheetRef}
-      snapPointsCustom={animatedSnapPoints}
+      // snapPointsCustom={animatedSnapPoints}
       onClose={() => setShowCalender(false)}
+      enableDynamicSizing={true}
       // @ts-ignore
-      handleHeight={animatedHandleHeight}
-      contentHeight={animatedContentHeight}>
-      <BottomSheetScrollView
-        style={{paddingBottom: bottom + 12}}
-        onLayout={handleContentLayout}>
+    >
+      <BottomSheetScrollView style={{paddingBottom: bottom + 12}}>
         {showCalender ? (
           <CalendarPicker
             startFromMonday={true}
@@ -152,4 +143,4 @@ interface ReportFilterBottomSheetProps {
   isKPI?: boolean;
 }
 
-export default ReportFilterBottomSheet;
+export default React.memo(ReportFilterBottomSheet,isEqual);

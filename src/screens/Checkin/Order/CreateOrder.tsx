@@ -1,4 +1,11 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
   AppBottomSheet,
@@ -7,6 +14,7 @@ import {
   AppHeader,
   AppInput,
   AppIcons,
+  Block,
 } from '../../../components/common';
 import {
   NavigationProp,
@@ -25,6 +33,7 @@ import {
   ViewStyle,
   TouchableOpacity,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {TextInput} from 'react-native-paper';
@@ -45,7 +54,7 @@ import {
   IUser,
   KeyAbleProps,
 } from '../../../models/types';
-import {useSelector} from '../../../config/function';
+import {useEffectOnce, useSelector} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux';
 import {productActions} from '../../../redux-store/product-reducer/reducer';
@@ -61,6 +70,8 @@ import {
 import ProductList from './components/ProductList';
 import UpdateProductItem from './components/UpdateProductItem';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {shallowEqual} from 'react-redux';
 
 const defautItem1 = {
   doctype: 'Sales Order Item',
@@ -82,6 +93,7 @@ const CreateOrder = () => {
     useRoute<RouteProp<AuthorizeParamsList, 'CHECKIN_ORDER_CREATE'>>();
   const type = router.params.type;
   const {t: getLabel, i18n} = useTranslation();
+  const [isPending, startEffect] = useTransition();
   const userInfo: IUser = useSelector(state => state.app.userProfile);
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
@@ -110,7 +122,14 @@ const CreateOrder = () => {
       isSelected: false,
     },
   ]);
-  const dataProductSelected = useSelector(state => state.product.dataSelected);
+  const dataProductSelected = useSelector(
+    state => state.product.dataSelected,
+    shallowEqual,
+  );
+  const listData = useSelector(
+    state => state.product.listProductSelect,
+    shallowEqual,
+  );
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
   const customer = useSelector(state => state.order.customerOrder);
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -135,6 +154,18 @@ const CreateOrder = () => {
   });
 
   const [percentageLabel, setPercentageLabel] = useState<string>('');
+
+  useEffectOnce(() => {
+    console.log(
+      'dataProduct',
+      dataProductSelected,
+      '/n Products',
+      products,
+      '/br, listData',
+      listData,
+      'dataa',
+    );
+  });
 
   const totalPrice = useMemo(() => {
     let sum: number = 0;
@@ -341,16 +372,18 @@ const CreateOrder = () => {
           };
         },
       );
-      setDataWarehouse(newData);
-      setWarehouse(newData[0]);
+      startEffect(() => {
+        setDataWarehouse(newData);
+        setWarehouse(newData[0]);
+      });
     }
     dispatch(appActions.setProcessingStatus(false));
   };
 
   const fetchProductPromotion = async () => {
     if (type === 'ORDER') {
-      if (dataProductSelected.length > 0) {
-        const newItems = dataProductSelected.map((item: any) => ({
+      if (dataProductSelected.length > 0 && listData?.length > 0) {
+        const newItems = dataProductSelected?.map((item: any) => ({
           ...defautItem1,
           item_code: item.item_code,
           uom: item.stock_uom,
@@ -373,54 +406,65 @@ const CreateOrder = () => {
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
           const result: any = res.result;
-          const newDataSelected = dataProductSelected.map((item, index) => {
-            const element = result[index];
-            if (item.item_code === element.item_code) {
-              if (element.free_item_data && element.free_item_data.length > 0) {
-                setProductsPromotion(element.free_item_data);
-              }
-              if (element?.pricing_rule_for === 'Rate') {
-                return {
-                  ...item,
-                  price: element.price_list_rate,
-                  discount_item_percent: 0,
-                  discount_item_amount: 0,
-                  has_pricing_rule: element.has_pricing_rule,
-                };
-              } else if (element?.pricing_rule_for === 'Discount Percentage') {
-                return {
-                  ...item,
-                  discount_item_percent: element.discount_percentage,
-                  discount_item_amount:
-                    (element.discount_percentage / 100) *
-                    item.price *
-                    item.quantity,
-                  price: item.price,
-                  has_pricing_rule: element.has_pricing_rule,
-                };
-              } else if (element?.pricing_rule_for === 'Discount Amount') {
-                return {
-                  ...item,
-                  discount_item_percent:
-                    (element.discount_amount / item.price / item.quantity) *
-                    100,
-                  discount_item_amount: element.discount_amount,
-                  price: item.price,
-                  has_pricing_rule: element.has_pricing_rule,
-                };
+          if (listData?.length > 0) {
+            const newDataSelected = listData?.map((item, index) => {
+              const element = result[index];
+              if (item.item_code === element.item_code) {
+                if (
+                  element.free_item_data &&
+                  element.free_item_data.length > 0
+                ) {
+                  startEffect(() => {
+                    setProductsPromotion(element.free_item_data);
+                  });
+                }
+                if (element?.pricing_rule_for === 'Rate') {
+                  return {
+                    ...item,
+                    price: element.price_list_rate,
+                    discount_item_percent: 0,
+                    discount_item_amount: 0,
+                    has_pricing_rule: element.has_pricing_rule,
+                  };
+                } else if (
+                  element?.pricing_rule_for === 'Discount Percentage'
+                ) {
+                  return {
+                    ...item,
+                    discount_item_percent: element.discount_percentage,
+                    discount_item_amount:
+                      (element.discount_percentage / 100) *
+                      item.price *
+                      item.quantity,
+                    price: item.price,
+                    has_pricing_rule: element.has_pricing_rule,
+                  };
+                } else if (element?.pricing_rule_for === 'Discount Amount') {
+                  return {
+                    ...item,
+                    discount_item_percent:
+                      (element.discount_amount / item.price / item.quantity) *
+                      100,
+                    discount_item_amount: element.discount_amount,
+                    price: item.price,
+                    has_pricing_rule: element.has_pricing_rule,
+                  };
+                } else {
+                  return {
+                    ...item,
+                    discount_item_percent: 0,
+                    discount_item_amount: 0,
+                    has_pricing_rule: element.has_pricing_rule,
+                  };
+                }
               } else {
-                return {
-                  ...item,
-                  discount_item_percent: 0,
-                  discount_item_amount: 0,
-                  has_pricing_rule: element.has_pricing_rule,
-                };
+                return item;
               }
-            } else {
-              return item;
-            }
-          });
-          updateDataProduct(newDataSelected);
+            });
+            startEffect(() => {
+              updateDataProduct(newDataSelected);
+            });
+          }
         }
       }
     }
@@ -583,8 +627,8 @@ const CreateOrder = () => {
   );
 
   return (
-    <>
-      <MainLayout style={styles.layout}>
+    <SafeAreaView edges={['top']} style={{flex: 1}}>
+      <ScrollView keyboardDismissMode="on-drag" style={styles.layout}>
         <AppHeader
           style={{paddingHorizontal: 16}}
           label={
@@ -787,61 +831,58 @@ const CreateOrder = () => {
             onPress={() => onCreatedOrder()}
           />
         </View>
-      </MainLayout>
+        <AppBottomSheet
+          bottomSheetRef={bottomSheetRef}
+          snapPointsCustom={['100%']}>
+          <Pressable
+            onPress={() => Keyboard.dismiss()}
+            style={{paddingHorizontal: 16, flex: 1}}>
+            <AppHeader
+              label={getLabel('product')}
+              backButtonIcon={
+                <TouchableOpacity
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    bottomSheetRef.current?.close();
+                  }}>
+                  <Image
+                    source={ImageAssets.CloseIcon}
+                    style={{width: 28, height: 28}}
+                  />
+                </TouchableOpacity>
+              }
+            />
+            <UpdateProductItem
+              productDetail={productDetail}
+              setProductDetail={setProductDetail}
+              onOpenBottonSheetData={onOpenBottonSheetData}
+            />
 
-      <AppBottomSheet
-        bottomSheetRef={bottomSheetRef}
-        snapPointsCustom={['100%']}>
-        <Pressable
-          onPress={() => Keyboard.dismiss()}
-          style={{paddingHorizontal: 16, flex: 1}}>
-          <AppHeader
-            label={getLabel('product')}
-            backButtonIcon={
-              <TouchableOpacity
+            <Block
+              marginTop={36}
+              position="absolute"
+              alignSelf="center"
+              bottom={AppConstant.HEIGHT * 0.07}
+              block
+              style={[styles.flexSpace]}>
+              <AppButton
+                style={{width: '49%', backgroundColor: colors.bg_neutral}}
+                styleLabel={{color: colors.text_secondary}}
+                label={getLabel('cancel')}
                 onPress={() => {
                   Keyboard.dismiss();
-                  bottomSheetRef.current?.close();
-                }}>
-                <Image
-                  source={ImageAssets.CloseIcon}
-                  style={{width: 28, height: 28}}
-                />
-              </TouchableOpacity>
-            }
-          />
-          <UpdateProductItem
-            productDetail={productDetail}
-            setProductDetail={setProductDetail}
-            onOpenBottonSheetData={onOpenBottonSheetData}
-          />
-          <View
-            style={[
-              styles.flexSpace,
-              {
-                marginTop: 36,
-                position: 'absolute',
-                alignSelf: 'center',
-                bottom: AppConstant.HEIGHT * 0.07,
-              },
-            ]}>
-            <AppButton
-              style={{width: '49%', backgroundColor: colors.bg_neutral}}
-              styleLabel={{color: colors.text_secondary}}
-              label={getLabel('cancel')}
-              onPress={() => {
-                Keyboard.dismiss();
-                bottomSheetRef.current && bottomSheetRef.current.close();
-              }}
-            />
-            <AppButton
-              style={{width: '49%'}}
-              label={getLabel('update')}
-              onPress={() => updateProductOrder()}
-            />
-          </View>
-        </Pressable>
-      </AppBottomSheet>
+                  bottomSheetRef.current && bottomSheetRef.current.close();
+                }}
+              />
+              <AppButton
+                style={{width: '49%'}}
+                label={getLabel('update')}
+                onPress={() => updateProductOrder()}
+              />
+            </Block>
+          </Pressable>
+        </AppBottomSheet>
+      </ScrollView>
 
       <AppBottomSheet
         bottomSheetRef={bottomSheetWh}
@@ -875,7 +916,7 @@ const CreateOrder = () => {
         date={new Date(date)}
         onConfirm={onConfirmSingle}
       />
-    </>
+    </SafeAreaView>
   );
 };
 
@@ -885,7 +926,7 @@ const createSheetStyle = (theme: AppTheme) =>
   StyleSheet.create({
     layout: {
       backgroundColor: theme.colors.bg_neutral,
-      paddingHorizontal: 0,
+      paddingHorizontal: 16,
     } as ViewStyle,
     flexSpace: {
       flexDirection: 'row',
