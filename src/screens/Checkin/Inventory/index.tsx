@@ -50,8 +50,10 @@ const CheckinInventory = () => {
   const snapPointsDetailPr = useMemo(() => ['60%'], []);
   const snapPointsData = useMemo(() => ['60%'], []);
   const [detailProduct, setDetailProduct] = useState<IProduct | any>();
+
   const products = useSelector(state => state.product.dataSelected);
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
+
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );

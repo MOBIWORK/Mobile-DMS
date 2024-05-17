@@ -158,7 +158,7 @@ const ListVisit = () => {
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
   const [loading, setLoading] = useState<boolean>(true);
-  const [bottomLoading,setBottomLoading] = useState<boolean>(true)
+  const [bottomLoading, setBottomLoading] = useState<boolean>(true);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [error, setError] = useState<string>('');
@@ -227,7 +227,7 @@ const ListVisit = () => {
   }, [dispatch, filterParams, filterDataRef.current]);
 
   const onEndReachedThreshold = () => {
-    setBottomLoading(true)
+    setBottomLoading(true);
     const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
     if (listCustomer.page_number <= totalPage && listCustomer.data.length > 3) {
       if (Object.keys(filterDataRef.current).length > 0) {
@@ -238,7 +238,7 @@ const ListVisit = () => {
           },
           true,
         );
-        setBottomLoading(false)
+        setBottomLoading(false);
       } else {
         getCustomer(
           {
@@ -248,13 +248,13 @@ const ListVisit = () => {
           },
           true,
         );
-        setBottomLoading(false)
+        setBottomLoading(false);
       }
     } else {
-      setBottomLoading(false)
+      setBottomLoading(false);
       return null;
     }
-    setBottomLoading(false)
+    setBottomLoading(false);
   };
 
   const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
@@ -467,7 +467,11 @@ const ListVisit = () => {
                 // onMomentumScrollEnd={eve => console.log(eve.nativeEvent.layoutMeasurement,'layout')}
                 bounces={true}
                 initialNumToRender={4}
-                ListFooterComponent={() => (bottomLoading && <ActivityIndicator size='large' color={colors.primary} />)}
+                ListFooterComponent={
+                  bottomLoading ? (
+                    <ActivityIndicator size="large" color={colors.primary} />
+                  ) : undefined
+                }
                 refreshControl={
                   <RefreshControl
                     refreshing={loading}
@@ -1026,8 +1030,6 @@ const ListVisit = () => {
   useEffect(() => {
     sortDataCustomer(distanceFilterValue);
   }, [listCustomer]);
-
- 
 
   return (
     <SafeAreaView
