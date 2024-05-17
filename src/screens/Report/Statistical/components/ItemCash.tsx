@@ -31,7 +31,7 @@ const ItemCash = (props: Props) => {
             {label}
           </Text>
           <Text fontSize={18} fontWeight="500" colorTheme="text">
-            {formatMoney(content)}
+            {content != undefined ? formatMoney(content) : 0}
           </Text>
         </Block>
       </Block>

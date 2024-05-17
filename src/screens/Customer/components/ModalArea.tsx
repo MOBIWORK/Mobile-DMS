@@ -58,15 +58,17 @@ const ModalArea = (props: Props) => {
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
-      return normalizedFilterText.every(word =>
+
+        return normalizedFilterText.every(word =>
         normalizedName.some(nameWord => nameWord.includes(word)),
       );
     });
+  
+    console.log(normalizedFilterText,'item texr')
 
     return filteredItems.length > 0 ? filteredItems : listTerritory;
   }, [filterText]);
 
-  // console.log(dataMemo,'dataMemo')
 
   const handleItem = (text: any) => {
     setSearchValue(text);

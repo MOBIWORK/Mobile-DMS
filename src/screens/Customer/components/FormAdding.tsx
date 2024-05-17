@@ -1,6 +1,6 @@
 import {
   StyleSheet,
-  Text,
+
   TextStyle,
   View,
   ScrollView,
@@ -10,28 +10,34 @@ import {
   Image,
   Pressable,
   Keyboard,
+
 } from 'react-native';
-import React, {useEffect, useRef, useState, useTransition} from 'react';
+import React, {
+
+  useEffect,
+
+  useState,
+  useTransition,
+} from 'react';
 
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
 import {ApiConstant, AppConstant} from '../../../const';
 import {Colors} from '../../../assets';
-import {AppIcons, AppInput, SvgIcon} from '../../../components/common';
+import {AppIcons, AppInput, Block, SvgIcon,AppText as Text} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
-import {IDataCustomer, KeyAbleProps} from '../../../models/types';
+import {IDataCustomer} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useSelector} from '../../../config/function';
 import CardAddress from './CardAddress';
 import {dispatch} from '../../../utils/redux';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 import {AppService} from '../../../services';
-import {CommonUtils} from '../../../utils';
 import isEqual from 'react-fast-compare';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import { shallowEqual } from 'react-redux';
+import {shallowEqual} from 'react-redux';
+import {formatCash} from '../../../utils/commom.utils';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -40,12 +46,12 @@ type Props = {
   setData: React.Dispatch<React.SetStateAction<IDataCustomer>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   valueDate: Date | any;
-  setModalShow:React.Dispatch<React.SetStateAction<boolean>>;
+  setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
   cameraBottomRef: React.RefObject<BottomSheetMethods>;
   imageSource: any;
   location: GeolocationResponse | null;
   setLocation: (location: GeolocationResponse) => void;
-  setModalOpen:React.Dispatch<React.SetStateAction<boolean>>
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const FormAdding = (props: Props) => {
@@ -60,25 +66,23 @@ const FormAdding = (props: Props) => {
     imageSource,
     location,
     setLocation,
-    setModalOpen
+    setModalOpen,
   } = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: translate} = useTranslation();
-  const mainAddress = useSelector(state => state.customer.mainAddress,shallowEqual);
+  const mainAddress = useSelector(
+    state => state.customer.mainAddress,
+    shallowEqual,
+  );
   const mainContactAddress = useSelector(
-    state => state.customer.mainContactAddress,shallowEqual
+    state => state.customer.mainContactAddress,
+    shallowEqual,
   );
 
   const [_, setValue] = useState<string>('');
 
   const [isPending, startTransition] = useTransition();
- 
-
-
-  
-
-  
 
   useEffect(() => {
     if (location?.coords) {
@@ -92,6 +96,17 @@ const FormAdding = (props: Props) => {
       });
     }
   }, [location]);
+
+  // const onEndEditingCreditLimit = useCallback(
+  //   (e: NativeSyntheticEvent<TextInputEndEditingEventData>) => {
+  //     let cashFormat: any;
+  //     startTransition(() => {
+  //       cashFormat = formatCash(e.nativeEvent.text);
+  //     });
+  //     setData(prev => ({...prev, credit_limit: cashFormat}));
+  //   },
+  //   [valueFilter.credit_limit],
+  // );
 
   return (
     <ScrollView
@@ -189,7 +204,7 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
-         setModalOpen(true)
+          setModalOpen(true);
         }}
         rightIcon={
           <TextInput.Icon
@@ -255,17 +270,17 @@ const FormAdding = (props: Props) => {
           />
         }
       />
-        <AppInput
+      <AppInput
         label={translate('debtLimit')}
-        value={valueFilter.customer_name}
+        value={valueFilter.credit_limit ? formatCash(valueFilter.credit_limit )  : '' }
         editable={true}
-        hiddenRightIcon={true}
+        hiddenRightIcon={false}
         isRequire={true}
+        rightIcon={<TextInput.Affix text='VND'/>}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onChangeValue={text =>
           startTransition(() => {
-            
             setData(prev => ({...prev, credit_limit: text}));
           })
         }
@@ -319,7 +334,7 @@ const FormAdding = (props: Props) => {
             <TouchableOpacity
               style={styles.directionViewButton}
               onPress={() => {
-                setModalShow(true)
+                setModalShow(true);
                 setTypeFilter(AppConstant.CustomerFilterType.dia_chi);
               }}>
               <View style={styles.containIcon}>
@@ -355,7 +370,7 @@ const FormAdding = (props: Props) => {
             <TouchableOpacity
               style={styles.directionViewButton}
               onPress={() => {
-                setModalShow(true)
+                setModalShow(true);
                 setTypeFilter(AppConstant.CustomerFilterType.nguoi_lien_he);
               }}>
               <View style={styles.containIcon}>

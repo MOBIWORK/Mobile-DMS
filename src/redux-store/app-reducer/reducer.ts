@@ -25,6 +25,7 @@ const initialAppState: IAppRedux = {
   dataCheckIn: {},
   userProfile: {},
   automaticLocation: false,
+  listSearch: [],
 };
 
 const appSlice = createSlice({
@@ -112,10 +113,25 @@ const appSlice = createSlice({
     setUserProfile: (state, action: PayloadAction<any>) => {
       state.userProfile = action.payload;
     },
-    resetDataApp: (state: any) => (state = undefined),
+    resetDataApp: state =>
+      void ((state.dataCheckIn = {}), (state.userProfile = {})),
     setAutomaticLocation: (state, action: PayloadAction<any>) => {
       state.automaticLocation = action.payload;
     },
+    setListSearch: (state, action: PayloadAction<any>) => {
+      if (!state.listSearch) {
+        state.listSearch = [];
+      }
+
+      state.listSearch = [...state.listSearch, action.payload];
+    },
+    clearOnSelect: (state, action: PayloadAction<any>) => {
+      if (!state.listSearch) {
+        state.listSearch = [];
+      }
+      state.listSearch = state.listSearch.filter((item: any) => item !== action.payload);
+    }
+    
   },
 });
 

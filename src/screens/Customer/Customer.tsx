@@ -6,6 +6,7 @@ import {
   ViewStyle,
   TextStyle,
   ImageStyle,
+  StatusBar,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import React, {useRef, useMemo, useCallback, useTransition} from 'react';
@@ -44,6 +45,7 @@ import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
+import ModalSearchCustomer from './components/ModalSearchCustomer';
 
 export type IValueType = {
   customerType: string;
@@ -98,7 +100,7 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
-  const [showModal,setShowModal] = React.useState(false)
+  const [showModal, setShowModal] = React.useState(false);
   const [isPending, startTransition] = useTransition();
   // const customerData = React.useRef<IDataCustomers[]>(listCustomer);
   const [customerData, setCustomerData] =
@@ -113,12 +115,12 @@ const Customer = () => {
     Math.ceil(listCustomerResult.total / listCustomerResult.page_size),
   );
 
-  const onPressType1 = () => {
+  const onPressType1 = useCallback(() => {
     bottomRef.current?.snapToIndex(0);
-  };
+  }, [bottomRef.current]);
+
   const onPressType2 = useCallback(() => {
     bottomRef2.current?.snapToIndex(0);
-    bottomRef.current?.close();
   }, [bottomRef2.current]);
 
   const sortedData = useCallback(
@@ -271,8 +273,11 @@ const Customer = () => {
     });
   };
 
+  const onBackButtonPress = useCallback(() => {
+    setShowModal(false);
+  }, [showModal]);
+
   const onEndReachedThreshold = useCallback(() => {
-    console.log('onEndReached');
     if (page <= totalPage.current) {
       console.log('run if', page);
       startTransition(() => {
@@ -381,11 +386,12 @@ const Customer = () => {
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
+      <StatusBar barStyle={'dark-content'} />
       <Block paddingHorizontal={16} block paddingBottom={bottom + 24}>
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate(ScreenConstant.SEARCH_CUSTOMER)}
+            onPress={() => setShowModal(true)}
             style={styles.iconSearch}>
             <AppImage source="IconSearch" style={styles.iconSearch} />
           </TouchableOpacity>
@@ -401,7 +407,7 @@ const Customer = () => {
 
         <Text style={styles.containCustomer}>
           <Text style={styles.numberCustomer}>
-            {listCustomerResult?.total}{' '}
+            {customerData ? customerData?.length : 0}{' '}
           </Text>
           {getLabel('customer')}
         </Text>
@@ -498,9 +504,12 @@ const Customer = () => {
           color={theme.colors.white}
         />
       </TouchableOpacity>
-
-
-
+      <ModalSearchCustomer
+        data={customerData}
+        setDataCustomer={setCustomerData}
+        showModal={showModal}
+        onBackButtonPress={onBackButtonPress}
+      />
     </SafeAreaView>
   );
 };
