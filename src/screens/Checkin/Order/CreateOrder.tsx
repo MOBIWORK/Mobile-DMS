@@ -350,6 +350,7 @@ const CreateOrder = () => {
             const priceUom = productDetail.unit.find(
               (item1: any) => item1.uom === item.label,
             );
+            console.log('itemLabel', item.price, priceUom);
             const newData = {
               ...productDetail,
               stock_uom: item.label,
@@ -394,27 +395,27 @@ const CreateOrder = () => {
   };
 
   const fetchProductPromotion = async () => {
-    if (type === 'ORDER') {
-      if (dataProductSelected.length > 0) {
-        const newItems = dataProductSelected?.map((item: any) => ({
-          ...defautItem1,
-          item_code: item.item_code,
-          uom: item.stock_uom,
-          qty: item.quantity,
-          stock_qty: item?.stock_qty ? item.stock_qty : item.quantity,
-        }));
-        const objecData = {
-          items: newItems,
-          customer: dataCheckin ? dataCheckin.item.customer_code : '', // Khách hàng
-          territory: 'Vietnam',
-          currency: 'VND',
-          price_list: 'Standard Selling',
-          price_list_currency: 'VND',
-          company: userInfo.company,
-          doctype: 'Sales Order',
-          name: 'new-sales-order-hnnkmtrehm',
-          transaction_date: CommonUtils.taskDate(date),
-        };
+    if (dataProductSelected.length > 0) {
+      const newItems = dataProductSelected.map((item: any) => ({
+        ...defautItem1,
+        item_code: item.item_code,
+        uom: item.stock_uom,
+        qty: item.quantity,
+        stock_qty: item?.stock_qty ? item.stock_qty : item.quantity,
+      }));
+      const objecData = {
+        items: newItems,
+        customer: dataCheckin ? dataCheckin.item.customer_code : '', // Khách hàng
+        territory: 'Vietnam',
+        currency: 'VND',
+        price_list: 'Standard Selling',
+        price_list_currency: 'VND',
+        company: userInfo.company,
+        doctype: 'Sales Order',
+        name: 'new-sales-order-hnnkmtrehm',
+        transaction_date: CommonUtils.taskDate(date),
+      };
+      if (type === 'ORDER') {
         const {data: res, status}: KeyAbleProps =
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
@@ -772,14 +773,7 @@ const CreateOrder = () => {
                   inputProp={{
                     keyboardType: 'numeric',
                     returnKeyType: 'done',
-                    // onEndEditing: event => {
-                    //   const txt = event.nativeEvent.text;
-                    //   setDiscount((prev: any) => ({
-                    //     ...prev,
-                    //     discount_percentage: Number(txt.replace(',', '.')),
-                    //   }));
-                    // },
-                    onBlur: event => {
+                    onEndEditing: event => {
                       const txt = event.nativeEvent.text;
                       setDiscount((prev: any) => ({
                         ...prev,
