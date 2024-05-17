@@ -352,7 +352,6 @@ const CreateOrder = () => {
             const priceUom = productDetail.unit.find(
               (item1: any) => item1.uom === item.label,
             );
-            console.log('itemLabel', item.price, priceUom);
             const newData = {
               ...productDetail,
               stock_uom: item.label,
@@ -545,8 +544,7 @@ const CreateOrder = () => {
           ? productDetail
           : item,
       );
-      setProducts(newProducts);
-      dispatch(productActions.updateProductSelect(newProducts));
+      updateDataProduct(newProducts);
     }
     if (bottomSheetRef.current) {
       bottomSheetRef.current.close();
