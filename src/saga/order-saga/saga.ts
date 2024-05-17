@@ -28,7 +28,7 @@ export function* onGetOrders(action: PayloadAction) {
       );
       yield put(orderAction.setLoading());
       if (status === ApiConstant.STT_OK) {
-        console.log('dataaa', data.result);
+        // console.log('dataaa', data.result);
         yield put(
           orderAction.setData({
             data: data.result?.data,

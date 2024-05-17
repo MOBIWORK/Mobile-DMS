@@ -15,27 +15,27 @@ const initState: StateType = {
   listProductSelect: [],
 };
 
-function mergeArraysSelectProduct(arr1: IProduct[], arr2: IProduct[]) {
-  const productMap: any = {};
-  arr1 = arr1.filter(product => product?.quantity! > 0);
-  arr2 = arr2.filter(product => product?.quantity! > 0);
-  arr1.forEach(product => {
-    if (product.item_code in productMap) {
-      productMap[product.item_code].quantity += product.quantity;
-    } else {
-      productMap[product.item_code] = {...product};
-    }
-  });
-  arr2.forEach(product => {
-    if (product.item_code in productMap) {
-      productMap[product.item_code].quantity += product.quantity;
-    } else {
-      productMap[product.item_code] = {...product};
-    }
-  });
-
-  return Object.values(productMap);
-}
+// function mergeArraysSelectProduct(arr1: IProduct[], arr2: IProduct[]) {
+//   const productMap: any = {};
+//   arr1 = arr1.filter(product => product?.quantity! > 0);
+//   arr2 = arr2.filter(product => product?.quantity! > 0);
+//   arr1.forEach(product => {
+//     if (product.item_code in productMap) {
+//       productMap[product.item_code].quantity += product.quantity;
+//     } else {
+//       productMap[product.item_code] = {...product};
+//     }
+//   });
+//   arr2.forEach(product => {
+//     if (product.item_code in productMap) {
+//       productMap[product.item_code].quantity += product.quantity;
+//     } else {
+//       productMap[product.item_code] = {...product};
+//     }
+//   });
+//
+//   return Object.values(productMap);
+// }
 
 const productSlice = createSlice({
   name: SLICE_NAME,
@@ -47,7 +47,11 @@ const productSlice = createSlice({
         let priceUom = item.details.find(
           itemDetails => itemDetails.uom === item.stock_uom,
         );
-        let neItem = {...item, price: priceUom ? priceUom.price_list_rate : 0};
+        let neItem = {
+          ...item,
+          price: priceUom ? priceUom.price_list_rate : 0,
+          price_default: priceUom ? priceUom.price_list_rate : 0,
+        };
         return item.min_order_qty === 0
           ? {...neItem, quantity: 1}
           : {...neItem, quantity: item.min_order_qty};
@@ -57,10 +61,7 @@ const productSlice = createSlice({
       state.data = [];
     },
     setProductSelected: (state, action: PayloadAction<IProduct[]>) => {
-      const newData = mergeArraysSelectProduct(
-        state.dataSelected,
-        action.payload,
-      );
+      const newData = state.dataSelected.concat(action.payload); //push item sản phẩm vào sau cùng, tách ra
       state.dataSelected = newData as any;
     },
     updateProductSelect: (state, action: PayloadAction<IProduct[]>) => {

@@ -242,7 +242,6 @@ const CreateOrder = () => {
   };
 
   const showDetailProdcut = (product: IProduct) => {
-    console.log('product', product);
     setProductDetail(product);
     if (bottomSheetRef.current) {
       bottomSheetRef.current.snapToIndex(0);
@@ -354,7 +353,7 @@ const CreateOrder = () => {
               ...productDetail,
               stock_uom: item.label,
               price: priceUom
-                ? priceUom.conversion_factor * productDetail.price
+                ? priceUom.conversion_factor * productDetail.price_default
                 : 0,
             };
             setProductDetail(newData);
@@ -503,7 +502,10 @@ const CreateOrder = () => {
     Keyboard.dismiss();
     if (productDetail) {
       const newProducts = products.map(item =>
-        item.item_code === productDetail.item_code ? productDetail : item,
+        item.item_code === productDetail.item_code &&
+        item.index === productDetail.index
+          ? productDetail
+          : item,
       );
       updateDataProduct(newProducts);
     }

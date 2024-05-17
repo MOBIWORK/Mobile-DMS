@@ -320,9 +320,9 @@ const OrderList = () => {
     fetchData();
   }, [fromDate, toDate, filterStatus, page]);
 
-  useEffect(() => {
-    dispatch(orderAction.resetDataOrder());
-  }, [fromDate, toDate, filterStatus]);
+  // useEffect(() => {
+  //   dispatch(orderAction.resetDataOrder());
+  // }, [fromDate, toDate, filterStatus]);
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>

@@ -368,11 +368,28 @@ const SelectProducts = () => {
   const onSubmitProductSelect = async (data: IProduct[]) => {
     const dataSelect = data.filter(item => item.isSelected);
     console.log(dataSelect, 'data select');
-
+    const newDataSelect = dataSelect.map(item => ({
+      ...item,
+      index: CommonUtils.randomInt(1, 1e6),
+    }));
     startEffect(() => {
-      dispatch(productActions.setProductSelected(dataSelect));
+      // dispatch(productActions.setProductSelected(dataSelect));
+    dispatch(productActions.setProductSelected(newDataSelect));
+
       dispatch(productActions.setListProductSelect(dataSelect));
     });
+   
+
+    // console.log('dataSelect', dataSelect);
+    // if (dataProductSelected && dataProductSelected?.length > 0) {
+    //   dispatch(
+    //     productActions.setProductSelected(
+    //       dataProductSelected.concat(dataSelect),
+    //     ),
+    //   );
+    // } else {
+    //
+    // }
     navigation.goBack();
   };
 
