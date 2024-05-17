@@ -72,6 +72,7 @@ import UpdateProductItem from './components/UpdateProductItem';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {shallowEqual} from 'react-redux';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 
 const defautItem1 = {
   doctype: 'Sales Order Item',
@@ -95,6 +96,10 @@ const CreateOrder = () => {
   const {t: getLabel, i18n} = useTranslation();
   const [isPending, startEffect] = useTransition();
   const userInfo: IUser = useSelector(state => state.app.userProfile);
+
+  const categoriesCheckin = useSelector(
+    state => state.checkin.categoriesCheckin,
+  );
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
   const {
@@ -208,10 +213,31 @@ const CreateOrder = () => {
   }, [totalPrice, total_VAT, total_Discount]);
 
   const onBackScreen = () => {
-    dispatch(productActions.updateProductSelect([]));
+    Keyboard.dismiss();
     if (customer) {
       dispatch(orderAction.setCustomerOder(null));
     }
+    dispatch(productActions.updateProductSelect([]));
+    navigation.goBack();
+  };
+
+  const completeCheckin = () => {
+    Keyboard.dismiss();
+    if (dataCheckin) {
+      const newData =
+        type === 'ORDER'
+          ? categoriesCheckin.map(item =>
+              item.key === 'order' ? {...item, isDone: true} : item,
+            )
+          : categoriesCheckin.map(item =>
+              item.key === 'return_order' ? {...item, isDone: true} : item,
+            );
+      dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    }
+    if (customer) {
+      dispatch(orderAction.setCustomerOder(null));
+    }
+    dispatch(productActions.updateProductSelect([]));
     navigation.goBack();
   };
 
@@ -259,20 +285,21 @@ const CreateOrder = () => {
         {
           setLabelBottonSheet('unit');
           if (productDetail) {
-            const units = productDetail.details;
-            const newUnits: IFilterType[] = units.map((item1: any) => {
-              return productDetail.stock_uom === item1.uom
-                ? {
-                    label: item1.uom,
-                    value: productDetail.item_code,
-                    isSelected: false,
-                  }
-                : {
-                    label: item1.uom,
-                    value: productDetail.item_code,
-                    isSelected: false,
-                  };
-            });
+            const newUnits: IFilterType[] = productDetail.unit.map(
+              (item1: any) => {
+                return productDetail.stock_uom === item1.uom
+                  ? {
+                      label: item1.uom,
+                      value: productDetail.item_code,
+                      isSelected: true,
+                    }
+                  : {
+                      label: item1.uom,
+                      value: productDetail.item_code,
+                      isSelected: false,
+                    };
+              },
+            );
             setDataCategorie(newUnits);
           } else {
             setDataCategorie([]);
@@ -319,13 +346,15 @@ const CreateOrder = () => {
       case 'unit':
         {
           if (productDetail) {
-            const priceUom = productDetail.details.find(
+            console.log('prooo', productDetail);
+            const priceUom = productDetail.unit.find(
               (item1: any) => item1.uom === item.label,
             );
+            console.log('itemLabel', item.price, priceUom);
             const newData = {
               ...productDetail,
               stock_uom: item.label,
-              price: priceUom ? priceUom.price : 0,
+              price: priceUom ? priceUom.conversion_factor * item.price : 0,
             };
             setProductDetail(newData);
           }
@@ -449,6 +478,16 @@ const CreateOrder = () => {
             });
           }
         }
+      } else {
+        const newDataSelected = dataProductSelected.map(item => {
+          return {
+            ...item,
+            discount_item_percent: 0,
+            discount_item_amount: 0,
+            has_pricing_rule: 0,
+          };
+        });
+        updateDataProduct(newDataSelected);
       }
     }
   };
@@ -498,7 +537,11 @@ const CreateOrder = () => {
       rate: item.price,
       uom: item.stock_uom,
       discount_percentage: item.discount_item_percent,
-      item_tax_template: item.rate_tax_item,
+      item_tax_rate: item?.rate_tax_item ? item.rate_tax_item : 0,
+      item_tax_template:
+        item?.item_tax_template?.length > 0
+          ? item.item_tax_template[0].item_tax_template
+          : '',
     }));
     const objectData: any = {
       set_warehouse: warehouse?.value,
@@ -520,18 +563,20 @@ const CreateOrder = () => {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
         objectData.grand_total = total_Money;
+        console.log('object', objectData);
         status = (await OrderService.createdOrder(objectData)).status;
         break;
       case 'RETURN_ORDER':
-        objectData.grand_total = total_Money;
+        objectData.grand_total = -total_Money;
         status = (await OrderService.createdReturnOrder(objectData)).status;
         break;
       default:
         break;
     }
+
     dispatch(appActions.setProcessingStatus(false));
     if (status === ApiConstant.STT_CREATED) {
-      onBackScreen();
+      completeCheckin();
     }
   };
 
@@ -723,14 +768,7 @@ const CreateOrder = () => {
                   inputProp={{
                     keyboardType: 'numeric',
                     returnKeyType: 'done',
-                    // onEndEditing: event => {
-                    //   const txt = event.nativeEvent.text;
-                    //   setDiscount((prev: any) => ({
-                    //     ...prev,
-                    //     discount_percentage: Number(txt.replace(',', '.')),
-                    //   }));
-                    // },
-                    onBlur: event => {
+                    onEndEditing: event => {
                       const txt = event.nativeEvent.text;
                       setDiscount((prev: any) => ({
                         ...prev,
