@@ -304,7 +304,7 @@ const OrderList = () => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = () => {
     dispatch(
       orderAction.onGetData({
         from_date: fromDate > 0 ? fromDate / 1000 : undefined,
@@ -320,9 +320,9 @@ const OrderList = () => {
     fetchData();
   }, [fromDate, toDate, filterStatus, page]);
 
-  useEffect(() => {
-    dispatch(orderAction.resetDataOrder());
-  }, [fromDate, toDate, filterStatus]);
+  // useEffect(() => {
+  //   dispatch(orderAction.resetDataOrder());
+  // }, [fromDate, toDate, filterStatus]);
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>

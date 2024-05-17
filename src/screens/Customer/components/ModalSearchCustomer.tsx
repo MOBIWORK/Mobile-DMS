@@ -54,7 +54,7 @@ const ModalSearchCustomer = (props: Props) => {
       .toLowerCase()
       .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
 
-    const filteredItems = data.filter(item => {
+    const filteredItems = data?.filter(item => {
       const normalizedName = item.name
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
@@ -66,7 +66,7 @@ const ModalSearchCustomer = (props: Props) => {
       );
     });
 
-    return filteredItems.length > 0 ? filteredItems : [];
+    return  data && filteredItems?.length > 0  ? filteredItems : [];
   }, [filterText]);
 
   const handleItem = (text: any) => {

@@ -8,6 +8,7 @@ export type StateType = {
     dataSelected : IProduct[]
     message :string,
     isLoading : boolean
+    listProductSelect:any[]
 }
 
 export type DataType = {

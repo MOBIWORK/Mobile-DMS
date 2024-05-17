@@ -13,9 +13,8 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
-  SvgIcon,
 } from '../../../components/common';
-import {ApiConstant, AppConstant} from '../../../const';
+import {AppConstant} from '../../../const';
 import {useNavigation} from '@react-navigation/native';
 import {
   Text,
@@ -38,8 +37,7 @@ import {NavigationProp} from '../../../navigation/screen-type';
 import {useSelector} from '../../../config/function';
 import {dispatch} from '../../../utils/redux';
 import {productActions} from '../../../redux-store/product-reducer/reducer';
-import {IProduct, KeyAbleProps} from '../../../models/types';
-import {ProductService} from '../../../services';
+import {IProduct} from '../../../models/types';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import {AppTheme, useTheme} from '../../../layouts/theme';
@@ -79,11 +77,15 @@ const SelectProducts = () => {
   );
   const [dataBrandProduct, setDataBrandProduct] = useState<IFilterType[]>([]);
   const [dataIndustry, setDataIndustry] = useState<IFilterType[]>([]);
+
   const {
     totalItem,
     data: products,
     isLoading,
   } = useSelector(state => state.product);
+
+  const dataProductSelected = useSelector(state => state.product.dataSelected);
+
   const [countSelect, setCountSelect] = useState<number>(0);
   const [data, setData] = useState<IProduct[]>([]);
   const [dataFilter, setDataFilter] = useState<IFilterType[]>([]);
@@ -363,59 +365,23 @@ const SelectProducts = () => {
 
   const onSubmitProductSelect = async () => {
     const dataSelect = data.filter(item => item.isSelected);
-    dispatch(productActions.setProductSelected(dataSelect));
+    const newDataSelect = dataSelect.map(item => ({
+      ...item,
+      index: CommonUtils.randomInt(1, 1e6),
+    }));
+
+    // console.log('dataSelect', dataSelect);
+    // if (dataProductSelected && dataProductSelected?.length > 0) {
+    //   dispatch(
+    //     productActions.setProductSelected(
+    //       dataProductSelected.concat(dataSelect),
+    //     ),
+    //   );
+    // } else {
+    //
+    // }
+    dispatch(productActions.setProductSelected(newDataSelect));
     navigation.goBack();
-  };
-
-  const fetchBrandProduct = async () => {
-    const {status, data}: KeyAbleProps = await ProductService.getBrand();
-    if (status === ApiConstant.STT_OK) {
-      const rlt = data.result;
-      const newData: IFilterType[] = [];
-      for (let i = 0; i < rlt.length; i++) {
-        const element = rlt[i];
-        newData.push({
-          label: element.brand,
-          value: element.name,
-          isSelected: false,
-        });
-      }
-      setDataBrandProduct(newData);
-    }
-  };
-
-  const fetchIndustryProduct = async () => {
-    const {data, status}: KeyAbleProps = await ProductService.getIndustry();
-    if (status === ApiConstant.STT_OK) {
-      const rlt = data.result;
-      const newData: IFilterType[] = [];
-      for (let i = 0; i < rlt.length; i++) {
-        const element = rlt[i];
-        newData.push({
-          label: element.industry,
-          value: element.name,
-          isSelected: false,
-        });
-      }
-      setDataIndustry(newData);
-    }
-  };
-
-  const fetchGroupProduct = async () => {
-    const {data, status}: KeyAbleProps = await ProductService.getGroup();
-    if (status === ApiConstant.STT_OK) {
-      const rlt = data.result;
-      const newData: IFilterType[] = [];
-      for (let i = 0; i < rlt.length; i++) {
-        const element = rlt[i];
-        newData.push({
-          label: element.item_group_name,
-          value: element.name,
-          isSelected: false,
-        });
-      }
-      setdDtaCategoryProduct(newData);
-    }
   };
 
   const animatedValue = useRef(new Animated.Value(1000)).current;
@@ -430,12 +396,6 @@ const SelectProducts = () => {
   const debouncedSearch = CommonUtils.debounce(function (query: string) {
     setProductName(query);
   }, 1000);
-
-  useEffect(() => {
-    fetchBrandProduct();
-    fetchGroupProduct();
-    fetchIndustryProduct();
-  }, []);
 
   useEffect(() => {
     debouncedSearch(textSearch);

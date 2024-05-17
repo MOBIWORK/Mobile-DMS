@@ -654,7 +654,8 @@ export type IProduct = {
   discount_item_percent: number; // chiết khấu % của sản phẩm
   new_discount_item_percent: number; // Chiết khấu % mới của sản phẩm thay đổi khi has_pricing_rule = 0
   discount_item_amount: number;
-  price: number; // giá của sản phẩm ứng với đơn vị tính mặc định và hệ số = 1
+  price: number;
+  price_default: number; // giá của sản phẩm ứng với đơn vị tính mặc định và hệ số = 1
   quantity: number; // số lượng sản phẩm (thay đổi được)
   item_tax_template: {item_tax_template: string}[]; // list chiết khấu
   rate_tax_item: number; //VAT %
@@ -663,6 +664,7 @@ export type IProduct = {
   expiry?: string;
   total_item_money: number;
   total_item_tax: number;
+  index: number; //phân biệt các sản phẩm với nhau cho dù cùng mã.
 };
 
 export type IOrderList = {

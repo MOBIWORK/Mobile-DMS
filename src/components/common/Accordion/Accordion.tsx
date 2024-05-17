@@ -1,5 +1,11 @@
-import {Platform, Pressable, StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import React, {ReactElement, useEffect, useState} from 'react';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
+import React, {ReactElement, useEffect, useState, useTransition} from 'react';
 import Animated, {
   useAnimatedRef,
   useSharedValue,
@@ -13,7 +19,7 @@ import {Block} from '../Block';
 import {AppText as Text} from '../AppText';
 import {useTheme, AppTheme} from '../../../layouts/theme';
 import isEqual from 'react-fast-compare';
-import {useEffectOnce } from '../../../config/function';
+import {useEffectOnce} from '../../../config/function';
 
 type Regular = {
   children: ReactElement | ReactElement[];
@@ -21,7 +27,7 @@ type Regular = {
   type: 'regular';
   containerStyle?: ViewStyle;
   titleContainerStyle?: ViewStyle;
-  contentStyle?:ViewStyle
+  contentStyle?: ViewStyle;
 };
 type Nested = {
   children: ReactElement | ReactElement[];
@@ -29,8 +35,7 @@ type Nested = {
   title: string;
   containerStyle?: ViewStyle;
   titleContainerStyle?: ViewStyle;
-  contentStyle?:ViewStyle
-
+  contentStyle?: ViewStyle;
 };
 
 type Props = Regular | Nested;
@@ -41,22 +46,24 @@ const Accordion = (props: Props) => {
   const [show, setShow] = useState(false);
   const theme = useTheme();
   const styles = rootStyle(theme);
+  const [isPending, startEffect] = useTransition();
 
   const heightAnimationStyle = useAnimatedStyle(() => ({
     height: heightValue.value,
   }));
 
-
-   useEffectOnce (() => {
+  useEffectOnce(() => {
     setTimeout(() => {
       if (heightValue.value === 0) {
-        runOnUI(() => {
-          'worklet';
-          const measuredHeight = measure(listRef)?.height;
-          if (measuredHeight) {
-            heightValue.value = withTiming(measuredHeight);
-          }
-        })();
+        startEffect(() => {
+          runOnUI(() => {
+            'worklet';
+            const measuredHeight = measure(listRef)?.height;
+            if (measuredHeight) {
+              heightValue.value = withTiming(measuredHeight);
+            }
+          })();
+        });
       } else {
         heightValue.value = withTiming(0);
       }
@@ -86,8 +93,13 @@ const Accordion = (props: Props) => {
         </Text>
         <Chevron show={show} />
       </Pressable>
-      <Animated.View style={heightAnimationStyle} collapsable={false} >
-        <Animated.View style={styles.contentContainer} ref={listRef}  collapsable={false}>
+      <Animated.View
+        style={heightAnimationStyle}
+        collapsable={Platform.OS === 'android' && false}>
+        <Animated.View
+          style={styles.contentContainer}
+          ref={listRef}
+          collapsable={Platform.OS === 'android' && false}>
           {props.type === 'regular' && <>{props.children}</>}
         </Animated.View>
       </Animated.View>
@@ -112,8 +124,13 @@ const Accordion = (props: Props) => {
         </Text>
         <Chevron show={show} />
       </Pressable>
-      <Animated.View style={[heightAnimationStyle]} collapsable={ Platform.OS === 'android' &&  false} >
-        <Animated.View style={[styles.contentContainer,props.contentStyle]} ref={listRef}  collapsable={false}>
+      <Animated.View
+        style={[heightAnimationStyle]}
+        collapsable={Platform.OS === 'android' && false}>
+        <Animated.View
+          style={[styles.contentContainer, props.contentStyle]}
+          ref={listRef}
+          collapsable={Platform.OS === 'android' && false}>
           {props.children}
         </Animated.View>
       </Animated.View>
@@ -121,7 +138,7 @@ const Accordion = (props: Props) => {
   );
 };
 
-export default React.memo(Accordion,isEqual);
+export default React.memo(Accordion, isEqual);
 
 const rootStyle = (theme: AppTheme) =>
   StyleSheet.create({
