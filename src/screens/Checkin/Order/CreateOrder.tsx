@@ -126,10 +126,6 @@ const CreateOrder = () => {
     state => state.product.dataSelected,
     shallowEqual,
   );
-  const listData = useSelector(
-    state => state.product.listProductSelect,
-    shallowEqual,
-  );
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
   const customer = useSelector(state => state.order.customerOrder);
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -154,18 +150,6 @@ const CreateOrder = () => {
   });
 
   const [percentageLabel, setPercentageLabel] = useState<string>('');
-
-  useEffectOnce(() => {
-    console.log(
-      'dataProduct',
-      dataProductSelected,
-      '/n Products',
-      products,
-      '/br, listData',
-      listData,
-      'dataa',
-    );
-  });
 
   const totalPrice = useMemo(() => {
     let sum: number = 0;
@@ -382,7 +366,7 @@ const CreateOrder = () => {
 
   const fetchProductPromotion = async () => {
     if (type === 'ORDER') {
-      if (dataProductSelected.length > 0 && listData?.length > 0) {
+      if (dataProductSelected.length > 0) {
         const newItems = dataProductSelected?.map((item: any) => ({
           ...defautItem1,
           item_code: item.item_code,
@@ -406,8 +390,8 @@ const CreateOrder = () => {
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
           const result: any = res.result;
-          if (listData?.length > 0) {
-            const newDataSelected = listData?.map((item, index) => {
+          if (dataProductSelected?.length > 0) {
+            const newDataSelected = dataProductSelected?.map((item, index) => {
               const element = result[index];
               if (item.item_code === element.item_code) {
                 if (
@@ -814,16 +798,15 @@ const CreateOrder = () => {
         </AppContainer>
 
         <View style={styles.footerView}>
-          <View
-            style={[
-              styles.flexSpace,
-              {paddingVertical: 12, alignItems: 'flex-end'},
-            ]}>
+          <Block
+            paddingVertical={12}
+            alignItems="flex-end"
+            style={[styles.flexSpace]}>
             <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
             <Text style={styles.totalPrice}>
               {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
             </Text>
-          </View>
+          </Block>
           <AppButton
             label={getLabel('orderCreated')}
             style={styles.button}
