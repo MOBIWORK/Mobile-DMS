@@ -77,11 +77,15 @@ const SelectProducts = () => {
   );
   const [dataBrandProduct, setDataBrandProduct] = useState<IFilterType[]>([]);
   const [dataIndustry, setDataIndustry] = useState<IFilterType[]>([]);
+
   const {
     totalItem,
     data: products,
     isLoading,
   } = useSelector(state => state.product);
+
+  const dataProductSelected = useSelector(state => state.product.dataSelected);
+
   const [countSelect, setCountSelect] = useState<number>(0);
   const [data, setData] = useState<IProduct[]>([]);
   const [dataFilter, setDataFilter] = useState<IFilterType[]>([]);
@@ -361,7 +365,17 @@ const SelectProducts = () => {
 
   const onSubmitProductSelect = async () => {
     const dataSelect = data.filter(item => item.isSelected);
+    // if (dataProductSelected && dataProductSelected?.length > 0) {
+    //   dispatch(
+    //     productActions.setProductSelected(
+    //       dataProductSelected.concat(dataSelect),
+    //     ),
+    //   );
+    // } else {
+    //
+    // }
     dispatch(productActions.setProductSelected(dataSelect));
+
     navigation.goBack();
   };
 

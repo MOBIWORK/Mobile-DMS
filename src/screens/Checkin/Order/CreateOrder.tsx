@@ -227,6 +227,7 @@ const CreateOrder = () => {
   };
 
   const showDetailProdcut = (product: IProduct) => {
+    console.log('product', product);
     setProductDetail(product);
     if (bottomSheetRef.current) {
       bottomSheetRef.current.snapToIndex(0);
@@ -331,15 +332,15 @@ const CreateOrder = () => {
       case 'unit':
         {
           if (productDetail) {
-            console.log('prooo', productDetail);
             const priceUom = productDetail.unit.find(
               (item1: any) => item1.uom === item.label,
             );
-            console.log('itemLabel', item.price, priceUom);
             const newData = {
               ...productDetail,
               stock_uom: item.label,
-              price: priceUom ? priceUom.conversion_factor * item.price : 0,
+              price: priceUom
+                ? priceUom.conversion_factor * productDetail.price
+                : 0,
             };
             setProductDetail(newData);
           }
@@ -476,7 +477,7 @@ const CreateOrder = () => {
       const newProducts = products.map(item =>
         item.item_code === productDetail.item_code ? productDetail : item,
       );
-      dispatch(productActions.updateProductSelect(newProducts));
+      updateDataProduct(newProducts);
     }
     if (bottomSheetRef.current) {
       bottomSheetRef.current.close();
