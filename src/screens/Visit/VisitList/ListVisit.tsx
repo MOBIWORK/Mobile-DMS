@@ -447,10 +447,7 @@ const ListVisit = () => {
             <Text style={{color: colors.text_secondary}}>
               {StringFormat(getLabel('customerVisitedCount'), {
                 customerCheckinCount: customerCheckinCount,
-                allCustomer:
-                  customerDataSort?.length != undefined
-                    ? customerDataSort?.length
-                    : 0,
+                allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
               })}
             </Text>
             {isPending ? (
