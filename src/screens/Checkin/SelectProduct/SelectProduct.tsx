@@ -365,6 +365,7 @@ const SelectProducts = () => {
 
   const onSubmitProductSelect = async () => {
     const dataSelect = data.filter(item => item.isSelected);
+    // console.log('dataSelect', dataSelect);
     // if (dataProductSelected && dataProductSelected?.length > 0) {
     //   dispatch(
     //     productActions.setProductSelected(
@@ -376,7 +377,7 @@ const SelectProducts = () => {
     // }
     dispatch(productActions.setProductSelected(dataSelect));
 
-    navigation.goBack();
+    // navigation.goBack();
   };
 
   const animatedValue = useRef(new Animated.Value(1000)).current;
