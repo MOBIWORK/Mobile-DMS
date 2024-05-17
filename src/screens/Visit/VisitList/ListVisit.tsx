@@ -464,10 +464,10 @@ const ListVisit = () => {
                 // onMomentumScrollEnd={eve => console.log(eve.nativeEvent.layoutMeasurement,'layout')}
                 bounces={true}
                 initialNumToRender={4}
-                ListFooterComponent={() =>
-                  bottomLoading && (
+                ListFooterComponent={
+                  bottomLoading ? (
                     <ActivityIndicator size="large" color={colors.primary} />
-                  )
+                  ) : undefined
                 }
                 refreshControl={
                   <RefreshControl

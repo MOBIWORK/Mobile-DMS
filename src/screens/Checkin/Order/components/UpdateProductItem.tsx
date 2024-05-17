@@ -24,11 +24,13 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
         const new_discount_item_percent =
           discountPercent > 0
             ? discountPercent
-            : (discountAmount * 100) / productDetail.price;
+            : (discountAmount * productDetail.quantity * 100) /
+              productDetail.price;
         const new_discount_item_amount =
           discountAmount > 0
             ? discountAmount
-            : (discountPercent * productDetail.price) / 100;
+            : (discountPercent * productDetail.quantity * productDetail.price) /
+              100;
 
         setDiscountPercent(new_discount_item_percent.toString());
         setDiscountAmount(
@@ -52,7 +54,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
   }, [productDetail]);
 
   return (
-    <View style={{marginTop: 24, rowGap: 20,flex:1}}>
+    <View style={{marginTop: 24, rowGap: 20, flex: 1}}>
       <AppInput
         label={getLabel('productCode')}
         value={productDetail?.item_code || ''}
