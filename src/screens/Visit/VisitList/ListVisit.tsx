@@ -869,7 +869,7 @@ const ListVisit = () => {
           location.coords.latitude,
           location.coords.longitude,
           log?.lat,
-          log.long,
+          log?.long,
         );
         let data: CheckinData = {
           checkin_id:
@@ -937,7 +937,7 @@ const ListVisit = () => {
               location.coords.latitude,
               location.coords.longitude,
               log?.lat || 0,
-              log.long || 0,
+              log?.long || 0,
             );
             let data: any = {
               checkin_id:
@@ -949,8 +949,8 @@ const ListVisit = () => {
               kh_ma: item.customer_code,
               kh_ten: item.customer_name,
               kh_diachi: item.customer_primary_address,
-              kh_long: log.long ?? '',
-              kh_lat: log.lat ?? '',
+              kh_long: log?.long ?? '',
+              kh_lat: log?.lat ?? '',
               checkin_giovao: new Date().getTime() / 1000,
               checkin_pinvao:
                 batteryLevel > 0

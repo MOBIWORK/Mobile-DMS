@@ -31,7 +31,7 @@ import { NavigationProp } from '../../../navigation/screen-type';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProductService } from '../../../services';
 import { STT_OK } from '../../../const/api.const';
-import { useSelector } from '../../../config/function';
+import { useDeepCompareEffect, useEffectOnce, useSelector } from '../../../config/function';
 import { dispatch } from '../../../utils/redux';
 import { productActions } from '../../../redux-store/product-reducer/reducer';
 import ItemSekeleton from '../ItemSekeleton';
@@ -416,9 +416,9 @@ const ListProduct = () => {
     fetchGroupProduct();
   }, [])
 
-  useEffect(() => {
+  useEffectOnce(() => {
     fetchProduct();
-  }, [filterBrand, filterIndustry, filterGroup, searchProduct,page])
+  })
 
   useEffect(() => {
     dispatch(productActions.resetDataProduct());

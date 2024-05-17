@@ -36,7 +36,7 @@ import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
 import {NavigationProp} from '../../../navigation/screen-type';
-import {useSelector} from '../../../config/function';
+import {useDeepCompareEffect, useSelector} from '../../../config/function';
 import {dispatch} from '../../../utils/redux';
 import {productActions} from '../../../redux-store/product-reducer/reducer';
 import {IProduct, KeyAbleProps} from '../../../models/types';
@@ -363,8 +363,9 @@ const SelectProducts = () => {
   );
 
   const onSubmitProductSelect = async (data: IProduct[]) => {
-    console.log(data, 'data select');
     const dataSelect = data.filter(item => item.isSelected);
+    console.log(dataSelect, 'data select');
+
     startEffect(() => {
       dispatch(productActions.setProductSelected(dataSelect));
       dispatch(productActions.setListProductSelect(dataSelect));
@@ -445,7 +446,7 @@ const SelectProducts = () => {
   useEffect(() => {
     debouncedSearch(textSearch);
   }, [textSearch]);
-
+ 
   useEffect(() => {
     if (products?.length > 0) {
       setData(products);
@@ -454,7 +455,7 @@ const SelectProducts = () => {
     }
   }, [products]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     dispatch(
       productActions.onGetData({
         item_group: filterProduct.group,

@@ -65,6 +65,7 @@ const productSlice = createSlice({
     },
     updateProductSelect: (state, action: PayloadAction<IProduct[]>) => {
       state.dataSelected = action.payload;
+      // state.listProductSelect = action.payload
     },
     setMessage: (state, action: PayloadAction<string>) => {
       state.message = action.payload;
@@ -74,8 +75,11 @@ const productSlice = createSlice({
     },
     setLogoutData: (state: any) => void (state = undefined),
     setListProductSelect: (state, action: PayloadAction<any>) => {
-      state.listProductSelect = [...state.listProductSelect, action.payload];
+      state.listProductSelect = [...state.listProductSelect, ...action.payload];
     },
+    updateListProduct:(state,action:PayloadAction<any>) => {
+      state.listProductSelect = action.payload
+    }
   },
 });
 
