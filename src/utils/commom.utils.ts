@@ -631,3 +631,7 @@ export const isStringNumber = (str: string) => {
   const regex = /^\d+(\d+)?$/;
   return regex.test(str);
 };
+
+export const randomInt = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min)) + min;
+};

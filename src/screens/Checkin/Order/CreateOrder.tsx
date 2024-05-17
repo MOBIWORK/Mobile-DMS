@@ -227,7 +227,6 @@ const CreateOrder = () => {
   };
 
   const showDetailProdcut = (product: IProduct) => {
-    console.log('product', product);
     setProductDetail(product);
     if (bottomSheetRef.current) {
       bottomSheetRef.current.snapToIndex(0);
@@ -339,7 +338,7 @@ const CreateOrder = () => {
               ...productDetail,
               stock_uom: item.label,
               price: priceUom
-                ? priceUom.conversion_factor * productDetail.price
+                ? priceUom.conversion_factor * productDetail.price_default
                 : 0,
             };
             setProductDetail(newData);
@@ -475,7 +474,10 @@ const CreateOrder = () => {
     Keyboard.dismiss();
     if (productDetail) {
       const newProducts = products.map(item =>
-        item.item_code === productDetail.item_code ? productDetail : item,
+        item.item_code === productDetail.item_code &&
+        item.index === productDetail.index
+          ? productDetail
+          : item,
       );
       updateDataProduct(newProducts);
     }
@@ -841,7 +843,7 @@ const CreateOrder = () => {
         snapPointsCustom={['100%']}>
         <Pressable
           onPress={() => Keyboard.dismiss()}
-          style={{paddingHorizontal: 16, flex: 1}}>
+          style={{paddingHorizontal: 16, height: AppConstant.HEIGHT * 0.9}}>
           <AppHeader
             label={getLabel('product')}
             backButtonIcon={
@@ -866,10 +868,9 @@ const CreateOrder = () => {
             style={[
               styles.flexSpace,
               {
-                marginTop: 36,
+                bottom: 0,
                 position: 'absolute',
                 alignSelf: 'center',
-                bottom: AppConstant.HEIGHT * 0.07,
               },
             ]}>
             <AppButton

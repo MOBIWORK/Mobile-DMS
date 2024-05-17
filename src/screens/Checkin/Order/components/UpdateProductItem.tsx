@@ -109,6 +109,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
         hiddenRightIcon
         inputProp={{
           keyboardType: 'numeric',
+          returnKeyType: 'done',
         }}
       />
       <AppInput

@@ -365,6 +365,11 @@ const SelectProducts = () => {
 
   const onSubmitProductSelect = async () => {
     const dataSelect = data.filter(item => item.isSelected);
+    const newDataSelect = dataSelect.map(item => ({
+      ...item,
+      index: CommonUtils.randomInt(1, 1e6),
+    }));
+
     // console.log('dataSelect', dataSelect);
     // if (dataProductSelected && dataProductSelected?.length > 0) {
     //   dispatch(
@@ -375,9 +380,8 @@ const SelectProducts = () => {
     // } else {
     //
     // }
-    dispatch(productActions.setProductSelected(dataSelect));
-
-    // navigation.goBack();
+    dispatch(productActions.setProductSelected(newDataSelect));
+    navigation.goBack();
   };
 
   const animatedValue = useRef(new Animated.Value(1000)).current;
