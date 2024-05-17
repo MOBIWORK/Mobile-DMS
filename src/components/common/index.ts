@@ -28,7 +28,9 @@ import AppImage from './AppImage';
 import AppSelectedDate from './AppSelectedDate';
 import TabSelected from './TabSelected';
 import SkeletonLoading from './SkeletonLoading';
+import RangeDatePicker from './DatePicker';
 export {
+  RangeDatePicker,
   AppBottomSheet,
   AppDialog,
   AppLoading,

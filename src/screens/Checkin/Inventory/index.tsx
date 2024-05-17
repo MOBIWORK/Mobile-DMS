@@ -7,6 +7,7 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
+  Block,
 } from '../../../components/common';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -156,9 +157,12 @@ const CheckinInventory = () => {
         customer_address: dataCheckin.item.customer_primary_address,
         inventory_items: newItems,
       };
+
+      console.log(objectData, 'dataPush');
       // console.log(objectData, 'objectData');
-      const {status}: any = await CheckinService.checkinInventory(objectData);
-      if (status === ApiConstant.STT_CREATED) {
+      const response: any = await CheckinService.checkinInventory(objectData);
+      console.log(response, 'response');
+      if (response.status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));
         completeCheckin();
       }
@@ -202,7 +206,10 @@ const CheckinInventory = () => {
               {`(${item.stock_uom})`}
             </Text>
           </View>
-          <View
+          <Block
+          paddingTop={12}
+          borderTopWidth={1}
+          borderColor={colors.divider}
             style={{
               paddingTop: 12,
               borderTopWidth: 1,
@@ -214,7 +221,7 @@ const CheckinInventory = () => {
               Hạn sử dụng :
               {item.expiry ? CommonUtils.convertDate(item.expiry) : ''}
             </Text>
-          </View>
+          </Block>
         </View>
         <TouchableOpacity
           style={[styles.removeIcon]}

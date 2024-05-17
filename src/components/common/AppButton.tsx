@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import {useTheme} from '@react-navigation/native';
+import isEqual from 'react-fast-compare';
 
 const AppButton: FC<AppButtonProps> = ({
   disabled,
@@ -46,7 +47,7 @@ export interface AppButtonProps {
   children?: JSX.Element;
 }
 
-export default AppButton;
+export default  React.memo(AppButton,isEqual);
 
 const styles = StyleSheet.create({
   label: {

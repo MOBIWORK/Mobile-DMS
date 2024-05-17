@@ -9,6 +9,7 @@ import {
 import React, {
   startTransition,
   useCallback,
+  useEffect,
   useRef,
   useState,
   useTransition,
@@ -30,8 +31,6 @@ import {VisitListItemType} from '../../../../models/types';
 import {AppService} from '../../../../services';
 import {ApiConstant} from '../../../../const';
 import MarkerItem from '../../../../components/common/MarkerItem';
-import {dispatch} from '../../../../utils/redux';
-import {checkinActions} from '../../../../redux-store/checkin-reducer/reducer';
 import {ModalUpdateType} from '../ListVisit';
 type Props = {
   isVisible: ModalUpdateType;
@@ -80,7 +79,7 @@ const ModalUpdateLocation = ({
   const [isPending, setIsPending] = useState<boolean>(false);
   
 
-  useEffectOnce(() => {
+  useEffect(() => {
     if (currentLocation && Object.keys(currentLocation).length > 0) {
       mapboxCameraRef.current?.flyTo(
         [currentLocation?.coords?.longitude, currentLocation?.coords?.latitude],
@@ -89,7 +88,7 @@ const ModalUpdateLocation = ({
     } else {
       return;
     }
-  });
+  },[]);
   const handleMarkerMap = useCallback(
     async (lat: number, lng: number) => {
       Keyboard.dismiss();

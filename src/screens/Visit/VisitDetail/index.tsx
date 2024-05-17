@@ -41,8 +41,6 @@ import {CustomerService} from '../../../services';
 import {IVisitRouteDetail} from '../../../models/types';
 import {
   useDeepCompareEffect,
-  useEffectOnce,
-  useSelector,
 } from '../../../config/function';
 
 import isEqual from 'react-fast-compare';

@@ -19,7 +19,6 @@ import {
 } from '../../../components/common';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Image,
   RefreshControl,
@@ -81,6 +80,7 @@ import {navigate} from '../../../navigation/navigation-service';
 import moment from 'moment';
 import {useBatteryLevel} from 'expo-battery';
 import ModalUpdateLocation from './Component/ModalUpdateLocation';
+import {ObjectId} from 'bson';
 
 //config Mapbox
 
@@ -447,10 +447,7 @@ const ListVisit = () => {
             <Text style={{color: colors.text_secondary}}>
               {StringFormat(getLabel('customerVisitedCount'), {
                 customerCheckinCount: customerCheckinCount,
-                allCustomer:
-                  customerDataSort?.length != undefined
-                    ? customerDataSort?.length
-                    : 0,
+                allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
               })}
             </Text>
             {isPending ? (
@@ -467,10 +464,10 @@ const ListVisit = () => {
                 // onMomentumScrollEnd={eve => console.log(eve.nativeEvent.layoutMeasurement,'layout')}
                 bounces={true}
                 initialNumToRender={4}
-                ListFooterComponent={
-                  bottomLoading ? (
+                ListFooterComponent={() =>
+                  bottomLoading && (
                     <ActivityIndicator size="large" color={colors.primary} />
-                  ) : undefined
+                  )
                 }
                 refreshControl={
                   <RefreshControl
@@ -480,6 +477,7 @@ const ListVisit = () => {
                 }
                 maxToRenderPerBatch={2}
                 updateCellsBatchingPeriod={4}
+                windowSize={14}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
                   <VisitItem
@@ -735,7 +733,7 @@ const ListVisit = () => {
       detailAdd?: any,
     ) => {
       // let log: LocationProps = JSON.parse(item.customer_location_primary!);
-      let uniqueID = generateRandomObjectId();
+      let uniqueID = new ObjectId();
       CommonUtils.getCurrentLocation(
         location => {
           let distanceCal = calculateDistance(
@@ -864,7 +862,7 @@ const ListVisit = () => {
   const handleBackground = useCallback((item: VisitListItemType) => {
     let log: LocationProps = JSON.parse(item.customer_location_primary!);
     setModalAlert({status: true, type: 'loading'});
-    let uniqueID = generateRandomObjectId();
+    let uniqueID = new ObjectId();
     CommonUtils.getCurrentLocation(
       location => {
         let distanceCal = calculateDistance(
@@ -929,77 +927,70 @@ const ListVisit = () => {
     console.log(item, 'item checkin');
     currentSelect.current = item;
     startEffect(() => {
-      if (item.customer_location_primary != null) {
-        let log: LocationProps = JSON.parse(item.customer_location_primary!);
-        setModalAlert({status: true, type: 'loading'});
-        let uniqueID = generateRandomObjectId();
-        startEffect(() => {
-          CommonUtils.getCurrentLocation(
-            location => {
-              let distanceCal = calculateDistance(
-                location.coords.latitude,
-                location.coords.longitude,
-                log?.lat,
-                log.long,
-              );
-              let data: CheckinData = {
-                checkin_id:
-                  dataCheckIn &&
-                  dataCheckIn?.kh_ma === item.customer_code &&
-                  dataCheckIn.checkin_id !== undefined
-                    ? dataCheckIn.checkin_id
-                    : uniqueID,
-                kh_ma: item.customer_code,
-                kh_ten: item.customer_name,
-                kh_diachi: item.customer_primary_address,
-                kh_long: log.long ?? '',
-                kh_lat: log.lat ?? '',
-                checkin_giovao: new Date().getTime() / 1000,
-                checkin_pinvao:
-                  batteryLevel > 0
-                    ? Math.round(batteryLevel * 10000) / 100
-                    : -Math.round(batteryLevel * 10000) / 100,
-                checkin_khoangcach: distanceCal,
-                createdDate: moment(new Date()).valueOf(),
-                checkin_timegps: moment(
-                  new Date(location.timestamp * 1000),
-                ).format('hh:mm'),
-                checkin_dochinhxac: location.coords.accuracy,
-                checkinvalidate_khoangcachcheckin:
-                  systemConfig.saiso_chophep_kb_vitringoaisaiso,
-                checkinvalidate_khoangcachcheckout:
-                  systemConfig.saiso_chophep_checkout_ngoaisaiso,
-                checkin_trangthaicuahang: true,
-                checkin_donhang: '',
-                checkin_giora: null,
-                checkin_hinhanh: [],
-                checkin_lat: location.coords.latitude,
-                checkin_long: location.coords.longitude,
-                checkin_pinra: 0,
-                checkout_khoangcach: 0,
-                createByName: '',
-                createdByEmail: '',
-                item: item,
-                isDetail: true,
-                ...item,
-              };
+      let log: LocationProps = JSON.parse(item.customer_location_primary!);
+      setModalAlert({status: true, type: 'loading'});
+      let uniqueID = new ObjectId();
+      startEffect(() => {
+        CommonUtils.getCurrentLocation(
+          location => {
+            let distanceCal = calculateDistance(
+              location.coords.latitude,
+              location.coords.longitude,
+              log?.lat || 0,
+              log.long || 0,
+            );
+            let data: any = {
+              checkin_id:
+                dataCheckIn &&
+                dataCheckIn?.kh_ma === item.customer_code &&
+                dataCheckIn.checkin_id !== undefined
+                  ? dataCheckIn.checkin_id
+                  : uniqueID,
+              kh_ma: item.customer_code,
+              kh_ten: item.customer_name,
+              kh_diachi: item.customer_primary_address,
+              kh_long: log.long ?? '',
+              kh_lat: log.lat ?? '',
+              checkin_giovao: new Date().getTime() / 1000,
+              checkin_pinvao:
+                batteryLevel > 0
+                  ? Math.round(batteryLevel * 10000) / 100
+                  : -Math.round(batteryLevel * 10000) / 100,
+              checkin_khoangcach: distanceCal,
+              createdDate: moment(new Date()).valueOf(),
+              checkin_timegps: moment(
+                new Date(location.timestamp * 1000),
+              ).format('hh:mm'),
+              checkin_dochinhxac: location.coords.accuracy,
+              checkinvalidate_khoangcachcheckin:
+                systemConfig.saiso_chophep_kb_vitringoaisaiso,
+              checkinvalidate_khoangcachcheckout:
+                systemConfig.saiso_chophep_checkout_ngoaisaiso,
+              checkin_trangthaicuahang: true,
+              checkin_donhang: '',
+              checkin_giora: null,
+              checkin_hinhanh: [],
+              checkin_lat: location.coords.latitude,
+              checkin_long: location.coords.longitude,
+              checkin_pinra: 0,
+              checkout_khoangcach: 0,
+              createByName: '',
+              createdByEmail: '',
+              item: item,
+              isDetail: true,
+              ...item,
+            };
 
-              setModalAlert(prev => ({...prev, status: false}));
+            setModalAlert(prev => ({...prev, status: false}));
 
-              navigate(ScreenConstant.VISIT_DETAIL, {
-                data: data,
-              });
-              dispatch(appActions.setDataCheckIn(data));
-            },
-            error => backgroundErrorListener(error.code),
-          );
-        });
-      } else {
-        setModalUpdateLocation({
-          status: true,
-          isDetail: true,
-        });
-      }
+            navigate(ScreenConstant.VISIT_DETAIL, {
+              data: data,
+            });
+            dispatch(appActions.setDataCheckIn(data));
+          },
+          error => backgroundErrorListener(error.code),
+        );
+      });
     });
   }, []);
 

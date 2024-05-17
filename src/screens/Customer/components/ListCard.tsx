@@ -1,9 +1,8 @@
 import {FlatList, RefreshControl} from 'react-native';
-import React, {useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import CardView from './CardView';
 import {IDataCustomers} from '../../../models/types';
 import isEqual from 'react-fast-compare';
-import SkeletonLoading from '../../Visit/SkeletonLoading';
 import {Block, AppText as Text} from '../../../components/common';
 
 type Props = {
@@ -15,22 +14,23 @@ type Props = {
 };
 
 const ListCard = (props: Props) => {
-  const renderItem = ({item, index}: {item: IDataCustomers; index: number}) => (
+  const renderItem = useCallback(({item, index}: {item: IDataCustomers; index: number}) => (
     <CardView data={item as any} key={index} index={index} {...item} />
-  );
-  const memorizedValue = useMemo(() => renderItem, [props.data, props.loading]);
+  ),[props.data,props.loading]);
+  // const memorizedValue = useCallback(() => renderItem, [props.data, props.loading]);
   // console.log(props.data,'data')
   return props.data && props.data.length > 0 ? (
     
     <FlatList
       data={props.data}
       style={{marginBottom: 20}}
-      decelerationRate={'fast'}
+      decelerationRate={'normal'}
       onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}
       onEndReachedThreshold={0}
       maxToRenderPerBatch={10}
-      updateCellsBatchingPeriod={5}
+      updateCellsBatchingPeriod={50}
+      scrollEventThrottle={100}
       windowSize={21}
       initialNumToRender={5}
       refreshControl={
@@ -41,8 +41,8 @@ const ListCard = (props: Props) => {
       }
       removeClippedSubviews={true}
       ListFooterComponent={props.listFooter}
-      keyExtractor={(item, index) => item.name}
-      renderItem={memorizedValue}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={renderItem}
     />
   ) : (
     <Block block justifyContent="center" alignItems="center">
