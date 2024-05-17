@@ -72,7 +72,7 @@ import UpdateProductItem from './components/UpdateProductItem';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {shallowEqual} from 'react-redux';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 
 const defautItem1 = {
   doctype: 'Sales Order Item',
@@ -242,6 +242,7 @@ const CreateOrder = () => {
   };
 
   const showDetailProdcut = (product: IProduct) => {
+    console.log(product, 'product');
     setProductDetail(product);
     if (bottomSheetRef.current) {
       bottomSheetRef.current.snapToIndex(0);
@@ -918,13 +919,10 @@ const CreateOrder = () => {
 
       <AppBottomSheet
         bottomSheetRef={bottomSheetWh}
-        snapPointsCustom={animatedSnapPoints}
+        enableDynamicSizing={true}
         // @ts-ignore
-        handleHeight={animatedHandleHeight}
-        contentHeight={animatedContentHeight}>
-        <BottomSheetScrollView
-          style={{paddingBottom: 50}}
-          onLayout={handleContentLayout}>
+      >
+        <BottomSheetScrollView style={{paddingBottom: 50}}>
           <FilterListComponent
             title={getLabel(labelBottonSheet)}
             data={dataCategorie}
