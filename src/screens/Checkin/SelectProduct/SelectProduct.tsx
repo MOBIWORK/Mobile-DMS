@@ -13,6 +13,8 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
+  Block,
+  SvgIcon,
 } from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useNavigation} from '@react-navigation/native';
@@ -34,7 +36,7 @@ import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
 import {NavigationProp} from '../../../navigation/screen-type';
-import {useSelector} from '../../../config/function';
+import {useDeepCompareEffect, useSelector} from '../../../config/function';
 import {dispatch} from '../../../utils/redux';
 import {productActions} from '../../../redux-store/product-reducer/reducer';
 import {IProduct} from '../../../models/types';
@@ -363,12 +365,20 @@ const SelectProducts = () => {
     [data],
   );
 
-  const onSubmitProductSelect = async () => {
+  const onSubmitProductSelect = async (data: IProduct[]) => {
     const dataSelect = data.filter(item => item.isSelected);
+    console.log(dataSelect, 'data select');
     const newDataSelect = dataSelect.map(item => ({
       ...item,
       index: CommonUtils.randomInt(1, 1e6),
     }));
+    startEffect(() => {
+      // dispatch(productActions.setProductSelected(dataSelect));
+    dispatch(productActions.setProductSelected(newDataSelect));
+
+      dispatch(productActions.setListProductSelect(dataSelect));
+    });
+   
 
     // console.log('dataSelect', dataSelect);
     // if (dataProductSelected && dataProductSelected?.length > 0) {
@@ -380,7 +390,6 @@ const SelectProducts = () => {
     // } else {
     //
     // }
-    dispatch(productActions.setProductSelected(newDataSelect));
     navigation.goBack();
   };
 
@@ -400,7 +409,7 @@ const SelectProducts = () => {
   useEffect(() => {
     debouncedSearch(textSearch);
   }, [textSearch]);
-
+ 
   useEffect(() => {
     if (products?.length > 0) {
       setData(products);
@@ -409,7 +418,7 @@ const SelectProducts = () => {
     }
   }, [products]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     dispatch(
       productActions.onGetData({
         item_group: filterProduct.group,
@@ -530,14 +539,14 @@ const SelectProducts = () => {
               <FlatList
                 data={data}
                 renderItem={({item}) => (
-                  <Pressable>
+                  <Block>
                     <ItemProductOrderComponent
                       item={item}
                       onSelectProduct={onSelectProduct}
                       openBottomSheetDataFilter={openBottomSheetDataFilter}
                       onChangeQuantityProduct={onChangeQuantityProduct}
                     />
-                  </Pressable>
+                  </Block>
                 )}
                 initialNumToRender={10}
                 maxToRenderPerBatch={4}
@@ -554,7 +563,7 @@ const SelectProducts = () => {
 
           {countSelect > 0 && (
             <TouchableOpacity
-              onPress={onSubmitProductSelect}
+              onPress={() => onSubmitProductSelect(data)}
               style={[{position: 'absolute', left: 16, bottom: 50, right: 16}]}>
               <View style={[styles.flex, styles.actionSubmit]}>
                 <Text style={[styles.action, {color: colors.bg_default}]}>

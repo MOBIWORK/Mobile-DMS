@@ -63,7 +63,6 @@ const DetailCustomer = () => {
         let res: any = await CustomerService.getCustomerDetail(
           params.data.name,
         );
-        console.log(res,'res detail cust')
         if (res.message === 'ok' || Object.keys(res.result).length > 0) {
           setData(res.result);
         }
@@ -81,6 +80,9 @@ const DetailCustomer = () => {
       // mounted.current = false;
     };
   }, []);
+
+// console.log(data,'detailCus')
+
 
   const snapPointAdding = useMemo(
     () =>
