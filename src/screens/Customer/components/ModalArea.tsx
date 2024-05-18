@@ -66,7 +66,7 @@ const ModalArea = (props: Props) => {
   
     console.log(normalizedFilterText,'item texr')
 
-    return filteredItems.length > 0 ? filteredItems : listTerritory;
+    return filterText != ''   ? filteredItems : listTerritory;
   }, [filterText]);
 
 

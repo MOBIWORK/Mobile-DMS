@@ -48,6 +48,7 @@ import { AppStateStatus } from 'react-native';
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
+  // const []
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
