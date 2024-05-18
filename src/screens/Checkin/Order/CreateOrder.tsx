@@ -6,7 +6,6 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import {MainLayout} from '../../../layouts';
 import {
   AppBottomSheet,
   AppButton,
@@ -54,7 +53,7 @@ import {
   IUser,
   KeyAbleProps,
 } from '../../../models/types';
-import {useEffectOnce, useSelector} from '../../../config/function';
+import {useSelector} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import {dispatch} from '../../../utils/redux';
 import {productActions} from '../../../redux-store/product-reducer/reducer';
@@ -919,10 +918,14 @@ const CreateOrder = () => {
 
       <AppBottomSheet
         bottomSheetRef={bottomSheetWh}
-        enableDynamicSizing={true}
+        // enableDynamicSizing={true}
+        snapPointsCustom={animatedSnapPoints}
         // @ts-ignore
-      >
-        <BottomSheetScrollView style={{paddingBottom: 50}}>
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: 50}}
+          onLayout={handleContentLayout}>
           <FilterListComponent
             title={getLabel(labelBottonSheet)}
             data={dataCategorie}
@@ -956,7 +959,6 @@ const createSheetStyle = (theme: AppTheme) =>
   StyleSheet.create({
     layout: {
       backgroundColor: theme.colors.bg_neutral,
-      paddingHorizontal: 16,
     } as ViewStyle,
     flexSpace: {
       flexDirection: 'row',

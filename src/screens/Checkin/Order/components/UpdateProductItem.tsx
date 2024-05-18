@@ -5,10 +5,8 @@ import {Keyboard, View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {useTheme} from '@react-navigation/native';
 import {IProduct} from '../../../../models/types';
-import {FC, useCallback, useEffect, useState, useTransition} from 'react';
+import {FC, useCallback, useState, useTransition} from 'react';
 import {CommonUtils} from '../../../../utils';
-import {formatCash} from '../../../../utils/commom.utils';
-import {IFilterType} from '../../../../components/common/FilterListComponent';
 import {useDeepCompareEffect} from '../../../../config/function';
 
 const UpdateProductItem: FC<UpdateProductItemProps> = ({
@@ -21,10 +19,10 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
   const [isPending, startTransition] = useTransition();
 
   const [discount_percent, setDiscountPercent] = useState<string>(
-    productDetail?.discount_item_percent.toString() || '',
+    productDetail?.discount_item_percent.toString() || '0',
   );
   const [discount_amount, setDiscountAmount] = useState<string>(
-    productDetail?.discount_item_amount.toString() || '',
+    productDetail?.discount_item_amount.toString() || '0',
   );
   const quantity = React.useRef<any>(
     productDetail && productDetail?.quantity ? productDetail?.quantity : 1,
@@ -41,6 +39,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
       quantity: any,
       productPrice: any,
     ) => {
+      console.log('discountAmount', discountAmount);
       if (
         discountPercent > 0 ||
         discountAmount > 0 ||
@@ -59,9 +58,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
 
         startTransition(() => {
           setDiscountPercent(new_discount_item_percent.toString());
-          setDiscountAmount(
-            CommonUtils.convertToTwoDecimalPlaces(new_discount_item_amount),
-          );
+          setDiscountAmount(new_discount_item_amount.toString());
           setProductDetail({
             ...productDetail,
             discount_item_percent: new_discount_item_percent,
@@ -82,19 +79,11 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
   useDeepCompareEffect(() => {
     onChangeDiscount(
       Number(discount_percent.replace(',', '.')),
-     0,
+      0,
       quantity.current,
       productDetailPrice,
     );
-    console.log('run deep')
   }, [productDetailPrice]);
-
-  // useEffect(() => {
-  //   if (productDetail) {
-  //     setDiscountPercent(productDetail?.discount_item_percent.toString());
-  //     setDiscountAmount(productDetail?.discount_item_amount.toString());
-  //   }
-  // }, [productDetail]);
 
   return (
     <View style={{marginTop: 24, rowGap: 20, flex: 1}}>
@@ -158,13 +147,9 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
         inputProp={{
           keyboardType: 'numeric',
           returnKeyType: 'done',
-          onSubmitEditing: event => {
-            const txt = event.nativeEvent.text;
-            console.log(txt, 'txt');
+          onSubmitEditing: () => {
             onChangeDiscount(
               Number(discount_percent.replace(',', '.')),
-
-              // Number(discount_amount.replace(',', '.')),
               0,
               Number(quantity.current),
               productDetailPrice,
