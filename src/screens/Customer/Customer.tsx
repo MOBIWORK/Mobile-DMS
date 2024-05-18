@@ -135,7 +135,7 @@ const Customer = () => {
         const distance1 = calculateDistance(
           location.coords.latitude,
           location.coords.longitude,
-          locationA?.lat || 0 ,
+          locationA?.lat || 0,
           locationA?.long || 0,
         );
         const distance2 = calculateDistance(
@@ -281,7 +281,9 @@ const Customer = () => {
   }, [showModal]);
 
   const onEndReachedThreshold = useCallback(() => {
-    if (page <= Math.ceil(listCustomerResult.total / listCustomerResult.page_size)) {
+    if (
+      page <= Math.ceil(listCustomerResult.total / listCustomerResult.page_size)
+    ) {
       console.log('run if', page);
       startTransition(() => {
         dispatch(customerActions.getCustomerNewPage(page + 1));
@@ -410,7 +412,7 @@ const Customer = () => {
 
         <Text style={styles.containCustomer}>
           <Text style={styles.numberCustomer}>
-            {customerData ? customerData?.length : 0}{' '}
+            {listCustomerResult ? listCustomerResult.total : 0}{' '}
           </Text>
           {getLabel('customer')}
         </Text>
