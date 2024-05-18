@@ -1,5 +1,11 @@
 import {AppState, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
-import React, {useCallback, useState, useEffect, useRef} from 'react';
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+  startTransition,
+} from 'react';
 import {
   Block,
   AppText as Text,
@@ -44,19 +50,32 @@ import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import { AppStateStatus } from 'react-native';
+import {AppStateStatus} from 'react-native';
+import {useMMKV, useMMKVString} from 'react-native-mmkv';
+import moment from 'moment';
+
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
-  // const []
+  const [mmkv, setMmkv] = useMMKVString('time');
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
+        if (mmkv != '' || mmkv != null || mmkv != undefined) {
+          startTransition(() => {
+            const newTimeStamp = moment(new Date()).valueOf();
+            const currentTime = newTimeStamp - Number(mmkv);
+            setElapsedTime(currentTime);
+          });
+        }
+
         intervalIdRef.current = setInterval(() => {
           setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
         }, 1000); // Update every 1 second
-      } else {
+      } else if (nextAppState === 'background') {
+        const timeStamp = moment(new Date()).valueOf();
+        setMmkv(String(timeStamp));
         clearInterval(intervalIdRef.current);
       }
     };
@@ -116,7 +135,7 @@ const CheckIn = () => {
     decimalMinutesToTime(systemConfig.thoigian_toithieu),
   );
   useDisableBackHandler(true);
-  // console.log(params,'params passed')
+  // console.log(elapsedTime,'params passed')
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
     type: string;
