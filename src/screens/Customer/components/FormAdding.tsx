@@ -275,7 +275,7 @@ const FormAdding = (props: Props) => {
         value={valueFilter.credit_limit ? formatCash(valueFilter.credit_limit )  : '' }
         editable={true}
         hiddenRightIcon={false}
-        isRequire={true}
+        isRequire={false}
         rightIcon={<TextInput.Affix text='VND'/>}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}

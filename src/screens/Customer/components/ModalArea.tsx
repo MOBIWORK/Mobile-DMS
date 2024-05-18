@@ -141,11 +141,7 @@ const ModalArea = (props: Props) => {
           initialNumToRender={10}
           windowSize={21}
           renderItem={({item, index}) => {
-            return isPending ? (
-              <Block justifyContent="center" alignItems="center" block>
-                <ActivityIndicator size="large" color={theme.colors.primary} />
-              </Block>
-            ) : (
+            return  (
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={index.toString()}

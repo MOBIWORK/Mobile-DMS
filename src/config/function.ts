@@ -8,6 +8,7 @@ import {dispatch} from '../utils/redux';
 import {appActions} from '../redux-store/app-reducer/reducer';
 import {ObjectId} from 'bson';
 import {CommonUtils} from '../utils';
+import { IProduct } from '../models/types';
 
 type TypesBase =
   | 'bigint'
@@ -191,6 +192,28 @@ function decimalMinutesToTime(decimalMinutes: any) {
 const useEffectOnce = (cb: React.EffectCallback) => {
   useEffect(cb, []);
 };
+
+const mergeProducts = (products: IProduct[]) => {
+  const productMap: { [itemCode: string]: IProduct } = {};
+
+  // Iterate through the products array and merge products with the same item_code
+  products.forEach(product => {
+    if (product.item_code in productMap) {
+      // If the item_code already exists, add the quantities
+      productMap[product.item_code].quantity += product.quantity;
+    } else {
+      // Otherwise, add the product to the map
+      productMap[product.item_code] = { ...product };
+    }
+  });
+
+  // Convert the product map back to an array
+  const mergedProducts = Object.values(productMap);
+
+  return mergedProducts;
+};
+
+
 export {
   formatPhoneNumber,
   formatMoney,
@@ -207,4 +230,5 @@ export {
   backgroundErrorListener,
   generateRandomObjectId,
   decimalMinutesToTime,
+  mergeProducts
 };
