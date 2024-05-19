@@ -396,27 +396,27 @@ const CreateOrder = () => {
   };
 
   const fetchProductPromotion = async () => {
-    if (dataProductSelected.length > 0) {
-      const newItems = dataProductSelected.map((item: any) => ({
-        ...defautItem1,
-        item_code: item.item_code,
-        uom: item.stock_uom,
-        qty: item.quantity,
-        stock_qty: item?.stock_qty ? item.stock_qty : item.quantity,
-      }));
-      const objecData = {
-        items: newItems,
-        customer: dataCheckin ? dataCheckin.item.customer_code : '', // Khách hàng
-        territory: 'Vietnam',
-        currency: 'VND',
-        price_list: 'Standard Selling',
-        price_list_currency: 'VND',
-        company: userInfo.company,
-        doctype: 'Sales Order',
-        name: 'new-sales-order-hnnkmtrehm',
-        transaction_date: CommonUtils.taskDate(date),
-      };
+    if (dataProductSelected?.length > 0) {
       if (type === 'ORDER') {
+        const newItems = dataProductSelected?.map((item: any) => ({
+          ...defautItem1,
+          item_code: item.item_code,
+          uom: item.stock_uom,
+          qty: item.quantity,
+          stock_qty: item?.stock_qty ? item.stock_qty : item.quantity,
+        }));
+        const objecData = {
+          items: newItems,
+          customer: dataCheckin ? dataCheckin.item.customer_code : '', // Khách hàng
+          territory: 'Vietnam',
+          currency: 'VND',
+          price_list: 'Standard Selling',
+          price_list_currency: 'VND',
+          company: userInfo.company,
+          doctype: 'Sales Order',
+          name: 'new-sales-order-hnnkmtrehm',
+          transaction_date: CommonUtils.taskDate(date),
+        };
         const {data: res, status}: KeyAbleProps =
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
@@ -544,7 +544,8 @@ const CreateOrder = () => {
           ? productDetail
           : item,
       );
-      updateDataProduct(newProducts);
+      setProducts(newProducts);
+      dispatch(productActions.updateProductSelect(newProducts));
     }
     if (bottomSheetRef.current) {
       bottomSheetRef.current.close();
