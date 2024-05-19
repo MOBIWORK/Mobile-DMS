@@ -35,7 +35,11 @@ import FormAdding from './components/FormAdding';
 import {Colors} from '../../assets';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation/screen-type';
-import {DataCustomersUpdate, IDataCustomer, ListCustomerTerritory} from '../../models/types';
+import {
+  DataCustomersUpdate,
+  IDataCustomer,
+  ListCustomerTerritory,
+} from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
@@ -98,7 +102,7 @@ const AddingNewCustomer = () => {
     state => state.customer.listCustomerTerritory,
   );
   const [openDate, setOpenDate] = React.useState<boolean>(false);
-  const [openModal,setOpenModal] = React.useState<boolean>(false);
+  const [openModal, setOpenModal] = React.useState<boolean>(false);
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
@@ -114,7 +118,7 @@ const AddingNewCustomer = () => {
     state => state.customer.listCustomerTerritory,
   );
 
-  const snapPoint = useMemo(() => ['60%'], []);
+  const snapPoint = useMemo(() => ['80%'], []);
   const filterRef = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
@@ -161,7 +165,6 @@ const AddingNewCustomer = () => {
         county:
           Object.keys(contact).length > 0 ? String(contact?.district?.id) : '',
         state: Object.keys(contact).length > 0 ? String(contact?.ward?.id) : '',
-        
       },
 
       customer_type:
@@ -177,8 +180,8 @@ const AddingNewCustomer = () => {
       customer_code: newListData.customer_code || '',
       customer_name: newListData.customer_name || '',
       customer_group: newListData.customer_group || '',
-      credit_limit:newListData.credit_limit || '',
-      image: newListData.faceimage ? newListData.faceimage  : ''
+      credit_limit: newListData.credit_limit || '',
+      image: newListData.faceimage ? newListData.faceimage : '',
     };
 
     dispatch(setNewCustomer(newListData));
@@ -206,8 +209,11 @@ const AddingNewCustomer = () => {
     openImagePicker((selectedImage, base64) => {
       // Handle the selected image, e.g., set it to state
       cameraBottomRef.current?.close();
-      setImageSource(base64);
-      setListData((prevState: any) => ({...prevState, faceimage: base64}));
+      setImageSource('data:image/jpeg;base64,' + base64);
+      setListData((prevState: any) => ({
+        ...prevState,
+        faceimage: `data:image/jpeg;base64,${base64}`,
+      }));
     });
   };
 
@@ -259,9 +265,9 @@ const AddingNewCustomer = () => {
     }
   }, []);
 
-  const onBackButtonPress = useCallback(() =>{
-    setOpenModal(false)
-  },[openModal])
+  const onBackButtonPress = useCallback(() => {
+    setOpenModal(false);
+  }, [openModal]);
 
   return (
     <>
@@ -291,7 +297,7 @@ const AddingNewCustomer = () => {
             <Text style={styles.textButtonStyle}>Thêm mới</Text>
           </TouchableOpacity>
         </View>
-        <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
+        <AppBottomSheet bottomSheetRef={filterRef}   snapPointsCustom={snapPoint}>
           <ListFilterAdding
             type={typeFilter}
             filterRef={filterRef}
@@ -379,12 +385,12 @@ const AddingNewCustomer = () => {
           </Block>
         </Modal>
         <ModalArea
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-        listTerritory={listTerritory}
-        data={listData as any}
-        setData={setListData as any}
-        onBackButtonPress={onBackButtonPress}
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          listTerritory={listTerritory}
+          data={listData as any}
+          setData={setListData as any}
+          onBackButtonPress={onBackButtonPress}
         />
       </MainLayout>
     </>

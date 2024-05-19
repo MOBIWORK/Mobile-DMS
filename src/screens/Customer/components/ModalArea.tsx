@@ -51,21 +51,21 @@ const ModalArea = (props: Props) => {
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
-
+      const removeTinhPrefix = (name:string)=> name.replace(/^tỉnh\s+/i, '').trim();
     const filteredItems = listTerritory.filter(item => {
-      const normalizedName = item.name
+      const normalizedName = removeTinhPrefix(item.name)
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
-
-      return normalizedFilterText.every(word =>
-        normalizedName.some(nameWord => nameWord.includes(word)),
-      );
+  
+      // Check if every word in normalizedFilterText is included in normalizedName
+      return normalizedFilterText.every(word => normalizedName.some(nameWord => nameWord.includes(word)));
     });
-
-    return filterText ? filteredItems : listTerritory;
+    return filterText !== '' ? filteredItems : listTerritory;
   }, [filterText]);
+  
+
 
   const handleItem = (text: any) => {
     setSearchValue(text);
@@ -131,7 +131,7 @@ const ModalArea = (props: Props) => {
           />
         </Block>
         <FlatList
-          data={dataMemo?.length > 0 ? dataMemo : listTerritory}
+          data={dataMemo}
           keyExtractor={(item, index) => item.name}
           showsVerticalScrollIndicator={false}
           bounces
