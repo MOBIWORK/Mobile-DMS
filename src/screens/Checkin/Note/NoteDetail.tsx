@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppCustomHeader} from '../../../components/common';
+import {AppCustomHeader, Block} from '../../../components/common';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {MainLayout} from '../../../layouts';
@@ -32,12 +32,12 @@ const NoteDetail = () => {
           </TouchableOpacity>
         }
       />
-      <View
-        style={{
-          flex: 8,
-          backgroundColor: colors.bg_neutral,
-          paddingHorizontal :16,
-        }}>
+      <Block
+      flex={8}
+      colorTheme='bg_neutral'
+      paddingLeft={16}
+      paddingRight={16}
+        >
             <RenderHTML
               source={{html : params.content}}
               tagsStyles={{
@@ -45,7 +45,7 @@ const NoteDetail = () => {
                 p :{fontSize :16 ,color :colors.text_primary}
               }}
             />
-      </View>
+      </Block>
     </MainLayout>
   );
 };

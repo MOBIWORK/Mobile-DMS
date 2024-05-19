@@ -49,10 +49,14 @@ const VisitItem: FC<VisitItemProps> = ({
   );
 
   const distanceCal = useMemo(() => {
-    let location: LocationProps = JSON.parse(item.customer_location_primary!);
+    let location: LocationProps =JSON.parse(
+      item.customer_location_primary
+        ? item.customer_location_primary
+        : "{\"long\": 0, \"lat\": 0}",
+    );
     let distance = calculateDistance(
-      currentLocation.coords.latitude,
-      currentLocation.coords.longitude,
+      currentLocation?.coords.latitude,
+      currentLocation?.coords.longitude,
       location?.lat,
       location?.long,
     );

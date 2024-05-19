@@ -15,6 +15,7 @@ import {
 } from '../../../components/common/';
 import {
   NavigationProp,
+  useIsFocused,
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
@@ -58,14 +59,15 @@ const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
   const [mmkv, setMmkv] = useMMKVString('time');
+  const isFocus = useIsFocused()
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
-        if (mmkv != '' || mmkv != null || mmkv != undefined) {
+        if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
           startTransition(() => {
             const newTimeStamp = moment(new Date()).valueOf();
-            const currentTime = newTimeStamp - Number(mmkv);
+            const currentTime = Number(newTimeStamp) - Number(mmkv);
             setElapsedTime(currentTime);
           });
         }

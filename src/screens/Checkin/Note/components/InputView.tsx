@@ -15,7 +15,6 @@ const InputViewCompoment = ({
   const {colors} = useTheme();
   const styles = createStyles(useTheme());
 
-  console.log(data, 'data ');
 
   return (
     <Pressable onPress={onPress}>
@@ -43,6 +42,7 @@ const InputViewCompoment = ({
                   colorTheme="action"
                   borderRadius={20}
                   justifyContent="center"
+                  marginRight={8}
                   alignItems="center">
                   <Text numberOfLines={1}>{item.first_name}</Text>
                 </Block>

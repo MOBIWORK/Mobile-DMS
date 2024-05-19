@@ -4,7 +4,6 @@ import {
   Image,
   Pressable,
   StyleSheet,
-  Text,
   View,
   ViewStyle,
 } from 'react-native';
@@ -15,7 +14,12 @@ import {
   useTheme,
 } from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
-import {AppButton, AppHeader, SvgIcon} from '../../../components/common';
+import {
+  AppButton,
+  AppHeader,
+  SvgIcon,
+  AppText as Text,
+} from '../../../components/common';
 import {Button, IconButton} from 'react-native-paper';
 import {NoteType} from '../../../models/types';
 import {ImageAssets} from '../../../assets';
@@ -94,12 +98,7 @@ const CheckinNote = () => {
             navigation.navigate(ScreenConstant.NOTE_DETAIL, {data: item})
           }
           style={styles.noteItemContainer}>
-          <Text
-            style={{
-              color: theme.colors.text_primary,
-              fontSize: 16,
-              fontWeight: '500',
-            }}>
+          <Text colorTheme="text_primary" fontSize={16} fontWeight="500">
             {item.title}
           </Text>
           <View style={[styles.infoContainer, {marginVertical: 4}]}>

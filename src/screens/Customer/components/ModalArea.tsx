@@ -51,23 +51,20 @@ const ModalArea = (props: Props) => {
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
-
+      const removeTinhPrefix = (name:string)=> name.replace(/^tỉnh\s+/i, '').trim();
     const filteredItems = listTerritory.filter(item => {
-      const normalizedName = item.name
+      const normalizedName = removeTinhPrefix(item.name)
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
-
-        return normalizedFilterText.every(word =>
-        normalizedName.some(nameWord => nameWord.includes(word)),
-      );
-    });
   
-    console.log(normalizedFilterText,'item texr')
-
-    return filterText != ''   ? filteredItems : listTerritory;
+      // Check if every word in normalizedFilterText is included in normalizedName
+      return normalizedFilterText.every(word => normalizedName.some(nameWord => nameWord.includes(word)));
+    });
+    return filterText !== '' ? filteredItems : listTerritory;
   }, [filterText]);
+  
 
 
   const handleItem = (text: any) => {
@@ -141,7 +138,7 @@ const ModalArea = (props: Props) => {
           initialNumToRender={10}
           windowSize={21}
           renderItem={({item, index}) => {
-            return  (
+            return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={index.toString()}
