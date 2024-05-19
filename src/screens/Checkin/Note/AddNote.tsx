@@ -1,4 +1,11 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  startTransition,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
   AppAvatar,
@@ -62,16 +69,25 @@ const AddNote = () => {
   const [sentEmail, setSendEmail] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<StaffType[]>([]);
   const [selectPersonal, setSelectPersonal] = useState<StaffType[]>([]);
+  const [isPending, startTransition] = useTransition();
 
   const onCreateNoteCheckin = async () => {
-    const objectData = {
-      title: title?.label || '',
-      content: content,
-      custom_checkin_id: dataCheckin.checkin_id,
-      email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
-    };
-    const {status}: any = await CheckinService.createNote(objectData);
-    if (status === ApiConstant.STT_CREATED) navigation.goBack();
+    try {
+      startTransition(() => {
+        const objectData = {
+          title: title?.label || '',
+          content: content,
+          custom_checkin_id: dataCheckin.checkin_id,
+          email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
+        };
+        CheckinService.createNote(objectData);
+      });
+    } catch (er) {
+      console.log(er);
+    } finally {
+      
+      navigation.goBack();
+    }
   };
 
   const isDisable = useMemo(() => {
@@ -142,16 +158,15 @@ const AddNote = () => {
 
   const fetchDataStaff = async () => {
     const {status, data}: any = await CheckinService.getListStaff();
-    console.log(status,'data response')
+    console.log(status, 'data response');
     if (status === ApiConstant.STT_OK) {
-     
       setStaffData(data?.result?.data);
       dispatch(
         checkinActions.setData({typeData: 'staff', data: data.result?.data}),
       );
     }
   };
-console.log(staffData,'staffData')
+
   useEffect(() => {
     if (noteTypes.length === 0) {
       fetchDataNoteType();
@@ -282,9 +297,10 @@ console.log(staffData,'staffData')
             <AppInput
               label={getLabel('content')}
               value={content}
-              onChangeValue={setContent}
+              onChangeValue={text => startTransition(() => setContent(text))}
+              styles={{height: 100}}
               inputProp={{
-                numberOfLines: 1,
+                numberOfLines: 3,
                 multiline: true,
               }}
             />
@@ -298,17 +314,16 @@ console.log(staffData,'staffData')
                 return null;
               }
             }}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              marginTop: 24,
-            }}>
+            style={styles.touchable}>
             <AppCheckBox
               status={sentEmail}
               onChangeValue={() => {
                 setSendEmail(!sentEmail);
-                if (staffData && staffData.length === 0 && sentEmail === false) {
+                if (
+                  staffData &&
+                  staffData.length === 0 &&
+                  sentEmail === false
+                ) {
                   fetchDataStaff();
                 } else {
                   return null;
@@ -419,5 +434,11 @@ const createStyle = (theme: AppTheme) =>
       alignItems: 'center',
       paddingLeft: 12,
       borderRadius: 4,
+    } as ViewStyle,
+    touchable: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      marginTop: 24,
     } as ViewStyle,
   });

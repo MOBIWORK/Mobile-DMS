@@ -65,7 +65,9 @@ const ProductList: FC<UpdateItemProductProps> = ({
           {products.map((item, i) => (
             <Pressable key={i} onPress={() => showDetailProdcut(item)}>
               <ItemProduct
-                onRemove={() => handlerRemoveItemProduct(item.item_code)}
+                onRemove={() =>
+                  handlerRemoveItemProduct(item.item_code, item.index)
+                }
                 name={item.item_name}
                 code={item.item_code}
                 dvt={item.stock_uom}
@@ -108,7 +110,7 @@ interface UpdateItemProductProps {
   products: IProduct[];
   productsPromotion: IProductPromotion[];
   showDetailProdcut: (item: IProduct) => void;
-  handlerRemoveItemProduct: (code: string) => void;
+  handlerRemoveItemProduct: (code: string, index: number) => void;
 }
 const styles = StyleSheet.create({
   flexSpace: {

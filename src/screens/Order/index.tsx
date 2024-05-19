@@ -289,7 +289,9 @@ const OrderList = () => {
           <View style={styles.flex}>
             <Text style={styles.itemTotal}>{getLabel('totalPrice')} :</Text>
             <Text style={[styles.nameCustomer]}>
-              {CommonUtils.formatCash(item.rounded_total.toString())}
+              {item?.price_list_rate > 0
+                ? CommonUtils.convertToTwoDecimalPlaces(item.price_list_rate)
+                : 0}
             </Text>
           </View>
         </View>
@@ -297,9 +299,9 @@ const OrderList = () => {
     );
   };
 
-  const onScrollPage = () => {
-    const number_page = (totalData / pageSize).toFixed();
-    if (Number(number_page) > page) {
+  const onEndReachedThreshold = () => {
+    const totalPage = Math.ceil(totalData / pageSize);
+    if (page <= totalPage && orders.length > 6) {
       setPage(page + 1);
     }
   };
@@ -318,11 +320,7 @@ const OrderList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fromDate, toDate, filterStatus, page]);
-
-  // useEffect(() => {
-  //   dispatch(orderAction.resetDataOrder());
-  // }, [fromDate, toDate, filterStatus]);
+  }, [page, filterStatus]);
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
@@ -373,9 +371,9 @@ const OrderList = () => {
         <View style={{flex: 1}}>
           <FlatList
             data={orders}
-            onEndReached={onScrollPage}
+            onEndReached={onEndReachedThreshold}
             onEndReachedThreshold={0.1}
-            initialNumToRender={pageSize}
+            initialNumToRender={10}
             showsVerticalScrollIndicator={false}
             style={{flex: 1}}
             renderItem={({item}) => (

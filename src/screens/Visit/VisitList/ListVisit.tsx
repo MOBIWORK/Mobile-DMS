@@ -491,7 +491,7 @@ const ListVisit = () => {
                   />
                 )}
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0}
+                onEndReachedThreshold={0.1}
               />
             )}
           </Block>
@@ -542,11 +542,16 @@ const ListVisit = () => {
         );
         const sortedData = () => {
           return filteredData.slice().sort((a, b) => {
-            const locationA: LocationProps = JSON.parse(
-              a.customer_location_primary,
-            );
+            const locationA: LocationProps =
+              JSON.parse(
+                a.customer_location_primary
+                  ? a.customer_location_primary
+                  : "{\"long\": 0, \"lat\": 0}",
+              ) || {};
             const locationB: LocationProps = JSON.parse(
-              b.customer_location_primary,
+              b.customer_location_primary
+                ? b.customer_location_primary
+                : "{\"long\": 0, \"lat\": 0}",
             );
             const distance1 = calculateDistance(
               currentLocation?.coords?.latitude
@@ -555,14 +560,14 @@ const ListVisit = () => {
               currentLocation?.coords?.longitude
                 ? currentLocation?.coords?.longitude
                 : 0,
-              locationA.lat,
-              locationA.long,
+              locationA.lat != null ? locationA.lat : 0,
+              locationA.long != null ? locationA.long : 0,
             );
             const distance2 = calculateDistance(
               currentLocation.coords.latitude,
               currentLocation.coords.longitude,
-              locationB.lat,
-              locationB.long,
+              locationB.lat != null ? locationB.lat : 0,
+              locationB.long != null ? locationB.long : 0,
             );
             return distanceLabel === getLabel('nearest')
               ? distance1 - distance2

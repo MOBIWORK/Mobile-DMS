@@ -39,7 +39,7 @@ import FilterListComponent, {
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {DatePickerModal} from 'react-native-paper-dates';
-import { shallowEqual } from 'react-redux';
+import {shallowEqual} from 'react-redux';
 
 const CheckinInventory = () => {
   const {colors} = useTheme();
@@ -54,7 +54,10 @@ const CheckinInventory = () => {
   const [detailProduct, setDetailProduct] = useState<IProduct | any>();
 
   const products = useSelector(state => state.product.dataSelected);
-  const listProducts = useSelector(state => state.product.listProductSelect,shallowEqual)
+  const listProducts = useSelector(
+    state => state.product.listProductSelect,
+    shallowEqual,
+  );
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
 
   const categoriesCheckin = useSelector(
@@ -64,7 +67,7 @@ const CheckinInventory = () => {
   const [dataBottomSheet, setDataBottomSheet] = useState<IFilterType[]>([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [openDate, setOpenDate] = useState<boolean>(false);
- const indexSelect = useRef<number>(0)
+  const indexSelect = useRef<number>(0);
   const onBackScreen = () => {
     dispatch(productActions.updateProductSelect([]));
     navigation.goBack();
@@ -78,17 +81,21 @@ const CheckinInventory = () => {
 
   const updateProduct = () => {
     if (detailProduct && listProducts) {
-     
-      const data = listProducts.map((item,index) => ((index === indexSelect.current) && (item.item_code === detailProduct.item_code)) ? detailProduct : item )
-      dispatch(productActions.updateListProduct(data))
-      const mergeProduct = mergeProducts(data)
-      dispatch(productActions.updateProductSelect(mergeProduct))
+      const data = listProducts.map((item, index) =>
+        index === indexSelect.current &&
+        item.item_code === detailProduct.item_code
+          ? detailProduct
+          : item,
+      );
+      dispatch(productActions.updateListProduct(data));
+      const mergeProduct = mergeProducts(data);
+      dispatch(productActions.updateProductSelect(mergeProduct));
     }
     if (bottomSheetRefDetail.current) {
       bottomSheetRefDetail.current.close();
     }
   };
-  console.log(listProducts,'listPro     ', products)
+  console.log(listProducts, 'listPro     ', products);
 
   const onOpenBottonSheetData = (typeData: string) => {
     switch (typeData) {
@@ -163,7 +170,7 @@ const CheckinInventory = () => {
         inventory_items: newItems,
       };
 
-  
+      console.log('object', objectData);
       const response: any = await CheckinService.checkinInventory(objectData);
       if (response.status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));
@@ -173,20 +180,19 @@ const CheckinInventory = () => {
   }, [dataCheckin, products]);
 
   const removeItem = (idx: number) => {
-    const newProducts = listProducts.filter((item,index) => index !== idx);
-    dispatch(productActions.updateListProduct(newProducts))
+    const newProducts = listProducts.filter((item, index) => index !== idx);
+    dispatch(productActions.updateListProduct(newProducts));
     dispatch(productActions.updateProductSelect(newProducts));
   };
 
-  const renderItem = (item: IProduct,index:number) => {
+  const renderItem = (item: IProduct, index: number) => {
     return (
       <Block>
         <Block
-        paddingHorizontal={16}
-        paddingVertical={12}
-        colorTheme='bg_default'
-        borderRadius={16}
-         >
+          paddingHorizontal={16}
+          paddingVertical={12}
+          colorTheme="bg_default"
+          borderRadius={16}>
           <View style={[styles.flex as any, {columnGap: 5, paddingTop: 8}]}>
             <AppIcons
               iconType={ICON_TYPE.IonIcon}
@@ -210,12 +216,11 @@ const CheckinInventory = () => {
             </Text>
           </View>
           <Block
-          paddingTop={12}
-          borderTopWidth={1}
-          borderColor={colors.divider}
-          borderStyle='dashed'
-          marginTop={8}
-           >
+            paddingTop={12}
+            borderTopWidth={1}
+            borderColor={colors.divider}
+            borderStyle="dashed"
+            marginTop={8}>
             <Text style={[styles.dateProduct]}>
               Hạn sử dụng :
               {item.expiry ? CommonUtils.convertDate(item.expiry) : ''}
@@ -236,7 +241,7 @@ const CheckinInventory = () => {
     );
   };
 
-  const openBottonSheetDetail = (item: IProduct,index:number) => {
+  const openBottonSheetDetail = (item: IProduct, index: number) => {
     indexSelect.current = index;
     setDetailProduct(item);
     if (bottomSheetRefDetail.current) {
@@ -247,7 +252,7 @@ const CheckinInventory = () => {
   const renderUiBottomSheetDetailProduct = React.useCallback(() => {
     return (
       <Block block>
-        <Block   padding={16} paddingTop={0} marginTop={-20} block >
+        <Block padding={16} paddingTop={0} marginTop={-20} block>
           <AppHeader
             label={getLabel('product')}
             onBack={() =>
@@ -322,12 +327,11 @@ const CheckinInventory = () => {
 
           {!isKeyboardVisible && (
             <Block
-            block
-            direction='row'
-            justifyContent='space-between'
-            alignItems='flex-end'
-            marginBottom={30}
-             >
+              block
+              direction="row"
+              justifyContent="space-between"
+              alignItems="flex-end"
+              marginBottom={30}>
               <AppButton
                 style={{
                   width: '45%',
@@ -350,7 +354,7 @@ const CheckinInventory = () => {
         </Block>
       </Block>
     );
-  },[bottomSheetRefDetail.current]);
+  }, [bottomSheetRefDetail.current]);
 
   const completeCheckin = () => {
     const newData = categoriesCheckin.map(item =>
@@ -400,13 +404,11 @@ const CheckinInventory = () => {
     Keyboard.dismiss();
   }, [products]);
 
-
-
   return (
     <MainLayout style={{backgroundColor: colors.bg_neutral}}>
       <AppHeader label={getLabel('inventoryControl')} onBack={onBackScreen} />
 
-      { listProducts && listProducts.length > 0 && (
+      {listProducts && listProducts.length > 0 && (
         <View
           style={[styles.flexSpace as any, {marginTop: 40, marginBottom: 8}]}>
           <Text style={[styles.titile as any, {color: colors.text_secondary}]}>
@@ -438,18 +440,19 @@ const CheckinInventory = () => {
       <AppContainer>
         {listProducts && listProducts?.length > 0 && (
           <View style={{rowGap: 16}}>
-            {listProducts && listProducts?.map((item:any, index:number) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => openBottonSheetDetail(item,index)}
-                activeOpacity={0.5}>
-                {renderItem(item,index)}
-              </TouchableOpacity>
-            ))}
+            {listProducts &&
+              listProducts?.map((item: any, index: number) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => openBottonSheetDetail(item, index)}
+                  activeOpacity={0.5}>
+                  {renderItem(item, index)}
+                </TouchableOpacity>
+              ))}
           </View>
         )}
 
-        { listProducts && listProducts?.length == 0 && (
+        {listProducts && listProducts?.length == 0 && (
           <View style={[styles.containerNodata as any]}>
             <View style={{alignItems: 'center'}}>
               <Image

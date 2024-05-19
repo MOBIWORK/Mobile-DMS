@@ -61,7 +61,7 @@ const checkinSlice = createSlice({
     },
 
     setDataListProgram: (state, action: PayloadAction<any>) => {
-      void (state.listProgramCampaign = action.payload);
+      state.listProgramCampaign = action.payload;
     },
     setSelectedProgram: (state, action: PayloadAction<any>) => {
       state.selectedProgram = [];
