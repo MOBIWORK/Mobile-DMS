@@ -59,16 +59,13 @@ const ModalArea = (props: Props) => {
         .toLowerCase()
         .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
 
-        return normalizedFilterText.every(word =>
+      return normalizedFilterText.every(word =>
         normalizedName.some(nameWord => nameWord.includes(word)),
       );
     });
-  
-    console.log(normalizedFilterText,'item texr')
 
-    return filteredItems.length > 0 ? filteredItems : listTerritory;
+    return filterText ? filteredItems : listTerritory;
   }, [filterText]);
-
 
   const handleItem = (text: any) => {
     setSearchValue(text);
@@ -134,14 +131,14 @@ const ModalArea = (props: Props) => {
           />
         </Block>
         <FlatList
-          data={dataMemo}
+          data={dataMemo?.length > 0 ? dataMemo : listTerritory}
           keyExtractor={(item, index) => item.name}
           showsVerticalScrollIndicator={false}
           bounces
           initialNumToRender={10}
           windowSize={21}
           renderItem={({item, index}) => {
-            return  (
+            return (
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={index.toString()}

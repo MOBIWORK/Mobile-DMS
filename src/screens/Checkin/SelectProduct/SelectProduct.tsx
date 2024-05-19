@@ -367,29 +367,14 @@ const SelectProducts = () => {
 
   const onSubmitProductSelect = async (data: IProduct[]) => {
     const dataSelect = data.filter(item => item.isSelected);
-    console.log(dataSelect, 'data select');
     const newDataSelect = dataSelect.map(item => ({
       ...item,
       index: CommonUtils.randomInt(1, 1e6),
     }));
     startEffect(() => {
-      // dispatch(productActions.setProductSelected(dataSelect));
-    dispatch(productActions.setProductSelected(newDataSelect));
-
-      dispatch(productActions.setListProductSelect(dataSelect));
+      dispatch(productActions.setProductSelected(newDataSelect));
+      // dispatch(productActions.setListProductSelect(dataSelect));
     });
-   
-
-    // console.log('dataSelect', dataSelect);
-    // if (dataProductSelected && dataProductSelected?.length > 0) {
-    //   dispatch(
-    //     productActions.setProductSelected(
-    //       dataProductSelected.concat(dataSelect),
-    //     ),
-    //   );
-    // } else {
-    //
-    // }
     navigation.goBack();
   };
 
@@ -409,7 +394,7 @@ const SelectProducts = () => {
   useEffect(() => {
     debouncedSearch(textSearch);
   }, [textSearch]);
- 
+
   useEffect(() => {
     if (products?.length > 0) {
       setData(products);
@@ -539,14 +524,14 @@ const SelectProducts = () => {
               <FlatList
                 data={data}
                 renderItem={({item}) => (
-                  <Block>
+                  <Pressable>
                     <ItemProductOrderComponent
                       item={item}
                       onSelectProduct={onSelectProduct}
                       openBottomSheetDataFilter={openBottomSheetDataFilter}
                       onChangeQuantityProduct={onChangeQuantityProduct}
                     />
-                  </Block>
+                  </Pressable>
                 )}
                 initialNumToRender={10}
                 maxToRenderPerBatch={4}
@@ -554,7 +539,6 @@ const SelectProducts = () => {
                 decelerationRate={'fast'}
                 removeClippedSubviews={true}
                 keyExtractor={(item, index) => index.toString()}
-                contentContainerStyle={{rowGap: 16}}
                 showsVerticalScrollIndicator={false}
                 style={{flex: 1}}
               />

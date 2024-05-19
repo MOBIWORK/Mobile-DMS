@@ -12,12 +12,12 @@ import {useDeepCompareEffect} from '../../../../config/function';
 const UpdateProductItem: FC<UpdateProductItemProps> = ({
   productDetail,
   setProductDetail,
-  onOpenBottonSheetData,
+  onOpenBottomSheetData,
 }) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
   const [isPending, startTransition] = useTransition();
-
+  //
   const [discount_percent, setDiscountPercent] = useState<string>(
     productDetail?.discount_item_percent.toString() || '0',
   );
@@ -39,7 +39,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
       quantity: any,
       productPrice: any,
     ) => {
-      console.log('discountAmount', discountAmount);
+      console.log('onChangeDiscount');
       if (
         discountPercent > 0 ||
         discountAmount > 0 ||
@@ -49,12 +49,16 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
         const new_discount_item_percent =
           discountPercent > 0
             ? discountPercent
-            : (discountAmount * 100) / (productPrice * quantity);
+            : discountAmount > 0
+            ? (discountAmount * 100) / (productPrice * quantity)
+            : 0;
 
         const new_discount_item_amount =
           discountAmount > 0
             ? discountAmount
-            : (discountPercent * quantity * productPrice) / 100;
+            : discountPercent > 0
+            ? (discountPercent * quantity * productPrice) / 100
+            : 0;
 
         startTransition(() => {
           setDiscountPercent(new_discount_item_percent.toString());
@@ -73,6 +77,8 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
       productDetail?.price,
       productDetail?.stock_uom,
       productDetailPrice,
+      discount_percent,
+      discount_amount,
     ],
   );
 
@@ -97,7 +103,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
       />
       <AppInput
         label={getLabel('unit')}
-        onPress={() => onOpenBottonSheetData('unit')}
+        onPress={() => onOpenBottomSheetData('unit')}
         value={productDetail?.stock_uom || ''}
         hiddenRightIcon
         editable={false}
@@ -105,7 +111,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
           <TextInput.Icon
             onPress={() => {
               Keyboard.dismiss();
-              onOpenBottonSheetData('unit');
+              onOpenBottomSheetData('unit');
             }}
             icon={'chevron-down'}
             color={colors.text_secondary}
@@ -224,6 +230,6 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
 interface UpdateProductItemProps {
   productDetail: IProduct;
   setProductDetail: (item: IProduct) => void;
-  onOpenBottonSheetData: (type: string) => void;
+  onOpenBottomSheetData: (type: string) => void;
 }
 export default UpdateProductItem;
