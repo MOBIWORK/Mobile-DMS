@@ -1,19 +1,18 @@
-import { IProduct } from "../../models/types"
-
-
+import {IProduct} from '../../models/types';
 
 export type StateType = {
-    data : IProduct[],
-    totalItem : number,
-    dataSelected : IProduct[]
-    message :string,
-    isLoading : boolean
-    listProductSelect:any[]
-}
+  data: IProduct[];
+  totalItem: number;
+  dataSelected: IProduct[];
+  message: string;
+  isLoading: boolean;
+  listProductSelect: any[];
+  dataProductDetail: any;
+};
 
 export type DataType = {
-    data : IProduct[],
-    total : number,
-}
+  data: IProduct[];
+  total: number;
+};
 
-export const GET_PRODUCTS = "GET_PRODUCTS"
+export const GET_PRODUCTS = 'GET_PRODUCTS';

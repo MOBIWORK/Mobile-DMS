@@ -136,7 +136,10 @@ const CreateOrder = () => {
   const [productsPromotion, setProductsPromotion] = useState<
     IProductPromotion[]
   >([]);
-  const [productDetail, setProductDetail] = useState<IProduct | any>();
+  // const [productDetail, setProductDetail] = useState<IProduct | any>();
+  const productDetail: any = useSelector(
+    state => state.product.dataProductDetail,
+  );
 
   const [dataCategorie, setDataCategorie] = useState<IFilterType[]>([]);
   const [toggleTab, setToggleTab] = useState<number>(1);
@@ -241,8 +244,8 @@ const CreateOrder = () => {
   };
 
   const showDetailProdcut = (product: IProduct) => {
-    console.log(product, 'product');
-    setProductDetail(product);
+    dispatch(productActions.setDataProductDetail(product));
+    // setProductDetail(product);
     if (bottomSheetRef.current) {
       bottomSheetRef.current.snapToIndex(0);
     }
@@ -271,7 +274,7 @@ const CreateOrder = () => {
     }
   }, []);
 
-  const onOpenBottonSheetData = (typeData: string) => {
+  const onOpenBottomSheetData = (typeData: string) => {
     switch (typeData) {
       case 'discount':
         setLabelBottonSheet('typeDiscount');
@@ -356,7 +359,7 @@ const CreateOrder = () => {
                 ? priceUom.conversion_factor * productDetail.price_default
                 : 0,
             };
-            setProductDetail(newData);
+            dispatch(productActions.setDataProductDetail(newData));
           }
         }
         break;
@@ -443,11 +446,16 @@ const CreateOrder = () => {
                 ) {
                   return {
                     ...item,
-                    discount_item_percent: element.discount_percentage,
+                    discount_item_percent:
+                      item?.discount_item_percent > 0
+                        ? item.discount_item_percent
+                        : element.discount_percentage,
                     discount_item_amount:
-                      (element.discount_percentage / 100) *
-                      item.price *
-                      item.quantity,
+                      item?.discount_item_amount > 0
+                        ? item.discount_item_percent
+                        : (element.discount_percentage / 100) *
+                          item.price *
+                          item.quantity,
                     price: item.price,
                     has_pricing_rule: element.has_pricing_rule,
                   };
@@ -455,17 +463,30 @@ const CreateOrder = () => {
                   return {
                     ...item,
                     discount_item_percent:
-                      (element.discount_amount / item.price / item.quantity) *
-                      100,
-                    discount_item_amount: element.discount_amount,
+                      item?.discount_item_percent > 0
+                        ? item.discount_item_percent
+                        : (element.discount_amount /
+                            item.price /
+                            item.quantity) *
+                          100,
+                    discount_item_amount:
+                      item?.discount_item_amount > 0
+                        ? item.discount_item_amount
+                        : element.discount_amount,
                     price: item.price,
                     has_pricing_rule: element.has_pricing_rule,
                   };
                 } else {
                   return {
                     ...item,
-                    discount_item_percent: 0,
-                    discount_item_amount: 0,
+                    discount_item_percent:
+                      item?.discount_item_percent > 0
+                        ? item.discount_item_percent
+                        : 0,
+                    discount_item_amount:
+                      item?.discount_item_amount > 0
+                        ? item.discount_item_amount
+                        : 0,
                     has_pricing_rule: element.has_pricing_rule,
                   };
                 }
@@ -477,13 +498,29 @@ const CreateOrder = () => {
               updateDataProduct(newDataSelected);
             });
           }
+        } else {
+          const newDataSelected = dataProductSelected.map(item => {
+            return {
+              ...item,
+              discount_item_percent:
+                item?.discount_item_percent > 0
+                  ? item.discount_item_percent
+                  : 0,
+              discount_item_amount:
+                item?.discount_item_amount > 0 ? item.discount_item_amount : 0,
+              has_pricing_rule: 0,
+            };
+          });
+          updateDataProduct(newDataSelected);
         }
       } else {
         const newDataSelected = dataProductSelected.map(item => {
           return {
             ...item,
-            discount_item_percent: 0,
-            discount_item_amount: 0,
+            discount_item_percent:
+              item?.discount_item_percent > 0 ? item.discount_item_percent : 0,
+            discount_item_amount:
+              item?.discount_item_amount > 0 ? item.discount_item_amount : 0,
             has_pricing_rule: 0,
           };
         });
@@ -492,26 +529,29 @@ const CreateOrder = () => {
     }
   };
 
-  const handlerRemoveItemProduct = (id: string) => {
-    const newProducts = products.filter(item => item.item_code !== id);
+  const handlerRemoveItemProduct = (id: string, index: number) => {
+    const newProducts = products.filter(item => item.index !== index);
     dispatch(productActions.updateProductSelect(newProducts));
     setProducts(newProducts);
   };
 
   const updateProductOrder = useCallback(() => {
     Keyboard.dismiss();
-    if (productDetail) {
+    if (Object.keys(productDetail).length > 0) {
       const newProducts = products.map(item =>
         item.item_code === productDetail.item_code &&
         item.index === productDetail.index
           ? productDetail
           : item,
       );
-      updateDataProduct(newProducts);
+      setProducts(newProducts);
+      dispatch(productActions.updateProductSelect(newProducts));
     }
     if (bottomSheetRef.current) {
       bottomSheetRef.current.close();
     }
+
+    dispatch(productActions.setDataProductDetail({}));
   }, [productDetail]);
 
   const isDisabled = useMemo(() => {
@@ -698,10 +738,10 @@ const CreateOrder = () => {
                 }
                 value={warehouse?.label ? warehouse.label : ''}
                 editable={false}
-                onPress={() => onOpenBottonSheetData('warehouse')}
+                onPress={() => onOpenBottomSheetData('warehouse')}
                 rightIcon={
                   <TextInput.Icon
-                    onPress={() => onOpenBottonSheetData('warehouse')}
+                    onPress={() => onOpenBottomSheetData('warehouse')}
                     icon={'chevron-down'}
                     color={colors.text_secondary}
                   />
@@ -753,10 +793,10 @@ const CreateOrder = () => {
                   value={discount.label}
                   label={getLabel('typeDiscount')}
                   editable={false}
-                  onPress={() => onOpenBottonSheetData('discount')}
+                  onPress={() => onOpenBottomSheetData('discount')}
                   rightIcon={
                     <TextInput.Icon
-                      onPress={() => onOpenBottonSheetData('discount')}
+                      onPress={() => onOpenBottomSheetData('discount')}
                       icon={'chevron-down'}
                       color={colors.text_secondary}
                     />
@@ -866,53 +906,58 @@ const CreateOrder = () => {
         <AppBottomSheet
           bottomSheetRef={bottomSheetRef}
           snapPointsCustom={['100%']}>
-          <Pressable
-            onPress={() => Keyboard.dismiss()}
-            style={{paddingHorizontal: 16, flex: 1}}>
-            <AppHeader
-              label={getLabel('product')}
-              backButtonIcon={
-                <TouchableOpacity
+          {Object.keys(productDetail).length > 0 ? (
+            <Pressable
+              onPress={() => Keyboard.dismiss()}
+              style={{paddingHorizontal: 16, height: AppConstant.HEIGHT * 0.9}}>
+              <AppHeader
+                label={getLabel('product')}
+                backButtonIcon={
+                  <TouchableOpacity
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      bottomSheetRef.current?.close();
+                      dispatch(productActions.setDataProductDetail({}));
+                    }}>
+                    <Image
+                      source={ImageAssets.CloseIcon}
+                      style={{width: 28, height: 28}}
+                    />
+                  </TouchableOpacity>
+                }
+              />
+              <UpdateProductItem
+                productDetail={productDetail}
+                setProductDetail={item =>
+                  dispatch(productActions.setDataProductDetail(item))
+                }
+                onOpenBottomSheetData={onOpenBottomSheetData}
+              />
+              <Block
+                marginTop={36}
+                position="absolute"
+                alignSelf="center"
+                bottom={0}
+                block
+                style={[styles.flexSpace]}>
+                <AppButton
+                  style={{width: '49%', backgroundColor: colors.bg_neutral}}
+                  styleLabel={{color: colors.text_secondary}}
+                  label={getLabel('cancel')}
                   onPress={() => {
                     Keyboard.dismiss();
-                    bottomSheetRef.current?.close();
-                  }}>
-                  <Image
-                    source={ImageAssets.CloseIcon}
-                    style={{width: 28, height: 28}}
-                  />
-                </TouchableOpacity>
-              }
-            />
-            <UpdateProductItem
-              productDetail={productDetail}
-              setProductDetail={setProductDetail}
-              onOpenBottonSheetData={onOpenBottonSheetData}
-            />
-
-            <Block
-              marginTop={36}
-              position="absolute"
-              alignSelf="center"
-              bottom={AppConstant.HEIGHT * 0.07}
-              block
-              style={[styles.flexSpace]}>
-              <AppButton
-                style={{width: '49%', backgroundColor: colors.bg_neutral}}
-                styleLabel={{color: colors.text_secondary}}
-                label={getLabel('cancel')}
-                onPress={() => {
-                  Keyboard.dismiss();
-                  bottomSheetRef.current && bottomSheetRef.current.close();
-                }}
-              />
-              <AppButton
-                style={{width: '49%'}}
-                label={getLabel('update')}
-                onPress={() => updateProductOrder()}
-              />
-            </Block>
-          </Pressable>
+                    bottomSheetRef.current && bottomSheetRef.current.close();
+                    dispatch(productActions.setDataProductDetail({}));
+                  }}
+                />
+                <AppButton
+                  style={{width: '49%'}}
+                  label={getLabel('update')}
+                  onPress={() => updateProductOrder()}
+                />
+              </Block>
+            </Pressable>
+          ) : undefined}
         </AppBottomSheet>
       </ScrollView>
 

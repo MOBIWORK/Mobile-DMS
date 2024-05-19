@@ -13,29 +13,8 @@ const initState: StateType = {
   isLoading: true,
   message: '',
   listProductSelect: [],
+  dataProductDetail: {},
 };
-
-// function mergeArraysSelectProduct(arr1: IProduct[], arr2: IProduct[]) {
-//   const productMap: any = {};
-//   arr1 = arr1.filter(product => product?.quantity! > 0);
-//   arr2 = arr2.filter(product => product?.quantity! > 0);
-//   arr1.forEach(product => {
-//     if (product.item_code in productMap) {
-//       productMap[product.item_code].quantity += product.quantity;
-//     } else {
-//       productMap[product.item_code] = {...product};
-//     }
-//   });
-//   arr2.forEach(product => {
-//     if (product.item_code in productMap) {
-//       productMap[product.item_code].quantity += product.quantity;
-//     } else {
-//       productMap[product.item_code] = {...product};
-//     }
-//   });
-//
-//   return Object.values(productMap);
-// }
 
 const productSlice = createSlice({
   name: SLICE_NAME,
@@ -78,9 +57,12 @@ const productSlice = createSlice({
     setListProductSelect: (state, action: PayloadAction<any>) => {
       state.listProductSelect = [...state.listProductSelect, ...action.payload];
     },
-    updateListProduct:(state,action:PayloadAction<any>) => {
-      state.listProductSelect = action.payload
-    }
+    updateListProduct: (state, action: PayloadAction<any>) => {
+      state.listProductSelect = action.payload;
+    },
+    setDataProductDetail: (state, action: PayloadAction<any>) => {
+      state.dataProductDetail = action.payload;
+    },
   },
 });
 

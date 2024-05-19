@@ -677,7 +677,7 @@ export type IOrderList = {
   custom_id: number | string;
   grand_total: number;
   rounding_adjustment: number;
-  rounded_total: number;
+  price_list_rate: number;
   creation: number;
 };
 

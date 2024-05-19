@@ -7,6 +7,7 @@ import {
   View,
   ViewStyle,
   TextInput as Input,
+  Pressable,
 } from 'react-native';
 import {AppCheckBox, AppIcons, Block} from '../../../../components/common';
 import {ICON_TYPE} from '../../../../const/app.const';
@@ -222,6 +223,7 @@ const createStyles = (theme: AppTheme) =>
       paddingHorizontal: 16,
       paddingVertical: 12,
       borderRadius: 16,
+      marginVertical: 6,
     },
     itemRowIf: {
       paddingVertical: 12,

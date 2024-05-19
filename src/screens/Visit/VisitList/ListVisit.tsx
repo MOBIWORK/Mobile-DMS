@@ -491,7 +491,7 @@ const ListVisit = () => {
                   />
                 )}
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0}
+                onEndReachedThreshold={0.1}
               />
             )}
           </Block>
