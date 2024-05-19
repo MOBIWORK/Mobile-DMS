@@ -5,10 +5,13 @@ import {
   ViewStyle,
   ActivityIndicator,
   FlatList,
+  NativeSyntheticEvent,
+  TextInputSubmitEditingEventData,
 } from 'react-native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo, useState, useTransition} from 'react';
 import {AppIcons, Block, AppText as Text} from '../../../components/common';
 import {AppConstant} from '../../../const';
+import {Searchbar} from 'react-native-paper';
 
 import {listBirthDayType, listFilterType, listFrequencyType} from './data';
 import {IValueType} from '../Customer';
@@ -22,6 +25,7 @@ import {
 } from '../../../models/types';
 import {useSelector} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
+import { ImageAssets } from '../../../assets';
 
 type Props = {
   type: string;
@@ -37,7 +41,9 @@ const ListFilterAdding = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
+  const [filterText, setFilterText] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [isPending, startEffect] = useTransition();
   const customerType: ListCustomerType[] = useSelector(
     state => state.customer.listCustomerType,
   );
@@ -45,6 +51,44 @@ const ListFilterAdding = (props: Props) => {
   const listRoute: ListCustomerRoute[] = useSelector(
     state => state.customer.listCustomerRoute,
   );
+
+  const dataMemo = useMemo(() => {
+    const normalizedFilterText = filterText
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .split(' '); // Normalize,
+    
+    const filteredItems = customerType?.filter(item => {
+      const normalizedName = item.name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
+  
+      // Check if every word in normalizedFilterText is included in normalizedName
+      return normalizedFilterText.every(word => normalizedName.some(nameWord => nameWord.includes(word)));
+    });
+    return filteredItems.length > 1 ? filteredItems : customerType;
+
+
+  }, [filterText]);
+
+
+  const handleItem = (text: any) => {
+    setSearchValue(text);
+    startEffect(() => {
+      setFilterText(text);
+    });
+  };
+  const onSubmitEnd = (
+    event: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
+  ) => {
+    setSearchValue(event.nativeEvent.text);
+    startEffect(() => {
+      setFilterText(event.nativeEvent.text);
+    });
+  };
 
   const handlePress = useCallback(
     (item: any) => {
@@ -192,7 +236,67 @@ const ListFilterAdding = (props: Props) => {
             </Text>
             <Text style={styles.titleHeaderText} />
           </Block>
-          {customerType &&
+          <Block
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-start"
+          marginBottom={20}
+          width={'100%'}>
+          <Searchbar
+            placeholder={getLabel('search') + '...'}
+            value={searchValue}
+            onChangeText={handleItem}
+            onSubmitEditing={onSubmitEnd}
+            icon={ImageAssets.SearchIcon}
+            placeholderTextColor={theme.colors.text_disable}
+            inputStyle={{color: theme.colors.text_primary}}
+            style={styles.searchBar}
+            iconColor={theme.colors.text_disable}
+            onClearIconPress={() => setSearchValue('')}
+          />
+        </Block>
+          <FlatList
+            data={customerType && customerType.length > 0 ? dataMemo : []}
+            keyExtractor={item => item.name}
+            showsVerticalScrollIndicator={false}
+            windowSize={11}
+            initialNumToRender={10}
+            renderItem={({item}) => {
+              return (
+                <TouchableOpacity
+                  style={styles.containItemBottomView}
+                  key={item.name}
+                  onPress={() => {
+                    setData(prev => ({
+                      ...prev,
+                      customer_group: item.customer_group_name,
+                    }));
+                    setValueFilter(prev => ({
+                      ...prev,
+                      customerGroupType: item.customer_group_name,
+                    }));
+                    filterRef?.current?.close();
+                  }}>
+                  <Text
+                    style={styles.itemText(
+                      item.customer_group_name,
+                      data.customer_group,
+                    )}>
+                    {item.customer_group_name}
+                  </Text>
+                  {item.customer_group_name === data.customer_group && (
+                    <AppIcons
+                      iconType={AppConstant.ICON_TYPE.Feather}
+                      name="check"
+                      size={24}
+                      color={theme.colors.primary}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
+          {/* {customerType &&
             customerType.length > 0 &&
             customerType?.map(item => {
               return (
@@ -227,9 +331,9 @@ const ListFilterAdding = (props: Props) => {
                   )}
                 </TouchableOpacity>
               );
-            })}
+            })} */}
         </Block>
-      // ) : type === AppConstant.CustomerFilterType.khu_vuc ? (
+      ) : // ) : type === AppConstant.CustomerFilterType.khu_vuc ? (
       //   <Block>
       //     <Block style={styles.headerBottomSheet}>
       //       <TouchableOpacity
@@ -288,7 +392,7 @@ const ListFilterAdding = (props: Props) => {
       //     {/* {listTerritory && listTerritory.length > 0 ? (
       //       listTerritory?.map(item => {
       //         return (
-              
+
       //         );
       //       })
       //     ) : (
@@ -297,8 +401,7 @@ const ListFilterAdding = (props: Props) => {
       //       </Block>
       //     )} */}
       //   </Block>
-      ) 
-      : type === AppConstant.CustomerFilterType.tuyen ? (
+      type === AppConstant.CustomerFilterType.tuyen ? (
         <Block>
           <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
@@ -429,5 +532,11 @@ const rootStyles = (theme: AppTheme) =>
       alignItems: 'center',
       marginHorizontal: 16,
       marginBottom: 5,
+    } as ViewStyle,
+    searchBar: {
+      backgroundColor: theme.colors.bg_default,
+      borderRadius: 10,
+      width: '90%',
+      marginLeft: 12,
     } as ViewStyle,
   });

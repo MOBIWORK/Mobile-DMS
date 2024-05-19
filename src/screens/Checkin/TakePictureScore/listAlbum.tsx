@@ -79,7 +79,6 @@ const listAlbum = (props: Props) => {
                 <TouchableOpacity
                   onPress={() => {
                     props.handleSelectImage(item);
-                    console.log(props.selectedImages.includes(item))
                     // console.log(item,props.listImageResponse[index+1],'select')
                   }}>
                   {props.selectedImages.includes(item) && (

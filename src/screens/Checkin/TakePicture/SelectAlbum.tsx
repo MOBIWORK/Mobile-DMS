@@ -50,7 +50,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
         if (item.value === itemCur.value) {
           return {
             ...itemCur,
-            id: index,
+            id: itemCur.id,
             isSelected: !itemCur.isSelected,
           };
         } else {

@@ -1,4 +1,10 @@
-import React, {useEffect, useRef, useState, useCallback} from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  startTransition,
+} from 'react';
 import {ExtendedTheme, useNavigation, useRoute} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
@@ -48,6 +54,7 @@ const TakePicture = () => {
   const [albumBottomSheet, setAlbumBottomSheet] = useState<IFilterType[]>();
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
+
   const dataCheckIn = useRef<CheckinData>(params.data);
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
@@ -57,7 +64,7 @@ const TakePicture = () => {
     state => state.app.dataCheckIn?.listImage,
     shallowEqual,
   );
-  const listImageLength = listImage?.length   || 1
+  const listImageLength = listImage?.length || 1;
   const [message, setMessage] = useState<number>(0);
   const data = useRef<ImageCheckIn>({
     album_id: '',
@@ -93,7 +100,8 @@ const TakePicture = () => {
           if (data?.current) {
             data.current.image = image?.base64!;
             await new Promise(resolve => setTimeout(resolve, 1500));
-            totalItemsProcessed++;
+            totalItemsProcessed++
+            setMessage(totalItemsProcessed);
             dispatch(appActions.postImageCheckIn(data.current));
           }
         }
@@ -102,12 +110,12 @@ const TakePicture = () => {
       console.error('Error during image processing', error);
     } finally {
       console.log(`Done processing ${totalItemsProcessed} items`);
-      setTimeout(() => {
-        setMessage(totalItemsProcessed);
+      startTransition(() => {
+      
         completeCheckin();
-        setLoading(false);
         dispatch(appActions.clearListImage([]));
-      }, 1000);
+      });
+      setLoading(false);
     }
   };
 
@@ -124,6 +132,7 @@ const TakePicture = () => {
   };
 
   const handleCamera = async (item: IAlbumImage) => {
+    console.log(item,'item')
     await CameraUtils.openImagePickerCamera((img, base64) => {
       const newListImage = [
         ...item.image,
@@ -143,6 +152,7 @@ const TakePicture = () => {
       setAlbumImageData(updatedState);
     });
   };
+
   // const obje = {...data.current}
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
@@ -178,7 +188,7 @@ const TakePicture = () => {
         const listAlbumResult: ListAlbumType[] = res.result;
         const listAlbum = listAlbumResult.map((item, index) => {
           return {
-            id: index,
+            id: item.ma_album,
             label: item.ten_album,
             value: item.ma_album,
             isSelected: false,
@@ -189,6 +199,10 @@ const TakePicture = () => {
     };
     getListAlbum();
   }, []);
+  console.log(listImageLength,'length')
+  console.log(message,'percent')
+
+  
 
   const EmptyAlbum = useCallback(() => {
     return (
@@ -209,7 +223,7 @@ const TakePicture = () => {
         </Button>
       </>
     );
-  },[]);
+  }, []);
 
   const AlbumItem = useCallback(
     (itemAlbum: IAlbumImage) => {
@@ -355,7 +369,7 @@ const TakePicture = () => {
           </Block>
           <Block marginTop={16} marginBottom={16}>
             <ProgressCircle
-              percent={listImageLength/ data.current.image.length}
+              percent={(message/listImageLength)*100}
               radius={50}
               borderWidth={12}
               color={theme.colors.success}
