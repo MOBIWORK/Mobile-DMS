@@ -8,6 +8,7 @@ import React, {
 import {ExtendedTheme, useNavigation, useRoute} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
+  Alert,
   FlatList,
   Image,
   Pressable,
@@ -44,6 +45,11 @@ import {useTheme} from '../../../layouts/theme';
 import ProgressCircle from 'react-native-progress-circle';
 import {CheckinService} from '../../../services';
 import {useTranslation} from 'react-i18next';
+
+export interface AlbumBottomSheet extends IFilterType {
+  numPicsRequired?: string;
+}
+
 const TakePicture = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
@@ -51,7 +57,8 @@ const TakePicture = () => {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const navigation = useNavigation();
-  const [albumBottomSheet, setAlbumBottomSheet] = useState<IFilterType[]>();
+  const [albumBottomSheet, setAlbumBottomSheet] =
+    useState<AlbumBottomSheet[]>();
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
 
@@ -90,20 +97,27 @@ const TakePicture = () => {
     try {
       setLoading(true);
       for (let index = 0; index < albumImageData.length; index++) {
-        if (data?.current) {
-          data.current.album_id = String(albumImageData[index].id + 1);
-          data.current.album_name = albumImageData[index].label;
-        }
-        const element = albumImageData[index].image;
-        for (let i = 1; i < element.length; i++) {
-          let image = element[i];
+        if (
+          albumImageData[index].image.length - 1 >=
+          albumImageData[index].numberImageReq
+        ) {
           if (data?.current) {
-            data.current.image = image?.base64!;
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            totalItemsProcessed++
-            setMessage(totalItemsProcessed);
-            dispatch(appActions.postImageCheckIn(data.current));
+            data.current.album_id = String(albumImageData[index].id + 1);
+            data.current.album_name = albumImageData[index].label;
           }
+          const element = albumImageData[index].image;
+          for (let i = 1; i < element.length; i++) {
+            let image = element[i];
+            if (data?.current) {
+              data.current.image = image?.base64!;
+              await new Promise(resolve => setTimeout(resolve, 1500));
+              totalItemsProcessed++;
+              setMessage(totalItemsProcessed);
+              dispatch(appActions.postImageCheckIn(data.current));
+            }
+          }
+        } else {
+          Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
         }
       }
     } catch (error) {
@@ -111,7 +125,6 @@ const TakePicture = () => {
     } finally {
       console.log(`Done processing ${totalItemsProcessed} items`);
       startTransition(() => {
-      
         completeCheckin();
         dispatch(appActions.clearListImage([]));
       });
@@ -132,7 +145,6 @@ const TakePicture = () => {
   };
 
   const handleCamera = async (item: IAlbumImage) => {
-    console.log(item,'item')
     await CameraUtils.openImagePickerCamera((img, base64) => {
       const newListImage = [
         ...item.image,
@@ -152,8 +164,6 @@ const TakePicture = () => {
       setAlbumImageData(updatedState);
     });
   };
-
-  // const obje = {...data.current}
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
     const newListImage = itemSelected.image.filter(item => item.url !== img);
@@ -192,6 +202,7 @@ const TakePicture = () => {
             label: item.ten_album,
             value: item.ma_album,
             isSelected: false,
+            numPicsRequired: item.so_anh_toi_thieu,
           };
         });
         setAlbumBottomSheet(listAlbum);
@@ -199,10 +210,6 @@ const TakePicture = () => {
     };
     getListAlbum();
   }, []);
-  console.log(listImageLength,'length')
-  console.log(message,'percent')
-
-  
 
   const EmptyAlbum = useCallback(() => {
     return (
@@ -231,7 +238,10 @@ const TakePicture = () => {
         <View style={styles.album}>
           <View style={styles.row}>
             <Button mode={'text'} icon={'chevron-down'}>
-              {itemAlbum.label}
+              {itemAlbum.label}{'  '}
+              {itemAlbum.image.length - 1 === 0
+                ? `( Tối thiểu ${itemAlbum.numberImageReq} ảnh )`
+                : `(${itemAlbum.image?.length - 1 || 0}/${itemAlbum.numberImageReq})`}
             </Button>
             <SvgIcon
               source={'TrashIcon'}
@@ -299,6 +309,7 @@ const TakePicture = () => {
     },
     [handleCamera, albumBottomSheet],
   );
+  console.log(albumImageData, 'albumImageData');
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
@@ -320,20 +331,15 @@ const TakePicture = () => {
       <View style={styles.body}>
         {albumImageData.length > 0 ? (
           <AppContainer style={{width: AppConstant.WIDTH - 32}}>
-            <View
-              style={{
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+            <Block width={'100%'} alignItems="center" justifyContent="center">
               {albumImageData.map((item, index) => {
                 return (
-                  <View key={index} style={{width: '100%', marginVertical: 8}}>
+                  <Block key={index} marginVertical={8} width={'100%'}>
                     {AlbumItem(item)}
-                  </View>
+                  </Block>
                 );
               })}
-            </View>
+            </Block>
           </AppContainer>
         ) : (
           <EmptyAlbum />
@@ -369,7 +375,7 @@ const TakePicture = () => {
           </Block>
           <Block marginTop={16} marginBottom={16}>
             <ProgressCircle
-              percent={(message/listImageLength)*100}
+              percent={(message+1 / listImageLength) * 100}
               radius={50}
               borderWidth={12}
               color={theme.colors.success}

@@ -20,6 +20,7 @@ import {ImageAssets} from '../../../assets';
 import {Button} from 'react-native-paper';
 import {IAlbumImage} from '../../../models/types';
 import {useTranslation} from 'react-i18next';
+import {AlbumBottomSheet} from '.';
 
 const SelectAlbum: FC<SelectAlbumProps> = ({
   bottomSheetRef,
@@ -41,9 +42,9 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
     handleContentLayout,
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
-  const [curData, setCurData] = useState<IFilterType[] | undefined>(data);
+  const [curData, setCurData] = useState<AlbumBottomSheet[] | undefined>(data);
 
-  const handleItem = (item: IFilterType) => {
+  const handleItem = (item: AlbumBottomSheet) => {
     const newData =
       curData &&
       curData.map((itemCur, index) => {
@@ -52,6 +53,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
             ...itemCur,
             id: itemCur.id,
             isSelected: !itemCur.isSelected,
+            numPicsRequired: itemCur.numPicsRequired,
           };
         } else {
           return itemCur;
@@ -70,20 +72,17 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
     setCurData(newData);
   };
 
-  const handleAlbum = (selectedItem: IFilterType[]) => {
-    console.log(
-      'hehe',
-      selectedItem.filter(item => item.isSelected),
-    );
+  const handleAlbum = (selectedItem: AlbumBottomSheet[]) => {
     const selectedData = selectedItem
       .filter(item => item.isSelected)
       .map((selected, selectedIdx) => ({
         id: selected.id,
         label: selected.label,
         image: ['IconCamera'],
+        numberImageReq: selected.numPicsRequired,
       }));
 
-    // console.log('selectedItem1', selectedData);
+    console.log('selectedItem1', selectedData);
 
     const albumImageDataCopy = [...albumImageData];
 
@@ -113,6 +112,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
             image: albumImageData[index]?.image
               ? albumImageData[index]?.image
               : item.image.map(image => ({url: image})),
+            numberImageReq: item.numberImageReq,
           })),
         ]);
       } else {
@@ -121,6 +121,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
             id: item.id, // Adjust this based on your actual structure
             label: item.label,
             image: item.image.map(image => ({url: image})),
+            numberImageReq: item.numberImageReq,
           })),
         ]);
       }

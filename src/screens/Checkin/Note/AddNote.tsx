@@ -1,5 +1,4 @@
 import React, {
-  startTransition,
   useEffect,
   useMemo,
   useRef,
@@ -20,20 +19,13 @@ import {
 import {TextInput} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
-import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {KeyAbleProps, StaffType} from '../../../models/types';
-import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import {FlatList, Pressable, Text, TouchableOpacity, View} from 'react-native';
+import {StaffType} from '../../../models/types';
+import BottomSheet from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {useEffectOnce, useSelector} from '../../../config/function';
+import {useSelector} from '../../../config/function';
 import {CheckinService} from '../../../services';
 import {ApiConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
@@ -85,7 +77,6 @@ const AddNote = () => {
     } catch (er) {
       console.log(er);
     } finally {
-      
       navigation.goBack();
     }
   };

@@ -62,10 +62,9 @@ const ModalArea = (props: Props) => {
       // Check if every word in normalizedFilterText is included in normalizedName
       return normalizedFilterText.every(word => normalizedName.some(nameWord => nameWord.includes(word)));
     });
-    return filterText !== '' ? filteredItems : listTerritory;
+    return filterText[0] !== '' ? filteredItems : listTerritory;
   }, [filterText]);
   
-
 
   const handleItem = (text: any) => {
     setSearchValue(text);
@@ -131,7 +130,7 @@ const ModalArea = (props: Props) => {
           />
         </Block>
         <FlatList
-          data={dataMemo}
+          data={dataMemo?.length > 0 ? dataMemo : listTerritory}
           keyExtractor={(item, index) => item.name}
           showsVerticalScrollIndicator={false}
           bounces
