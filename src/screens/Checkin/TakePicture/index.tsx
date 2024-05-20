@@ -61,6 +61,7 @@ const TakePicture = () => {
     useState<AlbumBottomSheet[]>();
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
+  const [isDone, setDone] = useState(true);
 
   const dataCheckIn = useRef<CheckinData>(params.data);
   const categoriesCheckin = useSelector(
@@ -93,42 +94,51 @@ const TakePicture = () => {
   const [loading, setLoading] = useState(false);
 
   const handlePushImageData = async () => {
-    let totalItemsProcessed = 0;
-    try {
-      setLoading(true);
-      for (let index = 0; index < albumImageData.length; index++) {
-        if (
-          albumImageData[index].image.length - 1 >=
-          albumImageData[index].numberImageReq
-        ) {
-          if (data?.current) {
-            data.current.album_id = String(albumImageData[index].id + 1);
-            data.current.album_name = albumImageData[index].label;
-          }
-          const element = albumImageData[index].image;
-          for (let i = 1; i < element.length; i++) {
-            let image = element[i];
+    if (albumImageData.length > 0) {
+      let totalItemsProcessed = 0;
+      try {
+        setLoading(true);
+        for (let index = 0; index < albumImageData.length; index++) {
+          if (
+            albumImageData[index].image.length - 1 >=
+            albumImageData[index].numberImageReq
+          ) {
             if (data?.current) {
-              data.current.image = image?.base64!;
-              await new Promise(resolve => setTimeout(resolve, 1500));
-              totalItemsProcessed++;
-              setMessage(totalItemsProcessed);
-              dispatch(appActions.postImageCheckIn(data.current));
+              data.current.album_id = String(albumImageData[index].id + 1);
+              data.current.album_name = albumImageData[index].label;
             }
+            const element = albumImageData[index].image;
+            for (let i = 1; i < element.length; i++) {
+              let image = element[i];
+              if (data?.current) {
+                data.current.image = image?.base64!;
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                totalItemsProcessed++;
+                setMessage(totalItemsProcessed);
+                dispatch(appActions.postImageCheckIn(data.current));
+              }
+            }
+          } else {
+            Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
+            setDone(false);
           }
-        } else {
-          Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
         }
+      } catch (error) {
+        console.error('Error during image processing', error);
+      } finally {
+        console.log(`Done processing ${totalItemsProcessed} items`);
+        if (isDone != false) {
+          startTransition(() => {
+            completeCheckin();
+            dispatch(appActions.clearListImage([]));
+          });
+        }
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
-    } catch (error) {
-      console.error('Error during image processing', error);
-    } finally {
-      console.log(`Done processing ${totalItemsProcessed} items`);
-      startTransition(() => {
-        completeCheckin();
-        dispatch(appActions.clearListImage([]));
-      });
-      setLoading(false);
+    } else {
+      Alert.alert('Bạn chưa hoàn thành bước chụp ảnh');
     }
   };
 
@@ -238,10 +248,15 @@ const TakePicture = () => {
         <View style={styles.album}>
           <View style={styles.row}>
             <Button mode={'text'} icon={'chevron-down'}>
-              {itemAlbum.label}{'  '}
+              {itemAlbum.label}
+              {'  '}
               {itemAlbum.image.length - 1 === 0
-                ? `( Tối thiểu ${itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0} ảnh )`
-                : `(${itemAlbum.image?.length - 1 || 0}/${itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0})`}
+                ? `( Tối thiểu ${
+                    itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0
+                  } ảnh )`
+                : `(${itemAlbum.image?.length - 1 || 0}/${
+                    itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0
+                  })`}
             </Button>
             <SvgIcon
               source={'TrashIcon'}
@@ -375,13 +390,13 @@ const TakePicture = () => {
           </Block>
           <Block marginTop={16} marginBottom={16}>
             <ProgressCircle
-              percent={(message+1 / listImageLength) * 100}
+              percent={((message + 1) / listImageLength) * 100}
               radius={50}
               borderWidth={12}
               color={theme.colors.success}
               shadowColor={theme.colors.bg_disable}
               bgColor="#fff">
-              <Text>{message}</Text>
+              <Text>{message + 1}</Text>
             </ProgressCircle>
           </Block>
         </Block>

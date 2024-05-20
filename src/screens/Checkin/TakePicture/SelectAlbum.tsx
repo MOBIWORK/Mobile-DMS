@@ -82,8 +82,6 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
         numberImageReq: selected.numPicsRequired,
       }));
 
-    console.log('selectedItem1', selectedData);
-
     const albumImageDataCopy = [...albumImageData];
 
     selectedData.forEach(selectedItem => {
@@ -107,7 +105,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
       if (albumImageData.length > 0) {
         setAlbumImageData([
           ...selectedData.map((item, index) => ({
-            id: index, // Adjust this based on your actual structure
+            id: item.id, // Adjust this based on your actual structure
             label: item.label,
             image: albumImageData[index]?.image
               ? albumImageData[index]?.image

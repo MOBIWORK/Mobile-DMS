@@ -53,12 +53,13 @@ import {GeolocationResponse} from '@react-native-community/geolocation';
 import {AppStateStatus} from 'react-native';
 import {useMMKV, useMMKVString} from 'react-native-mmkv';
 import moment from 'moment';
+import {storage} from '../../../utils/commom.utils';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
-  const [mmkv, setMmkv] = useMMKVString('time');
-  const isFocus = useIsFocused()
+  const mmkv = storage.getString('time');
+  const isFocus = useIsFocused();
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -67,38 +68,115 @@ const useTimer = () => {
           startTransition(() => {
             const newTimeStamp = moment(new Date()).valueOf();
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-            setElapsedTime(Math.ceil(currentTime/1000));
+            setElapsedTime(Math.ceil(currentTime / 1000));
+            clearInterval(intervalIdRef.current);
           });
         }
 
         intervalIdRef.current = setInterval(() => {
           setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
         }, 1000); // Update every 1 second
-      } else if (nextAppState === 'background' || nextAppState === 'inactive'  || !isFocus) {
+      } else if (
+        nextAppState === 'background' ||
+        nextAppState === 'inactive' ||
+        !isFocus
+      ) {
         const timeStamp = moment(new Date()).valueOf();
-        setMmkv(String(timeStamp));
+        storage.set('time', String(timeStamp));
+        // setMmkv(String(timeStamp));
         clearInterval(intervalIdRef.current);
       }
     };
 
-    const subcription = AppState.addEventListener(
+    const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,
     );
 
-    // Start the timer when the component mounts
+    if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
+      // Calculate initial elapsed time based on mmkv
+      const newTimeStamp = moment(new Date()).valueOf();
+      const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+      setElapsedTime(Math.ceil(currentTime / 1000));
+      clearInterval(intervalIdRef.current);
+    }
+
+    // Start the interval
     intervalIdRef.current = setInterval(() => {
       setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-    }, 1000); // Update every 1 second
+    }, 1000);
 
     return () => {
       clearInterval(intervalIdRef.current);
-      subcription.remove();
+      subscription.remove();
     };
-  }, []);
+  }, [mmkv, isFocus]);
 
   return elapsedTime;
 };
+
+// const useTimer = () => {
+//   const [elapsedTime, setElapsedTime] = useState(0);
+//   const intervalIdRef = useRef<any>(0);
+//   // const [mmkv, setMmkv] = useMMKVString('time');
+//   const mmkv = storage.getString('time');
+//   const isFocus = useIsFocused();
+
+//   useEffect(() => {
+//     const handleAppStateChange = (nextAppState: AppStateStatus) => {
+//       if (nextAppState === 'active') {
+//         if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
+
+//           startTransition(() => {
+//             const newTimeStamp = moment(new Date()).valueOf();
+//             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+//             setElapsedTime(Math.ceil(currentTime / 1000));
+//           });
+//         }
+
+//         intervalIdRef.current = setInterval(() => {
+//           setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+//         }, 1000); // Update every 1 second
+//       } else if (
+//         nextAppState === 'background' ||
+//         nextAppState === 'inactive' ||
+//         !isFocus
+//       ) {
+//         const timeStamp = moment(new Date()).valueOf();
+//         storage.set('time', String(timeStamp));
+//         // setMmkv(String(timeStamp));
+//         // clearInterval(intervalIdRef.current);
+//       }
+//     };
+
+//     const subcription = AppState.addEventListener(
+//       'change',
+//       handleAppStateChange,
+//     );
+
+//     // Start the timer when the component mounts
+//     if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
+//       console.log(mmkv, 'run that');
+//       startTransition(() => {
+//         const newTimeStamp = moment(new Date()).valueOf();
+//         const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+//         setElapsedTime(Math.ceil(currentTime / 1000));
+//       });
+//       intervalIdRef.current = setInterval(() => {
+//         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+//       }, 1000);
+//     }
+
+//     // Update every 1 second
+
+//     return () => {
+//       clearInterval(intervalIdRef.current);
+//       subcription.remove();
+//     };
+//   }, [mmkv]);
+
+//   return elapsedTime;
+// };
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -159,6 +237,7 @@ const CheckIn = () => {
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
 
+  // console.log(elapsedTime,'b')
   const handleSwitch = useCallback(() => {
     if (title === getLabel('openDoor')) {
       setTitle(getLabel('closeDoor'));

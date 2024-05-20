@@ -81,7 +81,6 @@ const DetailCustomer = () => {
     };
   }, []);
 
-// console.log(data,'detailCus')
 
 
   const snapPointAdding = useMemo(
