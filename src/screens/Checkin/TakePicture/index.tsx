@@ -375,7 +375,7 @@ const TakePicture = () => {
           </Block>
           <Block marginTop={16} marginBottom={16}>
             <ProgressCircle
-              percent={(message / listImageLength) * 100}
+              percent={(message+1 / listImageLength) * 100}
               radius={50}
               borderWidth={12}
               color={theme.colors.success}
