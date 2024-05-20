@@ -33,6 +33,7 @@ import {dispatch} from '../../utils/redux';
 import {useSelector} from '../../config/function';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../layouts/ErrorFallBack';
+import {OrderService} from '../../services';
 
 const OrderList = () => {
   const {t: getLabel} = useTranslation();
@@ -126,7 +127,7 @@ const OrderList = () => {
   const [toDate, setToDate] = useState<number>(0);
   const [filterStatus, setFilterStatus] = useState<string>();
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(20);
 
   const onOpenBottomSheet = (type: string) => {
     setType(type);
@@ -289,8 +290,8 @@ const OrderList = () => {
           <View style={styles.flex}>
             <Text style={styles.itemTotal}>{getLabel('totalPrice')} :</Text>
             <Text style={[styles.nameCustomer]}>
-              {item?.price_list_rate > 0
-                ? CommonUtils.convertToTwoDecimalPlaces(item.price_list_rate)
+              {item?.grand_total > 0
+                ? CommonUtils.convertToTwoDecimalPlaces(item.grand_total)
                 : 0}
             </Text>
           </View>
@@ -301,12 +302,12 @@ const OrderList = () => {
 
   const onEndReachedThreshold = () => {
     const totalPage = Math.ceil(totalData / pageSize);
-    if (page <= totalPage && orders.length > 6) {
+    if (page <= totalPage && orders.length > 3) {
       setPage(page + 1);
     }
   };
 
-  const fetchData = () => {
+  const fetchData = async () => {
     dispatch(
       orderAction.onGetData({
         from_date: fromDate > 0 ? fromDate / 1000 : undefined,
@@ -372,8 +373,8 @@ const OrderList = () => {
           <FlatList
             data={orders}
             onEndReached={onEndReachedThreshold}
-            onEndReachedThreshold={0.1}
-            initialNumToRender={10}
+            onEndReachedThreshold={0.2}
+            initialNumToRender={20}
             showsVerticalScrollIndicator={false}
             style={{flex: 1}}
             renderItem={({item}) => (
