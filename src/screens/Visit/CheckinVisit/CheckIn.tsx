@@ -74,7 +74,7 @@ const useTimer = () => {
         intervalIdRef.current = setInterval(() => {
           setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
         }, 1000); // Update every 1 second
-      } else if (nextAppState === 'background' || nextAppState === 'inactive') {
+      } else if (nextAppState === 'background' || nextAppState === 'inactive'  || !isFocus) {
         const timeStamp = moment(new Date()).valueOf();
         setMmkv(String(timeStamp));
         clearInterval(intervalIdRef.current);
