@@ -240,8 +240,8 @@ const TakePicture = () => {
             <Button mode={'text'} icon={'chevron-down'}>
               {itemAlbum.label}{'  '}
               {itemAlbum.image.length - 1 === 0
-                ? `( Tối thiểu ${itemAlbum.numberImageReq} ảnh )`
-                : `(${itemAlbum.image?.length - 1 || 0}/${itemAlbum.numberImageReq})`}
+                ? `( Tối thiểu ${itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0} ảnh )`
+                : `(${itemAlbum.image?.length - 1 || 0}/${itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0})`}
             </Button>
             <SvgIcon
               source={'TrashIcon'}
