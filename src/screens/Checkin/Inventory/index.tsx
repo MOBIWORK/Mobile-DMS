@@ -69,6 +69,7 @@ const CheckinInventory = () => {
   const [openDate, setOpenDate] = useState<boolean>(false);
   const indexSelect = useRef<number>(0);
   const onBackScreen = () => {
+    dispatch(productActions.updateListProduct([]));
     dispatch(productActions.updateProductSelect([]));
     navigation.goBack();
   };
@@ -77,7 +78,6 @@ const CheckinInventory = () => {
     () => (products.length > 0 ? false : true),
     [products],
   );
-  // console.log(listProducts,'list products')
 
   const updateProduct = () => {
     if (detailProduct && listProducts) {
@@ -95,7 +95,6 @@ const CheckinInventory = () => {
       bottomSheetRefDetail.current.close();
     }
   };
-  console.log(listProducts, 'listPro     ', products);
 
   const onOpenBottonSheetData = (typeData: string) => {
     switch (typeData) {
@@ -170,10 +169,10 @@ const CheckinInventory = () => {
         inventory_items: newItems,
       };
 
-      console.log('object', objectData);
       const response: any = await CheckinService.checkinInventory(objectData);
       if (response.status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));
+        dispatch(productActions.setListProductSelect([]));
         completeCheckin();
       }
     }
