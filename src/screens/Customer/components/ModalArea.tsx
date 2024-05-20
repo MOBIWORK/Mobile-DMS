@@ -66,7 +66,6 @@ const ModalArea = (props: Props) => {
   }, [filterText]);
   
 
-
   const handleItem = (text: any) => {
     setSearchValue(text);
     startTransition(() => {
@@ -131,7 +130,7 @@ const ModalArea = (props: Props) => {
           />
         </Block>
         <FlatList
-          data={dataMemo}
+          data={dataMemo?.length > 0 ? dataMemo : listTerritory}
           keyExtractor={(item, index) => item.name}
           showsVerticalScrollIndicator={false}
           bounces

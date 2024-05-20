@@ -538,6 +538,7 @@ export type IAlbumImage = {
     url: string;
     base64?: string;
   }[];
+  numberImageReq?:any
 };
 
 export type IStaff = {

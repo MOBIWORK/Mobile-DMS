@@ -29,7 +29,6 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   calculateDistance,
   decimalMinutesToTime,
-  useDeepCompareEffect,
   useDisableBackHandler,
   useEffectOnce,
   useSelector,
@@ -67,15 +66,15 @@ const useTimer = () => {
         if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
           startTransition(() => {
             const newTimeStamp = moment(new Date()).valueOf();
-            const currentTime = Number(newTimeStamp) - Number(mmkv);
-            setElapsedTime(currentTime);
+            const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+            setElapsedTime(Math.ceil(currentTime/1000));
           });
         }
 
         intervalIdRef.current = setInterval(() => {
           setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
         }, 1000); // Update every 1 second
-      } else if (nextAppState === 'background') {
+      } else if (nextAppState === 'background' || nextAppState === 'inactive') {
         const timeStamp = moment(new Date()).valueOf();
         setMmkv(String(timeStamp));
         clearInterval(intervalIdRef.current);
