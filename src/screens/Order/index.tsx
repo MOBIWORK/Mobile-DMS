@@ -290,10 +290,8 @@ const OrderList = () => {
           <View style={styles.flex}>
             <Text style={styles.itemTotal}>{getLabel('totalPrice')} :</Text>
             <Text style={[styles.nameCustomer]}>
-
               {item?.grand_total > 0
                 ? CommonUtils.convertToTwoDecimalPlaces(item.grand_total)
-
                 : 0}
             </Text>
           </View>

@@ -396,7 +396,6 @@ const CreateOrder = () => {
   };
 
   const fetchProductPromotion = async () => {
-
     if (dataProductSelected?.length > 0) {
       if (type === 'ORDER') {
         const newItems = dataProductSelected?.map((item: any) => ({
@@ -418,7 +417,6 @@ const CreateOrder = () => {
           name: 'new-sales-order-hnnkmtrehm',
           transaction_date: CommonUtils.taskDate(date),
         };
-
         const {data: res, status}: KeyAbleProps =
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
