@@ -61,7 +61,10 @@ const TakePicture = () => {
     useState<AlbumBottomSheet[]>();
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
-  const [isDone, setDone] = useState(true);
+  const [isDone, setDone] = useState(false);
+  const totalImageRequire = albumImageData
+    .map(item => item.numberImageReq)
+    .reduce((acc, curr) => acc + parseInt(curr), 0);
 
   const dataCheckIn = useRef<CheckinData>(params.data);
   const categoriesCheckin = useSelector(
@@ -92,7 +95,6 @@ const TakePicture = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
   const handlePushImageData = async () => {
     if (albumImageData.length > 0) {
       let totalItemsProcessed = 0;
@@ -120,17 +122,18 @@ const TakePicture = () => {
               }
             }
           } else {
-            Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
+            // Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
             setDone(false);
           }
         }
       } catch (error) {
         console.error('Error during image processing', error);
       } finally {
+        // console.log(totalItemsProcessed, message);
+
+        completeCheckin();
         dispatch(appActions.clearListImage([]));
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        setLoading(false);
       }
     } else {
       Alert.alert('Bạn chưa hoàn thành bước chụp ảnh');
@@ -138,13 +141,17 @@ const TakePicture = () => {
   };
 
   const completeCheckin = () => {
-    console.log('run ???')
-    const newData = categoriesCheckin.map((item: any) =>
-      item.key === 'camera' ? {...item, isDone: true} : item,
-    );
-    dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    navigation.goBack();
-    
+    if (message === totalImageRequire) {
+      const newData = categoriesCheckin.map((item: any) =>
+        item.key === 'camera' ? {...item, isDone: true} : item,
+      );
+      dispatch(checkinActions.setDataCategoriesCheckin(newData));
+      setMessage(0);
+      navigation.goBack();
+    } else {
+      Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
+      setMessage(0);
+    }
   };
 
   const handleCamera = async (item: IAlbumImage) => {
@@ -357,12 +364,8 @@ const TakePicture = () => {
           style={{width: '100%'}}
           label={getLabel('completed')}
           onPress={() => {
+            // console.log(isDone,'isDone')
             handlePushImageData();
-            if (isDone) {
-              completeCheckin();
-            } else {
-              return null;
-            }
           }}
         />
       </View>
@@ -389,7 +392,7 @@ const TakePicture = () => {
           </Block>
           <Block marginTop={16} marginBottom={16}>
             <ProgressCircle
-              percent={((message + 1) / listImageLength) * 100}
+              percent={(message / totalImageRequire) * 100}
               radius={50}
               borderWidth={12}
               color={theme.colors.success}
