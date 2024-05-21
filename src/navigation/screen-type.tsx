@@ -77,6 +77,7 @@ export type AuthorizeParamsList = {
   [ScreenConstant.CHANGE_PASSWORD]: {isForgotPassword: boolean};
   [ScreenConstant.NOTIFY_SETTING]: undefined;
   [ScreenConstant.BEFORE_CHECKIN]: {item: CheckinData};
+  [ScreenConstant.BARCODE_SCANNER]: undefined;
 };
 
 export type RootStackParamList = {

@@ -1,7 +1,7 @@
 export const HEADER_DEFAULT = {
   'Content-Type': 'application/json',
 };
-export const TIMEOUT = 50000;
+export const TIMEOUT = 10000;
 
 // HTTP Status
 export const STT_OK = 200;
@@ -47,6 +47,8 @@ export const GET_GROUP_PRODUCT =
 export const GET_PRICE_PRODUCT = URL_PREFIX + '.api.selling.order.price_list';
 export const GET_PRODUCT_PROMOTION =
   URL_PREFIX + '.api.selling.order.pricing_rule';
+export const GET_PRODUCT_CAMPAIGN =
+  '/api/method/mbw_dms.api.selling.product.list_product_campaign';
 
 // Customer
 

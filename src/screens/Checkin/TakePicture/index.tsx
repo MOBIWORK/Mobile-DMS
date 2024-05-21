@@ -11,6 +11,7 @@ import {
   Alert,
   FlatList,
   Image,
+  PermissionsAndroid,
   Pressable,
   StyleSheet,
   Text,
@@ -61,6 +62,10 @@ const TakePicture = () => {
     useState<AlbumBottomSheet[]>();
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
+  const [isDone, setDone] = useState(false);
+  const totalImageRequire = albumImageData
+    .map(item => item.numberImageReq)
+    .reduce((acc, curr) => acc + parseInt(curr), 0);
 
   const dataCheckIn = useRef<CheckinData>(params.data);
   const categoriesCheckin = useSelector(
@@ -91,78 +96,112 @@ const TakePicture = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
   const handlePushImageData = async () => {
-    let totalItemsProcessed = 0;
-    try {
-      setLoading(true);
-      for (let index = 0; index < albumImageData.length; index++) {
-        if (
-          albumImageData[index].image.length - 1 >=
-          albumImageData[index].numberImageReq
-        ) {
-          if (data?.current) {
-            data.current.album_id = String(albumImageData[index].id + 1);
-            data.current.album_name = albumImageData[index].label;
-          }
-          const element = albumImageData[index].image;
-          for (let i = 1; i < element.length; i++) {
-            let image = element[i];
+    if (albumImageData.length > 0) {
+      let totalItemsProcessed = 0;
+      try {
+        setLoading(true);
+        for (let index = 0; index < albumImageData.length; index++) {
+          if (
+            albumImageData[index].image.length - 1 >=
+            albumImageData[index].numberImageReq
+          ) {
             if (data?.current) {
-              data.current.image = image?.base64!;
-              await new Promise(resolve => setTimeout(resolve, 1500));
-              totalItemsProcessed++;
-              setMessage(totalItemsProcessed);
-              dispatch(appActions.postImageCheckIn(data.current));
+              data.current.album_id = String(albumImageData[index].id + 1);
+              data.current.album_name = albumImageData[index].label;
             }
+            const element = albumImageData[index].image;
+            for (let i = 1; i < element.length; i++) {
+              let image = element[i];
+              if (data?.current) {
+                data.current.image = image?.base64!;
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                totalItemsProcessed++;
+                startTransition(() => {
+                  setMessage(totalItemsProcessed);
+                  dispatch(appActions.postImageCheckIn(data.current));
+                });
+
+                setDone(true);
+              }
+            }
+          } else {
+            // Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
+            setDone(false);
           }
-        } else {
-          Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
         }
-      }
-    } catch (error) {
-      console.error('Error during image processing', error);
-    } finally {
-      console.log(`Done processing ${totalItemsProcessed} items`);
-      startTransition(() => {
+      } catch (error) {
+        console.error('Error during image processing', error);
+      } finally {
+        // console.log(totalItemsProcessed, message);
+
         completeCheckin();
         dispatch(appActions.clearListImage([]));
-      });
-      setLoading(false);
+        setLoading(false);
+      }
+    } else {
+      Alert.alert('Bạn chưa hoàn thành bước chụp ảnh');
     }
   };
 
   const completeCheckin = () => {
-    try {
+    if (message+1 === totalImageRequire) {
       const newData = categoriesCheckin.map((item: any) =>
         item.key === 'camera' ? {...item, isDone: true} : item,
       );
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
+
       navigation.goBack();
-    } catch (e) {
-      console.log('err');
+    } else {
+      Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
+      // setMessage(0);
     }
   };
+  const requestPermission = async () => {
+    try {
+      console.log('asking for permission')
+      const granted = await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      )
+      if (granted['android.permission.CAMERA'] && granted['android.permission.WRITE_EXTERNAL_STORAGE']) {
+        console.log("You can use the camera");
+      } else {
+        console.log("Camera permission denied");
+      }
+    } catch (error) {
+      console.log('permission error', error)
+    }
+  }
 
   const handleCamera = async (item: IAlbumImage) => {
-    await CameraUtils.openImagePickerCamera((img, base64) => {
-      const newListImage = [
-        ...item.image,
-        {url: img || '', base64: base64 || ''},
-      ];
-      const newItem: IAlbumImage = {
-        ...item,
-        image: newListImage,
-      };
-      const updatedState = albumImageData.map(itemState => {
-        if (itemState.id === newItem.id) {
-          return newItem;
-        } else {
-          return itemState;
-        }
+    const granted = await PermissionsAndroid.requestMultiple(
+      [PermissionsAndroid.PERMISSIONS.CAMERA,
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+    )
+    if (granted['android.permission.CAMERA'] && granted['android.permission.WRITE_EXTERNAL_STORAGE']){
+      await CameraUtils.openImagePickerCamera((img, base64) => {
+        const newListImage = [
+          ...item.image,
+          {url: img || '', base64: base64 || ''},
+        ];
+        const newItem: IAlbumImage = {
+          ...item,
+          image: newListImage,
+        };
+        const updatedState = albumImageData.map(itemState => {
+          if (itemState.id === newItem.id) {
+            return newItem;
+          } else {
+            return itemState;
+          }
+        });
+        setAlbumImageData(updatedState);
       });
-      setAlbumImageData(updatedState);
-    });
+    }else{
+      Alert.alert('Bạn chưa cấp quyền')
+    }
+   
   };
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
@@ -238,10 +277,15 @@ const TakePicture = () => {
         <View style={styles.album}>
           <View style={styles.row}>
             <Button mode={'text'} icon={'chevron-down'}>
-              {itemAlbum.label}{'  '}
+              {itemAlbum.label}
+              {'  '}
               {itemAlbum.image.length - 1 === 0
-                ? `( Tối thiểu ${itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0} ảnh )`
-                : `(${itemAlbum.image?.length - 1 || 0}/${itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0})`}
+                ? `( Tối thiểu ${
+                    itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0
+                  } ảnh )`
+                : `(${itemAlbum.image?.length - 1 || 0}/${
+                    itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0
+                  })`}
             </Button>
             <SvgIcon
               source={'TrashIcon'}
@@ -309,7 +353,6 @@ const TakePicture = () => {
     },
     [handleCamera, albumBottomSheet],
   );
-  console.log(albumImageData, 'albumImageData');
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
@@ -349,7 +392,10 @@ const TakePicture = () => {
         <AppButton
           style={{width: '100%'}}
           label={getLabel('completed')}
-          onPress={handlePushImageData}
+          onPress={() => {
+            // console.log(isDone,'isDone')
+            handlePushImageData();
+          }}
         />
       </View>
       <SelectAlbum
@@ -375,7 +421,7 @@ const TakePicture = () => {
           </Block>
           <Block marginTop={16} marginBottom={16}>
             <ProgressCircle
-              percent={(message+1 / listImageLength) * 100}
+              percent={(message / totalImageRequire) * 100}
               radius={50}
               borderWidth={12}
               color={theme.colors.success}

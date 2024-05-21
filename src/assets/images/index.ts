@@ -59,6 +59,7 @@ const ImageLibrary = require('./imageLibrary.png');
 const SettingIcon = require('./setting.png');
 const NotifyIcon = require('./notify.png');
 const CloseIcon = require('./closeButton.png');
+const ScannerFrame = require('./scanerFrame.png');
 
 export {
   IconBill,
@@ -121,4 +122,5 @@ export {
   SettingIcon,
   NotifyIcon,
   CloseIcon,
+  ScannerFrame,
 };

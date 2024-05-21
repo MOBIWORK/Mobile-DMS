@@ -5,11 +5,14 @@ import {ProductService} from '../../services';
 import {ApiConstant} from '../../const';
 
 export function* getDataProducts(action: PayloadAction) {
-  console.log('run data product saga');
   if (productActions.onGetData.match(action)) {
     try {
-      yield put(productActions.setLoading(true));
-      console.log('13333', action.payload);
+      // @ts-ignore
+      if (action.payload.page_number === 1) {
+        yield put(productActions.setLoading(true));
+      } else {
+        yield put(productActions.setProductBottomLoading(true));
+      }
       const {status, data} = yield call(ProductService.get, action.payload);
       if (status === ApiConstant.STT_OK) {
         yield put(
@@ -21,11 +24,13 @@ export function* getDataProducts(action: PayloadAction) {
       }
     } catch (error) {
       yield put(productActions.setLoading(false));
+      yield put(productActions.setProductBottomLoading(false));
       yield put(
         productActions.setMessage('Lỗi không lấy được dữ liệu sản phảm'),
       );
     } finally {
       yield put(productActions.setLoading(false));
+      yield put(productActions.setProductBottomLoading(false));
     }
   }
 }

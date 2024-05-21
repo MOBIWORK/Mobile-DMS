@@ -29,6 +29,7 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   calculateDistance,
   decimalMinutesToTime,
+  useDeepCompareEffect,
   useDisableBackHandler,
   useEffectOnce,
   useSelector,
@@ -51,51 +52,71 @@ import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {AppStateStatus} from 'react-native';
-import {useMMKV, useMMKVString} from 'react-native-mmkv';
 import moment from 'moment';
+import {storage} from '../../../utils/commom.utils';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
-  const [mmkv, setMmkv] = useMMKVString('time');
-  const isFocus = useIsFocused()
+  const mmkv: any = storage.getString('time');
+  const [appState, setAppState] = useState(AppState.currentState);
+  const isFocus = useIsFocused();
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
-        if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
+        const newTimeStamp = moment(new Date()).valueOf();
+        if (mmkv?.trim().length > 0 && isFocus) {
           startTransition(() => {
-            const newTimeStamp = moment(new Date()).valueOf();
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-            setElapsedTime(Math.ceil(currentTime/1000));
+            setElapsedTime(Math.ceil(currentTime / 1000));
           });
         }
-
-        intervalIdRef.current = setInterval(() => {
-          setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-        }, 1000); // Update every 1 second
-      } else if (nextAppState === 'background' || nextAppState === 'inactive'  || !isFocus) {
-        const timeStamp = moment(new Date()).valueOf();
-        setMmkv(String(timeStamp));
-        clearInterval(intervalIdRef.current);
+        // Update every 1 second
+      } else if (nextAppState === 'background' || !isFocus) {
+        if (mmkv?.trim().length > 0) {
+          setAppState(nextAppState);
+        } else {
+          const timeStamp = moment(new Date()).valueOf();
+          storage.set('time', String(timeStamp));
+        }
+      } else {
+        setAppState(nextAppState);
       }
     };
 
-    const subcription = AppState.addEventListener(
+    const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,
     );
+    // Start the interval
+    return () => {
+      subscription.remove();
+    };
+  }, [appState]);
 
-    // Start the timer when the component mounts
-    intervalIdRef.current = setInterval(() => {
-      setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-    }, 1000); // Update every 1 second
+  useEffect(() => {
+    if (mmkv?.trim().length > 0) {
+      console.log('run this');
+      const newTimeStamp = moment(new Date()).valueOf();
+      startTransition(() => {
+        const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+        setElapsedTime(Math.ceil(currentTime / 1000));
+        // clearInterval(intervalIdRef.current);
+      });
+      intervalIdRef.current = setInterval(() => {
+        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+      }, 1000);
+    } else {
+      intervalIdRef.current = setInterval(() => {
+        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+      }, 1000);
+    }
 
     return () => {
       clearInterval(intervalIdRef.current);
-      subcription.remove();
     };
-  }, []);
+  }, [isFocus]);
 
   return elapsedTime;
 };
@@ -159,6 +180,7 @@ const CheckIn = () => {
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
 
+  // console.log(elapsedTime,'b')
   const handleSwitch = useCallback(() => {
     if (title === getLabel('openDoor')) {
       setTitle(getLabel('closeDoor'));
@@ -329,6 +351,7 @@ const CheckIn = () => {
           dispatch(checkinActions.resetData());
           dispatch(appActions.setDataCheckIn({}));
           dispatch(appActions.setProcessingStatus(false));
+          storage.set('time', '');
         }
       }
     });
@@ -341,6 +364,7 @@ const CheckIn = () => {
     if (res?.status === ApiConstant.STT_OK) {
       dispatch(checkinActions.resetData());
       dispatch(appActions.setDataCheckIn({}));
+      storage.set('time', '');
       goBack();
     }
   }, [dataCheckIn]);

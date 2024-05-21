@@ -173,6 +173,7 @@ const CheckinInventory = () => {
       if (response.status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));
         dispatch(productActions.setListProductSelect([]));
+        dispatch(productActions.updateListProduct([]));
         completeCheckin();
       }
     }

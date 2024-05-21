@@ -13,8 +13,6 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
-  Block,
-  SvgIcon,
 } from '../../../components/common';
 import {AppConstant} from '../../../const';
 import {useNavigation} from '@react-navigation/native';
@@ -27,6 +25,7 @@ import {
   FlatList,
   Animated,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import {StyleSheet} from 'react-native';
 import {Searchbar, TextInput} from 'react-native-paper';
@@ -86,7 +85,10 @@ const SelectProducts = () => {
     isLoading,
   } = useSelector(state => state.product);
 
-  const dataProductSelected = useSelector(state => state.product.dataSelected);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const bottomLoading = useSelector(
+    state => state.product.productBottomLoading,
+  );
 
   const [countSelect, setCountSelect] = useState<number>(0);
   const [data, setData] = useState<IProduct[]>([]);
@@ -320,6 +322,15 @@ const SelectProducts = () => {
     }
   };
 
+  const onEndReachedThreshold = () => {
+    const totalPage = Math.ceil(totalItem / 20);
+    if (pageNumber <= totalPage && data.length > 5) {
+      setPageNumber(prevState => prevState + 1);
+    } else {
+      return null;
+    }
+  };
+
   const onSelectProduct = React.useCallback(
     (id: string, isSelected: boolean) => {
       let newData: any;
@@ -410,6 +421,8 @@ const SelectProducts = () => {
         brand: filterProduct.brand,
         industry: filterProduct.industry,
         item_name: productName,
+        page_number: pageNumber,
+        page_size: 20,
       }),
     );
   }, [
@@ -417,6 +430,7 @@ const SelectProducts = () => {
     filterProduct.group,
     filterProduct.industry,
     productName,
+    pageNumber,
   ]);
 
   useEffect(() => {
@@ -437,18 +451,18 @@ const SelectProducts = () => {
             onBack={() => navigation.goBack()}
             rightButton={
               <View style={[styles.flex, {columnGap: 16}]}>
-                <TouchableOpacity
-                  onPress={() =>
-                    bottomSheetRef.current &&
-                    bottomSheetRef.current.snapToIndex(0)
-                  }>
-                  <AppIcons
-                    iconType={AppConstant.ICON_TYPE.IonIcon}
-                    name={'filter'}
-                    size={24}
-                    color={colors.text_secondary}
-                  />
-                </TouchableOpacity>
+                {/*<TouchableOpacity*/}
+                {/*  onPress={() =>*/}
+                {/*    bottomSheetRef.current &&*/}
+                {/*    bottomSheetRef.current.snapToIndex(0)*/}
+                {/*  }>*/}
+                {/*  <AppIcons*/}
+                {/*    iconType={AppConstant.ICON_TYPE.IonIcon}*/}
+                {/*    name={'filter'}*/}
+                {/*    size={24}*/}
+                {/*    color={colors.text_secondary}*/}
+                {/*  />*/}
+                {/*</TouchableOpacity>*/}
                 <TouchableOpacity
                   onPress={() => {
                     setShowSearch(true);
@@ -533,7 +547,7 @@ const SelectProducts = () => {
                     />
                   </Pressable>
                 )}
-                initialNumToRender={10}
+                initialNumToRender={20}
                 maxToRenderPerBatch={4}
                 windowSize={11}
                 decelerationRate={'fast'}
@@ -541,6 +555,13 @@ const SelectProducts = () => {
                 keyExtractor={(item, index) => index.toString()}
                 showsVerticalScrollIndicator={false}
                 style={{flex: 1}}
+                ListFooterComponent={
+                  bottomLoading ? (
+                    <ActivityIndicator size="large" color={colors.primary} />
+                  ) : undefined
+                }
+                onEndReached={onEndReachedThreshold}
+                onEndReachedThreshold={0.5}
               />
             </View>
           )}

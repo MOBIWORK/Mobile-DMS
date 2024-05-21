@@ -54,7 +54,9 @@ const ProductList: FC<UpdateItemProductProps> = ({
               labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}
               icon="barcode-scan"
               mode="outlined"
-              onPress={() => console.log('Pressed')}>
+              onPress={() =>
+                navigation.navigate(ScreenConstant.BARCODE_SCANNER)
+              }>
               {getLabel('scanCode')}
             </Button>
           </View>
