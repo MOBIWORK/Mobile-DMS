@@ -70,7 +70,6 @@ const useTimer = () => {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
             setElapsedTime(Math.ceil(currentTime / 1000));
-            // clearInterval(intervalIdRef.current);
           });
         }
         // Update every 1 second
@@ -81,9 +80,6 @@ const useTimer = () => {
           const timeStamp = moment(new Date()).valueOf();
           storage.set('time', String(timeStamp));
         }
-
-        // clearInterval(intervalIdRef.current);
-        // setMmkv(String(timeStamp));
       } else {
         console.log('fuck');
         setAppState(nextAppState);
@@ -370,6 +366,7 @@ const CheckIn = () => {
       dispatch(checkinActions.resetData());
       storage.set('time', '');
       dispatch(appActions.setDataCheckIn({}));
+      storage.set('time', '');
       goBack();
     }
   }, [dataCheckIn]);
