@@ -81,6 +81,7 @@ import moment from 'moment';
 import {useBatteryLevel} from 'expo-battery';
 import ModalUpdateLocation from './Component/ModalUpdateLocation';
 import {ObjectId} from 'bson';
+import {MapView} from './Component/MapView';
 
 //config Mapbox
 
@@ -347,7 +348,7 @@ const ListVisit = () => {
     );
   };
 
-  const renderMapView = React.useCallback(() => {
+  const renderMapView = () => {
     return (
       <Block style={styles.map as ViewStyle}>
         <Mapbox.MapView
@@ -434,7 +435,7 @@ const ListVisit = () => {
         )}
       </Block>
     );
-  }, []);
+  };
 
   const _renderContent = () => {
     return (
@@ -493,7 +494,16 @@ const ListVisit = () => {
             )}
           </Block>
         ) : (
-          renderMapView()
+          <MapView
+            visitItemSelected={visitItemSelected}
+            location={location}
+            customerDataSort={customerDataSort}
+            mapboxCameraRef={mapboxCameraRef}
+            setVisitItemSelected={setVisitItemSelected}
+            onPressToDetail={onPressToDetail}
+            handleCompareDistance={handleCompareDistance}
+            handleRegainLocation={handleRegainLocation}
+          />
         )}
       </Block>
     );

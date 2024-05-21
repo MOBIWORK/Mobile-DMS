@@ -59,16 +59,13 @@ const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
   const mmkv: any = storage.getString('time');
-
   const [appState, setAppState] = useState(AppState.currentState);
-
   const isFocus = useIsFocused();
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
         const newTimeStamp = moment(new Date()).valueOf();
-
         if (mmkv?.trim().length > 0 && isFocus) {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
@@ -96,12 +93,26 @@ const useTimer = () => {
     return () => {
       subscription.remove();
     };
-  }, [mmkv, isFocus, appState]);
+  }, [appState]);
 
   useEffect(() => {
-    intervalIdRef.current = setInterval(() => {
-      setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-    }, 1000);
+    if (mmkv?.trim().length > 0) {
+      console.log('run this');
+      const newTimeStamp = moment(new Date()).valueOf();
+      startTransition(() => {
+        const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+        setElapsedTime(Math.ceil(currentTime / 1000));
+        // clearInterval(intervalIdRef.current);
+      });
+      intervalIdRef.current = setInterval(() => {
+        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+      }, 1000);
+    } else {
+      intervalIdRef.current = setInterval(() => {
+        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+      }, 1000);
+    }
+
     return () => {
       clearInterval(intervalIdRef.current);
     };

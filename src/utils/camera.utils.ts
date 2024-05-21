@@ -1,9 +1,9 @@
+import { PermissionsAndroid } from 'react-native';
 import {
   ImageLibraryOptions,
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import RNFS from 'react-native-fs';
 
 export default async function base64File(url: string) {
   const data = await fetch(url);
@@ -17,6 +17,8 @@ export default async function base64File(url: string) {
     };
   });
 }
+
+
 
 export const openImagePickerCamera = async (
   callBack: (
@@ -32,14 +34,15 @@ export const openImagePickerCamera = async (
     maxHeight: 1000,
     maxWidth: 1000,
     presentationStyle: 'fullScreen',
+    
+    
   };
   let base64Image: string;
+  
 
   await launchCamera(options, async response => {
     if (response.didCancel) {
-      console.log('User cancelled camera picker');
     } else if (response.errorMessage) {
-      console.log('Camera picker error: ', response.errorMessage);
     } else if (
       response?.assets?.[0].uri ||
       (response.assets && response.assets.length > 0)
