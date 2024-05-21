@@ -14,7 +14,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {AppConstant, ScreenConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ProductService} from '../../../services';
@@ -192,17 +192,23 @@ const ListProduct = () => {
     setSearchProduct('');
   };
 
-  const fetchProduct = () => {
-    dispatch(
-      productActions.onGetData({
-        brand: filterBrand.toString(),
-        industry: filterIndustry.toString(),
-        item_group: filterGroup.toString(),
-        item_name: searchProduct,
-        page_size: pageSize,
-        page: page,
-      }),
-    );
+  const fetchProduct = async () => {
+    const res: any = await ProductService.getListProductCampaign({
+      brand: filterBrand.toString(),
+      industry: filterIndustry.toString(),
+      item_group: filterGroup.toString(),
+      item_name: searchProduct,
+      page_size: pageSize,
+      page: page,
+    });
+    if (res?.status === ApiConstant.STT_OK) {
+      dispatch(
+        productActions.setDataProduct({
+          data: res?.data.result.data,
+          total: res?.data.result.total,
+        }),
+      );
+    }
   };
 
   const fetchBrandProduct = async () => {
@@ -373,7 +379,7 @@ const ListProduct = () => {
           </Text>
         </Text>
 
-        {isLoading && data.length == 0 ? (
+        {isLoading && data.length === 0 ? (
           <FlatList
             key={'2'}
             data={new Array(8)}
