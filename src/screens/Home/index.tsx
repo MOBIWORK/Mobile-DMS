@@ -66,7 +66,7 @@ import isEqual from 'react-fast-compare';
 import TimeKeep from './components/TimeKeep';
 import MapView from './components/MapView';
 import CircleChartView from './components/CircleChartView';
-import { shallowEqual } from 'react-redux';
+import {shallowEqual} from 'react-redux';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
@@ -79,7 +79,10 @@ const HomeScreen = () => {
 
   const location = useRef<GeolocationResponse | null>(null);
   const [enabled, setEnabled] = React.useState(false);
-  const userProfile: IUser = useSelector(state => state.app.userProfile,shallowEqual);
+  const userProfile: IUser = useSelector(
+    state => state.app.userProfile,
+    shallowEqual,
+  );
   const listCustomerVisit: VisitListItemType[] = useSelector(
     state => state.customer.listCustomerVisit,
   );
@@ -435,6 +438,7 @@ const HomeScreen = () => {
 
   useDeepCompareEffect(() => {
     if (isFocus) {
+      dispatch(appActions.setProcessingStatus(false));
       //delete search visit value in ListVisit.tsx
       onResetSearchValueOfVisit();
       //get Data
@@ -522,7 +526,7 @@ const HomeScreen = () => {
     // Kiểm tra xem có phiên bản mới không
   }, []);
 
-  const handleUpdateApp =  () => {
+  const handleUpdateApp = () => {
     codePush.sync(
       {
         installMode: codePush.InstallMode.IMMEDIATE,
@@ -708,7 +712,7 @@ const HomeScreen = () => {
             getItemCount={getItemCount}
             bounces={true}
             decelerationRate={'fast'}
-            keyExtractor={(item,index) => index.toString()}
+            keyExtractor={(item, index) => index.toString()}
             getItem={getItem}
             contentContainerStyle={styles.root}
             showsVerticalScrollIndicator={false}
