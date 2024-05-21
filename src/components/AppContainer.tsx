@@ -5,6 +5,7 @@ const AppContainer: FC<AppContainerProps> = ({children, style, onScroll}) => {
   return (
     <View style={{flex: 1}}>
       <ScrollView
+        keyboardDismissMode={'on-drag'}
         onScroll={onScroll ?? undefined}
         scrollEventThrottle={16}
         style={[{flex: 1}, style]}
