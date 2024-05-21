@@ -29,6 +29,7 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   calculateDistance,
   decimalMinutesToTime,
+  useDeepCompareEffect,
   useDisableBackHandler,
   useEffectOnce,
   useSelector,
@@ -51,7 +52,6 @@ import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {AppStateStatus} from 'react-native';
-import {useMMKV, useMMKVString} from 'react-native-mmkv';
 import moment from 'moment';
 import {storage} from '../../../utils/commom.utils';
 
@@ -59,32 +59,45 @@ const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
   const mmkv = storage.getString('time');
+
+  const [appState, setAppState] = useState(AppState.currentState);
+
   const isFocus = useIsFocused();
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active') {
+      if (nextAppState === 'active' || isFocus === true) {
+        const newTimeStamp = moment(new Date()).valueOf();
+
         if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
           startTransition(() => {
-            const newTimeStamp = moment(new Date()).valueOf();
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+
+            // console.log(currentTime, '????');
             setElapsedTime(Math.ceil(currentTime / 1000));
-            clearInterval(intervalIdRef.current);
+            // clearInterval(intervalIdRef.current);
           });
         }
-
-        intervalIdRef.current = setInterval(() => {
-          setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-        }, 1000); // Update every 1 second
+        // Update every 1 second
       } else if (
         nextAppState === 'background' ||
         nextAppState === 'inactive' ||
         !isFocus
       ) {
-        const timeStamp = moment(new Date()).valueOf();
-        storage.set('time', String(timeStamp));
+        if (mmkv != '' || mmkv != null || mmkv != undefined) {
+          if (nextAppState === 'inactive') {
+            setAppState('inactive');
+          }
+        } else {
+          if (nextAppState === 'inactive') {
+            setAppState('inactive');
+          }
+          const timeStamp = moment(new Date()).valueOf();
+          storage.set('time', String(timeStamp));
+        }
+
+        // clearInterval(intervalIdRef.current);
         // setMmkv(String(timeStamp));
-        clearInterval(intervalIdRef.current);
       }
     };
 
@@ -92,25 +105,20 @@ const useTimer = () => {
       'change',
       handleAppStateChange,
     );
-
-    if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
-      // Calculate initial elapsed time based on mmkv
-      const newTimeStamp = moment(new Date()).valueOf();
-      const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-      setElapsedTime(Math.ceil(currentTime / 1000));
-      clearInterval(intervalIdRef.current);
-    }
-
     // Start the interval
+    return () => {
+      subscription.remove();
+    };
+  }, [mmkv, isFocus, appState]);
+
+  useEffect(() => {
     intervalIdRef.current = setInterval(() => {
       setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
     }, 1000);
-
     return () => {
       clearInterval(intervalIdRef.current);
-      subscription.remove();
     };
-  }, [mmkv, isFocus]);
+  }, [isFocus]);
 
   return elapsedTime;
 };

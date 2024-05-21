@@ -116,6 +116,7 @@ const TakePicture = () => {
                 totalItemsProcessed++;
                 setMessage(totalItemsProcessed);
                 dispatch(appActions.postImageCheckIn(data.current));
+                setDone(true);
               }
             }
           } else {
@@ -126,13 +127,7 @@ const TakePicture = () => {
       } catch (error) {
         console.error('Error during image processing', error);
       } finally {
-        console.log(`Done processing ${totalItemsProcessed} items`);
-        if (isDone != false) {
-          startTransition(() => {
-            completeCheckin();
-            dispatch(appActions.clearListImage([]));
-          });
-        }
+        dispatch(appActions.clearListImage([]));
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -143,15 +138,13 @@ const TakePicture = () => {
   };
 
   const completeCheckin = () => {
-    try {
-      const newData = categoriesCheckin.map((item: any) =>
-        item.key === 'camera' ? {...item, isDone: true} : item,
-      );
-      dispatch(checkinActions.setDataCategoriesCheckin(newData));
-      navigation.goBack();
-    } catch (e) {
-      console.log('err');
-    }
+    console.log('run ???')
+    const newData = categoriesCheckin.map((item: any) =>
+      item.key === 'camera' ? {...item, isDone: true} : item,
+    );
+    dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    navigation.goBack();
+    
   };
 
   const handleCamera = async (item: IAlbumImage) => {
@@ -324,7 +317,6 @@ const TakePicture = () => {
     },
     [handleCamera, albumBottomSheet],
   );
-  console.log(albumImageData, 'albumImageData');
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
@@ -364,7 +356,14 @@ const TakePicture = () => {
         <AppButton
           style={{width: '100%'}}
           label={getLabel('completed')}
-          onPress={handlePushImageData}
+          onPress={() => {
+            handlePushImageData();
+            if (isDone) {
+              completeCheckin();
+            } else {
+              return null;
+            }
+          }}
         />
       </View>
       <SelectAlbum
@@ -396,7 +395,7 @@ const TakePicture = () => {
               color={theme.colors.success}
               shadowColor={theme.colors.bg_disable}
               bgColor="#fff">
-              <Text>{message + 1}</Text>
+              <Text>{message}</Text>
             </ProgressCircle>
           </Block>
         </Block>
