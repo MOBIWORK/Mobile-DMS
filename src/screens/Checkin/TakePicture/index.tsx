@@ -11,6 +11,7 @@ import {
   Alert,
   FlatList,
   Image,
+  PermissionsAndroid,
   Pressable,
   StyleSheet,
   Text,
@@ -144,7 +145,7 @@ const TakePicture = () => {
   };
 
   const completeCheckin = () => {
-    if (message === totalImageRequire) {
+    if (message+1 === totalImageRequire) {
       const newData = categoriesCheckin.map((item: any) =>
         item.key === 'camera' ? {...item, isDone: true} : item,
       );
@@ -156,27 +157,51 @@ const TakePicture = () => {
       // setMessage(0);
     }
   };
-  console.log(message, 'mess');
+  const requestPermission = async () => {
+    try {
+      console.log('asking for permission')
+      const granted = await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      )
+      if (granted['android.permission.CAMERA'] && granted['android.permission.WRITE_EXTERNAL_STORAGE']) {
+        console.log("You can use the camera");
+      } else {
+        console.log("Camera permission denied");
+      }
+    } catch (error) {
+      console.log('permission error', error)
+    }
+  }
 
   const handleCamera = async (item: IAlbumImage) => {
-    await CameraUtils.openImagePickerCamera((img, base64) => {
-      const newListImage = [
-        ...item.image,
-        {url: img || '', base64: base64 || ''},
-      ];
-      const newItem: IAlbumImage = {
-        ...item,
-        image: newListImage,
-      };
-      const updatedState = albumImageData.map(itemState => {
-        if (itemState.id === newItem.id) {
-          return newItem;
-        } else {
-          return itemState;
-        }
+    const granted = await PermissionsAndroid.requestMultiple(
+      [PermissionsAndroid.PERMISSIONS.CAMERA,
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+    )
+    if (granted['android.permission.CAMERA'] && granted['android.permission.WRITE_EXTERNAL_STORAGE']){
+      await CameraUtils.openImagePickerCamera((img, base64) => {
+        const newListImage = [
+          ...item.image,
+          {url: img || '', base64: base64 || ''},
+        ];
+        const newItem: IAlbumImage = {
+          ...item,
+          image: newListImage,
+        };
+        const updatedState = albumImageData.map(itemState => {
+          if (itemState.id === newItem.id) {
+            return newItem;
+          } else {
+            return itemState;
+          }
+        });
+        setAlbumImageData(updatedState);
       });
-      setAlbumImageData(updatedState);
-    });
+    }else{
+      Alert.alert('Bạn chưa cấp quyền')
+    }
+   
   };
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {

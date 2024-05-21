@@ -102,18 +102,22 @@ const useTimer = () => {
 
   useEffect(() => {
     if (mmkv?.trim().length > 0) {
+      console.log('run this');
       const newTimeStamp = moment(new Date()).valueOf();
       startTransition(() => {
         const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
         setElapsedTime(Math.ceil(currentTime / 1000));
         // clearInterval(intervalIdRef.current);
       });
-    }else{
-      return undefined
+      intervalIdRef.current = setInterval(() => {
+        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+      }, 1000);
+    } else {
+      intervalIdRef.current = setInterval(() => {
+        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+      }, 1000);
     }
-    intervalIdRef.current = setInterval(() => {
-      setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-    }, 1000);
+
     return () => {
       clearInterval(intervalIdRef.current);
     };
