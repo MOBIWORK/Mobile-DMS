@@ -116,8 +116,11 @@ const TakePicture = () => {
                 data.current.image = image?.base64!;
                 await new Promise(resolve => setTimeout(resolve, 1500));
                 totalItemsProcessed++;
-                setMessage(totalItemsProcessed);
-                dispatch(appActions.postImageCheckIn(data.current));
+                startTransition(() => {
+                  setMessage(totalItemsProcessed);
+                  dispatch(appActions.postImageCheckIn(data.current));
+                });
+
                 setDone(true);
               }
             }
@@ -146,13 +149,14 @@ const TakePicture = () => {
         item.key === 'camera' ? {...item, isDone: true} : item,
       );
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
-      setMessage(0);
+
       navigation.goBack();
     } else {
       Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
-      setMessage(0);
+      // setMessage(0);
     }
   };
+  console.log(message, 'mess');
 
   const handleCamera = async (item: IAlbumImage) => {
     await CameraUtils.openImagePickerCamera((img, base64) => {
