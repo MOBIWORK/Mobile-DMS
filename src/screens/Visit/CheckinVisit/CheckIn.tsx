@@ -58,17 +58,14 @@ import {storage} from '../../../utils/commom.utils';
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
-  const mmkv:any = storage.getString('time');
-
+  const mmkv: any = storage.getString('time');
   const [appState, setAppState] = useState(AppState.currentState);
-
   const isFocus = useIsFocused();
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
         const newTimeStamp = moment(new Date()).valueOf();
-
         if (mmkv?.trim().length > 0 && isFocus) {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
@@ -77,9 +74,9 @@ const useTimer = () => {
           });
         }
         // Update every 1 second
-      } else if (nextAppState === 'background' || !isFocus  ) {
-        if ( mmkv?.trim().length > 0) {
-          setAppState(nextAppState)
+      } else if (nextAppState === 'background' || !isFocus) {
+        if (mmkv?.trim().length > 0) {
+          setAppState(nextAppState);
         } else {
           const timeStamp = moment(new Date()).valueOf();
           storage.set('time', String(timeStamp));
@@ -88,6 +85,7 @@ const useTimer = () => {
         // clearInterval(intervalIdRef.current);
         // setMmkv(String(timeStamp));
       } else {
+        console.log('fuck');
         setAppState(nextAppState);
       }
     };
@@ -100,9 +98,19 @@ const useTimer = () => {
     return () => {
       subscription.remove();
     };
-  }, [mmkv, isFocus, appState]);
+  }, [appState]);
 
   useEffect(() => {
+    if (mmkv?.trim().length > 0) {
+      const newTimeStamp = moment(new Date()).valueOf();
+      startTransition(() => {
+        const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+        setElapsedTime(Math.ceil(currentTime / 1000));
+        // clearInterval(intervalIdRef.current);
+      });
+    }else{
+      return undefined
+    }
     intervalIdRef.current = setInterval(() => {
       setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
     }, 1000);
@@ -113,69 +121,6 @@ const useTimer = () => {
 
   return elapsedTime;
 };
-
-// const useTimer = () => {
-//   const [elapsedTime, setElapsedTime] = useState(0);
-//   const intervalIdRef = useRef<any>(0);
-//   // const [mmkv, setMmkv] = useMMKVString('time');
-//   const mmkv = storage.getString('time');
-//   const isFocus = useIsFocused();
-
-//   useEffect(() => {
-//     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-//       if (nextAppState === 'active') {
-//         if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
-
-//           startTransition(() => {
-//             const newTimeStamp = moment(new Date()).valueOf();
-//             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-//             setElapsedTime(Math.ceil(currentTime / 1000));
-//           });
-//         }
-
-//         intervalIdRef.current = setInterval(() => {
-//           setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-//         }, 1000); // Update every 1 second
-//       } else if (
-//         nextAppState === 'background' ||
-//         nextAppState === 'inactive' ||
-//         !isFocus
-//       ) {
-//         const timeStamp = moment(new Date()).valueOf();
-//         storage.set('time', String(timeStamp));
-//         // setMmkv(String(timeStamp));
-//         // clearInterval(intervalIdRef.current);
-//       }
-//     };
-
-//     const subcription = AppState.addEventListener(
-//       'change',
-//       handleAppStateChange,
-//     );
-
-//     // Start the timer when the component mounts
-//     if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
-//       console.log(mmkv, 'run that');
-//       startTransition(() => {
-//         const newTimeStamp = moment(new Date()).valueOf();
-//         const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-//         setElapsedTime(Math.ceil(currentTime / 1000));
-//       });
-//       intervalIdRef.current = setInterval(() => {
-//         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-//       }, 1000);
-//     }
-
-//     // Update every 1 second
-
-//     return () => {
-//       clearInterval(intervalIdRef.current);
-//       subcription.remove();
-//     };
-//   }, [mmkv]);
-
-//   return elapsedTime;
-// };
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -419,6 +364,7 @@ const CheckIn = () => {
     const res: any = await AppService.checkOut(dataCheckIn.checkin_id);
     if (res?.status === ApiConstant.STT_OK) {
       dispatch(checkinActions.resetData());
+      storage.set('time', '');
       dispatch(appActions.setDataCheckIn({}));
       goBack();
     }
