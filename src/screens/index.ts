@@ -51,6 +51,7 @@ import EditAccount from './Profile/EditAccount';
 import AccountSetting from './Profile/AccountSetting';
 import ChangePassword from './Authen/ChangePassword';
 import NotifySetting from './Profile/NotifySetting';
+import Scanner from './Checkin/Order/Scanner';
 export {
   SelectOrganization,
   SignIn,
@@ -105,4 +106,5 @@ export {
   AccountSetting,
   ChangePassword,
   NotifySetting,
+  Scanner,
 };

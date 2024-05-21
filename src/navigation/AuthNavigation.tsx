@@ -47,10 +47,12 @@ import {
   AccountSetting,
   ChangePassword,
   NotifySetting,
+  Scanner,
 } from '../screens';
 import MainTab from './MainTab';
 import {CommonUtils} from '../utils';
 import BeforeCheckin from '../screens/BeforeCheckin';
+import {BARCODE_SCANNER} from '../const/screen.const';
 
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
@@ -214,6 +216,7 @@ const AuthNavigation = () => {
         name={ScreenConstant.BEFORE_CHECKIN}
         component={BeforeCheckin}
       />
+      <Stack.Screen name={ScreenConstant.BARCODE_SCANNER} component={Scanner} />
     </Stack.Navigator>
   );
 };
