@@ -700,266 +700,265 @@ const CreateOrder = () => {
 
   return (
     <SafeAreaView edges={['top']} style={{flex: 1}}>
-      <ScrollView keyboardDismissMode="on-drag" style={styles.layout}>
-        <AppHeader
-          style={{paddingHorizontal: 16}}
-          label={
-            type === 'ORDER'
-              ? getLabel('createOrder')
-              : getLabel('createOrderReturn')
-          }
-          onBack={onBackScreen}
-        />
-        <AppContainer style={styles.appContainer}>
-          <View style={{rowGap: 20, paddingHorizontal: 16}}>
-            <View style={{rowGap: 20}}>
-              {type === 'ORDER' && (
-                <AppInput
-                  label={getLabel('deliveryDate')}
-                  value={CommonUtils.convertDate(date)}
-                  editable={false}
-                  onPress={() => setOpenDate(true)}
-                  rightIcon={
-                    <TextInput.Icon
-                      onPress={() => setOpenDate(true)}
-                      icon={'calendar-month-outline'}
-                      size={20}
-                      color={colors.text_secondary}
-                    />
-                  }
-                />
-              )}
-
+      {/*<ScrollView keyboardDismissMode="on-drag" style={styles.layout}>*/}
+      <AppHeader
+        style={{paddingHorizontal: 16}}
+        label={
+          type === 'ORDER'
+            ? getLabel('createOrder')
+            : getLabel('createOrderReturn')
+        }
+        onBack={onBackScreen}
+      />
+      <AppContainer style={styles.appContainer}>
+        <View style={{rowGap: 20, paddingHorizontal: 16}}>
+          <View style={{rowGap: 20}}>
+            {type === 'ORDER' && (
               <AppInput
-                label={
-                  type === 'ORDER'
-                    ? getLabel('eXwarehouse')
-                    : getLabel('imwarehouse')
-                }
-                value={warehouse?.label ? warehouse.label : ''}
+                label={getLabel('deliveryDate')}
+                value={CommonUtils.convertDate(date)}
                 editable={false}
-                onPress={() => onOpenBottomSheetData('warehouse')}
+                onPress={() => setOpenDate(true)}
                 rightIcon={
                   <TextInput.Icon
-                    onPress={() => onOpenBottomSheetData('warehouse')}
+                    onPress={() => setOpenDate(true)}
+                    icon={'calendar-month-outline'}
+                    size={20}
+                    color={colors.text_secondary}
+                  />
+                }
+              />
+            )}
+
+            <AppInput
+              label={
+                type === 'ORDER'
+                  ? getLabel('eXwarehouse')
+                  : getLabel('imwarehouse')
+              }
+              value={warehouse?.label ? warehouse.label : ''}
+              editable={false}
+              onPress={() => onOpenBottomSheetData('warehouse')}
+              rightIcon={
+                <TextInput.Icon
+                  onPress={() => onOpenBottomSheetData('warehouse')}
+                  icon={'chevron-down'}
+                  color={colors.text_secondary}
+                />
+              }
+            />
+          </View>
+
+          <View>
+            <View style={styles.flexSpace}>
+              <Text style={styles.titleSection}>{getLabel('product')}</Text>
+              <TouchableOpacity>
+                <AppIcons
+                  name="chevron-down"
+                  size={22}
+                  iconType={ICON_TYPE.Feather}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={[styles.containerSection]}>
+              {productsPromotion.length > 0 &&
+                toggleButtonUi(toggleTab, productsPromotion.length)}
+              <ProductList
+                tab={toggleTab}
+                products={products}
+                productsPromotion={productsPromotion}
+                showDetailProdcut={showDetailProdcut}
+                handlerRemoveItemProduct={handlerRemoveItemProduct}
+              />
+            </View>
+          </View>
+
+          <View>
+            <View style={styles.flexSpace}>
+              <Text style={styles.titleSection}>Chiết khấu đơn</Text>
+              <TouchableOpacity>
+                <AppIcons
+                  name="chevron-down"
+                  size={22}
+                  iconType={ICON_TYPE.Feather}
+                />
+              </TouchableOpacity>
+            </View>
+            <View
+              style={[
+                styles.containerSection,
+                {paddingVertical: 20, rowGap: 20},
+              ]}>
+              <AppInput
+                value={discount.label}
+                label={getLabel('typeDiscount')}
+                editable={false}
+                onPress={() => onOpenBottomSheetData('discount')}
+                rightIcon={
+                  <TextInput.Icon
+                    onPress={() => onOpenBottomSheetData('discount')}
                     icon={'chevron-down'}
                     color={colors.text_secondary}
                   />
                 }
               />
+              <AppInput
+                value={percentageLabel}
+                label={getLabel('discountPercentage')}
+                onChangeValue={text => {
+                  setPercentageLabel(text);
+                }}
+                inputProp={{
+                  keyboardType: 'numeric',
+                  returnKeyType: 'done',
+                  onEndEditing: event => {
+                    const txt = event.nativeEvent.text;
+                    setDiscount((prev: any) => ({
+                      ...prev,
+                      discount_percentage: Number(txt.replace(',', '.')),
+                    }));
+                  },
+                }}
+                rightIcon={<TextInput.Affix text="%" />}
+              />
+              <AppInput
+                value={CommonUtils.convertToTwoDecimalPlaces(total_Discount)}
+                label={getLabel('discountAmount')}
+                inputProp={{
+                  keyboardType: 'number-pad',
+                }}
+                styles={{backgroundColor: colors.bg_neutral}}
+                editable={false}
+                rightIcon={
+                  <TextInput.Affix text="VND" textStyle={{fontSize: 12}} />
+                }
+              />
             </View>
+          </View>
 
-            <View>
-              <View style={styles.flexSpace}>
-                <Text style={styles.titleSection}>{getLabel('product')}</Text>
-                <TouchableOpacity>
-                  <AppIcons
-                    name="chevron-down"
-                    size={22}
-                    iconType={ICON_TYPE.Feather}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={[styles.containerSection]}>
-                {productsPromotion.length > 0 &&
-                  toggleButtonUi(toggleTab, productsPromotion.length)}
-                <ProductList
-                  tab={toggleTab}
-                  products={products}
-                  productsPromotion={productsPromotion}
-                  showDetailProdcut={showDetailProdcut}
-                  handlerRemoveItemProduct={handlerRemoveItemProduct}
+          <View style={{marginBottom: 50}}>
+            <View style={styles.flexSpace}>
+              <Text style={styles.titleSection}>{getLabel('detailPay')}</Text>
+              <TouchableOpacity>
+                <AppIcons
+                  name="chevron-down"
+                  size={22}
+                  iconType={ICON_TYPE.Feather}
                 />
-              </View>
+              </TouchableOpacity>
             </View>
-
-            <View>
+            <View
+              style={[
+                styles.containerSection,
+                styles.shadow,
+                {paddingVertical: 16, rowGap: 12},
+              ]}>
               <View style={styles.flexSpace}>
-                <Text style={styles.titleSection}>Chiết khấu đơn</Text>
-                <TouchableOpacity>
-                  <AppIcons
-                    name="chevron-down"
-                    size={22}
-                    iconType={ICON_TYPE.Feather}
-                  />
-                </TouchableOpacity>
+                <Text style={styles.labelPay}>{getLabel('intoMoney')}</Text>
+                <Text style={styles.price}>
+                  {totalPrice
+                    ? CommonUtils.convertToTwoDecimalPlaces(totalPrice)
+                    : 0}
+                </Text>
               </View>
-              <View
-                style={[
-                  styles.containerSection,
-                  {paddingVertical: 20, rowGap: 20},
-                ]}>
-                <AppInput
-                  value={discount.label}
-                  label={getLabel('typeDiscount')}
-                  editable={false}
-                  onPress={() => onOpenBottomSheetData('discount')}
-                  rightIcon={
-                    <TextInput.Icon
-                      onPress={() => onOpenBottomSheetData('discount')}
-                      icon={'chevron-down'}
-                      color={colors.text_secondary}
-                    />
-                  }
-                />
-                <AppInput
-                  value={percentageLabel}
-                  label={getLabel('discountPercentage')}
-                  onChangeValue={text => {
-                    setPercentageLabel(text);
-                  }}
-                  inputProp={{
-                    keyboardType: 'numeric',
-                    returnKeyType: 'done',
-                    onEndEditing: event => {
-                      const txt = event.nativeEvent.text;
-                      setDiscount((prev: any) => ({
-                        ...prev,
-                        discount_percentage: Number(txt.replace(',', '.')),
-                      }));
-                    },
-                  }}
-                  rightIcon={<TextInput.Affix text="%" />}
-                />
-                <AppInput
-                  value={CommonUtils.convertToTwoDecimalPlaces(total_Discount)}
-                  label={getLabel('discountAmount')}
-                  inputProp={{
-                    keyboardType: 'number-pad',
-                  }}
-                  styles={{backgroundColor: colors.bg_neutral}}
-                  editable={false}
-                  rightIcon={
-                    <TextInput.Affix text="VND" textStyle={{fontSize: 12}} />
-                  }
-                />
-              </View>
-            </View>
-
-            <View style={{marginBottom: 50}}>
               <View style={styles.flexSpace}>
-                <Text style={styles.titleSection}>{getLabel('detailPay')}</Text>
-                <TouchableOpacity>
-                  <AppIcons
-                    name="chevron-down"
-                    size={22}
-                    iconType={ICON_TYPE.Feather}
-                  />
-                </TouchableOpacity>
+                <Text style={styles.labelPay}>{getLabel('discount')}</Text>
+                <Text style={styles.price}>
+                  {CommonUtils.convertToTwoDecimalPlaces(total_Discount)}
+                </Text>
               </View>
-              <View
-                style={[
-                  styles.containerSection,
-                  styles.shadow,
-                  {paddingVertical: 16, rowGap: 12},
-                ]}>
-                <View style={styles.flexSpace}>
-                  <Text style={styles.labelPay}>{getLabel('intoMoney')}</Text>
-                  <Text style={styles.price}>
-                    {totalPrice
-                      ? CommonUtils.convertToTwoDecimalPlaces(totalPrice)
-                      : 0}
-                  </Text>
-                </View>
-                <View style={styles.flexSpace}>
-                  <Text style={styles.labelPay}>{getLabel('discount')}</Text>
-                  <Text style={styles.price}>
-                    {CommonUtils.convertToTwoDecimalPlaces(total_Discount)}
-                  </Text>
-                </View>
-                <View style={styles.flexSpace}>
-                  <Text style={styles.labelPay}>VAT</Text>
-                  <Text style={styles.price}>
-                    {total_VAT
-                      ? CommonUtils.convertToTwoDecimalPlaces(total_VAT)
-                      : 0}
-                  </Text>
-                </View>
-                <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
-                  <Text style={styles.labelPay}>{getLabel('totalPrice')}</Text>
-                  <Text style={styles.totalPrice}>
-                    {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
-                  </Text>
-                </View>
+              <View style={styles.flexSpace}>
+                <Text style={styles.labelPay}>VAT</Text>
+                <Text style={styles.price}>
+                  {total_VAT
+                    ? CommonUtils.convertToTwoDecimalPlaces(total_VAT)
+                    : 0}
+                </Text>
+              </View>
+              <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
+                <Text style={styles.labelPay}>{getLabel('totalPrice')}</Text>
+                <Text style={styles.totalPrice}>
+                  {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
+                </Text>
               </View>
             </View>
           </View>
-        </AppContainer>
-
-        <View style={styles.footerView}>
-          <Block
-            paddingVertical={12}
-            alignItems="flex-end"
-            style={[styles.flexSpace]}>
-            <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
-            <Text style={styles.totalPrice}>
-              {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
-            </Text>
-          </Block>
-          <AppButton
-            label={getLabel('orderCreated')}
-            style={styles.button}
-            disabled={isDisabled}
-            onPress={() => onCreatedOrder()}
-          />
         </View>
-        <AppBottomSheet
-          bottomSheetRef={bottomSheetRef}
-          snapPointsCustom={['100%']}>
-          {Object.keys(productDetail).length > 0 ? (
-            <Pressable
-              onPress={() => Keyboard.dismiss()}
-              style={{paddingHorizontal: 16, height: AppConstant.HEIGHT * 0.9}}>
-              <AppHeader
-                label={getLabel('product')}
-                backButtonIcon={
-                  <TouchableOpacity
-                    onPress={() => {
-                      Keyboard.dismiss();
-                      bottomSheetRef.current?.close();
-                      dispatch(productActions.setDataProductDetail({}));
-                    }}>
-                    <Image
-                      source={ImageAssets.CloseIcon}
-                      style={{width: 28, height: 28}}
-                    />
-                  </TouchableOpacity>
-                }
-              />
-              <UpdateProductItem
-                productDetail={productDetail}
-                setProductDetail={item =>
-                  dispatch(productActions.setDataProductDetail(item))
-                }
-                onOpenBottomSheetData={onOpenBottomSheetData}
-              />
-              <Block
-                marginTop={36}
-                position="absolute"
-                alignSelf="center"
-                bottom={0}
-                block
-                style={[styles.flexSpace]}>
-                <AppButton
-                  style={{width: '49%', backgroundColor: colors.bg_neutral}}
-                  styleLabel={{color: colors.text_secondary}}
-                  label={getLabel('cancel')}
+      </AppContainer>
+
+      <View style={styles.footerView}>
+        <Block
+          paddingVertical={12}
+          alignItems="flex-end"
+          style={[styles.flexSpace]}>
+          <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
+          <Text style={styles.totalPrice}>
+            {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
+          </Text>
+        </Block>
+        <AppButton
+          label={getLabel('orderCreated')}
+          style={styles.button}
+          disabled={isDisabled}
+          onPress={() => onCreatedOrder()}
+        />
+      </View>
+      <AppBottomSheet
+        bottomSheetRef={bottomSheetRef}
+        snapPointsCustom={['100%']}>
+        {Object.keys(productDetail).length > 0 ? (
+          <Pressable
+            onPress={() => Keyboard.dismiss()}
+            style={{paddingHorizontal: 16, height: AppConstant.HEIGHT * 0.9}}>
+            <AppHeader
+              label={getLabel('product')}
+              backButtonIcon={
+                <TouchableOpacity
                   onPress={() => {
                     Keyboard.dismiss();
-                    bottomSheetRef.current && bottomSheetRef.current.close();
+                    bottomSheetRef.current?.close();
                     dispatch(productActions.setDataProductDetail({}));
-                  }}
-                />
-                <AppButton
-                  style={{width: '49%'}}
-                  label={getLabel('update')}
-                  onPress={() => updateProductOrder()}
-                />
-              </Block>
-            </Pressable>
-          ) : undefined}
-        </AppBottomSheet>
-      </ScrollView>
+                  }}>
+                  <Image
+                    source={ImageAssets.CloseIcon}
+                    style={{width: 28, height: 28}}
+                  />
+                </TouchableOpacity>
+              }
+            />
+            <UpdateProductItem
+              productDetail={productDetail}
+              setProductDetail={item =>
+                dispatch(productActions.setDataProductDetail(item))
+              }
+              onOpenBottomSheetData={onOpenBottomSheetData}
+            />
+            <Block
+              marginTop={36}
+              position="absolute"
+              alignSelf="center"
+              bottom={0}
+              block
+              style={[styles.flexSpace]}>
+              <AppButton
+                style={{width: '49%', backgroundColor: colors.bg_neutral}}
+                styleLabel={{color: colors.text_secondary}}
+                label={getLabel('cancel')}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  bottomSheetRef.current && bottomSheetRef.current.close();
+                  dispatch(productActions.setDataProductDetail({}));
+                }}
+              />
+              <AppButton
+                style={{width: '49%'}}
+                label={getLabel('update')}
+                onPress={() => updateProductOrder()}
+              />
+            </Block>
+          </Pressable>
+        ) : undefined}
+      </AppBottomSheet>
 
       <AppBottomSheet
         bottomSheetRef={bottomSheetWh}

@@ -6,6 +6,7 @@ export type StateType = {
   dataSelected: IProduct[];
   message: string;
   isLoading: boolean;
+  productBottomLoading: boolean;
   listProductSelect: any[];
   dataProductDetail: any;
 };

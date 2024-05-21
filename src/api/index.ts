@@ -1,7 +1,6 @@
 import {ApiResponse, create} from 'apisauce';
 import {ApiConstant, AppConstant} from '../const';
 
-import {IApiResponse} from '../models/types';
 import axios, {CreateAxiosDefaults} from 'axios';
 import {BASE_URL} from '@env';
 import {CommonUtils} from '../utils';
@@ -54,6 +53,7 @@ const handleErrorResponse = (
       dispatch(setProcessingStatus(false));
     }
   } else {
+    dispatch(setProcessingStatus(false));
     dispatch(
       setError({
         title: 'Không có kết nối đến máy chủ',

@@ -157,8 +157,8 @@ const ListVisit = () => {
   const filterDataRef = useRef<IListVisitParams>({});
 
   const [filterParams, setFilterParams] = useState<IListVisitParams>({});
-  const [loading, setLoading] = useState<boolean>(true);
-  const [bottomLoading, setBottomLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [bottomLoading, setBottomLoading] = useState<boolean>(false);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [error, setError] = useState<string>('');
@@ -205,7 +205,6 @@ const ListVisit = () => {
   const onRefreshData = useCallback(async () => {
     dispatch(appActions.setSearchVisitValue(''));
     try {
-      setLoading(true);
       if (Object.keys(filterDataRef.current).length > 0) {
         await getCustomer({
           ...filterDataRef.current,
@@ -221,8 +220,6 @@ const ListVisit = () => {
       }
     } catch (er) {
       console.log('errDispatch: ', er);
-    } finally {
-      setLoading(false);
     }
   }, [dispatch, filterParams, filterDataRef.current]);
 
@@ -546,12 +543,12 @@ const ListVisit = () => {
               JSON.parse(
                 a.customer_location_primary
                   ? a.customer_location_primary
-                  : "{\"long\": 0, \"lat\": 0}",
+                  : '{"long": 0, "lat": 0}',
               ) || {};
             const locationB: LocationProps = JSON.parse(
               b.customer_location_primary
                 ? b.customer_location_primary
-                : "{\"long\": 0, \"lat\": 0}",
+                : '{"long": 0, "lat": 0}',
             );
             const distance1 = calculateDistance(
               currentLocation?.coords?.latitude

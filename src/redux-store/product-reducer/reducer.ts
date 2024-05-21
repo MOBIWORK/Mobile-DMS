@@ -10,7 +10,8 @@ const initState: StateType = {
   data: [],
   totalItem: 0,
   dataSelected: [],
-  isLoading: true,
+  isLoading: false,
+  productBottomLoading: false,
   message: '',
   listProductSelect: [],
   dataProductDetail: {},
@@ -22,7 +23,7 @@ const productSlice = createSlice({
   reducers: {
     setDataProduct: (state, action: PayloadAction<DataType>) => {
       state.totalItem = action.payload.total;
-      state.data = action.payload.data.map(item => {
+      const newData = action.payload.data.map(item => {
         let priceUom = item.details.find(
           itemDetails => itemDetails.uom === item.stock_uom,
         );
@@ -35,6 +36,7 @@ const productSlice = createSlice({
           ? {...neItem, quantity: 1}
           : {...neItem, quantity: item.min_order_qty};
       });
+      state.data = state.data.concat(newData);
     },
     resetDataProduct: (state, action: PayloadAction) => {
       state.data = [];
@@ -52,6 +54,9 @@ const productSlice = createSlice({
     },
     setLoading: (state, action: PayloadAction<any>) => {
       state.isLoading = action.payload;
+    },
+    setProductBottomLoading: (state, action: PayloadAction<boolean>) => {
+      state.productBottomLoading = action.payload;
     },
     setLogoutData: (state: any) => void (state = undefined),
     setListProductSelect: (state, action: PayloadAction<any>) => {
