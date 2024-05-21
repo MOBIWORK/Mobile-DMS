@@ -58,7 +58,7 @@ import {storage} from '../../../utils/commom.utils';
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
-  const mmkv = storage.getString('time');
+  const mmkv:any = storage.getString('time');
 
   const [appState, setAppState] = useState(AppState.currentState);
 
@@ -66,38 +66,33 @@ const useTimer = () => {
 
   useDeepCompareEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active' || isFocus === true) {
+      if (nextAppState === 'active') {
         const newTimeStamp = moment(new Date()).valueOf();
 
-        if ((mmkv != '' || mmkv != null || mmkv != undefined) && isFocus) {
+        if (mmkv?.trim().length > 0 && isFocus) {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-
-            // console.log(currentTime, '????');
+            console.log(mmkv, 'dd');
+            console.log(currentTime/1000, '????');
             setElapsedTime(Math.ceil(currentTime / 1000));
             // clearInterval(intervalIdRef.current);
           });
         }
         // Update every 1 second
-      } else if (
-        nextAppState === 'background' ||
-        nextAppState === 'inactive' ||
-        !isFocus
-      ) {
-        if (mmkv != '' || mmkv != null || mmkv != undefined) {
-          if (nextAppState === 'inactive') {
-            setAppState('inactive');
-          }
+      } else if (nextAppState === 'background' || !isFocus  ) {
+        if ( mmkv?.trim().length > 0) {
+          console.log('run', mmkv?.trim().length )
+          setAppState(nextAppState)
         } else {
-          if (nextAppState === 'inactive') {
-            setAppState('inactive');
-          }
+          console.log('run here')
           const timeStamp = moment(new Date()).valueOf();
           storage.set('time', String(timeStamp));
         }
 
         // clearInterval(intervalIdRef.current);
         // setMmkv(String(timeStamp));
+      } else {
+        setAppState(nextAppState);
       }
     };
 
@@ -416,6 +411,7 @@ const CheckIn = () => {
           dispatch(checkinActions.resetData());
           dispatch(appActions.setDataCheckIn({}));
           dispatch(appActions.setProcessingStatus(false));
+          storage.set('time', '');
         }
       }
     });
