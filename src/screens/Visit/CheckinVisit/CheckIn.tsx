@@ -72,8 +72,6 @@ const useTimer = () => {
         if (mmkv?.trim().length > 0 && isFocus) {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-            console.log(mmkv, 'dd');
-            console.log(currentTime/1000, '????');
             setElapsedTime(Math.ceil(currentTime / 1000));
             // clearInterval(intervalIdRef.current);
           });
@@ -81,10 +79,8 @@ const useTimer = () => {
         // Update every 1 second
       } else if (nextAppState === 'background' || !isFocus  ) {
         if ( mmkv?.trim().length > 0) {
-          console.log('run', mmkv?.trim().length )
           setAppState(nextAppState)
         } else {
-          console.log('run here')
           const timeStamp = moment(new Date()).valueOf();
           storage.set('time', String(timeStamp));
         }
