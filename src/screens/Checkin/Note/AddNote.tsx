@@ -62,6 +62,7 @@ const AddNote = () => {
   const [staffData, setStaffData] = useState<StaffType[]>([]);
   const [selectPersonal, setSelectPersonal] = useState<StaffType[]>([]);
   const [isPending, startTransition] = useTransition();
+  const [height, setHeight] = useState(50);
 
   const onCreateNoteCheckin = async () => {
     try {
@@ -289,10 +290,15 @@ const AddNote = () => {
               label={getLabel('content')}
               value={content}
               onChangeValue={text => startTransition(() => setContent(text))}
-              styles={{height: 100}}
+              styles={{height: height}}
               inputProp={{
-                numberOfLines: 3,
+                // numberOfLines: 3,
                 multiline: true,
+                onContentSizeChange(e) {
+                  startTransition(() => {
+                    setHeight(e.nativeEvent.contentSize.height);
+                  });
+                },
               }}
             />
           </View>

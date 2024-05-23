@@ -96,8 +96,6 @@ const CreateOrder = () => {
   const [isPending, startEffect] = useTransition();
   const userInfo: IUser = useSelector(state => state.app.userProfile);
 
-  console.log('route', router.params);
-
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );
