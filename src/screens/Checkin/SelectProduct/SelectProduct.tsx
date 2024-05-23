@@ -427,7 +427,6 @@ const SelectProducts = () => {
   }, [products]);
 
   const fetchProduct = async () => {
-    console.log('123333');
     if (pageNumber === 1) {
       dispatch(productActions.setLoading(true));
     } else {
@@ -443,7 +442,6 @@ const SelectProducts = () => {
       //   page_size: 20,
       //   customer: route.params.customer_name,
       // });
-      console.log('ro', route.params.customer_name);
       const res: any = await ProductService.get({
         item_group: filterProduct.group,
         brand: filterProduct.brand,
@@ -451,7 +449,7 @@ const SelectProducts = () => {
         item_name: productName,
         page_number: pageNumber,
         page_size: 20,
-        customer: route.params.customer_name,
+        customer: route.params.customer_code,
       });
       console.log('res', res.data);
       if (res?.status === ApiConstant.STT_OK) {

@@ -767,7 +767,7 @@ const CreateOrder = () => {
                 toggleButtonUi(toggleTab, productsPromotion.length)}
               <ProductList
                 tab={toggleTab}
-                customerName={router.params.data?.customer_name ?? ''}
+                customerCode={router.params.data?.customer_code ?? ''}
                 products={products}
                 productsPromotion={productsPromotion}
                 showDetailProdcut={showDetailProdcut}

@@ -34,7 +34,7 @@ export type AuthorizeParamsList = {
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_INVENTORY]: undefined;
-  [ScreenConstant.CHECKIN_SELECT_PRODUCT]: {customer_name: string};
+  [ScreenConstant.CHECKIN_SELECT_PRODUCT]: {customer_code: string};
   [ScreenConstant.CHECKIN_ORDER_CREATE]: {type: string; data?: IDataCustomers};
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;

@@ -14,11 +14,14 @@ import React, {FC} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../../navigation/screen-type';
+import {useDispatch} from 'react-redux';
+import {productActions} from '../../../../redux-store/product-reducer/reducer';
 
-const UINoData: FC<UINoDataProp> = ({customer_name}) => {
+const UINoData: FC<UINoDataProp> = ({customer_code}) => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
+  const dispatch = useDispatch();
   return (
     <View style={[styles.containerNodata]}>
       <View style={{marginTop: 70}}>
@@ -43,11 +46,12 @@ const UINoData: FC<UINoDataProp> = ({customer_name}) => {
             labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}
             icon="plus"
             mode="outlined"
-            onPress={() =>
+            onPress={() => {
+              dispatch(productActions.resetDataProduct());
               navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
-                customer_name: customer_name,
-              })
-            }>
+                customer_code: customer_code,
+              });
+            }}>
             {getLabel('selectProduct')}
           </Button>
           <Button
@@ -65,7 +69,7 @@ const UINoData: FC<UINoDataProp> = ({customer_name}) => {
   );
 };
 interface UINoDataProp {
-  customer_name: string;
+  customer_code: string;
 }
 export default UINoData;
 const styles = StyleSheet.create({

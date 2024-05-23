@@ -421,9 +421,12 @@ const CheckinInventory = () => {
               icon="plus"
               iconColor={colors.action}
               size={16}
-              onPress={() =>
-                navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT)
-              }
+              onPress={() => {
+                dispatch(productActions.resetDataProduct());
+                navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
+                  customer_code: dataCheckin.customer_code,
+                });
+              }}
             />
             <IconButton
               style={{borderColor: colors.action}}
@@ -479,9 +482,12 @@ const CheckinInventory = () => {
                 labelStyle={[styles.textInventory as any, {fontWeight: '500'}]}
                 icon="plus"
                 mode="outlined"
-                onPress={() =>
-                  navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT)
-                }>
+                onPress={() => {
+                  dispatch(productActions.resetDataProduct());
+                  navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
+                    customer_code: dataCheckin.customer_code,
+                  });
+                }}>
                 {getLabel('selectProduct')}
               </Button>
               <Button
