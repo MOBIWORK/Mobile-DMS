@@ -124,7 +124,7 @@ const TakePictureScore = () => {
         }
       });
 
-      console.log('Updated List:', updatedListProgramImage[0].image);
+     
 
       dispatch(checkinActions.setListImageProgram(updatedListProgramImage));
 
@@ -164,6 +164,8 @@ const TakePictureScore = () => {
         console.log('Error uploading images:', err);
       } finally {
         setSelectedImages([]);
+        dispatch(checkinActions.setListImageProgram([]))
+        dispatch(checkinActions.setListImageSelect([]))
         setLoading(false);
       }
     },
