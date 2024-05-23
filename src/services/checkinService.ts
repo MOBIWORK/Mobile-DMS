@@ -13,6 +13,7 @@ export type IUpdateAddress = {
   county: string;
   city: string;
   country: 'Việt Nam';
+  checkin_id?:any
 };
 
 export interface checkinItemProduct {

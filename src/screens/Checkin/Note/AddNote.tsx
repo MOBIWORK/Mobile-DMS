@@ -129,6 +129,8 @@ const AddNote = () => {
     if (bottomSheetRef.current) bottomSheetRef.current.close();
   };
 
+  
+
   const onChangeDataType = (item: IFilterType) => {
     setTitle(item);
     if (bottomSheetType.current) bottomSheetType.current.close();

@@ -168,7 +168,6 @@ const CheckinInventory = () => {
         customer_address: dataCheckin.item.customer_primary_address,
         inventory_items: newItems,
       };
-
       const response: any = await CheckinService.checkinInventory(objectData);
       if (response.status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));
