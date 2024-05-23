@@ -1,4 +1,4 @@
-import React, {FC, useCallback} from 'react';
+import React, {FC} from 'react';
 import {
   ImageStyle,
   Pressable,
@@ -15,6 +15,8 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../../navigation/screen-type';
 import {useTranslation} from 'react-i18next';
 import UINoData from './UINoData';
+import {useDispatch} from 'react-redux';
+import {productActions} from '../../../../redux-store/product-reducer/reducer';
 
 const ProductList: FC<UpdateItemProductProps> = ({
   tab,
@@ -22,11 +24,12 @@ const ProductList: FC<UpdateItemProductProps> = ({
   productsPromotion,
   showDetailProdcut,
   handlerRemoveItemProduct,
-  customerName,
+  customerCode,
 }) => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
+  const dispatch = useDispatch();
 
   if (tab === 1) {
     return (
@@ -34,11 +37,12 @@ const ProductList: FC<UpdateItemProductProps> = ({
         {products.length > 0 ? (
           <View style={[styles.flexSpace]}>
             <Button
-              onPressIn={() =>
+              onPressIn={() => {
+                dispatch(productActions.resetDataProduct());
                 navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
-                  customer_name: customerName,
-                })
-              }
+                  customer_code: customerCode,
+                });
+              }}
               style={{
                 width: '48%',
                 marginRight: 16,
@@ -64,7 +68,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
             </Button>
           </View>
         ) : (
-          <UINoData customer_name={customerName} />
+          <UINoData customer_code={customerCode} />
         )}
         <View style={{marginTop: 20, rowGap: 8}}>
           {products.map((item, i) => (
@@ -112,7 +116,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
 export default ProductList;
 interface UpdateItemProductProps {
   tab: number;
-  customerName: string;
+  customerCode: string;
   products: IProduct[];
   productsPromotion: IProductPromotion[];
   showDetailProdcut: (item: IProduct) => void;
