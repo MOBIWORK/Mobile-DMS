@@ -27,10 +27,10 @@ import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
 // import { IDataCustomers } from '../../../models/types/index';
 
-  interface Props extends IDataCustomers {
-    index:number
-    data:IDataCustomers
-  }
+interface Props extends IDataCustomers {
+  index: number;
+  data: IDataCustomers;
+}
 
 const CardView = (props: Props) => {
   const theme = useTheme();
@@ -43,7 +43,10 @@ const CardView = (props: Props) => {
     startEffect(() => {
       dispatch(orderAction.setCustomerOder(props));
       dispatch(appActions.setDataCheckIn(null));
-      navigation.navigate(ScreenConstant.CHECKIN_ORDER_CREATE, {type: 'ORDER'});
+      navigation.navigate(ScreenConstant.CHECKIN_ORDER_CREATE, {
+        data: props.data,
+        type: 'ORDER',
+      });
     });
   };
 
@@ -62,7 +65,9 @@ const CardView = (props: Props) => {
             justifyContent="space-between"
             alignItems="center">
             <Block block>
-              <Text style={styles.textName}>{props.index + 1}. {props.customer_name}</Text>
+              <Text style={styles.textName}>
+                {props.index + 1}. {props.customer_name}
+              </Text>
               <Text style={styles.textName}>{props.customer_code}</Text>
               {/* <Text style={styles.textName} >{props.index}</Text> */}
             </Block>

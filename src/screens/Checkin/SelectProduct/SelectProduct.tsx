@@ -10,12 +10,13 @@ import {MainLayout} from '../../../layouts';
 import {
   AppBottomSheet,
   AppButton,
+  AppCheckBox,
   AppHeader,
   AppIcons,
   AppInput,
 } from '../../../components/common';
-import {AppConstant} from '../../../const';
-import {useNavigation} from '@react-navigation/native';
+import {ApiConstant, AppConstant} from '../../../const';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {
   Text,
   TextStyle,
@@ -34,7 +35,7 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {NavigationProp} from '../../../navigation/screen-type';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {useDeepCompareEffect, useSelector} from '../../../config/function';
 import {dispatch} from '../../../utils/redux';
 import {productActions} from '../../../redux-store/product-reducer/reducer';
@@ -48,6 +49,7 @@ import {
   BottomSheetScrollView,
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
+import {ProductService} from '../../../services';
 
 const initFilterValue = {
   label: '',
@@ -62,6 +64,7 @@ const SelectProducts = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetRefData = useRef<BottomSheet>(null);
   const styles = createStyles(useTheme());
+  const route = useRoute<RouterProp<'CHECKIN_SELECT_PRODUCT'>>();
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
@@ -90,6 +93,7 @@ const SelectProducts = () => {
     state => state.product.productBottomLoading,
   );
 
+  const [statusSelectAll, setStatusSelectAll] = useState<boolean>(false);
   const [countSelect, setCountSelect] = useState<number>(0);
   const [data, setData] = useState<IProduct[]>([]);
   const [dataFilter, setDataFilter] = useState<IFilterType[]>([]);
@@ -325,9 +329,19 @@ const SelectProducts = () => {
   const onEndReachedThreshold = () => {
     const totalPage = Math.ceil(totalItem / 20);
     if (pageNumber <= totalPage && data.length > 5) {
-      setPageNumber(prevState => prevState + 1);
+      // dispatch(
+      //   productActions.onGetData({
+      //     item_group: filterProduct.group,
+      //     brand: filterProduct.brand,
+      //     industry: filterProduct.industry,
+      //     item_name: productName,
+      //     page_number: pageNumber + 1,
+      //     page_size: 20,
+      //   }),
+      // );
+      setPageNumber(pageNumber + 1);
     } else {
-      return null;
+      return;
     }
   };
 
@@ -350,21 +364,18 @@ const SelectProducts = () => {
     [data],
   );
 
-  const isSelectedAll = useMemo(() => {
-    const dataSelect = data.filter(item => item.isSelected);
-    return dataSelect.length > 0;
-  }, [data]);
-
   const onSelectAllProduct = () => {
-    const newData = data.map(item => ({...item, isSelected: !isSelectedAll}));
-    if (isSelectedAll) {
-      setCountSelect(0);
-    } else {
-      setCountSelect(data.length);
-    }
-
+    setStatusSelectAll(prevState => !prevState);
+    const newData = data.map(item => ({...item, isSelected: !item.isSelected}));
+    setCountSelect(prevState => (prevState > 0 ? 0 : newData.length));
     setData(newData);
   };
+
+  useDeepCompareEffect(() => {
+    if (bottomLoading) {
+      setCountSelect(0);
+    }
+  }, [bottomLoading]);
 
   const onChangeQuantityProduct = React.useCallback(
     (idItem: string, qty: number) => {
@@ -385,6 +396,7 @@ const SelectProducts = () => {
     startEffect(() => {
       dispatch(productActions.setProductSelected(newDataSelect));
       dispatch(productActions.setListProductSelect(dataSelect));
+      dispatch(productActions.resetDataProduct());
     });
     navigation.goBack();
   };
@@ -414,33 +426,56 @@ const SelectProducts = () => {
     }
   }, [products]);
 
-  useDeepCompareEffect(() => {
-    dispatch(
-      productActions.onGetData({
+  const fetchProduct = async () => {
+    console.log('123333');
+    if (pageNumber === 1) {
+      dispatch(productActions.setLoading(true));
+    } else {
+      dispatch(productActions.setProductBottomLoading(true));
+    }
+    try {
+      // console.log({
+      //   item_group: filterProduct.group,
+      //   brand: filterProduct.brand,
+      //   industry: filterProduct.industry,
+      //   item_name: productName,
+      //   page_number: pageNumber,
+      //   page_size: 20,
+      //   customer: route.params.customer_name,
+      // });
+      console.log('ro', route.params.customer_name);
+      const res: any = await ProductService.get({
         item_group: filterProduct.group,
         brand: filterProduct.brand,
         industry: filterProduct.industry,
         item_name: productName,
         page_number: pageNumber,
         page_size: 20,
-      }),
-    );
-  }, [
-    filterProduct.brand,
-    filterProduct.group,
-    filterProduct.industry,
-    productName,
-    pageNumber,
-  ]);
+        customer: route.params.customer_name,
+      });
+      console.log('res', res.data);
+      if (res?.status === ApiConstant.STT_OK) {
+        dispatch(
+          productActions.setDataProduct({
+            data: res?.data.result.data,
+            total: res?.data.result.total,
+          }),
+        );
+      }
+    } catch (e) {
+      dispatch(productActions.setLoading(false));
+      dispatch(productActions.setProductBottomLoading(false));
+    } finally {
+      dispatch(productActions.setLoading(false));
+      dispatch(productActions.setProductBottomLoading(false));
+    }
+  };
 
   useEffect(() => {
-    dispatch(productActions.resetDataProduct());
-  }, [
-    filterProduct.brand,
-    filterProduct.group,
-    filterProduct.industry,
-    productName,
-  ]);
+    fetchProduct();
+    setCountSelect(0);
+    setStatusSelectAll(false);
+  }, [filterProduct, productName, pageNumber]);
 
   return (
     <>
@@ -448,7 +483,10 @@ const SelectProducts = () => {
         <View style={styles.container}>
           <AppHeader
             label={getLabel('product')}
-            onBack={() => navigation.goBack()}
+            onBack={() => {
+              dispatch(productActions.resetDataProduct());
+              navigation.goBack();
+            }}
             rightButton={
               <View style={[styles.flex, {columnGap: 16}]}>
                 {/*<TouchableOpacity*/}
@@ -511,11 +549,21 @@ const SelectProducts = () => {
         </View>
 
         <View style={[styles.flex as any, styles.titleContent]}>
-          <TouchableOpacity onPress={() => onSelectAllProduct()}>
-            <Text style={[styles.action]}>
-              {!isSelectedAll ? getLabel('selectAll') : getLabel('deselectAll')}
-            </Text>
-          </TouchableOpacity>
+          {/*<TouchableOpacity onPress={() => onSelectAllProduct()}>*/}
+          {/*  <Text style={[styles.action]}>*/}
+          {/*    {!isSelectedAll ? getLabel('selectAll') : getLabel('deselectAll')}*/}
+          {/*  </Text>*/}
+          {/*</TouchableOpacity>*/}
+          <View style={[styles.flex, {gap: 6}]}>
+            <AppCheckBox
+              status={statusSelectAll}
+              onChangeValue={() => onSelectAllProduct()}
+              styles={{
+                backgroundColor: statusSelectAll ? colors.action : undefined,
+              }}
+            />
+            <Text style={styles.action}>{getLabel('selectAll')}</Text>
+          </View>
           <Text style={[styles.filter as any, {color: colors.text_secondary}]}>
             {getLabel('total')} :{' '}
             <Text style={{color: colors.text_primary, fontWeight: '500'}}>
@@ -561,7 +609,7 @@ const SelectProducts = () => {
                   ) : undefined
                 }
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0.5}
+                onEndReachedThreshold={0}
               />
             </View>
           )}

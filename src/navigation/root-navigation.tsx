@@ -10,6 +10,8 @@ import UnAuthorNavigation from './UnAuthorNavigation';
 import {navigate} from './navigation-service';
 import {useSelector} from '../config/function';
 import {CheckinData} from '../services/appService';
+import {useDispatch} from 'react-redux';
+import {appActions} from '../redux-store/app-reducer/reducer';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -18,8 +20,10 @@ const RootNavigation = () => {
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
   const isLogout = CommonUtils.storage.getBoolean(AppConstant.isLogOut);
   const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(appActions.setProcessingStatus(false));
     if (
       dataCheckIn &&
       Object.keys(dataCheckIn)?.length > 0 &&

@@ -71,7 +71,7 @@ export default {
   selectDate: 'Select date',
   all: 'All',
   Company: 'Company',
-  individual: 'Cá nhân',
+  Individual: 'Individual',
   loyal: 'Loyal',
   Sunday: 'SUN',
   Monday: 'MON',

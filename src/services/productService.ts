@@ -9,6 +9,7 @@ export type PramsTypeProduct = {
   item_group?: string;
   page_size?: number;
   page_number?: number;
+  customer?: string;
 };
 
 interface GET_PRODUCT_PROMOTION {

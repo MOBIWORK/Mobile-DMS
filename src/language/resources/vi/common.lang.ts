@@ -74,7 +74,7 @@ export default {
   selectDate: 'Chọn ngày',
   all: 'Tất cả',
   Company: 'Công ty',
-  individual: 'Cá nhân',
+  Individual: 'Cá nhân',
   loyal: 'Thân thiết',
   Sunday: 'CN',
   Monday: 'T2',

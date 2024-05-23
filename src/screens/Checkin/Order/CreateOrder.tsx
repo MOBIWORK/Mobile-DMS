@@ -96,6 +96,8 @@ const CreateOrder = () => {
   const [isPending, startEffect] = useTransition();
   const userInfo: IUser = useSelector(state => state.app.userProfile);
 
+  console.log('route', router.params);
+
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );
@@ -765,6 +767,7 @@ const CreateOrder = () => {
                 toggleButtonUi(toggleTab, productsPromotion.length)}
               <ProductList
                 tab={toggleTab}
+                customerName={router.params.data?.customer_name ?? ''}
                 products={products}
                 productsPromotion={productsPromotion}
                 showDetailProdcut={showDetailProdcut}

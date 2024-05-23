@@ -154,10 +154,11 @@ const CheckIn = () => {
     shallowEqual,
   );
   const timeCheckin = useRef(
-    decimalMinutesToTime(systemConfig.thoigian_toithieu),
+    decimalMinutesToTime(
+      systemConfig?.tgcheckin_toithieu ? systemConfig.thoigian_toithieu : 0,
+    ),
   );
   useDisableBackHandler(true);
-  // console.log(elapsedTime,'params passed')
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
     type: string;
@@ -180,7 +181,6 @@ const CheckIn = () => {
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
 
-  // console.log(elapsedTime,'b')
   const handleSwitch = useCallback(() => {
     if (title === getLabel('openDoor')) {
       setTitle(getLabel('closeDoor'));
@@ -224,7 +224,6 @@ const CheckIn = () => {
         return setOpenDialogErr(false);
     }
   };
-  // console.log(systemConfig,'systemConfig')
 
   const isValidCheckOut = (currentLocation: GeolocationResponse) => {
     function isCamera(categoriesItem: IItemCheckIn) {
@@ -330,6 +329,7 @@ const CheckIn = () => {
     dispatch(appActions.setProcessingStatus(true));
     CommonUtils.getCurrentLocation(locations => {
       if (!isValidCheckOut(locations)) {
+        dispatch(appActions.setProcessingStatus(false));
         return;
       } else {
         try {
