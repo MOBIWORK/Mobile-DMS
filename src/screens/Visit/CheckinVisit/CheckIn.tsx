@@ -64,9 +64,9 @@ const useTimer = () => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active') {
+      if (nextAppState === 'active' && isFocus) {
         const newTimeStamp = moment(new Date()).valueOf();
-        if (mmkv?.trim().length > 0 && isFocus) {
+        if (mmkv?.trim().length > 0 ) {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
             setElapsedTime(Math.ceil(currentTime / 1000));
@@ -97,7 +97,7 @@ const useTimer = () => {
   }, [appState]);
 
   useEffect(() => {
-    if (mmkv?.trim().length > 0) {
+    if (mmkv?.trim().length > 0 && isFocus) {
       console.log('run this');
       const newTimeStamp = moment(new Date()).valueOf();
       startTransition(() => {

@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   startTransition,
+  useMemo,
 } from 'react';
 import {ExtendedTheme, useNavigation, useRoute} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
@@ -63,9 +64,9 @@ const TakePicture = () => {
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
   const [isDone, setDone] = useState(false);
-  const totalImageRequire = albumImageData
+  const totalImageRequire = useMemo(() =>albumImageData
     .map(item => item.numberImageReq)
-    .reduce((acc, curr) => acc + parseInt(curr), 0);
+    .reduce((acc, curr) => acc + parseInt(curr), 0),[albumImageData.length]);
 
   const dataCheckIn = useRef<CheckinData>(params.data);
   const systemConfig: DMSConfigMobile = useSelector(
@@ -98,6 +99,7 @@ const TakePicture = () => {
       ? dataCheckIn?.current.checkin_long
       : 0,
   });
+
 
   const [loading, setLoading] = useState(false);
   const handlePushImageData = async () => {
@@ -138,7 +140,6 @@ const TakePicture = () => {
         console.error('Error during image processing', error);
       } finally {
         // console.log(totalItemsProcessed, message);
-
         completeCheckin();
         dispatch(appActions.clearListImage([]));
         setLoading(false);
@@ -150,7 +151,7 @@ const TakePicture = () => {
 
   const completeCheckin = () => {
     if (
-      message + 1 === totalImageRequire ||
+      message  === totalImageRequire ||
       systemConfig.batbuoc_chupanh === 0
     ) {
       const newData = categoriesCheckin.map((item: any) =>
@@ -420,7 +421,7 @@ const TakePicture = () => {
               color={theme.colors.success}
               shadowColor={theme.colors.bg_disable}
               bgColor="#fff">
-              <Text>{message}</Text>
+              <Text>{message + 1}</Text>
             </ProgressCircle>
           </Block>
         </Block>

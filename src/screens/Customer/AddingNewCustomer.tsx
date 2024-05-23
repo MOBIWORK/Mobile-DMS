@@ -187,6 +187,7 @@ const AddingNewCustomer = () => {
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
+    console.log(updateListData,'updateData')
     const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
       const cusRes: any = await AppService.getCustomer();
