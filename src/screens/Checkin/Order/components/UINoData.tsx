@@ -10,12 +10,12 @@ import {
 import {ImageAssets} from '../../../../assets';
 import {Button} from 'react-native-paper';
 import {ScreenConstant} from '../../../../const';
-import React from 'react';
+import React, {FC} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../../navigation/screen-type';
 
-const UINoData = () => {
+const UINoData: FC<UINoDataProp> = ({customer_name}) => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
@@ -44,7 +44,9 @@ const UINoData = () => {
             icon="plus"
             mode="outlined"
             onPress={() =>
-              navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT)
+              navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
+                customer_name: customer_name,
+              })
             }>
             {getLabel('selectProduct')}
           </Button>
@@ -62,6 +64,9 @@ const UINoData = () => {
     </View>
   );
 };
+interface UINoDataProp {
+  customer_name: string;
+}
 export default UINoData;
 const styles = StyleSheet.create({
   flexSpace: {

@@ -16,7 +16,7 @@ import {
   AppInput,
 } from '../../../components/common';
 import {ApiConstant, AppConstant} from '../../../const';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {
   Text,
   TextStyle,
@@ -35,7 +35,7 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {NavigationProp} from '../../../navigation/screen-type';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {useDeepCompareEffect, useSelector} from '../../../config/function';
 import {dispatch} from '../../../utils/redux';
 import {productActions} from '../../../redux-store/product-reducer/reducer';
@@ -50,7 +50,6 @@ import {
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
 import {ProductService} from '../../../services';
-import {put} from 'typed-redux-saga';
 
 const initFilterValue = {
   label: '',
@@ -65,6 +64,7 @@ const SelectProducts = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetRefData = useRef<BottomSheet>(null);
   const styles = createStyles(useTheme());
+  const route = useRoute<RouterProp<'CHECKIN_SELECT_PRODUCT'>>();
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
@@ -427,12 +427,23 @@ const SelectProducts = () => {
   }, [products]);
 
   const fetchProduct = async () => {
+    console.log('123333');
     if (pageNumber === 1) {
       dispatch(productActions.setLoading(true));
     } else {
       dispatch(productActions.setProductBottomLoading(true));
     }
     try {
+      // console.log({
+      //   item_group: filterProduct.group,
+      //   brand: filterProduct.brand,
+      //   industry: filterProduct.industry,
+      //   item_name: productName,
+      //   page_number: pageNumber,
+      //   page_size: 20,
+      //   customer: route.params.customer_name,
+      // });
+      console.log('ro', route.params.customer_name);
       const res: any = await ProductService.get({
         item_group: filterProduct.group,
         brand: filterProduct.brand,
@@ -440,7 +451,9 @@ const SelectProducts = () => {
         item_name: productName,
         page_number: pageNumber,
         page_size: 20,
+        customer: route.params.customer_name,
       });
+      console.log('res', res.data);
       if (res?.status === ApiConstant.STT_OK) {
         dispatch(
           productActions.setDataProduct({

@@ -22,6 +22,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
   productsPromotion,
   showDetailProdcut,
   handlerRemoveItemProduct,
+  customerName,
 }) => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
@@ -34,7 +35,9 @@ const ProductList: FC<UpdateItemProductProps> = ({
           <View style={[styles.flexSpace]}>
             <Button
               onPressIn={() =>
-                navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT)
+                navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
+                  customer_name: customerName,
+                })
               }
               style={{
                 width: '48%',
@@ -61,7 +64,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
             </Button>
           </View>
         ) : (
-          <UINoData />
+          <UINoData customer_name={customerName} />
         )}
         <View style={{marginTop: 20, rowGap: 8}}>
           {products.map((item, i) => (
@@ -109,6 +112,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
 export default ProductList;
 interface UpdateItemProductProps {
   tab: number;
+  customerName: string;
   products: IProduct[];
   productsPromotion: IProductPromotion[];
   showDetailProdcut: (item: IProduct) => void;
