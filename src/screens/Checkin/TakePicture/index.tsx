@@ -36,7 +36,7 @@ import {ImageAssets} from '../../../assets';
 import {AppConstant} from '../../../const';
 import {CameraUtils} from '../../../utils';
 import {RouterProp} from '../../../navigation/screen-type';
-import {CheckinData} from '../../../services/appService';
+import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {useSelector} from '../../../config/function';
@@ -68,6 +68,10 @@ const TakePicture = () => {
     .reduce((acc, curr) => acc + parseInt(curr), 0);
 
   const dataCheckIn = useRef<CheckinData>(params.data);
+  const systemConfig: DMSConfigMobile = useSelector(
+    state => state.app?.systemConfig,
+    shallowEqual,
+  );
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
     shallowEqual,
@@ -145,7 +149,10 @@ const TakePicture = () => {
   };
 
   const completeCheckin = () => {
-    if (message+1 === totalImageRequire) {
+    if (
+      message + 1 === totalImageRequire ||
+      systemConfig.batbuoc_chupanh === 0
+    ) {
       const newData = categoriesCheckin.map((item: any) =>
         item.key === 'camera' ? {...item, isDone: true} : item,
       );
@@ -157,29 +164,16 @@ const TakePicture = () => {
       // setMessage(0);
     }
   };
-  const requestPermission = async () => {
-    try {
-      console.log('asking for permission')
-      const granted = await PermissionsAndroid.requestMultiple(
-        [PermissionsAndroid.PERMISSIONS.CAMERA,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-      )
-      if (granted['android.permission.CAMERA'] && granted['android.permission.WRITE_EXTERNAL_STORAGE']) {
-        console.log("You can use the camera");
-      } else {
-        console.log("Camera permission denied");
-      }
-    } catch (error) {
-      console.log('permission error', error)
-    }
-  }
 
   const handleCamera = async (item: IAlbumImage) => {
-    const granted = await PermissionsAndroid.requestMultiple(
-      [PermissionsAndroid.PERMISSIONS.CAMERA,
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-    )
-    if (granted['android.permission.CAMERA'] && granted['android.permission.WRITE_EXTERNAL_STORAGE']){
+    const granted = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    ]);
+    if (
+      granted['android.permission.CAMERA'] &&
+      granted['android.permission.WRITE_EXTERNAL_STORAGE']
+    ) {
       await CameraUtils.openImagePickerCamera((img, base64) => {
         const newListImage = [
           ...item.image,
@@ -198,10 +192,9 @@ const TakePicture = () => {
         });
         setAlbumImageData(updatedState);
       });
-    }else{
-      Alert.alert('Bạn chưa cấp quyền')
+    } else {
+      Alert.alert('Bạn chưa cấp quyền');
     }
-   
   };
 
   const onDeleteImageOfAlbum = (itemSelected: IAlbumImage, img: string) => {
