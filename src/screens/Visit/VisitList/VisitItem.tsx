@@ -49,11 +49,7 @@ const VisitItem: FC<VisitItemProps> = ({
   );
 
   const distanceCal = useMemo(() => {
-    let location: LocationProps =JSON.parse(
-      item.customer_location_primary
-        ? item.customer_location_primary
-        : "{\"long\": 0, \"lat\": 0}",
-    );
+    let location: LocationProps = JSON.parse(item.customer_location_primary != null && item.customer_location_primary);
     let distance = calculateDistance(
       currentLocation?.coords.latitude,
       currentLocation?.coords.longitude,
@@ -79,7 +75,6 @@ const VisitItem: FC<VisitItemProps> = ({
     },
     [item],
   );
-
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
@@ -131,15 +126,25 @@ const VisitItem: FC<VisitItemProps> = ({
             marginTop={8}
             justifyContent="space-between"
             style={[styles.content]}>
-            {((item.is_route === true && systemConfig.vt_ngoaituyen === 1) ||  (item.is_route === true &&  systemConfig.vt_ngoaituyen === 0 )) || (item.is_route === false && systemConfig.vt_ngoaituyen === 1) ? (
+            {(item.is_route === true && systemConfig.vt_ngoaituyen === 1) ||
+            (item.is_route === true && systemConfig.vt_ngoaituyen === 0) ||
+            (item.is_route === false && systemConfig.vt_ngoaituyen === 1) ? (
               <AppButton
                 onPress={() =>
                   startTransition(() => {
                     handlePressing(item, false);
                   })
                 }
-                
-                style={createStyleSheet(theme).button(!(((item.is_route === true && systemConfig.vt_ngoaituyen === 1) || (item.is_route === true  &&systemConfig.vt_ngoaituyen === 0 )) || (item.is_route === false && systemConfig.vt_ngoaituyen === 1)))}
+                style={createStyleSheet(theme).button(
+                  !(
+                    (item.is_route === true &&
+                      systemConfig.vt_ngoaituyen === 1) ||
+                    (item.is_route === true &&
+                      systemConfig.vt_ngoaituyen === 0) ||
+                    (item.is_route === false &&
+                      systemConfig.vt_ngoaituyen === 1)
+                  ),
+                )}
                 label={'Checkin'}
                 styleLabel={{
                   color: colors.action,

@@ -72,6 +72,7 @@ export default {
   all: 'All',
   Company: 'Company',
   Individual: 'Individual',
+  individual: 'Individual',
   loyal: 'Loyal',
   Sunday: 'SUN',
   Monday: 'MON',
