@@ -75,6 +75,8 @@ export default {
   all: 'Tất cả',
   Company: 'Công ty',
   Individual: 'Cá nhân',
+  individual: 'Cá nhân',
+
   loyal: 'Thân thiết',
   Sunday: 'CN',
   Monday: 'T2',
@@ -304,5 +306,5 @@ export default {
   listContact: 'Danh sách liên hệ',
   addressGet: 'Địa chỉ giao hàng',
   addressOrder: 'Địa chỉ đặt hàng',
-  mainAddress:"Địa chỉ chính"
+  mainAddress: 'Địa chỉ chính',
 };
