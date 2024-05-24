@@ -12,10 +12,11 @@ import {
   Alert,
   FlatList,
   Image,
+  ImageStyle,
   PermissionsAndroid,
   Pressable,
   StyleSheet,
-  Text,
+  // Text,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -24,11 +25,11 @@ import {
   AppButton,
   AppContainer,
   AppHeader,
-  AppText,
+  AppText as Text,
   Block,
   SvgIcon,
 } from '../../../components/common';
-import {Button, Modal} from 'react-native-paper';
+import {Button, Icon} from 'react-native-paper';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import BottomSheet from '@gorhom/bottom-sheet';
 import SelectAlbum from './SelectAlbum';
@@ -47,7 +48,7 @@ import {useTheme} from '../../../layouts/theme';
 import ProgressCircle from 'react-native-progress-circle';
 import {CheckinService} from '../../../services';
 import {useTranslation} from 'react-i18next';
-
+import Modal from 'react-native-modal';
 export interface AlbumBottomSheet extends IFilterType {
   numPicsRequired?: string;
 }
@@ -63,10 +64,19 @@ const TakePicture = () => {
     useState<AlbumBottomSheet[]>();
   const [albumImageData, setAlbumImageData] = useState<IAlbumImage[]>([]);
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
-  const [isDone, setDone] = useState(false);
-  const totalImageRequire = useMemo(() =>albumImageData
-    .map(item => item.numberImageReq)
-    .reduce((acc, curr) => acc + parseInt(curr), 0),[albumImageData.length]);
+  const [error, setError] = useState(false);
+  const [albumError, setAlbumError] = useState<any[]>([]);
+  const totalImageRequire = useMemo(
+    () =>
+      albumImageData
+        .map(item =>
+          item.numberImageReq != null || item.numberImageReq != undefined
+            ? item.numberImageReq
+            : 0,
+        )
+        .reduce((acc, curr) => acc + parseInt(curr), 0),
+    [albumImageData.length],
+  );
 
   const dataCheckIn = useRef<CheckinData>(params.data);
   const systemConfig: DMSConfigMobile = useSelector(
@@ -77,11 +87,6 @@ const TakePicture = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
-  const listImage = useSelector(
-    state => state.app.dataCheckIn?.listImage,
-    shallowEqual,
-  );
-  const listImageLength = listImage?.length || 1;
   const [message, setMessage] = useState<number>(0);
   const data = useRef<ImageCheckIn>({
     album_id: '',
@@ -100,70 +105,89 @@ const TakePicture = () => {
       : 0,
   });
 
-
   const [loading, setLoading] = useState(false);
   const handlePushImageData = async () => {
+    setMessage(0);
     if (albumImageData.length > 0) {
       let totalItemsProcessed = 0;
       try {
         setLoading(true);
         for (let index = 0; index < albumImageData.length; index++) {
-          if (
-            albumImageData[index].image.length - 1 >=
-            albumImageData[index].numberImageReq
-          ) {
+          if (systemConfig.batbuoc_chupanh === 1) {
+            if (
+              albumImageData[index].image.length - 1 >=
+              albumImageData[index].numberImageReq
+            ) {
+              if (data?.current) {
+                data.current.album_id = String(albumImageData[index].id + 1);
+                data.current.album_name = albumImageData[index].label;
+              }
+
+              const element = albumImageData[index].image;
+              for (let i = 1; i < element.length; i++) {
+                let image = element[i];
+                if (data?.current) {
+                  data.current.image = image?.base64!;
+                  await new Promise(resolve => setTimeout(resolve, 1500));
+                  totalItemsProcessed++;
+                  startTransition(() => {
+                    setMessage(totalItemsProcessed);
+                    dispatch(appActions.postImageCheckIn(data.current));
+                    setError(false);
+                  });
+                }
+              }
+            } else {
+              setLoading(false);
+              setAlbumError(prev => [...prev, albumImageData[index].label]);
+              // Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
+              setError(true);
+            }
+          } else {
             if (data?.current) {
               data.current.album_id = String(albumImageData[index].id + 1);
               data.current.album_name = albumImageData[index].label;
             }
-            const element = albumImageData[index].image;
-            for (let i = 1; i < element.length; i++) {
-              let image = element[i];
-              if (data?.current) {
-                data.current.image = image?.base64!;
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                totalItemsProcessed++;
-                startTransition(() => {
-                  setMessage(totalItemsProcessed);
-                  dispatch(appActions.postImageCheckIn(data.current));
-                });
-
-                setDone(true);
+            try {
+              const element = albumImageData[index].image;
+              for (let i = 1; i < element.length; i++) {
+                let image = element[i];
+                if (data?.current) {
+                  data.current.image = image?.base64!;
+                  await new Promise(resolve => setTimeout(resolve, 1500));
+                  totalItemsProcessed++;
+                  startTransition(() => {
+                    setMessage(totalItemsProcessed);
+                    dispatch(appActions.postImageCheckIn(data.current));
+                    setError(false);
+                  });
+                }
               }
+            } catch (e) {
+              // console.log('fuckkkkk', e);
             }
-          } else {
-            // Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
-            setDone(false);
           }
         }
       } catch (error) {
         console.error('Error during image processing', error);
       } finally {
-        // console.log(totalItemsProcessed, message);
-        completeCheckin();
-        dispatch(appActions.clearListImage([]));
-        setLoading(false);
+        // completeCheckin();
       }
     } else {
       Alert.alert('Bạn chưa hoàn thành bước chụp ảnh');
     }
   };
+  // dispatch(appActions.clearListImage([]));
 
+  // setAlbumError([])
   const completeCheckin = () => {
-    if (
-      message  === totalImageRequire ||
-      systemConfig.batbuoc_chupanh === 0
-    ) {
-      const newData = categoriesCheckin.map((item: any) =>
-        item.key === 'camera' ? {...item, isDone: true} : item,
-      );
-      dispatch(checkinActions.setDataCategoriesCheckin(newData));
-
-      navigation.goBack();
-    } else {
-      Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
-      // setMessage(0);
-    }
+    const newData = categoriesCheckin.map((item: any) =>
+      item.key === 'camera' ? {...item, isDone: true} : item,
+    );
+    dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    dispatch(appActions.clearListImage([]));
+    setLoading(false);
+    navigation.goBack();
   };
 
   const handleCamera = async (item: IAlbumImage) => {
@@ -224,6 +248,16 @@ const TakePicture = () => {
     setAlbumBottomSheet(newAlbumBottomSheet);
   };
 
+  const onBackButtonUpdate = useCallback(() => {
+    dispatch(appActions.clearListImage([]));
+    setLoading(false);
+  }, [loading]);
+
+  const onBackButtonError = useCallback(() => {
+    setAlbumError([]);
+    setError(false);
+  }, [error]);
+
   useEffect(() => {
     const getListAlbum = async () => {
       const res: any = await CheckinService.getListAlbum();
@@ -235,7 +269,11 @@ const TakePicture = () => {
             label: item.ten_album,
             value: item.ma_album,
             isSelected: false,
-            numPicsRequired: item.so_anh_toi_thieu,
+            numPicsRequired:
+              item?.so_anh_toi_thieu != null ||
+              item?.so_anh_toi_thieu != undefined
+                ? item?.so_anh_toi_thieu
+                : undefined,
           };
         });
         setAlbumBottomSheet(listAlbum);
@@ -267,20 +305,63 @@ const TakePicture = () => {
 
   const AlbumItem = useCallback(
     (itemAlbum: IAlbumImage) => {
+      const isError = albumError.findIndex(item => item === itemAlbum.label);
+
       return (
-        <View style={styles.album}>
+        <View style={styles.album(isError)}>
           <View style={styles.row}>
-            <Button mode={'text'} icon={'chevron-down'}>
-              {itemAlbum.label}
-              {'  '}
-              {itemAlbum.image.length - 1 === 0
-                ? `( Tối thiểu ${
-                    itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0
-                  } ảnh )`
-                : `(${itemAlbum.image?.length - 1 || 0}/${
-                    itemAlbum?.numberImageReq ? itemAlbum.numberImageReq : 0
-                  })`}
-            </Button>
+            <Block direction="row" marginLeft={8}>
+              <Block marginRight={8}>
+                <Icon source={'chevron-down'} size={20} />
+              </Block>
+              <Text fontSize={14} lineHeight={21} colorTheme="text_primary">
+                {itemAlbum.label}
+              </Text>
+              <Block
+                marginLeft={8}
+                direction="row"
+                // borderWidth={1}
+                // borderColor={theme.colors.text_disable}
+                padding={2}
+                justifyContent="center"
+                alignItems="center">
+                {itemAlbum.numberImageReq !== null &&
+                  itemAlbum.numberImageReq != undefined &&
+                  itemAlbum?.image.length - 1 != 0 && (
+                    <Block
+                      width={13}
+                      marginRight={3}
+                      height={13}
+                      borderRadius={13}
+                      justifyContent="center"
+                      alignItems="center"
+                      color={
+                        itemAlbum.image?.length - 1 == itemAlbum.numberImageReq
+                          ? theme.colors.success
+                          : theme.colors.bg_disable
+                      }>
+                      <SvgIcon source="CheckNonBorder" size={10} />
+                    </Block>
+                  )}
+
+                <Text
+                  color={theme.colors.text_primary}
+                  fontSize={14}
+                  colorTheme="text_primary">
+                  {itemAlbum.image.length - 1 === 0 &&
+                  itemAlbum.numberImageReq != null &&
+                  itemAlbum.numberImageReq != undefined
+                    ? `( Tối thiểu ${
+                        itemAlbum?.numberImageReq ?? itemAlbum.numberImageReq
+                      } ảnh )`
+                    : itemAlbum.numberImageReq === 0 ||
+                      itemAlbum.numberImageReq === null ||
+                      itemAlbum.numberImageReq === undefined
+                    ? ''
+                    : `${itemAlbum.image?.length - 1} ảnh`}{' '}
+                </Text>
+              </Block>
+            </Block>
             <SvgIcon
               source={'TrashIcon'}
               size={25}
@@ -348,6 +429,7 @@ const TakePicture = () => {
     [handleCamera, albumBottomSheet],
   );
 
+  console.log(totalImageRequire,'???')
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <AppHeader
@@ -385,10 +467,10 @@ const TakePicture = () => {
       <View style={styles.footer}>
         <AppButton
           style={{width: '100%'}}
-          label={getLabel('completed')}
+          label={getLabel('uploadImage')}
           onPress={() => {
-            // console.log(isDone,'isDone')
             handlePushImageData();
+            setAlbumError([]);
           }}
         />
       </View>
@@ -400,29 +482,135 @@ const TakePicture = () => {
         albumImageData={albumImageData}
         setAlbumImageData={setAlbumImageData}
       />
-
-      <Modal visible={loading} style={styles.modal}>
+      <Modal
+        isVisible={loading}
+        style={styles.modal}
+        animationIn="slideInUp"
+        animationOut={'slideOutDown'}
+        backdropOpacity={0.5}
+        onBackButtonPress={onBackButtonUpdate}
+        onBackdropPress={onBackButtonUpdate}>
         <Block
-          justifyContent="center"
-          alignItems="center"
           colorTheme="white"
           width={350}
           marginTop={20}
+          padding={16}
           marginBottom={20}
           borderRadius={16}>
-          <Block marginTop={16}>
-            <AppText color="black">Đang cập nhật</AppText>
+          <Block justifyContent="center" alignItems="center">
+            <Block marginTop={16}>
+              <Text color="black">Đang cập nhật</Text>
+            </Block>
+            <Block marginTop={16} marginBottom={16}>
+              <ProgressCircle
+                percent={(message / totalImageRequire) * 100}
+                radius={50}
+                borderWidth={12}
+                color={theme.colors.success}
+                shadowColor={theme.colors.bg_disable}
+                bgColor="#fff">
+                <Text>{message}</Text>
+              </ProgressCircle>
+            </Block>
           </Block>
-          <Block marginTop={16} marginBottom={16}>
-            <ProgressCircle
-              percent={(message / totalImageRequire) * 100}
-              radius={50}
-              borderWidth={12}
-              color={theme.colors.success}
-              shadowColor={theme.colors.bg_disable}
-              bgColor="#fff">
-              <Text>{message + 1}</Text>
-            </ProgressCircle>
+
+          <Block
+            marginTop={20}
+            marginBottom={20}
+            direction={message < totalImageRequire ? 'row' : undefined}
+            justifyContent={message < totalImageRequire ? 'space-around' : undefined}
+            paddingHorizontal={8}
+            block
+            paddingBottom={20}
+            >
+            {message < totalImageRequire && (
+              <TouchableOpacity
+                onPress={onBackButtonUpdate}
+                style={[styles.buttonCancel]}>
+                <Text
+                  fontSize={14}
+                  colorTheme="text_secondary"
+                  fontWeight="700"
+                  lineHeight={24}>
+                  Hủy
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity
+              disabled={message >= totalImageRequire ? false : true}
+              onPress={completeCheckin}
+              style={[
+                styles.buttonConfirm,
+                styles.uploadImage(message, totalImageRequire),
+              ]}>
+              <Text
+                fontSize={14}
+                colorTheme="bg_default"
+                fontWeight="700"
+                lineHeight={24}>
+                Hoàn thành
+              </Text>
+            </TouchableOpacity>
+          </Block>
+        </Block>
+      </Modal>
+      <Modal
+        isVisible={error}
+        style={styles.modal}
+        animationIn="slideInUp"
+        animationOut={'slideOutDown'}
+        backdropOpacity={0.5}
+        onBackButtonPress={onBackButtonError}
+        onBackdropPress={onBackButtonError}>
+        <Block
+          // justifyContent="center"
+          // alignItems="center"
+          colorTheme="white"
+          width={350}
+          marginTop={20}
+          padding={16}
+          marginBottom={20}
+          borderRadius={16}>
+          <Block justifyContent="center" alignItems="center">
+            <Image
+              source={ImageAssets.ErrorApiIcon}
+              style={styles.imageError}
+            />
+          </Block>
+          <Block justifyContent="center" alignItems="center">
+            <Text
+              textAlign="center"
+              fontSize={16}
+              colorTheme="text_primary"
+              lineHeight={24}
+              fontWeight="700">
+              Chưa đủ ảnh tối thiểu
+            </Text>
+            <Text
+              textAlign="center"
+              fontSize={14}
+              colorTheme="text_secondary"
+              lineHeight={22}
+              fontWeight="400">
+              {albumError.join(',')} chưa đủ ảnh tối thiểu, vui lòng cập nhật đủ
+              ảnh để hoàn thành bước Chụp ảnh{' '}
+            </Text>
+          </Block>
+          <Block marginTop={20} marginBottom={20}>
+            <TouchableOpacity
+              onPress={() => {
+                setError(false);
+              }}
+              style={styles.buttonConfirm}>
+              <Text
+                fontSize={14}
+                colorTheme="bg_default"
+                fontWeight="700"
+                lineHeight={24}>
+                Đồng ý
+              </Text>
+            </TouchableOpacity>
           </Block>
         </Block>
       </Modal>
@@ -450,14 +638,17 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       flex: 1,
       alignItems: 'flex-start',
     } as ViewStyle,
-    album: {
-      marginTop: 8,
-      padding: 16,
-      paddingHorizontal: 8,
-      backgroundColor: theme.colors.bg_default,
-      borderRadius: 16,
-      width: '100%',
-    } as ViewStyle,
+    album: (isError: number) =>
+      ({
+        marginTop: 8,
+        padding: 16,
+        paddingHorizontal: 8,
+        backgroundColor: theme.colors.bg_default,
+        borderColor: isError === -1 ? 'transparent' : theme.colors.error,
+        borderRadius: 16,
+        width: '100%',
+        borderWidth: isError === -1 ? 0 : 1,
+      } as ViewStyle),
     row: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -487,5 +678,33 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       borderColor: theme.colors.border,
       alignItems: 'center',
       justifyContent: 'center',
+    } as ViewStyle,
+    buttonConfirm: {
+      height: 36,
+      backgroundColor: theme.colors.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 20,
+      paddingVertical:4,
+      paddingHorizontal:16
+      // width:'100%'
+    } as ViewStyle,
+    imageError: {
+      width: 80,
+      height: 80,
+    } as ImageStyle,
+    uploadImage: (mess: number, total: number) =>
+      ({
+        backgroundColor:
+          mess >= total ? theme.colors.primary : theme.colors.bg_disable,
+      } as ViewStyle),
+    buttonCancel: {
+      height: 36,
+      backgroundColor: theme.colors.bg_default,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 20,
+      
+      // width:'100%'
     } as ViewStyle,
   });
