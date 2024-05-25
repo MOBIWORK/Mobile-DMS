@@ -433,15 +433,6 @@ const SelectProducts = () => {
       dispatch(productActions.setProductBottomLoading(true));
     }
     try {
-      // console.log({
-      //   item_group: filterProduct.group,
-      //   brand: filterProduct.brand,
-      //   industry: filterProduct.industry,
-      //   item_name: productName,
-      //   page_number: pageNumber,
-      //   page_size: 20,
-      //   customer: route.params.customer_name,
-      // });
       const res: any = await ProductService.get({
         item_group: filterProduct.group,
         brand: filterProduct.brand,

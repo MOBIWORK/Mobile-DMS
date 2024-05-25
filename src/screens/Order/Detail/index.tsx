@@ -33,7 +33,6 @@ const OrderDetail = () => {
   ]);
   const route = useRoute<RouterProp<'ORDER_DETAIL_SCREEN'>>();
   const name = route.params.name;
-
   const [data, setData] = useState<IOrderDetail>();
 
   const renderTabBar = (props: any) => {

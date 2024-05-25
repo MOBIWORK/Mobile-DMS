@@ -59,7 +59,6 @@ const TabOverview = ({data}: PropsType) => {
     setTotalPriceProduct(item.amount * item.qty - priceDiscount);
   };
 
-  console.log(data,'data')
   const renderUiBottomSheet = () => {
     return (
       <View
