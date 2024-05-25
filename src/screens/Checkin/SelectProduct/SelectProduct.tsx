@@ -449,9 +449,8 @@ const SelectProducts = () => {
         item_name: productName,
         page_number: pageNumber,
         page_size: 20,
-        customer: route.params.customer_code,
+        customer: route.params.customer_id,
       });
-      console.log('res', res.data);
       if (res?.status === ApiConstant.STT_OK) {
         dispatch(
           productActions.setDataProduct({

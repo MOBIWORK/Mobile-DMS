@@ -407,7 +407,7 @@ const CheckinInventory = () => {
               onPress={() => {
                 dispatch(productActions.resetDataProduct());
                 navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
-                  customer_code: dataCheckin.customer_code,
+                  customer_id: dataCheckin.name,
                 });
               }}
             />
@@ -468,7 +468,7 @@ const CheckinInventory = () => {
                 onPress={() => {
                   dispatch(productActions.resetDataProduct());
                   navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
-                    customer_code: dataCheckin.customer_code,
+                    customer_id: dataCheckin.name,
                   });
                 }}>
                 {getLabel('selectProduct')}
