@@ -120,6 +120,7 @@ export default {
   pendingDeliver: 'Waiting for shipping',
   completed: 'Complete',
   cancelled: 'Canceled',
+  uploadImage:'Uploading Image',
   recentSearches: 'Recent searches',
   searchOrder: 'Search for orders',
   totalPrice: 'Total amount',

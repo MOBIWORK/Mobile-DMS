@@ -53,7 +53,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
             ...itemCur,
             id: itemCur.id,
             isSelected: !itemCur.isSelected,
-            numPicsRequired: itemCur.numPicsRequired,
+            numPicsRequired:(( itemCur.numPicsRequired  != undefined ) ||( itemCur.numPicsRequired != null )) ? itemCur.numPicsRequired : undefined,
           };
         } else {
           return itemCur;
@@ -98,7 +98,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
           id: selectedItem.id, // Adjust this based on your actual structure
           label: selectedItem.label,
           image: ['IconCamera'],
-          numberImageReq: selectedItem.numPicsRequired,
+          numberImageReq: selectedItem.numPicsRequired || undefined,
         };
       }
     });

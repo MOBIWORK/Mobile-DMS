@@ -73,9 +73,11 @@ import checkCircle from './fi_check-circle.svg';
 import MapPin2 from './map-pin.svg';
 import AsynIcon from './asynIcon.svg';
 import EmptyBox from './empty-box.svg';
+import CheckNonBorder from './checkNonBorder.svg'
 export const SvgComponent = {
   TakePicture,
   MoneyIcon,
+  CheckNonBorder,
   checkCircle,
   MarkPicture,
   NewCustomerIcon,
