@@ -360,7 +360,7 @@ const CheckIn = () => {
 
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
-    const res: any = await AppService.checkOut(dataCheckIn.checkin_id);
+    const res: any = await AppService.checkOut(dataCheckIn.checkin_id,dataCheckIn.item.name);
     if (res?.status === ApiConstant.STT_OK) {
       dispatch(checkinActions.resetData());
       dispatch(appActions.setDataCheckIn({}));

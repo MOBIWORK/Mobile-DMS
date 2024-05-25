@@ -116,7 +116,8 @@ const TakePicture = () => {
           if (systemConfig.batbuoc_chupanh === 1) {
             if (
               albumImageData[index].image.length - 1 >=
-              albumImageData[index].numberImageReq
+                albumImageData[index].numberImageReq &&
+              albumImageData[index].numberImageReq != undefined
             ) {
               if (data?.current) {
                 data.current.album_id = String(albumImageData[index].id + 1);
@@ -138,10 +139,13 @@ const TakePicture = () => {
                 }
               }
             } else {
-              setLoading(false);
-              setAlbumError(prev => [...prev, albumImageData[index].label]);
-              // Alert.alert('Bạn chưa chụp đủ ảnh tối thiểu');
-              setError(true);
+              if (albumImageData[index].numberImageReq === undefined) {
+                setLoading(false);
+              } else {
+                setLoading(false);
+                setAlbumError(prev => [...prev, albumImageData[index].label]);
+                setError(true);
+              }
             }
           } else {
             if (data?.current) {
@@ -306,7 +310,6 @@ const TakePicture = () => {
   const AlbumItem = useCallback(
     (itemAlbum: IAlbumImage) => {
       const isError = albumError.findIndex(item => item === itemAlbum.label);
-
       return (
         <View style={styles.album(isError)}>
           <View style={styles.row}>
@@ -429,7 +432,6 @@ const TakePicture = () => {
     [handleCamera, albumBottomSheet],
   );
 
-  console.log(totalImageRequire,'???')
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <AppHeader
@@ -518,11 +520,12 @@ const TakePicture = () => {
             marginTop={20}
             marginBottom={20}
             direction={message < totalImageRequire ? 'row' : undefined}
-            justifyContent={message < totalImageRequire ? 'space-around' : undefined}
+            justifyContent={
+              message < totalImageRequire ? 'space-around' : undefined
+            }
             paddingHorizontal={8}
             block
-            paddingBottom={20}
-            >
+            paddingBottom={20}>
             {message < totalImageRequire && (
               <TouchableOpacity
                 onPress={onBackButtonUpdate}
@@ -685,8 +688,8 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 20,
-      paddingVertical:4,
-      paddingHorizontal:16
+      paddingVertical: 4,
+      paddingHorizontal: 16,
       // width:'100%'
     } as ViewStyle,
     imageError: {
@@ -704,7 +707,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 20,
-      
+
       // width:'100%'
     } as ViewStyle,
   });

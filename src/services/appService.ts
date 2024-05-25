@@ -183,8 +183,8 @@ export const postChecking = (data: CheckinData) =>
     .post(ApiConstant.POST_CHECKIN, data)
     .then(res => res.data);
 
-export const checkOut = (checkin_id: string) =>
-  createApi().post(ApiConstant.CHECK_OUT, {checkin_id: checkin_id});
+export const checkOut = (checkin_id: string,customer_id:any) =>
+  createApi().post(ApiConstant.CHECK_OUT, {checkin_id: checkin_id,customer_id:customer_id});
 
 export const getCustomer = () =>
   createApi()
