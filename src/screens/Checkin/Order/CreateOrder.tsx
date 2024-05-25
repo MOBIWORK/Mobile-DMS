@@ -913,18 +913,19 @@ const CreateOrder = () => {
             style={{paddingHorizontal: 16, height: AppConstant.HEIGHT * 0.9}}>
             <AppHeader
               label={getLabel('product')}
+              onBack={() => {
+                Keyboard.dismiss();
+                bottomSheetRef.current?.close();
+                dispatch(productActions.setDataProductDetail({}));
+              }}
               backButtonIcon={
-                <TouchableOpacity
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    bottomSheetRef.current?.close();
-                    dispatch(productActions.setDataProductDetail({}));
-                  }}>
-                  <Image
-                    source={ImageAssets.CloseIcon}
-                    style={{width: 28, height: 28}}
-                  />
-                </TouchableOpacity>
+                <Image
+                  source={ImageAssets.CloseIcon}
+                  style={{
+                    width: 28,
+                    height: 28,
+                  }}
+                />
               }
             />
             <UpdateProductItem
