@@ -24,7 +24,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
   productsPromotion,
   showDetailProdcut,
   handlerRemoveItemProduct,
-  customerCode,
+  customerId,
 }) => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
@@ -40,7 +40,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
               onPressIn={() => {
                 dispatch(productActions.resetDataProduct());
                 navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
-                  customer_code: customerCode,
+                  customer_id: customerId,
                 });
               }}
               style={{
@@ -68,7 +68,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
             </Button>
           </View>
         ) : (
-          <UINoData customer_code={customerCode} />
+          <UINoData customer_id={customerId} />
         )}
         <View style={{marginTop: 20, rowGap: 8}}>
           {products.map((item, i) => (
@@ -116,7 +116,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
 export default ProductList;
 interface UpdateItemProductProps {
   tab: number;
-  customerCode: string;
+  customerId: string;
   products: IProduct[];
   productsPromotion: IProductPromotion[];
   showDetailProdcut: (item: IProduct) => void;

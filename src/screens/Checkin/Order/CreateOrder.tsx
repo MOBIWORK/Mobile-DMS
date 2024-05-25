@@ -32,7 +32,6 @@ import {
   ViewStyle,
   TouchableOpacity,
   Keyboard,
-  ScrollView,
 } from 'react-native';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {TextInput} from 'react-native-paper';
@@ -765,7 +764,7 @@ const CreateOrder = () => {
                 toggleButtonUi(toggleTab, productsPromotion.length)}
               <ProductList
                 tab={toggleTab}
-                customerCode={router.params.data?.customer_code ?? ''}
+                customerId={router.params.data?.name ?? ''}
                 products={products}
                 productsPromotion={productsPromotion}
                 showDetailProdcut={showDetailProdcut}
