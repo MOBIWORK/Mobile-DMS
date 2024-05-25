@@ -596,10 +596,10 @@ const CreateOrder = () => {
     };
     if (dataCheckin) {
       objectData.checkin_id = dataCheckin.checkin_id;
-      objectData.customer = dataCheckin.customer_name;
+      objectData.customer = dataCheckin.name;
     }
     if (customer) {
-      objectData.customer = customer.customer_name;
+      objectData.customer = customer.name;
     }
 
     switch (type) {

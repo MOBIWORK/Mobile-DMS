@@ -210,7 +210,7 @@ const Index = () => {
       }
     };
     startEffect(() => {
-      getDetail(route.params.data.customer_name);
+      getDetail(route.params.data.name);
     });
   }, []);
 
