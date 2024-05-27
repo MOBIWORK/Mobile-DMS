@@ -1,6 +1,6 @@
-import {NavigatorScreenParams, RouteProp} from '@react-navigation/native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {ScreenConstant} from '../const';
+import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ScreenConstant } from '../const';
 import {
   IDataCustomers,
   IProduct,
@@ -8,12 +8,12 @@ import {
   ReportOrderItemType,
   VisitListItemType,
 } from '../models/types';
-import {CheckinData} from '../services/appService';
-import {TabParamList} from './MainTab';
+import { CheckinData } from '../services/appService';
+import { TabParamList } from './MainTab';
 
 export type UnAuthorizeParamList = {
-  [ScreenConstant.SIGN_IN]: {organizationName?: string};
-  [ScreenConstant.SELECT_ORGANIZATION]: {data?: string};
+  [ScreenConstant.SIGN_IN]: { organizationName?: string };
+  [ScreenConstant.SELECT_ORGANIZATION]: { data?: string };
   [ScreenConstant.SCANNER]: undefined;
   [ScreenConstant.FORGOT_PASSWORD]: undefined;
   [ScreenConstant.SUCCESS_CHANGE]: undefined;
@@ -24,10 +24,10 @@ export type AuthorizeParamsList = {
   [ScreenConstant.WIDGET_FVR_SCREEN]: undefined;
   [ScreenConstant.LIST_PRODUCT]: undefined;
   [ScreenConstant.SEARCH_PRODUCT]: undefined;
-  [ScreenConstant.PRODUCT_DETAIL]: {item: IProduct};
-  [ScreenConstant.IMAGE_VIEW]: {data: any};
+  [ScreenConstant.PRODUCT_DETAIL]: { item: IProduct };
+  [ScreenConstant.IMAGE_VIEW]: { data: any };
   [ScreenConstant.ORDER_SCREEN]: undefined;
-  [ScreenConstant.ORDER_DETAIL_SCREEN]: {name: string};
+  [ScreenConstant.ORDER_DETAIL_SCREEN]: { name: string };
   [ScreenConstant.LIST_VISIT]: undefined;
   [ScreenConstant.VISIT]: undefined;
   [ScreenConstant.SEARCH_VISIT]: undefined;
@@ -35,22 +35,22 @@ export type AuthorizeParamsList = {
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
   [ScreenConstant.CHECKIN_INVENTORY]: undefined;
   [ScreenConstant.CHECKIN_SELECT_PRODUCT]: undefined;
-  [ScreenConstant.CHECKIN_ORDER_CREATE]: {type: string};
+  [ScreenConstant.CHECKIN_ORDER_CREATE]: { type: string };
   [ScreenConstant.CUSTOMER]: undefined;
   [ScreenConstant.ADDING_NEW_CUSTOMER]: undefined;
-  [ScreenConstant.DETAIL_CUSTOMER]: {data: IDataCustomers};
-  [ScreenConstant.VISIT_DETAIL]: {data: any};
-  [ScreenConstant.REPORT_ORDER_DETAIL]: {item: ReportOrderItemType};
+  [ScreenConstant.DETAIL_CUSTOMER]: { data: IDataCustomers };
+  [ScreenConstant.VISIT_DETAIL]: { data: any };
+  [ScreenConstant.REPORT_ORDER_DETAIL]: { item: ReportOrderItemType };
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
-  [ScreenConstant.CHECKIN]: {item: CheckinData; isLocation?: any};
+  [ScreenConstant.CHECKIN]: { item: CheckinData; isLocation?: any };
   [ScreenConstant.UPDATE_SCREEN]: any;
-  [ScreenConstant.TAKE_PICTURE_VISIT]: {data: any};
+  [ScreenConstant.TAKE_PICTURE_VISIT]: { data: any };
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
-  [ScreenConstant.NOTE_DETAIL]: {data: NoteType};
+  [ScreenConstant.NOTE_DETAIL]: { data: NoteType };
   [ScreenConstant.ADD_NOTE]: undefined;
-  [ScreenConstant.CHECKIN_LOCATION]: {type: string; data: CheckinData};
+  [ScreenConstant.CHECKIN_LOCATION]: { type: string; data: CheckinData };
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
   [ScreenConstant.REPORT_SCREEN]: undefined;
   [ScreenConstant.STATISTICAL]: undefined;
@@ -61,7 +61,7 @@ export type AuthorizeParamsList = {
   [ScreenConstant.NEW_CUSTOMER]: undefined;
   [ScreenConstant.REPORT_DEBT]: undefined;
   [ScreenConstant.REPORT_KPI]: undefined;
-  [ScreenConstant.SEARCH_COMMON_SCREEN]: {type: string};
+  [ScreenConstant.SEARCH_COMMON_SCREEN]: { type: string };
   [ScreenConstant.TAKE_PICTURE_SCORE]: {
     data: any;
     screen: any;
@@ -71,13 +71,14 @@ export type AuthorizeParamsList = {
     screen?: string;
   };
   [ScreenConstant.USER_INFO_SCREEN]: undefined;
-  [ScreenConstant.EDIT_ACCOUNT]: {title: string; content: string};
+  [ScreenConstant.EDIT_ACCOUNT]: { title: string; content: string };
   [ScreenConstant.ACCOUNT_SETTING]: undefined;
   [ScreenConstant.CURRENT_PASSWORD]: undefined;
-  [ScreenConstant.CHANGE_PASSWORD]: {isForgotPassword: boolean};
+  [ScreenConstant.CHANGE_PASSWORD]: { isForgotPassword: boolean };
   [ScreenConstant.NOTIFY_SETTING]: undefined;
-  [ScreenConstant.BEFORE_CHECKIN]: {item: CheckinData};
+  [ScreenConstant.BEFORE_CHECKIN]: { item: CheckinData };
   [ScreenConstant.BARCODE_SCANNER]: undefined;
+  [ScreenConstant.NOTIFY_DETAIL]: { name: string };
 };
 
 export type RootStackParamList = {
