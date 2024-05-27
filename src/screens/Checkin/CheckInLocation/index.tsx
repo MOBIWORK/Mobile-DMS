@@ -105,6 +105,7 @@ const CheckInLocation = () => {
         });
         setValue(response.results[0].formatted_address);
       }
+      // setValue(text)
     }
   };
 
@@ -122,7 +123,7 @@ const CheckInLocation = () => {
       setValue(response.results[0].formatted_address);
     }
   };
-
+console.log(value,'?????')
   const handleComplete = async () => {
     if (value !== route.params.data.item.customer_primary_address) {
       dispatch(setProcessingStatus(true));
@@ -141,9 +142,8 @@ const CheckInLocation = () => {
         checkin_id: route.params.data.checkin_id,
       };
       newParams.data.kh_diachi = params.address_line1;
-
+      console.log(params, 'params running');
       const response: any = await CheckinService.updateCustomerAddress(params);
-      console.log(response, 'response');
       if (response?.status === ApiConstant.STT_OK) {
         dispatch(
           appActions.setDataCheckIn({
@@ -269,7 +269,7 @@ const CheckInLocation = () => {
             tintColor={theme.colors.text_secondary}
           />
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput]}
             value={value}
             onChangeText={setValue}
             onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}
@@ -319,6 +319,7 @@ const createStyle = (theme: ExtendedTheme) =>
       color: theme.colors.text_primary,
       marginLeft: 8,
       maxWidth: '90%',
+      flex: 1,
     } as TextStyle,
     regainPosition: {
       paddingHorizontal: 16,
