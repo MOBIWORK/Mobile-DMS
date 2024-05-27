@@ -577,7 +577,7 @@ const CreateOrder = () => {
   }, [setOpenDate]);
 
   const onCreatedOrder = async () => {
-    // dispatch(appActions.setProcessingStatus(true));
+    dispatch(appActions.setProcessingStatus(true));
     let status: any = 0;
     const arrItems = products.map(item => ({
       item_code: item.item_code,
@@ -612,20 +612,20 @@ const CreateOrder = () => {
         objectData.delivery_date = new Date(date).getTime() / 1000;
         objectData.grand_total = total_Money;
         console.log('object', objectData);
-        // status = (await OrderService.createdOrder(objectData)).status;
+        status = (await OrderService.createdOrder(objectData)).status;
         break;
       case 'RETURN_ORDER':
         objectData.grand_total = -total_Money;
-        // status = (await OrderService.createdReturnOrder(objectData)).status;
+        status = (await OrderService.createdReturnOrder(objectData)).status;
         break;
       default:
         break;
     }
 
-    // dispatch(appActions.setProcessingStatus(false));
-    // if (status === ApiConstant.STT_CREATED) {
-    //   completeCheckin();
-    // }
+    dispatch(appActions.setProcessingStatus(false));
+    if (status === ApiConstant.STT_CREATED) {
+      completeCheckin();
+    }
   };
 
   useEffect(() => {
