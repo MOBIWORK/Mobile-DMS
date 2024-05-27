@@ -268,3 +268,14 @@ export const createImageCheckinApi = (data: any) =>
 
 export const changePassword = (data: Account) =>
   createApi().put(ApiConstant.PUT_USER_CHANGE_PASSWORD, data);
+
+export const getNotification = () => {
+  return createApi()
+  .get(ApiConstant.GET_NOTIFICATION)
+  .then(res => res.data)
+}
+export const getNotificationDetail = (name:any) => {
+  return createApi()
+  .get(ApiConstant.GET_NOTIFICATION_DETAIL, {name: name})
+  .then(res => res.data)
+}
