@@ -47,6 +47,7 @@ const VisitItem: FC<VisitItemProps> = ({
     state => state.app.systemConfig,
     shallowEqual,
   );
+  // console.log(item.customer_location_primary,"????")
 
   const distanceCal = useMemo(() => {
     let location: LocationProps = JSON.parse(item.customer_location_primary != null && item.customer_location_primary);

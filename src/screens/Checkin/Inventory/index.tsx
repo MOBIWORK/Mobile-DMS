@@ -13,6 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import {
   ImageStyle,
   Keyboard,
+  Pressable,
   StyleSheet,
   Text,
   TextStyle,
@@ -49,8 +50,8 @@ const CheckinInventory = () => {
   const bottomSheetRefDetail = useRef<BottomSheet>(null);
   const bottomSheetData = useRef<BottomSheet>(null);
   const styles = createStyles(useTheme());
-  const snapPointsDetailPr = useMemo(() => ['60%'], []);
-  const snapPointsData = useMemo(() => ['60%'], []);
+  const snapPointsDetailPr = useMemo(() => ['100%'], []);
+  const snapPointsData = useMemo(() => ['30%'], []);
   const [detailProduct, setDetailProduct] = useState<IProduct | any>();
 
   const products = useSelector(state => state.product.dataSelected);
@@ -65,7 +66,6 @@ const CheckinInventory = () => {
   );
   const [labelBottonSheet, setLabelBottonSheet] = useState<string>('');
   const [dataBottomSheet, setDataBottomSheet] = useState<IFilterType[]>([]);
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [openDate, setOpenDate] = useState<boolean>(false);
   const indexSelect = useRef<number>(0);
   const onBackScreen = () => {
@@ -250,87 +250,91 @@ const CheckinInventory = () => {
 
   const renderUiBottomSheetDetailProduct = React.useCallback(() => {
     return (
-      <Block block>
-        <Block padding={16} paddingTop={0} marginTop={-20} block>
-          <AppHeader
-            label={getLabel('product')}
-            onBack={() =>
-              bottomSheetRefDetail.current &&
-              bottomSheetRefDetail.current.close()
-            }
-            backButtonIcon={
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name={'close'}
-                size={24}
-                color={colors.text_primary}
+      <Block block height={AppConstant.HEIGHT}>
+        <Pressable
+          style={{height: AppConstant.HEIGHT * 0.9}}
+          onPress={() => Keyboard.dismiss()}>
+          <Block padding={16} paddingTop={0} block>
+            <AppHeader
+              label={getLabel('product')}
+              onBack={() =>
+                bottomSheetRefDetail.current &&
+                bottomSheetRefDetail.current.close()
+              }
+              backButtonIcon={
+                <Image
+                  source={ImageAssets.CloseIcon}
+                  style={{
+                    width: 28,
+                    height: 28,
+                  }}
+                />
+              }
+            />
+            <View style={{marginTop: 32, rowGap: 24}}>
+              <AppInput
+                label={getLabel('productCode')}
+                value={detailProduct?.item_code || ''}
+                editable={false}
+                styles={{
+                  backgroundColor: colors.bg_neutral,
+                }}
+                hiddenRightIcon
               />
-            }
-          />
-          <View style={{marginTop: 32, rowGap: 24}}>
-            <AppInput
-              label={getLabel('productCode')}
-              value={detailProduct?.item_code || ''}
-              editable={false}
-              styles={{
-                backgroundColor: colors.bg_neutral,
-              }}
-              hiddenRightIcon
-            />
-            <AppInput
-              label={getLabel('unit')}
-              value={detailProduct?.stock_uom || ''}
-              editable={false}
-              onPress={() => onOpenBottonSheetData('unit')}
-              rightIcon={
-                <TextInput.Icon
-                  onPress={() => onOpenBottonSheetData('unit')}
-                  icon={'chevron-down'}
-                  style={{width: 24, height: 24}}
-                  color={colors.text_secondary}
-                />
-              }
-            />
-            <AppInput
-              label={getLabel('quantity')}
-              value={detailProduct?.quantity?.toString() || ''}
-              hiddenRightIcon
-              onChangeValue={(txt: string) =>
-                setDetailProduct({
-                  ...detailProduct,
-                  quantity: txt == '' ? 0 : parseInt(txt),
-                })
-              }
-              inputProp={{
-                keyboardType: 'numeric',
-              }}
-            />
-            <AppInput
-              label={getLabel('expired')}
-              value={
-                detailProduct?.expiry
-                  ? CommonUtils.convertDate(detailProduct.expiry)
-                  : ''
-              }
-              editable={false}
-              onPress={() => setOpenDate(true)}
-              rightIcon={
-                <TextInput.Icon
-                  icon={'calendar-month-outline'}
-                  style={{width: 24, height: 24}}
-                  color={colors.text_secondary}
-                />
-              }
-            />
-          </View>
-
-          {!isKeyboardVisible && (
+              <AppInput
+                label={getLabel('unit')}
+                value={detailProduct?.stock_uom || ''}
+                editable={false}
+                onPress={() => onOpenBottonSheetData('unit')}
+                rightIcon={
+                  <TextInput.Icon
+                    onPress={() => onOpenBottonSheetData('unit')}
+                    icon={'chevron-down'}
+                    style={{width: 24, height: 24}}
+                    color={colors.text_secondary}
+                  />
+                }
+              />
+              <AppInput
+                label={getLabel('quantity')}
+                value={detailProduct?.quantity?.toString() || ''}
+                hiddenRightIcon
+                onChangeValue={(txt: string) =>
+                  setDetailProduct({
+                    ...detailProduct,
+                    quantity: txt == '' ? 0 : parseInt(txt),
+                  })
+                }
+                inputProp={{
+                  keyboardType: 'numeric',
+                }}
+              />
+              <AppInput
+                label={getLabel('expired')}
+                value={
+                  detailProduct?.expiry
+                    ? CommonUtils.convertDate(detailProduct.expiry)
+                    : ''
+                }
+                editable={false}
+                onPress={() => setOpenDate(true)}
+                rightIcon={
+                  <TextInput.Icon
+                    icon={'calendar-month-outline'}
+                    style={{width: 24, height: 24}}
+                    color={colors.text_secondary}
+                  />
+                }
+              />
+            </View>
             <Block
               block
               direction="row"
               justifyContent="space-between"
-              alignItems="flex-end"
-              marginBottom={30}>
+              alignItems="center"
+              alignSelf={'center'}
+              position={'absolute'}
+              bottom={0}>
               <AppButton
                 style={{
                   width: '45%',
@@ -340,7 +344,8 @@ const CheckinInventory = () => {
                 label={getLabel('cancel')}
                 styleLabel={{color: colors.text_secondary}}
                 onPress={() =>
-                  bottomSheetRef.current && bottomSheetRef.current.close()
+                  bottomSheetRefDetail.current &&
+                  bottomSheetRefDetail.current.close()
                 }
               />
               <AppButton
@@ -349,8 +354,8 @@ const CheckinInventory = () => {
                 onPress={updateProduct}
               />
             </Block>
-          )}
-        </Block>
+          </Block>
+        </Pressable>
       </Block>
     );
   }, [bottomSheetRefDetail.current]);
@@ -379,27 +384,6 @@ const CheckinInventory = () => {
   };
 
   useEffect(() => {
-    // dispatch(productActions.setListProductSelect([]))
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true); // or some other action
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false); // or some other action
-      },
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
-
-  useEffect(() => {
     Keyboard.dismiss();
   }, [products]);
 
@@ -423,7 +407,7 @@ const CheckinInventory = () => {
               onPress={() => {
                 dispatch(productActions.resetDataProduct());
                 navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
-                  customer_code: dataCheckin.customer_code,
+                  customer_id: dataCheckin.name,
                 });
               }}
             />
@@ -484,7 +468,7 @@ const CheckinInventory = () => {
                 onPress={() => {
                   dispatch(productActions.resetDataProduct());
                   navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
-                    customer_code: dataCheckin.customer_code,
+                    customer_id: dataCheckin.name,
                   });
                 }}>
                 {getLabel('selectProduct')}

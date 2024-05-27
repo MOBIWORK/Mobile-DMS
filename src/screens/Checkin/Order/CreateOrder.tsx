@@ -32,7 +32,6 @@ import {
   ViewStyle,
   TouchableOpacity,
   Keyboard,
-  ScrollView,
 } from 'react-native';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {TextInput} from 'react-native-paper';
@@ -220,6 +219,8 @@ const CreateOrder = () => {
       dispatch(orderAction.setCustomerOder(null));
     }
     dispatch(productActions.updateProductSelect([]));
+    dispatch(productActions.resetDataProduct());
+    dispatch(productActions.updateListProduct([]));
     navigation.goBack();
   };
 
@@ -240,6 +241,9 @@ const CreateOrder = () => {
       dispatch(orderAction.setCustomerOder(null));
     }
     dispatch(productActions.updateProductSelect([]));
+    dispatch(productActions.resetDataProduct());
+    dispatch(productActions.updateListProduct([]));
+
     navigation.goBack();
   };
 
@@ -596,10 +600,10 @@ const CreateOrder = () => {
     };
     if (dataCheckin) {
       objectData.checkin_id = dataCheckin.checkin_id;
-      objectData.customer = dataCheckin.customer_name;
+      objectData.customer = dataCheckin.name;
     }
     if (customer) {
-      objectData.customer = customer.customer_name;
+      objectData.customer = customer.name;
     }
 
     switch (type) {
@@ -765,7 +769,7 @@ const CreateOrder = () => {
                 toggleButtonUi(toggleTab, productsPromotion.length)}
               <ProductList
                 tab={toggleTab}
-                customerCode={router.params.data?.customer_code ?? ''}
+                customerId={router.params.data?.name ?? ''}
                 products={products}
                 productsPromotion={productsPromotion}
                 showDetailProdcut={showDetailProdcut}
@@ -913,18 +917,19 @@ const CreateOrder = () => {
             style={{paddingHorizontal: 16, height: AppConstant.HEIGHT * 0.9}}>
             <AppHeader
               label={getLabel('product')}
+              onBack={() => {
+                Keyboard.dismiss();
+                bottomSheetRef.current?.close();
+                dispatch(productActions.setDataProductDetail({}));
+              }}
               backButtonIcon={
-                <TouchableOpacity
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    bottomSheetRef.current?.close();
-                    dispatch(productActions.setDataProductDetail({}));
-                  }}>
-                  <Image
-                    source={ImageAssets.CloseIcon}
-                    style={{width: 28, height: 28}}
-                  />
-                </TouchableOpacity>
+                <Image
+                  source={ImageAssets.CloseIcon}
+                  style={{
+                    width: 28,
+                    height: 28,
+                  }}
+                />
               }
             />
             <UpdateProductItem

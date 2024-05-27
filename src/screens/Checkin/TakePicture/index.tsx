@@ -14,6 +14,7 @@ import {
   Image,
   ImageStyle,
   PermissionsAndroid,
+  Platform,
   Pressable,
   StyleSheet,
   // Text,
@@ -200,8 +201,8 @@ const TakePicture = () => {
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
     ]);
     if (
-      granted['android.permission.CAMERA'] &&
-      granted['android.permission.WRITE_EXTERNAL_STORAGE']
+      (granted['android.permission.CAMERA'] &&
+      granted['android.permission.WRITE_EXTERNAL_STORAGE']) || Platform.OS === 'ios'
     ) {
       await CameraUtils.openImagePickerCamera((img, base64) => {
         const newListImage = [
@@ -261,12 +262,14 @@ const TakePicture = () => {
     setAlbumError([]);
     setError(false);
   }, [error]);
+  // console.log(systemConfig.batbuoc_chupanh,'ap')
 
   useEffect(() => {
     const getListAlbum = async () => {
       const res: any = await CheckinService.getListAlbum();
       if (res?.result?.length > 0) {
         const listAlbumResult: ListAlbumType[] = res.result;
+        console.log(res.result,'result album')
         const listAlbum = listAlbumResult.map((item, index) => {
           return {
             id: item.ma_album,
