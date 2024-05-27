@@ -373,7 +373,7 @@ const OrderList = () => {
           <FlatList
             data={orders}
             onEndReached={onEndReachedThreshold}
-            onEndReachedThreshold={0.2}
+            onEndReachedThreshold={0}
             initialNumToRender={20}
             showsVerticalScrollIndicator={false}
             style={{flex: 1}}

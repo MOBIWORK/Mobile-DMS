@@ -1083,7 +1083,7 @@ export type ListAlbumType = {
   name: string;
   ma_album: string;
   ten_album: string;
-  so_anh_toi_thieu: string;
+  so_anh_toi_thieu?: string;
   trang_thai: string;
 };
 

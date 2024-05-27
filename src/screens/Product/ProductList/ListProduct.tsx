@@ -199,7 +199,7 @@ const ListProduct = () => {
       item_group: filterGroup.toString(),
       item_name: searchProduct,
       page_size: pageSize,
-      page: page,
+      page_number: page,
     });
     if (res?.status === ApiConstant.STT_OK) {
       dispatch(
@@ -395,7 +395,7 @@ const ListProduct = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{rowGap: 16}}
             style={{height: '85%'}}
-            onEndReachedThreshold={0.1}
+            onEndReachedThreshold={0}
             onEndReached={onScrollPage}
           />
         )}

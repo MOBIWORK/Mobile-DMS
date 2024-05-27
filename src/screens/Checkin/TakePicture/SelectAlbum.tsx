@@ -53,7 +53,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
             ...itemCur,
             id: itemCur.id,
             isSelected: !itemCur.isSelected,
-            numPicsRequired: itemCur.numPicsRequired,
+            numPicsRequired:(( itemCur.numPicsRequired  != undefined ) ||( itemCur.numPicsRequired != null )) ? itemCur.numPicsRequired : undefined,
           };
         } else {
           return itemCur;
@@ -73,62 +73,42 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   };
 
   const handleAlbum = (selectedItem: AlbumBottomSheet[]) => {
-    const selectedData = selectedItem
-      .filter(item => item.isSelected)
-      .map((selected, selectedIdx) => ({
-        id: selected.id,
-        label: selected.label,
-        image: ['IconCamera'],
-        numberImageReq: selected.numPicsRequired,
-      }));
-
-    const albumImageDataCopy = [...albumImageData];
-
-    selectedData.forEach(selectedItem => {
-      const existingIndex = albumImageDataCopy.findIndex(
-        item => item.label === selectedItem.label,
+    // Filter only selected items
+    const selectedData = selectedItem.filter(item => item.isSelected);
+  
+    // Create a map for faster lookup
+    const selectedLabels = new Set(selectedData.map(item => item.label));
+  
+    // Filter albumImageDataCopy to remove unselected items
+    const albumImageDataCopyFiltered = albumImageData.filter(item =>
+      selectedLabels.has(item.label)
+    );
+  
+    // Merge selected items with existing albumImageDataCopyFiltered
+    const mergedData = selectedData.map(selectedItem => {
+      const existingItemIndex = albumImageDataCopyFiltered.findIndex(
+        item => item.label === selectedItem.label
       );
-
-      if (existingIndex === -1 && !('isSelected' in selectedItem)) {
-        const indexToRemove = albumImageDataCopy.findIndex(
-          item => item.label === selectedItem.label,
-        );
-        if (indexToRemove !== -1) {
-          albumImageDataCopy.splice(indexToRemove, 1);
-        }
+      if (existingItemIndex !== -1) {
+        // If item exists, return it as is
+        return albumImageDataCopyFiltered[existingItemIndex];
+      } else {
+        // If item doesn't exist, create a new one
+        return {
+          id: selectedItem.id, // Adjust this based on your actual structure
+          label: selectedItem.label,
+          image: ['IconCamera'],
+          numberImageReq: selectedItem.numPicsRequired || undefined,
+        };
       }
     });
-
-    // console.log('selectedItem2', selectedData);
-
-    if (selectedData.length > 0) {
-      if (albumImageData.length > 0) {
-        setAlbumImageData([
-          ...selectedData.map((item, index) => ({
-            id: item.id, // Adjust this based on your actual structure
-            label: item.label,
-            image: albumImageData[index]?.image
-              ? albumImageData[index]?.image
-              : item.image.map(image => ({url: image})),
-            numberImageReq: item.numberImageReq,
-          })),
-        ]);
-      } else {
-        setAlbumImageData([
-          ...selectedData.map(item => ({
-            id: item.id, // Adjust this based on your actual structure
-            label: item.label,
-            image: item.image.map(image => ({url: image})),
-            numberImageReq: item.numberImageReq,
-          })),
-        ]);
-      }
-    } else {
-      setAlbumImageData([]);
-    }
+  
+    // Update state only once
+    setAlbumImageData(mergedData);
+  
     return selectedData;
   };
-
+  
   const ItemAlbum: FC<ItemAlbumProps> = ({item}) => {
     return (
       <Pressable
@@ -255,7 +235,7 @@ interface SelectAlbumProps {
   bottomSheetRef: any;
   data: IFilterType[] | undefined;
   setData: (data: IFilterType[]) => void;
-  setAlbumImageData: React.Dispatch<React.SetStateAction<IAlbumImage[]>>;
+  setAlbumImageData: React.Dispatch<React.SetStateAction<IAlbumImage[]| any>>;
   albumImageData: IAlbumImage[];
 }
 interface ItemAlbumProps {

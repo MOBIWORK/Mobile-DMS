@@ -64,9 +64,9 @@ const useTimer = () => {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active') {
+      if (nextAppState === 'active' && isFocus) {
         const newTimeStamp = moment(new Date()).valueOf();
-        if (mmkv?.trim().length > 0 && isFocus) {
+        if (mmkv?.trim().length > 0) {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
             setElapsedTime(Math.ceil(currentTime / 1000));
@@ -96,7 +96,7 @@ const useTimer = () => {
   }, [appState]);
 
   useEffect(() => {
-    if (mmkv?.trim().length > 0) {
+    if (mmkv?.trim().length > 0 && isFocus) {
       console.log('run this');
       const newTimeStamp = moment(new Date()).valueOf();
       startTransition(() => {
@@ -154,10 +154,11 @@ const CheckIn = () => {
     shallowEqual,
   );
   const timeCheckin = useRef(
-    decimalMinutesToTime(systemConfig.thoigian_toithieu),
+    decimalMinutesToTime(
+      systemConfig?.tgcheckin_toithieu ? systemConfig.thoigian_toithieu : 0,
+    ),
   );
   useDisableBackHandler(true);
-  // console.log(elapsedTime,'params passed')
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
     type: string;
@@ -180,7 +181,6 @@ const CheckIn = () => {
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   };
 
-  // console.log(elapsedTime,'b')
   const handleSwitch = useCallback(() => {
     if (title === getLabel('openDoor')) {
       setTitle(getLabel('closeDoor'));
@@ -224,7 +224,6 @@ const CheckIn = () => {
         return setOpenDialogErr(false);
     }
   };
-  // console.log(systemConfig,'systemConfig')
 
   const isValidCheckOut = (currentLocation: GeolocationResponse) => {
     function isCamera(categoriesItem: IItemCheckIn) {
@@ -330,6 +329,7 @@ const CheckIn = () => {
     dispatch(appActions.setProcessingStatus(true));
     CommonUtils.getCurrentLocation(locations => {
       if (!isValidCheckOut(locations)) {
+        dispatch(appActions.setProcessingStatus(false));
         return;
       } else {
         try {
@@ -360,12 +360,22 @@ const CheckIn = () => {
 
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
-    const res: any = await AppService.checkOut(dataCheckIn.checkin_id);
-    if (res?.status === ApiConstant.STT_OK) {
-      dispatch(checkinActions.resetData());
-      dispatch(appActions.setDataCheckIn({}));
-      storage.set('time', '');
-      goBack();
+    try {
+      dispatch(appActions.setProcessingStatus(true));
+      const res: any = await AppService.checkOut(
+        dataCheckIn.checkin_id,
+        dataCheckIn.item.name,
+      );
+      if (res?.status === ApiConstant.STT_OK) {
+        dispatch(checkinActions.resetData());
+        dispatch(appActions.setDataCheckIn({}));
+        storage.set('time', '');
+        goBack();
+      }
+    } catch (e) {
+      dispatch(appActions.setProcessingStatus(false));
+    } finally {
+      dispatch(appActions.setProcessingStatus(false));
     }
   }, [dataCheckIn]);
 

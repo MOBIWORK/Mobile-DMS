@@ -1,7 +1,9 @@
 import {
   ActivityIndicator,
+  Alert,
   Image,
   ImageStyle,
+  PermissionsAndroid,
   Platform,
   StyleSheet,
   TouchableOpacity,
@@ -124,8 +126,6 @@ const TakePictureScore = () => {
         }
       });
 
-      console.log('Updated List:', updatedListProgramImage[0].image);
-
       dispatch(checkinActions.setListImageProgram(updatedListProgramImage));
 
       try {
@@ -164,6 +164,8 @@ const TakePictureScore = () => {
         console.log('Error uploading images:', err);
       } finally {
         setSelectedImages([]);
+        dispatch(checkinActions.setListImageProgram([]));
+        dispatch(checkinActions.setListImageSelect([]));
         setLoading(false);
       }
     },
@@ -185,26 +187,37 @@ const TakePictureScore = () => {
   // }, [selectedImages]);
   const handleCameraPicture = React.useCallback(async () => {
     dispatch(appActions.setProcessingStatus(true));
-    await CameraUtils.openImagePickerCamera(img => {
-      setAlbumImage(prevImages => {
-        if (prevImages.length === 0) {
-          // If no images exist, add the new image as the initial picture
-          return [
-            'IconCamera',
-            {uri: img, timeStamp: moment(new Date()).unix()},
-            ...prevImages.slice(1),
-          ];
-        } else {
-          // If images exist, keep the initial picture at index 0 and add the new image at the end
-          return [
-            prevImages[0],
-            ...prevImages.slice(1),
-            {uri: img, timeStamp: moment(new Date()).unix()},
-          ];
-        }
+    const granted = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    ]);
+    if (
+      (granted['android.permission.CAMERA'] &&
+      granted['android.permission.WRITE_EXTERNAL_STORAGE']) || Platform.OS === 'ios'
+    ) {
+      await CameraUtils.openImagePickerCamera(img => {
+        setAlbumImage(prevImages => {
+          if (prevImages.length === 0) {
+            // If no images exist, add the new image as the initial picture
+            return [
+              'IconCamera',
+              {uri: img, timeStamp: moment(new Date()).unix()},
+              ...prevImages.slice(1),
+            ];
+          } else {
+            // If images exist, keep the initial picture at index 0 and add the new image at the end
+            return [
+              prevImages[0],
+              ...prevImages.slice(1),
+              {uri: img, timeStamp: moment(new Date()).unix()},
+            ];
+          }
+        });
       });
-    });
-    dispatch(appActions.setProcessingStatus(false));
+      dispatch(appActions.setProcessingStatus(false));
+    } else {
+      Alert.alert('Bạn chưa cấp quyền');
+    }
   }, [selectedImages]);
 
   const handleSelectImage = useCallback(
@@ -250,9 +263,7 @@ const TakePictureScore = () => {
     return (
       <Block middle block justifyContent="center">
         <SvgIcon source={'TakePicture'} size={90} />
-        <Text style={{color: theme.colors.text_secondary}}>
-          Thêm ảnh chụp
-        </Text>
+        <Text style={{color: theme.colors.text_secondary}}>Thêm ảnh chụp</Text>
         <TouchableOpacity
           style={styles.emptyAlbumAdding}
           onPress={() => handleCameraPicture()}>

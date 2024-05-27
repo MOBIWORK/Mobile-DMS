@@ -54,7 +54,7 @@ const Overview = (props: Props) => {
               </AppText>
               {props.data.address.map((item, index) => {
                 return (
-                  props.data.customer_primary_address.includes(
+                  props.data?.customer_primary_address?.includes(
                     item.address_title,
                   ) && (
                     <CardOverView

@@ -1,4 +1,4 @@
-import { IDataCustomer, IOrderDetail, IOrderList } from "../../models/types"
+import { IDataCustomer, IDataCustomers, IOrderDetail, IOrderList } from "../../models/types"
 
 
 export type OrderStateType = {
@@ -7,7 +7,7 @@ export type OrderStateType = {
     message : string,
     totalItem : number,
     item : IOrderDetail | null,
-    customerOrder : IDataCustomer | null
+    customerOrder : IDataCustomers| null
 }
 
 

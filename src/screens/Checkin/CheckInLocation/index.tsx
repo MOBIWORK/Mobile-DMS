@@ -2,12 +2,11 @@ import React, {useLayoutEffect, useRef, useState} from 'react';
 import {AppButton, AppHeader, SvgIcon} from '../../../components/common';
 import {
   ExtendedTheme,
-  NavigationProp,
   useNavigation,
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {AuthorizeParamsList, RouterProp} from '../../../navigation/screen-type';
+import {RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {
@@ -38,11 +37,9 @@ import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {MainLayout} from '../../../layouts';
 import isEqual from 'react-fast-compare';
 import {CheckinData} from '../../../services/appService';
 import {shallowEqual} from 'react-redux';
-import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -51,7 +48,6 @@ const CheckInLocation = () => {
   const navigation = useNavigation<any>();
 
   const route = useRoute<RouterProp<'CHECKIN_LOCATION'>>();
-  const paramsCheckin = useRoute<RouterProp<'CHECKIN'>>().params;
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const styles = createStyle(theme);
@@ -141,8 +137,10 @@ const CheckInLocation = () => {
         county: split[2] ?? '',
         city: split[3] ?? '',
         country: 'Việt Nam',
+        checkin_id: route.params.data.checkin_id,
       };
       newParams.data.kh_diachi = params.address_line1;
+
       const response: any = await CheckinService.updateCustomerAddress(params);
       if (response?.status === ApiConstant.STT_OK) {
         dispatch(
@@ -199,9 +197,6 @@ const CheckInLocation = () => {
   }, []);
 
   return (
-    // <SafeAreaView
-    //   edges={['bottom', 'top']}
-    //   style={{backgroundColor: theme.colors.bg_default, paddingHorizontal: 0}}>
     <SafeAreaView style={{paddingHorizontal: 0}}>
       <AppHeader
         style={{paddingHorizontal: 16}}
@@ -294,7 +289,6 @@ const CheckInLocation = () => {
         </View>
       </View>
     </SafeAreaView>
-    // </SafeAreaView>
   );
 };
 export default React.memo(CheckInLocation, isEqual);

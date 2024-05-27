@@ -10,15 +10,18 @@ import {
 import {ImageAssets} from '../../../../assets';
 import {Button} from 'react-native-paper';
 import {ScreenConstant} from '../../../../const';
-import React from 'react';
+import React, {FC} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../../navigation/screen-type';
+import {useDispatch} from 'react-redux';
+import {productActions} from '../../../../redux-store/product-reducer/reducer';
 
-const UINoData = () => {
+const UINoData: FC<UINoDataProp> = ({customer_id}) => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
+  const dispatch = useDispatch();
   return (
     <View style={[styles.containerNodata]}>
       <View style={{marginTop: 70}}>
@@ -43,9 +46,12 @@ const UINoData = () => {
             labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}
             icon="plus"
             mode="outlined"
-            onPress={() =>
-              navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT)
-            }>
+            onPress={() => {
+              dispatch(productActions.resetDataProduct());
+              navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
+                customer_id: customer_id,
+              });
+            }}>
             {getLabel('selectProduct')}
           </Button>
           <Button
@@ -62,6 +68,9 @@ const UINoData = () => {
     </View>
   );
 };
+interface UINoDataProp {
+  customer_id: string;
+}
 export default UINoData;
 const styles = StyleSheet.create({
   flexSpace: {

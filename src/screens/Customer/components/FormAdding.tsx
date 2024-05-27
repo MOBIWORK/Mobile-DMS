@@ -29,7 +29,7 @@ import {AppIcons, AppInput, Block, SvgIcon,AppText as Text} from '../../../compo
 import AppImage from '../../../components/common/AppImage';
 import {IDataCustomer} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {useSelector} from '../../../config/function';
+import {formatMoney, useSelector} from '../../../config/function';
 import CardAddress from './CardAddress';
 import {dispatch} from '../../../utils/redux';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
@@ -272,7 +272,7 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('debtLimit')}
-        value={valueFilter.credit_limit ? formatCash(valueFilter.credit_limit )  : '' }
+        value={valueFilter.credit_limit ? formatMoney(valueFilter.credit_limit )  : '' }
         editable={true}
         hiddenRightIcon={false}
         isRequire={false}

@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
     alignItems: 'center',
     // backgroundColor:'red',
-    width:32,
-    height:32,
-    justifyContent:'center'
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
   } as ViewStyle,
 });
