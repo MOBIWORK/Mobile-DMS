@@ -59,6 +59,7 @@ const TabOverview = ({data}: PropsType) => {
     setTotalPriceProduct(item.amount * item.qty - priceDiscount);
   };
 
+  console.log(data,'data')
   const renderUiBottomSheet = () => {
     return (
       <View
@@ -216,7 +217,7 @@ const TabOverview = ({data}: PropsType) => {
                       numberOfLines={1}
                       ellipsizeMode="tail"
                       style={[styles.KHinforDesc, {width: '90%'}]}>
-                      {data?.address_display}
+                      {data?.customer_address}
                     </Text>
                   </View>
                   <View style={[styles.flex, {marginTop: 4}]}>
@@ -278,7 +279,7 @@ const TabOverview = ({data}: PropsType) => {
                     <Text style={[styles.labelDetail]}>
                       {getLabel('eXwarehouse')}
                     </Text>
-                    <Text style={[styles.textInforO]}>
+                    <Text style={[styles.textInforO]} numberOfLines={1} > 
                       {data?.set_warehouse}
                     </Text>
                   </View>
@@ -318,6 +319,50 @@ const TabOverview = ({data}: PropsType) => {
                       />
                     </Pressable>
                   ))}
+              </View>
+            </View>
+
+            <View>
+              <View style={[styles.flexSpace, {marginBottom: 8}]}>
+                <Text style={[styles.textLabel]}>{getLabel('VAT')}</Text>
+                <TouchableOpacity>
+                  <AppIcons
+                    iconType={ICON_TYPE.Feather}
+                    name="chevron-down"
+                    size={18}
+                    color={colors.text_primary}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={[
+                  styles.containerIfOd,
+                  {rowGap: 12, paddingVertical: 16},
+                ]}>
+                <View style={[styles.flexSpace]}>
+                  <Text style={[styles.labelDetail]}>
+                    {getLabel('formVat')}
+                  </Text>
+                  <Text style={[styles.textInforO]}>
+                    {data?.taxes_and_charges}
+                  </Text>
+                </View>
+                <View style={[styles.flexSpace]}>
+                  <Text style={[styles.labelDetail]}>
+                    {getLabel('VAT')} (%){' '}
+                  </Text>
+                  <Text style={[styles.textInforO]}>{data?.rate}</Text>
+                </View>
+                <View style={[styles.flexSpace]}>
+                  <Text style={[styles.labelDetail]}>
+                    {getLabel('VAT')} (VND)
+                  </Text>
+                  <Text style={[styles.textInforO]}>
+                    {CommonUtils.formatCash(
+                      data?.total_taxes_and_charges?.toString(),
+                    )}
+                  </Text>
+                </View>
               </View>
             </View>
 
@@ -534,6 +579,7 @@ const createStyles = (theme: AppTheme) =>
       fontSize: 16,
       lineHeight: 24,
       fontWeight: '400',
+      maxWidth:200
     } as TextStyle,
     totalPrice: {
       fontSize: 20,

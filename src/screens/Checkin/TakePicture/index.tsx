@@ -262,12 +262,14 @@ const TakePicture = () => {
     setAlbumError([]);
     setError(false);
   }, [error]);
+  // console.log(systemConfig.batbuoc_chupanh,'ap')
 
   useEffect(() => {
     const getListAlbum = async () => {
       const res: any = await CheckinService.getListAlbum();
       if (res?.result?.length > 0) {
         const listAlbumResult: ListAlbumType[] = res.result;
+        console.log(res.result,'result album')
         const listAlbum = listAlbumResult.map((item, index) => {
           return {
             id: item.ma_album,
