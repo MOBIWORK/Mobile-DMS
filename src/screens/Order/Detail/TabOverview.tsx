@@ -59,7 +59,6 @@ const TabOverview = ({data}: PropsType) => {
     setTotalPriceProduct(item.amount * item.qty - priceDiscount);
   };
 
-  console.log(data,'data')
   const renderUiBottomSheet = () => {
     return (
       <View
@@ -279,7 +278,7 @@ const TabOverview = ({data}: PropsType) => {
                     <Text style={[styles.labelDetail]}>
                       {getLabel('eXwarehouse')}
                     </Text>
-                    <Text style={[styles.textInforO]} numberOfLines={1} > 
+                    <Text style={[styles.textInforO]} numberOfLines={1}>
                       {data?.set_warehouse}
                     </Text>
                   </View>
@@ -579,7 +578,7 @@ const createStyles = (theme: AppTheme) =>
       fontSize: 16,
       lineHeight: 24,
       fontWeight: '400',
-      maxWidth:200
+      maxWidth: 200,
     } as TextStyle,
     totalPrice: {
       fontSize: 20,
