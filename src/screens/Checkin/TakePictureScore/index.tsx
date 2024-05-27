@@ -193,7 +193,7 @@ const TakePictureScore = () => {
     ]);
     if (
       granted['android.permission.CAMERA'] &&
-      granted['android.permission.WRITE_EXTERNAL_STORAGE']
+      granted['android.permission.WRITE_EXTERNAL_STORAGE'] || Platform.OS === 'ios'
     ) {
       await CameraUtils.openImagePickerCamera(img => {
         setAlbumImage(prevImages => {
