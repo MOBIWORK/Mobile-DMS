@@ -1,48 +1,36 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
-import {MainLayout} from '../../layouts';
-import {Text,TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
+import { MainLayout } from '../../layouts';
+import { Text, TouchableOpacity } from 'react-native';
 import AppContainer from '../../components/AppContainer';
-import {AppHeader} from '../../components/common';
-import {useNavigation} from '@react-navigation/native';
-import {useTranslation} from 'react-i18next';
-import {NavigationProp} from '../../navigation/screen-type';
+import { AppHeader } from '../../components/common';
+import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { NavigationProp } from '../../navigation/screen-type';
 import ItemNotification from '../../components/Notification/ItemNotification';
-import {AppTheme, useTheme} from '../../layouts/theme';
+import { AppTheme, useTheme } from '../../layouts/theme';
+import { useDeepCompareEffect } from '../../config/function';
+import { AppService } from '../../services';
+import { ScreenConstant } from '../../const';
 
 const InternalNotificationScreen = () => {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const styles = createSheetStyle(useTheme());
   const navigate = useNavigation<NavigationProp>();
   const [isRead, setRead] = useState<boolean>(false);
-
-  const [notifications, setNotifications] = useState<any[]>([
-    {
-      id: 1,
-      name: 'Thông báo nghỉ lễ Quốc Khánh 02/09',
-      description: 'Quyết định có hiệu lực kể từ ngày ký',
-      time: '17:00 - 20/09/2023',
-    },
-    {
-      id: 1,
-      name: 'Khen thưởng nhân viên xuất sắc tháng',
-      description:
-        'Căn cứ vào chức năng, quyền hạn của Chủ tịch HĐQT Công ty được quy định tại Điều lệ Công ty Cổ phần Công nghệ MobiWork Việt Nam được thông qua bởi các thành viên sáng lập;',
-      time: '17:00 - 20/09/2023',
-    },
-    {
-      id: 1,
-      name: 'Khen thưởng KD xuất sắc',
-      description:
-        'Phòng KT-TC, phòng HCNS và nhân viên/trưởng nhóm có tên trong danh sách có trách nhiệm thi hành theo quyết định này.',
-      time: '17:00 - 20/09/2023',
-    },
-  ]);
-
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
+  const navigation = useNavigation<NavigationProp>();
+  const [notifications, setNotifications] = useState<any[]>([]);
+  useDeepCompareEffect(() => {
+    getNotification();
+  }, [])
+  const getNotification = async () => {
+    const response: any = await AppService.getNotification();
+    if (response?.message === 'Thành công') setNotifications(response.result.data)
+  }
 
   return (
-    <MainLayout style={{backgroundColor: colors.bg_neutral}}>
+    <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
       <AppHeader
         label={getLabel('Thông báo nội nộ')}
         onBack={() => navigate.goBack()}
@@ -58,7 +46,7 @@ const InternalNotificationScreen = () => {
             onPress={() => setRead(false)}
             style={[
               styles.action,
-              {color: isRead ? colors.text_primary : colors.action},
+              { color: isRead ? colors.text_primary : colors.action },
             ]}>
             {getLabel('Tất cả')}
           </Text>
@@ -73,7 +61,7 @@ const InternalNotificationScreen = () => {
             onPress={() => setRead(true)}
             style={[
               styles.action,
-              {color: !isRead ? colors.text_primary : colors.action},
+              { color: !isRead ? colors.text_primary : colors.action },
             ]}>
             {getLabel('Chưa đọc')}
           </Text>
@@ -83,15 +71,13 @@ const InternalNotificationScreen = () => {
         <View style={styles.containerItem}>
           {notifications &&
             notifications.map((item, i) => (
-              <TouchableOpacity key={i}>
+              <TouchableOpacity key={i} onPress={() => navigation.navigate(ScreenConstant.NOTIFY_DETAIL, item.name)}>
                 <ItemNotification
-                  title={item.name}
+                  title={item.notice_title}
                   description={item.description}
-                  time={item.time}
-                  avatar={
-                    'https://www.elleman.vn/app/uploads/2019/05/20/4-buc-anh-dep-hinh-gau-truc.jpg'
-                  }
-                  isSend={true}
+                  time={item.from_date}
+                  avatar={item.user_image}
+                  isSend={item.is_watched}
                 />
               </TouchableOpacity>
             ))}

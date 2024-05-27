@@ -1091,3 +1091,22 @@ export type IReportNewCustomer = {
   total_new_cus: number;
   list_customer: ReportCustomerType[];
 };
+
+export type Notification = {
+  apply_for: string;
+  description: string;
+  employee_watched: {
+      employee_name: string;
+      image: string;
+      name: string;
+  }[];
+  from_date: string;
+  full_name: string;
+  is_watched: boolean;
+  message: string;
+  name: string;
+  notice_title: string;
+  owner: string;
+  priority_level: string;
+  to_date: string;
+}

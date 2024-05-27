@@ -1,8 +1,8 @@
-import {StyleSheet} from 'react-native';
-import React, {useEffect} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {AuthorizeParamsList} from './screen-type';
-import {AppConstant, ScreenConstant} from '../const';
+import { StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { AuthorizeParamsList } from './screen-type';
+import { AppConstant, ScreenConstant } from '../const';
 import {
   Home,
   WidgetFavouriteScreen,
@@ -48,11 +48,12 @@ import {
   ChangePassword,
   NotifySetting,
   Scanner,
+  NotificationDetail,
 } from '../screens';
 import MainTab from './MainTab';
-import {CommonUtils} from '../utils';
+import { CommonUtils } from '../utils';
 import BeforeCheckin from '../screens/BeforeCheckin';
-import {BARCODE_SCANNER} from '../const/screen.const';
+import { BARCODE_SCANNER } from '../const/screen.const';
 
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
@@ -190,7 +191,7 @@ const AuthNavigation = () => {
       <Stack.Screen
         name={ScreenConstant.LIST_ALBUM_SCORE}
         component={ListAlbumScore}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenConstant.USER_INFO_SCREEN}
@@ -217,6 +218,7 @@ const AuthNavigation = () => {
         component={BeforeCheckin}
       />
       <Stack.Screen name={ScreenConstant.BARCODE_SCANNER} component={Scanner} />
+      <Stack.Screen name={ScreenConstant.NOTIFY_DETAIL} component={NotificationDetail} />
     </Stack.Navigator>
   );
 };
