@@ -48,7 +48,6 @@ const CheckInLocation = () => {
   const navigation = useNavigation<any>();
 
   const route = useRoute<RouterProp<'CHECKIN_LOCATION'>>();
-  const paramsCheckin = useRoute<RouterProp<'CHECKIN'>>().params;
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const styles = createStyle(theme);
@@ -198,9 +197,6 @@ console.log(value,'?????')
   }, []);
 
   return (
-    // <SafeAreaView
-    //   edges={['bottom', 'top']}
-    //   style={{backgroundColor: theme.colors.bg_default, paddingHorizontal: 0}}>
     <SafeAreaView style={{paddingHorizontal: 0}}>
       <AppHeader
         style={{paddingHorizontal: 16}}
@@ -293,7 +289,6 @@ console.log(value,'?????')
         </View>
       </View>
     </SafeAreaView>
-    // </SafeAreaView>
   );
 };
 export default React.memo(CheckInLocation, isEqual);
