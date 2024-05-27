@@ -142,7 +142,6 @@ console.log(value,'?????')
         checkin_id: route.params.data.checkin_id,
       };
       newParams.data.kh_diachi = params.address_line1;
-      console.log(params, 'params running');
       const response: any = await CheckinService.updateCustomerAddress(params);
       if (response?.status === ApiConstant.STT_OK) {
         dispatch(

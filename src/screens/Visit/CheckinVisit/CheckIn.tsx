@@ -66,7 +66,7 @@ const useTimer = () => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active' && isFocus) {
         const newTimeStamp = moment(new Date()).valueOf();
-        if (mmkv?.trim().length > 0 ) {
+        if (mmkv?.trim().length > 0) {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
             setElapsedTime(Math.ceil(currentTime / 1000));
@@ -360,12 +360,22 @@ const CheckIn = () => {
 
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
-    const res: any = await AppService.checkOut(dataCheckIn.checkin_id,dataCheckIn.item.name);
-    if (res?.status === ApiConstant.STT_OK) {
-      dispatch(checkinActions.resetData());
-      dispatch(appActions.setDataCheckIn({}));
-      storage.set('time', '');
-      goBack();
+    try {
+      dispatch(appActions.setProcessingStatus(true));
+      const res: any = await AppService.checkOut(
+        dataCheckIn.checkin_id,
+        dataCheckIn.item.name,
+      );
+      if (res?.status === ApiConstant.STT_OK) {
+        dispatch(checkinActions.resetData());
+        dispatch(appActions.setDataCheckIn({}));
+        storage.set('time', '');
+        goBack();
+      }
+    } catch (e) {
+      dispatch(appActions.setProcessingStatus(false));
+    } finally {
+      dispatch(appActions.setProcessingStatus(false));
     }
   }, [dataCheckIn]);
 

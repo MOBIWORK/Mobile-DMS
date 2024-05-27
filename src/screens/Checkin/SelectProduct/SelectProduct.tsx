@@ -473,6 +473,8 @@ const SelectProducts = () => {
             label={getLabel('product')}
             onBack={() => {
               dispatch(productActions.resetDataProduct());
+              dispatch(productActions.updateListProduct([]));
+              dispatch(productActions.updateProductSelect([]));
               navigation.goBack();
             }}
             rightButton={
