@@ -219,6 +219,8 @@ const CreateOrder = () => {
       dispatch(orderAction.setCustomerOder(null));
     }
     dispatch(productActions.updateProductSelect([]));
+    dispatch(productActions.resetDataProduct());
+    dispatch(productActions.updateListProduct([]));
     navigation.goBack();
   };
 
@@ -239,6 +241,9 @@ const CreateOrder = () => {
       dispatch(orderAction.setCustomerOder(null));
     }
     dispatch(productActions.updateProductSelect([]));
+    dispatch(productActions.resetDataProduct());
+    dispatch(productActions.updateListProduct([]));
+
     navigation.goBack();
   };
 

@@ -141,12 +141,11 @@ const CheckInLocation = () => {
         county: split[2] ?? '',
         city: split[3] ?? '',
         country: 'Việt Nam',
-        checkin_id:route.params.data.checkin_id
+        checkin_id: route.params.data.checkin_id,
       };
       newParams.data.kh_diachi = params.address_line1;
-     
+
       const response: any = await CheckinService.updateCustomerAddress(params);
-      console.log(response,'response')
       if (response?.status === ApiConstant.STT_OK) {
         dispatch(
           appActions.setDataCheckIn({
