@@ -411,7 +411,7 @@ const CreateOrder = () => {
         }));
         const objecData = {
           items: newItems,
-          customer: dataCheckin ? dataCheckin.item.customer_code : '', // Khách hàng
+          customer: router.params.data?.customer_name ?? '', // Khách hàng
           territory: 'Vietnam',
           currency: 'VND',
           price_list: 'Standard Selling',
@@ -421,6 +421,7 @@ const CreateOrder = () => {
           name: 'new-sales-order-hnnkmtrehm',
           transaction_date: CommonUtils.taskDate(date),
         };
+        console.log('aaaaa', objecData);
         const {data: res, status}: KeyAbleProps =
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
