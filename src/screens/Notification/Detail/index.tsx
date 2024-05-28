@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TextStyle, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { MainLayout } from '../../../layouts'
-import { AppAvatar, AppContainer, AppHeader, AppIcons, AppText, SvgIcon } from '../../../components/common'
+import { AppAvatar, AppContainer, AppHeader, AppIcons, AppText, Block, SvgIcon } from '../../../components/common'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { NavigationProp, RouterProp } from '../../../navigation/screen-type';
 import { AppTheme, useTheme } from '../../../layouts/theme'
@@ -13,7 +13,8 @@ import { WIDTH } from '../../../const/app.const'
 import AvatarStack from '../../../components/Notification/AvatarStack'
 const NotificationDetail = () => {
     const navigation = useNavigation<NavigationProp>();
-    const styles = createSheetStyle(useTheme());
+    const theme = useTheme()
+    const styles = createSheetStyle(theme);
     const route = useRoute<RouterProp<'NOTIFY_DETAIL'>>();
     const { colors } = useTheme();
     const name = route.params
@@ -44,7 +45,7 @@ const NotificationDetail = () => {
                 notifications.map((item, i) => (
                     <AppContainer>
                         <AppText style={[styles.header_title, { color: colors.text_primary }]}>{item.notice_title}</AppText>
-                        <View style={styles.containSecondView}>
+                        <Block style={styles.containSecondView}>
                             <AppAvatar size={24} url={item.user_image} />
                             <AppText fontSize={14} colorTheme="text_secondary" fontWeight="400">
                                 {' '}{item.full_name} |{' '}
@@ -58,18 +59,18 @@ const NotificationDetail = () => {
                             <AppText fontSize={14} colorTheme="text_secondary" fontWeight="400">
                                 {' '}{item.from_date}{' '}
                             </AppText>
-                        </View>
-                        <View style={styles.containerItem}>
+                        </Block>
+                        <Block style={styles.containerItem}>
                             {htmlMessage && (
                                 <RenderHTML enableExperimentalMarginCollapsing contentWidth={WIDTH - 70} source={{ html: htmlMessage }} />
                             )}
-                        </View>
+                        </Block>
                         {employeeWatched && (
-                            <View style={styles.footerContainer}>
+                            <Block style={styles.footerContainer}>
                                 <AvatarStack
                                     view={employeeWatched.length.toString()}
                                     avatars={employeeWatched.filter(emp => emp.image !== undefined).map(emp => emp.image)} />
-                            </View>
+                            </Block>
                         )}
                     </AppContainer>
                 ))}
