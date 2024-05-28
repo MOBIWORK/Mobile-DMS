@@ -5,7 +5,8 @@ import isEqual from 'react-fast-compare';
 import { AppTheme, useTheme } from '../../layouts/theme';
 
 const AvatarStack = ({ view, avatars }: PropTypes) => {
-    const styles = createSheetStyle(useTheme());
+    const theme = useTheme()
+    const styles = createSheetStyle(theme);
     const maxAvatarsToShow = 3;
     const extraAvatars = avatars.length - maxAvatarsToShow;
 
@@ -47,10 +48,11 @@ const createSheetStyle = (theme: AppTheme) =>
             marginVertical: 8
         } as ViewStyle,
         text: {
-            color: theme.colors.text,
+            color: theme.colors.text_secondary,
             fontSize: 14,
             Lineheight: 21,
             marginRight: 12,
+            fontWeight: '600'
         } as TextStyle,
         avatarStack: {
             flexDirection: 'row-reverse',
