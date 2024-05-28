@@ -28,8 +28,8 @@ import {useTranslation} from 'react-i18next';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorFallBack';
 import {CommonUtils} from '../../../utils';
-import ItemProduct from '../../../components/Order/ItemProduct';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import ItemOrderProduct from '../Component/ItemOrderProduct';
 
 const TabOverview = ({data}: PropsType) => {
   const {colors} = useTheme();
@@ -304,64 +304,9 @@ const TabOverview = ({data}: PropsType) => {
                     <Pressable
                       key={index}
                       onPress={() => onOpenBottomSheetProduct(item)}>
-                      <ItemProduct
-                        dvt={item.uom}
-                        name={item.item_name}
-                        code={item.item_code}
-                        quantity={item.qty}
-                        price={item.rate}
-                        percentage_discount={item.discount_percentage}
-                        discount={(
-                          item.amount *
-                          (item.discount_percentage / 100)
-                        ).toString()}
-                      />
+                      <ItemOrderProduct item={item} />
                     </Pressable>
                   ))}
-              </View>
-            </View>
-
-            <View>
-              <View style={[styles.flexSpace, {marginBottom: 8}]}>
-                <Text style={[styles.textLabel]}>{getLabel('VAT')}</Text>
-                <TouchableOpacity>
-                  <AppIcons
-                    iconType={ICON_TYPE.Feather}
-                    name="chevron-down"
-                    size={18}
-                    color={colors.text_primary}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View
-                style={[
-                  styles.containerIfOd,
-                  {rowGap: 12, paddingVertical: 16},
-                ]}>
-                <View style={[styles.flexSpace]}>
-                  <Text style={[styles.labelDetail]}>
-                    {getLabel('formVat')}
-                  </Text>
-                  <Text style={[styles.textInforO]}>
-                    {data?.taxes_and_charges}
-                  </Text>
-                </View>
-                <View style={[styles.flexSpace]}>
-                  <Text style={[styles.labelDetail]}>
-                    {getLabel('VAT')} (%){' '}
-                  </Text>
-                  <Text style={[styles.textInforO]}>{data?.rate}</Text>
-                </View>
-                <View style={[styles.flexSpace]}>
-                  <Text style={[styles.labelDetail]}>
-                    {getLabel('VAT')} (VND)
-                  </Text>
-                  <Text style={[styles.textInforO]}>
-                    {CommonUtils.formatCash(
-                      data?.total_taxes_and_charges?.toString(),
-                    )}
-                  </Text>
-                </View>
               </View>
             </View>
 
@@ -395,7 +340,9 @@ const TabOverview = ({data}: PropsType) => {
                     {getLabel('discount')} (%){' '}
                   </Text>
                   <Text style={[styles.textInforO]}>
-                    {data?.additional_discount_percentage}
+                    {data?.additional_discount_percentage
+                      .toString()
+                      .replace('.', ',')}
                   </Text>
                 </View>
                 <View style={[styles.flexSpace]}>
@@ -403,7 +350,9 @@ const TabOverview = ({data}: PropsType) => {
                     {getLabel('discount')} (VND)
                   </Text>
                   <Text style={[styles.textInforO]}>
-                    {CommonUtils.formatCash(data?.discount_amount?.toString())}
+                    {CommonUtils.convertToTwoDecimalPlaces(
+                      data?.discount_amount ?? 0,
+                    )}
                   </Text>
                 </View>
               </View>
@@ -431,7 +380,7 @@ const TabOverview = ({data}: PropsType) => {
                     {getLabel('intoMoney')}
                   </Text>
                   <Text style={[styles.textInforO]}>
-                    {CommonUtils.formatCash(data?.total?.toString())}
+                    {CommonUtils.convertToTwoDecimalPlaces(data?.total ?? 0)}
                   </Text>
                 </View>
                 <View style={[styles.flexSpace]}>
@@ -439,14 +388,16 @@ const TabOverview = ({data}: PropsType) => {
                     {getLabel('discount')}
                   </Text>
                   <Text style={[styles.textInforO]}>
-                    {CommonUtils.formatCash(data?.discount_amount?.toString())}
+                    {CommonUtils.convertToTwoDecimalPlaces(
+                      data?.discount_amount ?? 0,
+                    )}
                   </Text>
                 </View>
                 <View style={[styles.flexSpace]}>
                   <Text style={[styles.labelDetail]}>{getLabel('VAT')} </Text>
                   <Text style={[styles.textInforO]}>
-                    {CommonUtils.formatCash(
-                      data?.total_taxes_and_charges?.toString(),
+                    {CommonUtils.convertToTwoDecimalPlaces(
+                      data?.discount_amount ?? 0,
                     )}
                   </Text>
                 </View>
@@ -455,7 +406,9 @@ const TabOverview = ({data}: PropsType) => {
                     {getLabel('totalPrice')}{' '}
                   </Text>
                   <Text style={[styles.totalPrice]}>
-                    {CommonUtils.formatCash(data?.rounded_total?.toString())}
+                    {CommonUtils.convertToTwoDecimalPlaces(
+                      data?.grand_total ?? 0,
+                    )}
                   </Text>
                 </View>
               </View>
@@ -471,9 +424,7 @@ const TabOverview = ({data}: PropsType) => {
             ]}>
             <Text style={[styles.textLabel]}>{getLabel('totalPrice')} :</Text>
             <Text style={[styles.totalPrice]}>
-              {CommonUtils.formatCash(
-                data?.grand_total ? data.grand_total.toString() : '',
-              )}
+              {CommonUtils.convertToTwoDecimalPlaces(data?.grand_total ?? 0)}
             </Text>
           </View>
         </View>

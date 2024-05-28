@@ -73,7 +73,7 @@ export default {
   custom: 'Tùy chỉnh',
   selectDate: 'Chọn ngày',
   all: 'Tất cả',
-  Company: 'Công ty',
+  company: 'Công ty',
   Individual: 'Cá nhân',
   individual: 'Cá nhân',
 
@@ -124,7 +124,7 @@ export default {
   pendingDeliver: 'Chờ vận chuyển',
   completed: 'Hoàn thành',
   cancelled: 'Đã huỷ',
-  uploadImage:'Tải ảnh',
+  uploadImage: 'Tải ảnh',
   recentSearches: 'Tìm kiém gần đây',
   searchOrder: 'Tìm kiếm đơn hàng',
   totalPrice: 'Tổng tiền',

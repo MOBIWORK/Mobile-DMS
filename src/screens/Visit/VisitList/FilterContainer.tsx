@@ -78,7 +78,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
           }
           backButtonIcon={
             <SvgIcon
-              source='Close'
+              source="Close"
               // name={'close'}
               size={24}
               color={colors.text_primary}
@@ -166,8 +166,14 @@ const FilterContainer: FC<FilterContainerProps> = ({
           />
         </View>
       </AppBottomSheet>
-      <AppBottomSheet bottomSheetRef={filterRef} enableDynamicSizing={true}>
-        <BottomSheetScrollView style={{paddingBottom: bottom + 16}}>
+      <AppBottomSheet
+        bottomSheetRef={filterRef}
+        snapPointsCustom={animatedSnapPoints}
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: bottom + 16}}
+          onLayout={handleContentLayout}>
           <ListFilterItem
             filterRef={filterRef}
             type={filterType}
