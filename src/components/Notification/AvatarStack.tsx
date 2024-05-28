@@ -4,10 +4,11 @@ import {AppAvatar, AppText} from '../common';
 import isEqual from 'react-fast-compare';
 import {AppTheme, useTheme} from '../../layouts/theme';
 
-const AvatarStack = ({view, avatars}: PropTypes) => {
-  const styles = createSheetStyle(useTheme());
-  const maxAvatarsToShow = 3;
-  const extraAvatars = avatars.length - maxAvatarsToShow;
+const AvatarStack = ({ view, avatars }: PropTypes) => {
+    const theme = useTheme()
+    const styles = createSheetStyle(theme);
+    const maxAvatarsToShow = 3;
+    const extraAvatars = avatars.length - maxAvatarsToShow;
 
   return (
     <View style={styles.container}>
@@ -47,30 +48,31 @@ interface PropTypes {
 export default React.memo(AvatarStack, isEqual);
 
 const createSheetStyle = (theme: AppTheme) =>
-  StyleSheet.create({
-    container: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginVertical: 8,
-    } as ViewStyle,
-    text: {
-      color: theme.colors.text,
-      fontSize: 14,
-      Lineheight: 21,
-      marginRight: 12,
-    } as TextStyle,
-    avatarStack: {
-      flexDirection: 'row-reverse',
-    } as ViewStyle,
-    avatarContainer: {
-      marginLeft: -8,
-      borderColor: theme.colors.white,
-      borderWidth: 1,
-      borderRadius: 12,
-      overflow: 'hidden',
-    } as ViewStyle,
-    extraAvatar: {
-      justifyContent: 'center',
-      alignItems: 'center',
-    } as ViewStyle,
-  });
+    StyleSheet.create({
+        container: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginVertical: 8
+        } as ViewStyle,
+        text: {
+            color: theme.colors.text_secondary,
+            fontSize: 14,
+            Lineheight: 21,
+            marginRight: 12,
+            fontWeight: '600'
+        } as TextStyle,
+        avatarStack: {
+            flexDirection: 'row-reverse',
+        } as ViewStyle,
+        avatarContainer: {
+            marginLeft: -8,
+            borderColor: theme.colors.white,
+            borderWidth: 1,
+            borderRadius: 12,
+            overflow: 'hidden',
+        } as ViewStyle,
+        extraAvatar: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        } as ViewStyle,
+    });
