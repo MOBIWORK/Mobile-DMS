@@ -95,7 +95,7 @@ interface AppBottomSheetProps {
   handleHeight?: number | SharedValue<number>;
   index?: number;
   onAnimated?: (fromIndex?: number, toIndex?: number) => void;
-  enableDynamicSizing?:boolean
+  enableDynamicSizing?: boolean;
 }
 
 export default AppBottomSheet;
