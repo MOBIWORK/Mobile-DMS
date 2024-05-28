@@ -36,6 +36,7 @@ export const ListSearchProductNearly = 'listSearchProductNearly';
 export const ListSearchVisitNearly = 'ListSearchVisitNearly';
 export const ListSearchCustomerNearly = 'ListSearchCustomerNearly';
 export const Widget = 'Widget';
+export const NotificationData = 'NotificationData';
 
 export const Api_key = 'Api_key';
 export const Api_secret = 'Api_secret';
