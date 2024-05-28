@@ -17,20 +17,20 @@ import {
   VirtualizedList,
   CellRendererProps,
 } from 'react-native';
-import codePush, {DownloadProgress} from 'react-native-code-push';
-import {IconButton} from 'react-native-paper';
+import codePush, { DownloadProgress } from 'react-native-code-push';
+import { IconButton } from 'react-native-paper';
 import ProgressCircle from 'react-native-progress-circle';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useMMKVObject, useMMKVString } from 'react-native-mmkv';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
-import {AppConstant, ScreenConstant} from '../../const';
+import { ApiConstant, AppConstant, ScreenConstant } from '../../const';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import BarChartStatistical from './BarChart';
-import {AppAvatar, Block} from '../../components/common';
-import {useTheme} from '../../layouts/theme';
-import {DataConstant} from '../../const';
+import { AppAvatar, Block } from '../../components/common';
+import { useTheme } from '../../layouts/theme';
+import { DataConstant } from '../../const';
 
 import {
   IKpi,
@@ -45,36 +45,36 @@ import {
 import ItemWidget from '../../components/Widget/ItemWidget';
 import NotificationScreen from './Notification';
 import Mapbox from '@rnmapbox/maps';
-import {rootStyles} from './styles';
+import { rootStyles } from './styles';
 
-import {dispatch} from '../../utils/redux';
-import {appActions} from '../../redux-store/app-reducer/reducer';
-import {useDeepCompareEffect, useSelector} from '../../config/function';
+import { dispatch } from '../../utils/redux';
+import { appActions } from '../../redux-store/app-reducer/reducer';
+import { useDeepCompareEffect, useSelector } from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
-import {AppService, ReportService} from '../../services';
-import {useTranslation} from 'react-i18next';
-import {NavigationProp} from '../../navigation/screen-type';
+import { AppService, ReportService } from '../../services';
+import { useTranslation } from 'react-i18next';
+import { NavigationProp } from '../../navigation/screen-type';
 import ModalErrorLocation from './components/ModalErrorLocation';
-import {getCustomerVisit, IListVisitParams} from '../../services/appService';
-import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import { getCustomerVisit, IListVisitParams } from '../../services/appService';
+import { customerActions } from '../../redux-store/customer-reducer/reducer';
 import Geolocation, {
   GeolocationResponse,
 } from '@react-native-community/geolocation';
-import {CommonUtils} from '../../utils';
-import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
+import { CommonUtils } from '../../utils';
+import { onResetSearchValueOfVisit } from '../Visit/VisitList/SearchVisit';
 import isEqual from 'react-fast-compare';
 import TimeKeep from './components/TimeKeep';
 import MapView from './components/MapView';
 import CircleChartView from './components/CircleChartView';
-import {shallowEqual} from 'react-redux';
+import { shallowEqual } from 'react-redux';
 
 const HomeScreen = () => {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const styles = rootStyles(useTheme());
   const bottomSheetNotification = useRef<BottomSheet>(null);
   const snapPoint = useMemo(() => ['100%'], []);
   const navigation = useNavigation<NavigationProp>();
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
   const isFocus = useIsFocused();
 
   const location = useRef<GeolocationResponse | null>(null);
@@ -99,28 +99,7 @@ const HomeScreen = () => {
 
   const [currentShit, setCurrentShit] = useState<any>(null);
 
-  const notifiCations = useRef([
-    {
-      id: 1,
-      name: 'Thông báo nghỉ lễ Quốc Khánh 02/09',
-      description: 'Quyết định có hiệu lực kể từ ngày ký',
-      time: '17:00 - 20/09/2023',
-    },
-    {
-      id: 1,
-      name: 'Khen thưởng nhân viên xuất sắc tháng',
-      description:
-        'Căn cứ vào chức năng, quyền hạn của Chủ tịch HĐQT Công ty được quy định tại Điều lệ Công ty Cổ phần Công nghệ MobiWork Việt Nam được thông qua bởi các thành viên sáng lập;',
-      time: '17:00 - 20/09/2023',
-    },
-    {
-      id: 1,
-      name: 'Khen thưởng KD xuất sắc',
-      description:
-        'Phòng KT-TC, phòng HCNS và nhân viên/trưởng nhóm có tên trong danh sách có trách nhiệm thi hành theo quyết định này.',
-      time: '17:00 - 20/09/2023',
-    },
-  ]).current;
+  const [notifications, setNotifications] = useState<any[]>([]);
 
   const [KpiValue, setKpiValue] = useState<IKpi | null>(null);
   const [salesValue, setSaleValue] = useState<IReportSales | null>(null);
@@ -152,7 +131,7 @@ const HomeScreen = () => {
             onPress={() =>
               navigation.navigate(ScreenConstant.WIDGET_FVR_SCREEN)
             }>
-            <Text style={[styles.tilteSection, {color: colors.action}]}>
+            <Text style={[styles.tilteSection, { color: colors.action }]}>
               {getLabel('custom')}
             </Text>
           </TouchableOpacity>
@@ -213,7 +192,7 @@ const HomeScreen = () => {
           <View
             style={[
               styles.itemWorkSheet,
-              {width: (AppConstant.WIDTH - 64) / 3},
+              { width: (AppConstant.WIDTH - 64) / 3 },
             ]}>
             <Text style={[styles.worksheetLb]}>{getLabel('revenue')}</Text>
             <View style={[styles.worksheetBar]}>
@@ -225,7 +204,7 @@ const HomeScreen = () => {
                 shadowColor={colors.bg_disable}
                 bgColor={colors.bg_default}
               />
-              <Text style={[styles.worksheetDt, {color: colors.action}]}>
+              <Text style={[styles.worksheetDt, { color: colors.action }]}>
                 {KpiValue ? `${KpiValue.doanh_thu}` : 0} %
               </Text>
             </View>
@@ -234,7 +213,7 @@ const HomeScreen = () => {
           <View
             style={[
               styles.itemWorkSheet,
-              {width: (AppConstant.WIDTH - 64) / 3, marginHorizontal: 15},
+              { width: (AppConstant.WIDTH - 64) / 3, marginHorizontal: 15 },
             ]}>
             <Text style={[styles.worksheetLb]}>{getLabel('sales')}</Text>
             <View style={[styles.worksheetBar]}>
@@ -246,7 +225,7 @@ const HomeScreen = () => {
                 shadowColor={colors.bg_disable}
                 bgColor={colors.bg_default}
               />
-              <Text style={[styles.worksheetDt, {color: colors.success}]}>
+              <Text style={[styles.worksheetDt, { color: colors.success }]}>
                 {KpiValue ? `${KpiValue.doanh_so}` : 0} %
               </Text>
             </View>
@@ -255,7 +234,7 @@ const HomeScreen = () => {
           <View
             style={[
               styles.itemWorkSheet,
-              {width: (AppConstant.WIDTH - 64) / 3},
+              { width: (AppConstant.WIDTH - 64) / 3 },
             ]}>
             <Text style={[styles.worksheetLb]}>{getLabel('order')}</Text>
             <View style={[styles.worksheetBar]}>
@@ -267,7 +246,7 @@ const HomeScreen = () => {
                 shadowColor={colors.bg_disable}
                 bgColor={colors.bg_default}
               />
-              <Text style={[styles.worksheetDt, {color: colors.info}]}>
+              <Text style={[styles.worksheetDt, { color: colors.info }]}>
                 {KpiValue ? `${KpiValue.don_hang}` : 0} %
               </Text>
             </View>
@@ -292,7 +271,7 @@ const HomeScreen = () => {
                 shadowColor={colors.bg_disable}
                 bgColor={colors.bg_default}
               />
-              <Text style={[styles.worksheetDt, {color: colors.primary}]}>
+              <Text style={[styles.worksheetDt, { color: colors.primary }]}>
                 {KpiValue ? `${KpiValue.vieng_tham}` : 0} %
               </Text>
             </View>
@@ -301,7 +280,7 @@ const HomeScreen = () => {
           <View
             style={[
               styles.itemWorkSheet,
-              {width: (AppConstant.WIDTH - 48) / 2, marginBottom: 0},
+              { width: (AppConstant.WIDTH - 48) / 2, marginBottom: 0 },
             ]}>
             <Text style={[styles.worksheetLb]}>{getLabel('newCustomer')}</Text>
             <View style={[styles.worksheetBar]}>
@@ -313,7 +292,7 @@ const HomeScreen = () => {
                 shadowColor={colors.bg_disable}
                 bgColor={colors.bg_default}
               />
-              <Text style={[styles.worksheetDt, {color: colors.secondary}]}>
+              <Text style={[styles.worksheetDt, { color: colors.secondary }]}>
                 {KpiValue ? `${KpiValue.kh_moi}` : 0} %
               </Text>
             </View>
@@ -435,6 +414,10 @@ const HomeScreen = () => {
       ),
     );
   };
+  const getNotification = async () => {
+    const response: any = await AppService.getNotification();
+    if (response?.message === 'Thành công') setNotifications(response.result.data.slice(0, 3))
+  }
 
   useDeepCompareEffect(() => {
     if (isFocus) {
@@ -450,6 +433,7 @@ const HomeScreen = () => {
       getReportSales();
       getReportRevenue();
       getReportVisit();
+      getNotification();
     }
   }, []);
 
@@ -540,7 +524,7 @@ const HomeScreen = () => {
   const getItemCount = (data: any): number => 10;
   const cellRender: React.ComponentType<
     CellRendererProps<React.JSX.Element | null>
-  > = React.useCallback(({item}) => item, []);
+  > = React.useCallback(({ item }) => item, []);
 
   const getItem = (data: any, index: number) => {
     switch (index) {
@@ -550,7 +534,7 @@ const HomeScreen = () => {
             <Pressable
               style={[styles.shadow, styles.header]}
               onPress={() => navigation.navigate(ScreenConstant.PROFILE)}>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 {Object.keys(userProfile).length > 0 && userProfile?.image ? (
                   <AppAvatar url={userProfile.image} size={48} />
                 ) : (
@@ -560,7 +544,7 @@ const HomeScreen = () => {
                   <Text style={[styles.userName]}>{getLabel('welcome')},</Text>
                   <Text style={[styles.userName]}>
                     {Object.keys(userProfile) &&
-                    Object.keys(userProfile!)?.length > 0
+                      Object.keys(userProfile!)?.length > 0
                       ? userProfile?.employee_name
                       : '---'}
                   </Text>
@@ -604,7 +588,7 @@ const HomeScreen = () => {
             <Block style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>{getLabel('sales')}</Text>
             </Block>
-            <Block style={{marginHorizontal: 16}}>
+            <Block style={{ marginHorizontal: 16 }}>
               <BarChartStatistical
                 color={colors.action}
                 isSales
@@ -620,7 +604,7 @@ const HomeScreen = () => {
             <Block style={[styles.flexSpace]}>
               <Text style={[styles.tilteSection]}>{getLabel('revenue')}</Text>
             </Block>
-            <Block style={{marginHorizontal: 16}}>
+            <Block style={{ marginHorizontal: 16 }}>
               <BarChartStatistical
                 isSales={false}
                 color={colors.main}
@@ -654,22 +638,20 @@ const HomeScreen = () => {
                 onPress={() =>
                   navigation.navigate(ScreenConstant.NOTIFYCATION)
                 }>
-                <Text style={[styles.tilteSection, {color: colors.action}]}>
+                <Text style={[styles.tilteSection, { color: colors.action }]}>
                   {getLabel('all')}
                 </Text>
               </TouchableOpacity>
             </Block>
             <Block style={styles.containerNtf}>
-              {notifiCations?.map((item, i) => (
+              {notifications?.map((item, i) => (
                 <Block key={i}>
                   <ItemNotification
                     isSend={true}
-                    title={item.name}
-                    time={item.time}
+                    title={item.notice_title}
+                    time={item.from_date}
                     description={item.description}
-                    avatar={
-                      'https://picture.vn/wp-content/uploads/2015/12/da-lat.png'
-                    }
+                    avatar={item.user_image}
                   />
                 </Block>
               ))}
@@ -697,7 +679,7 @@ const HomeScreen = () => {
         flex: 1,
         backgroundColor: colors.bg_neutral,
       }}
-      // edges={['top']}
+    // edges={['top']}
     >
       {isPending ? (
         <Block block justifyContent="center" alignItems="center">
