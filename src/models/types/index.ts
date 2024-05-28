@@ -538,7 +538,7 @@ export type IAlbumImage = {
     url: string;
     base64?: string;
   }[];
-  numberImageReq?:any
+  numberImageReq?: any;
 };
 
 export type IStaff = {
@@ -684,12 +684,12 @@ export type IOrderList = {
 
 export type ItemProductOrder = {
   item_name: string;
-  name: string;
   item_code: string;
+  rate: number;
   qty: number;
   uom: string;
   amount: number;
-  rate: number;
+  discount_amount: number;
   discount_percentage: number;
 };
 
