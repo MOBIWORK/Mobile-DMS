@@ -122,7 +122,6 @@ const CheckInLocation = () => {
       setValue(response.results[0].formatted_address);
     }
   };
-console.log(value,'?????')
   const handleComplete = async () => {
     if (value !== route.params.data.item.customer_primary_address) {
       dispatch(setProcessingStatus(true));
@@ -134,9 +133,9 @@ console.log(value,'?????')
         long: location?.coords.longitude ?? 0,
         lat: location?.coords.latitude ?? 0,
         address_line1: split[0] ?? '',
-        state: split[1] ?? '',
-        county: split[2] ?? '',
-        city: split[3] ?? '',
+        state: split[split.length - 3] ?? '',
+        county: split[split.length - 2] ?? '',
+        city: split[split.length - 1],
         country: 'Việt Nam',
         checkin_id: route.params.data.checkin_id,
       };
@@ -153,13 +152,11 @@ console.log(value,'?????')
           }),
         );
         completeCheckin();
-        // navigation.goBack();
         navigation.navigate({
           name: ScreenConstant.CHECKIN,
           params: {item: newParams.data, isLocation: true},
           merge: true,
         });
-        // navigation.setParams({data:newParams.data,type:newParams.type})
       }
     } else {
       completeCheckin();

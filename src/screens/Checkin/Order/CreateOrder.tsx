@@ -421,7 +421,6 @@ const CreateOrder = () => {
           name: 'new-sales-order-hnnkmtrehm',
           transaction_date: CommonUtils.taskDate(date),
         };
-        console.log('aaaaa', objecData);
         const {data: res, status}: KeyAbleProps =
           await ProductService.getPromotionalProducts(objecData);
         if (status === ApiConstant.STT_OK) {
@@ -452,11 +451,13 @@ const CreateOrder = () => {
                   return {
                     ...item,
                     discount_item_percent:
-                      item?.discount_item_percent > 0
+                      item?.discount_item_percent > 0 &&
+                      !element.has_pricing_rule
                         ? item.discount_item_percent
                         : element.discount_percentage,
                     discount_item_amount:
-                      item?.discount_item_amount > 0
+                      item?.discount_item_amount > 0 &&
+                      !element.has_pricing_rule
                         ? item.discount_item_percent
                         : (element.discount_percentage / 100) *
                           item.price *
@@ -468,14 +469,16 @@ const CreateOrder = () => {
                   return {
                     ...item,
                     discount_item_percent:
-                      item?.discount_item_percent > 0
+                      item?.discount_item_percent > 0 &&
+                      !element.has_pricing_rule
                         ? item.discount_item_percent
                         : (element.discount_amount /
                             item.price /
                             item.quantity) *
                           100,
                     discount_item_amount:
-                      item?.discount_item_amount > 0
+                      item?.discount_item_amount > 0 &&
+                      !element.has_pricing_rule
                         ? item.discount_item_amount
                         : element.discount_amount,
                     price: item.price,
@@ -485,11 +488,12 @@ const CreateOrder = () => {
                   return {
                     ...item,
                     discount_item_percent:
-                      item?.discount_item_percent > 0
+                      item?.discount_item_percent > 0 &&
+                      element.has_pricing_rule
                         ? item.discount_item_percent
                         : 0,
                     discount_item_amount:
-                      item?.discount_item_amount > 0
+                      item?.discount_item_amount > 0 && element.has_pricing_rule
                         ? item.discount_item_amount
                         : 0,
                     has_pricing_rule: element.has_pricing_rule,
@@ -504,6 +508,7 @@ const CreateOrder = () => {
             });
           }
         } else {
+          console.log('STT no OKE');
           const newDataSelected = dataProductSelected.map(item => {
             return {
               ...item,
