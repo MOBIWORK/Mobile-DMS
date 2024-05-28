@@ -25,7 +25,7 @@ export const DataWidget: IWidget[] = [
     id: 4,
     name: 'Thông báo nội bộ',
     icon: 'iconBell',
-    navigate: '',
+    navigate: ScreenConstant.NOTIFYCATION,
   },
   // {
   //   id: 5,
