@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
 import { MainLayout } from '../../layouts';
 import { Text, TouchableOpacity } from 'react-native';
+
 import AppContainer from '../../components/AppContainer';
-import { AppHeader } from '../../components/common';
+import { AppHeader, Block } from '../../components/common';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { NavigationProp } from '../../navigation/screen-type';
@@ -26,7 +27,7 @@ const InternalNotificationScreen = () => {
 
   useDeepCompareEffect(() => {
     getNotification();
-  }, [])
+  }, []);
   const getNotification = async () => {
     const response: any = await AppService.getNotification();
     if (response?.message === 'Thành công') {
@@ -61,6 +62,7 @@ const InternalNotificationScreen = () => {
     );
   }, [notificationData, isRead]);
 
+
   return (
     <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
       <AppHeader
@@ -83,12 +85,10 @@ const InternalNotificationScreen = () => {
             {getLabel('Tất cả')}
           </Text>
         </View>
-        <View
-          style={{
-            marginLeft: 8,
-            backgroundColor: !isRead ? colors.bg_neutral : colors.bg_default,
-            borderRadius: 20,
-          }}>
+        <Block
+          marginLeft={8}
+          colorTheme={!isRead ? 'bg_neutral' : 'bg_default'}
+          borderRadius={20}>
           <Text
             onPress={() => setRead(true)}
             style={[
@@ -97,7 +97,7 @@ const InternalNotificationScreen = () => {
             ]}>
             {getLabel('Chưa đọc')}
           </Text>
-        </View>
+        </Block>
       </View>
       {renderUiNoti()}
     </MainLayout>

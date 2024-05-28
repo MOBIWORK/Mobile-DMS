@@ -1,32 +1,18 @@
 import React from 'react';
 import {StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
-import {AppTheme, useTheme} from '../../layouts/theme';
-import {AppIcons} from '../common';
+import {AppTheme, useTheme} from '../../../layouts/theme';
 import {Text} from 'react-native';
-import {ICON_TYPE} from '../../const/app.const';
-import {CommonUtils} from '../../utils';
+import {ICON_TYPE} from '../../../const/app.const';
+import {CommonUtils} from '../../../utils';
 import {useTranslation} from 'react-i18next';
 import {TouchableOpacity} from 'react-native';
+import {ItemProductOrder} from '../../../models/types';
+import {AppIcons} from '../../../components/common';
 
-const ItemProduct = ({
-  name,
-  code,
-  dvt,
-  quantity,
-  price,
-  percentage_discount,
-  onRemove,
-}: ProductProps) => {
+const ItemOrderProduct = ({item}: ProductProps) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
   const styles = createSheetStyle(useTheme());
-  let priceP = price || 0;
-  let totalPrice = priceP * quantity;
-  let discount: number = 0;
-  if (percentage_discount && percentage_discount > 0) {
-    discount = (totalPrice * percentage_discount) / 100;
-    totalPrice = totalPrice - discount;
-  }
   return (
     <View style={styles.container}>
       <View style={styles.flex}>
@@ -36,82 +22,64 @@ const ItemProduct = ({
           size={24}
           color={colors.text_secondary}
         />
-        <Text style={[styles.code, {marginLeft: 4}]}>{code}</Text>
+        <Text style={[styles.code, {marginLeft: 4}]}>
+          {item?.item_code ?? '---'}
+        </Text>
       </View>
       <View style={{width: '80%'}}>
-        <Text style={[styles.name]}>{name}</Text>
+        <Text style={[styles.name]}>{item?.item_name ?? '---'}</Text>
       </View>
       <View style={[styles.flexSpace, {paddingBottom: 8}]}>
         <Text style={styles.textIf(colors.text_primary)}>
-          {CommonUtils.formatCash(price?.toString() || '0')}
+          {item?.rate ? CommonUtils.convertToTwoDecimalPlaces(item.rate) : 0}
           {''} đ
         </Text>
         <Text style={styles.textIf(colors.text_primary)}>
-          x{quantity} {`(${dvt})`}
+          x{item.qty} {`(${item.uom})`}
         </Text>
       </View>
 
       <View style={styles.contaienrIf}>
-        {percentage_discount?.toString() && (
+        {item?.discount_percentage?.toString() && (
           <View style={[styles.flexSpace, {paddingVertical: 4}]}>
             <Text style={styles.textIf(colors.text_secondary)}>
               {getLabel('discount')} (%)
             </Text>
             <Text style={styles.textIf(colors.text_primary)}>
-              {percentage_discount?.toString()} %
+              {item?.discount_percentage?.toString().replace('.', ',')} %
             </Text>
           </View>
         )}
-        {percentage_discount?.toString() && (
+        {item.discount_amount?.toString() && (
           <View style={[styles.flexSpace, {paddingVertical: 4}]}>
             <Text style={styles.textIf(colors.text_secondary)}>
               {getLabel('discount')}(VND)
             </Text>
             <Text style={styles.textIf(colors.text_primary)}>
-              {CommonUtils.formatCash(discount.toString())}
+              {CommonUtils.convertToTwoDecimalPlaces(item.discount_amount)}
             </Text>
           </View>
         )}
       </View>
-      {price?.toString() && (
+      {item?.amount?.toString() && (
         <View style={styles.flexSpace}>
           <Text style={styles.textIf(colors.text_secondary)}>
             {getLabel('intoMoney')}:
           </Text>
           <Text style={styles.name}>
-            {CommonUtils.formatCash(totalPrice.toString())}
+            {CommonUtils.convertToTwoDecimalPlaces(item.amount)}
           </Text>
         </View>
-      )}
-
-      {onRemove && (
-        <TouchableOpacity
-          onPress={() => onRemove && onRemove(name)}
-          style={[styles.iconRemove]}>
-          <AppIcons
-            iconType={ICON_TYPE.IonIcon}
-            name="trash-outline"
-            size={22}
-            color={colors.error}
-          />
-        </TouchableOpacity>
       )}
     </View>
   );
 };
 
 interface ProductProps {
-  code: string;
-  name: string;
-  dvt: string;
-  quantity: number;
-  price?: number;
-  percentage_discount?: number;
-  discount?: number | string;
-  onRemove?: (item_code: string) => void;
+  item: ItemProductOrder;
 }
 
-export default ItemProduct;
+export default ItemOrderProduct;
 
 const createSheetStyle = (theme: AppTheme) =>
   StyleSheet.create({

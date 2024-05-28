@@ -77,37 +77,36 @@ const NotificationDetail = () => {
         </MainLayout>
     )
 }
+export default NotificationDetail;
 
-export default NotificationDetail
-
-const createSheetStyle = (theme: AppTheme) => StyleSheet.create({
-    headeLb: {
-        textAlign: 'left',
-        marginLeft: 5,
-    } as TextStyle,
-    containerItem: {
-        borderRadius: 16,
-        overflow: 'hidden',
-        backgroundColor: theme.colors.bg_default,
-        marginTop: 8,
-        paddingHorizontal: 16
-    } as ViewStyle,
-    header_title: {
-        fontSize: 20,
-        fontWeight: '500',
-        lineHeight: 30,
-        paddingVertical: 8
-    } as TextStyle,
-    containSecondView: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        paddingVertical: 8
-    } as ViewStyle,
-    footerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-end'
-    } as ViewStyle
-
-})
+const createSheetStyle = (theme: AppTheme) =>
+    StyleSheet.create({
+        headeLb: {
+            textAlign: 'left',
+            marginLeft: 5,
+        } as TextStyle,
+        containerItem: {
+            borderRadius: 16,
+            overflow: 'hidden',
+            backgroundColor: theme.colors.bg_default,
+            marginTop: 8,
+            paddingHorizontal: 16,
+        } as ViewStyle,
+        header_title: {
+            fontSize: 20,
+            fontWeight: '500',
+            lineHeight: 30,
+            paddingVertical: 8,
+        } as TextStyle,
+        containSecondView: {
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            paddingVertical: 8,
+        } as ViewStyle,
+        footerContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+        } as ViewStyle,
+    });
