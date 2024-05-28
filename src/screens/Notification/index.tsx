@@ -1,36 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
-import { MainLayout } from '../../layouts';
-import { Text, TouchableOpacity } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
+import {MainLayout} from '../../layouts';
+import {Text, TouchableOpacity} from 'react-native';
 import AppContainer from '../../components/AppContainer';
-import { AppHeader } from '../../components/common';
-import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
-import { NavigationProp } from '../../navigation/screen-type';
+import {AppHeader, Block} from '../../components/common';
+import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
+import {NavigationProp} from '../../navigation/screen-type';
 import ItemNotification from '../../components/Notification/ItemNotification';
-import { AppTheme, useTheme } from '../../layouts/theme';
-import { useDeepCompareEffect } from '../../config/function';
-import { AppService } from '../../services';
-import { ScreenConstant } from '../../const';
+import {AppTheme, useTheme} from '../../layouts/theme';
+import {useDeepCompareEffect} from '../../config/function';
+import {AppService} from '../../services';
+import {ScreenConstant} from '../../const';
 
 const InternalNotificationScreen = () => {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const styles = createSheetStyle(useTheme());
   const navigate = useNavigation<NavigationProp>();
   const [isRead, setRead] = useState<boolean>(false);
-  const { t: getLabel } = useTranslation();
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const [notifications, setNotifications] = useState<any[]>([]);
   useDeepCompareEffect(() => {
     getNotification();
-  }, [])
+  }, []);
   const getNotification = async () => {
     const response: any = await AppService.getNotification();
-    if (response?.message === 'Thành công') setNotifications(response.result.data)
-  }
+    if (response?.message === 'Thành công')
+      setNotifications(response.result.data);
+  };
 
   return (
-    <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
+    <MainLayout style={{backgroundColor: colors.bg_neutral}}>
       <AppHeader
         label={getLabel('Thông báo nội nộ')}
         onBack={() => navigate.goBack()}
@@ -46,32 +47,34 @@ const InternalNotificationScreen = () => {
             onPress={() => setRead(false)}
             style={[
               styles.action,
-              { color: isRead ? colors.text_primary : colors.action },
+              {color: isRead ? colors.text_primary : colors.action},
             ]}>
             {getLabel('Tất cả')}
           </Text>
         </View>
-        <View
-          style={{
-            marginLeft: 8,
-            backgroundColor: !isRead ? colors.bg_neutral : colors.bg_default,
-            borderRadius: 20,
-          }}>
+        <Block
+          marginLeft={8}
+          colorTheme={!isRead ? 'bg_neutral' : 'bg_default'}
+          borderRadius={20}>
           <Text
             onPress={() => setRead(true)}
             style={[
               styles.action,
-              { color: !isRead ? colors.text_primary : colors.action },
+              {color: !isRead ? colors.text_primary : colors.action},
             ]}>
             {getLabel('Chưa đọc')}
           </Text>
-        </View>
+        </Block>
       </View>
       <AppContainer>
         <View style={styles.containerItem}>
           {notifications &&
             notifications.map((item, i) => (
-              <TouchableOpacity key={i} onPress={() => navigation.navigate(ScreenConstant.NOTIFY_DETAIL, item.name)}>
+              <TouchableOpacity
+                key={i}
+                onPress={() =>
+                  navigation.navigate(ScreenConstant.NOTIFY_DETAIL, item.name)
+                }>
                 <ItemNotification
                   title={item.notice_title}
                   description={item.description}
