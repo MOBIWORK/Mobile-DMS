@@ -63,7 +63,7 @@ export const GET_CUSTOMER_DETAIL =
 export const GET_CUSTOMER_VISIT =
   '/api/method/mbw_dms.api.router.get_customer_router';
 export const UPDATE_CUSTOMER_ADDRESS =
-  '/api/method/mbw_dms.api.checkin.update_address_customer';
+  '/api/method/mbw_dms.api.checkin.update_address_customer_checkin';
 export const CHECK_FAKE_GPS =
   '/api/method/mbw_dms.api.blacklist.insert_fake_gps';
 export const GET_CUSTOMER_TERRITORY =
