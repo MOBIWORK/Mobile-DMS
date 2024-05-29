@@ -188,7 +188,6 @@ const ListVisit = () => {
     },
     [error],
   );
-  // console.log(customerDataSort,'sort')
 
   const customerCheckinCount = useMemo(() => {
     if (listCustomer && customerDataSort && customerDataSort.length > 0) {
@@ -370,7 +369,6 @@ const ListVisit = () => {
                   `${item.customer_code} - ${index}`
                 }
                 decelerationRate={'normal'}
-                // onMomentumScrollEnd={eve => console.log(eve.nativeEvent.layoutMeasurement,'layout')}
                 bounces={true}
                 initialNumToRender={4}
                 ListFooterComponent={
@@ -743,7 +741,6 @@ const ListVisit = () => {
                 location?.lat,
                 location.long,
               );
-              console.log(data, 'data distance');
               if (
                 data >
                   (systemConfig.saiso_chophep_kb_vitringoaisaiso +
@@ -844,10 +841,8 @@ const ListVisit = () => {
       error => backgroundErrorListener(error.code),
     );
   }, []);
-  //  console.log(dataCheckIn.checkin_id,'checkinId')
 
   const onPressToDetail = useCallback((item: VisitListItemType) => {
-    console.log(item, 'item checkin');
     currentSelect.current = item;
     startEffect(() => {
       let log: LocationProps = JSON.parse(item.customer_location_primary!);
