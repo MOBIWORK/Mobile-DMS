@@ -80,10 +80,10 @@ const CheckInLocation = () => {
           [newLocation.coords.longitude, newLocation.coords.latitude],
           1000,
         );
-      handleMarkerMap(
-        newLocation?.coords.latitude,
-        newLocation?.coords.longitude,
-      );
+      // handleMarkerMap(
+      //   newLocation?.coords.latitude,
+      //   newLocation?.coords.longitude,
+      // );
     });
   };
 
@@ -98,22 +98,22 @@ const CheckInLocation = () => {
 
   const handleSearchText = async (text: string) => {
     if (text) {
-      await CommonUtils.CheckNetworkState();
-      const response: KeyAbleProps = await AppService.autocompleteGeoLocation(
-        text,
-      );
-      if (response.status === ApiConstant.STT_OK || 'OK') {
-        const geometry: any = response.results[0].geometry;
-        setLocation({
-          // @ts-ignore
-          coords: {
-            longitude: geometry.location.lng,
-            latitude: geometry.location.lat,
-          },
-        });
-        setValue(response.results[0].formatted_address);
-      }
-      // setValue(text)
+      // await CommonUtils.CheckNetworkState();
+      // const response: KeyAbleProps = await AppService.autocompleteGeoLocation(
+      //   text,
+      // );
+      // if (response.status === ApiConstant.STT_OK || 'OK') {
+      //   const geometry: any = response.results[0].geometry;
+      //   setLocation({
+      //     // @ts-ignore
+      //     coords: {
+      //       longitude: geometry.location.lng,
+      //       latitude: geometry.location.lat,
+      //     },
+      //   });
+      //   setValue(response.results[0].formatted_address);
+      // }
+      setValue(text);
     }
   };
 
@@ -149,6 +149,7 @@ const CheckInLocation = () => {
         checkin_id: route.params.data.checkin_id,
       };
       newParams.data.kh_diachi = params.address_line1;
+      // console.log('params', params);
       const response: any = await CheckinService.updateCustomerAddress(params);
       if (response?.status === ApiConstant.STT_OK) {
         dispatch(
@@ -190,14 +191,16 @@ const CheckInLocation = () => {
           latitude: customer_location.lat,
         },
       });
-      handleMarkerMap(customer_location.lat, customer_location.long);
     } else {
       CommonUtils.getCurrentLocation(locations => {
         setLocation(locations);
-        handleMarkerMap(
-          locations?.coords.latitude,
-          locations?.coords.longitude,
-        );
+        if (route?.params && route.params.data.item.customer_primary_address) {
+          setValue(route.params.data.item.customer_primary_address);
+        }
+        // handleMarkerMap(
+        //   locations?.coords.latitude,
+        //   locations?.coords.longitude,
+        // );
       });
     }
   }, []);
@@ -346,7 +349,7 @@ const createStyle = (theme: ExtendedTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
       position: 'absolute',
-      top: 80,
+      top: 100,
       right: 0,
     } as ViewStyle,
     getLocation: {
@@ -360,7 +363,7 @@ const createStyle = (theme: ExtendedTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
       position: 'absolute',
-      top: 80,
+      top: 100,
       left: 20,
     } as ViewStyle,
     buttonFooter: {
