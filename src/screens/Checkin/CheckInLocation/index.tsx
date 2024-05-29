@@ -132,45 +132,39 @@ const CheckInLocation = () => {
     }
   };
   const handleComplete = async () => {
-    if (value !== route.params.data.item.customer_primary_address) {
-      dispatch(setProcessingStatus(true));
-      let newParams = route.params;
-      await CommonUtils.CheckNetworkState();
-      const split = value.split(',', 4);
-      const params: IUpdateAddress = {
-        customer: route.params.data.item.name,
-        long: location?.coords.longitude ?? 0,
-        lat: location?.coords.latitude ?? 0,
-        address_line1: split[0] ?? '',
-        state: split[split.length - 3] ? split[split.length - 3].trim() : '',
-        county: split[split.length - 2] ? split[split.length - 2].trim() : '',
-        city: split[split.length - 1],
-        country: 'Việt Nam',
-        checkin_id: route.params.data.checkin_id,
-      };
-      newParams.data.kh_diachi = params.address_line1;
-      // console.log('params', params);
-      const response: any = await CheckinService.updateCustomerAddress(params);
-      if (response?.status === ApiConstant.STT_OK) {
-        dispatch(
-          appActions.setDataCheckIn({
-            ...dataCheckIn,
-            item: {
-              ...dataCheckIn.item,
-              customer_primary_address: value,
-            },
-          }),
-        );
-        completeCheckin();
-        navigation.navigate({
-          name: ScreenConstant.CHECKIN,
-          params: {item: newParams.data, isLocation: true},
-          merge: true,
-        });
-      }
-    } else {
+    dispatch(setProcessingStatus(true));
+    let newParams = route.params;
+    await CommonUtils.CheckNetworkState();
+    const split = value.split(',', 4);
+    const params: IUpdateAddress = {
+      customer: route.params.data.item.name,
+      long: location?.coords.longitude ?? 0,
+      lat: location?.coords.latitude ?? 0,
+      address_line1: split[0] ?? '',
+      state: split[split.length - 3] ? split[split.length - 3].trim() : '',
+      county: split[split.length - 2] ? split[split.length - 2].trim() : '',
+      city: split[split.length - 1],
+      country: 'Việt Nam',
+      checkin_id: route.params.data.checkin_id,
+    };
+    newParams.data.kh_diachi = params.address_line1;
+    const response: any = await CheckinService.updateCustomerAddress(params);
+    if (response?.status === ApiConstant.STT_OK) {
+      dispatch(
+        appActions.setDataCheckIn({
+          ...dataCheckIn,
+          item: {
+            ...dataCheckIn.item,
+            customer_primary_address: value,
+          },
+        }),
+      );
       completeCheckin();
-      navigation.goBack();
+      navigation.navigate({
+        name: ScreenConstant.CHECKIN,
+        params: {item: newParams.data, isLocation: true},
+        merge: true,
+      });
     }
     dispatch(setProcessingStatus(false));
   };

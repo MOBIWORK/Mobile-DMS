@@ -162,9 +162,9 @@ export function* createImageCheckIn(action: PayloadAction) {
         createImageCheckinApi,
         action.payload,
       );
-      
+
       if (response.result?.status === true) {
-        console.log(response,'response push image')
+        console.log(response, 'response push image');
         yield put(appActions.setListImage([response.result?.file_url]));
       } else {
         console.log('error');
