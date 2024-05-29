@@ -135,6 +135,7 @@ const CheckIn = () => {
     state => state.app.dataCheckIn,
     shallowEqual,
   );
+
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
     shallowEqual,
