@@ -63,7 +63,7 @@ export const GET_CUSTOMER_DETAIL =
 export const GET_CUSTOMER_VISIT =
   '/api/method/mbw_dms.api.router.get_customer_router';
 export const UPDATE_CUSTOMER_ADDRESS =
-  '/api/method/mbw_dms.api.checkin.update_address_customer';
+  '/api/method/mbw_dms.api.checkin.update_address_customer_checkin';
 export const CHECK_FAKE_GPS =
   '/api/method/mbw_dms.api.blacklist.insert_fake_gps';
 export const GET_CUSTOMER_TERRITORY =
@@ -141,7 +141,7 @@ export const GET_REPORT_NEW_CUSTOMER =
   '/api/method/mbw_dms.api.kpi.new_customer_report';
 export const GET_REPORT_NON_CUSTOMER_ORDER =
   '/api/method/mbw_dms.api.kpi.customer_not_order';
-export const GET_NOTIFICATION = 
-  '/api/method/mbw_dms.api.notification.notification.get_notifi'
-export const GET_NOTIFICATION_DETAIL = 
-  '/api/method/mbw_dms.api.notification.notification.get_notifi_detail'
+export const GET_NOTIFICATION =
+  '/api/method/mbw_dms.api.notification.notification.get_notifi';
+export const GET_NOTIFICATION_DETAIL =
+  '/api/method/mbw_dms.api.notification.notification.get_notifi_detail';
