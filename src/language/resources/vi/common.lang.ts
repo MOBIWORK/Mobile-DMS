@@ -308,4 +308,5 @@ export default {
   addressGet: 'Địa chỉ giao hàng',
   addressOrder: 'Địa chỉ đặt hàng',
   mainAddress: 'Địa chỉ chính',
+  getAddress: 'Lấy địa chỉ',
 };

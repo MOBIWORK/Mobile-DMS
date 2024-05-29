@@ -87,6 +87,15 @@ const CheckInLocation = () => {
     });
   };
 
+  const handleGetAddress = async () => {
+    if (location) {
+      await handleMarkerMap(
+        location.coords.latitude,
+        location.coords.longitude,
+      );
+    }
+  };
+
   const handleSearchText = async (text: string) => {
     if (text) {
       await CommonUtils.CheckNetworkState();
@@ -216,14 +225,18 @@ const CheckInLocation = () => {
           styleURL={Mapbox.StyleURL.Street}
           logoEnabled={false}
           style={{flex: 1}}
-          onPress={feature =>
-            handleMarkerMap(
+          onPress={feature => {
+            Keyboard.dismiss();
+            setLocation({
               // @ts-ignore
-              feature.geometry.coordinates[1],
-              // @ts-ignore
-              feature.geometry.coordinates[0],
-            )
-          }>
+              coords: {
+                // @ts-ignore
+                latitude: feature.geometry.coordinates[1],
+                // @ts-ignore
+                longitude: feature.geometry.coordinates[0],
+              },
+            });
+          }}>
           <Mapbox.RasterSource
             id="adminmap"
             tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
@@ -281,6 +294,17 @@ const CheckInLocation = () => {
             {getLabel('currentPosition')}
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={handleGetAddress} style={styles.getLocation}>
+          <Image
+            source={ImageAssets.MapPinIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+            tintColor={theme.colors.text_secondary}
+          />
+          <Text style={{color: theme.colors.text_primary, marginLeft: 4}}>
+            {getLabel('getAddress')}
+          </Text>
+        </TouchableOpacity>
         <View style={[styles.buttonFooter, {bottom: bottom + 80}]}>
           <AppButton label={getLabel('completed')} onPress={handleComplete} />
         </View>
@@ -322,8 +346,22 @@ const createStyle = (theme: ExtendedTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
       position: 'absolute',
-      top: 100,
+      top: 80,
       right: 0,
+    } as ViewStyle,
+    getLocation: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.bg_default,
+      alignSelf: 'flex-end',
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 80,
+      left: 20,
     } as ViewStyle,
     buttonFooter: {
       position: 'absolute',
