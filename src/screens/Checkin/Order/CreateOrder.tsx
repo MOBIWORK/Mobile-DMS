@@ -508,7 +508,6 @@ const CreateOrder = () => {
             });
           }
         } else {
-          console.log('STT no OKE');
           const newDataSelected = dataProductSelected.map(item => {
             return {
               ...item,
