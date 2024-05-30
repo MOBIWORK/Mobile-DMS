@@ -4,16 +4,14 @@ import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
 import {AppConstant} from '../../../const';
-import {
-  BottomSheetScrollView,
-  useBottomSheetDynamicSnapPoints,
-} from '@gorhom/bottom-sheet';
+import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 // @ts-ignore
 import CalendarPicker from 'react-native-calendar-picker';
 import {useTheme} from '@react-navigation/native';
 import {getLabel} from '../../../language';
 import isEqual from 'react-fast-compare';
+import moment from 'moment';
 
 const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   filerBottomSheetRef,
@@ -29,8 +27,8 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
     isKPI ? AppConstant.ReportFilterKPIData : AppConstant.ReportFilterData,
   );
   const [showCalender, setShowCalender] = useState<boolean>(false);
-  const [dateCalender, setDateCalender] = useState<any>(null);
-
+  const [startDate, setStartDateCalender] = useState<any>(null);
+  const [endDate, setEndDate] = useState<any>(null);
   const calenderConfig = {
     weekdays: [
       getLabel('Monday'),
@@ -74,10 +72,17 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
     onChange(item);
   };
 
-  const handleCalender = (date: any) => {
-    setDateCalender(date);
-    onChangeDateCalender(date);
-    filerBottomSheetRef?.current.close();
+  const handleCalender = (date: any, type: any) => {
+    if (type === 'END_DATE') {
+      setEndDate(date);
+    } else {
+      setStartDateCalender(date);
+      setEndDate(null);
+    }
+
+    // onChangeDateCalender(date);
+
+    // filerBottomSheetRef?.current.close();
   };
 
   return (
@@ -92,9 +97,11 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
         {showCalender ? (
           <CalendarPicker
             startFromMonday={true}
-            allowBackwardRangeSelect
+            allowRangeSelection={true}
+            // selectedEndDate={endDate}
             weekdays={calenderConfig.weekdays}
             months={calenderConfig.months}
+           
             textStyle={{color: theme.colors.text_primary}}
             todayBackgroundColor={theme.colors.text_secondary}
             todayTextStyle={{color: theme.colors.bg_default}}
@@ -114,10 +121,11 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
                 color={theme.colors.text_primary}
               />
             }
-            selectedStartDate={dateCalender}
+            // selectedStartDate={startDate}
             selectedDayStyle={{
               backgroundColor: theme.colors.primary,
             }}
+            selectedDayColor={theme.colors.primary}
             selectedDayTextStyle={{color: theme.colors.bg_default}}
             onDateChange={handleCalender}
           />
@@ -143,4 +151,4 @@ interface ReportFilterBottomSheetProps {
   isKPI?: boolean;
 }
 
-export default React.memo(ReportFilterBottomSheet,isEqual);
+export default React.memo(ReportFilterBottomSheet, isEqual);

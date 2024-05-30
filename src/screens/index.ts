@@ -53,8 +53,10 @@ import ChangePassword from './Authen/ChangePassword';
 import NotifySetting from './Profile/NotifySetting';
 import Scanner from './Checkin/Order/Scanner';
 import NotificationDetail from './Notification/Detail/index'
+import { EditCustomer } from './EditCustomer';
 export {
   SelectOrganization,
+  EditCustomer,
   SignIn,
   Home,
   SuccessChanged,

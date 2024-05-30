@@ -12,6 +12,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import {ReportService} from '../../../services';
+import isEqual from 'react-fast-compare';
 const NewCustomer = () => {
   const theme = useTheme();
   const styles = createStyle(theme);
@@ -74,7 +75,7 @@ const NewCustomer = () => {
   };
 
   const _renderContent = () => {
-    const Item = (item: ReportCustomerType) => {
+    const Item = React.memo((item: ReportCustomerType) => {
       return (
         <View style={styles.visitContainer}>
           <View style={styles.titleVisit}>
@@ -107,7 +108,7 @@ const NewCustomer = () => {
           />
         </View>
       );
-    };
+    },isEqual);
     return (
       <>
         {newCustomerData &&

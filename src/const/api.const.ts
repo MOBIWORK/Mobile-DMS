@@ -99,8 +99,8 @@ export const POST_CHECKIN_INVENTORY =
   URL_PREFIX + '.api.checkin.create_checkin_inventory';
 
 // NOTE
-export const POST_NEW_NOTE_CHECKIN = '/mbw_dms.api.note.create_note';
-export const GET_NOTE_USER_RECEIVED = '/mbw_dms.api.note.list_email';
+export const POST_NEW_NOTE_CHECKIN = '/api/method/mbw_dms.api.note.create_note';
+export const GET_NOTE_USER_RECEIVED = '/api/method/mbw_dms.api.note.list_email';
 export const GET_LIST_NOTE_API = '/api/method/mbw_dms.api.note.list_note';
 export const GET_NOTE_TYPE = '/api/method/mbw_dms.api.note.list_note_type';
 
@@ -141,7 +141,8 @@ export const GET_REPORT_NEW_CUSTOMER =
   '/api/method/mbw_dms.api.kpi.new_customer_report';
 export const GET_REPORT_NON_CUSTOMER_ORDER =
   '/api/method/mbw_dms.api.kpi.customer_not_order';
-export const GET_NOTIFICATION =
-  '/api/method/mbw_dms.api.notification.notification.get_notifi';
-export const GET_NOTIFICATION_DETAIL =
-  '/api/method/mbw_dms.api.notification.notification.get_notifi_detail';
+export const GET_NOTIFICATION = 
+  '/api/method/mbw_dms.api.notification.notification.get_notifi'
+export const GET_NOTIFICATION_DETAIL = 
+  '/api/method/mbw_dms.api.notification.notification.get_notifi_detail'
+export const UPDATE_CUSTOMER =  URL_PREFIX +  '.api.selling.customer.update_customer'

@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, ViewStyle, TextStyle } from 'react-native';
-import { AppAvatar, AppText } from '../common';
+import {StyleSheet, View, ViewStyle, TextStyle} from 'react-native';
+import {AppAvatar, AppText} from '../common';
 import isEqual from 'react-fast-compare';
-import { AppTheme, useTheme } from '../../layouts/theme';
+import {AppTheme, useTheme} from '../../layouts/theme';
 
 const AvatarStack = ({ view, avatars }: PropTypes) => {
     const theme = useTheme()
@@ -10,32 +10,39 @@ const AvatarStack = ({ view, avatars }: PropTypes) => {
     const maxAvatarsToShow = 3;
     const extraAvatars = avatars.length - maxAvatarsToShow;
 
-    return (
-        <View style={styles.container}>
-            <AppText style={styles.text}>Đã xem{'('}{view}{')'}</AppText>
-            <View style={styles.avatarStack}>
-                {extraAvatars > 0 && (
-                    <View style={[styles.avatarContainer, styles.extraAvatar]}>
-                        <AppAvatar size={24} name={`+${extraAvatars}`} />
-                    </View>
-                )}
-                {avatars.slice(0, maxAvatarsToShow).map((avatar, index) => (
-                    <View key={index} style={styles.avatarContainer}>
-                        {avatar ? (
-                            <AppAvatar size={24} url={avatar} />
-                        ) : (
-                            <AppAvatar size={24} url='https://www.elleman.vn/app/uploads/2019/05/20/4-buc-anh-dep-hinh-gau-truc.jpg' />
-                        )}
-                    </View>
-                ))}
-            </View>
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <AppText style={styles.text}>
+        Đã xem{'('}
+        {view}
+        {')'}
+      </AppText>
+      <View style={styles.avatarStack}>
+        {extraAvatars > 0 && (
+          <View style={[styles.avatarContainer, styles.extraAvatar]}>
+            <AppAvatar size={24} name={`+${extraAvatars}`} />
+          </View>
+        )}
+        {avatars.slice(0, maxAvatarsToShow).map((avatar, index) => (
+          <View key={index} style={styles.avatarContainer}>
+            {avatar ? (
+              <AppAvatar size={24} url={avatar} />
+            ) : (
+              <AppAvatar
+                size={24}
+                url="https://www.elleman.vn/app/uploads/2019/05/20/4-buc-anh-dep-hinh-gau-truc.jpg"
+              />
+            )}
+          </View>
+        ))}
+      </View>
+    </View>
+  );
 };
 
 interface PropTypes {
-    view: string;
-    avatars: string[];
+  view: string;
+  avatars: string[];
 }
 
 export default React.memo(AvatarStack, isEqual);

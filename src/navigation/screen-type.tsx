@@ -79,6 +79,7 @@ export type AuthorizeParamsList = {
   [ScreenConstant.BEFORE_CHECKIN]: { item: CheckinData };
   [ScreenConstant.BARCODE_SCANNER]: undefined;
   [ScreenConstant.NOTIFY_DETAIL]: { name: string };
+  [ScreenConstant.EDIT_CUSTOMER]:{data:IDataCustomers}
 };
 
 export type RootStackParamList = {

@@ -14,8 +14,7 @@ import {ImageAssets} from '../../assets';
 import {CommonUtils} from '../../utils';
 import {useTheme} from '@react-navigation/native';
 import isEqual from 'react-fast-compare';
-import {AppConstant} from '../../const';
-import {AppIcons} from './AppIcons';
+
 
 const AppHeader: FC<AppHeaderProps> = ({
   label,
@@ -25,6 +24,7 @@ const AppHeader: FC<AppHeaderProps> = ({
   hiddenBackButton,
   rightButton,
   backButtonIcon,
+  backIconStyle
 }) => {
   const {colors} = useTheme();
   return (
@@ -37,7 +37,7 @@ const AppHeader: FC<AppHeaderProps> = ({
               onBack && onBack();
             });
           }}
-          style={styles.backButton as any}>
+          style={[styles.backButton as any,backIconStyle]}>
           {backButtonIcon ? (
             backButtonIcon
           ) : (
@@ -78,6 +78,7 @@ interface AppHeaderProps {
     | React.JSX.Element
     | React.JSX.Element[];
   backButtonIcon?: JSX.Element;
+  backIconStyle?:ViewStyle
 }
 
 export default React.memo(AppHeader, isEqual);
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'relative',
-    paddingVertical: 16,
+    // paddingVertical: 16,
     marginRight: 8,
     alignItems: 'center',
     // backgroundColor:'red',

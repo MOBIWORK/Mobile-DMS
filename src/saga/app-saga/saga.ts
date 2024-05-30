@@ -60,6 +60,7 @@ export function* onCheckInData(action: PayloadAction) {
         action.payload,
       );
       if (Object.keys(response?.result).length > 0) {
+        yield put(appActions.setDataCheckIn({}));
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
         });

@@ -16,7 +16,7 @@ import {NavigationProp} from '../../navigation/screen-type';
 import {ScreenConstant} from '../../const';
 import {ItemProps, LineItem, SalesItem} from './ultil';
 
-const ReportItem: FC<ItemProps> = ({title, icon, content, onPress}) => {
+const ReportItem: FC<ItemProps> = React.memo(({title, icon, content, onPress}) => {
   return (
     <TouchableOpacity style={rootStyles(useTheme()).viewItem} onPress={onPress}>
       <Block>
@@ -32,7 +32,7 @@ const ReportItem: FC<ItemProps> = ({title, icon, content, onPress}) => {
       </Block>
     </TouchableOpacity>
   );
-};
+},isEqual);
 
 const Report = () => {
   const theme = useTheme();

@@ -11,6 +11,8 @@ import { useDeepCompareEffect } from '../../../config/function'
 import RenderHTML from 'react-native-render-html'
 import { WIDTH } from '../../../const/app.const'
 import AvatarStack from '../../../components/Notification/AvatarStack'
+import isEqual from 'react-fast-compare'
+
 const NotificationDetail = () => {
     const navigation = useNavigation<NavigationProp>();
     const theme = useTheme()
@@ -77,7 +79,10 @@ const NotificationDetail = () => {
         </MainLayout>
     )
 }
-export default NotificationDetail;
+
+
+export default React.memo(NotificationDetail,isEqual);
+
 
 const createSheetStyle = (theme: AppTheme) =>
     StyleSheet.create({

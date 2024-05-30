@@ -1,6 +1,10 @@
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
-import {DataCustomersUpdate, IDataCustomer} from '../models/types';
+import {
+  DataCustomersUpdate,
+  DetailCustomerType,
+  IDataCustomer,
+} from '../models/types';
 
 export type IReportOrder = {
   customer_name: string;
@@ -13,7 +17,10 @@ export const getCustomerTerritory = () =>
     .get(ApiConstant.GET_CUSTOMER_TERRITORY)
     .then(res => res.data);
 
-export const getCustomerDetail = (customer_name:string) => createApi().get(ApiConstant.GET_CUSTOMER_DETAIL + customer_name).then(res => res.data)
+export const getCustomerDetail = (customer_name: string) =>
+  createApi()
+    .get(ApiConstant.GET_CUSTOMER_DETAIL + customer_name)
+    .then(res => res.data);
 export const getCustomerRoute = () =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER_ROUTE)
@@ -30,4 +37,8 @@ export const getVisitRouteDetail = (customer_name: string) =>
 export const getReportOrder = (data: IReportOrder) =>
   createApi()
     .get(ApiConstant.GET_REPORT_ORDER, data)
+    .then(res => res.data);
+export const updateCustomer = (data: DetailCustomerType | any) =>
+  createApi()
+    .put(ApiConstant.UPDATE_CUSTOMER, {data: data})
     .then(res => res.data);

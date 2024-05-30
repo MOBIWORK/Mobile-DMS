@@ -74,13 +74,21 @@ import MapPin2 from './map-pin.svg';
 import AsynIcon from './asynIcon.svg';
 import EmptyBox from './empty-box.svg';
 import CheckNonBorder from './checkNonBorder.svg'
+import Edit from './edit.svg'
+import BlackPlush from './blackPlush.svg';
+import BluePlush from './bluePlush.svg';
+import RedEdit from './redEdit.svg'
 export const SvgComponent = {
+  RedEdit,
   TakePicture,
   MoneyIcon,
+  Edit,
   CheckNonBorder,
   checkCircle,
   MarkPicture,
   NewCustomerIcon,
+  BlackPlush,
+  BluePlush,
   ReportCustomerDebtIcon,
   ReportLine,
   ReportKPI,
