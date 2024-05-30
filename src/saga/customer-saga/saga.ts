@@ -20,7 +20,9 @@ import {call, put} from 'typed-redux-saga';
 
 import {CustomerService} from '../../services';
 import {ApiConstant, ScreenConstant} from '../../const';
-import {navigate} from '../../navigation/navigation-service';
+import {goBack, navigate} from '../../navigation/navigation-service';
+import {updateCustomer} from '../../services/customerService';
+import {showSnack} from '../../components/common';
 
 export type ResponseGenerator = {
   config?: any;
@@ -122,13 +124,39 @@ export function* getMoreDataCustomer(action: PayloadAction) {
         getPageCustomer,
         action.payload,
       );
-      console.log('response new page',response )
+      console.log('response new page', response);
       if (response.message === 'Thành công') {
         yield put(customerActions.addingListCustomer(response.result?.data));
         yield put(customerActions.setPage(response.result?.page_number));
       }
     } catch (err) {
       console.log(err, 'error');
+    } finally {
+      yield put(appActions.onLoadAppEnd());
+    }
+  }
+}
+
+export function* updateCustomerSaga(action: PayloadAction) {
+  if (customerActions.updateCustomerAction.match(action)) {
+    try {
+      yield put(appActions.onLoadApp());
+      const response: ResponseGenerator = yield call(
+        updateCustomer,
+        action.payload,
+      );
+      console.log(response, 'response update customer');
+      if (response.message === 'OK') {
+        showSnack({
+          msg: 'Cập nhật thành công',
+          interval: 2000,
+          type: 'success',
+        });
+        goBack()
+      }
+    } catch (err) {
+      console.log('run error');
+      console.error(err, 'err');
     } finally {
       yield put(appActions.onLoadAppEnd());
     }

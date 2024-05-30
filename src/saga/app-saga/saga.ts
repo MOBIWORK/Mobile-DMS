@@ -60,6 +60,7 @@ export function* onCheckInData(action: PayloadAction) {
         action.payload,
       );
       if (Object.keys(response?.result).length > 0) {
+        yield put(appActions.setDataCheckIn({}));
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
         });
@@ -162,9 +163,9 @@ export function* createImageCheckIn(action: PayloadAction) {
         createImageCheckinApi,
         action.payload,
       );
-      
+
       if (response.result?.status === true) {
-        console.log(response,'response push image')
+        console.log(response, 'response push image');
         yield put(appActions.setListImage([response.result?.file_url]));
       } else {
         console.log('error');

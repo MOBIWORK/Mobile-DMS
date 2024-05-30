@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {Text} from 'react-native';
 import AppContainer from '../../components/AppContainer';
-import {AppAvatar, AppHeader, AppIcons, SvgIcon} from '../../components/common';
+import {AppAvatar, AppHeader, AppIcons, Block, SvgIcon} from '../../components/common';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {AppConstant} from '../../const';
@@ -113,7 +113,7 @@ const ItemNotificationCompo = (data: any) => {
             ''
           )}
         </Text>
-        <View
+        <Block
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -135,7 +135,7 @@ const ItemNotificationCompo = (data: any) => {
             </Text>
           </View>
           {renderTypeNotification(data.type)}
-        </View>
+        </Block>
       </View>
     </TouchableOpacity>
   );

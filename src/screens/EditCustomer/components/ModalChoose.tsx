@@ -1,0 +1,88 @@
+import {StyleSheet, ViewStyle} from 'react-native';
+import React from 'react';
+import isEqual from 'react-fast-compare';
+import {
+  AppHeader,
+  Block,
+  SvgIcon,
+  AppText as Text,
+} from '../../../components/common';
+import Modal from 'react-native-modal';
+import {AppTheme, useTheme} from '../../../layouts/theme';
+
+import {Address, Contact} from '../../../models/types';
+import CardChoose from './CardChoose';
+type Props = {
+  visible: boolean;
+  onBackButtonPress: () => void;
+  type: string;
+  listAddress: Address[];
+  listContact: Contact[];
+};
+
+const ModalChoose = ({
+  visible,
+  onBackButtonPress,
+  type,
+  listAddress,
+  listContact,
+}: Props) => {
+  const theme = useTheme();
+  const styles = modalEditStyles(theme);
+
+  return (
+    <Modal
+      isVisible={visible}
+      onBackButtonPress={onBackButtonPress}
+      onBackdropPress={onBackButtonPress}
+      animationIn={'slideInUp'}
+      backdropOpacity={0.5}
+      style={styles.modalStyle}
+      animationOut={'slideOutDown'}>
+      <Block colorTheme="bg_default" block paddingHorizontal={16}>
+        {type === 'address' ? (
+          <Block>
+            <AppHeader
+              label="Chọn địa chỉ"
+              onBack={onBackButtonPress}
+              backButtonIcon={
+                <SvgIcon source="Close" colorTheme="black" size={22} />
+              }
+            />
+            {listAddress &&
+              listAddress.length > 0 &&
+              listAddress.map((item, index) => {
+                return <CardChoose key={index} type="address" data={item} />;
+              })}
+          </Block>
+        ) : (
+          <Block>
+            <AppHeader
+              label="Chọn địa chỉ"
+              onBack={onBackButtonPress}
+              backButtonIcon={
+                <SvgIcon source="Close" colorTheme="black" size={22} />
+              }
+            />
+            {listContact &&
+              listContact.length > 0 &&
+              listContact.map((item, index) => {
+                return <CardChoose key={index} type="contact" data={item} />;
+              })}
+          </Block>
+        )}
+      </Block>
+    </Modal>
+  );
+};
+
+export default React.memo(ModalChoose, isEqual);
+
+const modalEditStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    modalStyle: {
+      // paddingHorizontal:16,
+      marginHorizontal: 0,
+      marginVertical: 0,
+    } as ViewStyle,
+  });

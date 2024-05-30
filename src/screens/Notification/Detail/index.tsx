@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TextStyle, View} from 'react-native';
+import {StyleSheet,TextStyle, View} from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
@@ -7,7 +7,6 @@ import {
   AppHeader,
   AppIcons,
   AppText,
-  SvgIcon,
 } from '../../../components/common';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
@@ -18,6 +17,7 @@ import {useDeepCompareEffect} from '../../../config/function';
 import RenderHTML from 'react-native-render-html';
 import {WIDTH} from '../../../const/app.const';
 import AvatarStack from '../../../components/Notification/AvatarStack';
+import isEqual from 'react-fast-compare';
 const NotificationDetail = () => {
   const navigation = useNavigation<NavigationProp>();
   const styles = createSheetStyle(useTheme());
@@ -44,6 +44,7 @@ const NotificationDetail = () => {
       setHtmlMessage(message);
     }
   }, [name]);
+
   return (
     <MainLayout style={{backgroundColor: colors.bg_neutral}}>
       <AppHeader onBack={() => navigation.goBack()} />
@@ -102,7 +103,7 @@ const NotificationDetail = () => {
   );
 };
 
-export default NotificationDetail;
+export default React.memo(NotificationDetail,isEqual);
 
 const createSheetStyle = (theme: AppTheme) =>
   StyleSheet.create({

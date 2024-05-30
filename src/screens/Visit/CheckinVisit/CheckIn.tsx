@@ -345,8 +345,8 @@ const CheckIn = () => {
             }),
           );
         } catch (e) {
+          console.log(e, '???????');
           dispatch(appActions.setProcessingStatus(false));
-          console.log('err', e);
         } finally {
           dispatch(checkinActions.resetData());
           dispatch(appActions.setDataCheckIn({}));

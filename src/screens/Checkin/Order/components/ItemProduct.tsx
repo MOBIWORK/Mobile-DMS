@@ -1,14 +1,13 @@
 import React, {useEffect, useMemo} from 'react';
 import {
   StyleSheet,
-  Text,
   TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
 import {AppTheme, useTheme} from '../../../../layouts/theme';
-import {AppIcons} from '../../../../components/common';
+import {AppIcons, AppText as Text} from '../../../../components/common';
 import {ICON_TYPE} from '../../../../const/app.const';
 import {CommonUtils} from '../../../../utils';
 import {useTranslation} from 'react-i18next';
@@ -55,27 +54,38 @@ const ItemProduct = ({
       </View>
 
       <View style={styles.contaienrIf}>
-        {tax_percentage !== undefined && tax_percentage !== 0 && (
+        {/* {tax_percentage !== undefined && tax_percentage !== 0 && (
           <View style={[styles.flexSpace, {paddingVertical: 4}]}>
             <Text style={styles.textIf(colors.text_secondary)}>
               {getLabel('VAT')} (%)
             </Text>
             <Text style={styles.textIf(colors.text_primary)}>
-              {tax_percentage.toString()} %
+             
             </Text>
           </View>
-        )}
-        {tax_amount !== undefined && tax_amount !== 0 && (
-          <View style={[styles.flexSpace, {paddingVertical: 4}]}>
-            <Text style={styles.textIf(colors.text_secondary)}>
-              {getLabel('VAT')}(VND)
-            </Text>
-            <Text style={styles.textIf(colors.text_primary)}>
-              {price && CommonUtils.convertToTwoDecimalPlaces(tax_amount)}
-            </Text>
-          </View>
-        )}
-        {percentage_discount !== undefined && percentage_discount !== 0 && (
+        )} */}
+        {tax_amount !== undefined &&
+          tax_amount !== 0 &&
+          tax_percentage !== undefined &&
+          tax_percentage !== 0 && (
+            <View style={[styles.flexSpace, {paddingVertical: 4}]}>
+              <Text style={styles.textIf(colors.text_secondary)}>
+                {getLabel('VAT')}(VND)
+              </Text>
+              <Text style={styles.textIf(colors.text_primary)}>
+                {tax_percentage.toString()}%
+                <Text
+                  fontSize={12}
+                  colorTheme="text_secondary"
+                  fontWeight="100"
+                  textAlign="center">
+                  {' → '}
+                </Text>
+                {price && CommonUtils.convertToTwoDecimalPlaces(tax_amount)}
+              </Text>
+            </View>
+          )}
+        {/* {percentage_discount !== undefined && percentage_discount !== 0 && (
           <View style={[styles.flexSpace, {paddingVertical: 4}]}>
             <Text style={styles.textIf(colors.text_secondary)}>
               {getLabel('discount')} (%)
@@ -84,17 +94,28 @@ const ItemProduct = ({
               {percentage_discount?.toString()} %
             </Text>
           </View>
-        )}
-        {discount_amount !== undefined && discount_amount !== 0 && (
-          <View style={[styles.flexSpace, {paddingVertical: 4}]}>
-            <Text style={styles.textIf(colors.text_secondary)}>
-              {getLabel('discount')}(VND)
-            </Text>
-            <Text style={styles.textIf(colors.text_primary)}>
-              {CommonUtils.convertToTwoDecimalPlaces(discount_amount)}
-            </Text>
-          </View>
-        )}
+        )} */}
+        {discount_amount !== undefined &&
+          discount_amount !== 0 &&
+          percentage_discount !== undefined &&
+          percentage_discount !== 0 && (
+            <View style={[styles.flexSpace, {paddingVertical: 4}]}>
+              <Text style={styles.textIf(colors.text_secondary)}>
+                {getLabel('discount')}(VND)
+              </Text>
+              <Text style={styles.textIf(colors.text_primary)}>
+                {percentage_discount?.toString()} %
+                <Text
+                  fontSize={12}
+                  colorTheme="text_secondary"
+                  fontWeight="100"
+                  textAlign="center">
+                  {' → '}
+                </Text>
+                {CommonUtils.convertToTwoDecimalPlaces(discount_amount)}
+              </Text>
+            </View>
+          )}
       </View>
       {totalPrice !== undefined && totalPrice !== 0 && (
         <View style={styles.flexSpace}>

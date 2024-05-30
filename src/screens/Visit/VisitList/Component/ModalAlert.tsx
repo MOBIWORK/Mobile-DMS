@@ -76,16 +76,17 @@ const ModalAlert = ({
     );
     return res;
   }, [curLocation.current]);
-console.log(data,'data')
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
       locations => {
         curLocation.current = locations;
         setDistance(
-         Math.ceil( data*1000 -
-            (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-              AppConstant.additional_distance) 
-        ));
+          Math.ceil(
+            data * 1000 -
+              (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                AppConstant.additional_distance),
+          ),
+        );
         mapboxCameraRef.current &&
           mapboxCameraRef.current.moveTo(
             [locations.coords.longitude, locations.coords.latitude],

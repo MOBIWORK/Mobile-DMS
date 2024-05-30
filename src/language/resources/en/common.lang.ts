@@ -301,5 +301,12 @@ export default {
   listContact: 'List Contact',
   addressGet: 'Delivery Address',
   addressOrder: 'Order Address',
-  mainAddress:"Main Address"
+  mainAddress:"Main Address",
+  Su:"Su",
+  Mo:"Mo",
+  Tu:"Tu",
+  We:"We",
+  Th:"Th",
+  Fr:'Fr',
+  Sa:"Sa"
 };
