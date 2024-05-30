@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
 import { MainLayout } from '../../layouts';
 import { Text, TouchableOpacity } from 'react-native';
+
 import AppContainer from '../../components/AppContainer';
-import {AppHeader, Block} from '../../components/common';
-import {useNavigation} from '@react-navigation/native';
-import {useTranslation} from 'react-i18next';
-import {NavigationProp} from '../../navigation/screen-type';
+import { AppHeader, Block } from '../../components/common';
+import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { NavigationProp } from '../../navigation/screen-type';
 import ItemNotification from '../../components/Notification/ItemNotification';
 import { AppTheme, useTheme } from '../../layouts/theme';
 import { useDeepCompareEffect } from '../../config/function';
@@ -20,7 +21,7 @@ const InternalNotificationScreen = () => {
   const styles = createSheetStyle(theme);
   const navigate = useNavigation<NavigationProp>();
   const [isRead, setRead] = useState<boolean>(false);
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const [notificationData, setNotificationData] = useMMKVString(AppConstant.NotificationData);
 
@@ -62,7 +63,7 @@ const InternalNotificationScreen = () => {
   }, [notificationData, isRead]);
 
   return (
-    <MainLayout style={{backgroundColor: colors.bg_neutral}}>
+    <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
       <AppHeader
         label={getLabel('Thông báo nội nộ')}
         onBack={() => navigate.goBack()}
@@ -78,7 +79,7 @@ const InternalNotificationScreen = () => {
             onPress={() => setRead(false)}
             style={[
               styles.action,
-              {color: isRead ? colors.text_primary : colors.action},
+              { color: isRead ? colors.text_primary : colors.action },
             ]}>
             {getLabel('Tất cả')}
           </Text>
@@ -91,7 +92,7 @@ const InternalNotificationScreen = () => {
             onPress={() => setRead(true)}
             style={[
               styles.action,
-              {color: !isRead ? colors.text_primary : colors.action},
+              { color: !isRead ? colors.text_primary : colors.action },
             ]}>
             {getLabel('Chưa đọc')}
           </Text>

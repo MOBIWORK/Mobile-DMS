@@ -11,6 +11,8 @@ import { useDeepCompareEffect } from '../../../config/function'
 import RenderHTML from 'react-native-render-html'
 import { WIDTH } from '../../../const/app.const'
 import AvatarStack from '../../../components/Notification/AvatarStack'
+import isEqual from 'react-fast-compare'
+
 const NotificationDetail = () => {
     const navigation = useNavigation<NavigationProp>();
     const theme = useTheme()
@@ -78,36 +80,38 @@ const NotificationDetail = () => {
     )
 }
 
+
 export default React.memo(NotificationDetail,isEqual);
 
+
 const createSheetStyle = (theme: AppTheme) =>
-  StyleSheet.create({
-    headeLb: {
-      textAlign: 'left',
-      marginLeft: 5,
-    } as TextStyle,
-    containerItem: {
-      borderRadius: 16,
-      overflow: 'hidden',
-      backgroundColor: theme.colors.bg_default,
-      marginTop: 8,
-      paddingHorizontal: 16,
-    } as ViewStyle,
-    header_title: {
-      fontSize: 20,
-      fontWeight: '500',
-      lineHeight: 30,
-      paddingVertical: 8,
-    } as TextStyle,
-    containSecondView: {
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-      paddingVertical: 8,
-    } as ViewStyle,
-    footerContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-    } as ViewStyle,
-  });
+    StyleSheet.create({
+        headeLb: {
+            textAlign: 'left',
+            marginLeft: 5,
+        } as TextStyle,
+        containerItem: {
+            borderRadius: 16,
+            overflow: 'hidden',
+            backgroundColor: theme.colors.bg_default,
+            marginTop: 8,
+            paddingHorizontal: 16,
+        } as ViewStyle,
+        header_title: {
+            fontSize: 20,
+            fontWeight: '500',
+            lineHeight: 30,
+            paddingVertical: 8,
+        } as TextStyle,
+        containSecondView: {
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            paddingVertical: 8,
+        } as ViewStyle,
+        footerContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+        } as ViewStyle,
+    });
