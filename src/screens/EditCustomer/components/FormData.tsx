@@ -201,16 +201,18 @@ const FormData = (props: Props) => {
       contact: dataCustomer.contacts,
       credit_limits: dataCustomer.credit_limits,
       customer_code: dataCustomer.customer_code,
-      customer_group:
-        dataCustomer.customer_group != null
-          ? dataCustomer.customer_group
-          : null,
+      // customer_group:
+      //   dataCustomer.customer_group != null
+      //     ? dataCustomer.customer_group
+      //     : null,
       customer_name: dataCustomer.customer_name,
       customer_type: dataCustomer.customer_type,
       image: dataCustomer.image,
       router: dataCustomer.routers,
       website: dataCustomer.website,
+      territory:dataCustomer.territory
     };
+    console.log(dataUpdate,'dataUpdate')
     startTransition(() => {
       dispatch(customerActions.updateCustomerAction(dataUpdate));
     });

@@ -141,6 +141,7 @@ export function* updateCustomerSaga(action: PayloadAction) {
   if (customerActions.updateCustomerAction.match(action)) {
     try {
       yield put(appActions.onLoadApp());
+      console.log(action.payload)
       const response: ResponseGenerator = yield call(
         updateCustomer,
         action.payload,
