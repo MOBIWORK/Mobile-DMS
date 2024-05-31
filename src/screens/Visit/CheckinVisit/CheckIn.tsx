@@ -332,27 +332,17 @@ const CheckIn = () => {
         dispatch(appActions.setProcessingStatus(false));
         return;
       } else {
-        try {
-          dispatch(
-            appActions.onCheckIn({
-              ...dataCheckIn,
-              checkin_trangthaicuahang: status,
-              checkin_pinra:
-                batteryLevel > 0
-                  ? Math.round(batteryLevel * 10000) / 100
-                  : -Math.round(batteryLevel * 10000) / 100,
-              checkin_giora: new Date().getTime() / 1000,
-            }),
-          );
-        } catch (e) {
-          console.log(e, '???????');
-          dispatch(appActions.setProcessingStatus(false));
-        } finally {
-          dispatch(checkinActions.resetData());
-          dispatch(appActions.setDataCheckIn({}));
-          dispatch(appActions.setProcessingStatus(false));
-          storage.set('time', '');
-        }
+        dispatch(
+          appActions.onCheckIn({
+            ...dataCheckIn,
+            checkin_trangthaicuahang: status,
+            checkin_pinra:
+              batteryLevel > 0
+                ? Math.round(batteryLevel * 10000) / 100
+                : -Math.round(batteryLevel * 10000) / 100,
+            checkin_giora: new Date().getTime() / 1000,
+          }),
+        );
       }
     });
     setShow(false);
