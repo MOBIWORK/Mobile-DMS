@@ -10,6 +10,7 @@ import {
   AppButton,
   AppHeader,
   AppInput,
+  Block,
   SvgIcon,
 } from '../../../components/common';
 import {
@@ -30,6 +31,9 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
@@ -57,7 +61,7 @@ import {
   AddressType,
 } from '../../Customer/components/FormAddress';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
-import {ScrollView} from 'react-native-gesture-handler';
+// import {ScrollView} from 'react-native-gesture-handler';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -474,7 +478,14 @@ const CheckInLocation = () => {
   }, []);
 
   return (
-    <>
+    <SafeAreaView
+      style={{
+        paddingHorizontal: 0,
+        flex: 1,
+        // backgroundColor:'blue'
+        // height: AppConstant.HEIGHT * 0.6,
+      }}
+      edges={['top']}>
       {screen === 'Adding' && addressSelectedData.length !== 3 ? (
         <SelectedAddress
           setScreen={setScreen}
@@ -482,26 +493,19 @@ const CheckInLocation = () => {
           setData={setAddressSelectedData}
         />
       ) : (
-        <SafeAreaView
-          style={{
-            paddingHorizontal: 0,
-            flex: 1,
-            // height: AppConstant.HEIGHT * 0.6,
-          }}
-          edges={['bottom', 'top']}>
+        <Block block>
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
             onBack={() => navigation.goBack()}
             label={getLabel('location')}
           />
           {/*<AppContainer style={{height: AppConstant.HEIGHT}}>*/}
-          <ScrollView>
-            <View
-              style={{
-                overflow: 'hidden',
-                width: '100%',
-                paddingVertical: 16,
-              }}>
+          <KeyboardAvoidingView style={{flex:1}} behavior='height'>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{flex: 1}}
+            contentInsetAdjustmentBehavior="automatic">
+            <Block block>
               <Mapbox.MapView
                 onCameraChanged={state =>
                   (zoomLevelRef.current = state.properties.zoom)
@@ -511,7 +515,7 @@ const CheckInLocation = () => {
                 scaleBarEnabled={false}
                 styleURL={Mapbox.StyleURL.Street}
                 logoEnabled={false}
-                style={{width: '100%', height: 300}}
+                style={{flex: 1, height: 300}}
                 onPress={feature => {
                   Keyboard.dismiss();
                   setLocation({
@@ -579,7 +583,9 @@ const CheckInLocation = () => {
                   {getLabel('getAddress')}
                 </Text>
               </TouchableOpacity>
-              <View style={styles.inputContainer}>
+              <View
+                
+                style={styles.inputContainer}>
                 <AppInput
                   label={`${getLabel('province')}/${getLabel('city')}`}
                   onPress={() => {
@@ -588,6 +594,7 @@ const CheckInLocation = () => {
                   }}
                   value={addressObj.province.value}
                   editable={false}
+                  styles={{marginBottom: 12}}
                   hiddenRightIcon={false}
                   rightIcon={
                     <TextInputPaper.Icon
@@ -601,6 +608,7 @@ const CheckInLocation = () => {
                   label={getLabel('district')}
                   value={addressObj.district.value}
                   editable={false}
+                  styles={{marginBottom: 12}}
                   onPress={() => {
                     setScreen('Adding');
                     const newData = addressSelectedData.filter(
@@ -618,6 +626,7 @@ const CheckInLocation = () => {
                 />
                 <AppInput
                   label={getLabel('ward')}
+                  styles={{marginBottom: 12}}
                   value={addressObj.ward.value}
                   editable={false}
                   onPress={() => {
@@ -637,6 +646,7 @@ const CheckInLocation = () => {
                 />
                 <AppInput
                   label={getLabel('address')}
+                  styles={{marginBottom: 12}}
                   value={addressObj.detail}
                   editable={true}
                   hiddenRightIcon={true}
@@ -645,21 +655,22 @@ const CheckInLocation = () => {
                   }
                 />
               </View>
-            </View>
+            </Block>
           </ScrollView>
-          {showFooterBtn && (
-            <View style={[styles.buttonFooter, {bottom: bottom}]}>
-              <AppButton
-                label={getLabel('completed')}
-                onPress={handleComplete}
-                disabled={!isValidAddress}
-              />
-            </View>
-          )}
+          </KeyboardAvoidingView>
           {/*</AppContainer>*/}
-        </SafeAreaView>
+        </Block>
       )}
-    </>
+      {showFooterBtn && (
+        <View style={[styles.buttonFooter, {bottom: bottom}]}>
+          <AppButton
+            label={getLabel('completed')}
+            onPress={handleComplete}
+            disabled={!isValidAddress}
+          />
+        </View>
+      )}
+    </SafeAreaView>
   );
 };
 export default React.memo(CheckInLocation, isEqual);
@@ -717,6 +728,7 @@ const createStyle = (theme: ExtendedTheme) =>
       width: '90%',
       alignSelf: 'center',
       bottom: 10,
+      // backgroundColor: 'blue',
     } as ViewStyle,
     iconStyle: {
       width: 24,
@@ -726,5 +738,7 @@ const createStyle = (theme: ExtendedTheme) =>
       paddingHorizontal: 16,
       rowGap: 12,
       marginTop: 16,
+      paddingVertical: 16,
+      // flex:1
     } as ViewStyle,
   });

@@ -4,6 +4,7 @@ import CardView from './CardView';
 import {IDataCustomers} from '../../../models/types';
 import isEqual from 'react-fast-compare';
 import {Block, AppText as Text} from '../../../components/common';
+import SkeletonLoading from '../../Visit/SkeletonLoading';
 
 type Props = {
   data: IDataCustomers[];
@@ -45,14 +46,8 @@ const ListCard = (props: Props) => {
       renderItem={renderItem}
     />
   ) : (
-    <Block block justifyContent="center" alignItems="center">
-      <Text
-        fontSize={16}
-        fontWeight="500"
-        lineHeight={24}
-        colorTheme="text_primary">
-        Không tìm thấy khách hàng
-      </Text>
+    <Block block>
+     <SkeletonLoading/>
     </Block>
   );
   // </SafeAreaView>

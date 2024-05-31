@@ -114,7 +114,7 @@ const ModalAlert = ({
           status: false,
         }))
       }>
-      <Block height={400} colorTheme="white" borderRadius={16}>
+      <Block height={ show.type === 'loading' ?  200  :  400} color={show.type === 'loading' ? 'transparent' : theme.colors.white} borderRadius={16}>
         {show.type === 'loading' ? (
           <Block justifyContent="center" alignItems="center" block>
             <ActivityIndicator size="large" color={theme.colors.primary} />
