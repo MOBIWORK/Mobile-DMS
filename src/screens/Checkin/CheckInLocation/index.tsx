@@ -486,7 +486,6 @@ const CheckInLocation = () => {
         // height: AppConstant.HEIGHT * 0.6,
       }}
       edges={['top']}>
-
       {screen === 'Adding' && addressSelectedData.length !== 3 ? (
         <SelectedAddress
           setScreen={setScreen}
@@ -494,186 +493,171 @@ const CheckInLocation = () => {
           setData={setAddressSelectedData}
         />
       ) : (
-
         <Block block>
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
             onBack={() => navigation.goBack()}
             label={getLabel('location')}
           />
-          {/*<AppContainer style={{height: AppConstant.HEIGHT}}>*/}
-
-          <KeyboardAvoidingView style={{flex:1}} behavior='height'>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
+          <KeyboardAvoidingView
             style={{flex: 1}}
-            contentInsetAdjustmentBehavior="automatic">
-            <Block block>
-
-              <Mapbox.MapView
-                onCameraChanged={state =>
-                  (zoomLevelRef.current = state.properties.zoom)
-                }
-                pitchEnabled={false}
-                attributionEnabled={false}
-                scaleBarEnabled={false}
-                styleURL={Mapbox.StyleURL.Street}
-                logoEnabled={false}
-
-                style={{flex: 1, height: 300}}
-
-                onPress={feature => {
-                  Keyboard.dismiss();
-                  setLocation({
-                    // @ts-ignore
-                    coords: {
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={{flex: 1}}
+              contentInsetAdjustmentBehavior="automatic">
+              <Block block>
+                <Mapbox.MapView
+                  onCameraChanged={state =>
+                    (zoomLevelRef.current = state.properties.zoom)
+                  }
+                  pitchEnabled={false}
+                  attributionEnabled={false}
+                  scaleBarEnabled={false}
+                  styleURL={Mapbox.StyleURL.Street}
+                  logoEnabled={false}
+                  style={{flex: 1, height: 300}}
+                  onPress={feature => {
+                    Keyboard.dismiss();
+                    setLocation({
                       // @ts-ignore
-                      latitude: feature.geometry.coordinates[1],
-                      // @ts-ignore
-                      longitude: feature.geometry.coordinates[0],
-                    },
-                  });
-                }}>
-                <Mapbox.RasterSource
-                  id="adminmap"
-                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-                  <Mapbox.RasterLayer
-                    id={'adminmap'}
-                    sourceID={'admin'}
-                    style={{visibility: 'visible'}}
+                      coords: {
+                        // @ts-ignore
+                        latitude: feature.geometry.coordinates[1],
+                        // @ts-ignore
+                        longitude: feature.geometry.coordinates[0],
+                      },
+                    });
+                  }}>
+                  <Mapbox.RasterSource
+                    id="adminmap"
+                    tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                    <Mapbox.RasterLayer
+                      id={'adminmap'}
+                      sourceID={'admin'}
+                      style={{visibility: 'visible'}}
+                    />
+                  </Mapbox.RasterSource>
+                  <Mapbox.Camera
+                    ref={mapboxCameraRef}
+                    centerCoordinate={[
+                      location?.coords.longitude ?? 0,
+                      location?.coords.latitude ?? 0,
+                    ]}
+                    animationMode={'flyTo'}
+                    animationDuration={500}
+                    zoomLevel={zoomLevelRef.current}
                   />
-                </Mapbox.RasterSource>
-                <Mapbox.Camera
-                  ref={mapboxCameraRef}
-                  centerCoordinate={[
-                    location?.coords.longitude ?? 0,
-                    location?.coords.latitude ?? 0,
-                  ]}
-                  animationMode={'flyTo'}
-                  animationDuration={500}
-                  zoomLevel={zoomLevelRef.current}
-                />
-                {location?.coords && (
-                  <Mapbox.MarkerView
-                    coordinate={[
-                      Number(location?.coords.longitude),
-                      Number(location?.coords.latitude),
-                    ]}>
-                    <SvgIcon source={'LocationCheckIn'} size={40} />
-                  </Mapbox.MarkerView>
-                )}
-              </Mapbox.MapView>
-              <TouchableOpacity
-                onPress={handleRegainLocation}
-                style={styles.regainPosition}>
-                <Image
-                  source={ImageAssets.MapIcon}
-                  style={{width: 16, height: 16}}
-                  resizeMode={'cover'}
-                  tintColor={theme.colors.bg_default}
-                />
-                <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
-                  {getLabel('currentPosition')}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleGetAddress}
-                style={styles.getLocation}>
-                <Image
-                  source={ImageAssets.MapPinIcon}
-                  style={{width: 16, height: 16}}
-                  resizeMode={'cover'}
-                  tintColor={theme.colors.text_secondary}
-                />
-                <Text style={{color: theme.colors.text_primary, marginLeft: 4}}>
-                  {getLabel('getAddress')}
-                </Text>
-              </TouchableOpacity>
+                  {location?.coords && (
+                    <Mapbox.MarkerView
+                      coordinate={[
+                        Number(location?.coords.longitude),
+                        Number(location?.coords.latitude),
+                      ]}>
+                      <SvgIcon source={'LocationCheckIn'} size={40} />
+                    </Mapbox.MarkerView>
+                  )}
+                </Mapbox.MapView>
+                <TouchableOpacity
+                  onPress={handleRegainLocation}
+                  style={styles.regainPosition}>
+                  <Image
+                    source={ImageAssets.MapIcon}
+                    style={{width: 16, height: 16}}
+                    resizeMode={'cover'}
+                    tintColor={theme.colors.bg_default}
+                  />
+                  <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
+                    {getLabel('currentPosition')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleGetAddress}
+                  style={styles.getLocation}>
+                  <Image
+                    source={ImageAssets.MapPinIcon}
+                    style={{width: 16, height: 16}}
+                    resizeMode={'cover'}
+                    tintColor={theme.colors.text_secondary}
+                  />
+                  <Text
+                    style={{color: theme.colors.text_primary, marginLeft: 4}}>
+                    {getLabel('getAddress')}
+                  </Text>
+                </TouchableOpacity>
 
-              <View
-                
-                style={styles.inputContainer}>
-
-                <AppInput
-                  label={`${getLabel('province')}/${getLabel('city')}`}
-                  onPress={() => {
-                    setScreen('Adding');
-                    setAddressSelectedData([]);
-                  }}
-                  value={addressObj.province.value}
-                  editable={false}
-
-                  styles={{marginBottom: 12}}
-
-                  hiddenRightIcon={false}
-                  rightIcon={
-                    <TextInputPaper.Icon
-                      icon={'chevron-down'}
-                      style={styles.iconStyle}
-                      color={theme.colors.text_secondary}
-                    />
-                  }
-                />
-                <AppInput
-                  label={getLabel('district')}
-                  value={addressObj.district.value}
-                  editable={false}
-
-                  styles={{marginBottom: 12}}
-
-                  onPress={() => {
-                    setScreen('Adding');
-                    const newData = addressSelectedData.filter(
-                      item => item.type === AddressType.city,
-                    );
-                    setAddressSelectedData(newData);
-                  }}
-                  rightIcon={
-                    <TextInputPaper.Icon
-                      icon={'chevron-down'}
-                      style={styles.iconStyle}
-                      color={theme.colors.text_secondary}
-                    />
-                  }
-                />
-                <AppInput
-                  label={getLabel('ward')}
-
-                  styles={{marginBottom: 12}}
-
-                  value={addressObj.ward.value}
-                  editable={false}
-                  onPress={() => {
-                    setScreen('Adding');
-                    const newData = addressSelectedData.filter(
-                      item => item.type !== AddressType.district,
-                    );
-                    setAddressSelectedData(newData);
-                  }}
-                  rightIcon={
-                    <TextInputPaper.Icon
-                      icon={'chevron-down'}
-                      style={styles.iconStyle}
-                      color={theme.colors.text_secondary}
-                    />
-                  }
-                />
-                <AppInput
-                  label={getLabel('address')}
-
-                  styles={{marginBottom: 12}}
-
-                  value={addressObj.detail}
-                  editable={true}
-                  hiddenRightIcon={true}
-                  onChangeValue={text =>
-                    setAddressObj(prevState => ({...prevState, detail: text}))
-                  }
-                />
-              </View>
-
-            </Block>
-          </ScrollView>
+                <View style={styles.inputContainer}>
+                  <AppInput
+                    label={`${getLabel('province')}/${getLabel('city')}`}
+                    onPress={() => {
+                      setScreen('Adding');
+                      setAddressSelectedData([]);
+                    }}
+                    value={addressObj.province.value}
+                    editable={false}
+                    styles={{marginBottom: 12}}
+                    hiddenRightIcon={false}
+                    rightIcon={
+                      <TextInputPaper.Icon
+                        icon={'chevron-down'}
+                        style={styles.iconStyle}
+                        color={theme.colors.text_secondary}
+                      />
+                    }
+                  />
+                  <AppInput
+                    label={getLabel('district')}
+                    value={addressObj.district.value}
+                    editable={false}
+                    styles={{marginBottom: 12}}
+                    onPress={() => {
+                      setScreen('Adding');
+                      const newData = addressSelectedData.filter(
+                        item => item.type === AddressType.city,
+                      );
+                      setAddressSelectedData(newData);
+                    }}
+                    rightIcon={
+                      <TextInputPaper.Icon
+                        icon={'chevron-down'}
+                        style={styles.iconStyle}
+                        color={theme.colors.text_secondary}
+                      />
+                    }
+                  />
+                  <AppInput
+                    label={getLabel('ward')}
+                    styles={{marginBottom: 12}}
+                    value={addressObj.ward.value}
+                    editable={false}
+                    onPress={() => {
+                      setScreen('Adding');
+                      const newData = addressSelectedData.filter(
+                        item => item.type !== AddressType.district,
+                      );
+                      setAddressSelectedData(newData);
+                    }}
+                    rightIcon={
+                      <TextInputPaper.Icon
+                        icon={'chevron-down'}
+                        style={styles.iconStyle}
+                        color={theme.colors.text_secondary}
+                      />
+                    }
+                  />
+                  <AppInput
+                    label={getLabel('address')}
+                    styles={{marginBottom: 12}}
+                    value={addressObj.detail}
+                    editable={true}
+                    hiddenRightIcon={true}
+                    onChangeValue={text =>
+                      setAddressObj(prevState => ({...prevState, detail: text}))
+                    }
+                  />
+                </View>
+              </Block>
+            </ScrollView>
           </KeyboardAvoidingView>
           {/*</AppContainer>*/}
         </Block>
@@ -688,7 +672,6 @@ const CheckInLocation = () => {
         </View>
       )}
     </SafeAreaView>
-
   );
 };
 export default React.memo(CheckInLocation, isEqual);
@@ -724,7 +707,7 @@ const createStyle = (theme: ExtendedTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
       position: 'absolute',
-      top: 270,
+      top: 250,
       right: 0,
     } as ViewStyle,
     getLocation: {
@@ -738,7 +721,7 @@ const createStyle = (theme: ExtendedTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
       position: 'absolute',
-      top: 270,
+      top: 250,
       left: 20,
     } as ViewStyle,
     buttonFooter: {
@@ -746,7 +729,6 @@ const createStyle = (theme: ExtendedTheme) =>
       width: '90%',
       alignSelf: 'center',
       bottom: 10,
-
     } as ViewStyle,
     iconStyle: {
       width: 24,
@@ -757,6 +739,5 @@ const createStyle = (theme: ExtendedTheme) =>
       rowGap: 12,
       marginTop: 16,
       paddingVertical: 16,
-
     } as ViewStyle,
   });
