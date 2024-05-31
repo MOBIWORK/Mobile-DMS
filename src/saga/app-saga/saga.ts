@@ -16,7 +16,7 @@ import {
   postChecking,
 } from '../../services/appService';
 import {all, call, put} from 'typed-redux-saga';
-import {navigate} from '../../navigation/navigation-service';
+import {goBack, navigate} from '../../navigation/navigation-service';
 import {ApiConstant, ScreenConstant} from '../../const';
 import {
   categoriesCheckinList,

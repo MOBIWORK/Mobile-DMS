@@ -318,6 +318,7 @@ const CheckInLocation = () => {
   };
 
   const fillAddressInit = useCallback(async () => {
+    dispatch(appActions.setProcessingStatus(true));
     const customer_primary_address =
       route?.params && route.params.data.item.customer_primary_address;
     if (customer_primary_address) {
@@ -387,6 +388,7 @@ const CheckInLocation = () => {
       }
       setAddressObj(addressObj);
     }
+    dispatch(appActions.setProcessingStatus(false));
   }, [listDataCity.city]);
 
   useLayoutEffect(() => {
