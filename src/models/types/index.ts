@@ -119,7 +119,13 @@ export interface PlusCode {
 }
 export type VisitListItemType = {
   name: string;
-  customer_primary_address: string;
+  customer_primary_address: {
+    address_title: string;
+    address_line1: string;
+    city: string;
+    county: string;
+    state: string;
+  };
   customer_code: string;
   customer_location_primary: any;
   mobile_no: string | null;
@@ -1096,9 +1102,9 @@ export type Notification = {
   apply_for: string;
   description: string;
   employee_watched: {
-      employee_name: string;
-      image: string;
-      name: string;
+    employee_name: string;
+    image: string;
+    name: string;
   }[];
   from_date: string;
   full_name: string;
@@ -1109,4 +1115,4 @@ export type Notification = {
   owner: string;
   priority_level: string;
   to_date: string;
-}
+};

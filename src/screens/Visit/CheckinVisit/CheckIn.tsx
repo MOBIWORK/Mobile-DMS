@@ -29,7 +29,6 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   calculateDistance,
   decimalMinutesToTime,
-  useDeepCompareEffect,
   useDisableBackHandler,
   useEffectOnce,
   useSelector,
@@ -327,33 +326,23 @@ const CheckIn = () => {
   };
 
   const onCheckout = useCallback(async () => {
-    dispatch(appActions.setProcessingStatus(true));
+    // dispatch(appActions.setProcessingStatus(true));
     CommonUtils.getCurrentLocation(locations => {
       if (!isValidCheckOut(locations)) {
         dispatch(appActions.setProcessingStatus(false));
         return;
       } else {
-        try {
-          dispatch(
-            appActions.onCheckIn({
-              ...dataCheckIn,
-              checkin_trangthaicuahang: status,
-              checkin_pinra:
-                batteryLevel > 0
-                  ? Math.round(batteryLevel * 10000) / 100
-                  : -Math.round(batteryLevel * 10000) / 100,
-              checkin_giora: new Date().getTime() / 1000,
-            }),
-          );
-        } catch (e) {
-          dispatch(appActions.setProcessingStatus(false));
-          console.log('err', e);
-        } finally {
-          dispatch(checkinActions.resetData());
-          dispatch(appActions.setDataCheckIn({}));
-          dispatch(appActions.setProcessingStatus(false));
-          storage.set('time', '');
-        }
+        dispatch(
+          appActions.onCheckIn({
+            ...dataCheckIn,
+            checkin_trangthaicuahang: status,
+            checkin_pinra:
+              batteryLevel > 0
+                ? Math.round(batteryLevel * 10000) / 100
+                : -Math.round(batteryLevel * 10000) / 100,
+            checkin_giora: new Date().getTime() / 1000,
+          }),
+        );
       }
     });
     setShow(false);

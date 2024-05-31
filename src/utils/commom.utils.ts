@@ -17,6 +17,8 @@ import Geolocation, {
   GeolocationOptions,
   GeolocationResponse,
 } from '@react-native-community/geolocation';
+// @ts-ignore
+import stringSimilarity from 'string-similarity';
 
 export const storage = new MMKV();
 
@@ -634,4 +636,9 @@ export const isStringNumber = (str: string) => {
 
 export const randomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min)) + min;
+};
+
+export const findBestMatch = (target: string, stringArr: string[]) => {
+  const result = stringSimilarity.findBestMatch(target, stringArr);
+  return result.bestMatch.target;
 };

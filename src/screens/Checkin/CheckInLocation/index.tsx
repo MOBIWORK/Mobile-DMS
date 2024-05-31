@@ -1,5 +1,17 @@
-import React, {useLayoutEffect, useRef, useState} from 'react';
-import {AppButton, AppHeader, SvgIcon} from '../../../components/common';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  AppButton,
+  AppHeader,
+  AppInput,
+  SvgIcon,
+} from '../../../components/common';
 import {
   ExtendedTheme,
   useNavigation,
@@ -14,7 +26,6 @@ import {
   Keyboard,
   StyleSheet,
   Text,
-  TextInput,
   TextStyle,
   TouchableOpacity,
   View,
@@ -40,6 +51,13 @@ import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
 import {CheckinData} from '../../../services/appService';
 import {shallowEqual} from 'react-redux';
+import {TextInput as TextInputPaper} from 'react-native-paper';
+import {
+  AddressSelected,
+  AddressType,
+} from '../../Customer/components/FormAddress';
+import SelectedAddress from '../../Customer/components/SelectedAddress';
+import {ScrollView} from 'react-native-gesture-handler';
 
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
@@ -61,16 +79,61 @@ const CheckInLocation = () => {
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );
+
+  const listDataCity = useSelector(state => state.app.listDataCity);
+
+  const [addressObj, setAddressObj] = useState<{
+    province: {
+      code: string;
+      value: string;
+    };
+    district: {
+      code: string;
+      value: string;
+    };
+    ward: {
+      code: string;
+      value: string;
+    };
+    detail: string;
+  }>({
+    province: {
+      code: '',
+      value: '',
+    },
+    district: {
+      code: '',
+      value: '',
+    },
+    ward: {
+      code: '',
+      value: '',
+    },
+    detail: '',
+  });
+
+  const [showFooterBtn, setShowFooterBtn] = useState<boolean>(true);
+  const [screen, setScreen] = useState<string>('');
+  const [addressSelectedData, setAddressSelectedData] = useState<
+    AddressSelected[]
+  >([]);
+
   const customer_location: LocationProps =
     route.params?.data &&
     JSON.parse(route.params.data.item.customer_location_primary);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-  const [value, setValue] = useState<string>(
-    route.params?.data && route.params.data.item.customer_primary_address,
-  );
   const mapboxCameraRef = useRef<CameraRef>(null);
   const zoomLevelRef = useRef<number>(15);
+
+  const isValidAddress = useMemo(() => {
+    return (
+      addressObj.ward.code &&
+      addressObj.province.code &&
+      addressObj.district.code &&
+      addressObj.detail
+    );
+  }, [addressObj]);
 
   const handleRegainLocation = () => {
     CommonUtils.getCurrentLocation(newLocation => {
@@ -80,41 +143,18 @@ const CheckInLocation = () => {
           [newLocation.coords.longitude, newLocation.coords.latitude],
           1000,
         );
-      // handleMarkerMap(
-      //   newLocation?.coords.latitude,
-      //   newLocation?.coords.longitude,
-      // );
     });
   };
 
   const handleGetAddress = async () => {
+    dispatch(appActions.setProcessingStatus(true));
     if (location) {
       await handleMarkerMap(
         location.coords.latitude,
         location.coords.longitude,
       );
     }
-  };
-
-  const handleSearchText = async (text: string) => {
-    if (text) {
-      // await CommonUtils.CheckNetworkState();
-      // const response: KeyAbleProps = await AppService.autocompleteGeoLocation(
-      //   text,
-      // );
-      // if (response.status === ApiConstant.STT_OK || 'OK') {
-      //   const geometry: any = response.results[0].geometry;
-      //   setLocation({
-      //     // @ts-ignore
-      //     coords: {
-      //       longitude: geometry.location.lng,
-      //       latitude: geometry.location.lat,
-      //     },
-      //   });
-      //   setValue(response.results[0].formatted_address);
-      // }
-      setValue(text);
-    }
+    dispatch(appActions.setProcessingStatus(false));
   };
 
   const handleMarkerMap = async (lat: number, lng: number) => {
@@ -128,22 +168,123 @@ const CheckInLocation = () => {
     });
     const response: KeyAbleProps = await AppService.getDetailLocation(lat, lng);
     if (response.status === ApiConstant.STT_OK || 'OK') {
-      setValue(response.results[0].formatted_address);
+      const address: any = response.results[0].address_components;
+      const cityValue = address[address.length - 1]?.long_name ?? '';
+      const districtValue = address[address.length - 2]?.long_name ?? '';
+      const wardValue = address[address.length - 3]?.long_name ?? '';
+      const addLine1 = address[address.length - 4]?.long_name ?? '';
+      let addressObj = {
+        province: {
+          code: '',
+          value: cityValue,
+        },
+        district: {
+          code: '',
+          value: districtValue,
+        },
+        ward: {
+          code: '',
+          value: wardValue,
+        },
+        detail: addLine1,
+      };
+      if (cityValue) {
+        const cityNameArr = listDataCity.city.map(
+          cityNameArrItem => cityNameArrItem.ten_tinh,
+        );
+        const citySelectedName = CommonUtils.findBestMatch(
+          cityValue,
+          cityNameArr,
+        );
+        const citySelected = listDataCity.city.find(
+          citySelectedItem => citySelectedItem.ten_tinh === citySelectedName,
+        );
+        addressObj = {
+          ...addressObj,
+          province: {
+            code: citySelected?.ma_tinh ?? '',
+            value: citySelected?.ten_tinh ?? '',
+          },
+        };
+      }
+      if (districtValue && addressObj.province.code) {
+        const districtRes: any = await AppService.getListDistrict(
+          addressObj.province.code,
+        );
+        if (districtRes?.status === ApiConstant.STT_OK) {
+          const districtNameArr = districtRes.data.result.map(
+            (districtNameArrItem: any) => districtNameArrItem.ten_huyen,
+          );
+          const districtSelectedName = CommonUtils.findBestMatch(
+            districtValue,
+            districtNameArr,
+          );
+          const districtSelected = districtRes.data.result.find(
+            (item: any) => item.ten_huyen === districtSelectedName,
+          );
+          addressObj = {
+            ...addressObj,
+            district: {
+              code: districtSelected?.ma_huyen ?? '',
+              value: districtSelected?.ten_huyen ?? '',
+            },
+          };
+        }
+      }
+      if (wardValue && addressObj.district.code) {
+        const wardRes: any = await AppService.getListWard(
+          addressObj.district.code,
+        );
+        if (wardRes?.status === ApiConstant.STT_OK) {
+          const wardNameArr = wardRes.data.result.map(
+            (wardNameArrItem: any) => wardNameArrItem.ten_xa,
+          );
+          const wardSelectedName = CommonUtils.findBestMatch(
+            wardValue,
+            wardNameArr,
+          );
+          const wardSelected = wardRes.data.result.find(
+            (item: any) => item.ten_xa === wardSelectedName,
+          );
+          addressObj = {
+            ...addressObj,
+            ward: {
+              code: wardSelected?.ma_xa ?? '',
+              value: wardSelected?.ten_xa ?? '',
+            },
+          };
+        }
+      }
+      if (addLine1) {
+        addressObj = {
+          ...addressObj,
+          detail: addLine1,
+        };
+      }
+      setAddressObj(addressObj);
     }
   };
   const handleComplete = async () => {
     dispatch(setProcessingStatus(true));
     let newParams = route.params;
     await CommonUtils.CheckNetworkState();
-    const split = value.split(',', 4);
     const params: IUpdateAddress = {
       customer: route.params.data.item.name,
       long: location?.coords.longitude ?? 0,
       lat: location?.coords.latitude ?? 0,
-      address_line1: split[0] ?? '',
-      state: split[split.length - 3] ? split[split.length - 3].trim() : '',
-      county: split[split.length - 2] ? split[split.length - 2].trim() : '',
-      city: split[split.length - 1],
+      address_line1: addressObj.detail,
+      state: {
+        code: addressObj.ward.code,
+        name: addressObj.ward.value,
+      },
+      county: {
+        code: addressObj.district.code,
+        name: addressObj.district.value,
+      },
+      city: {
+        code: addressObj.province.code,
+        name: addressObj.province.value,
+      },
       country: 'Việt Nam',
       checkin_id: route.params.data.checkin_id,
     };
@@ -155,7 +296,7 @@ const CheckInLocation = () => {
           ...dataCheckIn,
           item: {
             ...dataCheckIn.item,
-            customer_primary_address: value,
+            customer_primary_address: `${addressObj.detail},${addressObj.ward.value},${addressObj.district.value},${addressObj.province.value}`,
           },
         }),
       );
@@ -176,6 +317,78 @@ const CheckInLocation = () => {
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
   };
 
+  const fillAddressInit = useCallback(async () => {
+    const customer_primary_address =
+      route?.params && route.params.data.item.customer_primary_address;
+    if (customer_primary_address) {
+      let addressObj = {
+        province: {
+          code: customer_primary_address.city,
+          value: '',
+        },
+        district: {
+          code: customer_primary_address.county,
+          value: '',
+        },
+        ward: {
+          code: customer_primary_address.state,
+          value: '',
+        },
+        detail: customer_primary_address.address_line1,
+      };
+      if (customer_primary_address.city) {
+        const citySelected = listDataCity.city.find(
+          item => item.ma_tinh === customer_primary_address.city,
+        );
+        addressObj = {
+          ...addressObj,
+          province: {
+            ...addressObj.province,
+            value: citySelected?.ten_tinh ?? '',
+          },
+        };
+      }
+      if (customer_primary_address.county) {
+        const districtRes: any = await AppService.getListDistrict(
+          customer_primary_address.city,
+        );
+        if (districtRes?.status === ApiConstant.STT_OK) {
+          const districtSelected = districtRes.data.result.find(
+            (item: any) => item.ma_huyen === customer_primary_address.county,
+          );
+          addressObj = {
+            ...addressObj,
+            district: {
+              ...addressObj.district,
+              value: districtSelected.ten_huyen,
+            },
+          };
+        }
+      }
+      if (customer_primary_address.state) {
+        const wardRes: any = await AppService.getListWard(
+          customer_primary_address.county,
+        );
+        if (wardRes?.status === ApiConstant.STT_OK) {
+          const wardSelected = wardRes.data.result.find(
+            (item: any) => item.ma_xa === customer_primary_address.state,
+          );
+          addressObj = {
+            ...addressObj,
+            ward: {...addressObj.ward, value: wardSelected.ten_xa},
+          };
+        }
+      }
+      if (customer_primary_address.address_line1) {
+        addressObj = {
+          ...addressObj,
+          detail: customer_primary_address.address_line1,
+        };
+      }
+      setAddressObj(addressObj);
+    }
+  }, [listDataCity.city]);
+
   useLayoutEffect(() => {
     if (customer_location) {
       setLocation({
@@ -188,125 +401,265 @@ const CheckInLocation = () => {
     } else {
       CommonUtils.getCurrentLocation(locations => {
         setLocation(locations);
-        if (route?.params && route.params.data.item.customer_primary_address) {
-          setValue(route.params.data.item.customer_primary_address);
-        }
-        // handleMarkerMap(
-        //   locations?.coords.latitude,
-        //   locations?.coords.longitude,
-        // );
       });
+    }
+    fillAddressInit().then();
+  }, []);
+
+  useEffect(() => {
+    if (listDataCity?.city?.length === 0) {
+      dispatch(appActions.onGetListCity());
     }
   }, []);
 
+  useEffect(() => {
+    if (addressSelectedData.length === 3) {
+      setAddressObj({
+        ...addressObj,
+        province: {
+          code: addressSelectedData[0]?.id
+            ? addressSelectedData[0].id.toString()
+            : '',
+          value: addressSelectedData[0].value,
+        },
+        district: {
+          code: addressSelectedData[1]?.id
+            ? addressSelectedData[1].id.toString()
+            : '',
+          value: addressSelectedData[1].value,
+        },
+        ward: {
+          code: addressSelectedData[2]?.id
+            ? addressSelectedData[2].id.toString()
+            : '',
+          value: addressSelectedData[2].value,
+        },
+      });
+    } else if (addressSelectedData.length === 2) {
+      setAddressObj({
+        ...addressObj,
+        province: {
+          code: addressSelectedData[0]?.id
+            ? addressSelectedData[0].id.toString()
+            : '',
+          value: addressSelectedData[0].value,
+        },
+        district: {
+          code: addressSelectedData[1]?.id
+            ? addressSelectedData[1].id.toString()
+            : '',
+          value: addressSelectedData[1].value,
+        },
+      });
+    } else if (addressSelectedData.length === 1) {
+      setAddressObj({
+        ...addressObj,
+        province: {
+          code: addressSelectedData[0]?.id
+            ? addressSelectedData[0].id.toString()
+            : '',
+          value: addressSelectedData[0].value,
+        },
+      });
+    }
+  }, [addressSelectedData]);
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardWillShow', () => setShowFooterBtn(false));
+    Keyboard.addListener('keyboardWillHide', () => setShowFooterBtn(true));
+    return () => {
+      Keyboard.removeAllListeners('keyboardWillShow');
+      Keyboard.removeAllListeners('keyboardWillHide');
+    };
+  }, []);
+
   return (
-    <SafeAreaView style={{paddingHorizontal: 0}}>
-      <AppHeader
-        style={{paddingHorizontal: 16}}
-        onBack={() => navigation.goBack()}
-        label={getLabel('location')}
-      />
-      <View
-        style={{
-          overflow: 'hidden',
-          width: '100%',
-          height: AppConstant.HEIGHT,
-        }}>
-        <Mapbox.MapView
-          onCameraChanged={state =>
-            (zoomLevelRef.current = state.properties.zoom)
-          }
-          pitchEnabled={false}
-          attributionEnabled={false}
-          scaleBarEnabled={false}
-          styleURL={Mapbox.StyleURL.Street}
-          logoEnabled={false}
-          style={{flex: 1}}
-          onPress={feature => {
-            Keyboard.dismiss();
-            setLocation({
-              // @ts-ignore
-              coords: {
-                // @ts-ignore
-                latitude: feature.geometry.coordinates[1],
-                // @ts-ignore
-                longitude: feature.geometry.coordinates[0],
-              },
-            });
-          }}>
-          <Mapbox.RasterSource
-            id="adminmap"
-            tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-            <Mapbox.RasterLayer
-              id={'adminmap'}
-              sourceID={'admin'}
-              style={{visibility: 'visible'}}
-            />
-          </Mapbox.RasterSource>
-          <Mapbox.Camera
-            ref={mapboxCameraRef}
-            centerCoordinate={[
-              location?.coords.longitude ?? 0,
-              location?.coords.latitude ?? 0,
-            ]}
-            animationMode={'flyTo'}
-            animationDuration={500}
-            zoomLevel={zoomLevelRef.current}
+    <>
+      {screen === 'Adding' && addressSelectedData.length !== 3 ? (
+        <SelectedAddress
+          setScreen={setScreen}
+          data={addressSelectedData}
+          setData={setAddressSelectedData}
+        />
+      ) : (
+        <SafeAreaView
+          style={{
+            paddingHorizontal: 0,
+            flex: 1,
+            // height: AppConstant.HEIGHT * 0.6,
+          }}
+          edges={['bottom', 'top']}>
+          <AppHeader
+            style={{paddingHorizontal: 16, marginTop: 0}}
+            onBack={() => navigation.goBack()}
+            label={getLabel('location')}
           />
-          {location?.coords && (
-            <Mapbox.MarkerView
-              coordinate={[
-                Number(location?.coords.longitude),
-                Number(location?.coords.latitude),
-              ]}>
-              <SvgIcon source={'LocationCheckIn'} size={40} />
-            </Mapbox.MarkerView>
+          {/*<AppContainer style={{height: AppConstant.HEIGHT}}>*/}
+          <ScrollView>
+            <View
+              style={{
+                overflow: 'hidden',
+                width: '100%',
+                paddingVertical: 16,
+              }}>
+              <Mapbox.MapView
+                onCameraChanged={state =>
+                  (zoomLevelRef.current = state.properties.zoom)
+                }
+                pitchEnabled={false}
+                attributionEnabled={false}
+                scaleBarEnabled={false}
+                styleURL={Mapbox.StyleURL.Street}
+                logoEnabled={false}
+                style={{width: '100%', height: 300}}
+                onPress={feature => {
+                  Keyboard.dismiss();
+                  setLocation({
+                    // @ts-ignore
+                    coords: {
+                      // @ts-ignore
+                      latitude: feature.geometry.coordinates[1],
+                      // @ts-ignore
+                      longitude: feature.geometry.coordinates[0],
+                    },
+                  });
+                }}>
+                <Mapbox.RasterSource
+                  id="adminmap"
+                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                  <Mapbox.RasterLayer
+                    id={'adminmap'}
+                    sourceID={'admin'}
+                    style={{visibility: 'visible'}}
+                  />
+                </Mapbox.RasterSource>
+                <Mapbox.Camera
+                  ref={mapboxCameraRef}
+                  centerCoordinate={[
+                    location?.coords.longitude ?? 0,
+                    location?.coords.latitude ?? 0,
+                  ]}
+                  animationMode={'flyTo'}
+                  animationDuration={500}
+                  zoomLevel={zoomLevelRef.current}
+                />
+                {location?.coords && (
+                  <Mapbox.MarkerView
+                    coordinate={[
+                      Number(location?.coords.longitude),
+                      Number(location?.coords.latitude),
+                    ]}>
+                    <SvgIcon source={'LocationCheckIn'} size={40} />
+                  </Mapbox.MarkerView>
+                )}
+              </Mapbox.MapView>
+              <TouchableOpacity
+                onPress={handleRegainLocation}
+                style={styles.regainPosition}>
+                <Image
+                  source={ImageAssets.MapIcon}
+                  style={{width: 16, height: 16}}
+                  resizeMode={'cover'}
+                  tintColor={theme.colors.bg_default}
+                />
+                <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
+                  {getLabel('currentPosition')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleGetAddress}
+                style={styles.getLocation}>
+                <Image
+                  source={ImageAssets.MapPinIcon}
+                  style={{width: 16, height: 16}}
+                  resizeMode={'cover'}
+                  tintColor={theme.colors.text_secondary}
+                />
+                <Text style={{color: theme.colors.text_primary, marginLeft: 4}}>
+                  {getLabel('getAddress')}
+                </Text>
+              </TouchableOpacity>
+              <View style={styles.inputContainer}>
+                <AppInput
+                  label={`${getLabel('province')}/${getLabel('city')}`}
+                  onPress={() => {
+                    setScreen('Adding');
+                    setAddressSelectedData([]);
+                  }}
+                  value={addressObj.province.value}
+                  editable={false}
+                  hiddenRightIcon={false}
+                  rightIcon={
+                    <TextInputPaper.Icon
+                      icon={'chevron-down'}
+                      style={styles.iconStyle}
+                      color={theme.colors.text_secondary}
+                    />
+                  }
+                />
+                <AppInput
+                  label={getLabel('district')}
+                  value={addressObj.district.value}
+                  editable={false}
+                  onPress={() => {
+                    setScreen('Adding');
+                    const newData = addressSelectedData.filter(
+                      item => item.type === AddressType.city,
+                    );
+                    setAddressSelectedData(newData);
+                  }}
+                  rightIcon={
+                    <TextInputPaper.Icon
+                      icon={'chevron-down'}
+                      style={styles.iconStyle}
+                      color={theme.colors.text_secondary}
+                    />
+                  }
+                />
+                <AppInput
+                  label={getLabel('ward')}
+                  value={addressObj.ward.value}
+                  editable={false}
+                  onPress={() => {
+                    setScreen('Adding');
+                    const newData = addressSelectedData.filter(
+                      item => item.type !== AddressType.district,
+                    );
+                    setAddressSelectedData(newData);
+                  }}
+                  rightIcon={
+                    <TextInputPaper.Icon
+                      icon={'chevron-down'}
+                      style={styles.iconStyle}
+                      color={theme.colors.text_secondary}
+                    />
+                  }
+                />
+                <AppInput
+                  label={getLabel('address')}
+                  value={addressObj.detail}
+                  editable={true}
+                  hiddenRightIcon={true}
+                  onChangeValue={text =>
+                    setAddressObj(prevState => ({...prevState, detail: text}))
+                  }
+                />
+              </View>
+            </View>
+          </ScrollView>
+          {showFooterBtn && (
+            <View style={[styles.buttonFooter, {bottom: bottom}]}>
+              <AppButton
+                label={getLabel('completed')}
+                onPress={handleComplete}
+                disabled={!isValidAddress}
+              />
+            </View>
           )}
-        </Mapbox.MapView>
-        <View style={styles.searchContainer}>
-          <Image
-            source={ImageAssets.MapPinFillIcon}
-            style={{width: 24, height: 24}}
-            resizeMode={'cover'}
-            tintColor={theme.colors.text_secondary}
-          />
-          <TextInput
-            style={[styles.textInput]}
-            value={value}
-            onChangeText={setValue}
-            onSubmitEditing={e => handleSearchText(e.nativeEvent.text)}
-            onBlur={() => handleSearchText(value)}
-          />
-        </View>
-        <TouchableOpacity
-          onPress={handleRegainLocation}
-          style={styles.regainPosition}>
-          <Image
-            source={ImageAssets.MapIcon}
-            style={{width: 16, height: 16}}
-            resizeMode={'cover'}
-            tintColor={theme.colors.bg_default}
-          />
-          <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
-            {getLabel('currentPosition')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleGetAddress} style={styles.getLocation}>
-          <Image
-            source={ImageAssets.MapPinIcon}
-            style={{width: 16, height: 16}}
-            resizeMode={'cover'}
-            tintColor={theme.colors.text_secondary}
-          />
-          <Text style={{color: theme.colors.text_primary, marginLeft: 4}}>
-            {getLabel('getAddress')}
-          </Text>
-        </TouchableOpacity>
-        <View style={[styles.buttonFooter, {bottom: bottom + 80}]}>
-          <AppButton label={getLabel('completed')} onPress={handleComplete} />
-        </View>
-      </View>
-    </SafeAreaView>
+          {/*</AppContainer>*/}
+        </SafeAreaView>
+      )}
+    </>
   );
 };
 export default React.memo(CheckInLocation, isEqual);
@@ -336,14 +689,13 @@ const createStyle = (theme: ExtendedTheme) =>
       paddingHorizontal: 16,
       paddingVertical: 8,
       backgroundColor: theme.colors.action,
-      alignSelf: 'flex-end',
       marginRight: 24,
       borderRadius: 10,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
       position: 'absolute',
-      top: 100,
+      top: 270,
       right: 0,
     } as ViewStyle,
     getLocation: {
@@ -357,12 +709,22 @@ const createStyle = (theme: ExtendedTheme) =>
       alignItems: 'center',
       justifyContent: 'flex-start',
       position: 'absolute',
-      top: 100,
+      top: 270,
       left: 20,
     } as ViewStyle,
     buttonFooter: {
       position: 'absolute',
       width: '90%',
       alignSelf: 'center',
+      bottom: 10,
+    } as ViewStyle,
+    iconStyle: {
+      width: 24,
+      height: 24,
+    } as ViewStyle,
+    inputContainer: {
+      paddingHorizontal: 16,
+      rowGap: 12,
+      marginTop: 16,
     } as ViewStyle,
   });
