@@ -17,12 +17,14 @@ import {
 } from '../../services/appService';
 import {all, call, put} from 'typed-redux-saga';
 import {navigate} from '../../navigation/navigation-service';
-import {ScreenConstant} from '../../const';
+import {ApiConstant, ScreenConstant} from '../../const';
 import {
   categoriesCheckinList,
   IItemCheckIn,
 } from '../../redux-store/checkin-reducer/type';
 import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
+import {dispatch} from '../../utils/redux';
+import {storage} from '../../utils/commom.utils';
 
 export const checkKeyInObject = (T: any, key: string) => {
   return Object.keys(T).includes(key);
@@ -54,7 +56,7 @@ export function* onLoadAppModeAndTheme() {
 export function* onCheckInData(action: PayloadAction) {
   if (appActions.onCheckIn.match(action)) {
     try {
-      yield put(appActions.onLoadApp());
+      yield put(appActions.setProcessingStatus(true));
       const response: ResponseGenerator = yield call(
         postChecking,
         action.payload,
@@ -64,11 +66,15 @@ export function* onCheckInData(action: PayloadAction) {
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
         });
+        dispatch(checkinActions.resetData());
+        dispatch(appActions.setDataCheckIn({}));
+        storage.set('time', '');
       }
     } catch (err) {
       console.log(err, 'err');
+      yield put(appActions.setProcessingStatus(false));
     } finally {
-      yield put(appActions.onLoadAppEnd());
+      yield put(appActions.setProcessingStatus(false));
     }
   }
 }
@@ -117,8 +123,8 @@ export function* onGetListCity(action: PayloadAction) {
         getListCity,
         action.payload,
       );
-      if (response.message === 'Thành công') {
-        yield put(appActions.setDataCity(response.data));
+      if (response.status === ApiConstant.STT_OK) {
+        yield put(appActions.setDataCity(response.data.result));
       }
     } catch (err) {
       console.error('[err]: ', err);

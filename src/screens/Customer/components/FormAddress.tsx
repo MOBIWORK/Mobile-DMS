@@ -104,7 +104,6 @@ const FormAddress = (props: Props) => {
   ]);
 
   const isValidAddress = useMemo(() => {
-    console.log(addressSelectedData.length, txtAddressDetail);
     return addressSelectedData?.length === 3 && txtAddressDetail !== '';
   }, [addressSelectedData, txtAddressDetail]);
 

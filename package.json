@@ -79,6 +79,7 @@
     "redux-saga": "^1.3.0",
     "reduxsauce": "^1.2.1",
     "string-format": "^2.0.0",
+    "string-similarity": "^4.0.4",
     "typed-redux-saga": "^1.5.0"
   },
   "devDependencies": {

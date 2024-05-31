@@ -80,6 +80,10 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
     [data.length],
   );
 
+  useEffect(() => {
+    console.log('dataaaa', data);
+  }, [data]);
+
   const ListAddressSelected = (item: AddressSelected, isBorder: boolean) => {
     return (
       <Block
@@ -224,7 +228,11 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         alignItems="center"
         justifyContent="flex-start"
         width={'100%'}>
-        <TouchableOpacity onPress={() => setScreen('')}>
+        <TouchableOpacity
+          onPress={() => {
+            setData([]);
+            setScreen('');
+          }}>
           <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
         </TouchableOpacity>
         <Searchbar
