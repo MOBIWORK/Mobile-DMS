@@ -59,7 +59,6 @@ const customerSlice = createSlice({
       state.listCustomer.page_number = action.payload;
     },
     resetDataCustomer: state => {
-     
       state.listCustomer = {};
       state.listCustomerRoute = [];
       state.listCustomerVisit = {};
@@ -92,6 +91,11 @@ const getCustomerNewPage = createAction(
   (page: number) => ({payload: page}),
 );
 
+const updateCustomerAction = createAction(
+  Actions.UPDATE_CUSTOMER,
+  (data: any) => ({payload: data}),
+);
+
 export const customerReducer = customerSlice.reducer;
 
 export const {
@@ -111,4 +115,5 @@ export const customerActions = {
   addingCustomer,
   getCustomerTerritory,
   getCustomerNewPage,
+  updateCustomerAction
 };

@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   TextStyle,
+  TouchableOpacity,
   View,
   ViewStyle,
   useWindowDimensions,
@@ -30,10 +31,10 @@ import {Address, Contact, Overview} from './screen';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import FormAddress from '../Customer/components/FormAddress';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
-import {AppConstant} from '../../const';
+import {AppConstant, ScreenConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import {goBack} from '../../navigation/navigation-service';
+import {goBack, navigate} from '../../navigation/navigation-service';
 import {CustomerService} from '../../services';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../layouts/ErrorFallBack';
@@ -50,10 +51,8 @@ const DetailCustomer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
-  const [show, setShow] = useState(false);
   const [isPending, startTrans] = useTransition();
   const [data, setData] = useState<any>(null);
-  const mounted = useRef<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -80,8 +79,6 @@ const DetailCustomer = () => {
       // mounted.current = false;
     };
   }, []);
-
-
 
   const snapPointAdding = useMemo(
     () =>
@@ -163,9 +160,9 @@ const DetailCustomer = () => {
           style={{backgroundColor: theme.colors.bg_default}}
           onBack={() => goBack()}
           rightButton={
-            <View style={styles.containIcon}>
-              <SvgIcon source="IconKebab" size={20} />
-            </View>
+            <TouchableOpacity style={styles.containIcon} onPress={() => navigate(ScreenConstant.EDIT_CUSTOMER,{data:data})}>
+              <SvgIcon source="Edit" size={20} />
+            </TouchableOpacity>
           }
         />
       </View>
@@ -196,7 +193,7 @@ const DetailCustomer = () => {
         <FormAddress
           onPressClose={() => {
             addingAddress.current?.close();
-            setShow(false);
+            // setShow(false);
           }}
           typeFilter={typeFilter}
           listData={[] as any}

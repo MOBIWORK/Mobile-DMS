@@ -33,6 +33,7 @@
     "appcenter-crashes": "5.0.0",
     "axios": "^1.6.2",
     "bson": "^6.2.0",
+    "dayjs": "^1.11.11",
     "debounce": "^2.0.0",
     "deprecated-react-native-prop-types": "^5.0.0",
     "expo": "^49.0.0",

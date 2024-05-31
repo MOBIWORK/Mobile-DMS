@@ -49,11 +49,12 @@ import {
   NotifySetting,
   Scanner,
   NotificationDetail,
+  EditCustomer
 } from '../screens';
 import MainTab from './MainTab';
 import { CommonUtils } from '../utils';
 import BeforeCheckin from '../screens/BeforeCheckin';
-import { BARCODE_SCANNER } from '../const/screen.const';
+
 
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
@@ -219,6 +220,8 @@ const AuthNavigation = () => {
       />
       <Stack.Screen name={ScreenConstant.BARCODE_SCANNER} component={Scanner} />
       <Stack.Screen name={ScreenConstant.NOTIFY_DETAIL} component={NotificationDetail} />
+      <Stack.Screen name={ScreenConstant.EDIT_CUSTOMER} component={EditCustomer} />
+
     </Stack.Navigator>
   );
 };

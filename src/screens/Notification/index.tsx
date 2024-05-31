@@ -62,7 +62,6 @@ const InternalNotificationScreen = () => {
     );
   }, [notificationData, isRead]);
 
-
   return (
     <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
       <AppHeader
