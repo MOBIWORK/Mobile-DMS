@@ -50,7 +50,9 @@ const VisitItem: FC<VisitItemProps> = ({
   // console.log(item.customer_location_primary,"????")
 
   const distanceCal = useMemo(() => {
-    let location: LocationProps = JSON.parse(item.customer_location_primary != null && item.customer_location_primary);
+    let location: LocationProps = JSON.parse(
+      item.customer_location_primary != null && item.customer_location_primary,
+    );
     let distance = calculateDistance(
       currentLocation?.coords.latitude,
       currentLocation?.coords.longitude,
@@ -109,7 +111,7 @@ const VisitItem: FC<VisitItemProps> = ({
               style={{color: colors.text_primary, marginHorizontal: 8}}
               numberOfLines={1}
               ellipsizeMode={'tail'}>
-              {item.customer_primary_address}
+              {item?.customer_primary_address?.address_title ?? '---'}
             </Text>
           </Block>
           <View style={styles.content}>

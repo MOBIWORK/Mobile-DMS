@@ -1,19 +1,12 @@
 import React, {FC, useTransition} from 'react';
+import {ItemNoteVisitDetail, IVisitRouteDetail} from '../../../models/types';
 import {
-  ItemNoteVisitDetail,
-  IVisitRouteDetail,
-  VisitListItemType,
-} from '../../../models/types';
-import {
-  CellRendererProps,
-  FlatList,
   Image,
   ScrollView,
   StyleSheet,
   TextStyle,
   View,
   ViewStyle,
-  VirtualizedList,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
@@ -31,7 +24,7 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {DMSConfigMobile} from '../../../services/appService';
 import {calculateDistance, useSelector} from '../../../config/function';
 import {LocationProps} from '../VisitList/VisitItem';
-import { ObjectId } from 'bson';
+import {ObjectId} from 'bson';
 
 const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   const {colors} = useTheme();
@@ -83,8 +76,6 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
       date: '21/11/2023',
     },
   ]).current;
-
-
 
   const statusItem = (status: boolean) => {
     return (
@@ -163,7 +154,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
             style={{color: colors.text_primary, marginHorizontal: 8}}
             numberOfLines={1}
             ellipsizeMode={'tail'}>
-            {item.customer_primary_address}
+            {item?.customer_primary_address?.address_title ?? '---'}
           </Text>
         </Block>
         <Block style={styles.content}>
@@ -208,7 +199,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
     (item: ItemNoteVisitDetail, index: number) => {
       return (
         <Block
-        key={index}
+          key={index}
           paddingVertical={16}
           borderBottomWidth={index !== NoteData.length - 1 ? 1 : 0}
           borderColor={colors.border}>
@@ -240,8 +231,6 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
     },
     [item],
   );
-
-
 
   const distance = React.useMemo(() => {
     let res: any;

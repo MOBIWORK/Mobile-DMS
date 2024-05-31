@@ -29,7 +29,6 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   calculateDistance,
   decimalMinutesToTime,
-  useDeepCompareEffect,
   useDisableBackHandler,
   useEffectOnce,
   useSelector,
@@ -327,7 +326,7 @@ const CheckIn = () => {
   };
 
   const onCheckout = useCallback(async () => {
-    dispatch(appActions.setProcessingStatus(true));
+    // dispatch(appActions.setProcessingStatus(true));
     CommonUtils.getCurrentLocation(locations => {
       if (!isValidCheckOut(locations)) {
         dispatch(appActions.setProcessingStatus(false));

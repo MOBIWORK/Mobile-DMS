@@ -675,7 +675,7 @@ const ListVisit = () => {
             kh_diachi:
               item.customer_primary_address === null
                 ? detailAdd
-                : item.customer_primary_address,
+                : item.customer_primary_address.address_title,
             kh_long: coords.lon || '',
             kh_lat: coords.lat || '',
             checkin_giovao: new Date().getTime() / 1000,
@@ -800,7 +800,7 @@ const ListVisit = () => {
               : uniqueID,
           kh_ma: item.customer_code,
           kh_ten: item.customer_name,
-          kh_diachi: item.customer_primary_address,
+          kh_diachi: item.customer_primary_address?.address_title ?? null,
           kh_long: log.long ?? '',
           kh_lat: log.lat ?? '',
           checkin_giovao: new Date().getTime() / 1000,
@@ -866,7 +866,7 @@ const ListVisit = () => {
                   : uniqueID,
               kh_ma: item.customer_code,
               kh_ten: item.customer_name,
-              kh_diachi: item.customer_primary_address,
+              kh_diachi: item.customer_primary_address?.address_title ?? null,
               kh_long: log?.long ?? '',
               kh_lat: log?.lat ?? '',
               checkin_giovao: new Date().getTime() / 1000,

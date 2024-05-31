@@ -2,18 +2,26 @@ import {createApi} from '../api';
 import {createFormData} from '../api/formData';
 import {ApiConstant} from '../const';
 import {DataSendMarkScore} from '../redux-store/checkin-reducer/type';
-import {GET_LIST_ALBUM} from '../const/api.const';
 
 export type IUpdateAddress = {
   customer: string;
   long: number;
   lat: number;
   address_line1: string;
-  state: string;
-  county: string;
-  city: string;
+  state: {
+    code: string;
+    name: string;
+  };
+  county: {
+    code: string;
+    name: string;
+  };
+  city: {
+    code: string;
+    name: string;
+  };
   country: 'Việt Nam';
-  checkin_id?:any
+  checkin_id?: any;
 };
 
 export interface checkinItemProduct {
