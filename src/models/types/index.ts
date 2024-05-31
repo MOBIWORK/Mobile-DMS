@@ -1115,5 +1115,4 @@ export type Notification = {
   owner: string;
   priority_level: string;
   to_date: string;
-}
-
+};

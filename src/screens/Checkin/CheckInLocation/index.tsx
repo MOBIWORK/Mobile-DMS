@@ -61,8 +61,6 @@ import {
   AddressType,
 } from '../../Customer/components/FormAddress';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
-// import {ScrollView} from 'react-native-gesture-handler';
-
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
@@ -486,6 +484,7 @@ const CheckInLocation = () => {
         // height: AppConstant.HEIGHT * 0.6,
       }}
       edges={['top']}>
+
       {screen === 'Adding' && addressSelectedData.length !== 3 ? (
         <SelectedAddress
           setScreen={setScreen}
@@ -493,6 +492,7 @@ const CheckInLocation = () => {
           setData={setAddressSelectedData}
         />
       ) : (
+
         <Block block>
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
@@ -500,12 +500,14 @@ const CheckInLocation = () => {
             label={getLabel('location')}
           />
           {/*<AppContainer style={{height: AppConstant.HEIGHT}}>*/}
+
           <KeyboardAvoidingView style={{flex:1}} behavior='height'>
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{flex: 1}}
             contentInsetAdjustmentBehavior="automatic">
             <Block block>
+
               <Mapbox.MapView
                 onCameraChanged={state =>
                   (zoomLevelRef.current = state.properties.zoom)
@@ -515,7 +517,9 @@ const CheckInLocation = () => {
                 scaleBarEnabled={false}
                 styleURL={Mapbox.StyleURL.Street}
                 logoEnabled={false}
+
                 style={{flex: 1, height: 300}}
+
                 onPress={feature => {
                   Keyboard.dismiss();
                   setLocation({
@@ -583,9 +587,11 @@ const CheckInLocation = () => {
                   {getLabel('getAddress')}
                 </Text>
               </TouchableOpacity>
+
               <View
                 
                 style={styles.inputContainer}>
+
                 <AppInput
                   label={`${getLabel('province')}/${getLabel('city')}`}
                   onPress={() => {
@@ -594,7 +600,9 @@ const CheckInLocation = () => {
                   }}
                   value={addressObj.province.value}
                   editable={false}
+
                   styles={{marginBottom: 12}}
+
                   hiddenRightIcon={false}
                   rightIcon={
                     <TextInputPaper.Icon
@@ -608,7 +616,9 @@ const CheckInLocation = () => {
                   label={getLabel('district')}
                   value={addressObj.district.value}
                   editable={false}
+
                   styles={{marginBottom: 12}}
+
                   onPress={() => {
                     setScreen('Adding');
                     const newData = addressSelectedData.filter(
@@ -626,7 +636,9 @@ const CheckInLocation = () => {
                 />
                 <AppInput
                   label={getLabel('ward')}
+
                   styles={{marginBottom: 12}}
+
                   value={addressObj.ward.value}
                   editable={false}
                   onPress={() => {
@@ -646,7 +658,9 @@ const CheckInLocation = () => {
                 />
                 <AppInput
                   label={getLabel('address')}
+
                   styles={{marginBottom: 12}}
+
                   value={addressObj.detail}
                   editable={true}
                   hiddenRightIcon={true}
@@ -655,6 +669,7 @@ const CheckInLocation = () => {
                   }
                 />
               </View>
+
             </Block>
           </ScrollView>
           </KeyboardAvoidingView>
@@ -671,6 +686,7 @@ const CheckInLocation = () => {
         </View>
       )}
     </SafeAreaView>
+
   );
 };
 export default React.memo(CheckInLocation, isEqual);
@@ -728,7 +744,7 @@ const createStyle = (theme: ExtendedTheme) =>
       width: '90%',
       alignSelf: 'center',
       bottom: 10,
-      // backgroundColor: 'blue',
+
     } as ViewStyle,
     iconStyle: {
       width: 24,
@@ -739,6 +755,6 @@ const createStyle = (theme: ExtendedTheme) =>
       rowGap: 12,
       marginTop: 16,
       paddingVertical: 16,
-      // flex:1
+
     } as ViewStyle,
   });
