@@ -358,7 +358,7 @@ const ListVisit = () => {
                 allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
               })}
             </Text>
-            {isPending ? (
+            {loading ? (
               <SkeletonLoading />
             ) : (
               <FlatList
@@ -373,7 +373,7 @@ const ListVisit = () => {
                 initialNumToRender={4}
                 ListFooterComponent={
                   bottomLoading ? (
-                    <ActivityIndicator size="large" color={colors.primary} />
+                    <SkeletonLoading />
                   ) : undefined
                 }
                 refreshControl={

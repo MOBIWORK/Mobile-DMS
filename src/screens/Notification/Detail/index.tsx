@@ -12,7 +12,6 @@ import RenderHTML from 'react-native-render-html'
 import { WIDTH } from '../../../const/app.const'
 import AvatarStack from '../../../components/Notification/AvatarStack'
 import isEqual from 'react-fast-compare'
-
 const NotificationDetail = () => {
     const navigation = useNavigation<NavigationProp>();
     const theme = useTheme()
