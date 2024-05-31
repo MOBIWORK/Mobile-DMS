@@ -197,20 +197,22 @@ const FormData = (props: Props) => {
   const onUpdateCustomer = useCallback(() => {
     const dataUpdate = {
       name: dataCustomer.name,
-      address: dataCustomer.address,
-      contact: dataCustomer.contacts,
-      credit_limits: dataCustomer.credit_limits,
-      customer_code: dataCustomer.customer_code,
+      address: dataCustomer.address || [{}],
+      contact: dataCustomer.contacts || [{}],
+      credit_limits: dataCustomer.credit_limits || '',
+      customer_code: dataCustomer.customer_code || '',
       customer_group:
         dataCustomer.customer_group != null
           ? dataCustomer.customer_group
           : null,
-      customer_name: dataCustomer.customer_name,
-      customer_type: dataCustomer.customer_type,
-      image: dataCustomer.image,
-      router: dataCustomer.routers,
-      website: dataCustomer.website,
+      customer_name: dataCustomer.customer_name || '',
+      customer_type: dataCustomer.customer_type || '',
+      image: dataCustomer.image || '',
+      router: dataCustomer.routers || '',
+      website: dataCustomer.website || '',
+      territory:dataCustomer.territory || ''
     };
+    console.log(dataUpdate,'dataUpdate')
     startTransition(() => {
       dispatch(customerActions.updateCustomerAction(dataUpdate));
     });
@@ -228,12 +230,7 @@ const FormData = (props: Props) => {
     let check: boolean | any = false;
     if (dataCustomer.address) {
       check = dataCustomer.address
-        .map(item =>
-          item.address_title.includes(
-            dataCustomer?.customer_primary_address!.replace('-Billing', ''),
-          ),
-        )
-        .find(check => (check === true ? check : false));
+        .map(item => item.is_primary_address)[0] ===  1 ? true : false ;
     } else {
       check = false;
     }
