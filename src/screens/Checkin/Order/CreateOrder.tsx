@@ -436,6 +436,10 @@ const CreateOrder = () => {
                   startEffect(() => {
                     setProductsPromotion(element.free_item_data);
                   });
+                } else {
+                  startEffect(() => {
+                    setProductsPromotion([]);
+                  });
                 }
                 if (element?.pricing_rule_for === 'Rate') {
                   return {
@@ -489,11 +493,13 @@ const CreateOrder = () => {
                     ...item,
                     discount_item_percent:
                       item?.discount_item_percent > 0 &&
-                      element.has_pricing_rule
-                        ? item.discount_item_percent
+                      !element.has_pricing_rule
+                        ? item.discount_item_percent &&
+                          !element.has_pricing_rule
                         : 0,
                     discount_item_amount:
-                      item?.discount_item_amount > 0 && element.has_pricing_rule
+                      item?.discount_item_amount > 0 &&
+                      !element.has_pricing_rule
                         ? item.discount_item_amount
                         : 0,
                     has_pricing_rule: element.has_pricing_rule,
