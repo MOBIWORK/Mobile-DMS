@@ -113,8 +113,8 @@ export function* createReportMarkScoreSaga(action: PayloadAction) {
     } finally {
       yield put(onLoadAppEnd());
       action.payload.screen === ScreenConstant.TAKE_PICTURE_SCORE
-        ? pop(2)
-        : pop(2);
+        ? pop(1)
+        : pop(1);
     }
   }
 }
