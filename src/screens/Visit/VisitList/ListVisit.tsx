@@ -743,7 +743,7 @@ const ListVisit = () => {
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
-      handleEnabledPressed()
+      handleEnabledPressed();
       if (item.customer_location_primary != null) {
         if (!isEnable.current && Platform.OS === 'android') {
           setModalErrorGPS(true);
@@ -992,9 +992,9 @@ const ListVisit = () => {
           <Modal
             isVisible={modalErrorGPS}
             backdropOpacity={0.5}
-            onBackButtonPress={() => {}}
+            onBackButtonPress={() => setModalErrorGPS(false)}
             style={{marginHorizontal: 0}}
-            onBackdropPress={() => {}}
+            onBackdropPress={() => setModalErrorGPS(false)}
             animationIn="slideInUp"
             animationOut="slideOutDown">
             <Block

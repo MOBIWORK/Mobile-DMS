@@ -52,6 +52,12 @@ const checkinSlice = createSlice({
       );
       state.dataNote = [];
       state.orderDetail = null;
+      state.listImageSelect = [];
+      state.imageToMark = [];
+      state.listProgramImage = []
+      state.listProgramCampaign = [];
+      state.selectedProgram = []
+    
     },
     setDataCategoriesCheckin: (
       state,
