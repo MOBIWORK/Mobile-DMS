@@ -33,18 +33,20 @@ import {useTranslation} from 'react-i18next';
 import {goBack} from '../../../navigation/navigation-service';
 import {CheckinService} from '../../../services';
 import {noteActions} from '../../../redux-store/note-reducer/reducer';
+import {shallowEqual} from 'react-redux';
+import isEqual from 'react-fast-compare';
 
 const CheckinNote = () => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const data = useSelector(state => state.checkin.dataNote);
+  const data = useSelector(state => state.checkin.dataNote, shallowEqual);
   const dataCheckin = useSelector(state => state.app.dataCheckIn);
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );
-  const isForcus = useIsFocused();
+  const isFocus = useIsFocused();
 
   const getData = async () => {
     {
@@ -58,10 +60,10 @@ const CheckinNote = () => {
   };
 
   useEffect(() => {
-    if (isForcus) {
+    if (isFocus) {
       getData();
     }
-  }, [isForcus]);
+  }, [isFocus]);
 
   const completeCheckin = () => {
     const newData = categoriesCheckin.map(item =>
@@ -90,7 +92,7 @@ const CheckinNote = () => {
     );
   };
 
-  const ListNote = () => {
+  const ListNote = React.memo(() => {
     const _renderNoteItem = (item: NoteType) => {
       return (
         <Pressable
@@ -147,11 +149,12 @@ const CheckinNote = () => {
           style={{width: '100%'}}
           showsVerticalScrollIndicator={false}
           data={data}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => _renderNoteItem(item)}
         />
       </View>
     );
-  };
+  }, isEqual);
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>

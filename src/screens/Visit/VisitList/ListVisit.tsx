@@ -389,9 +389,6 @@ const ListVisit = () => {
                 decelerationRate={'normal'}
                 bounces={true}
                 initialNumToRender={4}
-                ListFooterComponent={
-                  bottomLoading ? <SkeletonLoading /> : undefined
-                }
                 refreshControl={
                   <RefreshControl
                     refreshing={loading}
@@ -958,14 +955,14 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-    if (isEnable.current) {
-      if (searchVisit) {
-        handleSearchVisit();
-      } else {
-        startEffect(() => {
-          getData();
-        });
-      }
+
+    if (searchVisit) {
+      handleSearchVisit();
+    } else {
+      startEffect(() => {
+        getData();
+      });
+
       return () => {
         mounted.current = false;
       };

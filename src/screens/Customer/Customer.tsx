@@ -98,16 +98,13 @@ const Customer = () => {
   const handleEnabledPressed = useCallback(async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
-      console.log('checkEnabled', checkEnabled);
-
-      isEnable.current = checkEnabled;
       if (checkEnabled === true) {
         setModalErrorGPS(false);
       } else {
         setModalErrorGPS(true);
       }
     }
-  }, [isEnable.current]);
+  }, [modalErrorGPS]);
 
   const [value, setValue] = React.useState({
     first: getLabel('nearest'),
@@ -199,10 +196,9 @@ const Customer = () => {
     }
   }, [isFocus]);
 
-  const checkGPS = useCallback(async () => {
+  const checkGPS = async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
-      console.log('checkEnabled customer', checkEnabled);
 
       isEnable.current = checkEnabled;
       if (checkEnabled === true) {
@@ -211,45 +207,43 @@ const Customer = () => {
         setModalErrorGPS(true);
       }
     }
-  }, [isEnable.current, modalErrorGPS]);
+  };
 
   React.useEffect(() => {
-    checkGPS();
+    handleEnabledPressed();
   }, []);
 
   React.useEffect(() => {
     mounted.current = true;
-    
-    startTransition(() => {
-      if (mounted.current && isEnable.current) {
-        handleEnabledPressed();
+    checkGPS();
+    if (mounted.current && modalErrorGPS === false ) {
+      handleBackgroundLocation();
+      if (listCustomer && listCustomer?.length > 0) {
+        const filteredData = listCustomer.filter(
+          item => item.customer_location_primary,
+        );
+        const noLocationCustomer = listCustomer.filter(
+          item => !item.customer_location_primary,
+        );
 
-        handleBackgroundLocation();
-        if (listCustomer && listCustomer?.length > 0) {
-          const filteredData = listCustomer.filter(
-            item => item.customer_location_primary,
-          );
-          const noLocationCustomer = listCustomer.filter(
-            item => !item.customer_location_primary,
-          );
-
-          setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
-        } else {
-          dispatch(customerActions.onGetCustomer());
-          onRefreshData();
-        }
-
-        const getDataType = () => {
-          dispatch(customerActions.getCustomerType());
-        };
-        getDataType();
+        setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
+      } else {
+        dispatch(customerActions.onGetCustomer());
+        onRefreshData();
       }
-      mounted.current = false;
-    });
+
+      const getDataType = () => {
+        dispatch(customerActions.getCustomerType());
+      };
+      getDataType();
+    }
+
+    mounted.current = false;
+
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer, modalErrorGPS, isEnable.current]);
+  }, [listCustomer]);
 
   const handleApplyFilter = () => {
     if (
