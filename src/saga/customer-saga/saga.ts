@@ -144,7 +144,8 @@ export function* updateCustomerSaga(action: PayloadAction) {
       console.log(action.payload)
       const response: ResponseGenerator = yield call(
         updateCustomer,
-        action.payload,
+        action.payload.data,
+        action.payload.name
       );
       console.log(response, 'response update customer');
       if (response.message === 'OK') {

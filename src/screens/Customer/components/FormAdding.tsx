@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-
   TextStyle,
   View,
   ScrollView,
@@ -10,26 +9,30 @@ import {
   Image,
   Pressable,
   Keyboard,
-
 } from 'react-native';
-import React, {
-
-  useEffect,
-
-  useState,
-  useTransition,
-} from 'react';
+import React, {useEffect, useState, useTransition} from 'react';
 
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useTranslation} from 'react-i18next';
 import {TextInput} from 'react-native-paper';
 import {ApiConstant, AppConstant} from '../../../const';
 import {Colors} from '../../../assets';
-import {AppIcons, AppInput, Block, SvgIcon,AppText as Text} from '../../../components/common';
+import {
+  AppIcons,
+  AppInput,
+  Block,
+  SvgIcon,
+  AppText as Text,
+} from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
 import {IDataCustomer} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {formatMoney, useSelector} from '../../../config/function';
+import {
+  convertToMoneyFormat,
+  formatMoney,
+  reverseFormatNumber,
+  useSelector,
+} from '../../../config/function';
 import CardAddress from './CardAddress';
 import {dispatch} from '../../../utils/redux';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
@@ -272,18 +275,26 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('debtLimit')}
-        value={valueFilter.credit_limit ? formatMoney(valueFilter.credit_limit )  : '' }
+        value={
+          valueFilter.credit_limit
+            ? valueFilter.credit_limit || ''
+            : ''
+        }
         editable={true}
         hiddenRightIcon={false}
         isRequire={false}
-        rightIcon={<TextInput.Affix text='VND'/>}
+        rightIcon={<TextInput.Affix text="VND" />}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
-        onChangeValue={text =>
+        onChangeValue={text => {
+          // console.log(val,'val')
+          let revText = reverseFormatNumber(text)
+          console.log(revText,'revText')
           startTransition(() => {
-            setData(prev => ({...prev, credit_limit: text}));
-          })
-        }
+            let val = convertToMoneyFormat(revText);
+            setData(prev => ({...prev, credit_limit: val}));
+          });
+        }}
       />
       <AppInput
         label={translate('description')}

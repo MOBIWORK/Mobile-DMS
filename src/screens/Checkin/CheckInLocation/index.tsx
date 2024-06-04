@@ -304,9 +304,9 @@ const CheckInLocation = () => {
       );
       completeCheckin();
       navigation.navigate({
-        name: ScreenConstant.CHECKIN,
-        params: {item: newParams.data, isLocation: true},
-        merge: true,
+        name: ScreenConstant.LIST_VISIT,
+        // params: {item: newParams.data, isLocation: true},
+        // merge: true,
       });
     }
     dispatch(setProcessingStatus(false));

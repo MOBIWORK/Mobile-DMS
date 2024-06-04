@@ -24,6 +24,49 @@ export type CustomOmit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 const formatMoney = (amount: number | string | any) => {
   return `${amount}`.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 };
+
+const convertToMoneyFormat = (amount:any) => {
+  // Convert amount to a number
+  const numericAmount = parseFloat(amount);
+
+  // Check if the numericAmount is a valid number
+  if (isNaN(numericAmount)) {
+    return "Invalid amount";
+  }
+
+  // Convert numeric amount to money format
+  const formattedAmount = numericAmount.toLocaleString("vi-VN", { minimumFractionDigits: 0 });
+
+  return formattedAmount;
+};
+
+
+
+
+const reverseFormatNumber = (formattedNumber:any) => {
+  // Check if the formattedNumber contains a dot
+  const hasDot = /\./.test(formattedNumber);
+
+  if (hasDot) {
+    console.log(formattedNumber,'hasDot')
+    // Remove all non-numeric characters (except for the dot if it's a decimal separator)
+    const numericString = formattedNumber.replace(/[^0-9.]/g, '');
+
+    // Remove all dots except the last one (if it's a decimal separator)
+    const lastIndex = numericString.lastIndexOf('.');
+    const integerPart = numericString.substring(0, lastIndex).replace(/\./g, '');
+    const decimalPart = numericString.substring(lastIndex);
+
+    console.log(integerPart + decimalPart,'result has Dot')
+    // Concatenate the integer part and the decimal part
+    return integerPart + decimalPart;
+  } else {
+    console.log(formattedNumber,'nonDot')
+    // If no dot is present, return the number as it is
+    return formattedNumber;
+  }
+};
+
 const formatPhoneNumber = (phoneNumber: string) => {
   const numericPhoneNumber = phoneNumber.replace(/\D/g, '');
   if (numericPhoneNumber.length === 10 && numericPhoneNumber.startsWith('0')) {
@@ -96,6 +139,8 @@ const calculateDistance = (
   lat2: number,
   lon2: number,
 ): number => {
+  let distance:any
+if(!isNaN(lat1) && !isNaN(lat2) && !isNaN(lon1) && !isNaN(lon2)){
   const R = 6371; // Earth radius in kilometers
 
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -110,7 +155,11 @@ const calculateDistance = (
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  const distance = R * c; // Distance in kilometers
+  distance = R * c;
+}else{
+  distance = null
+}
+ // Distance in kilometers
 
   return distance;
 };
@@ -230,5 +279,7 @@ export {
   backgroundErrorListener,
   generateRandomObjectId,
   decimalMinutesToTime,
-  mergeProducts
+  mergeProducts,
+  reverseFormatNumber,
+  convertToMoneyFormat
 };
