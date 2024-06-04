@@ -467,6 +467,7 @@ export const getCurrentLocation = (
   error?: ((error: GeolocationError) => void) | undefined,
   options?: GeolocationOptions | undefined,
 ) => {
+  // console.log(s)
   Geolocation.getCurrentPosition(success, error, {
     timeout: 5000,
     ...options,

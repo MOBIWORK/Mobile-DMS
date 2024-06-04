@@ -29,7 +29,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
+import {ExtendedTheme, useIsFocused, useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {
   ListCustomerRoute,
@@ -119,6 +119,7 @@ const ListVisit = () => {
     state => state.app.dataCheckIn,
     shallowEqual,
   );
+  const isFocus = useIsFocused()
 
   const listCustomer: VisitListItemResult = useSelector(
     state => state.customer.listCustomerVisit,
@@ -216,7 +217,7 @@ const ListVisit = () => {
   }, [listCustomer, customerDataSort]);
 
   const onGetCurrentPositionAgain = () => {
-    setModalError(false);
+    setModalErrorGPS(false);
     handleRegainLocation();
   };
 
@@ -559,6 +560,7 @@ const ListVisit = () => {
   };
 
   const getData = async () => {
+    
     setLoading(true);
     await getCustomerRoute();
     // await sortDataCustomer(distanceFilterValue);
@@ -625,6 +627,7 @@ const ListVisit = () => {
   };
 
   const handleRegainLocation = async () => {
+    
     CommonUtils.getCurrentLocation(
       locations => {
         setLocation(locations);
@@ -744,10 +747,10 @@ const ListVisit = () => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
       handleEnabledPressed();
-      if (item.customer_location_primary != null) {
-        if (!isEnable.current && Platform.OS === 'android') {
-          setModalErrorGPS(true);
-        } else {
+      if (!isEnable.current && Platform.OS === 'android') {
+        setModalErrorGPS(true);
+    }  else if (item.customer_location_primary != null) {
+  
           setTimeout(() => {
             setModalAlert({
               type: 'loading',
@@ -789,7 +792,7 @@ const ListVisit = () => {
               });
             });
           }, 1000);
-        }
+        
       } else {
         setModalUpdateLocation({
           status: true,
@@ -956,7 +959,6 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-
     if (searchVisit) {
       handleSearchVisit();
     } else {
@@ -968,11 +970,11 @@ const ListVisit = () => {
         mounted.current = false;
       };
     }
-  }, [searchVisit, dataCheckIn]);
+  }, [searchVisit, dataCheckIn,isFocus]);
 
   useEffect(() => {
     sortDataCustomer(distanceFilterValue);
-  }, [listCustomer]);
+  }, [listCustomer,isFocus]);
 
   // useEffect(() => {
   //   if (isEnable.current === false && Platform.OS === 'android') {
@@ -1023,9 +1025,9 @@ const ListVisit = () => {
                 direction="row">
                 <TouchableOpacity
                   style={styles.buttonModal}
-                  onPress={handleEnabledPressed}>
+                  onPress={onGetCurrentPositionAgain}>
                   <Text colorTheme="white" fontSize={16} fontWeight="500">
-                    {getLabel('tryAgain')}
+                    {getLabel('close')}
                   </Text>
                 </TouchableOpacity>
               </Block>

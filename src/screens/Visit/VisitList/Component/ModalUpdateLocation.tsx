@@ -94,6 +94,7 @@ const ModalUpdateLocation = ({
       Keyboard.dismiss();
       setIsPending(true);
       const response: any = await AppService.getDetailLocation(lat, lng);
+      console.log(response,'response mả')
       if (response.status === ApiConstant.STT_OK || 'OK') {
         markingLocation.current.detailAdd =
           response.results[0].formatted_address;

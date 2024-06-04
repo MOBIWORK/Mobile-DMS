@@ -704,7 +704,6 @@ const HomeScreen = () => {
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="never"
             // stickyHeaderHiddenOnScroll={true}
-            stickyHeaderIndices={[0]}
             CellRendererComponent={cellRender}
           />
           <ModalUpdate

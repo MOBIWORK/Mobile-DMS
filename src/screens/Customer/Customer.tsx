@@ -216,7 +216,7 @@ const Customer = () => {
   React.useEffect(() => {
     mounted.current = true;
     handleBackgroundLocation();
-    checkGPS();
+    // checkGPS();
     if (mounted.current && modalErrorGPS === false) {
       if (listCustomer && listCustomer?.length > 0) {
         const filteredData = listCustomer.filter(
@@ -243,7 +243,7 @@ const Customer = () => {
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer]);
+  }, [listCustomer,isFocus]);
 
   const handleApplyFilter = () => {
     if (
