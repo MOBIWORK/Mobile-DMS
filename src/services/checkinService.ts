@@ -20,7 +20,7 @@ export type IUpdateAddress = {
     code: string;
     name: string;
   };
-  country: 'Việt Nam';
+  country?: 'Việt Nam';
   checkin_id?: any;
 };
 

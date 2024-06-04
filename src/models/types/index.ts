@@ -697,6 +697,8 @@ export type ItemProductOrder = {
   amount: number;
   discount_amount: number;
   discount_percentage: number;
+  item_tax_template: string;
+  item_tax_rate: number;
 };
 
 export type IOrderDetail = {
@@ -889,7 +891,7 @@ export type IKpi = {
 };
 
 export type IReportSales = {
-  Kpi: {
+  kpi: {
     dat_duoc: number;
     phan_tram_thuc_hien: number;
   };
@@ -969,6 +971,7 @@ export type IReportVisitDetail = {
     danh_sach_don: OrderDetailItemType[];
   };
   ton_kho: ReportInventoryType[];
+  // cong_no:
 };
 
 export type IOrderDetailItem = {

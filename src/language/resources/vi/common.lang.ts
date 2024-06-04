@@ -308,15 +308,13 @@ export default {
   addressGet: 'Địa chỉ giao hàng',
   addressOrder: 'Địa chỉ đặt hàng',
   mainAddress: 'Địa chỉ chính',
-
-  Su:"CN",
-  Mo:"T2",
-  Tu:"T3",
-  We:"T4",
-  Th:"T5",
-  Fr:'T6',
-  Sa:"T7",
-
+  Su: 'CN',
+  Mo: 'T2',
+  Tu: 'T3',
+  We: 'T4',
+  Th: 'T5',
+  Fr: 'T6',
+  Sa: 'T7',
   getAddress: 'Lấy địa chỉ',
-
+  orderStatistics: 'Thống kê phiếu đặt hàng',
 };

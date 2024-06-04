@@ -31,11 +31,11 @@ const CircleChartView = ({visitValue}: Props) => {
           bgColor={colors.bg_default}>
           <Block>
             <Text style={[styles.textProcess]}>
-              {visitValue?.dat_duoc}/{visitValue?.chi_tieu}
+              {visitValue?.dat_duoc ?? 0}/{visitValue?.chi_tieu ?? 0}
             </Text>
             <Text style={[styles.textProcessDesc]}>
               {' '}
-              (Đạt {visitValue?.phan_tram_thuc_hien}
+              (Đạt {visitValue?.phan_tram_thuc_hien ?? 0}
               %)
             </Text>
           </Block>

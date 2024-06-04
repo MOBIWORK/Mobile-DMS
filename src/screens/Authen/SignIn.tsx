@@ -76,9 +76,7 @@ const SignIn = () => {
       },
       true,
     );
-console.log(response,'response default')
     if (response.status === ApiConstant.STT_OK) {
-      console.log(response,'response 200')
       const result: ILoginResponse = response.data.result;
       CommonUtils.storage.set(AppConstant.Api_key, result.key_details.api_key);
       CommonUtils.storage.set(
@@ -87,7 +85,6 @@ console.log(response,'response default')
       );
       setUserNameStore(userName);
       setPasswordStore(password);
-      
 
       await CommonUtils.dismissKeyboard(() => {
         navigation.navigate(ScreenConstant.AUTHORIZED, {

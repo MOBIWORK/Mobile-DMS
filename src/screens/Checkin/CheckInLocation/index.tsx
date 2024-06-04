@@ -287,7 +287,7 @@ const CheckInLocation = () => {
         code: addressObj.province.code,
         name: addressObj.province.value,
       },
-      country: 'Việt Nam',
+      // country: 'Việt Nam',
       checkin_id: route.params.data.checkin_id,
     };
     newParams.data.kh_diachi = params.address_line1;
@@ -469,8 +469,14 @@ const CheckInLocation = () => {
   }, [addressSelectedData]);
 
   useEffect(() => {
-    Keyboard.addListener('keyboardWillShow', () => setShowFooterBtn(false));
-    Keyboard.addListener('keyboardWillHide', () => setShowFooterBtn(true));
+    Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setShowFooterBtn(false),
+    );
+    Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setShowFooterBtn(true),
+    );
     return () => {
       Keyboard.removeAllListeners('keyboardWillShow');
       Keyboard.removeAllListeners('keyboardWillHide');

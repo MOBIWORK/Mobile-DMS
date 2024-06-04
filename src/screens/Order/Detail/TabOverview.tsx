@@ -299,7 +299,8 @@ const TabOverview = ({data}: PropsType) => {
                 </TouchableOpacity>
               </View>
               <View style={[styles.containerOrder]}>
-                {data?.list_items &&
+                {data &&
+                  data?.list_items &&
                   data.list_items.map((item: ItemProductOrder, index: any) => (
                     <Pressable
                       key={index}
@@ -397,7 +398,7 @@ const TabOverview = ({data}: PropsType) => {
                   <Text style={[styles.labelDetail]}>{getLabel('VAT')} </Text>
                   <Text style={[styles.textInforO]}>
                     {CommonUtils.convertToTwoDecimalPlaces(
-                      data?.discount_amount ?? 0,
+                      data?.tax_amount ?? 0,
                     )}
                   </Text>
                 </View>

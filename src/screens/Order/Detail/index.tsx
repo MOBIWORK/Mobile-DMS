@@ -15,7 +15,6 @@ import {OrderService} from '../../../services';
 import {ApiConstant} from '../../../const';
 import {IOrderDetail, KeyAbleProps} from '../../../models/types';
 import {useTranslation} from 'react-i18next';
-import {CommonUtils} from '../../../utils';
 import {useTheme} from '../../../layouts/theme';
 import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 

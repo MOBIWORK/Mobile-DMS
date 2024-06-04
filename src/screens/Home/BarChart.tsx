@@ -55,10 +55,16 @@ const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
             : getLabel('totalRevenuePerMouth')}
         </Text>
         <Text style={[styles.description]}>
-          {data?.Kpi ? CommonUtils.convertNumber(data.Kpi.dat_duoc) : 0}đ
+          {data?.kpi?.dat_duoc > 0
+            ? CommonUtils.convertNumber(data.kpi.dat_duoc)
+            : 0}
+          đ
           <Text style={[styles.desSub, {color: color}]}>
             {` (${StringFormat(getLabel('reachPercent'), {
-              percent: data?.Kpi ? data.Kpi.phan_tram_thuc_hien : 0,
+              percent:
+                data?.kpi?.phan_tram_thuc_hien > 0
+                  ? data.kpi.phan_tram_thuc_hien
+                  : 0,
             })})`}
           </Text>
         </Text>

@@ -1,11 +1,7 @@
 import {TouchableOpacity} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
-import {
-  Block,
-  RangeDatePicker,
-  AppText as Text,
-} from '../../../components/common';
+import {Block, AppText as Text} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
 import {rootStyles} from './styles';
 import {useTheme} from '../../../layouts/theme';
@@ -73,7 +69,6 @@ const Statistical = () => {
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-      console.log('run is number');
       setFromDate(Number(item.value));
       setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
@@ -91,7 +86,6 @@ const Statistical = () => {
   };
 
   const onChangeDateCalender = (date: any) => {
-    console.log(date, 'data');
     setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
 
@@ -113,21 +107,16 @@ const Statistical = () => {
       }
       dispatch(appActions.setProcessingStatus(false));
     };
-    console.log(isNaN(from_date), isNaN(to_date));
     if (isNaN(from_date) && isNaN(to_date)) {
-      console.log('run on this');
-      console.log(from_date, to_date);
-
       return undefined;
     } else {
-      console.log('run else');
       getData();
     }
   }, [from_date, to_date]);
 
   return (
     <MainLayout style={styles.root}>
-      {/* <ReportHeader
+      <ReportHeader
         title={'Thống kê phiếu đặt hàng'}
         date={headerDate}
         onSelected={() =>
@@ -173,8 +162,8 @@ const Statistical = () => {
         filerBottomSheetRef={filerBottomSheetRef}
         onChange={onChangeHeaderDate}
         onChangeDateCalender={onChangeDateCalender}
-      /> */}
-      <RangeDatePicker  startDate='13/01/2024'    untilDate='13/12/2024'  dayHeadings={dayHeadings.current}    />
+      />
+      {/*<RangeDatePicker  startDate='13/01/2024'    untilDate='13/12/2024'  dayHeadings={dayHeadings.current}    />*/}
     </MainLayout>
   );
 };

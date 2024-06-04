@@ -41,6 +41,7 @@ import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {shallowEqual} from 'react-redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const CheckinInventory = () => {
   const {colors} = useTheme();
@@ -149,9 +150,12 @@ const CheckinInventory = () => {
   };
 
   const onSubmit = useCallback(async () => {
-    if (products.length > 0) {
-      const newItems = products.map(item => {
-        const price = item.details.find(item2 => item2.uom == item.stock_uom);
+    dispatch(appActions.setProcessingStatus(true));
+    if (listProducts.length > 0) {
+      const newItems = listProducts.map(item => {
+        const price = item.details.find(
+          (item2: any) => item2.uom === item.stock_uom,
+        );
         return {
           item_code: item.item_code,
           item_unit: item.stock_uom,
@@ -177,6 +181,7 @@ const CheckinInventory = () => {
         completeCheckin();
       }
     }
+    dispatch(appActions.setProcessingStatus(false));
   }, [dataCheckin, products]);
 
   const removeItem = (idx: number) => {
@@ -303,11 +308,12 @@ const CheckinInventory = () => {
                 onChangeValue={(txt: string) =>
                   setDetailProduct({
                     ...detailProduct,
-                    quantity: txt == '' ? 0 : parseInt(txt),
+                    quantity: txt === '' ? 0 : parseInt(txt),
                   })
                 }
                 inputProp={{
                   keyboardType: 'numeric',
+                  returnKeyType: 'done',
                 }}
               />
               <AppInput
