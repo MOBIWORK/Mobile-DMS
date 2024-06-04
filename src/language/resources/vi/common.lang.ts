@@ -74,6 +74,8 @@ export default {
   selectDate: 'Chọn ngày',
   all: 'Tất cả',
   company: 'Công ty',
+  Company: 'Công ty',
+
   Individual: 'Cá nhân',
   individual: 'Cá nhân',
 
@@ -309,14 +311,13 @@ export default {
   addressOrder: 'Địa chỉ đặt hàng',
   mainAddress: 'Địa chỉ chính',
 
-  Su:"CN",
-  Mo:"T2",
-  Tu:"T3",
-  We:"T4",
-  Th:"T5",
-  Fr:'T6',
-  Sa:"T7",
+  Su: 'CN',
+  Mo: 'T2',
+  Tu: 'T3',
+  We: 'T4',
+  Th: 'T5',
+  Fr: 'T6',
+  Sa: 'T7',
 
   getAddress: 'Lấy địa chỉ',
-
 };

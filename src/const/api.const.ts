@@ -145,4 +145,4 @@ export const GET_NOTIFICATION =
   '/api/method/mbw_dms.api.notification.notification.get_notifi'
 export const GET_NOTIFICATION_DETAIL = 
   '/api/method/mbw_dms.api.notification.notification.get_notifi_detail'
-export const UPDATE_CUSTOMER =  URL_PREFIX +  '.api.selling.customer.update_customer'
+export const UPDATE_CUSTOMER =  URL_PREFIX +  '.api.selling.customer.update_customer?name='

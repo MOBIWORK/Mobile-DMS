@@ -270,6 +270,7 @@ const AddingNewCustomer = () => {
     setOpenModal(false);
   }, [openModal]);
 
+    console.log(listData.credit_limit,'bbb')
   return (
     <>
       <MainLayout>

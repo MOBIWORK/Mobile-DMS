@@ -31,11 +31,7 @@ const CardEditAddress = (props: Props) => {
   return (
     <ErrorBoundary fallbackRender={ErrorFallBack}>
       {props.type === 'address' ? (
-        props.address.address_title &&
-        props.primaryAddress &&
-        props.address.address_title.includes(
-          props.primaryAddress.replace('-Billing', ''),
-        ) && (
+        props.address.is_primary_address === 1 && (
           <Block style={styles.card}>
             <Block paddingHorizontal={16}>
               <Block style={styles.containAddressLabel}>
@@ -66,20 +62,17 @@ const CardEditAddress = (props: Props) => {
               </Block>
             </Block>
             <Block style={styles.containAddress}>
-              {props.primaryAddress &&
-                props.address.address_title.includes(
-                  props?.primaryAddress!.replace('-Billing', ''),
-                ) && (
-                  <Block style={styles.addressGetAndOrder}>
-                    <Text
-                      fontSize={14}
-                      lineHeight={21}
-                      fontWeight="400"
-                      colorTheme="primary">
-                      {getLabel('deliveryAddress')}
-                    </Text>
-                  </Block>
-                )}
+              {props.address.is_primary_address === 1 && (
+                <Block style={styles.addressGetAndOrder}>
+                  <Text
+                    fontSize={14}
+                    lineHeight={21}
+                    fontWeight="400"
+                    colorTheme="primary">
+                    {getLabel('deliveryAddress')}
+                  </Text>
+                </Block>
+              )}
               {props.address.is_shipping_address === 1 && (
                 <Block style={styles.addressGetAndOrder}>
                   <Text

@@ -211,9 +211,7 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 0,
       marginVertical: 0,
       justifyContent: 'flex-end',
-      // borderTopLeftRadius:26,
-      // borderTopRightRadius:26
-      // marginTop:200
+     
     } as ViewStyle,
     containClose: {
       width: 26,

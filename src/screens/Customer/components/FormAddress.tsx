@@ -4,8 +4,7 @@ import {
   StyleSheet,
   TextStyle,
   TouchableOpacity,
-  View,
-  ViewStyle,
+  ViewStyle
 } from 'react-native';
 import React, {useState, useRef, useEffect, useMemo} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -310,7 +309,7 @@ const FormAddress = (props: Props) => {
         />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
         <>
-          <View style={styles.headerContentView('Địa chỉ chính')}>
+          <Block style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
               label="Địa chỉ chính"
               onBack={() => {}}
@@ -324,9 +323,9 @@ const FormAddress = (props: Props) => {
                 />
               }
             />
-          </View>
+          </Block>
 
-          <View style={[styles.buttonView, {marginBottom: 24}]}>
+          <Block style={[styles.buttonView, {marginBottom: 24}]}>
             <TouchableOpacity
               style={styles.buttonStyle}
               onPress={() => onPressButtonGetLocation()}>
@@ -339,7 +338,7 @@ const FormAddress = (props: Props) => {
                 Lấy vị trí hiện tại
               </AppText>
             </TouchableOpacity>
-          </View>
+          </Block>
           <ScrollView showsVerticalScrollIndicator={false}>
             <AppInput
               label={`${getLabel('province')}/${getLabel('city')}`}
@@ -430,7 +429,7 @@ const FormAddress = (props: Props) => {
             <Block style={styles.checkBoxRootView}>
               {listCheckBox.current.map(item => {
                 return (
-                  <View key={item.id}>
+                  <Block key={item.id}>
                     <TouchableOpacity
                       onPress={() => {
                         item.id === '1'
@@ -444,7 +443,7 @@ const FormAddress = (props: Props) => {
                             }));
                       }}
                       style={styles.checkBoxView}>
-                      <View
+                      <Block
                         style={
                           item.id === '1'
                             ? styles.boxIconGo(addressValue.addressGet)
@@ -459,13 +458,13 @@ const FormAddress = (props: Props) => {
                             name="check"
                           />
                         ) : null}
-                      </View>
+                      </Block>
                       <AppText>
                         {'   '}
                         {item.label}
                       </AppText>
                     </TouchableOpacity>
-                  </View>
+                  </Block>
                 );
               })}
             </Block>
@@ -512,8 +511,8 @@ const FormAddress = (props: Props) => {
               </Mapbox.MapView>
             </Block>
           </ScrollView>
-          <View style={styles.containButtonBottom(typeFilter)}>
-            <View style={styles.containContentButton}>
+          <Block style={styles.containButtonBottom(typeFilter)}>
+            <Block style={styles.containContentButton}>
               <TouchableOpacity
                 style={styles.buttonRestart}
                 onPress={() => {
@@ -536,12 +535,12 @@ const FormAddress = (props: Props) => {
                 onPress={handleSaveMainAddress}>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
-            </View>
-          </View>
+            </Block>
+          </Block>
         </>
       ) : (
         <>
-          <View style={styles.headerContentView(getLabel('mainContact'))}>
+          <Block style={styles.headerContentView(getLabel('mainContact'))}>
             <AppHeader
               label={getLabel('mainContact')}
               onBack={() => {}}
@@ -555,7 +554,7 @@ const FormAddress = (props: Props) => {
                 />
               }
             />
-          </View>
+          </Block>
           <MainLayout style={{paddingTop: 0}}>
             <AppInput
               label={getLabel('contactName')}
@@ -666,8 +665,8 @@ const FormAddress = (props: Props) => {
               onChangeValue={setTxtContactDetail}
               hiddenRightIcon={true}
             />
-            <View style={styles.containButtonBottom(typeFilter)}>
-              <View style={styles.containContentButton}>
+            <Block style={styles.containButtonBottom(typeFilter)}>
+              <Block style={styles.containContentButton}>
                 <TouchableOpacity
                   style={styles.buttonRestart}
                   onPress={() => {
@@ -690,8 +689,8 @@ const FormAddress = (props: Props) => {
                   }}>
                   <AppText style={styles.applyText}>{getLabel('save')}</AppText>
                 </TouchableOpacity>
-              </View>
-            </View>
+              </Block>
+            </Block>
           </MainLayout>
         </>
       )}
