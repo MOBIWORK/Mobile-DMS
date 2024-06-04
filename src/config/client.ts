@@ -44,7 +44,7 @@ const onResponse = (response: AxiosResponse): AxiosResponse => {
 const onResponseError = (error: AxiosError | any): Promise<AxiosError> => {
   if (error?.response?.status === 400) {
     console.log('%c### 400', 'color:red', error);
-    showSnack({msg: translate('error:haveError')});
+    // showSnack({msg: translate('error:haveError')});
     return error?.response?.data;
   }
   if (error?.response?.status === 401) {
@@ -54,7 +54,7 @@ const onResponseError = (error: AxiosError | any): Promise<AxiosError> => {
       return Promise.resolve(error);
     } else {
       showSnack({
-        msg: translate('error:haveError'),
+        msg: translate('haveError'),
         interval: 3000,
         type: 'error',
       });
@@ -62,7 +62,7 @@ const onResponseError = (error: AxiosError | any): Promise<AxiosError> => {
   }
   if (error?.response?.status === 500) {
     showSnack({
-      msg: translate('error:haveError'),
+      msg: translate('haveError'),
       interval: 3000,
       type: 'error',
     });
@@ -71,7 +71,7 @@ const onResponseError = (error: AxiosError | any): Promise<AxiosError> => {
   if (error?.response?.status === 403) {
     console.log(error,'error')
     showSnack({
-      msg: translate('error:haveError'),
+      msg: translate('haveError'),
       interval: 3000,
       type: 'error',
     });

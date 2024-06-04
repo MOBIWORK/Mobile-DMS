@@ -304,9 +304,9 @@ const CheckInLocation = () => {
       );
       completeCheckin();
       navigation.navigate({
-        name: ScreenConstant.LIST_VISIT,
-        // params: {item: newParams.data, isLocation: true},
-        // merge: true,
+        name: ScreenConstant.CHECKIN,
+        params: {item: newParams.data, isLocation: true},
+        merge: true,
       });
     }
     dispatch(setProcessingStatus(false));
@@ -496,7 +496,13 @@ const CheckInLocation = () => {
         <Block block>
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
-            onBack={() => navigation.goBack()}
+            onBack={() =>
+              navigation.navigate({
+                name: ScreenConstant.LIST_VISIT,
+                // params: {item: newParams.data, isLocation: true},
+                // merge: true,
+              })
+            }
             label={getLabel('location')}
           />
           <KeyboardAvoidingView

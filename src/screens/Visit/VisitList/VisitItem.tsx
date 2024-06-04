@@ -79,6 +79,9 @@ const VisitItem: FC<VisitItemProps> = ({
     return {location, distance};
   }, [item.customer_location_primary, currentLocation, isEnable.current]);
 
+
+
+
   const statusItem = React.useCallback(
     (status: boolean) => {
       return (
@@ -121,7 +124,7 @@ const VisitItem: FC<VisitItemProps> = ({
       }
     };
     check();
-  }, []);
+  }, [isEnable.current]);
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
