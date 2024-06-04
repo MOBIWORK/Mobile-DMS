@@ -20,6 +20,7 @@ import {
 import {
   FlatList,
   Image,
+  Platform,
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
@@ -79,6 +80,7 @@ import {useBatteryLevel} from 'expo-battery';
 import ModalUpdateLocation from './Component/ModalUpdateLocation';
 import {ObjectId} from 'bson';
 import {MapView} from './Component/MapView';
+import {isLocationEnabled} from 'react-native-android-location-enabler';
 
 //config Mapbox
 
@@ -108,6 +110,7 @@ const ListVisit = () => {
   );
   const searchVisit = useSelector(state => state.app.searchVisitValue);
   const [isPending, startEffect] = useTransition();
+  const [modalErrorGPS, setModalErrorGPS] = useState(false);
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -164,6 +167,21 @@ const ListVisit = () => {
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
   const currentSelect = useRef<VisitListItemType>();
+  const isEnable = useRef<boolean>(false);
+
+  const handleEnabledPressed = useCallback(async () => {
+    if (Platform.OS === 'android') {
+      const checkEnabled: boolean = await isLocationEnabled();
+      console.log('checkEnabled', checkEnabled);
+
+      isEnable.current = checkEnabled;
+      if (checkEnabled === true) {
+        setModalErrorGPS(false);
+      } else {
+        setModalErrorGPS(true);
+      }
+    }
+  }, [isEnable.current]);
   const backgroundErrorListener = useCallback(
     (errorCode: number) => {
       // Handle background location errors
@@ -427,6 +445,7 @@ const ListVisit = () => {
     if (Object.keys(systemConfig).length === 0) {
       dispatch(appActions.onGetSystemConfig());
     }
+    handleEnabledPressed();
     CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
 
@@ -462,38 +481,40 @@ const ListVisit = () => {
           item => item.customer_location_primary === null,
         );
         const sortedData = () => {
-          return filteredData.slice().sort((a, b) => {
-            const locationA: LocationProps =
-              JSON.parse(
-                a.customer_location_primary
-                  ? a.customer_location_primary
+          return (
+            filteredData.slice().sort((a, b) => {
+              const locationA: LocationProps =
+                JSON.parse(
+                  a.customer_location_primary
+                    ? a.customer_location_primary
+                    : '{"long": 0, "lat": 0}',
+                ) || {};
+              const locationB: LocationProps = JSON.parse(
+                b.customer_location_primary
+                  ? b.customer_location_primary
                   : '{"long": 0, "lat": 0}',
-              ) || {};
-            const locationB: LocationProps = JSON.parse(
-              b.customer_location_primary
-                ? b.customer_location_primary
-                : '{"long": 0, "lat": 0}',
-            );
-            const distance1 = calculateDistance(
-              currentLocation?.coords?.latitude
-                ? currentLocation?.coords?.latitude
-                : 0,
-              currentLocation?.coords?.longitude
-                ? currentLocation?.coords?.longitude
-                : 0,
-              locationA.lat != null ? locationA.lat : 0,
-              locationA.long != null ? locationA.long : 0,
-            );
-            const distance2 = calculateDistance(
-              currentLocation.coords.latitude,
-              currentLocation.coords.longitude,
-              locationB.lat != null ? locationB.lat : 0,
-              locationB.long != null ? locationB.long : 0,
-            );
-            return distanceLabel === getLabel('nearest')
-              ? distance1 - distance2
-              : distance2 - distance1;
-          });
+              );
+              const distance1 = calculateDistance(
+                currentLocation?.coords?.latitude
+                  ? currentLocation?.coords?.latitude
+                  : 0,
+                currentLocation?.coords?.longitude
+                  ? currentLocation?.coords?.longitude
+                  : 0,
+                locationA.lat != null ? locationA.lat : 0,
+                locationA.long != null ? locationA.long : 0,
+              );
+              const distance2 = calculateDistance(
+                currentLocation?.coords?.latitude,
+                currentLocation?.coords?.longitude,
+                locationB.lat != null ? locationB.lat : 0,
+                locationB.long != null ? locationB.long : 0,
+              );
+              return distanceLabel === getLabel('nearest')
+                ? distance1 - distance2
+                : distance2 - distance1;
+            }) || null
+          );
         };
         setCustomerData([...sortedData(), ...noLocationCustomer]);
       } else {
@@ -734,47 +755,51 @@ const ListVisit = () => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
       if (item.customer_location_primary != null) {
-        setTimeout(() => {
-          setModalAlert({
-            type: 'loading',
-            status: true,
-          });
-          startEffect(() => {
-            CommonUtils.getCurrentLocation(curLocation => {
-              let data = calculateDistance(
-                curLocation.coords.latitude,
-                curLocation.coords.longitude,
-                location?.lat,
-                location.long,
-              );
-              if (
-                data >
-                  (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-                    AppConstant.additional_distance) /
-                    1000 &&
-                isDetail === false
-              ) {
-                currentSelect.current = item;
-                setModalAlert(prev => ({
-                  ...prev,
-                  type: 'warn',
-                  cal:
-                    data -
+        if (!isEnable.current) {
+          setModalErrorGPS(true);
+        } else {
+          setTimeout(() => {
+            setModalAlert({
+              type: 'loading',
+              status: true,
+            });
+            startEffect(() => {
+              CommonUtils.getCurrentLocation(curLocation => {
+                let data = calculateDistance(
+                  curLocation.coords.latitude,
+                  curLocation.coords.longitude,
+                  location?.lat,
+                  location.long,
+                );
+                if (
+                  data >
                     (systemConfig.saiso_chophep_kb_vitringoaisaiso +
                       AppConstant.additional_distance) /
-                      1000,
-                }));
-              } else {
-                setModalAlert(prev => ({
-                  ...prev,
-                  status: false,
-                }));
+                      1000 &&
+                  isDetail === false
+                ) {
+                  currentSelect.current = item;
+                  setModalAlert(prev => ({
+                    ...prev,
+                    type: 'warn',
+                    cal:
+                      data -
+                      (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                        AppConstant.additional_distance) /
+                        1000,
+                  }));
+                } else {
+                  setModalAlert(prev => ({
+                    ...prev,
+                    status: false,
+                  }));
 
-                handleBackground(item);
-              }
+                  handleBackground(item);
+                }
+              });
             });
-          });
-        }, 1000);
+          }, 1000);
+        }
       } else {
         setModalUpdateLocation({
           status: true,
@@ -928,104 +953,175 @@ const ListVisit = () => {
   });
 
   useEffect(() => {
-    mounted.current = true;
-
-    if (searchVisit) {
-      handleSearchVisit();
-    } else {
-      startEffect(() => {
-        getData();
-      });
-    }
-    return () => {
-      mounted.current = false;
+    const checkGPS = async () => {
+      if (Platform.OS === 'android') {
+        const checkEnabled: boolean = await isLocationEnabled();
+        if (checkEnabled) {
+          isEnable.current = checkEnabled;
+        }
+      }
+      checkGPS();
     };
+  }, []);
+
+  useEffect(() => {
+    mounted.current = true;
+    if (isEnable.current) {
+      if (searchVisit) {
+        handleSearchVisit();
+      } else {
+        startEffect(() => {
+          getData();
+        });
+      }
+      return () => {
+        mounted.current = false;
+      };
+    }
   }, [searchVisit, dataCheckIn]);
 
   useEffect(() => {
     sortDataCustomer(distanceFilterValue);
   }, [listCustomer]);
 
+  useEffect(() => {
+    if (isEnable.current === false) {
+      setModalErrorGPS(true);
+    }
+  }, [isEnable.current]);
+
   return (
     <SafeAreaView
       edges={['bottom', 'top']}
       style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
       {_renderHeader()}
-      {_renderContent()}
-      <FilterContainer
-        bottomSheetRef={bottomSheetRef}
-        filterRef={filterRef}
-        filterValue={filterParams}
-        setFilter={setFilterParams}
-        channelData={lisCustomerRoute}
-        customerGroupData={customerType}
-        handleFilter={handleFilterData}
-        handleReset={handleReset}
-      />
-      <AppBottomSheet bottomSheetRef={distanceRef}>
-        <FilterListComponent
-          title={getLabel('distance')}
-          data={distanceFilterData}
-          handleItem={handleItemDistanceFilter}
-        />
-      </AppBottomSheet>
-      <Modal
-        isVisible={modalError}
-        backdropOpacity={0.5}
-        onBackButtonPress={() => {}}
-        style={{marginHorizontal: 0}}
-        onBackdropPress={() => {}}
-        animationIn="slideInUp"
-        animationOut="slideOutDown">
-        <Block
-          colorTheme="bg_default"
-          height={230}
-          marginLeft={16}
-          marginRight={16}
-          borderRadius={16}>
-          <Block justifyContent="center" alignItems="center" marginTop={8}>
-            <AppImage source="ErrorApiIcon" size={100} />
-          </Block>
-          <Block justifyContent="center" paddingVertical={8}>
-            <Text
-              textAlign="center"
-              fontSize={16}
-              fontWeight="500"
-              lineHeight={27}
-              colorTheme="text_primary">
-              {error}
-            </Text>
-          </Block>
-          <Block
-            paddingHorizontal={16}
-            justifyContent="center"
-            alignItems="center"
-            direction="row">
-            <TouchableOpacity
-              style={styles.buttonModal}
-              onPress={onGetCurrentPositionAgain}>
-              <Text colorTheme="white" fontSize={16} fontWeight="500">
-                {getLabel('tryAgain')}
-              </Text>
-            </TouchableOpacity>
-          </Block>
-        </Block>
-      </Modal>
-      <ModalAlert
-        show={modalAlert}
-        handleCheckin={handleBackground}
-        setShow={setModalAlert}
-        item={currentSelect.current}
-        currentLocation={currentLocation}
-      />
-      <ModalUpdateLocation
-        isVisible={modalUpdateLocation}
-        handleCheckin={handleCheckin}
-        // setVisible={setModalUpdateLocation}
-        item={currentSelect.current}
-        currentLocation={currentLocation}
-        onBackButtonPress={onBackButtonPress}
-      />
+
+      {modalErrorGPS ? (
+        <>
+          <SkeletonLoading />
+          <Modal
+            isVisible={modalErrorGPS}
+            backdropOpacity={0.5}
+            onBackButtonPress={() => {}}
+            style={{marginHorizontal: 0}}
+            onBackdropPress={() => {}}
+            animationIn="slideInUp"
+            animationOut="slideOutDown">
+            <Block
+              colorTheme="bg_default"
+              height={230}
+              marginLeft={16}
+              marginRight={16}
+              borderRadius={16}>
+              <Block justifyContent="center" alignItems="center" marginTop={8}>
+                <AppImage source="ErrorApiIcon" size={50} />
+              </Block>
+              <Block justifyContent="center" paddingVertical={8}>
+                <Text
+                  textAlign="center"
+                  fontSize={16}
+                  fontWeight="500"
+                  lineHeight={27}
+                  colorTheme="text_primary">
+                  Vui lòng bật GPS để tiếp tục
+                </Text>
+              </Block>
+              <Block
+                paddingHorizontal={16}
+                justifyContent="center"
+                alignItems="center"
+                direction="row">
+                <TouchableOpacity
+                  style={styles.buttonModal}
+                  onPress={handleEnabledPressed}>
+                  <Text colorTheme="white" fontSize={16} fontWeight="500">
+                    {getLabel('tryAgain')}
+                  </Text>
+                </TouchableOpacity>
+              </Block>
+            </Block>
+          </Modal>
+        </>
+      ) : (
+        <>
+          {_renderContent()}
+          <FilterContainer
+            bottomSheetRef={bottomSheetRef}
+            filterRef={filterRef}
+            filterValue={filterParams}
+            setFilter={setFilterParams}
+            channelData={lisCustomerRoute}
+            customerGroupData={customerType}
+            handleFilter={handleFilterData}
+            handleReset={handleReset}
+          />
+          <AppBottomSheet bottomSheetRef={distanceRef}>
+            <FilterListComponent
+              title={getLabel('distance')}
+              data={distanceFilterData}
+              handleItem={handleItemDistanceFilter}
+            />
+          </AppBottomSheet>
+
+          <Modal
+            isVisible={modalError}
+            backdropOpacity={0.5}
+            onBackButtonPress={() => {}}
+            style={{marginHorizontal: 0}}
+            onBackdropPress={() => {}}
+            animationIn="slideInUp"
+            animationOut="slideOutDown">
+            <Block
+              colorTheme="bg_default"
+              height={230}
+              marginLeft={16}
+              marginRight={16}
+              borderRadius={16}>
+              <Block justifyContent="center" alignItems="center" marginTop={8}>
+                <AppImage source="ErrorApiIcon" size={100} />
+              </Block>
+              <Block justifyContent="center" paddingVertical={8}>
+                <Text
+                  textAlign="center"
+                  fontSize={16}
+                  fontWeight="500"
+                  lineHeight={27}
+                  colorTheme="text_primary">
+                  {error}
+                </Text>
+              </Block>
+              <Block
+                paddingHorizontal={16}
+                justifyContent="center"
+                alignItems="center"
+                direction="row">
+                <TouchableOpacity
+                  style={styles.buttonModal}
+                  onPress={onGetCurrentPositionAgain}>
+                  <Text colorTheme="white" fontSize={16} fontWeight="500">
+                    {getLabel('tryAgain')}
+                  </Text>
+                </TouchableOpacity>
+              </Block>
+            </Block>
+          </Modal>
+          <ModalAlert
+            show={modalAlert}
+            handleCheckin={handleBackground}
+            setShow={setModalAlert}
+            item={currentSelect.current}
+            currentLocation={currentLocation}
+          />
+          <ModalUpdateLocation
+            isVisible={modalUpdateLocation}
+            handleCheckin={handleCheckin}
+            // setVisible={setModalUpdateLocation}
+            item={currentSelect.current}
+            currentLocation={currentLocation}
+            onBackButtonPress={onBackButtonPress}
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 };

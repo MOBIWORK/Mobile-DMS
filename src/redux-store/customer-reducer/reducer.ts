@@ -93,7 +93,7 @@ const getCustomerNewPage = createAction(
 
 const updateCustomerAction = createAction(
   Actions.UPDATE_CUSTOMER,
-  (data: any) => ({payload: data}),
+  (data: any,name:string) => ({payload: {data,name}}),
 );
 
 export const customerReducer = customerSlice.reducer;

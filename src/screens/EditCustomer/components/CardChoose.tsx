@@ -1,4 +1,4 @@
-import {Platform, StyleSheet, ViewStyle} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React from 'react';
 import isEqual from 'react-fast-compare';
 import {ErrorBoundary} from 'react-error-boundary';
@@ -14,10 +14,13 @@ type Props = CardListAddress | CardListContact;
 type CardListAddress = {
   type: 'address';
   data: Address;
+  onPress:(data:Address,type:'address') => void
 };
 type CardListContact = {
   type: 'contact';
   data: Contact;
+  onPress:(data:Contact,type:'contact') => void
+
 };
 
 const CardChoose = (props: Props) => {
@@ -28,15 +31,13 @@ const CardChoose = (props: Props) => {
   return (
     <ErrorBoundary fallbackRender={ErrorFallBack}>
       {props.type === 'address' ? (
-        <Block style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={() => props.onPress(props.data,props.type)}>
           <Block paddingHorizontal={16}>
             <Block style={styles.containAddressLabel}>
               <Block direction="row" alignItems="center">
                 <Block style={styles.containIcon}>
                   <SvgIcon source="MapPin" size={16} />
-                  <Block>
-                    <SvgIcon source="RedEdit" />
-                  </Block>
+                  
                 </Block>
                 <Block>
                   {props.data.address_title && (
@@ -80,9 +81,9 @@ const CardChoose = (props: Props) => {
               </Block>
             )}
           </Block>
-        </Block>
+        </TouchableOpacity>
       ) : (
-        <Block style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={() => props.onPress(props.data,props.type)}>
           <Block paddingHorizontal={16}>
             <Block style={styles.containAddressLabel}>
               <Text
@@ -135,7 +136,7 @@ const CardChoose = (props: Props) => {
               </Block>
             </Block>
           </Block>
-        </Block>
+        </TouchableOpacity>
       )}
     </ErrorBoundary>
   );

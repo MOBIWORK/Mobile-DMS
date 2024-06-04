@@ -71,6 +71,7 @@ export default {
   selectDate: 'Select date',
   all: 'All',
   company: 'Company',
+  Company: 'Company',
   Individual: 'Individual',
   individual: 'Individual',
   loyal: 'Loyal',

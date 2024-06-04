@@ -2,6 +2,7 @@ import React, {FC, useMemo, useTransition} from 'react';
 import {VisitListItemType} from '../../../models/types';
 import {
   Image,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -13,12 +14,20 @@ import {ExtendedTheme, useTheme} from '@react-navigation/native';
 
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorFallBack';
-import {calculateDistance, useSelector} from '../../../config/function';
+import {
+  backgroundErrorListener,
+  calculateDistance,
+  useSelector,
+} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 
 import isEquals from 'react-fast-compare';
 import {DMSConfigMobile} from '../../../services/appService';
+import {isLocationEnabled} from 'react-native-android-location-enabler';
+import {CommonUtils} from '../../../utils';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 export interface LocationProps {
   long: number;
@@ -43,6 +52,8 @@ const VisitItem: FC<VisitItemProps> = ({
     state => state.app.currentLocation,
     shallowEqual,
   );
+  const isEnable = React.useRef<boolean>(false);
+
   const systemConfig: DMSConfigMobile = useSelector(
     state => state.app.systemConfig,
     shallowEqual,
@@ -54,13 +65,14 @@ const VisitItem: FC<VisitItemProps> = ({
       item.customer_location_primary != null && item.customer_location_primary,
     );
     let distance = calculateDistance(
-      currentLocation?.coords.latitude,
-      currentLocation?.coords.longitude,
+      currentLocation?.coords?.latitude,
+      currentLocation?.coords?.longitude,
       location?.lat,
       location?.long,
     );
     return {location, distance};
-  }, [item.customer_location_primary, currentLocation]);
+  }, [item.customer_location_primary, currentLocation, isEnable.current]);
+
   const statusItem = React.useCallback(
     (status: boolean) => {
       return (
@@ -78,6 +90,32 @@ const VisitItem: FC<VisitItemProps> = ({
     },
     [item],
   );
+  React.useEffect(() => {
+    const check = async () => {
+      if (!isEnable.current) {
+        if (Platform.OS === 'android') {
+          const checkEnabled: boolean = await isLocationEnabled();
+          isEnable.current = checkEnabled;
+          if (checkEnabled === true) {
+            isEnable.current = checkEnabled;
+            // setModalErrorGPS(false);
+          } else {
+            isEnable.current = checkEnabled;
+
+            // setModalErrorGPS(true);
+          }
+        }
+      } else {
+        CommonUtils.getCurrentLocation(
+          locations => {
+            dispatch(appActions.onSetCurrentLocation(locations));
+          },
+          err => backgroundErrorListener(err.code),
+        );
+      }
+    };
+    check();
+  }, []);
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
