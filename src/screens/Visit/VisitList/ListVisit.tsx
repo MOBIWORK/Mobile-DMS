@@ -744,7 +744,7 @@ const ListVisit = () => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
       if (item.customer_location_primary != null) {
-        if (!isEnable.current) {
+        if (!isEnable.current && Platform.OS === 'android') {
           setModalErrorGPS(true);
         } else {
           setTimeout(() => {
@@ -974,7 +974,7 @@ const ListVisit = () => {
   }, [listCustomer]);
 
   useEffect(() => {
-    if (isEnable.current === false) {
+    if (isEnable.current === false && Platform.OS === 'android') {
       setModalErrorGPS(true);
     }
   }, [isEnable.current]);

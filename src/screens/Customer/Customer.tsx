@@ -215,9 +215,9 @@ const Customer = () => {
 
   React.useEffect(() => {
     mounted.current = true;
+    handleBackgroundLocation();
     checkGPS();
-    if (mounted.current && modalErrorGPS === false ) {
-      handleBackgroundLocation();
+    if (mounted.current && modalErrorGPS === false) {
       if (listCustomer && listCustomer?.length > 0) {
         const filteredData = listCustomer.filter(
           item => item.customer_location_primary,

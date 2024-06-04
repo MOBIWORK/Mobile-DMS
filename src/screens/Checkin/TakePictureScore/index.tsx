@@ -220,6 +220,12 @@ const TakePictureScore = () => {
     }
   }, [selectedImages]);
 
+  const onBack = useCallback(() =>{
+    goBack();
+    dispatch(checkinActions.setListImageProgram([]));
+    dispatch(checkinActions.setListImageSelect([]));
+  },[])
+
   const handleSelectImage = useCallback(
     (image: ImageSelect) => {
       const imageUri = typeof image === 'string' ? image : image.uri;
@@ -303,7 +309,7 @@ const TakePictureScore = () => {
               }/${listProgram.length}`
             : 'Chấm điểm'
         }
-        onBack={() => goBack()}
+        onBack={onBack}
       />
       <Block justifyContent="center" alignItems="center">
         <Text textAlign="center" fontSize={12} colorTheme="bg_disable">

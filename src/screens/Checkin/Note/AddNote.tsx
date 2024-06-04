@@ -40,6 +40,7 @@ import {ICON_TYPE} from '../../../const/app.const';
 import {dispatch} from '../../../utils/redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import InputViewCompoment from './components/InputView';
+import isEqual from 'react-fast-compare';
 
 const AddNote = () => {
   const theme = useTheme();
@@ -78,6 +79,7 @@ const AddNote = () => {
     } catch (er) {
       console.log(er);
     } finally {
+      dispatch(checkinActions.getListNoteCheckin(dataCheckin.checkin_id));
       navigation.goBack();
     }
   };
@@ -86,7 +88,7 @@ const AddNote = () => {
     return title?.label ? false : true;
   }, [title]);
 
-  const renderItem = (item: StaffType) => {
+  const renderItem = React.memo((item: StaffType) => {
     return (
       <View style={styles.viewItem}>
         <View style={styles.flex}>
@@ -107,7 +109,7 @@ const AddNote = () => {
         </View>
       </View>
     );
-  };
+  }, isEqual);
 
   const onCheckStaff = (staff: StaffType, isCheck: boolean) => {
     const newArr = staffData.map(item =>
@@ -128,8 +130,6 @@ const AddNote = () => {
     setStaffData(personals);
     if (bottomSheetRef.current) bottomSheetRef.current.close();
   };
-
-  
 
   const onChangeDataType = (item: IFilterType) => {
     setTitle(item);
@@ -174,7 +174,7 @@ const AddNote = () => {
     }
   }, []);
 
-  const renderBottomSheetStaff = () => {
+  const RenderBottomSheet = React.memo(() => {
     return (
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
@@ -257,7 +257,7 @@ const AddNote = () => {
         </View>
       </AppBottomSheet>
     );
-  };
+  }, isEqual);
 
   return (
     <MainLayout>
@@ -292,7 +292,7 @@ const AddNote = () => {
               label={getLabel('content')}
               value={content}
               onChangeValue={text => startTransition(() => setContent(text))}
-              styles={{height: height,paddingVertical:8}}
+              styles={{height: height, paddingVertical: 8}}
               inputProp={{
                 // numberOfLines: 3,
                 multiline: true,
@@ -356,7 +356,7 @@ const AddNote = () => {
           onPress={() => onCreateNoteCheckin()}
         />
       </View>
-      {renderBottomSheetStaff()}
+      <RenderBottomSheet />
       <AppBottomSheet
         bottomSheetRef={bottomSheetType}
         snapPointsCustom={snapPoint}>
