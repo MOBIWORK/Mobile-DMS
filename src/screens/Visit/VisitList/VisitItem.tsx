@@ -64,12 +64,18 @@ const VisitItem: FC<VisitItemProps> = ({
     let location: LocationProps = JSON.parse(
       item.customer_location_primary != null && item.customer_location_primary,
     );
-    let distance = calculateDistance(
-      currentLocation?.coords?.latitude,
-      currentLocation?.coords?.longitude,
-      location?.lat,
-      location?.long,
-    );
+    let distance:any
+    if(Object.keys(currentLocation).length > 0){
+      distance = calculateDistance(
+        currentLocation?.coords?.latitude,
+        currentLocation?.coords?.longitude,
+        location?.lat,
+        location?.long,
+      );
+    }else{
+      distance = NaN
+    }
+    
     return {location, distance};
   }, [item.customer_location_primary, currentLocation, isEnable.current]);
 

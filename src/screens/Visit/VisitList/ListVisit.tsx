@@ -442,7 +442,7 @@ const ListVisit = () => {
     if (Object.keys(systemConfig).length === 0) {
       dispatch(appActions.onGetSystemConfig());
     }
-    handleEnabledPressed();
+    // handleEnabledPressed();
     CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
 
@@ -751,6 +751,7 @@ const ListVisit = () => {
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
+      handleEnabledPressed()
       if (item.customer_location_primary != null) {
         if (!isEnable.current && Platform.OS === 'android') {
           setModalErrorGPS(true);
@@ -981,11 +982,11 @@ const ListVisit = () => {
     sortDataCustomer(distanceFilterValue);
   }, [listCustomer]);
 
-  useEffect(() => {
-    if (isEnable.current === false && Platform.OS === 'android') {
-      setModalErrorGPS(true);
-    }
-  }, [isEnable.current]);
+  // useEffect(() => {
+  //   if (isEnable.current === false && Platform.OS === 'android') {
+  //     setModalErrorGPS(true);
+  //   }
+  // }, [isEnable.current]);
 
   return (
     <SafeAreaView
