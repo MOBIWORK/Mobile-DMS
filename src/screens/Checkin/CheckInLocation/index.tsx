@@ -19,7 +19,7 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {RouterProp} from '../../../navigation/screen-type';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {
@@ -65,7 +65,7 @@ import SelectedAddress from '../../Customer/components/SelectedAddress';
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const CheckInLocation = () => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp>();
 
   const route = useRoute<RouterProp<'CHECKIN_LOCATION'>>();
   const theme = useTheme();
@@ -303,11 +303,6 @@ const CheckInLocation = () => {
         }),
       );
       completeCheckin();
-      navigation.navigate({
-        name: ScreenConstant.LIST_VISIT,
-        // params: {item: newParams.data, isLocation: true},
-        // merge: true,
-      });
     }
     dispatch(setProcessingStatus(false));
   };
@@ -317,6 +312,7 @@ const CheckInLocation = () => {
       item.key === 'location' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    navigation.goBack();
   };
 
   const fillAddressInit = useCallback(async () => {

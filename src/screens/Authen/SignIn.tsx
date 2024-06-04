@@ -2,6 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {MainLayout} from '../../layouts';
 import {
   Image,
+  Keyboard,
   Linking,
   Platform,
   StyleSheet,
@@ -188,9 +189,10 @@ const SignIn = () => {
         />
         <Text
           style={{color: colors.text_secondary, textAlign: 'center'}}
-          onPress={() =>
-            navigation.navigate(ScreenConstant.SELECT_ORGANIZATION, {})
-          }>
+          onPress={() => {
+            Keyboard.dismiss();
+            navigation.navigate(ScreenConstant.SELECT_ORGANIZATION, {});
+          }}>
           {getLabel('anotherOrganization')}
         </Text>
       </View>
