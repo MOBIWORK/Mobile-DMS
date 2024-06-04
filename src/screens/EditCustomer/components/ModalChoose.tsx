@@ -18,6 +18,7 @@ type Props = {
   type: string;
   listAddress: Address[];
   listContact: Contact[];
+  onPressData:(data:any,type:string) => void
 };
 
 const ModalChoose = ({
@@ -26,9 +27,15 @@ const ModalChoose = ({
   type,
   listAddress,
   listContact,
+  onPressData
 }: Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
+
+
+
+
+
 
   return (
     <Modal
@@ -52,7 +59,7 @@ const ModalChoose = ({
             {listAddress &&
               listAddress.length > 0 &&
               listAddress.map((item, index) => {
-                return <CardChoose key={index} type="address" data={item} />;
+                return <CardChoose key={index} type="address" data={item} onPress={onPressData}  />;
               })}
           </Block>
         ) : (
@@ -67,7 +74,7 @@ const ModalChoose = ({
             {listContact &&
               listContact.length > 0 &&
               listContact.map((item, index) => {
-                return <CardChoose key={index} type="contact" data={item} />;
+                return <CardChoose key={index} type="contact" data={item}  onPress={onPressData} />;
               })}
           </Block>
         )}

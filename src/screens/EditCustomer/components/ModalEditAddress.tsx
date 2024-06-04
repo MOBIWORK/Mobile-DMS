@@ -71,12 +71,14 @@ const ModalEditAddress = ({
   >([]);
 
   const [addressValue, setAddressValue] = useState<any>({
+  
     address_title: '',
     is_primary_address: 0,
     is_shipping_address: 0,
     address_location: '',
   });
   const [contactValue, setContactValue] = useState<any>({
+    
     nameContact: '',
     phoneNumber: '',
     addressContact: '',
@@ -118,6 +120,7 @@ const ModalEditAddress = ({
         setAddressValue((prev: any) => ({
           ...prev,
           detailAddress: data.results[0].formatted_address,
+          name:data.results[0].formatted_address
         }));
         const addressSplit = data.results[0].formatted_address.split(',', 4);
         const newData: AddressSelected[] = [
@@ -157,6 +160,7 @@ const ModalEditAddress = ({
           address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
           is_billing_contact: contactValue.isMainAddress ? 1 : 0,
           is_primary_contact: 0,
+          name:contactValue.nameContact
         },
       ],
     }));
@@ -197,6 +201,7 @@ const ModalEditAddress = ({
             is_shipping_address: addressValue.addressOrder ? 1 : 0,
             address_title: txtAddressDetail,
             address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
+            name:txtAddressDetail
           },
         ],
       }));
@@ -231,14 +236,14 @@ const ModalEditAddress = ({
   useEffect(() => {
     if (
       addressSelectedData.length === 3 &&
-      txtAddressDetail &&
+      // txtAddressDetail &&
       !keyboardVisitAble
     ) {
       autoCompleteGeo(
-        `${txtAddressDetail}, ${addressSelectedData[2].value}, ${addressSelectedData[1].value}, ${addressSelectedData[0].value}`,
+        ` ${addressSelectedData[2].value}, ${addressSelectedData[1].value}, ${addressSelectedData[0].value}`,
       );
     }
-  }, [addressSelectedData, txtAddressDetail, keyboardVisitAble]);
+  }, [addressSelectedData, keyboardVisitAble]);
 
   useEffect(() => {
     if (addressSelectedData.length === 3) {

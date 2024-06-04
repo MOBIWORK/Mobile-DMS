@@ -80,6 +80,9 @@ const DetailCustomer = () => {
     };
   }, []);
 
+  // console.log(data,'data customer') 
+
+
   const snapPointAdding = useMemo(
     () =>
       typeFilter === AppConstant.CustomerFilterType.dia_chi

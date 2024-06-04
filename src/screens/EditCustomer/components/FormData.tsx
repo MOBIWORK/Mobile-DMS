@@ -28,9 +28,19 @@ import {
 import {useTranslation} from 'react-i18next';
 import {ImageAssets} from '../../../assets';
 import {useTheme, AppTheme} from '../../../layouts/theme';
-import {DetailCustomerType, ListCustomerTerritory} from '../../../models/types';
+import {
+  Address,
+  Contact,
+  DetailCustomerType,
+  ListCustomerTerritory,
+} from '../../../models/types';
 import {TextInput} from 'react-native-paper';
-import {formatMoney, useSelector} from '../../../config/function';
+import {
+  convertToMoneyFormat,
+  formatMoney,
+  reverseFormatNumber,
+  useSelector,
+} from '../../../config/function';
 import moment from 'moment';
 import {shallowEqual} from 'react-redux';
 import ModalArea from '../../Customer/components/ModalArea';
@@ -46,6 +56,10 @@ import ButtonLayout from './ButtonLayout';
 import CardEditAddress from './CardEditAddress';
 import ModalEditAddress from './ModalEditAddress';
 import ModalChoose from './ModalChoose';
+import ModalData from './ModalData';
+import {DatePickerModal} from 'react-native-paper-dates';
+import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+// import {Contact} from '../../DetailCustomer/screen';
 
 type Props = {
   data: DetailCustomerType;
@@ -66,9 +80,18 @@ const FormData = (props: Props) => {
     custom_birthday: data.custom_birthday,
     routers: data.routers,
     image: data.image,
-    address: data.address,
+    address:
+      data.address &&
+      data.address.map(item => ({...item, name: data.customer_primary_address})),
     contacts: data.contacts,
+    credit_limits:
+      data.credit_limits && data.credit_limits?.length > 0
+        ? data.credit_limits
+        : [],
   });
+  const [dataCustomer, setDataCustomer] = useState<DetailCustomerType>(
+    initStateData.current,
+  );
   const listTerritory: ListCustomerTerritory[] = useSelector(
     state => state.customer.listCustomerTerritory,
     shallowEqual,
@@ -78,13 +101,11 @@ const FormData = (props: Props) => {
     state => state.customer.listCustomerRoute,
     shallowEqual,
   );
-  const [dataCustomer, setDataCustomer] = useState<DetailCustomerType>(
-    initStateData.current,
-  );
 
   const [isPending, startTransition] = useTransition();
   const [date, setDate] = useState<Date>();
   const [open, setOpen] = useState(false);
+  const [openDate, setOpenDate] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEditAddress, setModalEditAddress] = useState({
     type: 'address',
@@ -94,11 +115,14 @@ const FormData = (props: Props) => {
     type: 'address',
     status: false,
   });
+  const [modalData, setModalData] = useState({
+    type: 'customer_type',
+    status: false,
+  });
+
   const onBackButtonPress = useCallback(() => {
     setModalOpen(false);
   }, [modalOpen]);
-
-  // console.log(dataCustomer.customer_primary_contact, 'dataCustomer');
 
   const getCustomerTerritory = async () => {
     const response: any = await CustomerService.getCustomerTerritory();
@@ -162,6 +186,17 @@ const FormData = (props: Props) => {
     setOpen(false);
   }, [open]);
 
+  const onConfirmSingle = React.useCallback<SingleChange>(
+    params => {
+      setOpenDate(false);
+      setDate(params.date);
+    },
+    [setOpenDate],
+  );
+  const onDismissSingle = React.useCallback(() => {
+    setOpenDate(false);
+  }, [setOpenDate]);
+
   const onPressAddingAddress = useCallback(() => {
     startTransition(() => {
       setModalEditAddress({
@@ -195,6 +230,8 @@ const FormData = (props: Props) => {
   }, [modalChoose.type]);
 
   const onUpdateCustomer = useCallback(() => {
+    // let dataAddress = dataCustomer.address;
+
     const dataUpdate = {
       name: dataCustomer.name,
       address: dataCustomer.address || [{}],
@@ -210,11 +247,12 @@ const FormData = (props: Props) => {
       image: dataCustomer.image || '',
       router: dataCustomer.routers || '',
       website: dataCustomer.website || '',
-      territory:dataCustomer.territory || ''
+      territory: dataCustomer.territory || '',
     };
-    console.log(dataUpdate,'dataUpdate')
+  console.log(dataUpdate,'bbb')
+    
     startTransition(() => {
-      dispatch(customerActions.updateCustomerAction(dataUpdate));
+      dispatch(customerActions.updateCustomerAction(dataUpdate,dataCustomer.name!));
     });
   }, [dataCustomer]);
 
@@ -223,23 +261,37 @@ const FormData = (props: Props) => {
       setModalChoose(prev => ({...prev, status: false}));
     } else if (modalEditAddress.status === true) {
       setModalEditAddress(prev => ({...prev, status: false}));
+    } else {
+      setModalData(prev => ({...prev, status: false}));
     }
-  }, [modalChoose.status, modalEditAddress.status]);
+  }, [modalChoose.status, modalEditAddress.status, modalData.status]);
 
   const isPrimary = useMemo(() => {
-    let check: boolean | any = false;
     if (dataCustomer.address) {
-      check = dataCustomer.address
-        .map(item => item.is_primary_address)[0] ===  1 ? true : false ;
+      // Check if any address has is_primary_address equal to 1
+      return dataCustomer.address.some(item => item.is_primary_address === 1);
     } else {
-      check = false;
+      return false;
     }
+  }, [dataCustomer.address]);
 
-    return check;
-  }, [
-    dataCustomer?.customer_primary_address,
-    dataCustomer?.customer_primary_contact,
-  ]);
+  // console.log( dataCustomer.address.map(item => item.is_primary_address) ,'ccc')
+
+  // console.log(isPrimary,'isPrimary')
+
+  const onPressTrash = useCallback(() => {
+    const updatedAddressArray = dataCustomer.address
+      ? dataCustomer?.address.map(item => {
+          // Check if is_primary_address is 1, then update it to 0
+          if (item.is_primary_address === 1) {
+            return {...item, is_primary_address: 0};
+          }
+          // For other items, return them as they are
+          return item;
+        })
+      : [];
+    setDataCustomer(prev => ({...prev, address: updatedAddressArray}));
+  }, [dataCustomer.address]);
 
   useLayoutEffect(() => {
     if (listTerritory.length === 0) {
@@ -249,6 +301,34 @@ const FormData = (props: Props) => {
       getCustomerRoute();
     }
   }, []);
+
+  const onPressData = useCallback(
+    (data: any, type: string) => {
+      if (type === 'address') {
+        let newData: Address = data;
+
+        newData.is_primary_address = 1;
+        startTransition(() => {
+          setDataCustomer(prev => ({
+            ...prev,
+            address: [newData],
+          }));
+        });
+        onCloseModal();
+      } else {
+        let newData: Contact = data;
+        newData.is_primary_contact = 1;
+        startTransition(() => {
+          setDataCustomer(prev => ({
+            ...prev,
+            contact: [newData],
+          }));
+        });
+        onCloseModal();
+      }
+    },
+    [modalChoose.status],
+  );
 
   return (
     <Block block colorTheme="bg_default" marginTop={10} paddingHorizontal={16}>
@@ -326,6 +406,10 @@ const FormData = (props: Props) => {
           styles={{marginBottom: 20}}
           onPress={() => {
             //   setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
+            setModalData({
+              type: 'customer_type',
+              status: true,
+            });
             Keyboard.dismiss();
             //   filterRef.current?.snapToIndex(0);
           }}
@@ -347,6 +431,10 @@ const FormData = (props: Props) => {
           contentStyle={styles.contentStyle}
           styles={{marginBottom: 20}}
           onPress={() => {
+            setModalData({
+              type: 'customer_group',
+              status: true,
+            });
             //   setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
             //   filterRef.current?.snapToIndex(0);
           }}
@@ -407,6 +495,10 @@ const FormData = (props: Props) => {
           contentStyle={styles.contentStyle}
           styles={{marginBottom: 20}}
           onPress={() => {
+            setModalData({
+              type: 'gland',
+              status: true,
+            });
             //   setTypeFilter(AppConstant.CustomerFilterType.tuyen);
             //   filterRef.current?.snapToIndex(0);
           }}
@@ -429,6 +521,10 @@ const FormData = (props: Props) => {
           contentStyle={styles.contentStyle}
           styles={{marginBottom: 20}}
           onPress={() => {
+            setModalData({
+              type: 'frequency',
+              status: true,
+            });
             //   setTypeFilter(AppConstant.CustomerFilterType.tan_suat);
             //   filterRef.current?.snapToIndex(0);
           }}
@@ -444,7 +540,7 @@ const FormData = (props: Props) => {
           label={translate('debtLimit')}
           value={
             dataCustomer.credit_limits && dataCustomer.credit_limits?.length > 0
-              ? formatMoney(dataCustomer.credit_limits[0]!)
+              ? dataCustomer.credit_limits[0]
               : ''
           }
           editable={true}
@@ -453,11 +549,15 @@ const FormData = (props: Props) => {
           rightIcon={<TextInput.Affix text="VND" />}
           contentStyle={styles.contentStyle}
           styles={{marginBottom: 20}}
-          onChangeValue={text =>
+          onChangeValue={text => {
+            // console.log(val,'val')
+            let revText = reverseFormatNumber(text);
+            console.log(revText, 'revText');
             startTransition(() => {
-              setDataCustomer(prev => ({...prev, credit_limit: text}));
-            })
-          }
+              let val = convertToMoneyFormat(revText);
+              setDataCustomer(prev => ({...prev, credit_limits: [val]}));
+            });
+          }}
         />
         <AppInput
           label={translate('description')}
@@ -503,13 +603,7 @@ const FormData = (props: Props) => {
             {translate('address')}
           </Text>
           {isPrimary && (
-            <TouchableOpacity
-              onPress={() =>
-                setDataCustomer(prev => ({
-                  ...prev,
-                  customer_primary_address: 'none',
-                }))
-              }>
+            <TouchableOpacity onPress={onPressTrash}>
               <SvgIcon source="Trash" size={26} color="text_disable" />
             </TouchableOpacity>
           )}
@@ -589,23 +683,30 @@ const FormData = (props: Props) => {
             }
           />
         )}
-
-        <ModalArea
-          openModal={modalOpen}
-          setOpenModal={setModalOpen}
-          listTerritory={listTerritory}
-          data={dataCustomer as any}
-          setData={setDataCustomer as any}
-          onBackButtonPress={onBackButtonPress}
-        />
-        <ModalCamera
-          modal={open}
-          onBackButtonPress={onBackButtonCamera}
-          handleCameraPicker={handleCameraPicker}
-          handleImagePicker={handleImagePicker}
-        />
       </ScrollView>
-
+      <DatePickerModal
+        locale="vi"
+        mode="single"
+        visible={openDate}
+        label={translate('chooseBirthday')}
+        onDismiss={onDismissSingle}
+        date={date}
+        onConfirm={onConfirmSingle}
+      />
+      <ModalArea
+        openModal={modalOpen}
+        setOpenModal={setModalOpen}
+        listTerritory={listTerritory}
+        data={dataCustomer as any}
+        setData={setDataCustomer as any}
+        onBackButtonPress={onBackButtonPress}
+      />
+      <ModalCamera
+        modal={open}
+        onBackButtonPress={onBackButtonCamera}
+        handleCameraPicker={handleCameraPicker}
+        handleImagePicker={handleImagePicker}
+      />
       <ModalEditAddress
         visible={modalEditAddress.status}
         onBackButtonPress={onCloseModal}
@@ -618,6 +719,14 @@ const FormData = (props: Props) => {
         type={modalChoose.type}
         listAddress={dataCustomer.address || []}
         listContact={dataCustomer.contacts || []}
+        onPressData={onPressData}
+      />
+      <ModalData
+        isVisible={modalData.status}
+        onBackButton={onCloseModal}
+        type={modalData.type}
+        data={dataCustomer}
+        setData={setDataCustomer}
       />
 
       <Block>

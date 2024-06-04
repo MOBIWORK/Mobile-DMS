@@ -71,6 +71,8 @@ export default {
   selectDate: 'Select date',
   all: 'All',
   company: 'Company',
+  Company: 'Company',
+
   Individual: 'Individual',
   individual: 'Individual',
   loyal: 'Loyal',
@@ -301,13 +303,12 @@ export default {
   listContact: 'List Contact',
   addressGet: 'Delivery Address',
   addressOrder: 'Order Address',
-  mainAddress:"Main Address",
-  Su:"Su",
-  Mo:"Mo",
-  Tu:"Tu",
-  We:"We",
-  Th:"Th",
-  Fr:'Fr',
-  Sa:"Sa"
-
+  mainAddress: 'Main Address',
+  Su: 'Su',
+  Mo: 'Mo',
+  Tu: 'Tu',
+  We: 'We',
+  Th: 'Th',
+  Fr: 'Fr',
+  Sa: 'Sa',
 };
