@@ -114,7 +114,7 @@ const ListAlbumScore = (props: Props) => {
           style={styles.header}
           label="Chấm điểm trưng bày"
           onBack={() =>
-            screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack()
+            screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(1) : goBack()
           }
           // hiddenBackButton={true}
         />

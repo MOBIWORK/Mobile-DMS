@@ -389,9 +389,6 @@ const ListVisit = () => {
                 decelerationRate={'normal'}
                 bounces={true}
                 initialNumToRender={4}
-                ListFooterComponent={
-                  bottomLoading ? <SkeletonLoading /> : undefined
-                }
                 refreshControl={
                   <RefreshControl
                     refreshing={loading}
@@ -747,7 +744,7 @@ const ListVisit = () => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
       if (item.customer_location_primary != null) {
-        if (!isEnable.current) {
+        if (!isEnable.current && Platform.OS === 'android') {
           setModalErrorGPS(true);
         } else {
           setTimeout(() => {
@@ -958,14 +955,14 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-    if (isEnable.current) {
-      if (searchVisit) {
-        handleSearchVisit();
-      } else {
-        startEffect(() => {
-          getData();
-        });
-      }
+
+    if (searchVisit) {
+      handleSearchVisit();
+    } else {
+      startEffect(() => {
+        getData();
+      });
+
       return () => {
         mounted.current = false;
       };
@@ -977,7 +974,7 @@ const ListVisit = () => {
   }, [listCustomer]);
 
   useEffect(() => {
-    if (isEnable.current === false) {
+    if (isEnable.current === false && Platform.OS === 'android') {
       setModalErrorGPS(true);
     }
   }, [isEnable.current]);
