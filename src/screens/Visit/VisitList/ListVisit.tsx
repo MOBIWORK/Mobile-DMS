@@ -746,7 +746,9 @@ const ListVisit = () => {
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
-      handleEnabledPressed();
+      startTransition(() =>{
+      // handleEnabledPressed();
+    })
       if (!isEnable.current && Platform.OS === 'android') {
         setModalErrorGPS(true);
     }  else if (item.customer_location_primary != null) {
@@ -777,16 +779,13 @@ const ListVisit = () => {
                     type: 'warn',
                     cal:
                       data -
-                      (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-                        AppConstant.additional_distance) /
-                        1000,
+                      (systemConfig.saiso_chophep_kb_vitringoaisaiso /1000)
                   }));
                 } else {
                   setModalAlert(prev => ({
                     ...prev,
                     status: false,
                   }));
-
                   handleBackground(item);
                 }
               });
@@ -800,7 +799,7 @@ const ListVisit = () => {
         });
       }
     },
-    [],
+    [modalAlert.status,modalUpdateLocation.status],
   );
 
   const handleBackground = useCallback((item: VisitListItemType) => {
