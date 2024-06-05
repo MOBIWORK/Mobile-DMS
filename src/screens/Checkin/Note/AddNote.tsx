@@ -41,6 +41,7 @@ import {dispatch} from '../../../utils/redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import InputViewCompoment from './components/InputView';
 import isEqual from 'react-fast-compare';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const AddNote = () => {
   const theme = useTheme();
@@ -67,20 +68,22 @@ const AddNote = () => {
 
   const onCreateNoteCheckin = async () => {
     try {
-      startTransition(() => {
-        const objectData = {
-          title: title?.label || '',
-          content: content,
-          custom_checkin_id: dataCheckin.checkin_id,
-          email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
-        };
-        CheckinService.createNote(objectData);
-      });
+      dispatch(appActions.setProcessingStatus(true));
+      const objectData = {
+        title: title?.label || '',
+        content: content,
+        custom_checkin_id: dataCheckin.checkin_id,
+        email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
+      };
+      const res: any = await CheckinService.createNote(objectData);
+      if (res?.status === ApiConstant.STT_CREATED) {
+        dispatch(checkinActions.getListNoteCheckin(dataCheckin.checkin_id));
+        navigation.goBack();
+      }
     } catch (er) {
       console.log(er);
     } finally {
-      dispatch(checkinActions.getListNoteCheckin(dataCheckin.checkin_id));
-      navigation.goBack();
+      dispatch(appActions.setProcessingStatus(false));
     }
   };
 
@@ -88,7 +91,7 @@ const AddNote = () => {
     return title?.label ? false : true;
   }, [title]);
 
-  const renderItem = React.memo((item: StaffType) => {
+  const renderItem = React.useCallback((item: StaffType) => {
     return (
       <View style={styles.viewItem}>
         <View style={styles.flex}>
@@ -109,7 +112,7 @@ const AddNote = () => {
         </View>
       </View>
     );
-  }, isEqual);
+  }, []);
 
   const onCheckStaff = (staff: StaffType, isCheck: boolean) => {
     const newArr = staffData.map(item =>
@@ -122,18 +125,24 @@ const AddNote = () => {
 
   const onOpenBottonSheet = () => {
     setSendEmail(true);
-    if (bottomSheetRef.current) bottomSheetRef.current.snapToIndex(0);
+    if (bottomSheetRef.current) {
+      bottomSheetRef.current.snapToIndex(0);
+    }
   };
 
   const closeStaff = () => {
     setSelectPersonal([]);
     setStaffData(personals);
-    if (bottomSheetRef.current) bottomSheetRef.current.close();
+    if (bottomSheetRef.current) {
+      bottomSheetRef.current.close();
+    }
   };
 
   const onChangeDataType = (item: IFilterType) => {
     setTitle(item);
-    if (bottomSheetType.current) bottomSheetType.current.close();
+    if (bottomSheetType.current) {
+      bottomSheetType.current.close();
+    }
   };
 
   const fetchDataNoteType = async () => {
@@ -170,11 +179,12 @@ const AddNote = () => {
         value: item.loai_ghi_chu,
         isSelected: false,
       }));
+      console.log('newData', newData);
       setDataType(newData);
     }
   }, []);
 
-  const RenderBottomSheet = React.memo(() => {
+  const RenderBottomSheet = React.useCallback(() => {
     return (
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
@@ -241,23 +251,20 @@ const AddNote = () => {
                   <Text>Chưa có thông tin nhân viên</Text>
                 </View>
               )}
-
               <FlatList
-                data={staffData && staffData.length > 0 ? staffData : []}
+                data={staffData}
                 showsVerticalScrollIndicator={false}
                 initialNumToRender={4}
                 maxToRenderPerBatch={4}
                 bounces={false}
-                renderItem={({item, index}) => {
-                  return <Block key={index}>{renderItem(item)}</Block>;
-                }}
+                renderItem={({item, index}) => renderItem(item)}
               />
             </View>
           </View>
         </View>
       </AppBottomSheet>
     );
-  }, isEqual);
+  }, []);
 
   return (
     <MainLayout>
