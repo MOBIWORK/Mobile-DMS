@@ -29,7 +29,12 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {ExtendedTheme, useIsFocused, useNavigation, useTheme} from '@react-navigation/native';
+import {
+  ExtendedTheme,
+  useIsFocused,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {
   ListCustomerRoute,
@@ -119,7 +124,7 @@ const ListVisit = () => {
     state => state.app.dataCheckIn,
     shallowEqual,
   );
-  const isFocus = useIsFocused()
+  const isFocus = useIsFocused();
 
   const listCustomer: VisitListItemResult = useSelector(
     state => state.customer.listCustomerVisit,
@@ -560,7 +565,6 @@ const ListVisit = () => {
   };
 
   const getData = async () => {
-    
     setLoading(true);
     await getCustomerRoute();
     // await sortDataCustomer(distanceFilterValue);
@@ -627,7 +631,6 @@ const ListVisit = () => {
   };
 
   const handleRegainLocation = async () => {
-    
     CommonUtils.getCurrentLocation(
       locations => {
         setLocation(locations);
@@ -746,52 +749,49 @@ const ListVisit = () => {
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
-      startTransition(() =>{
-      // handleEnabledPressed();
-    })
+      startTransition(() => {
+        // handleEnabledPressed();
+      });
       if (!isEnable.current && Platform.OS === 'android') {
         setModalErrorGPS(true);
-    }  else if (item.customer_location_primary != null) {
-  
-          setTimeout(() => {
-            setModalAlert({
-              type: 'loading',
-              status: true,
+      } else if (item.customer_location_primary != null) {
+        setModalAlert({
+          type: 'loading',
+          status: true,
+        });
+        setTimeout(() => {
+          startEffect(() => {
+            CommonUtils.getCurrentLocation(curLocation => {
+              let data = calculateDistance(
+                curLocation.coords.latitude,
+                curLocation.coords.longitude,
+                location?.lat,
+                location.long,
+              );
+              if (
+                data >
+                  (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                    AppConstant.additional_distance) /
+                    1000 &&
+                isDetail === false
+              ) {
+                currentSelect.current = item;
+                setModalAlert(prev => ({
+                  ...prev,
+                  type: 'warn',
+                  cal:
+                    data - systemConfig.saiso_chophep_kb_vitringoaisaiso / 1000,
+                }));
+              } else {
+                setModalAlert(prev => ({
+                  ...prev,
+                  status: false,
+                }));
+                setTimeout(() => handleBackground(item), 500);
+              }
             });
-            startEffect(() => {
-              CommonUtils.getCurrentLocation(curLocation => {
-                let data = calculateDistance(
-                  curLocation.coords.latitude,
-                  curLocation.coords.longitude,
-                  location?.lat,
-                  location.long,
-                );
-                if (
-                  data >
-                    (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-                      AppConstant.additional_distance) /
-                      1000 &&
-                  isDetail === false
-                ) {
-                  currentSelect.current = item;
-                  setModalAlert(prev => ({
-                    ...prev,
-                    type: 'warn',
-                    cal:
-                      data -
-                      (systemConfig.saiso_chophep_kb_vitringoaisaiso /1000)
-                  }));
-                } else {
-                  setModalAlert(prev => ({
-                    ...prev,
-                    status: false,
-                  }));
-                  handleBackground(item);
-                }
-              });
-            });
-          }, 1000);
-        
+          });
+        }, 1000);
       } else {
         setModalUpdateLocation({
           status: true,
@@ -799,7 +799,7 @@ const ListVisit = () => {
         });
       }
     },
-    [modalAlert.status,modalUpdateLocation.status],
+    [modalAlert.status, modalUpdateLocation.status],
   );
 
   const handleBackground = useCallback((item: VisitListItemType) => {
@@ -969,11 +969,11 @@ const ListVisit = () => {
         mounted.current = false;
       };
     }
-  }, [searchVisit, dataCheckIn,isFocus]);
+  }, [searchVisit, dataCheckIn, isFocus]);
 
   useEffect(() => {
     sortDataCustomer(distanceFilterValue);
-  }, [listCustomer,isFocus]);
+  }, [listCustomer, isFocus]);
 
   // useEffect(() => {
   //   if (isEnable.current === false && Platform.OS === 'android') {
