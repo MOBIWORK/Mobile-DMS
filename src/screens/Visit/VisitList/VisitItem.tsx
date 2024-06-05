@@ -65,7 +65,7 @@ const VisitItem: FC<VisitItemProps> = ({
       item.customer_location_primary != null && item.customer_location_primary,
     );
     let distance:any
-    if(Object.keys(currentLocation).length > 0){
+    if(Object.keys(currentLocation).length > 0 && item.customer_location_primary != null){
       distance = calculateDistance(
         currentLocation?.coords?.latitude,
         currentLocation?.coords?.longitude,

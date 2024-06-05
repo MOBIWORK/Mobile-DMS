@@ -71,9 +71,7 @@ const ModalUpdateLocation = ({
       lon: undefined,
     },
   });
-  const categoriesCheckin = useSelector(
-    state => state.checkin.categoriesCheckin,
-  );
+  
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme);
   const [isPending, setIsPending] = useState<boolean>(false);
