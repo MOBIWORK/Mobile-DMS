@@ -1,35 +1,36 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {MainLayout} from '../../../layouts';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { MainLayout } from '../../../layouts';
 import {
   AppBottomSheet,
   AppHeader,
   FilterView,
 } from '../../../components/common';
-import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
-import {ImageAssets} from '../../../assets';
-import {useNavigation, useTheme} from '@react-navigation/native';
-import {useTranslation} from 'react-i18next';
-import {IProduct, KeyAbleProps} from '../../../models/types';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { ImageAssets } from '../../../assets';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { IProduct, KeyAbleProps } from '../../../models/types';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
-import {NavigationProp} from '../../../navigation/screen-type';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ProductService} from '../../../services';
-import {STT_OK} from '../../../const/api.const';
-import {useEffectOnce, useSelector} from '../../../config/function';
-import {dispatch} from '../../../utils/redux';
-import {productActions} from '../../../redux-store/product-reducer/reducer';
+import { ApiConstant, AppConstant, ScreenConstant } from '../../../const';
+import { NavigationProp } from '../../../navigation/screen-type';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ProductService } from '../../../services';
+import { STT_OK } from '../../../const/api.const';
+import { useEffectOnce, useSelector } from '../../../config/function';
+import { dispatch } from '../../../utils/redux';
+import { productActions } from '../../../redux-store/product-reducer/reducer';
 import ItemSekeleton from '../ItemSekeleton';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 import ProductFilter from '../Component/ProductFilter';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const ListProduct = () => {
-  const {colors} = useTheme();
-  const {t: getLabel} = useTranslation();
-  const {bottom} = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const { t: getLabel } = useTranslation();
+  const { bottom } = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
 
   const searchProductValue = useSelector(state => state.app.searchProductValue);
@@ -43,7 +44,7 @@ const ListProduct = () => {
     AppConstant.ProductFilterType.nhom_sp,
   );
 
-  const {data, totalItem, isLoading} = useSelector(state => state.product);
+  const { data, totalItem, isLoading } = useSelector(state => state.product);
   const [page, setPage] = useState<number>(1);
   const [pageSize] = useState<number>(20);
   const [brand, setBrand] = useState<TypeFilter>();
@@ -62,6 +63,7 @@ const ListProduct = () => {
   const [searchProduct, setSearchProduct] = useState<string>('');
   const [placeholder, setPlaceholder] = useState<string>('');
   const [titleModal, setTitleModal] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onBack = () => {
     dispatch(appActions.setSearchProductValue(''));
@@ -73,9 +75,9 @@ const ListProduct = () => {
       case AppConstant.ProductFilterType.nhom_sp: {
         const newData = dataGroupItem.map(itemRes => {
           if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
+            return { ...itemRes, isSelected: true };
           } else {
-            return {...itemRes, isSelected: false};
+            return { ...itemRes, isSelected: false };
           }
         });
         setGroupItem({
@@ -89,9 +91,9 @@ const ListProduct = () => {
       case AppConstant.ProductFilterType.thuong_hieu: {
         const newData = dataBrand.map(itemRes => {
           if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
+            return { ...itemRes, isSelected: true };
           } else {
-            return {...itemRes, isSelected: false};
+            return { ...itemRes, isSelected: false };
           }
         });
         setBrand({
@@ -105,9 +107,9 @@ const ListProduct = () => {
       case AppConstant.ProductFilterType.nghanh_hang: {
         const newData = dataIndustry.map(itemRes => {
           if (item.label === itemRes.label) {
-            return {...itemRes, isSelected: true};
+            return { ...itemRes, isSelected: true };
           } else {
-            return {...itemRes, isSelected: false};
+            return { ...itemRes, isSelected: false };
           }
         });
         setIndustry({
@@ -132,7 +134,7 @@ const ListProduct = () => {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate(ScreenConstant.PRODUCT_DETAIL, {item})
+          navigation.navigate(ScreenConstant.PRODUCT_DETAIL, { item })
         }>
         <View
           style={{
@@ -146,10 +148,10 @@ const ListProduct = () => {
           }}>
           <Image
             source={image}
-            style={{width: 64, height: 82, borderRadius: 4}}
+            style={{ width: 64, height: 82, borderRadius: 4 }}
             resizeMode={'cover'}
           />
-          <View style={{marginLeft: 16, rowGap: 5}}>
+          <View style={{ marginLeft: 16, rowGap: 5 }}>
             <Text
               style={{
                 color: colors.text_primary,
@@ -158,14 +160,14 @@ const ListProduct = () => {
               }}>
               {item.item_name}
             </Text>
-            <Text style={{color: colors.text_primary}}>{item.item_group}</Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{ color: colors.text_primary }}>{item.item_group}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
                 source={ImageAssets.BarCodeIcon}
-                style={{width: 16, height: 16}}
+                style={{ width: 16, height: 16 }}
                 resizeMode={'cover'}
               />
-              <Text style={{color: colors.text_primary, marginLeft: 4}}>
+              <Text style={{ color: colors.text_primary, marginLeft: 4 }}>
                 {item.item_code}
               </Text>
             </View>
@@ -186,9 +188,9 @@ const ListProduct = () => {
   };
 
   const resetFilter = () => {
-    setBrand({label: '', value: ''});
-    setGroupItem({label: '', value: ''});
-    setIndustry({label: '', value: ''});
+    setBrand({ label: '', value: '' });
+    setGroupItem({ label: '', value: '' });
+    setIndustry({ label: '', value: '' });
     setSearchProduct('');
   };
 
@@ -212,7 +214,7 @@ const ListProduct = () => {
   };
 
   const fetchBrandProduct = async () => {
-    const {status, data}: KeyAbleProps = await ProductService.getBrand();
+    const { status, data }: KeyAbleProps = await ProductService.getBrand();
     if (status === STT_OK) {
       const rlt = data.result;
       const newData: IFilterType[] = [];
@@ -229,7 +231,7 @@ const ListProduct = () => {
   };
 
   const fetchIndustryProduct = async () => {
-    const {data, status}: KeyAbleProps = await ProductService.getIndustry();
+    const { data, status }: KeyAbleProps = await ProductService.getIndustry();
     if (status === STT_OK) {
       const rlt = data.result;
       const newData: IFilterType[] = [];
@@ -246,7 +248,7 @@ const ListProduct = () => {
   };
 
   const fetchGroupProduct = async () => {
-    const {data, status}: KeyAbleProps = await ProductService.getGroup();
+    const { data, status }: KeyAbleProps = await ProductService.getGroup();
     if (status === STT_OK) {
       const rlt = data.result;
       const newData: IFilterType[] = [];
@@ -322,6 +324,10 @@ const ListProduct = () => {
       }
     }
   };
+  const onRefreshData = useCallback(async () => {
+    dispatch(appActions.setSearchProductValue(''));
+    setPage(1);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchBrandProduct();
@@ -331,7 +337,7 @@ const ListProduct = () => {
 
   useEffect(() => {
     fetchProduct();
-  }, [page, filterBrand, filterIndustry, filterGroup]);
+  }, [page, filterBrand, filterIndustry, filterGroup, searchProduct]);
 
   useEffect(() => {
     dispatch(productActions.resetDataProduct());
@@ -342,29 +348,29 @@ const ListProduct = () => {
   }, [searchProductValue]);
 
   return (
-    <MainLayout style={{backgroundColor: colors.bg_neutral}}>
+    <MainLayout style={{ backgroundColor: colors.bg_neutral }}>
       <AppHeader
         label={getLabel('product')}
-        labelStyle={{textAlign: 'left', marginLeft: 8}}
+        labelStyle={{ textAlign: 'left', marginLeft: 8 }}
         onBack={() => onBack()}
         rightButton={
           <TouchableOpacity
             onPress={() => navigation.navigate(ScreenConstant.SEARCH_PRODUCT)}>
             <Image
               source={ImageAssets.SearchIcon}
-              style={{width: 30, height: 30, tintColor: colors.text_secondary}}
+              style={{ width: 30, height: 30, tintColor: colors.text_secondary }}
               resizeMode={'cover'}
             />
           </TouchableOpacity>
         }
       />
       <FilterView
-        style={{marginTop: 16}}
+        style={{ marginTop: 16 }}
         onPress={() =>
           bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
         }
       />
-      <View style={{marginTop: 24}}>
+      <View style={{ marginTop: 24 }}>
         <Text
           style={{
             color: colors.text_primary,
@@ -374,7 +380,7 @@ const ListProduct = () => {
           }}>
           {totalItem}
           {'  '}
-          <Text style={{fontWeight: '400', fontSize: 14}}>
+          <Text style={{ fontWeight: '400', fontSize: 14 }}>
             {getLabel('product').toLocaleLowerCase()}
           </Text>
         </Text>
@@ -383,20 +389,26 @@ const ListProduct = () => {
           <FlatList
             key={'2'}
             data={new Array(8)}
-            renderItem={({}) => <ItemSekeleton />}
+            renderItem={({ }) => <ItemSekeleton />}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{rowGap: 16}}
+            contentContainerStyle={{ rowGap: 16 }}
           />
         ) : (
           <FlatList
             data={data}
             key={5}
-            renderItem={({item}) => _renderItemProduct(item)}
+            renderItem={({ item }) => _renderItemProduct(item)}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{rowGap: 16}}
-            style={{height: '85%'}}
+            contentContainerStyle={{ rowGap: 16 }}
+            style={{ height: '85%' }}
             onEndReachedThreshold={0}
             onEndReached={onScrollPage}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={onRefreshData}
+              />
+            }
           />
         )}
       </View>
@@ -417,7 +429,7 @@ const ListProduct = () => {
         bottomSheetRef={filterRef}
         snapPointsCustom={snapPointsFilter}
         onClose={() => setSearchFilter('')}>
-        <View style={{paddingBottom: bottom + 16, flex: 1}}>
+        <View style={{ paddingBottom: bottom + 16, flex: 1 }}>
           <FilterListComponent
             title={titleModal}
             searchPlaceholder={placeholder}
