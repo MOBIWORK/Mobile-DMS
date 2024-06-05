@@ -170,7 +170,7 @@ const CheckinInventory = () => {
         customer_id: dataCheckin.item.customer_name, //mã khách hàng
         customer_name: dataCheckin.item.name, //tên khách hàng
         customer_address:
-          dataCheckin.item.customer_primary_address.address_title,
+          dataCheckin?.item?.customer_primary_address?.address_title ?? '',
         inventory_items: newItems,
       };
       const response: any = await CheckinService.checkinInventory(objectData);

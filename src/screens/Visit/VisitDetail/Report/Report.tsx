@@ -3,6 +3,7 @@ import {AppSegmentedButtons, Block} from '../../../../components/common';
 import {AppSegmentedButtonsType} from '../../../../components/common/AppSegmentedButtons';
 import Order from './Order/Order';
 import {
+  DebtDetailItemType,
   IReportVisitDetail,
   ReportDebtType,
   VisitListItemType,
@@ -26,6 +27,9 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
   const theme = useTheme();
   const [reportData, setReportData] = useState<IReportVisitDetail>();
   const inventoryData = useRef<any>(reportData?.ton_kho);
+  const debtData = useRef<DebtDetailItemType[] | undefined>(
+    reportData?.cong_no,
+  );
 
   const changeReportIndex = React.useCallback(
     (value: string | number) => {
@@ -52,6 +56,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
     if (Object.keys(response?.result).length > 0) {
       setReportData(response.result);
       inventoryData.current = response.result?.ton_kho;
+      debtData.current = response.result?.cong_no;
     }
   };
 
@@ -92,8 +97,10 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
             reportData?.ton_kho &&
             inventoryData.current ? (
             <Inventory inventoryData={inventoryData.current} />
-          ) : index.current === 3 ? (
-            <Debt debtData={ReportDebtData} />
+          ) : index.current === 3 &&
+            debtData.current &&
+            debtData.current.length > 0 ? (
+            <Debt debtData={debtData.current} />
           ) : null}
         </>
       )}

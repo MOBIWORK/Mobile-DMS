@@ -596,15 +596,14 @@ const ListVisit = () => {
             ? CommonUtils.dateToDate('monthly')
             : undefined;
         const params: IListVisitParams = {
-          router: filterParams?.router && filterParams.router.channel_code,
-          // checkin_status:
-          //   filterParams?.status && filterParams.status === getLabel('visited')
-          //     ? 'is_checkin'
-          //     : filterParams?.status &&
-          //       filterParams.status === getLabel('notVisited')
-          //     ? 'not_checkin'
-          //     : 'all',
-          checkin_status: 'is_checkin',
+          router: filterParams?.router ? filterParams.router.channel_code : '',
+          checkin_status:
+            filterParams?.status && filterParams.status === getLabel('visited')
+              ? 'is_checkin'
+              : filterParams?.status &&
+                filterParams.status === getLabel('notVisited')
+              ? 'not_checkin'
+              : 'all',
           order_by:
             filterParams?.order_by && filterParams.order_by === 'A -> Z'
               ? 'asc'
@@ -748,10 +747,10 @@ const ListVisit = () => {
   );
 
   const handleCompareDistance = useCallback(
-    (item: VisitListItemType, isDetail: boolean) => {
+    async (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
-      handleEnabledPressed()
+      await handleEnabledPressed();
       if (item.customer_location_primary != null) {
         if (!isEnable.current && Platform.OS === 'android') {
           setModalErrorGPS(true);

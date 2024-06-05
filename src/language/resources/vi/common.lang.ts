@@ -318,4 +318,6 @@ export default {
   Sa: 'T7',
   getAddress: 'Lấy địa chỉ',
   orderStatistics: 'Thống kê phiếu đặt hàng',
+  bill: 'Hóa đơn',
+  amountOwed: 'Số tiền nợ',
 };

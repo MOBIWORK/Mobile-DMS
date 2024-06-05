@@ -964,6 +964,17 @@ export type OrderDetailItemType = {
   grand_total: number;
 };
 
+export type DebtDetailItemType = {
+  posting_date: string;
+  details: [
+    {
+      name: string;
+      grand_total: number;
+    },
+  ];
+  total_grand_total: number;
+};
+
 export type IReportVisitDetail = {
   don_hang: {
     so_don_trong_thang: number;
@@ -971,7 +982,7 @@ export type IReportVisitDetail = {
     danh_sach_don: OrderDetailItemType[];
   };
   ton_kho: ReportInventoryType[];
-  // cong_no:
+  cong_no: DebtDetailItemType[];
 };
 
 export type IOrderDetailItem = {

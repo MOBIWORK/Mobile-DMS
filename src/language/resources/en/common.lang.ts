@@ -312,4 +312,6 @@ export default {
   Sa: 'Sa',
   getAddress: 'Get address',
   orderStatistics: 'Order statistics',
+  bill: 'Bill',
+  amountOwed: 'Amount owed',
 };

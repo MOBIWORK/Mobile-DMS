@@ -312,13 +312,27 @@ const CheckInLocation = () => {
       item.key === 'location' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    navigation.goBack();
+    navigation.navigate(ScreenConstant.CHECKIN, {
+      item: {
+        ...route.params.data,
+        item: {
+          ...route.params.data.item,
+          customer_primary_address: {
+            address_title: `${addressObj.detail},${addressObj.ward.value},${addressObj.district.value},${addressObj.province.value}`,
+            address_line1: addressObj.detail,
+            city: addressObj.province.code,
+            county: addressObj.district.code,
+            state: addressObj.ward.code,
+          },
+        },
+      },
+    });
   };
 
   const fillAddressInit = useCallback(async () => {
     dispatch(appActions.setProcessingStatus(true));
     const customer_primary_address =
-      route?.params && route.params.data.item.customer_primary_address;
+      route?.params?.data?.item?.customer_primary_address;
     if (customer_primary_address) {
       let addressObj = {
         province: {
@@ -359,7 +373,7 @@ const CheckInLocation = () => {
             ...addressObj,
             district: {
               ...addressObj.district,
-              value: districtSelected.ten_huyen,
+              value: districtSelected?.ten_huyen ?? '',
             },
           };
         }
@@ -374,7 +388,7 @@ const CheckInLocation = () => {
           );
           addressObj = {
             ...addressObj,
-            ward: {...addressObj.ward, value: wardSelected.ten_xa},
+            ward: {...addressObj.ward, value: wardSelected?.ten_xa ?? ''},
           };
         }
       }
@@ -385,6 +399,20 @@ const CheckInLocation = () => {
         };
       }
       setAddressObj(addressObj);
+      //setAddressSelected
+      setAddressSelectedData([
+        {
+          type: 'city',
+          value: addressObj.province.value,
+          id: addressObj.province.code,
+        },
+        {
+          type: 'district',
+          value: addressObj.district.value,
+          id: addressObj.district.code,
+        },
+        {type: 'ward', value: addressObj.ward.value, id: addressObj.ward.code},
+      ]);
     }
     dispatch(appActions.setProcessingStatus(false));
   }, [listDataCity.city]);
@@ -498,7 +526,13 @@ const CheckInLocation = () => {
         <Block block>
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
-            onBack={() => navigation.goBack()}
+            onBack={() => {
+              route.params.type === 'CHECKIN'
+                ? navigation.goBack()
+                : navigation.navigate(ScreenConstant.AUTHORIZED, {
+                    screen: ScreenConstant.MAIN_TAB,
+                  });
+            }}
             label={getLabel('location')}
           />
           <KeyboardAvoidingView
