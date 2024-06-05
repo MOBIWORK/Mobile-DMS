@@ -95,16 +95,16 @@ const Customer = () => {
     shallowEqual,
   );
 
-  const handleEnabledPressed = useCallback(async () => {
-    if (Platform.OS === 'android') {
-      const checkEnabled: boolean = await isLocationEnabled();
-      if (checkEnabled === true) {
-        setModalErrorGPS(false);
-      } else {
-        setModalErrorGPS(true);
-      }
-    }
-  }, [modalErrorGPS]);
+  // const handleEnabledPressed = useCallback(async () => {
+  //   if (Platform.OS === 'android') {
+  //     const checkEnabled: boolean = await isLocationEnabled();
+  //     if (checkEnabled === true) {
+  //       setModalErrorGPS(false);
+  //     } else {
+  //       setModalErrorGPS(true);
+  //     }
+  //   }
+  // }, [modalErrorGPS]);
 
   const [value, setValue] = React.useState({
     first: getLabel('nearest'),
@@ -148,7 +148,7 @@ const Customer = () => {
 
   const sortedData = useCallback(
     (filteredData: IDataCustomers[]) => {
-      return filteredData.slice().sort((a, b) => {
+      return    filteredData.slice().sort((a, b) => {
         const locationA: LocationProps = JSON.parse(
           a.customer_location_primary,
         );
@@ -170,7 +170,7 @@ const Customer = () => {
         return value.first === getLabel('nearest')
           ? distance1 - distance2
           : distance2 - distance1;
-      });
+      })  || filteredData  ; 
     },
     [listCustomer?.length],
   );
@@ -210,13 +210,13 @@ const Customer = () => {
   };
 
   React.useEffect(() => {
-    handleEnabledPressed();
+    // handleEnabledPressed();
   }, []);
 
   React.useEffect(() => {
     mounted.current = true;
     handleBackgroundLocation();
-    checkGPS();
+    // checkGPS();
     if (mounted.current && modalErrorGPS === false) {
       if (listCustomer && listCustomer?.length > 0) {
         const filteredData = listCustomer.filter(
@@ -243,7 +243,7 @@ const Customer = () => {
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer]);
+  }, [listCustomer,isFocus]);
 
   const handleApplyFilter = () => {
     if (
@@ -433,7 +433,7 @@ const Customer = () => {
   // console.log(modalErrorGPS)
 
   useLayoutEffect(() => {
-    handleEnabledPressed();
+    // handleEnabledPressed();
     // CommonUtils.getCurrentLocation(locations => setLocation(locations));
   }, []);
 
@@ -455,9 +455,9 @@ const Customer = () => {
           <Modal
             isVisible={modalErrorGPS}
             backdropOpacity={0.5}
-            onBackButtonPress={() => {}}
+            onBackButtonPress={() => setModalErrorGPS(false)}
             style={{marginHorizontal: 0}}
-            onBackdropPress={() => {}}
+            onBackdropPress={() => setModalErrorGPS(false)}
             animationIn="slideInUp"
             animationOut="slideOutDown">
             <Block
@@ -479,7 +479,7 @@ const Customer = () => {
                   Vui lòng bật GPS để tiếp tục
                 </Text>
               </Block>
-              <Block
+              {/* <Block
                 paddingHorizontal={16}
                 justifyContent="center"
                 alignItems="center"
@@ -491,7 +491,7 @@ const Customer = () => {
                     {getLabel('tryAgain')}
                   </Text>
                 </TouchableOpacity>
-              </Block>
+              </Block> */}
             </Block>
           </Modal>
         </>

@@ -343,6 +343,7 @@ const CheckIn = () => {
             checkin_giora: new Date().getTime() / 1000,
           }),
         );
+        dispatch(checkinActions.resetData());
       }
     });
     setShow(false);
@@ -358,6 +359,7 @@ const CheckIn = () => {
       );
       if (res?.status === ApiConstant.STT_OK) {
         dispatch(checkinActions.resetData());
+        // dispatch
         dispatch(appActions.setDataCheckIn({}));
         storage.set('time', '');
         goBack();
@@ -374,6 +376,7 @@ const CheckIn = () => {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
         type: '',
         data: params,
+        isLocation:params.
       });
       navigation.setParams({isLocation: true});
     } else {

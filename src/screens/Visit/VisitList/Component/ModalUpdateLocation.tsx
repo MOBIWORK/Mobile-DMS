@@ -71,9 +71,7 @@ const ModalUpdateLocation = ({
       lon: undefined,
     },
   });
-  const categoriesCheckin = useSelector(
-    state => state.checkin.categoriesCheckin,
-  );
+  
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme);
   const [isPending, setIsPending] = useState<boolean>(false);
@@ -94,6 +92,7 @@ const ModalUpdateLocation = ({
       Keyboard.dismiss();
       setIsPending(true);
       const response: any = await AppService.getDetailLocation(lat, lng);
+      console.log(response,'response mả')
       if (response.status === ApiConstant.STT_OK || 'OK') {
         markingLocation.current.detailAdd =
           response.results[0].formatted_address;

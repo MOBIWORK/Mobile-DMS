@@ -120,7 +120,7 @@ const VisitItem: FC<VisitItemProps> = ({
       }
     };
     check();
-  }, []);
+  }, [isEnable.current]);
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>

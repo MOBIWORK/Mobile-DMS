@@ -28,7 +28,12 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
+import {
+  ExtendedTheme,
+  useIsFocused,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {
   ListCustomerRoute,
@@ -115,6 +120,7 @@ const ListVisit = () => {
     state => state.app.dataCheckIn,
     shallowEqual,
   );
+  const isFocus = useIsFocused();
 
   const listCustomer: VisitListItemResult = useSelector(
     state => state.customer.listCustomerVisit,
@@ -212,7 +218,7 @@ const ListVisit = () => {
   }, [listCustomer, customerDataSort]);
 
   const onGetCurrentPositionAgain = () => {
-    setModalError(false);
+    setModalErrorGPS(false);
     handleRegainLocation();
   };
 
@@ -747,56 +753,52 @@ const ListVisit = () => {
   );
 
   const handleCompareDistance = useCallback(
-    async (item: VisitListItemType, isDetail: boolean) => {
+    (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
       currentSelect.current = item;
-      await handleEnabledPressed();
-      if (item.customer_location_primary != null) {
-        if (!isEnable.current && Platform.OS === 'android') {
-          setModalErrorGPS(true);
-        } else {
-          setTimeout(() => {
-            setModalAlert({
-              type: 'loading',
-              status: true,
+      startTransition(() => {
+        // handleEnabledPressed();
+      });
+      if (!isEnable.current && Platform.OS === 'android') {
+        setModalErrorGPS(true);
+      } else if (item.customer_location_primary != null) {
+        setModalAlert({
+          type: 'loading',
+          status: true,
+        });
+        setTimeout(() => {
+          startEffect(() => {
+            CommonUtils.getCurrentLocation(curLocation => {
+              let data = calculateDistance(
+                curLocation.coords.latitude,
+                curLocation.coords.longitude,
+                location?.lat,
+                location.long,
+              );
+              if (
+                data >
+                  (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                    AppConstant.additional_distance) /
+                    1000 &&
+                isDetail === false
+              ) {
+                currentSelect.current = item;
+                setModalAlert(prev => ({
+                  ...prev,
+                  type: 'warn',
+                  cal:
+                    data - systemConfig.saiso_chophep_kb_vitringoaisaiso / 1000,
+                }));
+              } else {
+                setModalAlert(prev => ({
+                  ...prev,
+                  status: false,
+                }));
+                setTimeout(() => handleBackground(item), 500);
+              }
             });
-            startEffect(() => {
-              CommonUtils.getCurrentLocation(curLocation => {
-                let data = calculateDistance(
-                  curLocation.coords.latitude,
-                  curLocation.coords.longitude,
-                  location?.lat,
-                  location.long,
-                );
-                if (
-                  data >
-                    (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-                      AppConstant.additional_distance) /
-                      1000 &&
-                  isDetail === false
-                ) {
-                  currentSelect.current = item;
-                  setModalAlert(prev => ({
-                    ...prev,
-                    type: 'warn',
-                    cal:
-                      data -
-                      (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-                        AppConstant.additional_distance) /
-                        1000,
-                  }));
-                } else {
-                  setModalAlert(prev => ({
-                    ...prev,
-                    status: false,
-                  }));
-
-                  handleBackground(item);
-                }
-              });
-            });
-          }, 1000);
-        }
+          });
+        }, 1000);
       } else {
         setModalUpdateLocation({
           status: true,
@@ -804,7 +806,7 @@ const ListVisit = () => {
         });
       }
     },
-    [],
+    [modalAlert.status, modalUpdateLocation.status],
   );
 
   const handleBackground = useCallback((item: VisitListItemType) => {
@@ -963,7 +965,6 @@ const ListVisit = () => {
 
   useEffect(() => {
     mounted.current = true;
-
     if (searchVisit) {
       handleSearchVisit();
     } else {
@@ -975,11 +976,11 @@ const ListVisit = () => {
         mounted.current = false;
       };
     }
-  }, [searchVisit, dataCheckIn]);
+  }, [searchVisit, dataCheckIn, isFocus]);
 
   useEffect(() => {
     sortDataCustomer(distanceFilterValue);
-  }, [listCustomer]);
+  }, [listCustomer, isFocus]);
 
   // useEffect(() => {
   //   if (isEnable.current === false && Platform.OS === 'android') {
@@ -999,9 +1000,9 @@ const ListVisit = () => {
           <Modal
             isVisible={modalErrorGPS}
             backdropOpacity={0.5}
-            onBackButtonPress={() => {}}
+            onBackButtonPress={() => setModalErrorGPS(false)}
             style={{marginHorizontal: 0}}
-            onBackdropPress={() => {}}
+            onBackdropPress={() => setModalErrorGPS(false)}
             animationIn="slideInUp"
             animationOut="slideOutDown">
             <Block
@@ -1030,9 +1031,9 @@ const ListVisit = () => {
                 direction="row">
                 <TouchableOpacity
                   style={styles.buttonModal}
-                  onPress={handleEnabledPressed}>
+                  onPress={onGetCurrentPositionAgain}>
                   <Text colorTheme="white" fontSize={16} fontWeight="500">
-                    {getLabel('tryAgain')}
+                    {getLabel('close')}
                   </Text>
                 </TouchableOpacity>
               </Block>
