@@ -12,7 +12,7 @@ import {
   AppImage,
 } from '../../../../components/common';
 
-const Debt: FC<DebtProps> = ({debtData}) => {
+const Debt: FC<DebtProps> = ({debtData, reportDebt}) => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const {t: getLabel} = useTranslation();
@@ -86,15 +86,45 @@ const Debt: FC<DebtProps> = ({debtData}) => {
   }, []);
 
   return (
-    <SafeAreaView edges={['top', 'bottom']}>
-      {/*<View style={styles.headerContainer as any}>*/}
-      {/*  <Text style={{color: theme.colors.text_primary}}>*/}
-      {/*    {getLabel('totalDebt')}*/}
-      {/*  </Text>*/}
-      {/*  <Text style={styles.titleText as any}>*/}
-      {/*    {CommonUtils.convertNumber(7000000).toString()}*/}
-      {/*  </Text>*/}
-      {/*</View>*/}
+    <SafeAreaView edges={['bottom']}>
+      <View style={styles.headerContainer as any}>
+        <View
+          style={{
+            padding: 16,
+            width: '48%',
+            backgroundColor: theme.colors.bg_default,
+            borderRadius: 12,
+            height: 120,
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{color: theme.colors.text_primary}}>
+            {getLabel('totalDebt')}
+          </Text>
+          <Text style={styles.titleText as any}>
+            {reportDebt && reportDebt?.tong_cong_no > 0
+              ? CommonUtils.convertNumber(reportDebt.tong_cong_no).toString()
+              : 0}
+          </Text>
+        </View>
+        <View
+          style={{
+            padding: 16,
+            width: '48%',
+            backgroundColor: theme.colors.bg_default,
+            borderRadius: 12,
+            height: 120,
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{color: theme.colors.text_primary}}>
+            Tổng nợ đến hết ngày {CommonUtils.convertDate(new Date().getTime())}
+          </Text>
+          <Text style={styles.titleText as any}>
+            {reportDebt && reportDebt?.tong_cong_no > 0
+              ? CommonUtils.convertNumber(reportDebt.tong_cong_no).toString()
+              : 0}
+          </Text>
+        </View>
+      </View>
       <FlatList
         // scrollEnabled={debtData.length > 1}
         showsVerticalScrollIndicator={false}
@@ -108,6 +138,10 @@ const Debt: FC<DebtProps> = ({debtData}) => {
   );
 };
 interface DebtProps {
+  reportDebt?: {
+    tong_cong_no: number;
+    cong_no_den_ngay: number;
+  };
   debtData: DebtDetailItemType[];
 }
 export default Debt;
@@ -133,7 +167,7 @@ const createStyleSheet = (theme: ExtendedTheme) =>
     headerContainer: {
       padding: 16,
       borderRadius: 12,
-      backgroundColor: theme.colors.bg_default,
+      // backgroundColor: theme.colors.bg_default,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',

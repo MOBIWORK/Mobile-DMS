@@ -376,7 +376,6 @@ const CheckIn = () => {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
         type: '',
         data: params,
-        isLocation:params.
       });
       navigation.setParams({isLocation: true});
     } else {

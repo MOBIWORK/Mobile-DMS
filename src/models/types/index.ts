@@ -982,7 +982,11 @@ export type IReportVisitDetail = {
     danh_sach_don: OrderDetailItemType[];
   };
   ton_kho: ReportInventoryType[];
-  cong_no: DebtDetailItemType[];
+  cong_no: {
+    tong_cong_no: number;
+    cong_no_den_ngay: number;
+  };
+  cong_no_chi_tiet: DebtDetailItemType[];
 };
 
 export type IOrderDetailItem = {

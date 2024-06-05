@@ -28,7 +28,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
   const [reportData, setReportData] = useState<IReportVisitDetail>();
   const inventoryData = useRef<any>(reportData?.ton_kho);
   const debtData = useRef<DebtDetailItemType[] | undefined>(
-    reportData?.cong_no,
+    reportData?.cong_no_chi_tiet,
   );
 
   const changeReportIndex = React.useCallback(
@@ -56,7 +56,7 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
     if (Object.keys(response?.result).length > 0) {
       setReportData(response.result);
       inventoryData.current = response.result?.ton_kho;
-      debtData.current = response.result?.cong_no;
+      debtData.current = response.result?.cong_no_chi_tiet;
     }
   };
 
@@ -100,7 +100,10 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
           ) : index.current === 3 &&
             debtData.current &&
             debtData.current.length > 0 ? (
-            <Debt debtData={debtData.current} />
+            <Debt
+              debtData={debtData.current}
+              reportDebt={reportData?.cong_no ? reportData.cong_no : undefined}
+            />
           ) : null}
         </>
       )}

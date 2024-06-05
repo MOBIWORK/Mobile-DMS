@@ -178,7 +178,7 @@ export default {
   typeNote: 'Note type',
   content: 'Content',
   save: 'Save',
-  sendEmailToEveryone: 'Send emails to everyone',
+  addNoteRecipients: 'Add note recipients',
   note: 'Note',
   userNote: 'Note recipient',
   noteList: 'List of notes',

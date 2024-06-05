@@ -27,7 +27,7 @@ import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../../utils';
 import {DMSConfigMobile} from '../../../../services/appService';
 import {AppConstant} from '../../../../const';
-import { isLocationEnabled } from 'react-native-android-location-enabler';
+import {isLocationEnabled} from 'react-native-android-location-enabler';
 type Props = {
   show: ModalType;
   setShow: React.Dispatch<React.SetStateAction<ModalType>>;
@@ -52,7 +52,7 @@ const ModalAlert = ({
   const systemConfig: DMSConfigMobile = useSelector(
     state => state.app.systemConfig,
   );
-  const [enable,setEnable] = useState(false)
+  const [enable, setEnable] = useState(false);
   const curLocation = useRef<any>(currentLocation);
   const [distance, setDistance] = React.useState<number>(
     show.cal ? Math.ceil(show.cal * 1000) : 0,
@@ -79,14 +79,12 @@ const ModalAlert = ({
     return res;
   }, [curLocation.current]);
 
-  const handleCheckPressed = useCallback(async() => {
+  const handleCheckPressed = useCallback(async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
-      setEnable(checkEnabled)
-     
+      setEnable(checkEnabled);
     }
-  },[])
-
+  }, []);
 
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
@@ -126,13 +124,18 @@ const ModalAlert = ({
           status: false,
         }))
       }>
-      
-      <Block height={ show.type === 'loading' ?  200  :  400} color={show.type === 'loading' ? 'transparent' : theme.colors.white} borderRadius={16}>
+      <Block
+        height={show.type === 'loading' ? 200 : 400}
+        color={show.type === 'loading' ? 'transparent' : theme.colors.white}
+        borderRadius={16}>
         {show.type === 'loading' ? (
           <Block justifyContent="center" alignItems="center" block>
             <ActivityIndicator size="large" color={theme.colors.primary} />
             <Block justifyContent="center" alignItems="center" marginTop={16}>
-              <Text textAlign="center"> Đang lấy dữ liệu, vui lòng chờ...</Text>
+              <Text textAlign="center" color={theme.colors.bg_default}>
+                {' '}
+                Đang lấy dữ liệu, vui lòng chờ...
+              </Text>
             </Block>
           </Block>
         ) : (

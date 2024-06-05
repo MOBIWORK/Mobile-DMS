@@ -182,7 +182,7 @@ export default {
   typeNote: 'Loại ghi chú',
   content: 'Nội dung',
   save: 'Lưu',
-  sendEmailToEveryone: 'Gửi email đến mọi người',
+  addNoteRecipients: 'Thêm người nhận ghi chú',
   note: 'Ghi chú',
   someThingErr: 'Đã có lỗi xảy ra, vui lòng thử lại',
   userNote: 'Người nhận ghi chú',
