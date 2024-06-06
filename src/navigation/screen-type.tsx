@@ -44,13 +44,13 @@ export type AuthorizeParamsList = {
   [ScreenConstant.MAIN_TAB]: NavigatorScreenParams<TabParamList> | undefined;
   [ScreenConstant.DROP_DRAG]: undefined;
   [ScreenConstant.PROFILE]: undefined;
-  [ScreenConstant.CHECKIN]: { item: CheckinData; isLocation?: any };
+  [ScreenConstant.CHECKIN]: { item: CheckinData; isLocation?: any ,screen?:any};
   [ScreenConstant.UPDATE_SCREEN]: any;
   [ScreenConstant.TAKE_PICTURE_VISIT]: { data: any };
   [ScreenConstant.CHECKIN_NOTE_VISIT]: undefined;
   [ScreenConstant.NOTE_DETAIL]: { data: NoteType };
   [ScreenConstant.ADD_NOTE]: undefined;
-  [ScreenConstant.CHECKIN_LOCATION]: { type: string; data: CheckinData };
+  [ScreenConstant.CHECKIN_LOCATION]: { type: string; data: CheckinData,screen?:any };
   [ScreenConstant.SEARCH_CUSTOMER]: undefined;
   [ScreenConstant.REPORT_SCREEN]: undefined;
   [ScreenConstant.STATISTICAL]: undefined;

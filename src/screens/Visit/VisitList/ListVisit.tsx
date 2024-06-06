@@ -181,13 +181,10 @@ const ListVisit = () => {
 
   const handleEnabledPressed = useCallback(
     async (item?: VisitListItemType, type?: boolean) => {
-      console.log(item,type)
       if (item  && Object.keys(item).length > 0 && type != undefined) {
         handleCompareDistance(item!, type);
        setModalErrorGPS(false);
-      //  console.log('runnnn')
       } else {
-        // console.log('case 2 ')
         if (Platform.OS === 'android') {
           const checkEnabled: boolean = await isLocationEnabled();
           console.log('checkEnabled', checkEnabled);
@@ -749,6 +746,7 @@ const ListVisit = () => {
             navigate(ScreenConstant.CHECKIN, {
               item: data,
               isLocation: false,
+              screen:ScreenConstant.LIST_VISIT
             });
           }
         },
