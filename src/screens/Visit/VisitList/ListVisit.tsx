@@ -191,6 +191,8 @@ const ListVisit = () => {
           } else {
             setModalErrorGPS(true);
           }
+        } else {
+          handleCompareDistance(item, type);
         }
       } else {
         if (Platform.OS === 'android') {
