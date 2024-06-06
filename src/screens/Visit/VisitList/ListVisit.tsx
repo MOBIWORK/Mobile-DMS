@@ -181,13 +181,20 @@ const ListVisit = () => {
 
   const handleEnabledPressed = useCallback(
     async (item?: VisitListItemType, type?: boolean) => {
-      if (item  && Object.keys(item).length > 0 && type != undefined) {
-        handleCompareDistance(item!, type);
-       setModalErrorGPS(false);
+      if (item && Object.keys(item).length > 0 && type != undefined) {
+        if (Platform.OS === 'android') {
+          const checkEnabled: boolean = await isLocationEnabled();
+          isEnable.current = checkEnabled;
+          if (checkEnabled === true) {
+            handleCompareDistance(item!, type);
+            setModalErrorGPS(false);
+          } else {
+            setModalErrorGPS(true);
+          }
+        }
       } else {
         if (Platform.OS === 'android') {
           const checkEnabled: boolean = await isLocationEnabled();
-          console.log('checkEnabled', checkEnabled);
           isEnable.current = checkEnabled;
           if (checkEnabled === true) {
             setModalErrorGPS(false);
@@ -381,7 +388,7 @@ const ListVisit = () => {
     );
   };
 
-  const _renderContent = () => {
+  const renderContent = () => {
     return (
       <Block marginTop={8}>
         {isShowListVisit ? (
@@ -427,7 +434,7 @@ const ListVisit = () => {
                   />
                 )}
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0}
+                onEndReachedThreshold={0.5}
               />
             )}
           </Block>
@@ -746,7 +753,7 @@ const ListVisit = () => {
             navigate(ScreenConstant.CHECKIN, {
               item: data,
               isLocation: false,
-              screen:ScreenConstant.LIST_VISIT
+              screen: ScreenConstant.LIST_VISIT,
             });
           }
         },
@@ -1046,7 +1053,7 @@ const ListVisit = () => {
         </>
       ) : (
         <>
-          {_renderContent()}
+          {renderContent()}
           <FilterContainer
             bottomSheetRef={bottomSheetRef}
             filterRef={filterRef}
