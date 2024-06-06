@@ -61,6 +61,7 @@ import {
   AddressType,
 } from '../../Customer/components/FormAddress';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
+import {goBack} from '../../../navigation/navigation-service';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
@@ -496,13 +497,21 @@ const CheckInLocation = () => {
         <Block block>
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
-            onBack={() =>
-              navigation.navigate({
-                name: ScreenConstant.LIST_VISIT,
-                // params: {item: newParams.data, isLocation: true},
-                // merge: true,
-              })
-            }
+            onBack={() => {
+              if (route.params.screen === ScreenConstant.LIST_VISIT) {
+                navigation.navigate({
+                  name: ScreenConstant.LIST_VISIT,
+                  // params: {item: newParams.data, isLocation: true},
+                  // merge: true,
+                });
+              } else {
+                navigation.navigate({
+                  name: ScreenConstant.CHECKIN,
+                  params: {item: route.params.data, isLocation: false},
+                  merge: true,
+                });
+              }
+            }}
             label={getLabel('location')}
           />
           <KeyboardAvoidingView
