@@ -181,32 +181,27 @@ const ListVisit = () => {
 
   const handleEnabledPressed = useCallback(
     async (item?: VisitListItemType, type?: boolean) => {
-      if (!item || !type) {
-        if (Platform.OS === 'android') {
-          const checkEnabled: boolean = await isLocationEnabled();
-          console.log('checkEnabled', checkEnabled);
-          isEnable.current = checkEnabled;
-          if (checkEnabled === true) {
-            setModalErrorGPS(false);
-          } else {
-            setModalErrorGPS(true);
-          }
-        }
+      console.log(item,type)
+      if (item  && Object.keys(item).length > 0 && type != undefined) {
+        handleCompareDistance(item!, type);
+       setModalErrorGPS(false);
+      //  console.log('runnnn')
       } else {
+        // console.log('case 2 ')
         if (Platform.OS === 'android') {
           const checkEnabled: boolean = await isLocationEnabled();
           console.log('checkEnabled', checkEnabled);
           isEnable.current = checkEnabled;
           if (checkEnabled === true) {
             setModalErrorGPS(false);
-            handleCompareDistance(item!, type);
+            // handleCompareDistance(item!, type);
           } else {
             setModalErrorGPS(true);
           }
         }
       }
     },
-    [isEnable.current],
+    [modalErrorGPS],
   );
   const backgroundErrorListener = useCallback(
     (errorCode: number) => {
@@ -242,7 +237,7 @@ const ListVisit = () => {
     handleRegainLocation();
   };
 
-  const checkGPS = useCallback(() => {}, []);
+  // const checkGPS = useCallback(() => {}, []);
 
   const onRefreshData = useCallback(async () => {
     dispatch(appActions.setSearchVisitValue(''));
@@ -1042,7 +1037,7 @@ const ListVisit = () => {
                 direction="row">
                 <TouchableOpacity
                   style={styles.buttonModal}
-                  onPress={() => handleEnabledPressed()}>
+                  onPress={() => setModalErrorGPS(false)}>
                   <Text colorTheme="white" fontSize={16} fontWeight="500">
                     {getLabel('close')}
                   </Text>
