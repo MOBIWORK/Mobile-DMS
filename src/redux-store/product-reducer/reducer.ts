@@ -21,22 +21,37 @@ const productSlice = createSlice({
   name: SLICE_NAME,
   initialState: initState,
   reducers: {
+    // setDataProduct: (state, action: PayloadAction<DataType>) => {
+    //   state.totalItem = action.payload.total;
+    //   const newData = action.payload.data.map(item => {
+    //     let priceUom = item.details.find(
+    //       itemDetails => itemDetails.uom === item.stock_uom,
+    //     );
+    //     let neItem = {
+    //       ...item,
+    //       price: priceUom ? priceUom.price_list_rate : 0,
+    //       price_default: priceUom ? priceUom.price_list_rate : 0,
+    //     };
+    //     return item.min_order_qty === 0
+    //       ? {...neItem, quantity: 1}
+    //       : {...neItem, quantity: item.min_order_qty};
+    //   });
+    //   state.data = state.data.concat(newData);
+    // },
     setDataProduct: (state, action: PayloadAction<DataType>) => {
       state.totalItem = action.payload.total;
-      const newData = action.payload.data.map(item => {
+      state.data = action.payload.data.map(item => {
         let priceUom = item.details.find(
           itemDetails => itemDetails.uom === item.stock_uom,
         );
-        let neItem = {
+        let newItem = {
           ...item,
           price: priceUom ? priceUom.price_list_rate : 0,
           price_default: priceUom ? priceUom.price_list_rate : 0,
+          quantity: item.min_order_qty === 0 ? 1 : item.min_order_qty,
         };
-        return item.min_order_qty === 0
-          ? {...neItem, quantity: 1}
-          : {...neItem, quantity: item.min_order_qty};
+        return newItem;
       });
-      state.data = state.data.concat(newData);
     },
     resetDataProduct: (state, action: PayloadAction) => {
       state.data = [];
