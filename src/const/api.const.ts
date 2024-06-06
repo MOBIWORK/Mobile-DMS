@@ -1,7 +1,7 @@
 export const HEADER_DEFAULT = {
   'Content-Type': 'application/json',
 };
-export const TIMEOUT = 30000;
+export const TIMEOUT = 1000000;
 
 // HTTP Status
 export const STT_OK = 200;
