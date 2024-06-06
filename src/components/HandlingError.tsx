@@ -35,7 +35,7 @@ const HandlingError: FC = () => {
           return error?.message;
       }
     } else {
-      return  error;
+      return  error &&   Object.keys(error).length > 0  ? getLabel('someThingErr') : error;
     }
   }, [error]);
   console.log(error,'run')

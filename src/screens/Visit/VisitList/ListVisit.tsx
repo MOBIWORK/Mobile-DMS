@@ -49,6 +49,7 @@ import Mapbox from '@rnmapbox/maps';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {
+  backgroundErrorListener,
   calculateDistance,
   useEffectOnce,
   useSelector,
@@ -167,8 +168,6 @@ const ListVisit = () => {
   const [bottomLoading, setBottomLoading] = useState<boolean>(false);
   const [isShowListVisit, setShowListVisit] = useState<boolean>(true);
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-  const [error, setError] = useState<string>('');
-  const [modalError, setModalError] = useState(false);
   const mounted = useRef<boolean>(true);
   const [visitItemSelected, setVisitItemSelected] =
     useState<VisitListItemType | null>(null);
@@ -205,26 +204,26 @@ const ListVisit = () => {
     },
     [modalErrorGPS],
   );
-  const backgroundErrorListener = useCallback(
-    (errorCode: number) => {
-      // Handle background location errors
-      switch (errorCode) {
-        case 0:
-          setError(
-            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-          );
-          break;
-        case 1:
-          setError('GPS đã bị tắt. Vui lòng bật lại.');
-          break;
-        default:
-          setError(
-            'Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại',
-          );
-      }
-    },
-    [error],
-  );
+  // const backgroundErrorListener = useCallback(
+  //   (errorCode: number) => {
+  //     // Handle background location errors
+  //     switch (errorCode) {
+  //       case 0:
+  //         setError(
+  //           'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+  //         );
+  //         break;
+  //       case 1:
+  //         setError('GPS đã bị tắt. Vui lòng bật lại.');
+  //         break;
+  //       default:
+  //         setError(
+  //           'Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại',
+  //         );
+  //     }
+  //   },
+  //   [error],
+  // );
 
   const customerCheckinCount = useMemo(() => {
     if (listCustomer && customerDataSort && customerDataSort.length > 0) {
@@ -234,10 +233,8 @@ const ListVisit = () => {
     }
   }, [listCustomer, customerDataSort]);
 
-  const onGetCurrentPositionAgain = () => {
-    setModalError(false);
-    handleRegainLocation();
-  };
+
+  // const checkGPS = useCallback(() => {}, []);
 
   const onRefreshData = useCallback(async () => {
     dispatch(appActions.setSearchVisitValue(''));
@@ -466,7 +463,7 @@ const ListVisit = () => {
       dispatch(appActions.onGetSystemConfig());
     }
     // handleEnabledPressed();
-    CommonUtils.getCurrentLocation(locations => setLocation(locations));
+    CommonUtils.getCurrentLocation(locations => setLocation(locations),error => backgroundErrorListener(error.code));
   }, []);
 
   const getCustomer = async (params?: IListVisitParams, isMore?: boolean) => {
@@ -1079,48 +1076,6 @@ const ListVisit = () => {
             />
           </AppBottomSheet>
 
-          <Modal
-            isVisible={modalError}
-            backdropOpacity={0.5}
-            onBackButtonPress={() => {}}
-            style={{marginHorizontal: 0}}
-            onBackdropPress={() => {}}
-            animationIn="slideInUp"
-            animationOut="slideOutDown">
-            <Block
-              colorTheme="bg_default"
-              height={230}
-              marginLeft={16}
-              marginRight={16}
-              borderRadius={16}>
-              <Block justifyContent="center" alignItems="center" marginTop={8}>
-                <AppImage source="ErrorApiIcon" size={100} />
-              </Block>
-              <Block justifyContent="center" paddingVertical={8}>
-                <Text
-                  textAlign="center"
-                  fontSize={16}
-                  fontWeight="500"
-                  lineHeight={27}
-                  colorTheme="text_primary">
-                  {error}
-                </Text>
-              </Block>
-              <Block
-                paddingHorizontal={16}
-                justifyContent="center"
-                alignItems="center"
-                direction="row">
-                <TouchableOpacity
-                  style={styles.buttonModal}
-                  onPress={onGetCurrentPositionAgain}>
-                  <Text colorTheme="white" fontSize={16} fontWeight="500">
-                    {getLabel('tryAgain')}
-                  </Text>
-                </TouchableOpacity>
-              </Block>
-            </Block>
-          </Modal>
           <ModalAlert
             show={modalAlert}
             handleCheckin={handleBackground}
