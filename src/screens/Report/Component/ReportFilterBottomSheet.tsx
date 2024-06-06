@@ -20,6 +20,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   onChange,
   onChangeDateCalender,
   isKPI,
+  isNonCustomer,
   allowRangeSelection,
 }) => {
   const {bottom} = useSafeAreaInsets();
@@ -34,7 +35,11 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
   const [data, setData] = useState<IFilterType[]>(
-    isKPI ? AppConstant.ReportFilterKPIData : AppConstant.ReportFilterData,
+    isKPI
+      ? AppConstant.ReportFilterKPIData
+      : isNonCustomer
+      ? AppConstant.ReportFilterNonCustomerData
+      : AppConstant.ReportFilterData,
   );
   const [showCalender, setShowCalender] = useState<boolean>(false);
   const [startDate, setStartDateCalender] = useState<any>(null);
@@ -108,6 +113,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
         {showCalender ? (
           <CalendarPicker
             startFromMonday={true}
+            maxDate={new Date()}
             allowRangeSelection={allowRangeSelection ?? false}
             // selectedEndDate={endDate}
             weekdays={calenderConfig.weekdays}
@@ -160,6 +166,7 @@ interface ReportFilterBottomSheetProps {
   onChangeDateCalender: (date: any) => void;
   allowRangeSelection?: boolean;
   isKPI?: boolean;
+  isNonCustomer?: boolean;
 }
 
 export default React.memo(ReportFilterBottomSheet, isEqual);
