@@ -1,10 +1,11 @@
 import {
   Keyboard,
+  Platform,
   ScrollView,
   StyleSheet,
   TextStyle,
   TouchableOpacity,
-  ViewStyle
+  ViewStyle,
 } from 'react-native';
 import React, {useState, useRef, useEffect, useMemo} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -38,6 +39,8 @@ import Mapbox from '@rnmapbox/maps';
 import {AppService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
+import {backgroundErrorListener} from '../../../config/function';
+import {isLocationEnabled} from 'react-native-android-location-enabler';
 
 type Props = {
   onPressClose: () => void;
@@ -86,6 +89,7 @@ const FormAddress = (props: Props) => {
 
   const [txtAddressDetail, setTxtAddressDetail] = useState<string>('');
   const [txtContactDetail, setTxtContactDetail] = useState<string>('');
+  const [enableGPS, setEnableGPS] = useState(false);
 
   const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
 
@@ -105,6 +109,17 @@ const FormAddress = (props: Props) => {
   const isValidAddress = useMemo(() => {
     return addressSelectedData?.length === 3 && txtAddressDetail !== '';
   }, [addressSelectedData, txtAddressDetail]);
+  const checkGPS = async () => {
+    if (Platform.OS === 'android') {
+      const checkEnabled: boolean = await isLocationEnabled();
+      if (checkEnabled) {
+        setEnableGPS(checkEnabled);
+        // isEnable.current = checkEnabled;
+      }
+    } else {
+      setEnableGPS(true);
+    }
+  };
 
   const fetchData = async (lat: any, lon: any) => {
     const data: RootEkMapResponse = await getDetailLocation(lat, lon);
@@ -134,9 +149,16 @@ const FormAddress = (props: Props) => {
   };
 
   const onPressButtonGetLocation = () => {
-    CommonUtils.getCurrentLocation(locations => {
-      fetchData(locations.coords.latitude, locations.coords.longitude);
-    });
+    if(enableGPS){
+    CommonUtils.getCurrentLocation(
+      locations => {
+        fetchData(locations.coords.latitude, locations.coords.longitude);
+      },
+      err => backgroundErrorListener(err.code),
+    );
+  }else{
+    backgroundErrorListener(1)
+  }
   };
 
   const autoCompleteGeo = async (address: string) => {
@@ -308,7 +330,7 @@ const FormAddress = (props: Props) => {
           }
         />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
-        <>
+        <Block paddingHorizontal={16}>
           <Block style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
               label="Địa chỉ chính"
@@ -328,7 +350,10 @@ const FormAddress = (props: Props) => {
           <Block style={[styles.buttonView, {marginBottom: 24}]}>
             <TouchableOpacity
               style={styles.buttonStyle}
-              onPress={() => onPressButtonGetLocation()}>
+              onPress={() => {
+                onPressButtonGetLocation();
+                checkGPS()
+              }}>
               <SvgIcon source="iconMap" size={20} colorTheme="action" />
               <AppText
                 style={styles.marginText}
@@ -537,7 +562,7 @@ const FormAddress = (props: Props) => {
               </TouchableOpacity>
             </Block>
           </Block>
-        </>
+        </Block>
       ) : (
         <>
           <Block style={styles.headerContentView(getLabel('mainContact'))}>

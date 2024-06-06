@@ -1,4 +1,10 @@
-import {AppState, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {
+  AppState,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
 import React, {
   useCallback,
   useState,
@@ -27,6 +33,7 @@ import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
+  backgroundErrorListener,
   calculateDistance,
   decimalMinutesToTime,
   useDisableBackHandler,
@@ -53,6 +60,7 @@ import {GeolocationResponse} from '@react-native-community/geolocation';
 import {AppStateStatus} from 'react-native';
 import moment from 'moment';
 import {storage} from '../../../utils/commom.utils';
+import {isLocationEnabled} from 'react-native-android-location-enabler';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -141,7 +149,8 @@ const CheckIn = () => {
   );
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
-  const screen = useRoute<RouterProp<'CHECKIN'>>().params.screen
+  const [enableGPS, setEnableGPS] = useState(false);
+  const screen = useRoute<RouterProp<'CHECKIN'>>().params.screen;
   const [status, setStatus] = useState(
     dataCheckIn?.checkin_trangthaicuahang
       ? dataCheckIn.checkin_trangthaicuahang
@@ -223,6 +232,16 @@ const CheckIn = () => {
         } as any);
       case 'distance':
         return setOpenDialogErr(false);
+    }
+  };
+
+  const checkGPS = async () => {
+    if (Platform.OS === 'android') {
+      const checkEnabled: boolean = await isLocationEnabled();
+      if (checkEnabled) {
+        setEnableGPS(checkEnabled);
+        // isEnable.current = checkEnabled;
+      }
     }
   };
 
@@ -328,47 +347,59 @@ const CheckIn = () => {
 
   const onCheckout = useCallback(async () => {
     // dispatch(appActions.setProcessingStatus(true));
-    CommonUtils.getCurrentLocation(locations => {
-      if (!isValidCheckOut(locations)) {
-        dispatch(appActions.setProcessingStatus(false));
-        return;
-      } else {
-        dispatch(
-          appActions.onCheckIn({
-            ...dataCheckIn,
-            checkin_trangthaicuahang: status,
-            checkin_pinra:
-              batteryLevel > 0
-                ? Math.round(batteryLevel * 10000) / 100
-                : -Math.round(batteryLevel * 10000) / 100,
-            checkin_giora: new Date().getTime() / 1000,
-          }),
-        );
-        dispatch(checkinActions.resetData());
-      }
-    });
+    if (enableGPS) {
+      CommonUtils.getCurrentLocation(
+        locations => {
+          if (!isValidCheckOut(locations)) {
+            dispatch(appActions.setProcessingStatus(false));
+            return;
+          } else {
+            dispatch(
+              appActions.onCheckIn({
+                ...dataCheckIn,
+                checkin_trangthaicuahang: status,
+                checkin_pinra:
+                  batteryLevel > 0
+                    ? Math.round(batteryLevel * 10000) / 100
+                    : -Math.round(batteryLevel * 10000) / 100,
+                checkin_giora: new Date().getTime() / 1000,
+              }),
+            );
+            dispatch(checkinActions.resetData());
+          }
+        },
+        err => backgroundErrorListener(err.code),
+      );
+    } else {
+      backgroundErrorListener(1);
+    }
     setShow(false);
   }, [dataCheckIn, categoriesCheckin]);
 
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
-    try {
-      dispatch(appActions.setProcessingStatus(true));
-      const res: any = await AppService.checkOut(
-        dataCheckIn.checkin_id,
-        dataCheckIn.item.name,
-      );
-      if (res?.status === ApiConstant.STT_OK) {
-        dispatch(checkinActions.resetData());
-        // dispatch
-        dispatch(appActions.setDataCheckIn({}));
-        storage.set('time', '');
-        goBack();
+    // console.log(enableGPS,'enable')
+    if (enableGPS) {
+      try {
+        dispatch(appActions.setProcessingStatus(true));
+        const res: any = await AppService.checkOut(
+          dataCheckIn.checkin_id,
+          dataCheckIn.item.name,
+        );
+        if (res?.status === ApiConstant.STT_OK) {
+          dispatch(checkinActions.resetData());
+          // dispatch
+          dispatch(appActions.setDataCheckIn({}));
+          storage.set('time', '');
+          goBack();
+        }
+      } catch (e) {
+        dispatch(appActions.setProcessingStatus(false));
+      } finally {
+        dispatch(appActions.setProcessingStatus(false));
       }
-    } catch (e) {
-      dispatch(appActions.setProcessingStatus(false));
-    } finally {
-      dispatch(appActions.setProcessingStatus(false));
+    } else {
+      backgroundErrorListener(1);
     }
   }, [dataCheckIn]);
 
@@ -377,7 +408,7 @@ const CheckIn = () => {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
         type: '',
         data: params,
-       screen:screen
+        screen: screen,
       });
       navigation.setParams({isLocation: true});
     } else {
@@ -402,7 +433,10 @@ const CheckIn = () => {
             <Block>
               <TouchableOpacity
                 style={{padding: 8}}
-                onPress={() => setShow(true)}>
+                onPress={() => {
+                  setShow(true);
+                  checkGPS();
+                }}>
                 <SvgIcon source="arrowLeft" size={24} />
               </TouchableOpacity>
             </Block>

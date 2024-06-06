@@ -610,11 +610,11 @@ const FormData = (props: Props) => {
         </Block>
         {isPrimary ? (
           dataCustomer.address &&
-          dataCustomer.address.map(item => {
+          dataCustomer.address.map((item,index) => {
             return (
               <CardEditAddress
                 type="address"
-                key={item.address_title}
+                key={index.toString()}
                 address={item}
                 primaryAddress={dataCustomer.customer_primary_address}
               />

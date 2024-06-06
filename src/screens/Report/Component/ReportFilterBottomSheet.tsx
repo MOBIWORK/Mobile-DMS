@@ -192,18 +192,18 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
               allowRangeSelection={true}
               // selectedEndDate={endDate}
               weekdays={calenderConfig.weekdays}
-              disabledDates={(date: any) => {
-                if (date.isBetween(startDate, endDate)) {
-                  // if (
-                  //   startDate != null &&
-                  //   endDate != null 
-                  //   // calculateDaysDifference(startDate, endDate) <= 7
-                  // ) 
-                  return false;
-                } else {
-                  return true;
-                }
-              }}
+              // disabledDates={(date: any) => {
+              //   if (date.isBetween(startDate, endDate)) {
+              //     // if (
+              //     //   startDate != null &&
+              //     //   endDate != null 
+              //     //   // calculateDaysDifference(startDate, endDate) <= 7
+              //     // ) 
+              //     return false;
+              //   } else {
+              //     return true;
+              //   }
+              // }}
               maxRangeDuration={[6]}
               months={calenderConfig.months}
               textStyle={{color: theme.colors.text_primary}}

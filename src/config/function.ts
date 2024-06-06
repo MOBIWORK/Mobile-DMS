@@ -8,7 +8,7 @@ import {dispatch} from '../utils/redux';
 import {appActions} from '../redux-store/app-reducer/reducer';
 import {ObjectId} from 'bson';
 import {CommonUtils} from '../utils';
-import { IProduct } from '../models/types';
+import {IProduct} from '../models/types';
 
 type TypesBase =
   | 'bigint'
@@ -25,43 +25,44 @@ const formatMoney = (amount: number | string | any) => {
   return `${amount}`.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 };
 
-const convertToMoneyFormat = (amount:any) => {
+const convertToMoneyFormat = (amount: any) => {
   // Convert amount to a number
   const numericAmount = parseFloat(amount);
 
   // Check if the numericAmount is a valid number
   if (isNaN(numericAmount)) {
-    return "Invalid amount";
+    return 'Invalid amount';
   }
 
   // Convert numeric amount to money format
-  const formattedAmount = numericAmount.toLocaleString("vi-VN", { minimumFractionDigits: 0 });
+  const formattedAmount = numericAmount.toLocaleString('vi-VN', {
+    minimumFractionDigits: 0,
+  });
 
   return formattedAmount;
 };
 
-
-
-
-const reverseFormatNumber = (formattedNumber:any) => {
+const reverseFormatNumber = (formattedNumber: any) => {
   // Check if the formattedNumber contains a dot
   const hasDot = /\./.test(formattedNumber);
 
   if (hasDot) {
-    console.log(formattedNumber,'hasDot')
+    console.log(formattedNumber, 'hasDot');
     // Remove all non-numeric characters (except for the dot if it's a decimal separator)
     const numericString = formattedNumber.replace(/[^0-9.]/g, '');
 
     // Remove all dots except the last one (if it's a decimal separator)
     const lastIndex = numericString.lastIndexOf('.');
-    const integerPart = numericString.substring(0, lastIndex).replace(/\./g, '');
+    const integerPart = numericString
+      .substring(0, lastIndex)
+      .replace(/\./g, '');
     const decimalPart = numericString.substring(lastIndex);
 
-    console.log(integerPart + decimalPart,'result has Dot')
+    console.log(integerPart + decimalPart, 'result has Dot');
     // Concatenate the integer part and the decimal part
     return integerPart + decimalPart;
   } else {
-    console.log(formattedNumber,'nonDot')
+    console.log(formattedNumber, 'nonDot');
     // If no dot is present, return the number as it is
     return formattedNumber;
   }
@@ -139,27 +140,27 @@ const calculateDistance = (
   lat2: number,
   lon2: number,
 ): number => {
-  let distance:any
-if(!isNaN(lat1) && !isNaN(lat2) && !isNaN(lon1) && !isNaN(lon2)){
-  const R = 6371; // Earth radius in kilometers
+  let distance: any;
+  if (!isNaN(lat1) && !isNaN(lat2) && !isNaN(lon1) && !isNaN(lon2)) {
+    const R = 6371; // Earth radius in kilometers
 
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
 
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  distance = R * c;
-}else{
-  distance = null
-}
- // Distance in kilometers
+    distance = R * c;
+  } else {
+    distance = null;
+  }
+  // Distance in kilometers
 
   return distance;
 };
@@ -210,19 +211,31 @@ const backgroundErrorListener = (errorCode: number) => {
   switch (errorCode) {
     case 0:
       dispatch(
-        appActions.setError(
-          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-        ),
+        appActions.setError({
+          title: '',
+          message:
+            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+          // status: 400,
+        }),
       );
       break;
     case 1:
-      dispatch(appActions.setError('GPS đã bị tắt. Vui lòng bật lại.'));
+      dispatch(
+        appActions.setError({
+          title: '',
+          message: 'GPS đã bị tắt. Vui lòng bật lại.',
+          // status: 400,
+        }),
+      );
       break;
     default:
       dispatch(
-        appActions.setError(
-          'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-        ),
+        appActions.setError({
+          title: '',
+          message:
+            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
+          // status: 400,
+        }),
       );
   }
 };
@@ -243,7 +256,7 @@ const useEffectOnce = (cb: React.EffectCallback) => {
 };
 
 const mergeProducts = (products: IProduct[]) => {
-  const productMap: { [itemCode: string]: IProduct } = {};
+  const productMap: {[itemCode: string]: IProduct} = {};
 
   // Iterate through the products array and merge products with the same item_code
   products.forEach(product => {
@@ -252,7 +265,7 @@ const mergeProducts = (products: IProduct[]) => {
       productMap[product.item_code].quantity += product.quantity;
     } else {
       // Otherwise, add the product to the map
-      productMap[product.item_code] = { ...product };
+      productMap[product.item_code] = {...product};
     }
   });
 
@@ -261,7 +274,6 @@ const mergeProducts = (products: IProduct[]) => {
 
   return mergedProducts;
 };
-
 
 export {
   formatPhoneNumber,
@@ -281,5 +293,5 @@ export {
   decimalMinutesToTime,
   mergeProducts,
   reverseFormatNumber,
-  convertToMoneyFormat
+  convertToMoneyFormat,
 };

@@ -21,6 +21,8 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Platform,
   RefreshControl,
   StyleSheet,
@@ -53,6 +55,7 @@ import {
   backgroundErrorListener,
   calculateDistance,
   generateRandomObjectId,
+  useDeepCompareEffect,
   useEffectOnce,
   useSelector,
 } from '../../../config/function';
@@ -126,6 +129,7 @@ const ListVisit = () => {
     shallowEqual,
   );
   const isFocus = useIsFocused();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const listCustomer: VisitListItemResult = useSelector(
     state => state.customer.listCustomerVisit,
@@ -177,6 +181,8 @@ const ListVisit = () => {
     useState<VisitListItemType | null>(null);
   const currentSelect = useRef<VisitListItemType>();
   const isEnable = useRef<boolean>(false);
+  const slideSizeRef = useRef<number>(0);
+  const flatlistRef = useRef<FlatList>(null);
 
   const handleEnabledPressed = useCallback(
     async (item?: VisitListItemType, type?: boolean) => {
@@ -239,7 +245,6 @@ const ListVisit = () => {
     }
   }, [listCustomer, customerDataSort]);
 
- 
   // const checkGPS = useCallback(() => {}, []);
 
   const onRefreshData = useCallback(async () => {
@@ -387,6 +392,36 @@ const ListVisit = () => {
     );
   };
 
+  const onScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const slideSize = event.nativeEvent.layoutMeasurement.height - 220;
+      const index = event.nativeEvent.contentOffset.y / slideSize;
+      const roundIndex = Math.ceil(index);
+      setCurrentIndex(roundIndex);
+      slideSizeRef.current = slideSize;
+    },
+    [],
+  );
+
+  const onPresClose = () => {
+    setModalErrorGPS(false);
+    setTimeout(() => {
+      flatlistRef?.current?.scrollToIndex({
+        animated: true,
+        viewOffset: 0,
+        viewPosition: 1,
+        index: currentIndex + 1,
+      });
+    }, 500);
+  };
+
+  const getItemLayout = (
+    data: ArrayLike<VisitListItemType> | null | undefined,
+    index: number,
+  ) => ({length: slideSizeRef.current, offset: 50 * index, index});
+
+  // console.log(fla)
+
   const renderContent = () => {
     return (
       <Block marginTop={8}>
@@ -402,6 +437,7 @@ const ListVisit = () => {
               <SkeletonLoading />
             ) : (
               <FlatList
+                ref={flatlistRef}
                 style={{height: '85%', paddingVertical: 8}}
                 showsVerticalScrollIndicator={false}
                 data={customerDataSort ?? listCustomer.data}
@@ -411,6 +447,8 @@ const ListVisit = () => {
                 decelerationRate={'normal'}
                 bounces={true}
                 initialNumToRender={4}
+                // onScroll={onScroll}
+                onMomentumScrollEnd={onScroll}
                 refreshControl={
                   <RefreshControl
                     refreshing={loading}
@@ -418,8 +456,11 @@ const ListVisit = () => {
                   />
                 }
                 maxToRenderPerBatch={2}
+                // scrollToIndex={}
+                getItemLayout={getItemLayout}
                 updateCellsBatchingPeriod={4}
                 windowSize={14}
+                // onScroll={(event) => console.log(event.nativeEvent.)}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
                   <VisitItem
@@ -458,7 +499,10 @@ const ListVisit = () => {
       dispatch(appActions.onGetSystemConfig());
     }
     // handleEnabledPressed();
-    CommonUtils.getCurrentLocation(locations => setLocation(locations),error => backgroundErrorListener(error.code));
+    CommonUtils.getCurrentLocation(
+      locations => setLocation(locations),
+      // error => backgroundErrorListener(error.code),
+    );
   }, []);
 
   const getCustomer = async (params?: IListVisitParams, isMore?: boolean) => {
@@ -882,6 +926,8 @@ const ListVisit = () => {
     );
   }, []);
 
+  // console.log(currentIndex,'current')
+
   const onPressToDetail = useCallback((item: VisitListItemType) => {
     currentSelect.current = item;
     startEffect(() => {
@@ -992,11 +1038,11 @@ const ListVisit = () => {
     sortDataCustomer(distanceFilterValue);
   }, [listCustomer, isFocus]);
 
-  // useEffect(() => {
-  //   if (isEnable.current === false && Platform.OS === 'android') {
-  //     setModalErrorGPS(true);
-  //   }
-  // }, [isEnable.current]);
+  useEffect(() => {
+    if (isEnable.current === false && Platform.OS === 'android') {
+      setModalErrorGPS(true);
+    }
+  }, [isEnable.current]);
 
   return (
     <SafeAreaView
@@ -1006,7 +1052,7 @@ const ListVisit = () => {
 
       {modalErrorGPS ? (
         <>
-          <SkeletonLoading />
+          {/* <SkeletonLoading /> */}
           <Modal
             isVisible={modalErrorGPS}
             backdropOpacity={0.5}
@@ -1041,7 +1087,7 @@ const ListVisit = () => {
                 direction="row">
                 <TouchableOpacity
                   style={styles.buttonModal}
-                  onPress={() => setModalErrorGPS(false)}>
+                  onPress={onPresClose}>
                   <Text colorTheme="white" fontSize={16} fontWeight="500">
                     {getLabel('close')}
                   </Text>

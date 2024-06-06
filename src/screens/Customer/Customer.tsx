@@ -203,11 +203,11 @@ const Customer = () => {
       const checkEnabled: boolean = await isLocationEnabled();
       isEnable.current = checkEnabled;
       if (checkEnabled === true) {
-        // setModalErrorGPS(false);
+        setModalErrorGPS(false);
         handleBackgroundLocation();
       } else {
         return null;
-        // setModalErrorGPS(true);
+        setModalErrorGPS(true);
       }
     }
   };
@@ -220,33 +220,33 @@ const Customer = () => {
   React.useEffect(() => {
     mounted.current = true;
     // checkGPS();
-    if (mounted.current ) {
-      if (listCustomer && listCustomer?.length > 0) {
-        const filteredData = listCustomer.filter(
-          item => item.customer_location_primary,
-        );
-        const noLocationCustomer = listCustomer.filter(
-          item => !item.customer_location_primary,
-        );
 
-        setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
-      } else {
-        dispatch(customerActions.onGetCustomer());
-        onRefreshData();
-      }
+    if (listCustomer && listCustomer?.length > 0) {
+      const filteredData = listCustomer.filter(
+        item => item.customer_location_primary,
+      );
+      const noLocationCustomer = listCustomer.filter(
+        item => !item.customer_location_primary,
+      );
+      console.log('run  here ');
 
-      const getDataType = () => {
-        dispatch(customerActions.getCustomerType());
-      };
-      getDataType();
+      setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
+    } else {
+      dispatch(customerActions.onGetCustomer());
+      onRefreshData();
     }
+
+    const getDataType = () => {
+      dispatch(customerActions.getCustomerType());
+    };
+    getDataType();
 
     mounted.current = false;
 
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer, isFocus,isEnable.current]);
+  }, [listCustomer, isFocus]);
 
   const handleApplyFilter = () => {
     if (
@@ -319,8 +319,6 @@ const Customer = () => {
       customerGroupType: getLabel('all'),
     });
   };
-
-
 
   const onBackButtonPress = useCallback(() => {
     setShowModal(false);
@@ -436,8 +434,6 @@ const Customer = () => {
   // console.log(customerData.current,'customerData')
 
   // console.log(modalErrorGPS)
-
-
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
