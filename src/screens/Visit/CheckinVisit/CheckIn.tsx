@@ -141,6 +141,7 @@ const CheckIn = () => {
   );
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
+  const screen = useRoute<RouterProp<'CHECKIN'>>().params.screen
   const [status, setStatus] = useState(
     dataCheckIn?.checkin_trangthaicuahang
       ? dataCheckIn.checkin_trangthaicuahang
@@ -376,6 +377,7 @@ const CheckIn = () => {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
         type: '',
         data: params,
+       screen:screen
       });
       navigation.setParams({isLocation: true});
     } else {

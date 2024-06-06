@@ -175,19 +175,34 @@ const ListVisit = () => {
   const currentSelect = useRef<VisitListItemType>();
   const isEnable = useRef<boolean>(false);
 
-  const handleEnabledPressed = useCallback(async () => {
-    if (Platform.OS === 'android') {
-      const checkEnabled: boolean = await isLocationEnabled();
-      console.log('checkEnabled', checkEnabled);
-
-      isEnable.current = checkEnabled;
-      if (checkEnabled === true) {
-        setModalErrorGPS(false);
+  const handleEnabledPressed = useCallback(
+    async (item?: VisitListItemType, type?: boolean) => {
+      if (item && Object.keys(item).length > 0 && type != undefined) {
+        if (Platform.OS === 'android') {
+          const checkEnabled: boolean = await isLocationEnabled();
+          isEnable.current = checkEnabled;
+          if (checkEnabled === true) {
+            handleCompareDistance(item!, type);
+            setModalErrorGPS(false);
+          } else {
+            setModalErrorGPS(true);
+          }
+        }
       } else {
-        setModalErrorGPS(true);
+        if (Platform.OS === 'android') {
+          const checkEnabled: boolean = await isLocationEnabled();
+          isEnable.current = checkEnabled;
+          if (checkEnabled === true) {
+            setModalErrorGPS(false);
+            // handleCompareDistance(item!, type);
+          } else {
+            setModalErrorGPS(true);
+          }
+        }
       }
-    }
-  }, [isEnable.current]);
+    },
+    [modalErrorGPS],
+  );
   const backgroundErrorListener = useCallback(
     (errorCode: number) => {
       // Handle background location errors
@@ -218,7 +233,7 @@ const ListVisit = () => {
   }, [listCustomer, customerDataSort]);
 
   const onGetCurrentPositionAgain = () => {
-    setModalErrorGPS(false);
+    setModalError(false);
     handleRegainLocation();
   };
 
@@ -367,7 +382,7 @@ const ListVisit = () => {
     );
   };
 
-  const _renderContent = () => {
+  const renderContent = () => {
     return (
       <Block marginTop={8}>
         {isShowListVisit ? (
@@ -405,14 +420,14 @@ const ListVisit = () => {
                   <VisitItem
                     item={item}
                     handlePressDetail={onPressToDetail}
-                    handlePressing={handleCompareDistance}
+                    handlePressing={handleEnabledPressed}
                     handleOpenMap={() =>
                       startTransition(() => presentMap(item))
                     }
                   />
                 )}
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0}
+                onEndReachedThreshold={0.5}
                 ListEmptyComponent={
                   <View
                     style={{
@@ -743,6 +758,7 @@ const ListVisit = () => {
             navigate(ScreenConstant.CHECKIN, {
               item: data,
               isLocation: false,
+              screen: ScreenConstant.LIST_VISIT,
             });
           }
         },
@@ -1031,7 +1047,7 @@ const ListVisit = () => {
                 direction="row">
                 <TouchableOpacity
                   style={styles.buttonModal}
-                  onPress={onGetCurrentPositionAgain}>
+                  onPress={() => setModalErrorGPS(false)}>
                   <Text colorTheme="white" fontSize={16} fontWeight="500">
                     {getLabel('close')}
                   </Text>
@@ -1042,7 +1058,7 @@ const ListVisit = () => {
         </>
       ) : (
         <>
-          {_renderContent()}
+          {renderContent()}
           <FilterContainer
             bottomSheetRef={bottomSheetRef}
             filterRef={filterRef}

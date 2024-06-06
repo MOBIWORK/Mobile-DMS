@@ -61,6 +61,7 @@ import {
   AddressType,
 } from '../../Customer/components/FormAddress';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
+import {goBack} from '../../../navigation/navigation-service';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
