@@ -49,7 +49,7 @@ import {rootStyles} from './styles';
 
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
-import {useDeepCompareEffect, useSelector} from '../../config/function';
+import {backgroundErrorListener, useDeepCompareEffect, useSelector} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
@@ -156,31 +156,6 @@ const HomeScreen = () => {
     );
   }, [widgets]);
 
-  const backgroundErrorListener = useCallback(
-    (errorCode: number) => {
-      // Handle background location errors
-      switch (errorCode) {
-        case 1:
-          setError(
-            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-          );
-          setEnabled(true);
-          break;
-        case 2:
-          setError('GPS đã bị tắt. Vui lòng bật lại.');
-          setEnabled(true);
-
-          break;
-        default:
-          setError(
-            'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-          );
-          setEnabled(true);
-          break;
-      }
-    },
-    [location],
-  );
 
   const renderUiStatistical = useCallback(() => {
     return (
@@ -410,7 +385,7 @@ const HomeScreen = () => {
             1000,
           );
         },
-        // err => backgroundErrorListener(err.code),
+        err => backgroundErrorListener(err.code),
       ),
     );
   };

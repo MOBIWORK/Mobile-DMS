@@ -205,9 +205,10 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
               //   if (date.isBetween(startDate, endDate)) {
               //     // if (
               //     //   startDate != null &&
-              //     //   endDate != null
+              //     //   endDate != null 
               //     //   // calculateDaysDifference(startDate, endDate) <= 7
-              //     // )
+              //     // ) 
+
               //     return false;
               //   } else {
               //     return true;

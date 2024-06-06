@@ -44,7 +44,10 @@ import {ApiConstant, AppConstant} from '../../../const';
 import {AppService} from '../../../services';
 import Mapbox from '@rnmapbox/maps';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
-import { backgroundErrorListener } from '../../../config/function';
+import {backgroundErrorListener, useSelector} from '../../../config/function';
+import {shallowEqual} from 'react-redux';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 type Props = {
   visible: boolean;
   onBackButtonPress: () => void;
@@ -63,6 +66,11 @@ const ModalEditAddress = ({
   const {t: getLabel} = useTranslation();
 
   const [screen, setScreen] = useState('');
+  const listDataCity = useSelector(
+    state => state.app.listDataCity,
+    shallowEqual,
+  );
+
   const [addressSelectedData, setAddressSelectedData] = useState<
     AddressSelected[]
   >([]);
@@ -70,16 +78,47 @@ const ModalEditAddress = ({
   const [contactSelectedData, setContactSelectedData] = useState<
     AddressSelected[]
   >([]);
+  const [addressObj, setAddressObj] = useState<{
+    province: {
+      code: string;
+      value: string;
+    };
+    district: {
+      code: string;
+      value: string;
+    };
+    ward: {
+      code: string;
+      value: string;
+    };
+    detail: string;
+  }>({
+    province: {
+      code: '',
+      value: '',
+    },
+    district: {
+      code: '',
+      value: '',
+    },
+    ward: {
+      code: '',
+      value: '',
+    },
+    detail: '',
+  });
 
   const [addressValue, setAddressValue] = useState<any>({
-  
     address_title: '',
     is_primary_address: 0,
     is_shipping_address: 0,
     address_location: '',
+    address_line1: '',
+    city: '',
+    county: '',
+    state: '',
   });
   const [contactValue, setContactValue] = useState<any>({
-    
     nameContact: '',
     phoneNumber: '',
     addressContact: '',
@@ -109,21 +148,26 @@ const ModalEditAddress = ({
   }, [addressSelectedData, txtAddressDetail]);
 
   const onPressButtonGetLocation = () => {
-    CommonUtils.getCurrentLocation(locations => {
-      fetchData(locations.coords.latitude, locations.coords.longitude);
-    },err => backgroundErrorListener(err.code));
+    CommonUtils.getCurrentLocation(
+      locations => {
+        fetchData(locations.coords.latitude, locations.coords.longitude);
+      },
+      err => backgroundErrorListener(err.code),
+    );
   };
 
   const fetchData = useCallback(
     async (lat: any, lon: any) => {
       const data: RootEkMapResponse = await getDetailLocation(lat, lon);
+      // console.log(data,)
       if (data.status === 'OK' && data.results.length > 0) {
         setAddressValue((prev: any) => ({
           ...prev,
           detailAddress: data.results[0].formatted_address,
-          name:data.results[0].formatted_address
+          name: data.results[0].formatted_address,
         }));
         const addressSplit = data.results[0].formatted_address.split(',', 4);
+
         const newData: AddressSelected[] = [
           {
             type: AddressType.city,
@@ -149,36 +193,38 @@ const ModalEditAddress = ({
   );
 
   const handleSaveMainContact = useCallback(() => {
-    startTransition(() =>{
-    setData(prev => ({
-      ...prev,
-      contacts: [
-        ...(prev.contacts || []),
-        {
-          last_name: contactValue.nameContact,
-          first_name: contactValue.nameContact,
-          mobile_no: contactValue.phoneNumber,
-          address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
-          is_billing_contact: contactValue.isMainAddress ? 1 : 0,
-          is_primary_contact: 0,
-          name:contactValue.nameContact
-        },
-      ],
-    }));
-  })
-  setContactValue({})
+    startTransition(() => {
+      setData(prev => ({
+        ...prev,
+        contacts: [
+          ...(prev.contacts || []),
+          {
+            last_name: contactValue.nameContact,
+            first_name: contactValue.nameContact,
+            mobile_no: contactValue.phoneNumber,
+            address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
+            is_billing_contact: contactValue.isMainAddress ? 1 : 0,
+            is_primary_contact: 0,
+            name: contactValue.nameContact,
+            city: addressSelectedData[0].id || '',
+            county: addressSelectedData[1].id || '',
+            state: addressSelectedData[2].id || '',
+          },
+        ],
+      }));
+    });
+    setContactValue({});
     onBackButtonPress();
-  }, [contactValue,txtContactDetail]);
-
+  }, [contactValue, txtContactDetail]);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
       await CommonUtils.CheckNetworkState();
-      const response: KeyAbleProps = await AppService.autocompleteGeoLocation(
+      const res: KeyAbleProps = await AppService.autocompleteGeoLocation(
         address,
       );
-      if (response.status === ApiConstant.STT_OK || 'OK') {
-        const geometry: any = response.results[0].geometry;
+      if (res.status === ApiConstant.STT_OK || 'OK') {
+        const geometry: any = res.results[0].geometry;
         setLocation({
           // @ts-ignore
           coords: {
@@ -186,9 +232,114 @@ const ModalEditAddress = ({
             latitude: geometry.location.lat,
           },
         });
+        const response: KeyAbleProps = await AppService.getDetailLocation(
+          geometry.location.lat,
+          geometry.location.lng,
+        );
+        if (response.status === ApiConstant.STT_OK || 'OK') {
+          const address: any = response.results[0].address_components;
+          const cityValue = address[address.length - 1]?.long_name ?? '';
+          const districtValue = address[address.length - 2]?.long_name ?? '';
+          const wardValue = address[address.length - 3]?.long_name ?? '';
+          const addLine1 = address[address.length - 4]?.long_name ?? '';
+          let addressObj = {
+            province: {
+              code: '',
+              value: cityValue,
+            },
+            district: {
+              code: '',
+              value: districtValue,
+            },
+            ward: {
+              code: '',
+              value: wardValue,
+            },
+            detail: addLine1,
+          };
+          if (cityValue) {
+            const cityNameArr = listDataCity.city.map(
+              cityNameArrItem => cityNameArrItem.ten_tinh,
+            );
+            const citySelectedName = CommonUtils.findBestMatch(
+              cityValue,
+              cityNameArr,
+            );
+            const citySelected = listDataCity.city.find(
+              citySelectedItem =>
+                citySelectedItem.ten_tinh === citySelectedName,
+            );
+            addressObj = {
+              ...addressObj,
+              province: {
+                code: citySelected?.ma_tinh ?? '',
+                value: citySelected?.ten_tinh ?? '',
+              },
+            };
+          }
+          if (districtValue && addressObj.province.code) {
+            const districtRes: any = await AppService.getListDistrict(
+              addressObj.province.code,
+            );
+            if (districtRes?.status === ApiConstant.STT_OK) {
+              const districtNameArr = districtRes.data.result.map(
+                (districtNameArrItem: any) => districtNameArrItem.ten_huyen,
+              );
+              const districtSelectedName = CommonUtils.findBestMatch(
+                districtValue,
+                districtNameArr,
+              );
+              const districtSelected = districtRes.data.result.find(
+                (item: any) => item.ten_huyen === districtSelectedName,
+              );
+              addressObj = {
+                ...addressObj,
+                district: {
+                  code: districtSelected?.ma_huyen ?? '',
+                  value: districtSelected?.ten_huyen ?? '',
+                },
+              };
+            }
+          }
+          if (wardValue && addressObj.district.code) {
+            const wardRes: any = await AppService.getListWard(
+              addressObj.district.code,
+            );
+            if (wardRes?.status === ApiConstant.STT_OK) {
+              const wardNameArr = wardRes.data.result.map(
+                (wardNameArrItem: any) => wardNameArrItem.ten_xa,
+              );
+              const wardSelectedName = CommonUtils.findBestMatch(
+                wardValue,
+                wardNameArr,
+              );
+              const wardSelected = wardRes.data.result.find(
+                (item: any) => item.ten_xa === wardSelectedName,
+              );
+              addressObj = {
+                ...addressObj,
+                ward: {
+                  code: wardSelected?.ma_xa ?? '',
+                  value: wardSelected?.ten_xa ?? '',
+                },
+              };
+            }
+          }
+          if (addLine1) {
+            addressObj = {
+              ...addressObj,
+              detail: addLine1,
+            };
+          }
+          setAddressObj(addressObj);
+        }
       }
+      
     }
   };
+
+ 
+
 
   const handleSaveMainAddress = useCallback(() => {
     startTransition(() => {
@@ -202,7 +353,13 @@ const ModalEditAddress = ({
             is_shipping_address: addressValue.addressOrder ? 1 : 0,
             address_title: txtAddressDetail,
             address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
-            name:txtAddressDetail
+            name: txtAddressDetail + '-Billing',
+            // address_line1: txtAddressDetail,
+            address_type: 'Billing',
+            city: addressObj.province.code || '',
+            county:addressObj.district.code || '',
+            state:addressObj.ward.code || '',
+            address_line1:addressObj.detail
           },
         ],
       }));
@@ -211,14 +368,6 @@ const ModalEditAddress = ({
     setAddressSelectedData([]);
     onBackButtonPress();
   }, [addressValue.addressGet, addressValue.addressOrder]);
-
-  // setData(prev => ({
-  //   ...prev,
-  //   latitude: location?.coords.latitude,
-  //   longitude: location?.coords.longitude,
-  // }));
-
-  //
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
@@ -309,7 +458,7 @@ const ModalEditAddress = ({
       animationOut={'slideOutDown'}>
       <Block colorTheme="bg_default" block paddingHorizontal={16}>
         {(screen === 'Adding' || screen === 'AddingContact') &&
-        ((type === 'address' && addressSelectedData.length !== 3) ||
+        ((type === 'address' && addressSelectedData.length !== 4) ||
           (type === 'contact' && contactSelectedData.length !== 3)) ? (
           <SelectedAddress
             setScreen={setScreen}
@@ -356,8 +505,9 @@ const ModalEditAddress = ({
                 label={`${getLabel('province')}/${getLabel('city')}`}
                 contentStyle={styles.contentStyle}
                 onPress={() => {
+                  console.log(addressSelectedData, 'on press adding');
                   setScreen('Adding');
-                  setAddressSelectedData([]);
+                  // setAddressSelectedData([]);
                 }}
                 value={addressValue?.city?.value ?? ''}
                 editable={false}
@@ -376,12 +526,12 @@ const ModalEditAddress = ({
                 value={addressValue?.district?.value ?? ''}
                 editable={false}
                 onPress={() => {
-                  setScreen('Adding');
                   startTransition(() => {
                     const newData = addressSelectedData.filter(
                       item => item.type === AddressType.city,
                     );
                     setAddressSelectedData(newData);
+                    setScreen('Adding');
                   });
                 }}
                 contentStyle={styles.contentStyle}
@@ -400,12 +550,12 @@ const ModalEditAddress = ({
                 editable={false}
                 contentStyle={styles.contentStyle}
                 onPress={() => {
-                  setScreen('Adding');
                   startTransition(() => {
                     const newData = addressSelectedData.filter(
                       item => item.type !== AddressType.district,
                     );
                     setAddressSelectedData(newData);
+                    setScreen('Adding');
                   });
                 }}
                 styles={styles.marginInputBlock}
@@ -697,7 +847,6 @@ const ModalEditAddress = ({
                   onPress={() => {
                     handleSaveMainContact();
                     setContactValue({});
-                    
                   }}>
                   <Text style={styles.applyText}>{getLabel('save')}</Text>
                 </TouchableOpacity>

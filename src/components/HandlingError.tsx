@@ -16,7 +16,9 @@ const HandlingError: FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
 
-  const error: any = useSelector(state => state.app.error);
+
+  const error = useSelector(state => state.app.error);
+
   const isShowModalError = useSelector(state => state.app.showModal);
 
   const open = useMemo(
@@ -35,9 +37,9 @@ const HandlingError: FC = () => {
           return error?.message;
       }
     } else {
-      return error && Object.keys(error).length > 0
-        ? getLabel('someThingErr')
-        : error;
+
+      return error?.message;
+
     }
   }, [error]);
 

@@ -42,6 +42,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
   const [searchValue, setSearch] = useState<string>('');
   const [listCity, setListCity] = useState<IFilterType[]>([]);
   const [isPending, startTransition] = useTransition();
+
   const handleItem = (item: IFilterType) => {
     const type =
       data.length === 0
@@ -79,6 +80,19 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
     },
     [data.length],
   );
+
+
+
+  React.useEffect(() => {
+    if (data.length > 0) {
+      getListCity();
+    } else {
+      return undefined;
+    }
+  }, [data.length]);
+
+  // console.log(listCity, 'run ');
+
 
   const ListAddressSelected = (item: AddressSelected, isBorder: boolean) => {
     return (
@@ -214,7 +228,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
 
   useEffect(() => {
     getListCity();
-  }, [data.length]);
+}, [data.length]);
 
   return (
     <MainLayout style={{paddingHorizontal: 16}}>

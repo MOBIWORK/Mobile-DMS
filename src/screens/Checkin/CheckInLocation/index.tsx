@@ -48,7 +48,7 @@ import {
   appActions,
   setProcessingStatus,
 } from '../../../redux-store/app-reducer/reducer';
-import {useSelector} from '../../../config/function';
+import {backgroundErrorListener, useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
 import {GeolocationResponse} from '@react-native-community/geolocation';
@@ -120,7 +120,7 @@ const CheckInLocation = () => {
   const [addressSelectedData, setAddressSelectedData] = useState<
     AddressSelected[]
   >([]);
-
+const [errCode,setErrCode] = useState<any>(null)
   const customer_location: LocationProps =
     route.params?.data &&
     JSON.parse(route.params.data.item.customer_location_primary);
@@ -139,23 +139,30 @@ const CheckInLocation = () => {
   }, [addressObj]);
 
   const handleRegainLocation = () => {
-    CommonUtils.getCurrentLocation(newLocation => {
-      setLocation(newLocation);
-      mapboxCameraRef.current &&
-        mapboxCameraRef.current.moveTo(
-          [newLocation.coords.longitude, newLocation.coords.latitude],
-          1000,
-        );
-    });
+    CommonUtils.getCurrentLocation(
+      newLocation => {
+        setLocation(newLocation);
+        mapboxCameraRef.current &&
+          mapboxCameraRef.current.moveTo(
+            [newLocation.coords.longitude, newLocation.coords.latitude],
+            1000,
+          );
+      },
+      err => {backgroundErrorListener(err.code)},
+    );
   };
 
   const handleGetAddress = async () => {
     dispatch(appActions.setProcessingStatus(true));
-    if (location) {
+    if (location  ) {
+      // console.log('run case 1 ');
       await handleMarkerMap(
         location.coords.latitude,
         location.coords.longitude,
       );
+    } else {
+      // console.log('run case 2 ');
+      backgroundErrorListener(1);
     }
     dispatch(appActions.setProcessingStatus(false));
   };
@@ -171,6 +178,7 @@ const CheckInLocation = () => {
     });
     const response: KeyAbleProps = await AppService.getDetailLocation(lat, lng);
     if (response.status === ApiConstant.STT_OK || 'OK') {
+      console.log(response.status,'bbbbv')
       const address: any = response.results[0].address_components;
       const cityValue = address[address.length - 1]?.long_name ?? '';
       const districtValue = address[address.length - 2]?.long_name ?? '';
@@ -428,9 +436,12 @@ const CheckInLocation = () => {
         },
       });
     } else {
-      CommonUtils.getCurrentLocation(locations => {
-        setLocation(locations);
-      });
+      CommonUtils.getCurrentLocation(
+        locations => {
+          setLocation(locations);
+        },
+        error => backgroundErrorListener(error.code),
+      );
     }
     fillAddressInit().then();
   }, []);
