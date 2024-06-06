@@ -4,24 +4,34 @@ import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
 import {AppConstant} from '../../../const';
-import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import {
+  BottomSheetScrollView,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 // @ts-ignore
 import CalendarPicker from 'react-native-calendar-picker';
 import {useTheme} from '@react-navigation/native';
 import {getLabel} from '../../../language';
 import isEqual from 'react-fast-compare';
-import moment from 'moment';
 
 const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   filerBottomSheetRef,
   onChange,
   onChangeDateCalender,
   isKPI,
+  allowRangeSelection,
 }) => {
   const {bottom} = useSafeAreaInsets();
   const theme = useTheme();
-  // const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+
+  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
   const [data, setData] = useState<IFilterType[]>(
     isKPI ? AppConstant.ReportFilterKPIData : AppConstant.ReportFilterData,
@@ -80,28 +90,28 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
       setEndDate(null);
     }
 
-    // onChangeDateCalender(date);
-
-    // filerBottomSheetRef?.current.close();
+    onChangeDateCalender(date);
+    filerBottomSheetRef?.current.close();
   };
 
   return (
     <AppBottomSheet
       bottomSheetRef={filerBottomSheetRef}
-      // snapPointsCustom={animatedSnapPoints}
+      snapPointsCustom={animatedSnapPoints}
       onClose={() => setShowCalender(false)}
-      enableDynamicSizing={true}
       // @ts-ignore
-    >
-      <BottomSheetScrollView style={{paddingBottom: bottom + 12}}>
+      handleHeight={animatedHandleHeight}
+      contentHeight={animatedContentHeight}>
+      <BottomSheetScrollView
+        style={{paddingBottom: bottom + 12}}
+        onLayout={handleContentLayout}>
         {showCalender ? (
           <CalendarPicker
             startFromMonday={true}
-            allowRangeSelection={true}
+            allowRangeSelection={allowRangeSelection ?? false}
             // selectedEndDate={endDate}
             weekdays={calenderConfig.weekdays}
             months={calenderConfig.months}
-           
             textStyle={{color: theme.colors.text_primary}}
             todayBackgroundColor={theme.colors.text_secondary}
             todayTextStyle={{color: theme.colors.bg_default}}
@@ -148,6 +158,7 @@ interface ReportFilterBottomSheetProps {
   filerBottomSheetRef: any;
   onChange: (item: IFilterType) => void;
   onChangeDateCalender: (date: any) => void;
+  allowRangeSelection?: boolean;
   isKPI?: boolean;
 }
 

@@ -90,6 +90,8 @@ const NonOrderCustomer = () => {
 
   const onChangeDateCalender = (date: any) => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
+    setFromDate(new Date(date).getTime());
+    setToDate(new Date(date).getTime());
   };
 
   return (
@@ -116,7 +118,9 @@ const NonOrderCustomer = () => {
       </ScrollView>
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
-        onChange={onChangeHeaderDate}
+        onChange={item =>
+          item.value !== 'selectDate' && onChangeHeaderDate(item)
+        }
         onChangeDateCalender={onChangeDateCalender}
       />
     </SafeAreaView>

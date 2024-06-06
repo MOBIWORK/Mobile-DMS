@@ -13,7 +13,7 @@ import {
 import {ImageAssets} from '../../../assets';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {AppContainer, SvgIcon} from '../../../components/common';
-import {KeyAbleProps, ReportTravelDiaryType} from '../../../models/types';
+import {ReportTravelDiaryType} from '../../../models/types';
 import {CommonUtils} from '../../../utils';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -23,6 +23,7 @@ import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import {ReportService} from '../../../services';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {AppConstant} from '../../../const';
 
 const TravelDiary = () => {
   const theme = useTheme();
@@ -58,6 +59,8 @@ const TravelDiary = () => {
 
   const onChangeDateCalender = (date: any) => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
+    setFromDate(new Date(date).getTime());
+    setToDate(new Date(date).getTime());
   };
 
   const Item: FC<ItemProps> = ({item}) => {
@@ -131,6 +134,7 @@ const TravelDiary = () => {
   };
 
   useEffect(() => {
+    console.log('fromdate', from_date, 'todate', to_date);
     fetchData();
   }, [from_date, to_date]);
 
@@ -155,7 +159,7 @@ const TravelDiary = () => {
         }
       />
       <AppContainer style={{marginBottom: bottom}}>
-        {data.length > 0 && (
+        {data.length > 0 ? (
           <View
             style={{
               marginTop: 24,
@@ -167,11 +171,22 @@ const TravelDiary = () => {
               return <Item key={index} item={item} />;
             })}
           </View>
+        ) : (
+          <Text
+            style={{
+              fontSize: 20,
+              textAlign: 'center',
+              marginTop: AppConstant.HEIGHT * 0.3,
+            }}>
+            {getLabel('noData')}
+          </Text>
         )}
       </AppContainer>
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
-        onChange={onChangeHeaderDate}
+        onChange={item =>
+          item.value !== 'selectDate' && onChangeHeaderDate(item)
+        }
         onChangeDateCalender={onChangeDateCalender}
       />
     </MainLayout>

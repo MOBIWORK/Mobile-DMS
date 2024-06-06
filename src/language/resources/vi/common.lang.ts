@@ -320,4 +320,5 @@ export default {
   orderStatistics: 'Thống kê phiếu đặt hàng',
   bill: 'Hóa đơn',
   amountOwed: 'Số tiền nợ',
+  noData: ' Không có dữ liệu',
 };

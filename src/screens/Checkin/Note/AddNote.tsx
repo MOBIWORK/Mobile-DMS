@@ -15,7 +15,6 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
-  Block,
 } from '../../../components/common';
 import {TextInput} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
@@ -48,7 +47,6 @@ import {ICON_TYPE} from '../../../const/app.const';
 import {dispatch} from '../../../utils/redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import InputViewCompoment from './components/InputView';
-import isEqual from 'react-fast-compare';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const AddNote = () => {

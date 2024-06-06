@@ -314,4 +314,5 @@ export default {
   orderStatistics: 'Order statistics',
   bill: 'Bill',
   amountOwed: 'Amount owed',
+  noData: 'No data',
 };

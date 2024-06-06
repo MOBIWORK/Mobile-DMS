@@ -87,6 +87,8 @@ const Statistical = () => {
 
   const onChangeDateCalender = (date: any) => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
+    setFromDate(new Date(date).getTime());
+    setToDate(new Date(date).getTime());
   };
 
   useEffect(() => {
@@ -160,7 +162,9 @@ const Statistical = () => {
       )}
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
-        onChange={onChangeHeaderDate}
+        onChange={item =>
+          item.value !== 'selectDate' && onChangeHeaderDate(item)
+        }
         onChangeDateCalender={onChangeDateCalender}
       />
       {/*<RangeDatePicker  startDate='13/01/2024'    untilDate='13/12/2024'  dayHeadings={dayHeadings.current}    />*/}

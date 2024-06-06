@@ -585,14 +585,23 @@ export type ReportCustomerType = {
   collectionDate?: number;
 };
 
-export type ReportDebtTotalType = {
-  name: string;
-  code: string;
-  phone: string;
-  address: string;
-  totalDebt: number;
-  paid: number;
+export type ReportDebtCustomer = {
+  customer_name: string;
+  customer_code: string;
+  total_due: number;
+  customer_primary_contact: string | null;
+  mobile_no: string | null;
+  customer_type: string;
+  customer_group: string | null;
+  total_paid: number;
   remaining: number;
+};
+
+export type ReportDebtTotalType = {
+  total_dues: number;
+  total_paids: number;
+  remaining: number;
+  customers: ReportDebtCustomer[];
 };
 
 export type ReportKPIItemType = {
