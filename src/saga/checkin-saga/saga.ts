@@ -60,6 +60,7 @@ export function* getListProgramData(action: PayloadAction) {
       if (response?.message === 'ok') {
         yield put(checkinActions.setDataListProgram(response.result?.data));
       } else {
+        console.log('run this ???????')
         setError({
           title: null,
           message: 'Đã có lỗi xảy ra, vui lòng thử lại sau',

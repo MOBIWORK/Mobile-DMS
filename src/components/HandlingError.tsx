@@ -16,7 +16,7 @@ const HandlingError: FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
 
-  const error = useSelector(state => state.app.error);
+  const error:any = useSelector(state => state.app.error);
   const isShowModalError = useSelector(state => state.app.showModal);
 
   const open = useMemo(
@@ -29,15 +29,16 @@ const HandlingError: FC = () => {
   );
 
   const msgError = useMemo(() => {
-    if (error?.message) {
+    if (error?.message && Object.keys(error).length > 0) {
       switch (error?.status) {
         default:
           return error?.message;
       }
     } else {
-      return getLabel('someThingErr');
+      return  error;
     }
   }, [error]);
+  console.log(error,'run')
 
   const onSubmitDialog = () => {
     dispatch(setError(null));
