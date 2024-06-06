@@ -1,69 +1,148 @@
 import React, {FC} from 'react';
-import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, View} from 'react-native';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import {CommonUtils} from '../../../../utils';
-import {ImageAssets} from '../../../../assets';
-import {ReportDebtListType, ReportDebtType} from '../../../../models/types';
+import {DebtDetailItemType} from '../../../../models/types';
 import {useTranslation} from 'react-i18next';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {
+  Accordion,
+  Block,
+  AppText as Text,
+  AppImage,
+} from '../../../../components/common';
 
-const Debt: FC<DebtProps> = ({debtData}) => {
+const Debt: FC<DebtProps> = ({debtData, reportDebt}) => {
   const theme = useTheme();
   const styles = createStyleSheet(theme);
   const {t: getLabel} = useTranslation();
 
-  const renderDebtItem = (item: ReportDebtListType, index: number) => {
+  const renderDebtItem = React.useCallback((debtItem: DebtDetailItemType) => {
     return (
-      <Pressable
-        style={[
-          styles.itemContainer as any,
-          {borderBottomWidth: index !== debtData.listDebt.length - 1 ? 1 : 0},
-        ]}>
-        <View style={{maxWidth: '70%', rowGap: 10}}>
-          <View style={styles.rowItem as any}>
-            <Image
-              source={ImageAssets.CalenderIcon}
-              style={{width: 20, height: 20}}
-              resizeMode={'cover'}
-              tintColor={theme.colors.text_primary}
-            />
-            <Text style={[styles.titleText as any, {marginLeft: 8}]}>
-              {item.dateTime}
+      <Accordion
+        type="regular"
+        containerStyle={{
+          backgroundColor: theme.colors.bg_default,
+        }}
+        title={`${getLabel('day')} ${
+          debtItem?.posting_date
+            ? CommonUtils.convertDate(debtItem.posting_date)
+            : ''
+        }`}>
+        <>
+          <Block
+            direction="row"
+            justifyContent="space-between"
+            paddingVertical={8}
+            paddingHorizontal={16}>
+            <Text fontSize={16} fontWeight="500">
+              {getLabel('bill')}
             </Text>
-          </View>
-          <Text style={{color: theme.colors.text_secondary}}>
-            {item.description}
+            <Text fontSize={16} fontWeight="500">
+              {getLabel('amountOwed')}
+            </Text>
+          </Block>
+          {debtItem.details.map((item, index) => {
+            return (
+              <Block
+                key={index}
+                marginBottom={8}
+                paddingHorizontal={16}
+                block
+                color={theme.colors.bg_default}>
+                <Block
+                  direction={'row'}
+                  justifyContent={'space-between'}
+                  alignItems={'center'}>
+                  <Block direction={'row'}>
+                    <AppImage size={10} source={'BarCodeIcon'} />
+                    <Text
+                      style={{color: theme.colors.text_primary, marginLeft: 6}}>
+                      {item.name}
+                    </Text>
+                  </Block>
+                  <Text color={theme.colors.text_primary} fontSize={14}>
+                    {CommonUtils.convertToTwoDecimalPlaces(item.grand_total)}
+                  </Text>
+                </Block>
+              </Block>
+            );
+          })}
+          <Text
+            style={{marginRight: 16, marginBottom: 8}}
+            fontSize={14}
+            fontWeight={'500'}
+            textAlign={'right'}>
+            Tổng tiền:{' '}
+            <Text fontSize={16}>
+              {CommonUtils.convertToTwoDecimalPlaces(
+                debtItem.total_grand_total,
+              )}
+            </Text>
           </Text>
-        </View>
-        <Text style={styles.titleText as any}>
-          {CommonUtils.convertNumber(item.numberDebt)}
-        </Text>
-      </Pressable>
+        </>
+      </Accordion>
     );
-  };
+  }, []);
 
   return (
-    <SafeAreaView style={{marginTop: 32}} edges={['top','bottom']}>
+    <SafeAreaView edges={['bottom']}>
       <View style={styles.headerContainer as any}>
-        <Text style={{color: theme.colors.text_primary}}>
-          {getLabel('totalDebt')}
-        </Text>
-        <Text style={styles.titleText as any}>
-          {CommonUtils.convertNumber(7000000).toString()}
-        </Text>
+        <View
+          style={{
+            padding: 16,
+            width: '48%',
+            backgroundColor: theme.colors.bg_default,
+            borderRadius: 12,
+            height: 120,
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{color: theme.colors.text_primary}}>
+            {getLabel('totalDebt')}
+          </Text>
+          <Text style={styles.titleText as any}>
+            {reportDebt && reportDebt?.tong_cong_no > 0
+              ? CommonUtils.convertNumber(reportDebt.tong_cong_no).toString()
+              : 0}
+          </Text>
+        </View>
+        <View
+          style={{
+            padding: 16,
+            width: '48%',
+            backgroundColor: theme.colors.bg_default,
+            borderRadius: 12,
+            height: 120,
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{color: theme.colors.text_primary}}>
+            Tổng nợ đến hết ngày {CommonUtils.convertDate(new Date().getTime())}
+          </Text>
+          <Text style={styles.titleText as any}>
+            {reportDebt && reportDebt?.tong_cong_no > 0
+              ? CommonUtils.convertNumber(reportDebt.tong_cong_no).toString()
+              : 0}
+          </Text>
+        </View>
       </View>
-      <View style={styles.listContainer as any}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={debtData.listDebt}
-          renderItem={({item, index}) => renderDebtItem(item, index)}
-        />
-      </View>
+      <FlatList
+        // scrollEnabled={debtData.length > 1}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        initialNumToRender={8}
+        removeClippedSubviews={true}
+        data={debtData}
+        renderItem={({item}) => renderDebtItem(item)}
+      />
     </SafeAreaView>
   );
 };
 interface DebtProps {
-  debtData: ReportDebtType;
+  reportDebt?: {
+    tong_cong_no: number;
+    cong_no_den_ngay: number;
+  };
+  debtData: DebtDetailItemType[];
 }
 export default Debt;
 const createStyleSheet = (theme: ExtendedTheme) =>
@@ -88,16 +167,9 @@ const createStyleSheet = (theme: ExtendedTheme) =>
     headerContainer: {
       padding: 16,
       borderRadius: 12,
-      backgroundColor: theme.colors.bg_default,
+      // backgroundColor: theme.colors.bg_default,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-    },
-    listContainer: {
-      borderRadius: 16,
-      marginTop: 16,
-      backgroundColor: theme.colors.bg_default,
-      paddingHorizontal: 16,
-      maxHeight: '85%',
     },
   });

@@ -72,7 +72,6 @@ export default {
   all: 'All',
   company: 'Company',
   Company: 'Company',
-
   Individual: 'Individual',
   individual: 'Individual',
   loyal: 'Loyal',
@@ -179,7 +178,7 @@ export default {
   typeNote: 'Note type',
   content: 'Content',
   save: 'Save',
-  sendEmailToEveryone: 'Send emails to everyone',
+  addNoteRecipients: 'Add note recipients',
   note: 'Note',
   userNote: 'Note recipient',
   noteList: 'List of notes',
@@ -311,4 +310,9 @@ export default {
   Th: 'Th',
   Fr: 'Fr',
   Sa: 'Sa',
+  getAddress: 'Get address',
+  orderStatistics: 'Order statistics',
+  bill: 'Bill',
+  amountOwed: 'Amount owed',
+  noData: 'No data',
 };

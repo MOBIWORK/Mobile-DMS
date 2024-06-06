@@ -1,9 +1,16 @@
-import React, {FC, useMemo, useRef, useState} from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {MainLayout} from '../../../layouts';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 import ReportHeader from '../Component/ReportHeader';
 import PieChart from 'react-native-pie-chart';
-import {AppConstant} from '../../../const';
+import {ApiConstant, AppConstant} from '../../../const';
 import {
   StyleSheet,
   Text,
@@ -13,7 +20,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {CommonUtils} from '../../../utils';
-import {ReportDebtTotalType} from '../../../models/types';
+import {ReportDebtCustomer, ReportDebtTotalType} from '../../../models/types';
 import {AppBottomSheet, AppContainer} from '../../../components/common';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import FilterListComponent, {
@@ -25,6 +32,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
+import {ReportService} from '../../../services';
 
 const ReportDebt = () => {
   const theme = useTheme();
@@ -40,8 +48,11 @@ const ReportDebt = () => {
     handleContentLayout,
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
-  const [debtData, setDebtData] =
-    useState<ReportDebtTotalType[]>(ReportDebtDataFake);
+  const [debtData, setDebtData] = useState<ReportDebtTotalType | null>(null);
+  const [debtMasterData, setDebtMasterData] =
+    useState<ReportDebtTotalType | null>(null);
+  const [filterTypeLabel, setFilterTypeLabel] = useState<string>('all');
+  const [filterGroupLabel, setFilterGroupLabel] = useState<string>('all');
   const [filterTypeData, setFilterTypeData] = useState<IFilterType[]>(
     CustomerTypeFilterData,
   );
@@ -49,6 +60,8 @@ const ReportDebt = () => {
     CustomerGroupFilterData,
   );
   const [isFilterType, setFilterType] = useState<boolean>(true);
+  const [fromDate, setFromDate] = useState<number>(new Date().getTime());
+  const [toDate, setToDate] = useState<number>(new Date().getTime());
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const filerBottomSheetRef = useRef<BottomSheet>(null);
@@ -69,12 +82,19 @@ const ReportDebt = () => {
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
+      setFromDate(Number(item.value));
+      setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      setHeaderDate(getLabel(String(item.value)));
+      const {from_date, to_date} = CommonUtils.dateToDate(
+        item.value?.toString() || '',
+      );
+      setFromDate(new Date(from_date).getTime());
+      setToDate(new Date(to_date).getTime());
+      setHeaderDate(getLabel(String(item.label)));
     }
   };
 
@@ -82,31 +102,91 @@ const ReportDebt = () => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
   };
 
-  const handleItemFilter = (item: IFilterType) => {
-    if (isFilterType) {
-      const newData = filterTypeData.map(filterTypeItem => {
-        if (item.value === filterTypeItem.value) {
-          return {...filterTypeItem, isSelected: true};
-        } else {
-          return {...filterTypeItem, isSelected: false};
-        }
-      });
-      setFilterTypeData(newData);
+  const handleItemFilter = useCallback(
+    (item: IFilterType) => {
+      if (isFilterType) {
+        const newData = filterTypeData.map(filterTypeItem => {
+          if (item.value === filterTypeItem.value) {
+            return {...filterTypeItem, isSelected: true};
+          } else {
+            return {...filterTypeItem, isSelected: false};
+          }
+        });
+        setFilterTypeLabel(item.label);
+        setFilterTypeData(newData);
+      } else {
+        const newData = filterGroupData.map(filterGroupItem => {
+          if (item.value === filterGroupItem.value) {
+            return {...filterGroupItem, isSelected: true};
+          } else {
+            return {...filterGroupItem, isSelected: false};
+          }
+        });
+        setFilterGroupLabel(item.label);
+        setFilterGroupData(newData);
+      }
+
+      bottomSheetRef.current?.close();
+    },
+    [isFilterType],
+  );
+
+  useEffect(() => {
+    if (
+      filterTypeLabel !== 'all' &&
+      filterGroupLabel === 'all' &&
+      debtMasterData
+    ) {
+      const newDataDebt = debtMasterData.customers.filter(
+        itemDebtData => itemDebtData.customer_type === filterTypeLabel,
+      );
+      setDebtData({...debtMasterData, customers: newDataDebt});
+    } else if (
+      filterTypeLabel === 'all' &&
+      filterGroupLabel !== 'all' &&
+      debtMasterData
+    ) {
+      const newDataDebt = debtMasterData.customers.filter(
+        itemDebtData => itemDebtData.customer_group === filterGroupLabel,
+      );
+      setDebtData({...debtMasterData, customers: newDataDebt});
+    } else if (
+      filterTypeLabel !== 'all' &&
+      filterGroupLabel !== 'all' &&
+      debtMasterData
+    ) {
+      const newDataDebt = debtMasterData.customers.filter(
+        itemDebtData =>
+          itemDebtData.customer_group === filterGroupLabel &&
+          itemDebtData.customer_type === filterTypeLabel,
+      );
+      setDebtData({...debtMasterData, customers: newDataDebt});
     } else {
-      const newData = filterGroupData.map(filterGroupItem => {
-        if (item.value === filterGroupItem.value) {
-          return {...filterGroupItem, isSelected: true};
-        } else {
-          return {...filterGroupItem, isSelected: false};
-        }
-      });
-      setFilterGroupData(newData);
+      setDebtData(debtMasterData);
     }
-  };
+  }, [filterTypeLabel, filterGroupLabel]);
+
+  useEffect(() => {
+    const getData = async () => {
+      console.log('fromDate', fromDate, 'toDate', toDate);
+      const res: any = await ReportService.getReportDebt({
+        from_date: fromDate / 1000,
+        to_date: toDate / 1000,
+      });
+      if (res?.status === ApiConstant.STT_OK) {
+        setDebtData(res.data.result);
+        setDebtMasterData(res.data.result);
+      }
+    };
+    getData().then();
+  }, [fromDate, toDate]);
 
   const _renderChart = () => {
     const chartSize = AppConstant.WIDTH * 0.5;
-    const series = [1, 1];
+    const series = [
+      debtMasterData?.total_paids ?? 1,
+      debtMasterData?.remaining ?? 1,
+    ];
     const sliceColor = [theme.colors.success, theme.colors.warning];
 
     const NoteItem = (isPaid: boolean, money: number) => {
@@ -153,13 +233,13 @@ const ReportDebt = () => {
             }}>
             <Text style={styles.txt12}>Tổng</Text>
             <Text style={styles.txtNumberMoney}>
-              {CommonUtils.convertNumber(800000000)}
+              {CommonUtils.convertToTwoDecimalPlaces(debtData?.total_dues ?? 0)}
             </Text>
           </View>
         </View>
         <View style={{marginTop: 16, rowGap: 12}}>
-          {NoteItem(true, 400000000)}
-          {NoteItem(false, 400000000)}
+          {NoteItem(true, debtData?.total_paids ?? 0)}
+          {NoteItem(false, debtData?.remaining ?? 0)}
         </View>
       </View>
     );
@@ -209,38 +289,52 @@ const ReportDebt = () => {
       );
     };
 
-    const CustomerItem = (item: ReportDebtTotalType) => {
+    const CustomerItem = useCallback((item: ReportDebtCustomer) => {
       return (
         <View style={styles.visitContainer}>
           <View style={styles.titleVisit}>
-            <Text style={styles.txtTitleName}>{item.name}</Text>
-            <Text style={{color: theme.colors.text_primary}}>{item.code}</Text>
+            <Text style={styles.txtTitleName}>{item.customer_name}</Text>
+            <Text style={{color: theme.colors.text_primary}}>
+              {item.customer_code}
+            </Text>
           </View>
           <View style={{rowGap: 12}}>
-            <RowItem label={'Địa chỉ'} content={item.address} />
-            <RowItem label={'SĐT'} content={item.phone} />
+            <RowItem
+              label={'Địa chỉ'}
+              content={item?.customer_primary_contact ?? '---'}
+            />
+            <RowItem label={'SĐT'} content={item?.mobile_no ?? '---'} />
             <RowItem
               label={'Tổng dư nợ'}
-              content={CommonUtils.convertNumber(item.totalDebt)}
+              content={CommonUtils.convertToTwoDecimalPlaces(
+                item?.total_due ?? 0,
+              )}
             />
             <RowItem
               label={'Đã trả'}
-              content={CommonUtils.convertNumber(item.paid)}
+              content={CommonUtils.convertToTwoDecimalPlaces(
+                item?.total_paid ?? 0,
+              )}
               contentColor={theme.colors.success}
             />
             <RowItem
               label={'Còn lại'}
-              content={CommonUtils.convertNumber(item.remaining)}
+              content={CommonUtils.convertToTwoDecimalPlaces(
+                item?.remaining ?? 0,
+              )}
             />
           </View>
         </View>
       );
-    };
+    }, []);
+
     return (
       <>
-        {debtData.map((item, index) => {
-          return <View key={index}>{CustomerItem(item)}</View>;
-        })}
+        {debtData &&
+          debtData.customers?.length > 0 &&
+          debtData.customers.map((item, index) => {
+            return <View key={index}>{CustomerItem(item)}</View>;
+          })}
       </>
     );
   };
@@ -271,9 +365,7 @@ const ReportDebt = () => {
           onLayout={handleContentLayout}>
           <FilterListComponent
             title={isFilterType ? 'Loại khách hàng' : 'Nhóm khách hàng'}
-            data={
-              isFilterType ? CustomerTypeFilterData : CustomerGroupFilterData
-            }
+            data={isFilterType ? filterTypeData : filterGroupData}
             handleItem={handleItemFilter}
             isSearch={false}
             onClose={() =>
@@ -367,35 +459,6 @@ const createStyle = (theme: ExtendedTheme) =>
     } as ViewStyle,
   });
 
-const ReportDebtDataFake: ReportDebtTotalType[] = [
-  {
-    name: 'Công ty TNHH ABC',
-    code: 'KH - 123',
-    phone: '03291930182',
-    address: 'Hà Nội',
-    totalDebt: 3000000,
-    paid: 100000,
-    remaining: 2900000,
-  },
-  {
-    name: 'Công ty TNHH ABC',
-    code: 'KH - 123',
-    phone: '03291930182',
-    address: 'Hà Nội',
-    totalDebt: 3000000,
-    paid: 100000,
-    remaining: 2900000,
-  },
-  {
-    name: 'Công ty TNHH ABC',
-    code: 'KH - 123',
-    phone: '03291930182',
-    address: 'Hà Nội',
-    totalDebt: 3000000,
-    paid: 100000,
-    remaining: 2900000,
-  },
-];
 const CustomerTypeFilterData: IFilterType[] = [
   {
     label: 'all',
@@ -403,12 +466,12 @@ const CustomerTypeFilterData: IFilterType[] = [
     isSelected: true,
   },
   {
-    label: 'company',
+    label: 'Company',
     value: 2,
     isSelected: false,
   },
   {
-    label: 'individual',
+    label: 'Individual',
     value: 3,
     isSelected: false,
   },
@@ -421,7 +484,7 @@ export const CustomerGroupFilterData: IFilterType[] = [
     isSelected: true,
   },
   {
-    label: 'loyal',
+    label: 'Loyal',
     value: 2,
     isSelected: false,
   },

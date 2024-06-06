@@ -12,8 +12,6 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import {ReportService} from '../../../services';
-import isEqual from 'react-fast-compare';
-import moment from 'moment';
 const NewCustomer = () => {
   const theme = useTheme();
   const styles = createStyle(theme);
@@ -50,26 +48,19 @@ const NewCustomer = () => {
     }
   };
 
-  const onChangeDateCalender = (date: any, endDate?: any) => {
-    // console.log(moment(date).valueOf()/1000,endDate,'date,end')
-    if (!endDate) {
-      setHeaderDate(CommonUtils.convertDate(Number(date)));
-    } else {
-      setHeaderDate(
-        `${moment(date).format('DD/MM/YYYY')}  -  ${moment(endDate).format(
-          'DD/MM/YYYY',
-        )}`,
-      );
-      setFromDate(moment(date).valueOf())
-      setToDate(moment(endDate).valueOf())
-    }
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
+    setFromDate(new Date(date).getTime());
+    setToDate(new Date(date).getTime());
   };
 
   const RowItem: FC<RowProps> = ({label, content}) => {
     return (
       <View style={styles.row}>
         <Text style={styles.txt12}>{label}</Text>
-        <Text style={{color: theme.colors.text_primary}}>{content ?? ''}</Text>
+        <Text style={{color: theme.colors.text_primary, maxWidth: '60%'}}>
+          {content ?? ''}
+        </Text>
       </View>
     );
   };
@@ -87,12 +78,12 @@ const NewCustomer = () => {
   };
 
   const _renderContent = () => {
-    const Item = React.memo((item: ReportCustomerType) => {
+    const Item = React.useCallback((item: ReportCustomerType) => {
       return (
         <View style={styles.visitContainer}>
           <View style={styles.titleVisit}>
             <Text style={styles.txtTitleName}>{item.name}</Text>
-            <Text style={{color: theme.colors.text_primary}}>KH - 1233</Text>
+            <Text style={{color: theme.colors.text_primary}}>{item.code}</Text>
           </View>
           <RowItem
             label={getLabel('address')}
@@ -120,7 +111,7 @@ const NewCustomer = () => {
           />
         </View>
       );
-    }, isEqual);
+    }, []);
     return (
       <>
         {newCustomerData &&
@@ -130,8 +121,6 @@ const NewCustomer = () => {
       </>
     );
   };
-
-
 
   useEffect(() => {
     const getData = async () => {
@@ -145,11 +134,11 @@ const NewCustomer = () => {
           response.result?.list_customer.map((item: any) => {
             return {
               name: item.customer_name,
-              code: item?.customer_code ?? '',
-              address: item.address,
-              customerType: item.customer_type,
-              customerGroup: item.customer_group,
-              collectionDate: item.date_collection,
+              code: item?.customer_code ?? '---',
+              address: item?.address ?? '---',
+              customerType: item?.customer_type ?? '---',
+              customerGroup: item?.customer_group ?? '---',
+              collectionDate: item?.date_collection ?? '---',
             };
           });
         setNewCustomerData({total_new_cus: total, list_customer: listCustomer});
@@ -160,14 +149,9 @@ const NewCustomer = () => {
         });
       }
     };
-    if (headerDate === 'Chọn ngày') {
-      return undefined;
-    } else {
-      getData();
-    }
+    console.log('fromDate', 'toDate', fromDate, toDate);
+    getData();
   }, [fromDate, toDate]);
-
-  // console.log(newCustomerData,'customerDâta', 'bbbb');
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
@@ -185,7 +169,9 @@ const NewCustomer = () => {
       </AppContainer>
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
-        onChange={onChangeHeaderDate}
+        onChange={item =>
+          item.value !== 'selectDate' && onChangeHeaderDate(item)
+        }
         onChangeDateCalender={onChangeDateCalender}
       />
     </MainLayout>

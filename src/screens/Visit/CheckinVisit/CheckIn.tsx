@@ -464,7 +464,11 @@ const CheckIn = () => {
           <Block paddingTop={8}>
             <Block direction="row" alignItems="center" marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
-              <Text numberOfLines={1}> {params.kh_diachi} </Text>
+              <Text numberOfLines={1}>
+                {' '}
+                {params?.item?.customer_primary_address?.address_title ??
+                  ''}{' '}
+              </Text>
             </Block>
             <Block
               direction="row"

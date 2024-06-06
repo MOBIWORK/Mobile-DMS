@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {PayloadAction, createAction} from '@reduxjs/toolkit';
 import {OrderStateType} from './type';
-import {IDataCustomer, IOrderDetail, IOrderList} from '../../models/types';
+import {IDataCustomers, IOrderDetail, IOrderList} from '../../models/types';
 import * as Action from './type';
 import {PramsTypeOrder} from '../../services/orderService';
 
@@ -12,11 +12,12 @@ const initialState: OrderStateType = {
   message: '',
   totalItem: 0,
   item: null,
-  customerOrder : null
+  customerOrder: null,
 };
 type DataType = {
   data: IOrderList[];
   totalItem: number;
+  page_number: number;
 };
 
 function mergeArrays(arr1: any[], arr2: any[]) {
@@ -38,7 +39,10 @@ const orderSlice = createSlice({
   initialState: initialState,
   reducers: {
     setData: (state, action: PayloadAction<DataType>) => {
-      state.data = mergeArrays(state.data, action.payload.data);
+      state.data =
+        action.payload.page_number > 1
+          ? mergeArrays(state.data, action.payload.data)
+          : action.payload.data;
       state.totalItem = action.payload.totalItem;
     },
     resetDataOrder: (state, action: PayloadAction) => {
@@ -57,7 +61,7 @@ const orderSlice = createSlice({
       state.item = action.payload;
     },
     setLogoutData: (state: any) => (state = undefined),
-    setCustomerOder: (state, action: PayloadAction<IDataCustomer | null>) => {
+    setCustomerOder: (state, action: PayloadAction<IDataCustomers | null>) => {
       state.customerOrder = action.payload;
     },
   },

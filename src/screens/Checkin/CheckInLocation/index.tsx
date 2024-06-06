@@ -19,7 +19,7 @@ import {
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {RouterProp} from '../../../navigation/screen-type';
+import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import Mapbox from '@rnmapbox/maps';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {
@@ -66,7 +66,7 @@ import {goBack} from '../../../navigation/navigation-service';
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
 const CheckInLocation = () => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp>();
 
   const route = useRoute<RouterProp<'CHECKIN_LOCATION'>>();
   const theme = useTheme();
@@ -296,7 +296,7 @@ const [errCode,setErrCode] = useState<any>(null)
         code: addressObj.province.code,
         name: addressObj.province.value,
       },
-      country: 'Việt Nam',
+      // country: 'Việt Nam',
       checkin_id: route.params.data.checkin_id,
     };
     newParams.data.kh_diachi = params.address_line1;
@@ -312,11 +312,6 @@ const [errCode,setErrCode] = useState<any>(null)
         }),
       );
       completeCheckin();
-      navigation.navigate({
-        name: ScreenConstant.CHECKIN,
-        params: {item: newParams.data, isLocation: true},
-        merge: true,
-      });
     }
     dispatch(setProcessingStatus(false));
   };
@@ -326,12 +321,27 @@ const [errCode,setErrCode] = useState<any>(null)
       item.key === 'location' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    navigation.navigate(ScreenConstant.CHECKIN, {
+      item: {
+        ...route.params.data,
+        item: {
+          ...route.params.data.item,
+          customer_primary_address: {
+            address_title: `${addressObj.detail},${addressObj.ward.value},${addressObj.district.value},${addressObj.province.value}`,
+            address_line1: addressObj.detail,
+            city: addressObj.province.code,
+            county: addressObj.district.code,
+            state: addressObj.ward.code,
+          },
+        },
+      },
+    });
   };
 
   const fillAddressInit = useCallback(async () => {
     dispatch(appActions.setProcessingStatus(true));
     const customer_primary_address =
-      route?.params && route.params.data.item.customer_primary_address;
+      route?.params?.data?.item?.customer_primary_address;
     if (customer_primary_address) {
       let addressObj = {
         province: {
@@ -372,7 +382,7 @@ const [errCode,setErrCode] = useState<any>(null)
             ...addressObj,
             district: {
               ...addressObj.district,
-              value: districtSelected.ten_huyen,
+              value: districtSelected?.ten_huyen ?? '',
             },
           };
         }
@@ -387,7 +397,7 @@ const [errCode,setErrCode] = useState<any>(null)
           );
           addressObj = {
             ...addressObj,
-            ward: {...addressObj.ward, value: wardSelected.ten_xa},
+            ward: {...addressObj.ward, value: wardSelected?.ten_xa ?? ''},
           };
         }
       }
@@ -398,6 +408,20 @@ const [errCode,setErrCode] = useState<any>(null)
         };
       }
       setAddressObj(addressObj);
+      //setAddressSelected
+      setAddressSelectedData([
+        {
+          type: 'city',
+          value: addressObj.province.value,
+          id: addressObj.province.code,
+        },
+        {
+          type: 'district',
+          value: addressObj.district.value,
+          id: addressObj.district.code,
+        },
+        {type: 'ward', value: addressObj.ward.value, id: addressObj.ward.code},
+      ]);
     }
     dispatch(appActions.setProcessingStatus(false));
   }, [listDataCity.city]);
@@ -481,8 +505,14 @@ const [errCode,setErrCode] = useState<any>(null)
   }, [addressSelectedData]);
 
   useEffect(() => {
-    Keyboard.addListener('keyboardWillShow', () => setShowFooterBtn(false));
-    Keyboard.addListener('keyboardWillHide', () => setShowFooterBtn(true));
+    Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setShowFooterBtn(false),
+    );
+    Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setShowFooterBtn(true),
+    );
     return () => {
       Keyboard.removeAllListeners('keyboardWillShow');
       Keyboard.removeAllListeners('keyboardWillHide');
@@ -509,19 +539,11 @@ const [errCode,setErrCode] = useState<any>(null)
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
             onBack={() => {
-              if (route.params.screen === ScreenConstant.LIST_VISIT) {
-                navigation.navigate({
-                  name: ScreenConstant.LIST_VISIT,
-                  // params: {item: newParams.data, isLocation: true},
-                  // merge: true,
-                });
-              } else {
-                navigation.navigate({
-                  name: ScreenConstant.CHECKIN,
-                  params: {item: route.params.data, isLocation: false},
-                  merge: true,
-                });
-              }
+              route.params.type === 'CHECKIN'
+                ? navigation.goBack()
+                : navigation.navigate(ScreenConstant.AUTHORIZED, {
+                    screen: ScreenConstant.MAIN_TAB,
+                  });
             }}
             label={getLabel('location')}
           />

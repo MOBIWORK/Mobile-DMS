@@ -10,8 +10,11 @@ import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
 import {AppConstant} from '../../../const';
-import {BottomSheetScrollView, TouchableOpacity} from '@gorhom/bottom-sheet';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {
+  BottomSheetScrollView,
+  TouchableOpacity,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
 // @ts-ignore
 import CalendarPicker from 'react-native-calendar-picker';
 import {useTheme} from '@react-navigation/native';
@@ -25,13 +28,23 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   onChange,
   onChangeDateCalender,
   isKPI,
+  isNonCustomer,
 }) => {
-  const {bottom} = useSafeAreaInsets();
   const theme = useTheme();
-  // const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
   const [data, setData] = useState<IFilterType[]>(
-    isKPI ? AppConstant.ReportFilterKPIData : AppConstant.ReportFilterData,
+    isKPI
+      ? AppConstant.ReportFilterKPIData
+      : isNonCustomer
+      ? AppConstant.ReportFilterNonCustomerData
+      : AppConstant.ReportFilterData,
   );
   const [showCalender, setShowCalender] = useState<boolean>(false);
   const [startDate, setStartDateCalender] = useState<any>(null);
@@ -115,13 +128,13 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   return (
     <AppBottomSheet
       bottomSheetRef={filerBottomSheetRef}
-      // snapPointsCustom={animatedSnapPoints}
-      onClose={() => setShowCalender(false)}
-      enableDynamicSizing={true}
-
-      // @ts-ignore
-    >
-      <BottomSheetScrollView>
+      snapPointsCustom={animatedSnapPoints}
+      contentHeight={animatedContentHeight}
+      handleHeight={animatedHandleHeight}
+      onClose={() => setShowCalender(false)}>
+      <BottomSheetScrollView
+        style={{paddingBottom: 24}}
+        onLayout={handleContentLayout}>
         {showCalender ? (
           <Block>
             <Block paddingBottom={10}>
@@ -157,32 +170,28 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
                 justifyContent="space-around"
                 alignItems="center">
                 <AppInput
+                  label={'Ngày bắt đầu'}
                   value={
                     startDate === null
                       ? 'Chọn ngày'
                       : moment(startDate).format('DD/MM/YYYY')
                   }
-                  // editable={true}
-                  label="Ngày bắt đầu"
+                  editable={false}
                   styles={styles.appInput}
-                  hiddenRightIcon={startDate === null ? true : false}
-                  labelStyle={styles.labelStyles}
-                  contentStyle={styles.contentStyle(startDate)}
-                  onChangeValue={text => console.log(text)}
+                  hiddenRightIcon={startDate === null}
+                  onChangeValue={() => setStartDateCalender(null)}
                 />
                 <AppInput
+                  label={'Ngày kết thúc'}
                   value={
                     endDate === null
                       ? 'Chọn ngày'
                       : moment(endDate).format('DD/MM/YYYY')
                   }
-                  // editable={true}
+                  editable={false}
                   styles={styles.appInput}
-                  hiddenRightIcon={endDate === null ? true : false}
-                  labelStyle={styles.labelStyles}
-                  contentStyle={styles.contentStyle(endDate)}
-                  label="Ngày kết thúc"
-                  onChangeValue={text => console.log(text)}
+                  hiddenRightIcon={endDate === null}
+                  onChangeValue={() => setEndDate(null)}
                 />
               </Block>
             </Block>
@@ -199,6 +208,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
               //     //   endDate != null 
               //     //   // calculateDaysDifference(startDate, endDate) <= 7
               //     // ) 
+
               //     return false;
               //   } else {
               //     return true;
@@ -254,6 +264,7 @@ interface ReportFilterBottomSheetProps {
   onChange: (item: IFilterType) => void;
   onChangeDateCalender: (date: any, endDate?: any) => void;
   isKPI?: boolean;
+  isNonCustomer?: boolean;
 }
 
 const styles = StyleSheet.create({

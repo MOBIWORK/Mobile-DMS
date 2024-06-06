@@ -18,7 +18,6 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   NativeScrollEvent,
@@ -49,7 +48,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {
   backgroundErrorListener,
@@ -82,7 +81,6 @@ import {CommonUtils} from '../../../utils';
 import {shallowEqual, useDispatch} from 'react-redux';
 // @ts-ignore
 import StringFormat from 'string-format';
-import MarkerItem from '../../../components/common/MarkerItem';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
 import ModalAlert from './Component/ModalAlert';
@@ -108,7 +106,6 @@ export interface ModalUpdateType {
 
 const ListVisit = () => {
   const {colors} = useTheme();
-  const {bottom} = useSafeAreaInsets();
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
@@ -196,10 +193,8 @@ const ListVisit = () => {
           } else {
             setModalErrorGPS(true);
           }
-
         } else {
           handleCompareDistance(item, type);
-
         }
       } else {
         if (Platform.OS === 'android') {
@@ -241,12 +236,9 @@ const ListVisit = () => {
     if (listCustomer && customerDataSort && customerDataSort.length > 0) {
       return customerDataSort.filter(item => item.is_checkin).length;
     } else {
-      return '';
+      return 0;
     }
   }, [listCustomer, customerDataSort]);
-
-  // const checkGPS = useCallback(() => {}, []);
-
   const onRefreshData = useCallback(async () => {
     dispatch(appActions.setSearchVisitValue(''));
     try {
@@ -470,11 +462,22 @@ const ListVisit = () => {
                     handleOpenMap={() =>
                       startTransition(() => presentMap(item))
                     }
-                    // onPress={handleBackground}
                   />
                 )}
                 onEndReached={onEndReachedThreshold}
                 onEndReachedThreshold={0.5}
+                ListEmptyComponent={
+                  <View
+                    style={{
+                      alignSelf: 'center',
+                      height: AppConstant.HEIGHT * 0.5,
+                      justifyContent: 'center',
+                    }}>
+                    <Text style={{color: colors.text_primary, fontSize: 20}}>
+                      {getLabel('noVisit')}
+                    </Text>
+                  </View>
+                }
               />
             )}
           </Block>
@@ -574,9 +577,7 @@ const ListVisit = () => {
         };
         setCustomerData([...sortedData(), ...noLocationCustomer]);
       } else {
-        startEffect(() => {
-          getCustomer();
-        });
+        setCustomerData([]);
       }
     });
   };
@@ -627,7 +628,6 @@ const ListVisit = () => {
   const getData = async () => {
     setLoading(true);
     await getCustomerRoute();
-    // await sortDataCustomer(distanceFilterValue);
     await getDataGroup();
     setLoading(false);
   };
@@ -658,11 +658,14 @@ const ListVisit = () => {
             ? CommonUtils.dateToDate('monthly')
             : undefined;
         const params: IListVisitParams = {
-          router: filterParams?.router && filterParams.router.channel_code,
-          // status:
-          //   filterParams?.status && filterParams.status === getLabel('visited')
-          //     ? 'active'
-          //     : 'lock',
+          router: filterParams?.router ? filterParams.router.channel_code : '',
+          checkin_status:
+            filterParams?.status && filterParams.status === getLabel('visited')
+              ? 'is_checkin'
+              : filterParams?.status &&
+                filterParams.status === getLabel('notVisited')
+              ? 'not_checkin'
+              : 'all',
           order_by:
             filterParams?.order_by && filterParams.order_by === 'A -> Z'
               ? 'asc'

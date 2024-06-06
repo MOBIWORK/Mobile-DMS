@@ -15,6 +15,7 @@ import {goBack, pop} from '../../navigation/navigation-service';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
+    console.log('parammm', action.payload);
     const {data, status}: KeyAbleProps = yield call(
       CheckinService.getNoteCheckin,
       action.payload,

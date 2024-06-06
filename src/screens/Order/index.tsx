@@ -313,15 +313,15 @@ const OrderList = () => {
         from_date: fromDate > 0 ? fromDate / 1000 : undefined,
         to_date: toDate > 0 ? toDate / 1000 : undefined,
         status: filterStatus,
-        page_number: page,
-        page_size: pageSize,
+        page_number: filterStatus || fromDate > 0 ? undefined : page,
+        page_size: filterStatus || fromDate > 0 ? undefined : pageSize,
       }),
     );
   };
 
   useEffect(() => {
     fetchData();
-  }, [page, filterStatus]);
+  }, [page, filterStatus, toDate, fromDate]);
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>

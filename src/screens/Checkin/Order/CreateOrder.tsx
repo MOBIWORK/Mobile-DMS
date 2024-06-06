@@ -494,8 +494,7 @@ const CreateOrder = () => {
                     discount_item_percent:
                       item?.discount_item_percent > 0 &&
                       !element.has_pricing_rule
-                        ? item.discount_item_percent &&
-                          !element.has_pricing_rule
+                        ? item.discount_item_percent
                         : 0,
                     discount_item_amount:
                       item?.discount_item_amount > 0 &&
@@ -675,7 +674,7 @@ const CreateOrder = () => {
               const VAT_item_amount =
                 (item.rate_tax_item / 100) *
                 (intoMoney - (intoMoney * discount.discount_percentage) / 100);
-              // VAT(sp) = %VAT x (thành tiền - chiết khấu(net))
+              // VAT(sp) = %VAT x (thành tiền - chiết khấu đơn(net))
               return {
                 ...item,
                 total_item_tax: VAT_item_amount,
