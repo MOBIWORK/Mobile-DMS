@@ -179,19 +179,35 @@ const ListVisit = () => {
   const currentSelect = useRef<VisitListItemType>();
   const isEnable = useRef<boolean>(false);
 
-  const handleEnabledPressed = useCallback(async () => {
-    if (Platform.OS === 'android') {
-      const checkEnabled: boolean = await isLocationEnabled();
-      console.log('checkEnabled', checkEnabled);
-
-      isEnable.current = checkEnabled;
-      if (checkEnabled === true) {
-        setModalErrorGPS(false);
+  const handleEnabledPressed = useCallback(
+    async (item?: VisitListItemType, type?: boolean) => {
+      if (!item || !type) {
+        if (Platform.OS === 'android') {
+          const checkEnabled: boolean = await isLocationEnabled();
+          console.log('checkEnabled', checkEnabled);
+          isEnable.current = checkEnabled;
+          if (checkEnabled === true) {
+            setModalErrorGPS(false);
+          } else {
+            setModalErrorGPS(true);
+          }
+        }
       } else {
-        setModalErrorGPS(true);
+        if (Platform.OS === 'android') {
+          const checkEnabled: boolean = await isLocationEnabled();
+          console.log('checkEnabled', checkEnabled);
+          isEnable.current = checkEnabled;
+          if (checkEnabled === true) {
+            setModalErrorGPS(false);
+            handleCompareDistance(item!, type);
+          } else {
+            setModalErrorGPS(true);
+          }
+        }
       }
-    }
-  }, [isEnable.current]);
+    },
+    [isEnable.current],
+  );
   const backgroundErrorListener = useCallback(
     (errorCode: number) => {
       // Handle background location errors
@@ -222,9 +238,11 @@ const ListVisit = () => {
   }, [listCustomer, customerDataSort]);
 
   const onGetCurrentPositionAgain = () => {
-    setModalErrorGPS(false);
+    setModalError(false);
     handleRegainLocation();
   };
+
+  const checkGPS = useCallback(() => {}, []);
 
   const onRefreshData = useCallback(async () => {
     dispatch(appActions.setSearchVisitValue(''));
@@ -409,7 +427,7 @@ const ListVisit = () => {
                   <VisitItem
                     item={item}
                     handlePressDetail={onPressToDetail}
-                    handlePressing={handleCompareDistance}
+                    handlePressing={handleEnabledPressed}
                     handleOpenMap={() =>
                       startTransition(() => presentMap(item))
                     }
@@ -1024,7 +1042,7 @@ const ListVisit = () => {
                 direction="row">
                 <TouchableOpacity
                   style={styles.buttonModal}
-                  onPress={onGetCurrentPositionAgain}>
+                  onPress={() => handleEnabledPressed()}>
                   <Text colorTheme="white" fontSize={16} fontWeight="500">
                     {getLabel('close')}
                   </Text>
