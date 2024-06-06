@@ -55,10 +55,10 @@ export const SalesItem: ItemProps[] = [
     icon: 'EmptyOrderCustomer',
     onPress: () => navigate(ScreenConstant.NON_ORDER_CUSTOMER),
   },
-  {
-    title: 'Báo cáo kết quả bán hàng',
-    content: 'Hiển thị KPI, thống kê phiếu đặt hàng ',
-    icon: 'ReportOrder',
-    onPress: () => navigate(ScreenConstant.REPORT_SCREEN),
-  },
+  // {
+  //   title: 'Báo cáo kết quả bán hàng',
+  //   content: 'Hiển thị KPI, thống kê phiếu đặt hàng ',
+  //   icon: 'ReportOrder',
+  //   onPress: () => navigate(ScreenConstant.REPORT_SCREEN),
+  // },
 ];

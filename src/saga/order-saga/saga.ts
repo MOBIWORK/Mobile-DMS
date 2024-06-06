@@ -1,5 +1,5 @@
 import {PayloadAction} from '@reduxjs/toolkit/dist/createAction';
-import {all, call, put} from 'typed-redux-saga';
+import {call, put} from 'typed-redux-saga';
 import {orderAction} from '../../redux-store/order-reducer/reducer';
 import {OrderService} from '../../services';
 import {KeyAbleProps} from '../../models/types';
@@ -26,12 +26,13 @@ export function* onGetOrders(action: PayloadAction) {
         OrderService.get,
         action.payload,
       );
-      yield put(orderAction.setLoading());
+      // yield put(orderAction.setLoading());
       if (status === ApiConstant.STT_OK) {
         yield put(
           orderAction.setData({
             data: data.result?.data,
             totalItem: data.result.total,
+            page_number: action.payload.page_number ?? 0,
           }),
         );
       }

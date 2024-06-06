@@ -75,7 +75,6 @@ export default {
   all: 'Tất cả',
   company: 'Công ty',
   Company: 'Công ty',
-
   Individual: 'Cá nhân',
   individual: 'Cá nhân',
 
@@ -183,7 +182,7 @@ export default {
   typeNote: 'Loại ghi chú',
   content: 'Nội dung',
   save: 'Lưu',
-  sendEmailToEveryone: 'Gửi email đến mọi người',
+  addNoteRecipients: 'Thêm người nhận ghi chú',
   note: 'Ghi chú',
   someThingErr: 'Đã có lỗi xảy ra, vui lòng thử lại',
   userNote: 'Người nhận ghi chú',
@@ -310,7 +309,6 @@ export default {
   addressGet: 'Địa chỉ giao hàng',
   addressOrder: 'Địa chỉ đặt hàng',
   mainAddress: 'Địa chỉ chính',
-
   Su: 'CN',
   Mo: 'T2',
   Tu: 'T3',
@@ -318,6 +316,9 @@ export default {
   Th: 'T5',
   Fr: 'T6',
   Sa: 'T7',
-
   getAddress: 'Lấy địa chỉ',
+  orderStatistics: 'Thống kê phiếu đặt hàng',
+  bill: 'Hóa đơn',
+  amountOwed: 'Số tiền nợ',
+  noData: ' Không có dữ liệu',
 };

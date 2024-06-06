@@ -83,6 +83,7 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     name: 'Vị trí',
     screenName: 'CHECKIN_LOCATION',
     backgroundColor: 'redBackground',
+    type: 'CHECKIN',
     key: 'location',
   },
   {

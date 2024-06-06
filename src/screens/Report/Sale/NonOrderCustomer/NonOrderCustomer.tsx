@@ -1,5 +1,5 @@
 import {StyleSheet, ScrollView, ViewStyle} from 'react-native';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {Block} from '../../../../components/common';
 import {AppTheme, useTheme} from '../../../../layouts/theme';
@@ -25,55 +25,56 @@ const NonOrderCustomer = () => {
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
 
-  const [from_date, setFromDate] = useState<number>(new Date().getTime());
-  const [to_date, setToDate] = useState<number>(new Date().getTime());
+  const [date, setDate] = useState<number>(new Date().getTime());
+  // const [from_date, setFromDate] = useState<number>(new Date().getTime());
+  // const [to_date, setToDate] = useState<number>(new Date().getTime());
 
-  const generateFakeData = useCallback(() => {
-    const fakeData: IDataNonOrderCustomer[] = [];
+  // const generateFakeData = useCallback(() => {
+  //   const fakeData: IDataNonOrderCustomer[] = [];
+  //
+  //   for (let i = 0; i < 15; i++) {
+  //     const data = {
+  //       nameCompany: `Công ty ${i + 1}`,
+  //       customerCode: generateRandomAlphaNumeric(6),
+  //       address: `${i + 1}`,
+  //       lastTimeOrder: generateRandomPastTime(),
+  //     };
+  //     fakeData.push(data);
+  //   }
+  //
+  //   return fakeData;
+  // }, []);
 
-    for (let i = 0; i < 15; i++) {
-      const data = {
-        nameCompany: `Công ty ${i + 1}`,
-        customerCode: generateRandomAlphaNumeric(6),
-        address: `${i + 1}`,
-        lastTimeOrder: generateRandomPastTime(),
-      };
-
-      fakeData.push(data);
-    }
-
-    return fakeData;
-  }, []);
-
-  const generateRandomAlphaNumeric = useCallback((length: number) => {
-    const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(
-        Math.floor(Math.random() * characters.length),
-      );
-    }
-    return result;
-  }, []);
-
-  const generateRandomPastTime = useCallback(() => {
-    const currentDate = new Date();
-    const pastDate = new Date(currentDate);
-    pastDate.setDate(currentDate.getDate() - Math.floor(Math.random() * 365));
-
-    const day = String(pastDate.getDate()).padStart(2, '0');
-    const month = String(pastDate.getMonth() + 1).padStart(2, '0');
-    const year = pastDate.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  }, []);
-  const fakeDataList = useMemo(() => generateFakeData(), []);
+  // const generateRandomAlphaNumeric = useCallback((length: number) => {
+  //   const characters =
+  //     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //   let result = '';
+  //   for (let i = 0; i < length; i++) {
+  //     result += characters.charAt(
+  //       Math.floor(Math.random() * characters.length),
+  //     );
+  //   }
+  //   return result;
+  // }, []);
+  //
+  // const generateRandomPastTime = useCallback(() => {
+  //   const currentDate = new Date();
+  //   const pastDate = new Date(currentDate);
+  //   pastDate.setDate(currentDate.getDate() - Math.floor(Math.random() * 365));
+  //
+  //   const day = String(pastDate.getDate()).padStart(2, '0');
+  //   const month = String(pastDate.getMonth() + 1).padStart(2, '0');
+  //   const year = pastDate.getFullYear();
+  //
+  //   return `${day}/${month}/${year}`;
+  // }, []);
+  // const fakeDataList = useMemo(() => generateFakeData(), []);
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-      setFromDate(Number(item.value));
-      setToDate(Number(item.value));
+      setDate(Number(item.value));
+      // setFromDate(Number(item.value));
+      // setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
@@ -82,15 +83,22 @@ const NonOrderCustomer = () => {
       const {from_date, to_date} = CommonUtils.dateToDate(
         item.value?.toString() || '',
       );
-      setFromDate(new Date(from_date).getTime());
-      setToDate(new Date(to_date).getTime());
+      // setFromDate(new Date(from_date).getTime());
+      // setToDate(new Date(to_date).getTime());
       setHeaderDate(getLabel(String(item.label)));
     }
   };
 
   const onChangeDateCalender = (date: any) => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
+    setDate(new Date(date).getTime());
+    // setFromDate(new Date(date).getTime());
+    // setToDate(new Date(date).getTime());
   };
+
+  useEffect(() => {
+    console.log('datee', date);
+  }, [date]);
 
   return (
     <SafeAreaView edges={['bottom', 'top']} style={styles.root}>
@@ -109,14 +117,17 @@ const NonOrderCustomer = () => {
       />
       <ScrollView showsVerticalScrollIndicator={false}>
         <Block paddingHorizontal={8}>
-          {fakeDataList.map((item, index) => {
-            return <CardNonOrder key={index} item={item} />;
-          })}
+          {/*{fakeDataList.map((item, index) => {*/}
+          {/*  return <CardNonOrder key={index} item={item} />;*/}
+          {/*})}*/}
         </Block>
       </ScrollView>
       <ReportFilterBottomSheet
+        isNonCustomer
         filerBottomSheetRef={filerBottomSheetRef}
-        onChange={onChangeHeaderDate}
+        onChange={item =>
+          item.value !== 'selectDate' && onChangeHeaderDate(item)
+        }
         onChangeDateCalender={onChangeDateCalender}
       />
     </SafeAreaView>

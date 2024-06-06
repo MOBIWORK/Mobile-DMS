@@ -1,65 +1,77 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { MainLayout } from '../../../layouts';
+import React, {useEffect, useRef, useState} from 'react';
+import {MainLayout} from '../../../layouts';
 import ReportHeader from '../Component/ReportHeader';
-import { AppContainer, SvgIcon } from '../../../components/common';
-import { ExtendedTheme, useTheme } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FlatList, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import {AppContainer, SvgIcon} from '../../../components/common';
+import {ExtendedTheme, useTheme} from '@react-navigation/native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
-import { CommonUtils } from '../../../utils';
-import { ApiConstant, AppConstant } from '../../../const';
-import { useTranslation } from 'react-i18next';
+import {CommonUtils} from '../../../utils';
+import {ApiConstant, AppConstant} from '../../../const';
+import {useTranslation} from 'react-i18next';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { IFilterType } from '../../../components/common/FilterListComponent';
+import {IFilterType} from '../../../components/common/FilterListComponent';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import RouterResutlLoading from './Loading/RouterResutlLoading';
-import { ReportService } from '../../../services';
-import { KeyAbleProps, ReportRouterResultType } from '../../../models/types';
-
-
-
+import {ReportService} from '../../../services';
+import {KeyAbleProps, ReportRouterResultType} from '../../../models/types';
 
 const RouteResult = () => {
-
   const theme = useTheme();
-  const { bottom } = useSafeAreaInsets();
-  const { t: getLabel } = useTranslation();
+  const {bottom} = useSafeAreaInsets();
+  const {t: getLabel} = useTranslation();
   const styles = createStyle(theme);
   const [isLoading, setLoading] = useState<boolean>(false);
   const filerBottomSheetRef = useRef<BottomSheet>(null);
-  const [reportRouter ,setReportRouter] = useState<ReportRouterResultType | any>();
+  const [reportRouter, setReportRouter] = useState<
+    ReportRouterResultType | any
+  >();
   const [headerDate, setHeaderDate] = useState<string>(
     `${getLabel('today')}, ${CommonUtils.convertDate(new Date().getTime())}`,
   );
-  const [from_date,setFromDate] = useState<number>(new Date().getTime());
-  const [to_date,setToDate] = useState<number>(new Date().getTime());
+  const [from_date, setFromDate] = useState<number>(new Date().getTime());
+  const [to_date, setToDate] = useState<number>(new Date().getTime());
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-      setFromDate(Number(item.value))
-      setToDate(Number(item.value))
+      setFromDate(Number(item.value));
+      setToDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      const {from_date ,to_date} = CommonUtils.dateToDate(item.value?.toString() || "");
+      const {from_date, to_date} = CommonUtils.dateToDate(
+        item.value?.toString() || '',
+      );
       setFromDate(new Date(from_date).getTime());
       setToDate(new Date(to_date).getTime());
       setHeaderDate(getLabel(String(item.label)));
     }
   };
-  
+
   const onChangeDateCalender = (date: any) => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
+    setFromDate(new Date(date).getTime());
+    setToDate(new Date(date).getTime());
   };
-
 
   const _renderProcess = () => {
     return (
       <View style={styles.processContainer}>
         <ProgressCircle
-          percent={reportRouter ?  reportRouter.so_kh_da_vt / reportRouter.so_kh_phai_vt : 0}
+          percent={
+            reportRouter
+              ? reportRouter.so_kh_da_vt / reportRouter.so_kh_phai_vt
+              : 0
+          }
           radius={80}
           borderWidth={30}
           color={theme.colors.action}
@@ -67,13 +79,13 @@ const RouteResult = () => {
           bgColor={theme.colors.bg_default}>
           <View>
             <Text style={[styles.textProcess]}>
-              {reportRouter ? `${reportRouter.so_kh_da_vt} / ${reportRouter.so_kh_phai_vt}` : ""}
+              {reportRouter
+                ? `${reportRouter.so_kh_da_vt} / ${reportRouter.so_kh_phai_vt}`
+                : ''}
             </Text>
           </View>
         </ProgressCircle>
-        <Text style={[styles.checkinDesc]}>
-          {getLabel("numberToVisit")}
-        </Text>
+        <Text style={[styles.checkinDesc]}>{getLabel('numberToVisit')}</Text>
       </View>
     );
   };
@@ -83,11 +95,11 @@ const RouteResult = () => {
       <View
         style={[
           styles.processContainer,
-          { flexDirection: 'row', justifyContent: 'flex-start' },
+          {flexDirection: 'row', justifyContent: 'flex-start'},
         ]}>
         <SvgIcon source={'Money'} size={40} />
-        <View style={{ rowGap: 4, marginLeft: 8 }}>
-          <Text style={styles.txt12}>{getLabel("sales")}</Text>
+        <View style={{rowGap: 4, marginLeft: 8}}>
+          <Text style={styles.txt12}>{getLabel('sales')}</Text>
           <Text style={styles.txt18}>
             {CommonUtils.convertNumber(reportRouter?.doanh_so || 0)}
           </Text>
@@ -101,56 +113,61 @@ const RouteResult = () => {
       return (
         <View style={styles.visitReportContainer}>
           <Text style={styles.txt12}>{item.label}</Text>
-          <Text style={styles.txt18}>{reportRouter ? reportRouter[item.keyData] : ""}</Text>
+          <Text style={styles.txt18}>
+            {reportRouter ? reportRouter[item.keyData] : ''}
+          </Text>
         </View>
       );
     };
     return (
       <FlatList
         data={VisitReportData}
-        renderItem={({ item }) => Item(item)}
+        renderItem={({item}) => Item(item)}
         numColumns={2}
       />
     );
   };
 
+  const fetchData = async () => {
+    setLoading(true);
+    const {status, data}: KeyAbleProps = await ReportService.getRouterResult({
+      from_date: from_date / 1000,
+      to_date: to_date / 1000,
+    });
+    setLoading(false);
+    if (status === ApiConstant.STT_OK) {
+      setReportRouter(data.result);
+    }
+  };
 
-  const fetchData = async () =>{
-      setLoading(true);
-      const {status,data}:KeyAbleProps = await ReportService.getRouterResult({
-        from_date : from_date / 1000,
-        to_date : to_date / 1000
-      })
-      setLoading(false);
-      if(status === ApiConstant.STT_OK) {
-        setReportRouter(data.result)
-      }
-  }
-
-  useEffect(()=>{
-    fetchData()
-  },[from_date,to_date])
+  useEffect(() => {
+    fetchData();
+  }, [from_date, to_date]);
 
   return (
-    <MainLayout style={{ backgroundColor: theme.colors.bg_neutral }}>
+    <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>
       <ReportHeader
-        title={getLabel("resultRouter")}
+        title={getLabel('resultRouter')}
         date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&
           filerBottomSheetRef.current.snapToIndex(0)
         }
       />
-      {isLoading ? <RouterResutlLoading /> :
-        <AppContainer style={{ marginBottom: bottom }}>
+      {isLoading ? (
+        <RouterResutlLoading />
+      ) : (
+        <AppContainer style={{marginBottom: bottom}}>
           {_renderProcess()}
           {_renderSales()}
           {_renderVisitReport()}
         </AppContainer>
-      }
+      )}
       <ReportFilterBottomSheet
         filerBottomSheetRef={filerBottomSheetRef}
-        onChange={onChangeHeaderDate}
+        onChange={item =>
+          item.value !== 'selectDate' && onChangeHeaderDate(item)
+        }
         onChangeDateCalender={onChangeDateCalender}
       />
     </MainLayout>
@@ -205,23 +222,22 @@ type VisitReportDataType = {
 const VisitReportData: VisitReportDataType[] = [
   {
     label: 'Viếng thăm đúng tuyến',
-    keyData: "vt_dung_tuyen",
+    keyData: 'vt_dung_tuyen',
   },
   {
     label: 'Viếng thăm khác tuyến',
-    keyData: "vt_ngoai_tuyen",
+    keyData: 'vt_ngoai_tuyen',
   },
   {
     label: 'Viếng thăm không có đơn',
-    keyData: "vieng_tham_ko_don",
+    keyData: 'vieng_tham_ko_don',
   },
   {
     label: 'Viếng thăm có hình ảnh',
-    keyData: "vieng_tham_co_anh",
-
+    keyData: 'vieng_tham_co_anh',
   },
   {
     label: 'Viếng thăm không có hình ảnh',
-    keyData: "vieng_tham_ko_anh",
+    keyData: 'vieng_tham_ko_anh',
   },
 ];

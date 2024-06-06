@@ -585,14 +585,23 @@ export type ReportCustomerType = {
   collectionDate?: number;
 };
 
-export type ReportDebtTotalType = {
-  name: string;
-  code: string;
-  phone: string;
-  address: string;
-  totalDebt: number;
-  paid: number;
+export type ReportDebtCustomer = {
+  customer_name: string;
+  customer_code: string;
+  total_due: number;
+  customer_primary_contact: string | null;
+  mobile_no: string | null;
+  customer_type: string;
+  customer_group: string | null;
+  total_paid: number;
   remaining: number;
+};
+
+export type ReportDebtTotalType = {
+  total_dues: number;
+  total_paids: number;
+  remaining: number;
+  customers: ReportDebtCustomer[];
 };
 
 export type ReportKPIItemType = {
@@ -697,6 +706,8 @@ export type ItemProductOrder = {
   amount: number;
   discount_amount: number;
   discount_percentage: number;
+  item_tax_template: string;
+  item_tax_rate: number;
 };
 
 export type IOrderDetail = {
@@ -889,7 +900,7 @@ export type IKpi = {
 };
 
 export type IReportSales = {
-  Kpi: {
+  kpi: {
     dat_duoc: number;
     phan_tram_thuc_hien: number;
   };
@@ -962,6 +973,17 @@ export type OrderDetailItemType = {
   grand_total: number;
 };
 
+export type DebtDetailItemType = {
+  posting_date: string;
+  details: [
+    {
+      name: string;
+      grand_total: number;
+    },
+  ];
+  total_grand_total: number;
+};
+
 export type IReportVisitDetail = {
   don_hang: {
     so_don_trong_thang: number;
@@ -969,6 +991,11 @@ export type IReportVisitDetail = {
     danh_sach_don: OrderDetailItemType[];
   };
   ton_kho: ReportInventoryType[];
+  cong_no: {
+    tong_cong_no: number;
+    cong_no_den_ngay: number;
+  };
+  cong_no_chi_tiet: DebtDetailItemType[];
 };
 
 export type IOrderDetailItem = {

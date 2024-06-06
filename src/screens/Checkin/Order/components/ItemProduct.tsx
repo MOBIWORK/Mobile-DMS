@@ -60,7 +60,7 @@ const ItemProduct = ({
               {getLabel('VAT')} (%)
             </Text>
             <Text style={styles.textIf(colors.text_primary)}>
-             
+
             </Text>
           </View>
         )} */}
@@ -104,7 +104,7 @@ const ItemProduct = ({
                 {getLabel('discount')}(VND)
               </Text>
               <Text style={styles.textIf(colors.text_primary)}>
-                {percentage_discount?.toString()} %
+                {percentage_discount.toString()} %
                 <Text
                   fontSize={12}
                   colorTheme="text_secondary"

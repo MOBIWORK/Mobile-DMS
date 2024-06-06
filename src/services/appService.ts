@@ -55,7 +55,7 @@ export type CheckinData = {
   createdByEmail?: string;
   createByName?: string;
   item: VisitListItemType;
-  isDetail?:boolean
+  isDetail?: boolean;
 };
 
 export type DMSConfigMobile = {
@@ -79,7 +79,7 @@ export type DMSConfigMobile = {
   soluong_anh: number;
   batbuoc_ghichu: number;
   doctype: string;
-  config_map_by_vgm:VGMType[]
+  config_map_by_vgm: VGMType[];
 };
 
 type VGMType = {
@@ -132,6 +132,7 @@ export type IListVisitParams = {
   customer_group?: string;
   customer_type?: string;
   search_key?: string;
+  checkin_status?: string;
 };
 
 export type Account = {
@@ -183,8 +184,11 @@ export const postChecking = (data: CheckinData) =>
     .post(ApiConstant.POST_CHECKIN, data)
     .then(res => res.data);
 
-export const checkOut = (checkin_id: string,customer_id:any) =>
-  createApi().post(ApiConstant.CHECK_OUT, {checkin_id: checkin_id,customer_id:customer_id});
+export const checkOut = (checkin_id: string, customer_id: any) =>
+  createApi().post(ApiConstant.CHECK_OUT, {
+    checkin_id: checkin_id,
+    customer_id: customer_id,
+  });
 
 export const getCustomer = () =>
   createApi()
@@ -271,11 +275,11 @@ export const changePassword = (data: Account) =>
 
 export const getNotification = () => {
   return createApi()
-  .get(ApiConstant.GET_NOTIFICATION)
-  .then(res => res.data)
-}
-export const getNotificationDetail = (name:any) => {
+    .get(ApiConstant.GET_NOTIFICATION)
+    .then(res => res.data);
+};
+export const getNotificationDetail = (name: any) => {
   return createApi()
-  .get(ApiConstant.GET_NOTIFICATION_DETAIL, {name: name})
-  .then(res => res.data)
-}
+    .get(ApiConstant.GET_NOTIFICATION_DETAIL, {name: name})
+    .then(res => res.data);
+};

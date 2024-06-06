@@ -64,23 +64,19 @@ const VisitItem: FC<VisitItemProps> = ({
     let location: LocationProps = JSON.parse(
       item.customer_location_primary != null && item.customer_location_primary,
     );
-    let distance:any
-    if(Object.keys(currentLocation).length > 0 && item.customer_location_primary != null){
+    let distance: any;
+    if (Object.keys(currentLocation).length > 0 && location) {
       distance = calculateDistance(
         currentLocation?.coords?.latitude,
         currentLocation?.coords?.longitude,
         location?.lat,
         location?.long,
       );
-    }else{
-      distance = NaN
+    } else {
+      distance = NaN;
     }
-    
     return {location, distance};
   }, [item.customer_location_primary, currentLocation, isEnable.current]);
-
-
-
 
   const statusItem = React.useCallback(
     (status: boolean) => {

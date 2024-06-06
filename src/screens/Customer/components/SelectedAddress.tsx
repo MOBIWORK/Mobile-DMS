@@ -80,10 +80,6 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
     [data.length],
   );
 
-  useEffect(() => {
-    console.log('dataaaa', data);
-  }, [data]);
-
   const ListAddressSelected = (item: AddressSelected, isBorder: boolean) => {
     return (
       <Block
@@ -224,14 +220,13 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
     <MainLayout style={{paddingHorizontal: 16}}>
       <Block
         direction="row"
-        // paddingHorizontal={16}
         alignItems="center"
         justifyContent="flex-start"
         width={'100%'}>
         <TouchableOpacity
           onPress={() => {
-            setData([]);
             setScreen('');
+            setData([]);
           }}>
           <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
         </TouchableOpacity>

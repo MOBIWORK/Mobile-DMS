@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -14,12 +15,18 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
-  Block,
 } from '../../../components/common';
 import {TextInput} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
-import {FlatList, Pressable, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  Keyboard,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {StaffType} from '../../../models/types';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterListComponent, {
@@ -40,7 +47,7 @@ import {ICON_TYPE} from '../../../const/app.const';
 import {dispatch} from '../../../utils/redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import InputViewCompoment from './components/InputView';
-import isEqual from 'react-fast-compare';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const AddNote = () => {
   const theme = useTheme();
@@ -61,26 +68,30 @@ const AddNote = () => {
   const [dataType, setDataType] = useState<IFilterType[]>([]);
   const [sentEmail, setSendEmail] = useState<boolean>(false);
   const [staffData, setStaffData] = useState<StaffType[]>([]);
+  const staffMasterData = useRef<StaffType[]>([]);
   const [selectPersonal, setSelectPersonal] = useState<StaffType[]>([]);
   const [isPending, startTransition] = useTransition();
   const [height, setHeight] = useState(80);
 
   const onCreateNoteCheckin = async () => {
+    Keyboard.dismiss();
     try {
-      startTransition(() => {
-        const objectData = {
-          title: title?.label || '',
-          content: content,
-          custom_checkin_id: dataCheckin.checkin_id,
-          email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
-        };
-        CheckinService.createNote(objectData);
-      });
+      dispatch(appActions.setProcessingStatus(true));
+      const objectData = {
+        title: title?.label || '',
+        content: content,
+        custom_checkin_id: dataCheckin.checkin_id,
+        email: sentEmail ? selectPersonal.map(item => item.user_id) : [],
+      };
+      const res: any = await CheckinService.createNote(objectData);
+      if (res?.status === ApiConstant.STT_CREATED) {
+        dispatch(checkinActions.getListNoteCheckin(dataCheckin.checkin_id));
+        navigation.goBack();
+      }
     } catch (er) {
       console.log(er);
     } finally {
-      dispatch(checkinActions.getListNoteCheckin(dataCheckin.checkin_id));
-      navigation.goBack();
+      dispatch(appActions.setProcessingStatus(false));
     }
   };
 
@@ -88,7 +99,7 @@ const AddNote = () => {
     return title?.label ? false : true;
   }, [title]);
 
-  const renderItem = React.memo((item: StaffType) => {
+  const renderItem = React.useCallback((item: StaffType) => {
     return (
       <View style={styles.viewItem}>
         <View style={styles.flex}>
@@ -101,44 +112,53 @@ const AddNote = () => {
         <View style={{paddingRight: 8}}>
           <AppCheckBox
             styles={{borderRadius: 10}}
-            status={item.isCheck ? true : false}
-            onChangeValue={() =>
-              onCheckStaff(item, item.isCheck ? item.isCheck : false)
-            }
+            status={item.isCheck ?? false}
+            onChangeValue={() => onCheckStaff(item)}
           />
         </View>
       </View>
     );
-  }, isEqual);
+  }, []);
 
-  const onCheckStaff = (staff: StaffType, isCheck: boolean) => {
-    const newArr = staffData.map(item =>
-      item.user_id == staff.user_id ? {...item, isCheck: !isCheck} : item,
-    );
-    const arrStf = newArr.filter(item => item.isCheck == true);
-    setStaffData(newArr);
-    setSelectPersonal(arrStf);
-  };
+  const onCheckStaff = useCallback(
+    (staff: StaffType) => {
+      const newArr = staffMasterData.current.map(item =>
+        item.user_id === staff.user_id
+          ? {...item, isCheck: !item.isCheck}
+          : item,
+      );
+      const arrStf = newArr.filter(item => item.isCheck === true);
+      setStaffData(newArr);
+      setSelectPersonal(arrStf);
+    },
+    [staffMasterData],
+  );
 
   const onOpenBottonSheet = () => {
     setSendEmail(true);
-    if (bottomSheetRef.current) bottomSheetRef.current.snapToIndex(0);
+    if (bottomSheetRef.current) {
+      bottomSheetRef.current.snapToIndex(0);
+    }
   };
 
   const closeStaff = () => {
     setSelectPersonal([]);
     setStaffData(personals);
-    if (bottomSheetRef.current) bottomSheetRef.current.close();
+    if (bottomSheetRef.current) {
+      bottomSheetRef.current.close();
+    }
   };
 
   const onChangeDataType = (item: IFilterType) => {
     setTitle(item);
-    if (bottomSheetType.current) bottomSheetType.current.close();
+    if (bottomSheetType.current) {
+      bottomSheetType.current.close();
+    }
   };
 
   const fetchDataNoteType = async () => {
     const {status, data}: any = await CheckinService.getNoteType();
-    if (status == ApiConstant.STT_OK) {
+    if (status === ApiConstant.STT_OK) {
       const result = data.result;
       const newData = result.map((item: any) => ({
         label: item.name,
@@ -151,14 +171,16 @@ const AddNote = () => {
   };
 
   const fetchDataStaff = async () => {
+    dispatch(appActions.setProcessingStatus(true));
     const {status, data}: any = await CheckinService.getListStaff();
-    console.log(status, 'data response');
     if (status === ApiConstant.STT_OK) {
+      staffMasterData.current = data.result.data;
       setStaffData(data?.result?.data);
       dispatch(
         checkinActions.setData({typeData: 'staff', data: data.result?.data}),
       );
     }
+    dispatch(appActions.setProcessingStatus(false));
   };
 
   useEffect(() => {
@@ -173,91 +195,6 @@ const AddNote = () => {
       setDataType(newData);
     }
   }, []);
-
-  const RenderBottomSheet = React.memo(() => {
-    return (
-      <AppBottomSheet
-        bottomSheetRef={bottomSheetRef}
-        snapPointsCustom={snapPoint}>
-        <View style={{paddingHorizontal: 16}}>
-          <AppHeader
-            style={{marginTop: -5}}
-            label={getLabel('staff')}
-            onBack={closeStaff}
-            backButtonIcon={
-              <AppIcons
-                onPress={closeStaff}
-                iconType="IonIcon"
-                name="close"
-                size={30}
-                color={colors.text_secondary}
-              />
-            }
-            rightButton={
-              <TouchableOpacity onPress={() => bottomSheetRef.current?.close()}>
-                <Text style={styles.textBt}>{getLabel('confirm')}</Text>
-              </TouchableOpacity>
-            }
-          />
-          <View style={{marginTop: 24}}>
-            <View style={styles.containerSearch}>
-              <AppIcons
-                iconType={ICON_TYPE.IonIcon}
-                name="search"
-                size={20}
-                color={colors.text_secondary}
-              />
-              <Input
-                placeholder={`${getLabel('search')} ...`}
-                style={{marginLeft: 8, flex: 1}}
-              />
-            </View>
-
-            <View style={{marginTop: 20}}>
-              {selectPersonal.length > 0 ? (
-                <View style={{marginBottom: 16, flexDirection: 'row'}}>
-                  {selectPersonal.map(item => (
-                    <View
-                      key={item.name}
-                      style={{flexDirection: 'row', marginRight: 12}}>
-                      <AppAvatar size={48} url={item.image} />
-                      <Pressable
-                        onPress={() => onCheckStaff(item, true)}
-                        style={styles.deleteBt}>
-                        <View style={styles.viewBtt}>
-                          <AppIcons
-                            iconType={ICON_TYPE.IonIcon}
-                            name="close"
-                            size={14}
-                            color={colors.text_secondary}
-                          />
-                        </View>
-                      </Pressable>
-                    </View>
-                  ))}
-                </View>
-              ) : (
-                <View>
-                  <Text>Chưa có thông tin nhân viên</Text>
-                </View>
-              )}
-
-              <FlatList
-                data={staffData && staffData.length > 0 ? staffData : []}
-                showsVerticalScrollIndicator={false}
-                initialNumToRender={4}
-                maxToRenderPerBatch={4}
-                bounces={false}
-                renderItem={({item, index}) => {
-                  return <Block key={index}>{renderItem(item)}</Block>;
-                }}
-              />
-            </View>
-          </View>
-        </View>
-      </AppBottomSheet>
-    );
-  }, isEqual);
 
   return (
     <MainLayout>
@@ -307,7 +244,7 @@ const AddNote = () => {
           <TouchableOpacity
             onPress={() => {
               setSendEmail(!sentEmail);
-              if (staffData && staffData.length === 0 && sentEmail === true) {
+              if (staffData?.length === 0) {
                 fetchDataStaff();
               } else {
                 return null;
@@ -330,17 +267,14 @@ const AddNote = () => {
               }}
             />
             <Text style={{color: theme.colors.text_primary, marginLeft: 8}}>
-              {getLabel('sendEmailToEveryone')}
+              {getLabel('addNoteRecipients')}
             </Text>
           </TouchableOpacity>
 
           {sentEmail && (
             <View style={{marginTop: 24}}>
-              {/* <Block>
-                <Text>dm lng hi</Text>
-              </Block> */}
               <InputViewCompoment
-                data={staffData}
+                data={selectPersonal}
                 label={getLabel('userNote')}
                 onPress={() => onOpenBottonSheet()}
                 backgroundColor={colors.bg_default}
@@ -356,7 +290,96 @@ const AddNote = () => {
           onPress={() => onCreateNoteCheckin()}
         />
       </View>
-      <RenderBottomSheet />
+      <AppBottomSheet
+        bottomSheetRef={bottomSheetRef}
+        snapPointsCustom={snapPoint}>
+        <View style={{paddingHorizontal: 16}}>
+          <AppHeader
+            style={{marginTop: -5}}
+            label={getLabel('staff')}
+            onBack={closeStaff}
+            backButtonIcon={
+              <AppIcons
+                onPress={closeStaff}
+                iconType="IonIcon"
+                name="close"
+                size={30}
+                color={colors.text_secondary}
+              />
+            }
+            rightButton={
+              <TouchableOpacity onPress={() => bottomSheetRef.current?.close()}>
+                <Text style={styles.textBt}>{getLabel('confirm')}</Text>
+              </TouchableOpacity>
+            }
+          />
+          <View style={{marginTop: 24}}>
+            <View style={styles.containerSearch}>
+              <AppIcons
+                iconType={ICON_TYPE.IonIcon}
+                name="search"
+                size={20}
+                color={colors.text_secondary}
+              />
+              <Input
+                placeholder={`${getLabel('search')} ...`}
+                style={{marginLeft: 8, flex: 1}}
+              />
+            </View>
+            <View style={{marginTop: 20}}>
+              {selectPersonal.length > 0 && (
+                <View style={{marginBottom: 16, flexDirection: 'row'}}>
+                  {selectPersonal.map(item => (
+                    <View
+                      key={item.name}
+                      style={{flexDirection: 'row', marginRight: 12}}>
+                      <AppAvatar
+                        size={48}
+                        name={item.first_name}
+                        url={item.image}
+                      />
+                      <Pressable
+                        onPress={() => onCheckStaff(item)}
+                        style={styles.deleteBt}>
+                        <View style={styles.viewBtt}>
+                          <AppIcons
+                            iconType={ICON_TYPE.IonIcon}
+                            name="close"
+                            size={14}
+                            color={colors.text_secondary}
+                          />
+                        </View>
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              )}
+              <FlatList
+                data={staffData}
+                showsVerticalScrollIndicator={false}
+                initialNumToRender={4}
+                maxToRenderPerBatch={4}
+                bounces={false}
+                renderItem={({item}) => renderItem(item)}
+                ListEmptyComponent={
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 300,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{color: theme.colors.text_primary, fontSize: 16}}>
+                      Chưa có thông tin nhân viên
+                    </Text>
+                  </View>
+                }
+              />
+            </View>
+          </View>
+        </View>
+      </AppBottomSheet>
       <AppBottomSheet
         bottomSheetRef={bottomSheetType}
         snapPointsCustom={snapPoint}>

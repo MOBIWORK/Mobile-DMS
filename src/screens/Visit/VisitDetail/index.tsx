@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useMemo,
-  useEffect,
-  useTransition,
-} from 'react';
+import React, {useRef, useState, useMemo, useTransition} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute, useTheme} from '@react-navigation/native';
 import {
@@ -12,18 +6,11 @@ import {
   StyleSheet,
   Text,
   useWindowDimensions,
-  View,
   ViewStyle,
 } from 'react-native';
 import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
-import {MainLayout} from '../../../layouts';
-import {
-  AppBottomSheet,
-  AppContainer,
-  AppHeader,
-  Block,
-} from '../../../components/common';
+import {AppBottomSheet, AppHeader, Block} from '../../../components/common';
 import Detail from './Detail';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Report from './Report/Report';
@@ -39,9 +26,7 @@ import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calenda
 import {useMMKVString} from 'react-native-mmkv';
 import {CustomerService} from '../../../services';
 import {IVisitRouteDetail} from '../../../models/types';
-import {
-  useDeepCompareEffect,
-} from '../../../config/function';
+import {useDeepCompareEffect} from '../../../config/function';
 
 import isEqual from 'react-fast-compare';
 
@@ -133,7 +118,7 @@ const Index = () => {
 
   const DetailScreen = React.memo(
     () => (
-      <Block block style={{marginBottom: bottom}} padding={16} >
+      <Block block style={{marginBottom: bottom}} padding={16}>
         {isPendin ? (
           <Block block justifyContent="center" alignItems="center">
             {' '}

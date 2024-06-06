@@ -5,14 +5,27 @@ import {Text} from 'react-native';
 import {ICON_TYPE} from '../../../const/app.const';
 import {CommonUtils} from '../../../utils';
 import {useTranslation} from 'react-i18next';
-import {TouchableOpacity} from 'react-native';
 import {ItemProductOrder} from '../../../models/types';
-import {AppIcons} from '../../../components/common';
+import {AppIcons, AppText} from '../../../components/common';
 
 const ItemOrderProduct = ({item}: ProductProps) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
   const styles = createSheetStyle(useTheme());
+
+  // const VAT_amount = useMemo(() => {
+  //   const intoMoney = item.rate * item.qty - item.discount_amount;
+  //   if (order_discount_type === 'Grand Total') {
+  //     return item?.item_tax_rate ? (item.item_tax_rate * intoMoney) / 100 : 0; //VAT = VAT * thành tiền
+  //   } else {
+  //     return item?.item_tax_rate
+  //       ? (item.item_tax_rate / 100) *
+  //           (intoMoney - (intoMoney * additional_discount_percentage) / 100)
+  //       : 0;
+  //     // VAT(sp) = %VAT x (thành tiền - chiết khấu đơn(net))
+  //   }
+  // }, [item]);
+
   return (
     <View style={styles.container}>
       <View style={styles.flex}>
@@ -38,28 +51,36 @@ const ItemOrderProduct = ({item}: ProductProps) => {
           x{item.qty} {`(${item.uom})`}
         </Text>
       </View>
-
       <View style={styles.contaienrIf}>
-        {item?.discount_percentage?.toString() && (
+        {item?.item_tax_rate !== undefined && item?.item_tax_rate !== 0 && (
           <View style={[styles.flexSpace, {paddingVertical: 4}]}>
-            <Text style={styles.textIf(colors.text_secondary)}>
-              {getLabel('discount')} (%)
-            </Text>
+            <Text style={styles.textIf(colors.text_secondary)}>VAT(%)</Text>
             <Text style={styles.textIf(colors.text_primary)}>
-              {item?.discount_percentage?.toString().replace('.', ',')} %
+              {item?.item_tax_rate ? item.item_tax_rate.toString() : 0} %
             </Text>
           </View>
         )}
-        {item.discount_amount?.toString() && (
-          <View style={[styles.flexSpace, {paddingVertical: 4}]}>
-            <Text style={styles.textIf(colors.text_secondary)}>
-              {getLabel('discount')}(VND)
-            </Text>
-            <Text style={styles.textIf(colors.text_primary)}>
-              {CommonUtils.convertToTwoDecimalPlaces(item.discount_amount)}
-            </Text>
-          </View>
-        )}
+        {item?.discount_amount !== undefined &&
+          item?.discount_amount !== 0 &&
+          item?.discount_percentage !== undefined &&
+          item?.discount_percentage !== 0 && (
+            <View style={[styles.flexSpace, {paddingVertical: 4}]}>
+              <Text style={styles.textIf(colors.text_secondary)}>
+                {getLabel('discount')}(VND)
+              </Text>
+              <Text style={styles.textIf(colors.text_primary)}>
+                {item.discount_percentage.toString()} %
+                <AppText
+                  fontSize={12}
+                  colorTheme="text_secondary"
+                  fontWeight="100"
+                  textAlign="center">
+                  {' → '}
+                </AppText>
+                {CommonUtils.convertToTwoDecimalPlaces(item.discount_amount)}
+              </Text>
+            </View>
+          )}
       </View>
       {item?.amount?.toString() && (
         <View style={styles.flexSpace}>

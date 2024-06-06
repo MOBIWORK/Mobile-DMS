@@ -1,7 +1,7 @@
 export const HEADER_DEFAULT = {
   'Content-Type': 'application/json',
 };
-export const TIMEOUT = 30000;
+export const TIMEOUT = 1000000;
 
 // HTTP Status
 export const STT_OK = 200;
@@ -141,8 +141,11 @@ export const GET_REPORT_NEW_CUSTOMER =
   '/api/method/mbw_dms.api.kpi.new_customer_report';
 export const GET_REPORT_NON_CUSTOMER_ORDER =
   '/api/method/mbw_dms.api.kpi.customer_not_order';
-export const GET_NOTIFICATION = 
-  '/api/method/mbw_dms.api.notification.notification.get_notifi'
-export const GET_NOTIFICATION_DETAIL = 
-  '/api/method/mbw_dms.api.notification.notification.get_notifi_detail'
-export const UPDATE_CUSTOMER =  URL_PREFIX +  '.api.selling.customer.update_customer?name='
+export const GET_NOTIFICATION =
+  '/api/method/mbw_dms.api.notification.notification.get_notifi';
+export const GET_NOTIFICATION_DETAIL =
+  '/api/method/mbw_dms.api.notification.notification.get_notifi_detail';
+export const UPDATE_CUSTOMER =
+  URL_PREFIX + '.api.selling.customer.update_customer?name=';
+export const GET_REPORT_DEBT =
+  '/api/method/mbw_dms.api.kpi.receivable_summary_report';

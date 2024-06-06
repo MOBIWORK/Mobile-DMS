@@ -71,11 +71,10 @@ const ModalUpdateLocation = ({
       lon: undefined,
     },
   });
-  
+
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme);
   const [isPending, setIsPending] = useState<boolean>(false);
-  
 
   useEffect(() => {
     if (currentLocation && Object.keys(currentLocation).length > 0) {
@@ -86,13 +85,12 @@ const ModalUpdateLocation = ({
     } else {
       return;
     }
-  },[]);
+  }, []);
   const handleMarkerMap = useCallback(
     async (lat: number, lng: number) => {
       Keyboard.dismiss();
       setIsPending(true);
       const response: any = await AppService.getDetailLocation(lat, lng);
-      console.log(response,'response mả')
       if (response.status === ApiConstant.STT_OK || 'OK') {
         markingLocation.current.detailAdd =
           response.results[0].formatted_address;
@@ -131,18 +129,18 @@ const ModalUpdateLocation = ({
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
       locations => {
-        startTransition(() =>{
-        curLocation.current = locations;
-        handleMarkerMap(
-          curLocation.current?.coords?.latitude,
-          curLocation.current?.coords?.longitude,
-        );
-        mapboxCameraRef.current &&
-          mapboxCameraRef.current.moveTo(
-            [locations.coords.longitude, locations.coords.latitude],
-            1000,
+        startTransition(() => {
+          curLocation.current = locations;
+          handleMarkerMap(
+            curLocation.current?.coords?.latitude,
+            curLocation.current?.coords?.longitude,
           );
-        })
+          mapboxCameraRef.current &&
+            mapboxCameraRef.current.moveTo(
+              [locations.coords.longitude, locations.coords.latitude],
+              1000,
+            );
+        });
       },
       err => backgroundErrorListener(err.code),
     );
