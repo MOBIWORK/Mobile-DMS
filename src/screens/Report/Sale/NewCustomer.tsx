@@ -13,6 +13,7 @@ import {useTranslation} from 'react-i18next';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import {ReportService} from '../../../services';
 import isEqual from 'react-fast-compare';
+import moment from 'moment';
 const NewCustomer = () => {
   const theme = useTheme();
   const styles = createStyle(theme);
@@ -49,8 +50,19 @@ const NewCustomer = () => {
     }
   };
 
-  const onChangeDateCalender = (date: any) => {
-    setHeaderDate(CommonUtils.convertDate(Number(date)));
+  const onChangeDateCalender = (date: any, endDate?: any) => {
+    // console.log(moment(date).valueOf()/1000,endDate,'date,end')
+    if (!endDate) {
+      setHeaderDate(CommonUtils.convertDate(Number(date)));
+    } else {
+      setHeaderDate(
+        `${moment(date).format('DD/MM/YYYY')}  -  ${moment(endDate).format(
+          'DD/MM/YYYY',
+        )}`,
+      );
+      setFromDate(moment(date).valueOf())
+      setToDate(moment(endDate).valueOf())
+    }
   };
 
   const RowItem: FC<RowProps> = ({label, content}) => {
@@ -108,7 +120,7 @@ const NewCustomer = () => {
           />
         </View>
       );
-    },isEqual);
+    }, isEqual);
     return (
       <>
         {newCustomerData &&
@@ -118,6 +130,8 @@ const NewCustomer = () => {
       </>
     );
   };
+
+
 
   useEffect(() => {
     const getData = async () => {
@@ -146,9 +160,14 @@ const NewCustomer = () => {
         });
       }
     };
-
-    getData();
+    if (headerDate === 'Chọn ngày') {
+      return undefined;
+    } else {
+      getData();
+    }
   }, [fromDate, toDate]);
+
+  // console.log(newCustomerData,'customerDâta', 'bbbb');
 
   return (
     <MainLayout style={{backgroundColor: theme.colors.bg_neutral}}>

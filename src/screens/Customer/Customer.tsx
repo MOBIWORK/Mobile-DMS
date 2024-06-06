@@ -148,29 +148,31 @@ const Customer = () => {
 
   const sortedData = useCallback(
     (filteredData: IDataCustomers[]) => {
-      return    filteredData.slice().sort((a, b) => {
-        const locationA: LocationProps = JSON.parse(
-          a.customer_location_primary,
-        );
-        const locationB: LocationProps = JSON.parse(
-          b.customer_location_primary,
-        );
-        const distance1 = calculateDistance(
-          location?.coords?.latitude,
-          location?.coords?.longitude,
-          locationA.lat != null ? locationA.lat : 0,
-          locationA.long != null ? locationA.long : 0,
-        );
-        const distance2 = calculateDistance(
-          location?.coords?.latitude,
-          location?.coords?.longitude,
-          locationB.lat != null ? locationB.lat : 0,
-          locationB.long != null ? locationB.long : 0,
-        );
-        return value.first === getLabel('nearest')
-          ? distance1 - distance2
-          : distance2 - distance1;
-      })  || filteredData  ; 
+      return (
+        filteredData.slice().sort((a, b) => {
+          const locationA: LocationProps = JSON.parse(
+            a.customer_location_primary,
+          );
+          const locationB: LocationProps = JSON.parse(
+            b.customer_location_primary,
+          );
+          const distance1 = calculateDistance(
+            location?.coords?.latitude,
+            location?.coords?.longitude,
+            locationA.lat != null ? locationA.lat : 0,
+            locationA.long != null ? locationA.long : 0,
+          );
+          const distance2 = calculateDistance(
+            location?.coords?.latitude,
+            location?.coords?.longitude,
+            locationB.lat != null ? locationB.lat : 0,
+            locationB.long != null ? locationB.long : 0,
+          );
+          return value.first === getLabel('nearest')
+            ? distance1 - distance2
+            : distance2 - distance1;
+        }) || filteredData
+      );
     },
     [listCustomer?.length],
   );
@@ -199,25 +201,26 @@ const Customer = () => {
   const checkGPS = async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
-
       isEnable.current = checkEnabled;
       if (checkEnabled === true) {
-        setModalErrorGPS(false);
+        // setModalErrorGPS(false);
+        handleBackgroundLocation();
       } else {
-        setModalErrorGPS(true);
+        return null;
+        // setModalErrorGPS(true);
       }
     }
   };
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
+    checkGPS();
     // handleEnabledPressed();
   }, []);
 
   React.useEffect(() => {
     mounted.current = true;
-    handleBackgroundLocation();
     // checkGPS();
-    if (mounted.current && modalErrorGPS === false) {
+    if (mounted.current ) {
       if (listCustomer && listCustomer?.length > 0) {
         const filteredData = listCustomer.filter(
           item => item.customer_location_primary,
@@ -243,7 +246,7 @@ const Customer = () => {
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer,isFocus]);
+  }, [listCustomer, isFocus,isEnable.current]);
 
   const handleApplyFilter = () => {
     if (
@@ -316,6 +319,8 @@ const Customer = () => {
       customerGroupType: getLabel('all'),
     });
   };
+
+
 
   const onBackButtonPress = useCallback(() => {
     setShowModal(false);
@@ -432,190 +437,123 @@ const Customer = () => {
 
   // console.log(modalErrorGPS)
 
-  useLayoutEffect(() => {
-    // handleEnabledPressed();
-    // CommonUtils.getCurrentLocation(locations => setLocation(locations));
-  }, []);
+
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
-      {modalErrorGPS ? (
-        <>
-          <Block paddingHorizontal={16}>
-            <View style={styles.rootHeader}>
-              <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
-              <TouchableOpacity
-                onPress={() => setShowModal(true)}
-                style={styles.iconSearch}>
-                <AppImage source="IconSearch" style={styles.iconSearch} />
-              </TouchableOpacity>
-            </View>
-          </Block>
-          <SkeletonLoading />
-          <Modal
-            isVisible={modalErrorGPS}
-            backdropOpacity={0.5}
-            onBackButtonPress={() => setModalErrorGPS(false)}
-            style={{marginHorizontal: 0}}
-            onBackdropPress={() => setModalErrorGPS(false)}
-            animationIn="slideInUp"
-            animationOut="slideOutDown">
-            <Block
-              colorTheme="bg_default"
-              height={230}
-              marginLeft={16}
-              marginRight={16}
-              borderRadius={16}>
-              <Block justifyContent="center" alignItems="center" marginTop={8}>
-                <AppImage source="ErrorApiIcon" size={50} />
-              </Block>
-              <Block justifyContent="center" paddingVertical={8}>
-                <Text
-                  textAlign="center"
-                  fontSize={16}
-                  fontWeight="500"
-                  lineHeight={27}
-                  colorTheme="text_primary">
-                  Vui lòng bật GPS để tiếp tục
-                </Text>
-              </Block>
-              {/* <Block
-                paddingHorizontal={16}
-                justifyContent="center"
-                alignItems="center"
-                direction="row">
-                <TouchableOpacity
-                  style={styles.buttonModal}
-                  onPress={handleEnabledPressed}>
-                  <Text colorTheme="white" fontSize={16} fontWeight="500">
-                    {getLabel('tryAgain')}
-                  </Text>
-                </TouchableOpacity>
-              </Block> */}
-            </Block>
-          </Modal>
-        </>
-      ) : (
-        <>
-          <StatusBar barStyle={'dark-content'} />
-          <Block paddingHorizontal={16} block paddingBottom={bottom + 24}>
-            <View style={styles.rootHeader}>
-              <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
-              <TouchableOpacity
-                onPress={() => setShowModal(true)}
-                style={styles.iconSearch}>
-                <AppImage source="IconSearch" style={styles.iconSearch} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.containFilterView}>
-              <FilterHandle
-                type={'1'}
-                value={value.first}
-                onPress={onPressType1}
-              />
-              <FilterHandle
-                type={'2'}
-                value={value.second}
-                onPress={onPressType2}
-              />
-            </View>
-
-            <Text style={styles.containCustomer}>
-              <Text style={styles.numberCustomer}>
-                {listCustomerResult ? listCustomerResult.total : 0}{' '}
-              </Text>
-              {getLabel('customer')}
-            </Text>
-            {mounted.current === true ? (
-              <SkeletonLoading />
-            ) : (
-              <ListCard
-                data={customerData}
-                loading={isPending}
-                onRefresh={onRefreshData}
-                onLoadData={onEndReachedThreshold}
-              />
-            )}
-          </Block>
-
-          <AppBottomSheet
-            bottomSheetRef={bottomRef}
-            useBottomSheetView={show.firstModal}
-            enablePanDownToClose={true}>
-            <View>
-              <View style={styles.tittleHeader}>
-                <Text style={styles.titleText}>{getLabel('distance')}</Text>
-              </View>
-              {listFilter.map(item => {
-                return (
-                  <TouchableOpacity
-                    style={styles.containItemBottomView}
-                    key={item.id.toString()}
-                    onPress={() =>
-                      setValue(prev => ({
-                        ...prev,
-                        first: item.title,
-                      }))
-                    }>
-                    <Text style={styles.itemText(item.title, value.first)}>
-                      {item.title}
-                    </Text>
-                    {item.title === value.first && (
-                      <AppIcons
-                        iconType={AppConstant.ICON_TYPE.Feather}
-                        name="check"
-                        size={24}
-                        color={theme.colors.primary}
-                      />
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </AppBottomSheet>
-          <AppBottomSheet
-            bottomSheetRef={bottomRef2}
-            useBottomSheetView={show.secondModal}
-            snapPointsCustom={snapPoints}
-            // onClose={() => dispatch(appActions.setShowModal(false)) }
-
-            enablePanDownToClose={true}>
-            {renderBottomView()}
-          </AppBottomSheet>
-          <AppBottomSheet
-            bottomSheetRef={filterRef}
-            enablePanDownToClose={true}
-            snapPointsCustom={['60%']}>
-            <ListFilter
-              type={typeFilter}
-              filterRef={filterRef}
-              customerType={customerType}
-              setValueFilter={setValueFilter}
-              valueFilter={valueFilter}
-            />
-          </AppBottomSheet>
+      <StatusBar barStyle={'dark-content'} />
+      <Block paddingHorizontal={16} block paddingBottom={bottom + 24}>
+        <View style={styles.rootHeader}>
+          <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity
-            onPress={() => {
-              dispatch(customerActions.setMainAddress({}));
-              dispatch(customerActions.setMainContactAddress({}));
-              navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER);
-            }}
-            style={styles.fab}>
-            <AppIcons
-              iconType="IonIcon"
-              name="add-outline"
-              size={40}
-              color={theme.colors.white}
-            />
+            onPress={() => setShowModal(true)}
+            style={styles.iconSearch}>
+            <AppImage source="IconSearch" style={styles.iconSearch} />
           </TouchableOpacity>
-          <ModalSearchCustomer
-            data={customerData}
-            setDataCustomer={setCustomerData}
-            showModal={showModal}
-            onBackButtonPress={onBackButtonPress}
+        </View>
+        <View style={styles.containFilterView}>
+          <FilterHandle type={'1'} value={value.first} onPress={onPressType1} />
+          <FilterHandle
+            type={'2'}
+            value={value.second}
+            onPress={onPressType2}
           />
-        </>
-      )}
+        </View>
+
+        <Text style={styles.containCustomer}>
+          <Text style={styles.numberCustomer}>
+            {listCustomerResult ? listCustomerResult.total : 0}{' '}
+          </Text>
+          {getLabel('customer')}
+        </Text>
+        {appLoading ? (
+          <SkeletonLoading />
+        ) : (
+          <ListCard
+            data={customerData}
+            loading={isPending}
+            onRefresh={onRefreshData}
+            onLoadData={onEndReachedThreshold}
+          />
+        )}
+      </Block>
+
+      <AppBottomSheet
+        bottomSheetRef={bottomRef}
+        useBottomSheetView={show.firstModal}
+        enablePanDownToClose={true}>
+        <View>
+          <View style={styles.tittleHeader}>
+            <Text style={styles.titleText}>{getLabel('distance')}</Text>
+          </View>
+          {listFilter.map(item => {
+            return (
+              <TouchableOpacity
+                style={styles.containItemBottomView}
+                key={item.id.toString()}
+                onPress={() =>
+                  setValue(prev => ({
+                    ...prev,
+                    first: item.title,
+                  }))
+                }>
+                <Text style={styles.itemText(item.title, value.first)}>
+                  {item.title}
+                </Text>
+                {item.title === value.first && (
+                  <AppIcons
+                    iconType={AppConstant.ICON_TYPE.Feather}
+                    name="check"
+                    size={24}
+                    color={theme.colors.primary}
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </AppBottomSheet>
+      <AppBottomSheet
+        bottomSheetRef={bottomRef2}
+        useBottomSheetView={show.secondModal}
+        snapPointsCustom={snapPoints}
+        // onClose={() => dispatch(appActions.setShowModal(false)) }
+
+        enablePanDownToClose={true}>
+        {renderBottomView()}
+      </AppBottomSheet>
+      <AppBottomSheet
+        bottomSheetRef={filterRef}
+        enablePanDownToClose={true}
+        snapPointsCustom={['60%']}>
+        <ListFilter
+          type={typeFilter}
+          filterRef={filterRef}
+          customerType={customerType}
+          setValueFilter={setValueFilter}
+          valueFilter={valueFilter}
+        />
+      </AppBottomSheet>
+      <TouchableOpacity
+        onPress={() => {
+          dispatch(customerActions.setMainAddress({}));
+          dispatch(customerActions.setMainContactAddress({}));
+          navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER);
+        }}
+        style={styles.fab}>
+        <AppIcons
+          iconType="IonIcon"
+          name="add-outline"
+          size={40}
+          color={theme.colors.white}
+        />
+      </TouchableOpacity>
+      <ModalSearchCustomer
+        data={customerData}
+        setDataCustomer={setCustomerData}
+        showModal={showModal}
+        onBackButtonPress={onBackButtonPress}
+      />
     </SafeAreaView>
   );
 };

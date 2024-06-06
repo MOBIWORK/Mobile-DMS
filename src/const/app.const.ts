@@ -127,26 +127,6 @@ export const SelectedDateFilterData: IFilterType[] = [
 
 export const ReportFilterData: IFilterType[] = [
   {
-    label: 'today',
-    value: new Date().getTime(),
-    isSelected: true,
-  },
-  {
-    label: 'yesterday',
-    value: new Date().setDate(new Date().getDate() - 1),
-    isSelected: false,
-  },
-  {
-    label: 'thisMonth',
-    value: 'monthly',
-    isSelected: false,
-  },
-  {
-    label: 'lastMonth',
-    value: 'last_month',
-    isSelected: false,
-  },
-  {
     label: 'selectDate',
     value: 'selectDate',
     isSelected: false,
