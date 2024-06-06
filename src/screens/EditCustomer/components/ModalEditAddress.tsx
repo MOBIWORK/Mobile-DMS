@@ -44,6 +44,7 @@ import {ApiConstant, AppConstant} from '../../../const';
 import {AppService} from '../../../services';
 import Mapbox from '@rnmapbox/maps';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
+import { backgroundErrorListener } from '../../../config/function';
 type Props = {
   visible: boolean;
   onBackButtonPress: () => void;
@@ -110,7 +111,7 @@ const ModalEditAddress = ({
   const onPressButtonGetLocation = () => {
     CommonUtils.getCurrentLocation(locations => {
       fetchData(locations.coords.latitude, locations.coords.longitude);
-    });
+    },err => backgroundErrorListener(err.code));
   };
 
   const fetchData = useCallback(
