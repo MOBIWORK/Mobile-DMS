@@ -1,10 +1,16 @@
 import React, {FC, useMemo, useState} from 'react';
-import {AppBottomSheet, AppIcons} from '../../../components/common';
+import {
+  AppBottomSheet,
+  AppIcons,
+  AppInput,
+  Block,
+  AppText as Text,
+} from '../../../components/common';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
 import {AppConstant} from '../../../const';
-import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import {BottomSheetScrollView, TouchableOpacity} from '@gorhom/bottom-sheet';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 // @ts-ignore
 import CalendarPicker from 'react-native-calendar-picker';
@@ -12,6 +18,7 @@ import {useTheme} from '@react-navigation/native';
 import {getLabel} from '../../../language';
 import isEqual from 'react-fast-compare';
 import moment from 'moment';
+import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 
 const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   filerBottomSheetRef,
@@ -85,50 +92,148 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
     // filerBottomSheetRef?.current.close();
   };
 
+  const calculateDaysDifference = React.useCallback(
+    (startDate: any, endDate: any) => {
+      // Parse the input dates using moment
+      const start = moment(startDate, 'DD/MM/YYYY');
+      const end = moment(endDate, 'DD/MM/YYYY');
+
+      // Calculate the difference in days
+      const differenceInDays = end.diff(start, 'days');
+
+      return differenceInDays;
+    },
+    [startDate, endDate],
+  );
+  const onApply = React.useCallback(() => {
+    onChangeDateCalender(startDate, endDate);
+    filerBottomSheetRef?.current.close();
+  }, [startDate, endDate]);
+
+  // console.log(startDate, endDate, 'bstưb');
+
   return (
     <AppBottomSheet
       bottomSheetRef={filerBottomSheetRef}
       // snapPointsCustom={animatedSnapPoints}
       onClose={() => setShowCalender(false)}
       enableDynamicSizing={true}
+
       // @ts-ignore
     >
-      <BottomSheetScrollView style={{paddingBottom: bottom + 12}}>
+      <BottomSheetScrollView>
         {showCalender ? (
-          <CalendarPicker
-            startFromMonday={true}
-            allowRangeSelection={true}
-            // selectedEndDate={endDate}
-            weekdays={calenderConfig.weekdays}
-            months={calenderConfig.months}
-           
-            textStyle={{color: theme.colors.text_primary}}
-            todayBackgroundColor={theme.colors.text_secondary}
-            todayTextStyle={{color: theme.colors.bg_default}}
-            previousComponent={
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.EntypoIcon}
-                name={'chevron-left'}
-                size={30}
-                color={theme.colors.text_primary}
-              />
-            }
-            nextComponent={
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.EntypoIcon}
-                name={'chevron-right'}
-                size={30}
-                color={theme.colors.text_primary}
-              />
-            }
-            // selectedStartDate={startDate}
-            selectedDayStyle={{
-              backgroundColor: theme.colors.primary,
-            }}
-            selectedDayColor={theme.colors.primary}
-            selectedDayTextStyle={{color: theme.colors.bg_default}}
-            onDateChange={handleCalender}
-          />
+          <Block>
+            <Block paddingBottom={10}>
+              <Block
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                paddingHorizontal={16}
+                marginBottom={20}>
+                <TouchableOpacity
+                  onPress={() => filerBottomSheetRef?.current.close()}>
+                  <Text fontSize={16} colorTheme="primary" fontWeight="400">
+                    Hủy
+                  </Text>
+                </TouchableOpacity>
+
+                <Block>
+                  <Text
+                    fontWeight="400"
+                    fontSize={18}
+                    colorTheme="text_primary">
+                    Chọn ngày
+                  </Text>
+                </Block>
+                <TouchableOpacity onPress={onApply}>
+                  <Text fontSize={16} colorTheme="primary" fontWeight="400">
+                    Áp dụng
+                  </Text>
+                </TouchableOpacity>
+              </Block>
+              <Block
+                direction="row"
+                justifyContent="space-around"
+                alignItems="center">
+                <AppInput
+                  value={
+                    startDate === null
+                      ? 'Chọn ngày'
+                      : moment(startDate).format('DD/MM/YYYY')
+                  }
+                  // editable={true}
+                  label="Ngày bắt đầu"
+                  styles={styles.appInput}
+                  hiddenRightIcon={startDate === null ? true : false}
+                  labelStyle={styles.labelStyles}
+                  contentStyle={styles.contentStyle(startDate)}
+                  onChangeValue={text => console.log(text)}
+                />
+                <AppInput
+                  value={
+                    endDate === null
+                      ? 'Chọn ngày'
+                      : moment(endDate).format('DD/MM/YYYY')
+                  }
+                  // editable={true}
+                  styles={styles.appInput}
+                  hiddenRightIcon={endDate === null ? true : false}
+                  labelStyle={styles.labelStyles}
+                  contentStyle={styles.contentStyle(endDate)}
+                  label="Ngày kết thúc"
+                  onChangeValue={text => console.log(text)}
+                />
+              </Block>
+            </Block>
+
+            <CalendarPicker
+              startFromMonday={true}
+              allowRangeSelection={true}
+              // selectedEndDate={endDate}
+              weekdays={calenderConfig.weekdays}
+              disabledDates={(date: any) => {
+                if (date.isBetween(startDate, endDate)) {
+                  // if (
+                  //   startDate != null &&
+                  //   endDate != null 
+                  //   // calculateDaysDifference(startDate, endDate) <= 7
+                  // ) 
+                  return false;
+                } else {
+                  return true;
+                }
+              }}
+              maxRangeDuration={[6]}
+              months={calenderConfig.months}
+              textStyle={{color: theme.colors.text_primary}}
+              todayBackgroundColor={theme.colors.text_secondary}
+              todayTextStyle={{color: theme.colors.bg_default}}
+              previousComponent={
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.EntypoIcon}
+                  name={'chevron-left'}
+                  size={30}
+                  color={theme.colors.text_primary}
+                />
+              }
+              nextComponent={
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.EntypoIcon}
+                  name={'chevron-right'}
+                  size={30}
+                  color={theme.colors.text_primary}
+                />
+              }
+              // selectedStartDate={startDate}
+              selectedDayStyle={{
+                backgroundColor: theme.colors.primary,
+              }}
+              selectedDayColor={theme.colors.primary}
+              selectedDayTextStyle={{color: theme.colors.bg_default}}
+              onDateChange={handleCalender}
+            />
+          </Block>
         ) : (
           <FilterListComponent
             isSearch={false}
@@ -147,8 +252,28 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
 interface ReportFilterBottomSheetProps {
   filerBottomSheetRef: any;
   onChange: (item: IFilterType) => void;
-  onChangeDateCalender: (date: any) => void;
+  onChangeDateCalender: (date: any, endDate?: any) => void;
   isKPI?: boolean;
 }
+
+const styles = StyleSheet.create({
+  appInput: {
+    flex: 1,
+    width: 165,
+  } as ViewStyle,
+  labelStyles: {
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 23,
+    color: '#637381',
+  } as TextStyle,
+  contentStyle: (value: any) =>
+    ({
+      color: value === null ? '#C4CDD5' : '#212B36',
+      fontSize: 16,
+      lineHeight: 24,
+      fontWeight: '400',
+    } as TextStyle),
+});
 
 export default React.memo(ReportFilterBottomSheet, isEqual);
