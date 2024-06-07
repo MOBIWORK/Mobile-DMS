@@ -334,12 +334,8 @@ const ModalEditAddress = ({
           setAddressObj(addressObj);
         }
       }
-      
     }
   };
-
- 
-
 
   const handleSaveMainAddress = useCallback(() => {
     startTransition(() => {
@@ -357,15 +353,16 @@ const ModalEditAddress = ({
             // address_line1: txtAddressDetail,
             address_type: 'Billing',
             city: addressObj.province.code || '',
-            county:addressObj.district.code || '',
-            state:addressObj.ward.code || '',
-            address_line1:addressObj.detail
+            county: addressObj.district.code || '',
+            state: addressObj.ward.code || '',
+            address_line1: addressObj.detail,
           },
         ],
       }));
     });
     setAddressValue({});
     setAddressSelectedData([]);
+    setData(prev => ({...prev, address: []}));
     onBackButtonPress();
   }, [addressValue.addressGet, addressValue.addressOrder]);
 
