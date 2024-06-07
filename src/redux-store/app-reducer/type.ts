@@ -29,6 +29,7 @@ export interface IAppRedux {
   searchProductValue: string;
   searchVisitValue: string;
   searchCustomerValue: string;
+  searchOderValue: string;
   theme: ThemeType;
   newCustomer: any[];
   loadingApp?: boolean;
