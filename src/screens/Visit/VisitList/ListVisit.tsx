@@ -1022,6 +1022,9 @@ const ListVisit = () => {
     };
   }, []);
 
+
+  // console.log(sortDataCustomer,'bbb')
+
   useEffect(() => {
     mounted.current = true;
     if (searchVisit) {
@@ -1041,11 +1044,11 @@ const ListVisit = () => {
     sortDataCustomer(distanceFilterValue);
   }, [listCustomer, isFocus]);
 
-  useEffect(() => {
-    if (isEnable.current === false && Platform.OS === 'android') {
-      setModalErrorGPS(true);
-    }
-  }, [isEnable.current]);
+  // useEffect(() => {
+  //   if (isEnable.current === false && Platform.OS === 'android') {
+  //     // setModalErrorGPS(true);
+  //   }
+  // }, [isEnable.current]);
 
   return (
     <SafeAreaView
