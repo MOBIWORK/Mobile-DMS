@@ -16,7 +16,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
   const {colors} = useTheme();
   const [isPending, startTrans] = useTransition();
   return (
-    <Block>
+    <Block  colorTheme='bg_default'    >
       <TouchableOpacity
         onPress={
           () =>

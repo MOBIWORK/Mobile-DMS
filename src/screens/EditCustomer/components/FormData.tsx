@@ -37,7 +37,6 @@ import {
 import {TextInput} from 'react-native-paper';
 import {
   convertToMoneyFormat,
-  formatMoney,
   reverseFormatNumber,
   useSelector,
 } from '../../../config/function';
