@@ -20,6 +20,7 @@ import CardAddressView from '../component/CardAddressView';
 type Props = {
   onPressAdding: () => void;
   data: DetailCustomerType;
+  listData:any[],
 };
 
 const Address = (props: Props) => {

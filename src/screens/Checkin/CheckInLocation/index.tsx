@@ -178,7 +178,6 @@ const [errCode,setErrCode] = useState<any>(null)
     });
     const response: KeyAbleProps = await AppService.getDetailLocation(lat, lng);
     if (response.status === ApiConstant.STT_OK || 'OK') {
-      console.log(response.status,'bbbbv')
       const address: any = response.results[0].address_components;
       const cityValue = address[address.length - 1]?.long_name ?? '';
       const districtValue = address[address.length - 2]?.long_name ?? '';
@@ -539,10 +538,10 @@ const [errCode,setErrCode] = useState<any>(null)
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
             onBack={() => {
-              route.params.type === 'CHECKIN'
+             route.params.type === ''
                 ? navigation.goBack()
                 : navigation.navigate(ScreenConstant.AUTHORIZED, {
-                    screen: ScreenConstant.MAIN_TAB,
+                    screen: ScreenConstant.LIST_VISIT,
                   });
             }}
             label={getLabel('location')}

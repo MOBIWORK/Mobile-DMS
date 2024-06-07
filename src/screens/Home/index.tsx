@@ -402,7 +402,7 @@ const HomeScreen = () => {
       //delete search visit value in ListVisit.tsx
       onResetSearchValueOfVisit();
       //get Data
-      getLocation();
+      // getLocation();
       getSystemConfig();
       getProfile();
       getCurrentShit();

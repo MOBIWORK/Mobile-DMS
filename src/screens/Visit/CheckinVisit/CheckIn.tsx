@@ -239,9 +239,12 @@ const CheckIn = () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
+        console.log(checkEnabled, 'response');
         setEnableGPS(checkEnabled);
         // isEnable.current = checkEnabled;
       }
+    } else {
+      setEnableGPS(true);
     }
   };
 
@@ -347,6 +350,9 @@ const CheckIn = () => {
 
   const onCheckout = useCallback(async () => {
     // dispatch(appActions.setProcessingStatus(true));
+    startTransition(() => {
+    checkGPS();
+    });
     if (enableGPS) {
       CommonUtils.getCurrentLocation(
         locations => {
@@ -370,15 +376,14 @@ const CheckIn = () => {
         },
         err => backgroundErrorListener(err.code),
       );
-    } else {
-      backgroundErrorListener(1);
+    } else{
+      backgroundErrorListener(1)
     }
     setShow(false);
-  }, [dataCheckIn, categoriesCheckin]);
+  }, [dataCheckIn, categoriesCheckin,enableGPS]);
 
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
-    // console.log(enableGPS,'enable')
     if (enableGPS) {
       try {
         dispatch(appActions.setProcessingStatus(true));
@@ -401,7 +406,7 @@ const CheckIn = () => {
     } else {
       backgroundErrorListener(1);
     }
-  }, [dataCheckIn]);
+  }, [dataCheckIn,enableGPS]);
 
   useEffectOnce(() => {
     if (route === false) {
@@ -464,11 +469,7 @@ const CheckIn = () => {
           <Block paddingTop={8}>
             <Block direction="row" alignItems="center" marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
-              <Text numberOfLines={1}>
-                {' '}
-                {params?.item?.customer_primary_address?.address_title ??
-                  ''}{' '}
-              </Text>
+              <Text numberOfLines={1}> {params.kh_diachi} </Text>
             </Block>
             <Block
               direction="row"

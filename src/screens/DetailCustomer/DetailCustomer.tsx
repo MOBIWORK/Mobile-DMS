@@ -16,16 +16,11 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {NavigationProp, RouterProp} from '../../navigation/screen-type';
-import {
-  AppBottomSheet,
-  AppHeader,
-  Block,
-  SvgIcon,
-} from '../../components/common';
+import {useRoute} from '@react-navigation/native';
+import {RouterProp} from '../../navigation/screen-type';
+import {AppHeader, Block, SvgIcon} from '../../components/common';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-
+import Modal from 'react-native-modal';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {Address, Contact, Overview} from './screen';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -38,6 +33,8 @@ import {goBack, navigate} from '../../navigation/navigation-service';
 import {CustomerService} from '../../services';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../layouts/ErrorFallBack';
+import { useSelector } from '../../config/function';
+import { shallowEqual } from 'react-redux';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -47,31 +44,35 @@ const DetailCustomer = () => {
 
   const params = useRoute<RouterProp<'DETAIL_CUSTOMER'>>().params;
 
-  const addingAddress = useRef<BottomSheetMethods>();
-  const [typeFilter, setTypeFilter] = React.useState<string>(
-    AppConstant.CustomerFilterType.loai_khach_hang,
-  );
+
   const [isPending, startTrans] = useTransition();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalShow, setModalShow] = useState({
+    type: AppConstant.CustomerFilterType.loai_khach_hang,
+    status: false,
+  });
 
+  const getDetailCustomer = async () => {
+    try {
+      let res: any = await CustomerService.getCustomerDetail(
+        params.data.name,
+      );
+      if (res.message === 'ok' || Object.keys(res.result).length > 0) {
+        setData(res.result);
+      }
+    } catch (err) {
+      console.log('[error]: ', err);
+    } finally {
+      // mounted.current = false;
+      setLoading(false);
+    }
+  };
+
+  const listData = useSelector(state => state.customer.mainAddress,shallowEqual)
   useEffect(() => {
     setLoading(true);
-    const getDetailCustomer = async () => {
-      try {
-        let res: any = await CustomerService.getCustomerDetail(
-          params.data.name,
-        );
-        if (res.message === 'ok' || Object.keys(res.result).length > 0) {
-          setData(res.result);
-        }
-      } catch (err) {
-        console.log('[error]: ', err);
-      } finally {
-        // mounted.current = false;
-        setLoading(false);
-      }
-    };
+    
 
     getDetailCustomer();
 
@@ -80,18 +81,9 @@ const DetailCustomer = () => {
     };
   }, []);
 
-  // console.log(data,'data customer') 
+  // console.log(data,'data customer')
 
 
-  const snapPointAdding = useMemo(
-    () =>
-      typeFilter === AppConstant.CustomerFilterType.dia_chi
-        ? ['100%']
-        : typeFilter === AppConstant.CustomerFilterType.nguoi_lien_he
-        ? ['60%']
-        : ['40%'],
-    [typeFilter],
-  );
   const routes = useRef([
     {key: 'first', title: getLabel('overview')},
     {key: 'second', title: getLabel('address')},
@@ -107,7 +99,7 @@ const DetailCustomer = () => {
       ),
       second: () => (
         <ErrorBoundary fallbackRender={ErrorFallBack}>
-          <Address onPressAdding={onPressAdding} data={data as any} />
+          <Address onPressAdding={onPressAdding} data={data as any}     listData={listData} />
         </ErrorBoundary>
       ),
       third: () => (
@@ -121,15 +113,19 @@ const DetailCustomer = () => {
 
   const indexView = useRef<number>(0);
 
-  const onPressAdding = () => {
-    setTypeFilter(AppConstant.CustomerFilterType.dia_chi);
-    addingAddress.current?.snapToIndex(0);
-  };
+  const onPressAdding = useCallback(() => {
+    setModalShow({
+      type: AppConstant.CustomerFilterType.dia_chi,
+      status: true,
+    });
+  }, [modalShow.status,modalShow.type]);
 
-  const onPressAddingContact = () => {
-    setTypeFilter(AppConstant.CustomerFilterType.nguoi_lien_he);
-    addingAddress.current?.snapToIndex(0);
-  };
+  const onPressAddingContact = useCallback(() => {
+    setModalShow({
+      type: AppConstant.CustomerFilterType.nguoi_lien_he,
+      status: true,
+    });
+  }, [modalShow.status,modalShow.type]);
 
   const renderTabBar = useCallback((props: any) => {
     return (
@@ -145,6 +141,13 @@ const DetailCustomer = () => {
       />
     );
   }, []);
+
+  const onBackButtonPress = useCallback(() => {
+    setModalShow(prev => ({
+      ...prev,
+      status: false,
+    }));
+  }, [modalShow.status]);
 
   const onIndexChange = useCallback(
     (index: number) => {
@@ -163,7 +166,11 @@ const DetailCustomer = () => {
           style={{backgroundColor: theme.colors.bg_default}}
           onBack={() => goBack()}
           rightButton={
-            <TouchableOpacity style={styles.containIcon} onPress={() => navigate(ScreenConstant.EDIT_CUSTOMER,{data:data})}>
+            <TouchableOpacity
+              style={styles.containIcon}
+              onPress={() =>
+                navigate(ScreenConstant.EDIT_CUSTOMER, {data: data})
+              }>
               <SvgIcon source="Edit" size={20} />
             </TouchableOpacity>
           }
@@ -190,19 +197,25 @@ const DetailCustomer = () => {
         />
       )}
 
-      <AppBottomSheet
-        bottomSheetRef={addingAddress}
-        snapPointsCustom={snapPointAdding}>
-        <FormAddress
-          onPressClose={() => {
-            addingAddress.current?.close();
-            // setShow(false);
-          }}
-          typeFilter={typeFilter}
-          listData={[] as any}
-          setData={() => {}}
-        />
-      </AppBottomSheet>
+      <Modal
+        isVisible={modalShow.status}
+        animationIn="slideInUp"
+        animationOut={'slideOutDown'}
+        backdropOpacity={0.5}
+        onBackButtonPress={onBackButtonPress}
+        onBackdropPress={onBackButtonPress}
+        style={styles.modalStyle}>
+        <Block block colorTheme="bg_default">
+          <FormAddress
+            onPressClose={onBackButtonPress}
+            typeFilter={modalShow.type}
+            listData={[] as any}
+            setData={() => {}}
+            dataCustomer={data}
+            getDetailCustomer={getDetailCustomer}
+          />
+        </Block>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -238,5 +251,9 @@ const rootStyles = (theme: AppTheme) =>
     labelHeader: {
       marginHorizontal: 16,
       marginBottom: 20,
+    } as ViewStyle,
+    modalStyle: {
+      marginHorizontal: 0,
+      marginVertical: 0,
     } as ViewStyle,
   });
