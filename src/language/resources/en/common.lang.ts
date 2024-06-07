@@ -279,7 +279,7 @@ export default {
   reportVisit: 'Visit report',
   nonUserProfileDes: 'Your account has no information on the system',
   internalNotifi: 'Internal notifications',
-  confirmDeleteOrder: 'Confirm deletion of this order',
+  confirmDeleteOrder: 'Confirm deletion of this order?',
   welcome: 'Welcome',
   noAlbum: 'No albums',
   addAlbum: 'Add album',

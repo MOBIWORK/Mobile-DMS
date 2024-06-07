@@ -137,7 +137,7 @@ const ItemProductOrderComponent = ({
               <Input
                 value={item.quantity ? item.quantity.toString() : ''}
                 onChangeText={(qty: string) =>
-                  onChangeQuantityProduct(item.item_code, parseInt(qty))
+                  onChangeQuantityProduct(item.item_code, parseInt(qty, 10))
                 }
                 keyboardType="numeric"
                 style={[
@@ -216,7 +216,7 @@ const createStyles = (theme: AppTheme) =>
       fontSize: 16,
       lineHeight: 24,
       fontWeight: '400',
-      color: theme.colors.text_disable,
+      color: theme.colors.text_primary,
     } as TextStyle,
     itemProduct: {
       paddingHorizontal: 16,

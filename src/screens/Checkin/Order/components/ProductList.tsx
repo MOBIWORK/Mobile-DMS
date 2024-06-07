@@ -25,6 +25,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
   showDetailProdcut,
   handlerRemoveItemProduct,
   customerId,
+  isAddProduct,
 }) => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
@@ -34,7 +35,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
   if (tab === 1) {
     return (
       <>
-        {products.length > 0 ? (
+        {products.length > 0 && isAddProduct ? (
           <View style={[styles.flexSpace]}>
             <Button
               onPressIn={() => {
@@ -69,11 +70,13 @@ const ProductList: FC<UpdateItemProductProps> = ({
             </Button>
           </View>
         ) : (
-          <UINoData customer_id={customerId} />
+          isAddProduct && <UINoData customer_id={customerId} />
         )}
         <View style={{marginTop: 20, rowGap: 8}}>
           {products.map((item, i) => (
-            <Pressable key={i} onPress={() => showDetailProdcut(item)}>
+            <Pressable
+              key={i}
+              onPress={() => showDetailProdcut && showDetailProdcut(item)}>
               <ItemProduct
                 onRemove={() =>
                   handlerRemoveItemProduct(item.item_code, item.index)
@@ -85,7 +88,6 @@ const ProductList: FC<UpdateItemProductProps> = ({
                 percentage_discount={item.discount_item_percent}
                 discount_amount={item.discount_item_amount}
                 tax_percentage={item?.rate_tax_item ?? 0}
-                tax_amount={item.total_item_tax}
                 totalPrice={item.total_item_money}
                 price={item?.price ?? 0}
               />
@@ -103,7 +105,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
               <ItemProduct
                 name={item.item_name}
                 code={item.item_code}
-                dvt={item.stock_uom}
+                dvt={item.uom}
                 quantity={item.qty}
               />
             </Pressable>
@@ -120,8 +122,9 @@ interface UpdateItemProductProps {
   customerId: string;
   products: IProduct[];
   productsPromotion: IProductPromotion[];
-  showDetailProdcut: (item: IProduct) => void;
+  showDetailProdcut?: (item: IProduct) => void;
   handlerRemoveItemProduct: (code: string, index: number) => void;
+  isAddProduct?: boolean;
 }
 const styles = StyleSheet.create({
   flexSpace: {
