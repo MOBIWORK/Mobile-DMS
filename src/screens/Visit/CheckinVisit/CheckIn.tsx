@@ -249,6 +249,7 @@ const CheckIn = () => {
       }
     } else {
       setEnableGPS(true);
+      onCheckout();
     }
   };
 
@@ -435,7 +436,7 @@ const CheckIn = () => {
         dispatch(appActions.setProcessingStatus(false));
       }
     }
-  }, [dataCheckIn,enableGPS]);
+  }, [dataCheckIn, enableGPS]);
 
   useEffectOnce(() => {
     if (route === false) {
