@@ -347,7 +347,7 @@ const CheckIn = () => {
 
   const onCheckout = useCallback(async () => {
     // dispatch(appActions.setProcessingStatus(true));
-    if (enableGPS) {
+    if (enableGPS || Platform.OS === 'ios') {
       CommonUtils.getCurrentLocation(
         locations => {
           if (!isValidCheckOut(locations)) {
@@ -379,7 +379,7 @@ const CheckIn = () => {
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
     // console.log(enableGPS,'enable')
-    if (enableGPS) {
+    if (enableGPS || Platform.OS === 'ios') {
       try {
         dispatch(appActions.setProcessingStatus(true));
         const res: any = await AppService.checkOut(

@@ -708,9 +708,11 @@ export type ItemProductOrder = {
   discount_percentage: number;
   item_tax_template: string;
   item_tax_rate: number;
+  is_free_item: number;
 };
 
 export type IOrderDetail = {
+  name: string;
   list_items: ItemProductOrder[];
   customer: string;
   customer_name: string;
@@ -758,19 +760,17 @@ export type ListCustomerRoute = {
 };
 
 export type IProductPromotion = {
-  item_code: string;
-  qty: number;
-  pricing_rules: string;
-  rate: number;
-  price_list_rate: number;
-  is_free_item: number;
+  name?: string;
   item_name: string;
-  description: string;
-  stock_uom: string;
+  item_code: string;
+  rate: number;
+  qty: number;
   uom: string;
-  conversion_factor: number;
-  delivery_date: string;
-  parent_item?: string;
+  amount?: number;
+  discount_amount?: number;
+  discount_percentage?: number;
+  is_free_item?: number;
+  item_tax_rate?: number;
 };
 
 export type StaffType = {
