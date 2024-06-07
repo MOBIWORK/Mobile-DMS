@@ -1,5 +1,6 @@
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
+import {DELETE_ORDER} from '../const/api.const';
 
 export type PramsTypeOrder = {
   from_date?: number;
@@ -49,3 +50,5 @@ export const createdReturnOrder = (data: POST_DATA) =>
   createApi().post(ApiConstant.POST_RETuRN_ORDER, data);
 export const getDetailCheckinOrder = (params: GetDetailOrder) =>
   createApi().get(ApiConstant.GET_DETAIL_CHECKIN_ORDER, params);
+export const deleteOrder = (orderName: string) =>
+  createApi().delete(ApiConstant.DELETE_ORDER, {name: orderName});

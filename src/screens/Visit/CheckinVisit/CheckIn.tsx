@@ -243,13 +243,12 @@ const CheckIn = () => {
           setEnableGPS(true);
           onCheckout();
         } else {
-          console.log('run')
+          console.log('run');
           setEnableGPS(false);
         }
         // isEnable.current = checkEnabled;
-      }else{
-        backgroundErrorListener(1)
-        
+      } else {
+        backgroundErrorListener(1);
       }
     } else {
       setEnableGPS(true);
@@ -365,61 +364,40 @@ const CheckIn = () => {
 
   const onCheckout = useCallback(async () => {
     // dispatch(appActions.setProcessingStatus(true));
-
-    CommonUtils.getCurrentLocation(
-      async locations => {
-        if (!isValidCheckOut(locations)) {
-          dispatch(appActions.setProcessingStatus(false));
-          return;
-        } else {
-          dispatch(
-            appActions.onCheckIn({
-              ...dataCheckIn,
-              checkin_trangthaicuahang: status,
-              checkin_pinra:
-                batteryLevel > 0
-                  ? Math.round(batteryLevel * 10000) / 100
-                  : -Math.round(batteryLevel * 10000) / 100,
-              checkin_giora: new Date().getTime() / 1000,
-            }),
-          );
-          dispatch(checkinActions.resetData());
-          await getCustomerRoute();
-        }
-      },
-      err => backgroundErrorListener(err.code),
-    );
-
+    if (enableGPS || Platform.OS === 'ios') {
+      CommonUtils.getCurrentLocation(
+        async locations => {
+          if (!isValidCheckOut(locations)) {
+            dispatch(appActions.setProcessingStatus(false));
+            return;
+          } else {
+            dispatch(
+              appActions.onCheckIn({
+                ...dataCheckIn,
+                checkin_trangthaicuahang: status,
+                checkin_pinra:
+                  batteryLevel > 0
+                    ? Math.round(batteryLevel * 10000) / 100
+                    : -Math.round(batteryLevel * 10000) / 100,
+                checkin_giora: new Date().getTime() / 1000,
+              }),
+            );
+            dispatch(checkinActions.resetData());
+            await getCustomerRoute();
+          }
+        },
+        err => backgroundErrorListener(err.code),
+      );
+    } else {
+      backgroundErrorListener(1);
+    }
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
   const onConfirmCheckout = useCallback(async () => {
-    if (Platform.OS === 'android') {
-      const checkEnable: boolean = await isLocationEnabled();
-      if (checkEnable === true) {
-        try {
-          dispatch(appActions.setProcessingStatus(true));
-          const res: any = await AppService.checkOut(
-            dataCheckIn.checkin_id,
-            dataCheckIn.item.name,
-          );
-          if (res?.status === ApiConstant.STT_OK) {
-            dispatch(checkinActions.resetData());
-            // dispatch
-            dispatch(appActions.setDataCheckIn({}));
-            storage.set('time', '');
-            goBack();
-          }
-        } catch (e) {
-          dispatch(appActions.setProcessingStatus(false));
-        } finally {
-          dispatch(appActions.setProcessingStatus(false));
-        }
-      } else {
-        setEnableGPS(false);
-        backgroundErrorListener(1);
-      }
-    } else {
+    setShow(false);
+    // console.log(enableGPS,'enable')
+    if (enableGPS || Platform.OS === 'ios') {
       try {
         dispatch(appActions.setProcessingStatus(true));
         const res: any = await AppService.checkOut(
