@@ -376,11 +376,11 @@ const CheckIn = () => {
         },
         err => backgroundErrorListener(err.code),
       );
-    } else{
-      backgroundErrorListener(1)
+    } else {
+      backgroundErrorListener(1);
     }
     setShow(false);
-  }, [dataCheckIn, categoriesCheckin,enableGPS]);
+  }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
   const onConfirmCheckout = useCallback(async () => {
     setShow(false);
@@ -406,7 +406,7 @@ const CheckIn = () => {
     } else {
       backgroundErrorListener(1);
     }
-  }, [dataCheckIn,enableGPS]);
+  }, [dataCheckIn, enableGPS]);
 
   useEffectOnce(() => {
     if (route === false) {
@@ -469,7 +469,11 @@ const CheckIn = () => {
           <Block paddingTop={8}>
             <Block direction="row" alignItems="center" marginRight={32}>
               <SvgIcon source="MapPin" size={16} />
-              <Text numberOfLines={1}> {params.kh_diachi} </Text>
+              <Text numberOfLines={1}>
+                {' '}
+                {params?.item?.customer_primary_address?.address_title ??
+                  ''}{' '}
+              </Text>
             </Block>
             <Block
               direction="row"

@@ -84,6 +84,8 @@ export const GET_WAREHOUSES =
   URL_PREFIX + '.api.selling.product.list_warehouse';
 export const GET_DETAIL_CHECKIN_ORDER =
   URL_PREFIX + '.api.selling.order.get_sale_order_by_checkin_id';
+export const DELETE_ORDER =
+  '/api/method/mbw_dms.api.selling.order.delete_sales_order';
 
 //Address
 export const GET_LIST_CITY = '/api/method/mbw_dms.api.location.list_province';
