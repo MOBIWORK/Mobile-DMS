@@ -81,7 +81,10 @@ const FormData = (props: Props) => {
     image: data.image,
     address:
       data.address &&
-      data.address.map(item => ({...item, name: data.customer_primary_address})),
+      data.address.map(item => ({
+        ...item,
+        name: data.customer_primary_address,
+      })),
     contacts: data.contacts,
     credit_limits:
       data.credit_limits && data.credit_limits?.length > 0
@@ -228,9 +231,13 @@ const FormData = (props: Props) => {
     });
   }, [modalChoose.type]);
 
+  
   const onUpdateCustomer = useCallback(() => {
     // let dataAddress = dataCustomer.address;
-
+    let route = dataCustomer.routers;
+    route?.[0].frequency && Array(route?.[0].frequency) && typeof route?.[0].frequency != 'string'
+      ? route?.[0].frequency?.join(';')
+      : dataCustomer.routers;
     const dataUpdate = {
       name: dataCustomer.name,
       address: dataCustomer.address || [{}],
@@ -244,12 +251,15 @@ const FormData = (props: Props) => {
       customer_name: dataCustomer.customer_name || '',
       customer_type: dataCustomer.customer_type || '',
       image: dataCustomer.image || '',
-      router: dataCustomer.routers || '',
+      routers: route || '',
       website: dataCustomer.website || '',
       territory: dataCustomer.territory || '',
-    };    
+    };
+    console.log(dataUpdate.address,'dataUpdate')
     startTransition(() => {
-      dispatch(customerActions.updateCustomerAction(dataUpdate,dataCustomer.name!));
+      dispatch(
+        customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
+      );
     });
   }, [dataCustomer]);
 
@@ -298,6 +308,8 @@ const FormData = (props: Props) => {
       getCustomerRoute();
     }
   }, []);
+
+  console.log(dataCustomer.routers);
 
   const onPressData = useCallback(
     (data: any, type: string) => {
@@ -470,7 +482,7 @@ const FormData = (props: Props) => {
           contentStyle={styles.contentStyle}
           styles={{marginBottom: 20}}
           onPress={() => {
-            setOpen(true);
+            setOpenDate(true);
           }}
           rightIcon={
             <TextInput.Icon
@@ -511,7 +523,13 @@ const FormData = (props: Props) => {
           label={translate('frequency')}
           // value={dataCustomer.frequency ? converArr(dataCustomer.frequency) : ''}
           value={
-            dataCustomer.frequency ? dataCustomer.frequency.toString() : ''
+            dataCustomer?.routers?.[0]?.frequency &&
+            typeof dataCustomer?.routers?.[0]?.frequency === 'string'
+              ? dataCustomer.routers[0].frequency
+              : dataCustomer?.routers?.[0].frequency &&
+                dataCustomer?.routers[0].frequency.length > 0
+              ? dataCustomer?.routers?.[0].frequency.join(';')
+              : ''
           }
           editable={false}
           isRequire={false}
@@ -607,7 +625,7 @@ const FormData = (props: Props) => {
         </Block>
         {isPrimary ? (
           dataCustomer.address &&
-          dataCustomer.address.map((item,index) => {
+          dataCustomer.address.map((item, index) => {
             return (
               <CardEditAddress
                 type="address"

@@ -31,7 +31,7 @@ const convertToMoneyFormat = (amount: any) => {
 
   // Check if the numericAmount is a valid number
   if (isNaN(numericAmount)) {
-    return 'Invalid amount';
+    return '';
   }
 
   // Convert numeric amount to money format
@@ -47,22 +47,9 @@ const reverseFormatNumber = (formattedNumber: any) => {
   const hasDot = /\./.test(formattedNumber);
 
   if (hasDot) {
-    console.log(formattedNumber, 'hasDot');
-    // Remove all non-numeric characters (except for the dot if it's a decimal separator)
-    const numericString = formattedNumber.replace(/[^0-9.]/g, '');
 
-    // Remove all dots except the last one (if it's a decimal separator)
-    const lastIndex = numericString.lastIndexOf('.');
-    const integerPart = numericString
-      .substring(0, lastIndex)
-      .replace(/\./g, '');
-    const decimalPart = numericString.substring(lastIndex);
-
-    console.log(integerPart + decimalPart, 'result has Dot');
-    // Concatenate the integer part and the decimal part
-    return integerPart + decimalPart;
+  return formattedNumber.replace(/\./g, '')
   } else {
-    console.log(formattedNumber, 'nonDot');
     // If no dot is present, return the number as it is
     return formattedNumber;
   }
@@ -256,16 +243,17 @@ const useEffectOnce = (cb: React.EffectCallback) => {
 };
 
 const mergeProducts = (products: IProduct[]) => {
-  const productMap: {[itemCode: string]: IProduct} = {};
+  const productMap: { [key: string]: IProduct } = {};
 
   // Iterate through the products array and merge products with the same item_code
   products.forEach(product => {
-    if (product.item_code in productMap) {
+    const key = `${product.item_code}-${product.unit ?? ''}-${product.end_of_life ?? ''}`;
+    if (key in productMap ) {
       // If the item_code already exists, add the quantities
-      productMap[product.item_code].quantity += product.quantity;
+      productMap[key].quantity += product.quantity;
     } else {
       // Otherwise, add the product to the map
-      productMap[product.item_code] = {...product};
+      productMap[key] = {...product};
     }
   });
 
