@@ -37,7 +37,6 @@ import {
 import {TextInput} from 'react-native-paper';
 import {
   convertToMoneyFormat,
-  formatMoney,
   reverseFormatNumber,
   useSelector,
 } from '../../../config/function';
@@ -248,9 +247,7 @@ const FormData = (props: Props) => {
       router: dataCustomer.routers || '',
       website: dataCustomer.website || '',
       territory: dataCustomer.territory || '',
-    };
-  console.log(dataUpdate,'bbb')
-    
+    };    
     startTransition(() => {
       dispatch(customerActions.updateCustomerAction(dataUpdate,dataCustomer.name!));
     });

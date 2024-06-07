@@ -47,7 +47,7 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import {goBack, navigate} from '../../../navigation/navigation-service';
-import {AppService} from '../../../services';
+import {AppService, CustomerService} from '../../../services';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
 // @ts-ignore
@@ -61,6 +61,7 @@ import {AppStateStatus} from 'react-native';
 import moment from 'moment';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -76,7 +77,7 @@ const useTimer = () => {
         if (mmkv?.trim().length > 0) {
           startTransition(() => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-            setElapsedTime(Math.ceil(currentTime / 1000));
+            setElapsedTime(Math.ceil(currentTime / 1000) + 2);
           });
         }
         // Update every 1 second
@@ -104,7 +105,6 @@ const useTimer = () => {
 
   useEffect(() => {
     if (mmkv?.trim().length > 0 && isFocus) {
-      console.log('run this');
       const newTimeStamp = moment(new Date()).valueOf();
       startTransition(() => {
         const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
@@ -119,7 +119,6 @@ const useTimer = () => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
     }
-
     return () => {
       clearInterval(intervalIdRef.current);
     };
@@ -240,7 +239,12 @@ const CheckIn = () => {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
         console.log(checkEnabled, 'response');
-        setEnableGPS(checkEnabled);
+        if (checkEnabled === true) {
+          setEnableGPS(true);
+          onCheckout();
+        } else {
+          setEnableGPS(false);
+        }
         // isEnable.current = checkEnabled;
       }
     } else {
@@ -348,43 +352,70 @@ const CheckIn = () => {
     return true;
   };
 
+  const getCustomerRoute = async () => {
+    const response: any = await CustomerService.getCustomerRoute();
+    if (response?.result.length > 0) {
+      dispatch(customerActions.setListCustomerRoute(response.result));
+    }
+  };
+
   const onCheckout = useCallback(async () => {
     // dispatch(appActions.setProcessingStatus(true));
-    startTransition(() => {
-    checkGPS();
-    });
-    if (enableGPS) {
-      CommonUtils.getCurrentLocation(
-        locations => {
-          if (!isValidCheckOut(locations)) {
-            dispatch(appActions.setProcessingStatus(false));
-            return;
-          } else {
-            dispatch(
-              appActions.onCheckIn({
-                ...dataCheckIn,
-                checkin_trangthaicuahang: status,
-                checkin_pinra:
-                  batteryLevel > 0
-                    ? Math.round(batteryLevel * 10000) / 100
-                    : -Math.round(batteryLevel * 10000) / 100,
-                checkin_giora: new Date().getTime() / 1000,
-              }),
-            );
-            dispatch(checkinActions.resetData());
-          }
-        },
-        err => backgroundErrorListener(err.code),
-      );
-    } else{
-      backgroundErrorListener(1)
-    }
+
+    CommonUtils.getCurrentLocation(
+      async locations => {
+        if (!isValidCheckOut(locations)) {
+          dispatch(appActions.setProcessingStatus(false));
+          return;
+        } else {
+          dispatch(
+            appActions.onCheckIn({
+              ...dataCheckIn,
+              checkin_trangthaicuahang: status,
+              checkin_pinra:
+                batteryLevel > 0
+                  ? Math.round(batteryLevel * 10000) / 100
+                  : -Math.round(batteryLevel * 10000) / 100,
+              checkin_giora: new Date().getTime() / 1000,
+            }),
+          );
+          dispatch(checkinActions.resetData());
+          await getCustomerRoute();
+        }
+      },
+      err => backgroundErrorListener(err.code),
+    );
+
     setShow(false);
-  }, [dataCheckIn, categoriesCheckin,enableGPS]);
+  }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
   const onConfirmCheckout = useCallback(async () => {
-    setShow(false);
-    if (enableGPS) {
+    if (Platform.OS === 'android') {
+      const checkEnable: boolean = await isLocationEnabled();
+      if (checkEnable === true) {
+        try {
+          dispatch(appActions.setProcessingStatus(true));
+          const res: any = await AppService.checkOut(
+            dataCheckIn.checkin_id,
+            dataCheckIn.item.name,
+          );
+          if (res?.status === ApiConstant.STT_OK) {
+            dispatch(checkinActions.resetData());
+            // dispatch
+            dispatch(appActions.setDataCheckIn({}));
+            storage.set('time', '');
+            goBack();
+          }
+        } catch (e) {
+          dispatch(appActions.setProcessingStatus(false));
+        } finally {
+          dispatch(appActions.setProcessingStatus(false));
+        }
+      } else {
+        setEnableGPS(false);
+        backgroundErrorListener(1);
+      }
+    } else {
       try {
         dispatch(appActions.setProcessingStatus(true));
         const res: any = await AppService.checkOut(
@@ -403,10 +434,8 @@ const CheckIn = () => {
       } finally {
         dispatch(appActions.setProcessingStatus(false));
       }
-    } else {
-      backgroundErrorListener(1);
     }
-  }, [dataCheckIn,enableGPS]);
+  }, [dataCheckIn, enableGPS]);
 
   useEffectOnce(() => {
     if (route === false) {
@@ -504,7 +533,7 @@ const CheckIn = () => {
         style={styles.containContainerButton}
         onPress={() =>
           isCurrentTimeGreaterOrEqual(timeCheckin.current)
-            ? onCheckout()
+            ? checkGPS()
             : showSnack({
                 msg: StringFormat(getLabel('checkOutTimeErr'), {
                   time: systemConfig.thoigian_toithieu,
