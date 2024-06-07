@@ -24,6 +24,7 @@ const ItemProduct = ({
   tax_amount,
   totalPrice,
   onRemove,
+  isAddProduct,
 }: ProductProps) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
@@ -99,6 +100,7 @@ const ItemProduct = ({
 
       {onRemove && (
         <TouchableOpacity
+          disabled={!isAddProduct}
           onPress={() => onRemove && onRemove(name)}
           style={[styles.iconRemove]}>
           <AppIcons
@@ -124,6 +126,7 @@ interface ProductProps {
   discount_amount?: number;
   tax_percentage?: number;
   tax_amount?: number;
+  isAddProduct?: boolean;
   onRemove?: (item_code: string) => void;
 }
 

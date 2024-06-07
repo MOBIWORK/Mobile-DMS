@@ -90,6 +90,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
                 tax_percentage={item?.rate_tax_item ?? 0}
                 totalPrice={item.total_item_money}
                 price={item?.price ?? 0}
+                isAddProduct={isAddProduct}
               />
             </Pressable>
           ))}

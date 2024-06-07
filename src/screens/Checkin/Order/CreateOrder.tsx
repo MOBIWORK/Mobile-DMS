@@ -472,16 +472,17 @@ const CreateOrder = () => {
     switch (type) {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
-        if (!orderResultData) {
-          const orderRes: any = await OrderService.createdOrder(objectData);
-          if (orderRes?.status === ApiConstant.STT_CREATED) {
-            setOrderResultData({
-              ...orderRes.data.result?.detail_order,
-              name: orderRes.data.result?.name,
-            });
-            onUpdateItemProduct(orderRes.data.result?.detail_order?.list_items);
-          }
-        }
+        console.log('object', objectData);
+        // if (!orderResultData) {
+        //   const orderRes: any = await OrderService.createdOrder(objectData);
+        //   if (orderRes?.status === ApiConstant.STT_CREATED) {
+        //     setOrderResultData({
+        //       ...orderRes.data.result?.detail_order,
+        //       name: orderRes.data.result?.name,
+        //     });
+        //     onUpdateItemProduct(orderRes.data.result?.detail_order?.list_items);
+        //   }
+        // }
         break;
       case 'RETURN_ORDER':
         const returnOrderRes: any = await OrderService.createdReturnOrder(
@@ -757,9 +758,7 @@ const CreateOrder = () => {
           </Text>
         </Block>
         <AppButton
-          label={
-            orderResultData ? getLabel('completed') : getLabel('orderCreated')
-          }
+          label={orderResultData ? getLabel('completed') : getLabel('continue')}
           style={styles.button}
           disabled={isDisabled}
           onPress={() => onCreatedOrder()}

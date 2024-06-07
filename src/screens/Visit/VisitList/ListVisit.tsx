@@ -1022,7 +1022,6 @@ const ListVisit = () => {
     };
   }, []);
 
-
   // console.log(sortDataCustomer,'bbb')
 
   useEffect(() => {
@@ -1042,7 +1041,7 @@ const ListVisit = () => {
 
   useEffect(() => {
     sortDataCustomer(distanceFilterValue);
-  }, [listCustomer, isFocus]);
+  }, [listCustomer, isFocus, distanceFilterData]);
 
   // useEffect(() => {
   //   if (isEnable.current === false && Platform.OS === 'android') {
