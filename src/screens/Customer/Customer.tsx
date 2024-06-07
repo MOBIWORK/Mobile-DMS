@@ -577,7 +577,7 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     numberCustomer: {
       fontSize: 14,
-      color: Colors.darker,
+      color: theme.colors.text_primary,
       lineHeight: 21,
       fontWeight: '700',
       textAlign: 'left',
@@ -658,7 +658,7 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 6,
     } as ViewStyle,
     buttonRestart: {
-      backgroundColor: Colors.gray_100,
+      backgroundColor: theme.colors.bg_neutral,
       borderRadius: 24,
       alignItems: 'center',
       paddingHorizontal: 12,
@@ -677,7 +677,7 @@ const rootStyles = (theme: AppTheme) =>
       fontSize: 14,
       fontWeight: '700',
       lineHeight: 24,
-      color: Colors.white,
+      color: theme.colors.bg_default,
     } as TextStyle,
     headerBottomSheet: {
       marginHorizontal: 16,
@@ -706,7 +706,7 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 30,
       backgroundColor: theme.colors.primary,
       borderWidth: 2,
-      borderColor: Colors.white,
+      borderColor: theme.colors.bg_default,
       position: 'absolute',
       justifyContent: 'center',
       alignItems: 'center',

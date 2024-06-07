@@ -479,10 +479,10 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 30,
       backgroundColor: theme.colors.bg_default,
       borderWidth: 2,
-      borderColor: Colors.white,
+      borderColor: theme.colors.bg_default,
     } as ViewStyle,
     locationView: {
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.bg_default,
       height: 48,
       position: 'absolute',
       top: 10,
