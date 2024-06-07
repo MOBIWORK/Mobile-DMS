@@ -141,13 +141,13 @@ export function* updateCustomerSaga(action: PayloadAction) {
   if (customerActions.updateCustomerAction.match(action)) {
     try {
       yield put(appActions.onLoadApp());
-      console.log(action.payload)
+      console.log(action.payload.data)
       const response: ResponseGenerator = yield call(
         updateCustomer,
         action.payload.data.data,
         action.payload.name
       );
-      
+        console.log(response.message,'bbb')
       if (response.message === 'OK') {
         showSnack({
           msg: 'Cập nhật thành công',

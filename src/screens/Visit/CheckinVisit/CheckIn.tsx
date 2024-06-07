@@ -243,9 +243,13 @@ const CheckIn = () => {
           setEnableGPS(true);
           onCheckout();
         } else {
+          console.log('run')
           setEnableGPS(false);
         }
         // isEnable.current = checkEnabled;
+      }else{
+        backgroundErrorListener(1)
+        
       }
     } else {
       setEnableGPS(true);
@@ -469,7 +473,7 @@ const CheckIn = () => {
                 style={{padding: 8}}
                 onPress={() => {
                   setShow(true);
-                  checkGPS();
+                  // checkGPS();
                 }}>
                 <SvgIcon source="arrowLeft" size={24} />
               </TouchableOpacity>

@@ -147,6 +147,15 @@ const ModalEditAddress = ({
     return addressSelectedData?.length === 3 && txtAddressDetail !== '';
   }, [addressSelectedData, txtAddressDetail]);
 
+
+  useEffect(() => {
+    if (listDataCity?.city?.length === 0) {
+      dispatch(appActions.onGetListCity());
+    }
+  }, []);
+
+
+  console.log(addressObj,'sss')
   const onPressButtonGetLocation = () => {
     CommonUtils.getCurrentLocation(
       locations => {
@@ -237,6 +246,7 @@ const ModalEditAddress = ({
           geometry.location.lng,
         );
         if (response.status === ApiConstant.STT_OK || 'OK') {
+
           const address: any = response.results[0].address_components;
           const cityValue = address[address.length - 1]?.long_name ?? '';
           const districtValue = address[address.length - 2]?.long_name ?? '';
@@ -258,17 +268,21 @@ const ModalEditAddress = ({
             detail: addLine1,
           };
           if (cityValue) {
+     
             const cityNameArr = listDataCity.city.map(
               cityNameArrItem => cityNameArrItem.ten_tinh,
             );
+       
             const citySelectedName = CommonUtils.findBestMatch(
               cityValue,
               cityNameArr,
             );
+           
             const citySelected = listDataCity.city.find(
               citySelectedItem =>
                 citySelectedItem.ten_tinh === citySelectedName,
             );
+            
             addressObj = {
               ...addressObj,
               province: {
@@ -337,6 +351,8 @@ const ModalEditAddress = ({
     }
   };
 
+  // console.log(addressObj,'addObj')
+
   const handleSaveMainAddress = useCallback(() => {
     startTransition(() => {
       setData(prev => ({
@@ -362,7 +378,7 @@ const ModalEditAddress = ({
     });
     setAddressValue({});
     setAddressSelectedData([]);
-    setData(prev => ({...prev, address: []}));
+    // setData(prev => ({...prev, address: []}));
     onBackButtonPress();
   }, [addressValue.addressGet, addressValue.addressOrder]);
 
@@ -443,6 +459,13 @@ const ModalEditAddress = ({
       }));
     }
   }, [contactSelectedData]);
+
+
+  useEffect(() => {
+    if (listDataCity?.city?.length === 0) {
+      dispatch(appActions.onGetListCity());
+    }
+  }, []);
 
   return (
     <Modal
