@@ -176,6 +176,12 @@ const CreateOrder = () => {
       orderResultData?.name ?? '',
     );
     if (res?.status === ApiConstant.STT_OK) {
+      if (customer) {
+        dispatch(orderAction.setCustomerOder(null));
+      }
+      dispatch(productActions.updateProductSelect([]));
+      dispatch(productActions.resetDataProduct());
+      dispatch(productActions.updateListProduct([]));
       navigation.goBack();
     }
     dispatch(appActions.setProcessingStatus(false));
@@ -469,7 +475,10 @@ const CreateOrder = () => {
         if (!orderResultData) {
           const orderRes: any = await OrderService.createdOrder(objectData);
           if (orderRes?.status === ApiConstant.STT_CREATED) {
-            setOrderResultData(orderRes.data.result);
+            setOrderResultData({
+              ...orderRes.data.result?.detail_order,
+              name: orderRes.data.result?.name,
+            });
             onUpdateItemProduct(orderRes.data.result?.detail_order?.list_items);
           }
         }
@@ -479,7 +488,10 @@ const CreateOrder = () => {
           objectData,
         );
         if (returnOrderRes?.status === ApiConstant.STT_CREATED) {
-          setOrderResultData(returnOrderRes.data);
+          setOrderResultData({
+            ...returnOrderRes.data.result?.detail_order,
+            name: returnOrderRes.data.result?.name,
+          });
           onUpdateItemProduct(
             returnOrderRes.data.result?.detail_order?.list_items,
           );

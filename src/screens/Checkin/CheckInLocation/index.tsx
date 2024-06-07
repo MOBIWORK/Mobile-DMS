@@ -120,7 +120,7 @@ const CheckInLocation = () => {
   const [addressSelectedData, setAddressSelectedData] = useState<
     AddressSelected[]
   >([]);
-const [errCode,setErrCode] = useState<any>(null)
+  const [errCode, setErrCode] = useState<any>(null);
   const customer_location: LocationProps =
     route.params?.data &&
     JSON.parse(route.params.data.item.customer_location_primary);
@@ -148,13 +148,15 @@ const [errCode,setErrCode] = useState<any>(null)
             1000,
           );
       },
-      err => {backgroundErrorListener(err.code)},
+      err => {
+        backgroundErrorListener(err.code);
+      },
     );
   };
 
   const handleGetAddress = async () => {
     dispatch(appActions.setProcessingStatus(true));
-    if (location  ) {
+    if (location) {
       // console.log('run case 1 ');
       await handleMarkerMap(
         location.coords.latitude,
@@ -538,10 +540,10 @@ const [errCode,setErrCode] = useState<any>(null)
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
             onBack={() => {
-             route.params.type === ''
+              route.params.type === 'CHECKIN'
                 ? navigation.goBack()
                 : navigation.navigate(ScreenConstant.AUTHORIZED, {
-                    screen: ScreenConstant.LIST_VISIT,
+                    screen: ScreenConstant.MAIN_TAB,
                   });
             }}
             label={getLabel('location')}
