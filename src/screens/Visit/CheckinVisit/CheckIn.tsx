@@ -252,6 +252,7 @@ const CheckIn = () => {
       }
     } else {
       setEnableGPS(true);
+      onCheckout();
     }
   };
 
