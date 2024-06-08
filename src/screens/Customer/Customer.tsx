@@ -18,6 +18,7 @@ import React, {
   useCallback,
   useTransition,
   useState,
+  useEffect,
 } from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -44,6 +45,7 @@ import {
   calculateDistance,
   handleBackgroundLocation,
   useDeepCompareEffect,
+  useEffectOnce,
   useSelector,
 } from '../../config/function';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
@@ -122,6 +124,8 @@ const Customer = () => {
     firstModal: false,
     secondModal: false,
   });
+
+  const [loading, setLoading] = useState(true);
   const [valueFilter, setValueFilter] = React.useState<IValueType>({
     customerType: getLabel('all'),
     customerGroupType: getLabel('all'),
@@ -162,7 +166,6 @@ const Customer = () => {
       const index = event.nativeEvent.contentOffset.y / slideSize;
       const roundIndex = Math.ceil(index);
       currentIndex.current = roundIndex;
-      console.log(currentIndex.current, 'currentIndex');
     },
 
     [currentIndex],
@@ -251,8 +254,9 @@ const Customer = () => {
     // handleEnabledPressed();
   }, []);
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     mounted.current = true;
+    console.log('run fist');
     if (listCustomer && listCustomer?.length > 0) {
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
@@ -262,21 +266,27 @@ const Customer = () => {
       );
       setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
       dispatch(appActions.onLoadAppEnd());
+      mounted.current = false;
     } else {
       dispatch(customerActions.onGetCustomer());
-   
+      mounted.current = false;
+
       // onRefreshData();
     }
 
-    dispatch(customerActions.getCustomerType());
     dispatch(onLoadAppEnd());
 
-    mounted.current = false;
+    console.log('run last');
+    setLoading(false);
 
     return () => {
       mounted.current = false;
     };
-  }, [isFocus, dispatch]);
+  }, [isFocus,listCustomer]);
+
+  useEffectOnce(() => {
+    dispatch(customerActions.getCustomerType());
+  });
 
   const handleApplyFilter = () => {
     if (
@@ -502,13 +512,12 @@ const Customer = () => {
           </Text>
           {getLabel('customer')}
         </Text>
-        {appLoading ? (
+        {loading ? (
           <SkeletonLoading />
         ) : (
           <ListCard
-            ref={flatListRef}
-            data={customerData}
-            loading={isPending}
+            data={customerData || []}
+            loading={loading}
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}
             onScroll={onScroll}
