@@ -1006,9 +1006,7 @@ const ListVisit = () => {
     // sortDataCustomer(distanceFilterValue);
   }, []);
 
-  useEffectOnce(() => {
-    dispatch(appActions.onGetSystemConfig());
-  });
+
 
   useEffect(() => {
     const checkGPS = async () => {

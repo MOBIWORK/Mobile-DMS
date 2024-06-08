@@ -97,6 +97,7 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
         return {
           ...prev,
           frequency: updatedFrequency,
+          routers:[{frequency:updatedFrequency,router_code:prev.routers?.[0].router_code, router_name:prev.routers?.[0].router_code}]
         };
       });
     },
@@ -315,9 +316,10 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
                     style={styles.containItemBottomView}
                     key={item.name}
                     onPress={() => {
+                      console.log(item,'item')
                       setData(prev => ({
                         ...prev,
-                        router_name: [item.channel_name, item.name],
+                        routers:[{frequency:prev?.routers?.[0]?.frequency || '',  router_code:item.channel_code,router_name:item.channel_name}],
                       }));
                       onBackButton();
                     }}>

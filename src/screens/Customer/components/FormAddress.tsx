@@ -185,17 +185,15 @@ const FormAddress = (props: Props) => {
   };
 
   const handleSaveMainAddress = async () => {
-    if (
-      !addressValue.city?.id ||
-      !addressValue.district?.id ||
-      !addressValue.ward?.id
-    ) {
+    console.log('runnnn')
+  {
       const locationIDRes: any = await AppService.getIDLocation({
         province_name: addressValue.city?.value ?? '',
         district_name: addressValue.district?.value ?? '',
         ward_name: addressValue.ward?.value ?? '',
       });
       if (locationIDRes?.status === ApiConstant.STT_OK) {
+        console.log(locationIDRes,'ress')
         const newAddressValue: MainAddress = {
           ...addressValue,
           city: {
@@ -212,7 +210,7 @@ const FormAddress = (props: Props) => {
           } as any,
         };
         const data: IUpdateAddress = {
-          customer: props.dataCustomer.name!,
+          customer: props.dataCustomer.name!  || '',
           long: location?.coords.longitude || NaN,
           lat: location?.coords.latitude || NaN,
           address_line1: txtAddressDetail,
@@ -229,35 +227,23 @@ const FormAddress = (props: Props) => {
             name: addressValue.city?.value ?? '',
           },
         };
-
-        const res: ResponseGenerator =
-          await CheckinService.updateCustomerAddress(data);
-        if (res.status === 200) {
-          props?.getDetailCustomer?.() ? await props.getDetailCustomer() : null;
-        }
         dispatch(
           customerActions.setMainAddress({
             ...newAddressValue,
+            data,
             detailAddress: txtAddressDetail,
           }),
         );
       }
-    } else {
-      dispatch(
-        customerActions.setMainAddress({
-          ...addressValue,
-          detailAddress: txtAddressDetail,
-        }),
-      );
-    }
+      onPressClose()
     setData({
       ...listData,
       latitude: location?.coords.latitude,
       longitude: location?.coords.longitude,
     });
-    onPressClose();
-  };
 
+  };
+  }
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisitAble(true);
@@ -358,7 +344,7 @@ const FormAddress = (props: Props) => {
           }
         />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
-        <Block paddingHorizontal={16} block>
+        <Block  block>
           <Block style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
               label="Địa chỉ chính"

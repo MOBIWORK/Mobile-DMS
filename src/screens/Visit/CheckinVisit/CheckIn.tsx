@@ -36,6 +36,7 @@ import {
   backgroundErrorListener,
   calculateDistance,
   decimalMinutesToTime,
+  useDeepCompareEffect,
   useDisableBackHandler,
   useEffectOnce,
   useSelector,
@@ -234,7 +235,7 @@ const CheckIn = () => {
     }
   };
 
-  const checkGPS = async () => {
+  const checkGPS = useCallback(async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
@@ -243,158 +244,27 @@ const CheckIn = () => {
           setEnableGPS(true);
           onCheckout();
         } else {
+          console.log('run');
           setEnableGPS(false);
         }
         // isEnable.current = checkEnabled;
+      } else {
+        backgroundErrorListener(1);
       }
     } else {
       setEnableGPS(true);
       onCheckout();
     }
-  };
+  }, [enableGPS]);
 
-  const isValidCheckOut = (currentLocation: GeolocationResponse) => {
-    function isCamera(categoriesItem: IItemCheckIn) {
-      return categoriesItem.key === 'camera';
-    }
-    function isInventory(categoriesItem: IItemCheckIn) {
-      return categoriesItem.key === 'inventory';
-    }
-    function isNote(categoriesItem: IItemCheckIn) {
-      return categoriesItem.key === 'note';
-    }
-
-    if (
-      systemConfig.batbuoc_kiemton &&
-      !categoriesCheckin.find(isInventory).isDone
-    ) {
-      setMsgCheckOutErr({
-        type: 'inventory',
-        msg: getLabel('inventoryNotComplete'),
-      });
-      setOpenDialogErr(true);
-      return false;
-    } else if (
-      systemConfig.batbuoc_chupanh &&
-      !categoriesCheckin.find(isCamera).isDone
-    ) {
-      setMsgCheckOutErr({
-        type: 'camera',
-        msg: getLabel('cameraNotComplete'),
-      });
-      setOpenDialogErr(true);
-      return false;
-    } else if (
-      systemConfig.batbuoc_ghichu &&
-      !categoriesCheckin.find(isNote).isDone
-    ) {
-      setMsgCheckOutErr({
-        type: 'note',
-        msg: getLabel('noteNotComplete'),
-      });
-      setOpenDialogErr(true);
-      return false;
-    } else if (!systemConfig.checkout_ngoaisaiso) {
-      let location: LocationProps = JSON.parse(
-        params.item.customer_location_primary,
-      );
-      let distance = calculateDistance(
-        currentLocation.coords.latitude,
-        currentLocation.coords.longitude,
-        location?.lat,
-        location?.long,
-      );
-      if (distance * 1000 > AppConstant.additional_distance) {
-        setMsgCheckOutErr({
-          type: 'distance',
-          title: getLabel('errDistance'),
-          msg: getLabel('mgsDistanceErr'),
-        });
-        setOpenDialogErr(true);
-        return false;
-      } else {
-        return true;
-      }
-    } else if (
-      systemConfig.checkout_ngoaisaiso &&
-      systemConfig.saiso_chophep_checkout_ngoaisaiso > 0
-    ) {
-      let location: LocationProps = JSON.parse(
-        params.item.customer_location_primary,
-      );
-      let distance = calculateDistance(
-        currentLocation.coords.latitude,
-        currentLocation.coords.longitude,
-        location?.lat,
-        location?.long,
-      );
-      if (
-        distance * 1000 >
-        systemConfig.saiso_chophep_checkout_ngoaisaiso +
-          AppConstant.additional_distance
-      ) {
-        setMsgCheckOutErr({
-          type: 'distance',
-          title: getLabel('errDistance'),
-          msg: getLabel('mgsDistanceErr'),
-        });
-        setOpenDialogErr(true);
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      setMsgCheckOutErr({
-        type: '',
-        msg: '',
-      });
-      setOpenDialogErr(false);
-    }
-    return true;
-  };
-
-  const getCustomerRoute = async () => {
-    const response: any = await CustomerService.getCustomerRoute();
-    if (response?.result.length > 0) {
-      dispatch(customerActions.setListCustomerRoute(response.result));
-    }
-  };
-
-  const onCheckout = useCallback(async () => {
-    // dispatch(appActions.setProcessingStatus(true));
-
-    CommonUtils.getCurrentLocation(
-      async locations => {
-        if (!isValidCheckOut(locations)) {
-          dispatch(appActions.setProcessingStatus(false));
-          return;
-        } else {
-          dispatch(
-            appActions.onCheckIn({
-              ...dataCheckIn,
-              checkin_trangthaicuahang: status,
-              checkin_pinra:
-                batteryLevel > 0
-                  ? Math.round(batteryLevel * 10000) / 100
-                  : -Math.round(batteryLevel * 10000) / 100,
-              checkin_giora: new Date().getTime() / 1000,
-            }),
-          );
-          dispatch(checkinActions.resetData());
-          await getCustomerRoute();
-        }
-      },
-      err => backgroundErrorListener(err.code),
-    );
-
-    setShow(false);
-  }, [dataCheckIn, categoriesCheckin, enableGPS]);
-
-  const onConfirmCheckout = useCallback(async () => {
+  const checkGPSConfirmCheckout = useCallback(async () => {
     if (Platform.OS === 'android') {
-      const checkEnable: boolean = await isLocationEnabled();
-      if (checkEnable === true) {
-        try {
+      const checkEnabled: boolean = await isLocationEnabled();
+      if (checkEnabled) {
+        console.log(checkEnabled, 'response');
+        if (checkEnabled === true) {
+          setEnableGPS(true);
+          // try {
           dispatch(appActions.setProcessingStatus(true));
           const res: any = await AppService.checkOut(
             dataCheckIn.checkin_id,
@@ -405,40 +275,214 @@ const CheckIn = () => {
             // dispatch
             dispatch(appActions.setDataCheckIn({}));
             storage.set('time', '');
+            dispatch(appActions.setProcessingStatus(false));
+
             goBack();
           }
-        } catch (e) {
-          dispatch(appActions.setProcessingStatus(false));
-        } finally {
-          dispatch(appActions.setProcessingStatus(false));
+          // } catch (e) {
+
+          // } finally {
+          // }
+        } else {
+          console.log('run');
+          setEnableGPS(false);
         }
+        // isEnable.current = checkEnabled;
       } else {
-        setEnableGPS(false);
         backgroundErrorListener(1);
       }
     } else {
-      try {
-        dispatch(appActions.setProcessingStatus(true));
-        const res: any = await AppService.checkOut(
-          dataCheckIn.checkin_id,
-          dataCheckIn.item.name,
-        );
-        if (res?.status === ApiConstant.STT_OK) {
-          dispatch(checkinActions.resetData());
-          // dispatch
-          dispatch(appActions.setDataCheckIn({}));
-          storage.set('time', '');
-          goBack();
-        }
-      } catch (e) {
+      setEnableGPS(true);
+      // try {
+      dispatch(appActions.setProcessingStatus(true));
+      const res: any = await AppService.checkOut(
+        dataCheckIn.checkin_id,
+        dataCheckIn.item.name,
+      );
+      if (res?.status === ApiConstant.STT_OK) {
+        dispatch(checkinActions.resetData());
+        // dispatch
+        dispatch(appActions.setDataCheckIn({}));
+        storage.set('time', '');
         dispatch(appActions.setProcessingStatus(false));
-      } finally {
-        dispatch(appActions.setProcessingStatus(false));
-      }
-    }
-  }, [dataCheckIn, enableGPS]);
 
-  useEffectOnce(() => {
+        goBack();
+      }
+      // } catch (e) {
+      // } finally {
+      // dispatch(appActions.setProcessingStatus(false));
+      // }
+    }
+  }, [enableGPS]);
+
+  const isValidCheckOut = useCallback(
+    (currentLocation: GeolocationResponse) => {
+      function isCamera(categoriesItem: IItemCheckIn) {
+        return categoriesItem.key === 'camera';
+      }
+      function isInventory(categoriesItem: IItemCheckIn) {
+        return categoriesItem.key === 'inventory';
+      }
+      function isNote(categoriesItem: IItemCheckIn) {
+        return categoriesItem.key === 'note';
+      }
+
+      if (
+        systemConfig.batbuoc_kiemton &&
+        !categoriesCheckin.find(isInventory).isDone
+      ) {
+        setMsgCheckOutErr({
+          type: 'inventory',
+          msg: getLabel('inventoryNotComplete'),
+        });
+        setOpenDialogErr(true);
+        return false;
+      } else if (
+        systemConfig.batbuoc_chupanh &&
+        !categoriesCheckin.find(isCamera).isDone
+      ) {
+        setMsgCheckOutErr({
+          type: 'camera',
+          msg: getLabel('cameraNotComplete'),
+        });
+        setOpenDialogErr(true);
+        return false;
+      } else if (
+        systemConfig.batbuoc_ghichu &&
+        !categoriesCheckin.find(isNote).isDone
+      ) {
+        setMsgCheckOutErr({
+          type: 'note',
+          msg: getLabel('noteNotComplete'),
+        });
+        setOpenDialogErr(true);
+        return false;
+      } else if (!systemConfig.checkout_ngoaisaiso) {
+        let location: LocationProps = JSON.parse(
+          params.item.customer_location_primary,
+        );
+        let distance = calculateDistance(
+          currentLocation.coords.latitude,
+          currentLocation.coords.longitude,
+          location?.lat,
+          location?.long,
+        );
+        if (distance * 1000 > AppConstant.additional_distance) {
+          setMsgCheckOutErr({
+            type: 'distance',
+            title: getLabel('errDistance'),
+            msg: getLabel('mgsDistanceErr'),
+          });
+          setOpenDialogErr(true);
+          return false;
+        } else {
+          return true;
+        }
+      } else if (
+        systemConfig.checkout_ngoaisaiso &&
+        systemConfig.saiso_chophep_checkout_ngoaisaiso > 0
+      ) {
+        let location: LocationProps = JSON.parse(
+          params.item.customer_location_primary,
+        );
+        let distance = calculateDistance(
+          currentLocation.coords.latitude,
+          currentLocation.coords.longitude,
+          location?.lat,
+          location?.long,
+        );
+        if (
+          distance * 1000 >
+          systemConfig.saiso_chophep_checkout_ngoaisaiso +
+            AppConstant.additional_distance
+        ) {
+          setMsgCheckOutErr({
+            type: 'distance',
+            title: getLabel('errDistance'),
+            msg: getLabel('mgsDistanceErr'),
+          });
+          setOpenDialogErr(true);
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        setMsgCheckOutErr({
+          type: '',
+          msg: '',
+        });
+        setOpenDialogErr(false);
+      }
+      return true;
+    },
+    [openDialogErr, msgCheckOutErr],
+  );
+
+  const getCustomerRoute = useCallback(async () => {
+    const response: any = await CustomerService.getCustomerRoute();
+    if (response?.result.length > 0) {
+      dispatch(customerActions.setListCustomerRoute(response.result));
+    }
+  }, [dispatch]);
+
+  const onCheckout = useCallback(async () => {
+    // dispatch(appActions.setProcessingStatus(true));
+    if (enableGPS || Platform.OS === 'ios') {
+      CommonUtils.getCurrentLocation(
+        async locations => {
+          if (!isValidCheckOut(locations)) {
+            dispatch(appActions.setProcessingStatus(false));
+            return;
+          } else {
+            dispatch(
+              appActions.onCheckIn({
+                ...dataCheckIn,
+                checkin_trangthaicuahang: status,
+                checkin_pinra:
+                  batteryLevel > 0
+                    ? Math.round(batteryLevel * 10000) / 100
+                    : -Math.round(batteryLevel * 10000) / 100,
+                checkin_giora: new Date().getTime() / 1000,
+              }),
+            );
+            dispatch(checkinActions.resetData());
+            await getCustomerRoute();
+          }
+        },
+        err => backgroundErrorListener(err.code),
+      );
+    } else {
+      backgroundErrorListener(1);
+    }
+    setShow(false);
+  }, [dataCheckIn, categoriesCheckin, enableGPS]);
+
+  // const onConfirmCheckout = useCallback(async () => {
+  //   // console.log(enableGPS,'enable')
+  //   if (enableGPS || Platform.OS === 'ios') {
+  //     try {
+  //       dispatch(appActions.setProcessingStatus(true));
+  //       const res: any = await AppService.checkOut(
+  //         dataCheckIn.checkin_id,
+  //         dataCheckIn.item.name,
+  //       );
+  //       if (res?.status === ApiConstant.STT_OK) {
+  //         dispatch(checkinActions.resetData());
+  //         // dispatch
+  //         dispatch(appActions.setDataCheckIn({}));
+  //         storage.set('time', '');
+  //         goBack();
+  //       }
+  //     } catch (e) {
+  //       dispatch(appActions.setProcessingStatus(false));
+  //     } finally {
+  //       dispatch(appActions.setProcessingStatus(false));
+  //     }
+  //   }
+  //   setShow(false);
+  // }, [dataCheckIn, enableGPS]);
+
+  useDeepCompareEffect(() => {
     if (route === false) {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
         type: '',
@@ -449,7 +493,7 @@ const CheckIn = () => {
     } else {
       return;
     }
-  });
+  }, [route]);
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
@@ -470,7 +514,7 @@ const CheckIn = () => {
                 style={{padding: 8}}
                 onPress={() => {
                   setShow(true);
-                  checkGPS();
+                  // checkGPS();
                 }}>
                 <SvgIcon source="arrowLeft" size={24} />
               </TouchableOpacity>
@@ -603,7 +647,7 @@ const CheckIn = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={onConfirmCheckout}
+              onPress={checkGPSConfirmCheckout}
               style={styles.containButton('exit')}>
               <Text fontSize={14} colorTheme="white" fontWeight="700">
                 Thoát
