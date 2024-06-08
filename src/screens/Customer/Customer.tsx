@@ -7,6 +7,9 @@ import {
   ImageStyle,
   StatusBar,
   Platform,
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import React, {
@@ -15,13 +18,12 @@ import React, {
   useCallback,
   useTransition,
   useState,
-  useLayoutEffect,
 } from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import {AppConstant, ScreenConstant} from '../../const';
-import {Colors} from '../../assets';
+
 import AppImage from '../../components/common/AppImage';
 import FilterHandle from './components/FilterHandle';
 import {listFilter} from './components/data';
@@ -50,7 +52,11 @@ import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import isEqual from 'react-fast-compare';
-import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  onLoadApp,
+  onLoadAppEnd,
+} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
@@ -125,6 +131,7 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
+  const currentIndex = useRef<number>(0);
   const [showModal, setShowModal] = React.useState(false);
   const [isPending, startTransition] = useTransition();
   // const customerData = React.useRef<IDataCustomers[]>(listCustomer);
@@ -134,6 +141,7 @@ const Customer = () => {
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
+  const flatListRef = useRef<FlatList>(null);
   const mounted = useRef<boolean>(true);
   const snapPoints = useMemo(() => ['100%'], []);
   const totalPage = useRef<number>(
@@ -148,33 +156,48 @@ const Customer = () => {
     bottomRef2.current?.snapToIndex(0);
   }, [bottomRef2.current]);
 
-  const sortedData = useCallback((filteredData: IDataCustomers[]) => {
-    return (
-      filteredData.slice().sort((a, b) => {
-        const locationA: LocationProps = JSON.parse(
-          a.customer_location_primary,
-        );
-        const locationB: LocationProps = JSON.parse(
-          b.customer_location_primary,
-        );
-        const distance1 = calculateDistance(
-          location?.coords?.latitude,
-          location?.coords?.longitude,
-          locationA.lat != null ? locationA.lat : 0,
-          locationA.long != null ? locationA.long : 0,
-        );
-        const distance2 = calculateDistance(
-          location?.coords?.latitude,
-          location?.coords?.longitude,
-          locationB.lat != null ? locationB.lat : 0,
-          locationB.long != null ? locationB.long : 0,
-        );
-        return value.first === getLabel('nearest')
-          ? distance1 - distance2
-          : distance2 - distance1;
-      }) || filteredData
-    );
-  }, [customerData]);
+  const onScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const slideSize = event.nativeEvent.layoutMeasurement.height - 240;
+      const index = event.nativeEvent.contentOffset.y / slideSize;
+      const roundIndex = Math.ceil(index);
+      currentIndex.current = roundIndex;
+      console.log(currentIndex.current, 'currentIndex');
+    },
+
+    [currentIndex],
+  );
+
+  const sortedData = useCallback(
+    (filteredData: IDataCustomers[]) => {
+      return (
+        filteredData.slice().sort((a, b) => {
+          const locationA: LocationProps = JSON.parse(
+            a.customer_location_primary,
+          );
+          const locationB: LocationProps = JSON.parse(
+            b.customer_location_primary,
+          );
+          const distance1 = calculateDistance(
+            location?.coords?.latitude,
+            location?.coords?.longitude,
+            locationA.lat != null ? locationA.lat : 0,
+            locationA.long != null ? locationA.long : 0,
+          );
+          const distance2 = calculateDistance(
+            location?.coords?.latitude,
+            location?.coords?.longitude,
+            locationB.lat != null ? locationB.lat : 0,
+            locationB.long != null ? locationB.long : 0,
+          );
+          return value.first === getLabel('nearest')
+            ? distance1 - distance2
+            : distance2 - distance1;
+        }) || filteredData
+      );
+    },
+    [customerData],
+  );
 
   const onRefreshData = useCallback(async () => {
     try {
@@ -183,6 +206,10 @@ const Customer = () => {
       totalPage.current = Math.ceil(
         listCustomerResult.total / listCustomerResult.page_size,
       );
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: currentIndex.current,
+      });
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
@@ -194,6 +221,12 @@ const Customer = () => {
     if (isFocus) {
       //delete search visit value in ListVisit.tsx
       onResetSearchValueOfVisit();
+      if (currentIndex.current > 0) {
+        flatListRef.current?.scrollToIndex({
+          animated: true,
+          index: currentIndex.current,
+        });
+      }
     }
   }, [isFocus]);
 
@@ -208,8 +241,8 @@ const Customer = () => {
         setModalErrorGPS(true);
         return null;
       }
-    }else{
-      handleBackgroundLocation()
+    } else {
+      handleBackgroundLocation();
     }
   }, [modalErrorGPS]);
 
@@ -228,19 +261,22 @@ const Customer = () => {
         item => !item.customer_location_primary,
       );
       setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
+      dispatch(appActions.onLoadAppEnd());
     } else {
       dispatch(customerActions.onGetCustomer());
-      onRefreshData();
+   
+      // onRefreshData();
     }
 
     dispatch(customerActions.getCustomerType());
+    dispatch(onLoadAppEnd());
 
     mounted.current = false;
 
     return () => {
       mounted.current = false;
     };
-  }, [isFocus,dispatch]);
+  }, [isFocus, dispatch]);
 
   const handleApplyFilter = () => {
     if (
@@ -312,7 +348,7 @@ const Customer = () => {
       customerBirthday: getLabel('all'),
       customerGroupType: getLabel('all'),
     });
-  },[valueFilter]);
+  }, [valueFilter]);
 
   const onBackButtonPress = useCallback(() => {
     setShowModal(false);
@@ -325,6 +361,10 @@ const Customer = () => {
       console.log('run if', page);
       startTransition(() => {
         dispatch(customerActions.getCustomerNewPage(page + 1));
+      });
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: currentIndex.current,
       });
     } else {
       console.log('run else');
@@ -466,10 +506,12 @@ const Customer = () => {
           <SkeletonLoading />
         ) : (
           <ListCard
+            ref={flatListRef}
             data={customerData}
             loading={isPending}
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}
+            onScroll={onScroll}
           />
         )}
       </Block>
