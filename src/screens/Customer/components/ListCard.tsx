@@ -18,6 +18,7 @@ type Props = {
   onRefresh: () => Promise<void>;
   loading: boolean;
   onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  currentIndex: number;
 };
 
 const ListCard = (props: Props) => {
@@ -27,11 +28,25 @@ const ListCard = (props: Props) => {
   );
 
   const flatListRef = useRef<FlatList>(null);
-  const onScrollFlat = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (onScroll && typeof onScroll(event) === 'function') {
-      onScroll(event);
+
+  const onEndReachedThreshold = () => {
+    if (props.onLoadData && typeof props.onLoadData === 'function') {
+      props.onLoadData();
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: props.data && props.data.length -1,
+      });
     }
   };
+  const onLoadingData = () =>{
+    if(props.onRefresh && typeof props.onRefresh === 'function'){
+      props.onRefresh();
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: props.currentIndex,
+      });
+    }
+  }
 
   // const memorizedValue = useCallback(() => renderItem, [props.data, props.loading]);
   // console.log(props.data,'data')
@@ -42,7 +57,7 @@ const ListCard = (props: Props) => {
       decelerationRate={'normal'}
       ref={flatListRef}
       onScroll={onScroll}
-      onEndReached={() => props.onLoadData!()}
+      onEndReached={onEndReachedThreshold}
       showsVerticalScrollIndicator={false}
       onEndReachedThreshold={0}
       maxToRenderPerBatch={10}
@@ -52,7 +67,7 @@ const ListCard = (props: Props) => {
       initialNumToRender={5}
       refreshControl={
         <RefreshControl
-          onRefresh={() => props.onRefresh()}
+          onRefresh={onLoadingData}
           refreshing={props.loading}
         />
       }
