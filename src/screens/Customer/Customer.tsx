@@ -513,6 +513,7 @@ const Customer = () => {
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}
             onScroll={onScroll}
+            currentIndex={currentIndex.current}
           />
         )}
       </Block>
