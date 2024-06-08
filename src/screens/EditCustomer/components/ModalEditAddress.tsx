@@ -147,15 +147,13 @@ const ModalEditAddress = ({
     return addressSelectedData?.length === 3 && txtAddressDetail !== '';
   }, [addressSelectedData, txtAddressDetail]);
 
-
   useEffect(() => {
     if (listDataCity?.city?.length === 0) {
       dispatch(appActions.onGetListCity());
     }
   }, []);
 
-
-  console.log(addressObj,'sss')
+  console.log(addressObj, 'sss');
   const onPressButtonGetLocation = () => {
     CommonUtils.getCurrentLocation(
       locations => {
@@ -202,29 +200,28 @@ const ModalEditAddress = ({
   );
 
   const handleSaveMainContact = useCallback(() => {
+    const contact = {
+      last_name: contactValue.nameContact,
+      first_name: contactValue.nameContact,
+      mobile_no: contactValue.phoneNumber,
+      address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
+      is_billing_contact: contactValue.isMainAddress ? 1 : 0,
+      is_primary_contact: 0,
+      name: contactValue.nameContact,
+      city: addressObj.province.code || '',
+      county: addressObj.district.code || '',
+      state: addressObj.ward.code || '',
+    };
+    console.log(contact, 'contact');
     startTransition(() => {
       setData(prev => ({
         ...prev,
-        contacts: [
-          ...(prev.contacts || []),
-          {
-            last_name: contactValue.nameContact,
-            first_name: contactValue.nameContact,
-            mobile_no: contactValue.phoneNumber,
-            address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
-            is_billing_contact: contactValue.isMainAddress ? 1 : 0,
-            is_primary_contact: 0,
-            name: contactValue.nameContact,
-            city: addressSelectedData[0].id || '',
-            county: addressSelectedData[1].id || '',
-            state: addressSelectedData[2].id || '',
-          },
-        ],
+        contacts: [contact],
       }));
     });
     setContactValue({});
     onBackButtonPress();
-  }, [contactValue, txtContactDetail]);
+  }, [contactValue, txtContactDetail, addressObj]);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
@@ -246,7 +243,6 @@ const ModalEditAddress = ({
           geometry.location.lng,
         );
         if (response.status === ApiConstant.STT_OK || 'OK') {
-
           const address: any = response.results[0].address_components;
           const cityValue = address[address.length - 1]?.long_name ?? '';
           const districtValue = address[address.length - 2]?.long_name ?? '';
@@ -268,21 +264,20 @@ const ModalEditAddress = ({
             detail: addLine1,
           };
           if (cityValue) {
-     
             const cityNameArr = listDataCity.city.map(
               cityNameArrItem => cityNameArrItem.ten_tinh,
             );
-       
+
             const citySelectedName = CommonUtils.findBestMatch(
               cityValue,
               cityNameArr,
             );
-           
+
             const citySelected = listDataCity.city.find(
               citySelectedItem =>
                 citySelectedItem.ten_tinh === citySelectedName,
             );
-            
+
             addressObj = {
               ...addressObj,
               province: {
@@ -354,25 +349,27 @@ const ModalEditAddress = ({
   // console.log(addressObj,'addObj')
 
   const handleSaveMainAddress = useCallback(() => {
+    const newAdd = {
+      is_primary_address: addressValue.addressGet ? 1 : 0,
+      is_shipping_address: addressValue.addressOrder ? 1 : 0,
+      address_title: txtAddressDetail,
+      address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
+      name: txtAddressDetail + '-Billing',
+      // address_line1: txtAddressDetail,
+      address_type: 'Billing',
+      city: addressObj.province.code || '',
+      county: addressObj.district.code || '',
+      state: addressObj.ward.code || '',
+      address_line1: addressObj.detail,
+    };
+
     startTransition(() => {
       setData(prev => ({
         ...prev,
         customer_primary_address: txtAddressDetail,
         address: [
-          ...(prev.address || []), // Copy previous address array
-          {
-            is_primary_address: addressValue.addressGet ? 1 : 0,
-            is_shipping_address: addressValue.addressOrder ? 1 : 0,
-            address_title: txtAddressDetail,
-            address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
-            name: txtAddressDetail + '-Billing',
-            // address_line1: txtAddressDetail,
-            address_type: 'Billing',
-            city: addressObj.province.code || '',
-            county: addressObj.district.code || '',
-            state: addressObj.ward.code || '',
-            address_line1: addressObj.detail,
-          },
+          // ...(prev.address || []), // Copy previous address array
+          newAdd,
         ],
       }));
     });
@@ -380,7 +377,7 @@ const ModalEditAddress = ({
     setAddressSelectedData([]);
     // setData(prev => ({...prev, address: []}));
     onBackButtonPress();
-  }, [addressValue.addressGet, addressValue.addressOrder]);
+  }, [addressValue.addressGet, addressValue.addressOrder, addressObj]);
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
@@ -459,7 +456,6 @@ const ModalEditAddress = ({
       }));
     }
   }, [contactSelectedData]);
-
 
   useEffect(() => {
     if (listDataCity?.city?.length === 0) {

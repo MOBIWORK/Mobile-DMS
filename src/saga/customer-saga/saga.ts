@@ -60,7 +60,7 @@ export function* onGetCustomerType(action: PayloadAction) {
         yield put(setListCustomerType(response.result));
       }
     } catch (err) {
-      console.error('err: ', err);
+      console.error('errCustomerType: ', err);
     } finally {
       yield put(onLoadAppEnd());
     }
