@@ -81,8 +81,6 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
     [data.length],
   );
 
-
-
   React.useEffect(() => {
     if (data.length > 0) {
       getListCity();
@@ -92,7 +90,6 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
   }, [data.length]);
 
   // console.log(listCity, 'run ');
-
 
   const ListAddressSelected = (item: AddressSelected, isBorder: boolean) => {
     return (
@@ -169,7 +166,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
     );
   };
 
-  const getListCity = async () => {
+  const getListCity = useCallback(async () => {
     switch (data.length) {
       case 0: {
         const response: ResponseGenerator = await AppService.getListCity();
@@ -224,11 +221,11 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         break;
       }
     }
-  };
+  }, [data]);
 
   useEffect(() => {
     getListCity();
-}, [data.length]);
+  }, [data.length]);
 
   return (
     <MainLayout style={{paddingHorizontal: 16}}>

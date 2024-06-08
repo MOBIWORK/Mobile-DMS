@@ -5,6 +5,9 @@ import {
   ViewStyle,
   TextStyle,
   TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
+  Alert,
 } from 'react-native';
 import React, {
   useCallback,
@@ -187,13 +190,9 @@ const AddingNewCustomer = () => {
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
-    console.log(updateListData,'updateData')
+    console.log(updateListData, 'updateData');
     const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
-      const cusRes: any = await AppService.getCustomer();
-      if (Object.keys(cusRes?.result).length > 0) {
-        await dispatch(customerActions.setCustomer(cusRes.result));
-      }
       navigation.navigate(ScreenConstant.MAIN_TAB, {
         screen: ScreenConstant.CUSTOMER,
       });
@@ -206,28 +205,52 @@ const AddingNewCustomer = () => {
     setOpenDate(false);
   }, [setOpenDate]);
 
-  const handleImagePicker = () => {
-    openImagePicker((selectedImage, base64) => {
-      // Handle the selected image, e.g., set it to state
-      cameraBottomRef.current?.close();
-      setImageSource('data:image/jpeg;base64,' + base64);
-      setListData((prevState: any) => ({
-        ...prevState,
-        faceimage: `data:image/jpeg;base64,${base64}`,
-      }));
-    });
+  const handleImagePicker = async () => {
+    const granted = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    ]);
+    if (
+      (granted['android.permission.CAMERA'] &&
+        granted['android.permission.WRITE_EXTERNAL_STORAGE']) ||
+      Platform.OS === 'ios'
+    ) {
+      openImagePicker((selectedImage, base64) => {
+        // Handle the selected image, e.g., set it to state
+        cameraBottomRef.current?.close();
+        setImageSource('data:image/jpeg;base64,' + base64);
+        setListData((prevState: any) => ({
+          ...prevState,
+          faceimage: `data:image/jpeg;base64,${base64}`,
+        }));
+      });
+    } else {
+      Alert.alert('Bạn chưa cấp quyền');
+    }
   };
 
-  const handleCameraPicker = () => {
-    openImagePickerCamera((selectedImage, base64) => {
-      // Handle the selected image, e.g., set it to state
-      cameraBottomRef.current?.close();
-      setImageSource('data:image/jpeg;base64,' + base64);
-      setListData((prevState: any) => ({
-        ...prevState,
-        faceimage: `data:image/jpeg;base64,${base64}`,
-      }));
-    });
+  const handleCameraPicker = async () => {
+    const granted = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    ]);
+    if (
+      (granted['android.permission.CAMERA'] &&
+        granted['android.permission.WRITE_EXTERNAL_STORAGE']) ||
+      Platform.OS === 'ios'
+    ) {
+      openImagePickerCamera((selectedImage, base64) => {
+        // Handle the selected image, e.g., set it to state
+        cameraBottomRef.current?.close();
+        setImageSource('data:image/jpeg;base64,' + base64);
+        setListData((prevState: any) => ({
+          ...prevState,
+          faceimage: `data:image/jpeg;base64,${base64}`,
+        }));
+      });
+    } else {
+      Alert.alert('Bạn chưa cấp quyền ');
+    }
   };
   const onConfirmSingle = React.useCallback<SingleChange>(
     params => {
@@ -269,8 +292,11 @@ const AddingNewCustomer = () => {
   const onBackButtonPress = useCallback(() => {
     setOpenModal(false);
   }, [openModal]);
+  const onPressClose = useCallback(() =>{
+    setModalAddress(false)
+  },[modalAddress])
 
-    console.log(listData.credit_limit,'bbb')
+  console.log(listData.credit_limit, 'bbb');
   return (
     <>
       <MainLayout>
@@ -299,7 +325,7 @@ const AddingNewCustomer = () => {
             <Text style={styles.textButtonStyle}>Thêm mới</Text>
           </TouchableOpacity>
         </View>
-        <AppBottomSheet bottomSheetRef={filterRef}   snapPointsCustom={snapPoint}>
+        <AppBottomSheet bottomSheetRef={filterRef} snapPointsCustom={snapPoint}>
           <ListFilterAdding
             type={typeFilter}
             filterRef={filterRef}
@@ -377,12 +403,11 @@ const AddingNewCustomer = () => {
           onBackdropPress={() => setModalAddress(false)}>
           <Block block>
             <FormAddress
-              onPressClose={() => {
-                setModalAddress(false);
-              }}
+              onPressClose={onPressClose}
               typeFilter={typeFilter}
               listData={listData}
               setData={setListData}
+              dataCustomer={listData.customer_name}
             />
           </Block>
         </Modal>
@@ -421,7 +446,7 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'center',
     } as ViewStyle,
     textButtonStyle: {
-      color: Colors.white,
+      color: theme.colors.bg_default,
       fontSize: 14,
       fontWeight: '700',
       lineHeight: 24,

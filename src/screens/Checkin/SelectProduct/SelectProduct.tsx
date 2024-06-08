@@ -1,6 +1,6 @@
 import React, {
   memo,
-  startTransition,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -28,6 +28,7 @@ import {
   Animated,
   Pressable,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Searchbar, TextInput } from 'react-native-paper';
@@ -110,7 +111,6 @@ const SelectProducts = () => {
     group: '',
     industry: '',
   });
-  const previousProductNameRef = useRef<string | null>(null);
 
   const openBottomSheetDataFilter = React.useCallback(
     (type: string, item?: IProduct) => {
@@ -349,6 +349,7 @@ const SelectProducts = () => {
 
   const onSelectProduct = React.useCallback(
     (id: string, isSelected: boolean) => {
+      Keyboard.dismiss();
       let newData: any;
       startEffect(() => {
         newData = data.map(item => {
@@ -366,10 +367,15 @@ const SelectProducts = () => {
     [data],
   );
 
+  const isSelectAll = useMemo(() => {
+    return statusSelectAll;
+  }, [statusSelectAll]);
+
   const onSelectAllProduct = () => {
+    Keyboard.dismiss();
     setStatusSelectAll(prevState => !prevState);
-    const newData = data.map(item => ({ ...item, isSelected: !item.isSelected }));
-    setCountSelect(prevState => (prevState > 0 ? 0 : newData.length));
+    const newData = data.map(item => ({ ...item, isSelected: !isSelectAll }));
+    setCountSelect(!isSelectAll ? data.length : 0);
     setData(newData);
   };
 
@@ -445,6 +451,12 @@ const SelectProducts = () => {
       setData([]);
     }
   }, [products]);
+
+  useEffect(() => {
+    if (data?.length > 0 && countSelect < data.length) {
+      setStatusSelectAll(false);
+    }
+  }, [countSelect, data]);
 
   const fetchProduct = async () => {
     if (pageNumber === 1) {

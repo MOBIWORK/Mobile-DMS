@@ -1,5 +1,10 @@
-import {FlatList, RefreshControl} from 'react-native';
-import React, {useCallback, useMemo} from 'react';
+import {
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  RefreshControl,
+} from 'react-native';
+import React, {useCallback, useMemo, useRef} from 'react';
 import CardView from './CardView';
 import {IDataCustomers} from '../../../models/types';
 import isEqual from 'react-fast-compare';
@@ -12,20 +17,31 @@ type Props = {
   listFooter?: () => React.JSX.Element;
   onRefresh: () => Promise<void>;
   loading: boolean;
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 };
 
 const ListCard = (props: Props) => {
-  const renderItem = useCallback(({item, index}: {item: IDataCustomers; index: number}) => (
+  const {onScroll} = props;
+  const renderItem = ({item, index}: {item: IDataCustomers; index: number}) => (
     <CardView data={item as any} key={index} index={index} {...item} />
-  ),[props.data,props.loading]);
+  );
+
+  const flatListRef = useRef<FlatList>(null);
+  const onScrollFlat = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (onScroll && typeof onScroll(event) === 'function') {
+      onScroll(event);
+    }
+  };
+
   // const memorizedValue = useCallback(() => renderItem, [props.data, props.loading]);
   // console.log(props.data,'data')
-  return props.data && props.data.length > 0 ? (
-    
+  return !props.loading ? (
     <FlatList
       data={props.data}
       style={{marginBottom: 20}}
       decelerationRate={'normal'}
+      ref={flatListRef}
+      onScroll={onScroll}
       onEndReached={() => props.onLoadData!()}
       showsVerticalScrollIndicator={false}
       onEndReachedThreshold={0}
@@ -47,7 +63,7 @@ const ListCard = (props: Props) => {
     />
   ) : (
     <Block block>
-     <SkeletonLoading/>
+      <SkeletonLoading />
     </Block>
   );
   // </SafeAreaView>

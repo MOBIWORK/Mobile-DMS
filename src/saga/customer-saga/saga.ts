@@ -60,7 +60,8 @@ export function* onGetCustomerType(action: PayloadAction) {
         yield put(setListCustomerType(response.result));
       }
     } catch (err) {
-      console.error('err: ', err);
+      console.error('errCustomerType: ', err);
+      yield put(onLoadAppEnd());
     } finally {
       yield put(onLoadAppEnd());
     }
@@ -141,20 +142,20 @@ export function* updateCustomerSaga(action: PayloadAction) {
   if (customerActions.updateCustomerAction.match(action)) {
     try {
       yield put(appActions.onLoadApp());
-      console.log(action.payload)
+      console.log(action.payload.data);
       const response: ResponseGenerator = yield call(
         updateCustomer,
         action.payload.data.data,
-        action.payload.name
+        action.payload.name,
       );
-      
+      console.log(response.message, 'bbb');
       if (response.message === 'OK') {
         showSnack({
           msg: 'Cập nhật thành công',
           interval: 2000,
           type: 'success',
         });
-        goBack()
+        goBack();
       }
     } catch (err) {
       console.log('run error');

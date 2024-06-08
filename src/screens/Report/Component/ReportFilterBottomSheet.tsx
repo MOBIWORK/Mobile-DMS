@@ -205,15 +205,16 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
               //   if (date.isBetween(startDate, endDate)) {
               //     // if (
               //     //   startDate != null &&
-              //     //   endDate != null 
+              //     //   endDate != null
               //     //   // calculateDaysDifference(startDate, endDate) <= 7
-              //     // ) 
+              //     // )
 
               //     return false;
               //   } else {
               //     return true;
               //   }
               // }}
+              maxDate={new Date()}
               maxRangeDuration={[6]}
               months={calenderConfig.months}
               textStyle={{color: theme.colors.text_primary}}

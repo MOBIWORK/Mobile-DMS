@@ -7,6 +7,9 @@ import {
   ImageStyle,
   StatusBar,
   Platform,
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import React, {
@@ -15,13 +18,13 @@ import React, {
   useCallback,
   useTransition,
   useState,
-  useLayoutEffect,
+  useEffect,
 } from 'react';
 import {TextInput} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import {AppConstant, ScreenConstant} from '../../const';
-import {Colors} from '../../assets';
+
 import AppImage from '../../components/common/AppImage';
 import FilterHandle from './components/FilterHandle';
 import {listFilter} from './components/data';
@@ -41,6 +44,8 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   calculateDistance,
   handleBackgroundLocation,
+  useDeepCompareEffect,
+  useEffectOnce,
   useSelector,
 } from '../../config/function';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
@@ -49,7 +54,11 @@ import {IDataCustomers, ListCustomerType} from '../../models/types';
 import {LocationProps} from '../Visit/VisitList/VisitItem';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import isEqual from 'react-fast-compare';
-import {onLoadApp, onLoadAppEnd} from '../../redux-store/app-reducer/reducer';
+import {
+  appActions,
+  onLoadApp,
+  onLoadAppEnd,
+} from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
@@ -74,7 +83,8 @@ const Customer = () => {
 
   const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer?.data,
-    shallowEqual,
+    // shallowEqual,
+    isEqual,
   );
   const listCustomerResult = useSelector(
     state => state.customer.listCustomer,
@@ -114,6 +124,8 @@ const Customer = () => {
     firstModal: false,
     secondModal: false,
   });
+
+  const [loading, setLoading] = useState(true);
   const [valueFilter, setValueFilter] = React.useState<IValueType>({
     customerType: getLabel('all'),
     customerGroupType: getLabel('all'),
@@ -123,6 +135,7 @@ const Customer = () => {
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
+  const currentIndex = useRef<number>(0);
   const [showModal, setShowModal] = React.useState(false);
   const [isPending, startTransition] = useTransition();
   // const customerData = React.useRef<IDataCustomers[]>(listCustomer);
@@ -132,6 +145,7 @@ const Customer = () => {
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
+  const flatListRef = useRef<FlatList>(null);
   const mounted = useRef<boolean>(true);
   const snapPoints = useMemo(() => ['100%'], []);
   const totalPage = useRef<number>(
@@ -145,6 +159,17 @@ const Customer = () => {
   const onPressType2 = useCallback(() => {
     bottomRef2.current?.snapToIndex(0);
   }, [bottomRef2.current]);
+
+  const onScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const slideSize = event.nativeEvent.layoutMeasurement.height - 240;
+      const index = event.nativeEvent.contentOffset.y / slideSize;
+      const roundIndex = Math.ceil(index);
+      currentIndex.current = roundIndex;
+    },
+
+    [currentIndex],
+  );
 
   const sortedData = useCallback(
     (filteredData: IDataCustomers[]) => {
@@ -174,7 +199,7 @@ const Customer = () => {
         }) || filteredData
       );
     },
-    [listCustomer?.length],
+    [customerData],
   );
 
   const onRefreshData = useCallback(async () => {
@@ -184,21 +209,31 @@ const Customer = () => {
       totalPage.current = Math.ceil(
         listCustomerResult.total / listCustomerResult.page_size,
       );
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: currentIndex.current,
+      });
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
       dispatch(onLoadAppEnd());
     }
-  }, [dispatch, appLoading, mounted]);
+  }, [dispatch]);
 
   React.useEffect(() => {
     if (isFocus) {
       //delete search visit value in ListVisit.tsx
       onResetSearchValueOfVisit();
+      if (currentIndex.current > 0) {
+        flatListRef.current?.scrollToIndex({
+          animated: true,
+          index: currentIndex.current,
+        });
+      }
     }
   }, [isFocus]);
 
-  const checkGPS = async () => {
+  const checkGPS = useCallback(async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       isEnable.current = checkEnabled;
@@ -206,21 +241,22 @@ const Customer = () => {
         setModalErrorGPS(false);
         handleBackgroundLocation();
       } else {
-        return null;
         setModalErrorGPS(true);
+        return null;
       }
+    } else {
+      handleBackgroundLocation();
     }
-  };
+  }, [modalErrorGPS]);
 
   React.useLayoutEffect(() => {
     checkGPS();
     // handleEnabledPressed();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     mounted.current = true;
-    // checkGPS();
-
+    console.log('run fist');
     if (listCustomer && listCustomer?.length > 0) {
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
@@ -228,25 +264,29 @@ const Customer = () => {
       const noLocationCustomer = listCustomer.filter(
         item => !item.customer_location_primary,
       );
-      console.log('run  here ');
-
       setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
+      dispatch(appActions.onLoadAppEnd());
+      mounted.current = false;
     } else {
       dispatch(customerActions.onGetCustomer());
-      onRefreshData();
+      mounted.current = false;
+
+      // onRefreshData();
     }
 
-    const getDataType = () => {
-      dispatch(customerActions.getCustomerType());
-    };
-    getDataType();
+    dispatch(onLoadAppEnd());
 
-    mounted.current = false;
+    console.log('run last');
+    setLoading(false);
 
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer, isFocus]);
+  }, [isFocus,listCustomer]);
+
+  useEffectOnce(() => {
+    dispatch(customerActions.getCustomerType());
+  });
 
   const handleApplyFilter = () => {
     if (
@@ -311,14 +351,14 @@ const Customer = () => {
       bottomRef2.current?.close();
     }
   };
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     bottomRef2.current && bottomRef2.current.close();
     setValueFilter({
       customerType: getLabel('all'),
       customerBirthday: getLabel('all'),
       customerGroupType: getLabel('all'),
     });
-  };
+  }, [valueFilter]);
 
   const onBackButtonPress = useCallback(() => {
     setShowModal(false);
@@ -332,11 +372,21 @@ const Customer = () => {
       startTransition(() => {
         dispatch(customerActions.getCustomerNewPage(page + 1));
       });
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: currentIndex.current,
+      });
     } else {
       console.log('run else');
       return null;
     }
   }, [page]);
+
+  const onPressAdding = useCallback(() => {
+    dispatch(customerActions.setMainAddress({}));
+    dispatch(customerActions.setMainContactAddress({}));
+    navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER);
+  }, []);
 
   const renderBottomView = React.useCallback(() => {
     return (
@@ -462,14 +512,15 @@ const Customer = () => {
           </Text>
           {getLabel('customer')}
         </Text>
-        {appLoading ? (
+        {loading ? (
           <SkeletonLoading />
         ) : (
           <ListCard
-            data={customerData}
-            loading={isPending}
+            data={customerData || []}
+            loading={loading}
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}
+            onScroll={onScroll}
           />
         )}
       </Block>
@@ -530,13 +581,7 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(customerActions.setMainAddress({}));
-          dispatch(customerActions.setMainContactAddress({}));
-          navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER);
-        }}
-        style={styles.fab}>
+      <TouchableOpacity onPress={onPressAdding} style={styles.fab}>
         <AppIcons
           iconType="IonIcon"
           name="add-outline"
@@ -577,7 +622,7 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     numberCustomer: {
       fontSize: 14,
-      color: Colors.darker,
+      color: theme.colors.text_primary,
       lineHeight: 21,
       fontWeight: '700',
       textAlign: 'left',
@@ -658,7 +703,7 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 6,
     } as ViewStyle,
     buttonRestart: {
-      backgroundColor: Colors.gray_100,
+      backgroundColor: theme.colors.bg_neutral,
       borderRadius: 24,
       alignItems: 'center',
       paddingHorizontal: 12,
@@ -677,7 +722,7 @@ const rootStyles = (theme: AppTheme) =>
       fontSize: 14,
       fontWeight: '700',
       lineHeight: 24,
-      color: Colors.white,
+      color: theme.colors.bg_default,
     } as TextStyle,
     headerBottomSheet: {
       marginHorizontal: 16,
@@ -706,7 +751,7 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 30,
       backgroundColor: theme.colors.primary,
       borderWidth: 2,
-      borderColor: Colors.white,
+      borderColor: theme.colors.bg_default,
       position: 'absolute',
       justifyContent: 'center',
       alignItems: 'center',

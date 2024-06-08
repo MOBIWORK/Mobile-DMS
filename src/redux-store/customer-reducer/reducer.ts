@@ -78,7 +78,6 @@ const onGetCustomerByName = createAction(
   Actions.GET_CUSTOMER_BY_NAME,
   (name: string) => ({payload: name}),
 );
-
 const getCustomerType = createAction(Actions.GET_CUSTOMER_TYPE);
 
 const addingCustomer = createAction(

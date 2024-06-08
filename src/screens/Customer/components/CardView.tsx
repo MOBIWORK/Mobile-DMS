@@ -125,14 +125,14 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 2,
       borderRadius: 16,
       marginTop: 4,
-      shadowColor: Colors.darker,
+      shadowColor: !theme.dark ? Colors.darker : 'transparent',
       ...Platform.select({
         android: {
           elevation: 2,
-          shadowColor: Colors.darker,
+          shadowColor: !theme.dark ? Colors.darker : 'transparent',
         },
         ios: {
-          shadowColor: Colors.darker,
+          shadowColor: !theme.dark ? Colors.darker : 'transparent',
           shadowOffset: {
             width: 0,
             height: 1,
@@ -158,7 +158,7 @@ const rootStyles = (theme: AppTheme) =>
       fontSize: 14,
       lineHeight: 21,
       fontWeight: '400',
-      color: Colors.darker,
+      color: theme.colors.text_primary,
     } as TextStyle,
     containContentView: {
       marginHorizontal: 16,
@@ -169,7 +169,7 @@ const rootStyles = (theme: AppTheme) =>
       fontSize: 16,
       fontWeight: '600',
       lineHeight: 24,
-      color: Colors.darker,
+      color: theme.colors.text_primary,
       marginBottom: 4,
     } as TextStyle,
     containButton: {
@@ -180,7 +180,7 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
       borderColor: theme.colors.action,
       height: 37,
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colors.bg_default,
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth: 1,

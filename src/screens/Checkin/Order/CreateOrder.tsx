@@ -14,6 +14,7 @@ import {
   AppInput,
   AppIcons,
   Block,
+  AppDialog,
 } from '../../../components/common';
 import {
   NavigationProp,
@@ -46,9 +47,11 @@ import FilterListComponent, {
 import {ApiConstant, AppConstant} from '../../../const';
 import {OrderService, ProductService} from '../../../services';
 import {
+  IOrderDetail,
   IProduct,
   IProductPromotion,
   IResOrganization,
+  ItemProductOrder,
   IUser,
   KeyAbleProps,
 } from '../../../models/types';
@@ -71,16 +74,6 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {shallowEqual} from 'react-redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
-
-const defautItem1 = {
-  doctype: 'Sales Order Item',
-  name: 'new-sales-order-item-earlpsogzi',
-  child_docname: 'new-sales-order-item-earlpsogzi',
-  parenttype: 'Sales Order',
-  parent: 'new-sales-order-hnnkmtrehm',
-  is_free_item: 0,
-  conversion_factor: 1,
-};
 
 const CreateOrder = () => {
   const navigation = useNavigation<NavigationProp<AuthorizeParamsList>>();
@@ -107,6 +100,7 @@ const CreateOrder = () => {
     handleContentLayout,
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [openDate, setOpenDate] = useState<boolean>(false);
   const [organization, _] = useMMKVObject<IResOrganization>(
     AppConstant.Organization,
@@ -135,7 +129,10 @@ const CreateOrder = () => {
   const [productsPromotion, setProductsPromotion] = useState<
     IProductPromotion[]
   >([]);
-  // const [productDetail, setProductDetail] = useState<IProduct | any>();
+  const [orderResultData, setOrderResultData] = useState<IOrderDetail | null>(
+    null,
+  );
+
   const productDetail: any = useSelector(
     state => state.product.dataProductDetail,
   );
@@ -157,75 +154,82 @@ const CreateOrder = () => {
 
   const [percentageLabel, setPercentageLabel] = useState<string>('');
 
-  const totalPrice = useMemo(() => {
-    let sum: number = 0;
-    if (products.length > 0) {
-      products.forEach(item => {
-        if (item.total_item_money) {
-          sum += item.total_item_money;
-        }
-      });
-    }
-    return sum;
-  }, [products]);
-
-  const total_Discount = useMemo(() => {
-    const discountPercent = Number(percentageLabel.replace(',', '.'));
-    if (products?.length > 0 && discountPercent > 0) {
-      let sum: number = 0;
-      if (discount.value === 'grand') {
-        products.forEach(item => {
-          sum += item.total_item_money;
-        });
-        return (sum * discountPercent) / 100;
-      } else {
-        products.forEach(item => {
-          sum += item.price * item.quantity - item.discount_item_amount;
-        });
-        return (sum * discountPercent) / 100;
-      }
-    } else {
-      return 0;
-    }
-  }, [products, discount]);
-
-  useEffect(() => {
-    updateDataProduct(products);
-  }, [discount]);
-
-  const total_VAT = useMemo(() => {
-    let sum: number = 0;
-    if (products.length > 0) {
-      products.forEach(item => {
-        if (item.total_item_tax) {
-          sum += item.total_item_tax;
-        }
-      });
-    }
-    return sum;
-  }, [products]);
-
-  const total_Money = useMemo(() => {
-    if (totalPrice > 0) {
-      return totalPrice - total_Discount; //bởi vì VAT đã được bao gồm trong tổng giá của sp rồi nên không trừ ở đây nữa.
-    } else {
-      return 0;
-    }
-  }, [totalPrice, total_VAT, total_Discount]);
-
   const onBackScreen = () => {
     Keyboard.dismiss();
-    if (customer) {
-      dispatch(orderAction.setCustomerOder(null));
+    if (orderResultData) {
+      setOpenDialog(true);
+    } else {
+      if (customer) {
+        dispatch(orderAction.setCustomerOder(null));
+      }
+      dispatch(productActions.updateProductSelect([]));
+      dispatch(productActions.resetDataProduct());
+      dispatch(productActions.updateListProduct([]));
+      navigation.goBack();
     }
-    dispatch(productActions.updateProductSelect([]));
-    dispatch(productActions.resetDataProduct());
-    dispatch(productActions.updateListProduct([]));
-    navigation.goBack();
+  };
+
+  const onDeleteOrder = async () => {
+    setOpenDialog(false);
+    dispatch(appActions.setProcessingStatus(true));
+    const res: any = await OrderService.deleteOrder(
+      orderResultData?.name ?? '',
+    );
+    if (res?.status === ApiConstant.STT_OK) {
+      if (customer) {
+        dispatch(orderAction.setCustomerOder(null));
+      }
+      dispatch(productActions.updateProductSelect([]));
+      dispatch(productActions.resetDataProduct());
+      dispatch(productActions.updateListProduct([]));
+      navigation.goBack();
+    }
+    dispatch(appActions.setProcessingStatus(false));
+  };
+
+  const onUpdateItemProduct = (item: ItemProductOrder[]) => {
+    //update itemProduct
+    const newProduct = products.map((productItem, index) => {
+      const element = item[index];
+      if (
+        element.item_code === productItem.item_code &&
+        element.is_free_item === 0
+      ) {
+        return {
+          ...productItem,
+          rate_tax_item: element.item_tax_rate,
+          discount_item_percent: element.discount_percentage,
+          discount_item_amount: element.discount_amount,
+          price: element.rate,
+          total_item_money: element.amount,
+        };
+      } else {
+        return productItem;
+      }
+    });
+    setProducts(newProduct);
+
+    //update Item Promotion
+    if (type === 'ORDER') {
+      const listPromotion: IProductPromotion[] = [];
+      item.forEach(orderItem => {
+        if (orderItem.is_free_item === 1) {
+          listPromotion.push({
+            item_name: orderItem.item_name,
+            item_code: orderItem.item_code,
+            rate: orderItem.rate,
+            qty: orderItem.qty,
+            uom: orderItem.uom,
+          });
+        }
+      });
+      setProductsPromotion(listPromotion);
+    }
   };
 
   const completeCheckin = () => {
     Keyboard.dismiss();
+    setOrderResultData(null);
     if (dataCheckin) {
       const newData =
         type === 'ORDER'
@@ -249,7 +253,6 @@ const CreateOrder = () => {
 
   const showDetailProdcut = (product: IProduct) => {
     dispatch(productActions.setDataProductDetail(product));
-    // setProductDetail(product);
     if (bottomSheetRef.current) {
       bottomSheetRef.current.snapToIndex(0);
     }
@@ -399,150 +402,6 @@ const CreateOrder = () => {
     dispatch(appActions.setProcessingStatus(false));
   };
 
-  const fetchProductPromotion = async () => {
-    if (dataProductSelected?.length > 0) {
-      if (type === 'ORDER') {
-        const newItems = dataProductSelected?.map((item: any) => ({
-          ...defautItem1,
-          item_code: item.item_code,
-          uom: item.stock_uom,
-          qty: item.quantity,
-          stock_qty: item?.stock_qty ? item.stock_qty : item.quantity,
-        }));
-        const objecData = {
-          items: newItems,
-          customer: router.params.data?.customer_name ?? '', // Khách hàng
-          territory: 'Vietnam',
-          currency: 'VND',
-          price_list: 'Standard Selling',
-          price_list_currency: 'VND',
-          company: userInfo.company,
-          doctype: 'Sales Order',
-          name: 'new-sales-order-hnnkmtrehm',
-          transaction_date: CommonUtils.taskDate(date),
-        };
-        const {data: res, status}: KeyAbleProps =
-          await ProductService.getPromotionalProducts(objecData);
-        if (status === ApiConstant.STT_OK) {
-          const result: any = res.result;
-          if (dataProductSelected?.length > 0) {
-            const newDataSelected = dataProductSelected?.map((item, index) => {
-              const element = result[index];
-              if (item.item_code === element.item_code) {
-                if (
-                  element.free_item_data &&
-                  element.free_item_data.length > 0
-                ) {
-                  startEffect(() => {
-                    setProductsPromotion(element.free_item_data);
-                  });
-                } else {
-                  startEffect(() => {
-                    setProductsPromotion([]);
-                  });
-                }
-                if (element?.pricing_rule_for === 'Rate') {
-                  return {
-                    ...item,
-                    price: element.price_list_rate,
-                    discount_item_percent: 0,
-                    discount_item_amount: 0,
-                    has_pricing_rule: element.has_pricing_rule,
-                  };
-                } else if (
-                  element?.pricing_rule_for === 'Discount Percentage'
-                ) {
-                  return {
-                    ...item,
-                    discount_item_percent:
-                      item?.discount_item_percent > 0 &&
-                      !element.has_pricing_rule
-                        ? item.discount_item_percent
-                        : element.discount_percentage,
-                    discount_item_amount:
-                      item?.discount_item_amount > 0 &&
-                      !element.has_pricing_rule
-                        ? item.discount_item_percent
-                        : (element.discount_percentage / 100) *
-                          item.price *
-                          item.quantity,
-                    price: item.price,
-                    has_pricing_rule: element.has_pricing_rule,
-                  };
-                } else if (element?.pricing_rule_for === 'Discount Amount') {
-                  return {
-                    ...item,
-                    discount_item_percent:
-                      item?.discount_item_percent > 0 &&
-                      !element.has_pricing_rule
-                        ? item.discount_item_percent
-                        : (element.discount_amount /
-                            item.price /
-                            item.quantity) *
-                          100,
-                    discount_item_amount:
-                      item?.discount_item_amount > 0 &&
-                      !element.has_pricing_rule
-                        ? item.discount_item_amount
-                        : element.discount_amount,
-                    price: item.price,
-                    has_pricing_rule: element.has_pricing_rule,
-                  };
-                } else {
-                  return {
-                    ...item,
-                    discount_item_percent:
-                      item?.discount_item_percent > 0 &&
-                      !element.has_pricing_rule
-                        ? item.discount_item_percent
-                        : 0,
-                    discount_item_amount:
-                      item?.discount_item_amount > 0 &&
-                      !element.has_pricing_rule
-                        ? item.discount_item_amount
-                        : 0,
-                    has_pricing_rule: element.has_pricing_rule,
-                  };
-                }
-              } else {
-                return item;
-              }
-            });
-            startEffect(() => {
-              updateDataProduct(newDataSelected);
-            });
-          }
-        } else {
-          const newDataSelected = dataProductSelected.map(item => {
-            return {
-              ...item,
-              discount_item_percent:
-                item?.discount_item_percent > 0
-                  ? item.discount_item_percent
-                  : 0,
-              discount_item_amount:
-                item?.discount_item_amount > 0 ? item.discount_item_amount : 0,
-              has_pricing_rule: 0,
-            };
-          });
-          updateDataProduct(newDataSelected);
-        }
-      } else {
-        const newDataSelected = dataProductSelected.map(item => {
-          return {
-            ...item,
-            discount_item_percent:
-              item?.discount_item_percent > 0 ? item.discount_item_percent : 0,
-            discount_item_amount:
-              item?.discount_item_amount > 0 ? item.discount_item_amount : 0,
-            has_pricing_rule: 0,
-          };
-        });
-        updateDataProduct(newDataSelected);
-      }
-    }
-  };
-
   const handlerRemoveItemProduct = (id: string, index: number) => {
     const newProducts = products.filter(item => item.index !== index);
     dispatch(productActions.updateProductSelect(newProducts));
@@ -587,24 +446,18 @@ const CreateOrder = () => {
 
   const onCreatedOrder = async () => {
     dispatch(appActions.setProcessingStatus(true));
-    let status: any = 0;
     const arrItems = products.map(item => ({
-      item_code: item.item_code,
-      qty: item.quantity,
-      rate: item.price,
-      uom: item.stock_uom,
-      discount_percentage: item.discount_item_percent,
-      item_tax_rate: item?.rate_tax_item ? item.rate_tax_item : 0,
-      item_tax_template:
-        item?.item_tax_template?.length > 0
-          ? item.item_tax_template[0].item_tax_template
-          : '',
+      item_code: item?.item_code,
+      qty: item?.quantity,
+      rate: item?.price,
+      uom: item?.stock_uom,
+      item_tax_template: item?.item_tax_template[0]?.item_tax_template,
+      rate_tax_item: item?.rate_tax_item,
     }));
     const objectData: any = {
       set_warehouse: warehouse?.value,
       apply_discount_on: discount.label,
       additional_discount_percentage: discount.discount_percentage,
-      discount_amount: total_Discount,
       company: organization?.company_name,
       items: arrItems,
     };
@@ -619,20 +472,38 @@ const CreateOrder = () => {
     switch (type) {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
-        objectData.grand_total = total_Money;
-        console.log('object', objectData);
-        status = (await OrderService.createdOrder(objectData)).status;
+        // console.log('object', objectData);
+        if (!orderResultData) {
+          const orderRes: any = await OrderService.createdOrder(objectData);
+          if (orderRes?.status === ApiConstant.STT_CREATED) {
+            setOrderResultData({
+              ...orderRes.data.result?.detail_order,
+              name: orderRes.data.result?.name,
+            });
+            onUpdateItemProduct(orderRes.data.result?.detail_order?.list_items);
+          }
+        }
         break;
       case 'RETURN_ORDER':
-        objectData.grand_total = -total_Money;
-        status = (await OrderService.createdReturnOrder(objectData)).status;
+        const returnOrderRes: any = await OrderService.createdReturnOrder(
+          objectData,
+        );
+        if (returnOrderRes?.status === ApiConstant.STT_CREATED) {
+          setOrderResultData({
+            ...returnOrderRes.data.result?.detail_order,
+            name: returnOrderRes.data.result?.name,
+          });
+          onUpdateItemProduct(
+            returnOrderRes.data.result?.detail_order?.list_items,
+          );
+        }
         break;
       default:
         break;
     }
 
     dispatch(appActions.setProcessingStatus(false));
-    if (status === ApiConstant.STT_CREATED) {
+    if (orderResultData) {
       completeCheckin();
     }
   };
@@ -646,75 +517,12 @@ const CreateOrder = () => {
     if (dataProductSelected?.length === 0) {
       setPercentageLabel('');
     } else {
-      fetchProductPromotion();
+      setProducts(dataProductSelected);
     }
   }, [dataProductSelected]);
 
-  const updateDataProduct = useCallback(
-    (data: IProduct[]) => {
-      if (data.length > 0) {
-        const newProduct = data.map(item => {
-          const intoMoney =
-            item.price * item.quantity - item.discount_item_amount;
-          if (item?.rate_tax_item > 0) {
-            if (
-              discount.discount_percentage > 0 &&
-              discount.value === 'grand'
-            ) {
-              const VAT_item_amount = (item.rate_tax_item * intoMoney) / 100; //VAT = VAT * thành tiền
-              return {
-                ...item,
-                total_item_tax: VAT_item_amount,
-                total_item_money: intoMoney + VAT_item_amount,
-              };
-            } else if (
-              discount.discount_percentage > 0 &&
-              discount.value === 'net'
-            ) {
-              const VAT_item_amount =
-                (item.rate_tax_item / 100) *
-                (intoMoney - (intoMoney * discount.discount_percentage) / 100);
-              // VAT(sp) = %VAT x (thành tiền - chiết khấu đơn(net))
-              return {
-                ...item,
-                total_item_tax: VAT_item_amount,
-                total_item_money:
-                  item.price * item.quantity +
-                  VAT_item_amount -
-                  item.discount_item_amount,
-              };
-            } else {
-              const VAT_item_amount =
-                (item.rate_tax_item *
-                  (item.price * item.quantity - item.discount_item_amount)) /
-                100; // VAT(sp) = %VAT x (thành tiền - chiết khấu sp)
-              return {
-                ...item,
-                total_item_tax: VAT_item_amount,
-                total_item_money:
-                  item.price * item.quantity +
-                  VAT_item_amount -
-                  item.discount_item_amount,
-              };
-            }
-          } else {
-            return {
-              ...item,
-              total_item_tax: 0,
-              total_item_money:
-                item.price * item.quantity - item.discount_item_amount,
-            };
-          }
-        });
-        setProducts(newProduct);
-      }
-    },
-    [products, discount],
-  );
-
   return (
     <SafeAreaView edges={['top']} style={{flex: 1}}>
-      {/*<ScrollView keyboardDismissMode="on-drag" style={styles.layout}>*/}
       <AppHeader
         style={{paddingHorizontal: 16}}
         label={
@@ -732,7 +540,12 @@ const CreateOrder = () => {
                 label={getLabel('deliveryDate')}
                 value={CommonUtils.convertDate(date)}
                 editable={false}
-                onPress={() => setOpenDate(true)}
+                styles={{
+                  backgroundColor: orderResultData
+                    ? colors.bg_neutral
+                    : colors.bg_default,
+                }}
+                onPress={() => !orderResultData && setOpenDate(true)}
                 rightIcon={
                   <TextInput.Icon
                     onPress={() => setOpenDate(true)}
@@ -752,7 +565,14 @@ const CreateOrder = () => {
               }
               value={warehouse?.label ? warehouse.label : ''}
               editable={false}
-              onPress={() => onOpenBottomSheetData('warehouse')}
+              styles={{
+                backgroundColor: orderResultData
+                  ? colors.bg_neutral
+                  : colors.bg_default,
+              }}
+              onPress={() =>
+                !orderResultData && onOpenBottomSheetData('warehouse')
+              }
               rightIcon={
                 <TextInput.Icon
                   onPress={() => onOpenBottomSheetData('warehouse')}
@@ -782,7 +602,10 @@ const CreateOrder = () => {
                 customerId={router.params.data?.name ?? ''}
                 products={products}
                 productsPromotion={productsPromotion}
-                showDetailProdcut={showDetailProdcut}
+                showDetailProdcut={item =>
+                  !orderResultData && showDetailProdcut(item)
+                }
+                isAddProduct={!orderResultData}
                 handlerRemoveItemProduct={handlerRemoveItemProduct}
               />
             </View>
@@ -808,18 +631,39 @@ const CreateOrder = () => {
                 value={discount.label}
                 label={getLabel('typeDiscount')}
                 editable={false}
-                onPress={() => onOpenBottomSheetData('discount')}
+                styles={{
+                  backgroundColor: orderResultData
+                    ? colors.bg_neutral
+                    : colors.bg_default,
+                }}
+                onPress={() =>
+                  !orderResultData && onOpenBottomSheetData('discount')
+                }
                 rightIcon={
                   <TextInput.Icon
-                    onPress={() => onOpenBottomSheetData('discount')}
+                    onPress={() =>
+                      !orderResultData && onOpenBottomSheetData('discount')
+                    }
                     icon={'chevron-down'}
                     color={colors.text_secondary}
                   />
                 }
               />
               <AppInput
-                value={percentageLabel}
+                value={
+                  orderResultData
+                    ? orderResultData?.additional_discount_percentage > 0
+                      ? orderResultData.additional_discount_percentage.toString()
+                      : '0'
+                    : percentageLabel
+                }
                 label={getLabel('discountPercentage')}
+                styles={{
+                  backgroundColor: orderResultData
+                    ? colors.bg_neutral
+                    : colors.bg_default,
+                }}
+                editable={!orderResultData}
                 onChangeValue={text => {
                   setPercentageLabel(text);
                 }}
@@ -836,18 +680,22 @@ const CreateOrder = () => {
                 }}
                 rightIcon={<TextInput.Affix text="%" />}
               />
-              <AppInput
-                value={CommonUtils.convertToTwoDecimalPlaces(total_Discount)}
-                label={getLabel('discountAmount')}
-                inputProp={{
-                  keyboardType: 'number-pad',
-                }}
-                styles={{backgroundColor: colors.bg_neutral}}
-                editable={false}
-                rightIcon={
-                  <TextInput.Affix text="VND" textStyle={{fontSize: 12}} />
-                }
-              />
+              {orderResultData && (
+                <AppInput
+                  value={CommonUtils.convertToTwoDecimalPlaces(
+                    orderResultData?.discount_amount ?? 0,
+                  )}
+                  label={getLabel('discountAmount')}
+                  inputProp={{
+                    keyboardType: 'number-pad',
+                  }}
+                  styles={{backgroundColor: colors.bg_neutral}}
+                  editable={false}
+                  rightIcon={
+                    <TextInput.Affix text="VND" textStyle={{fontSize: 12}} />
+                  }
+                />
+              )}
             </View>
           </View>
 
@@ -869,31 +717,27 @@ const CreateOrder = () => {
                 {paddingVertical: 16, rowGap: 12},
               ]}>
               <View style={styles.flexSpace}>
-                <Text style={styles.labelPay}>{getLabel('intoMoney')}</Text>
-                <Text style={styles.price}>
-                  {totalPrice
-                    ? CommonUtils.convertToTwoDecimalPlaces(totalPrice)
-                    : 0}
-                </Text>
-              </View>
-              <View style={styles.flexSpace}>
                 <Text style={styles.labelPay}>{getLabel('discount')}</Text>
                 <Text style={styles.price}>
-                  {CommonUtils.convertToTwoDecimalPlaces(total_Discount)}
+                  {CommonUtils.convertToTwoDecimalPlaces(
+                    orderResultData?.discount_amount ?? 0,
+                  )}
                 </Text>
               </View>
               <View style={styles.flexSpace}>
                 <Text style={styles.labelPay}>VAT</Text>
                 <Text style={styles.price}>
-                  {total_VAT
-                    ? CommonUtils.convertToTwoDecimalPlaces(total_VAT)
-                    : 0}
+                  {CommonUtils.convertToTwoDecimalPlaces(
+                    orderResultData?.total_taxes_and_charges ?? 0,
+                  )}
                 </Text>
               </View>
               <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
                 <Text style={styles.labelPay}>{getLabel('totalPrice')}</Text>
                 <Text style={styles.totalPrice}>
-                  {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
+                  {CommonUtils.convertToTwoDecimalPlaces(
+                    orderResultData?.total ?? 0,
+                  )}
                 </Text>
               </View>
             </View>
@@ -908,11 +752,13 @@ const CreateOrder = () => {
           style={[styles.flexSpace]}>
           <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
           <Text style={styles.totalPrice}>
-            {CommonUtils.convertToTwoDecimalPlaces(total_Money)}
+            {CommonUtils.convertToTwoDecimalPlaces(
+              orderResultData?.grand_total ?? 0,
+            )}
           </Text>
         </Block>
         <AppButton
-          label={getLabel('orderCreated')}
+          label={orderResultData ? getLabel('completed') : getLabel('continue')}
           style={styles.button}
           disabled={isDisabled}
           onPress={() => onCreatedOrder()}
@@ -998,7 +844,6 @@ const CreateOrder = () => {
           />
         </BottomSheetScrollView>
       </AppBottomSheet>
-
       <DatePickerModal
         locale={i18n.language ?? 'vi'}
         mode="single"
@@ -1008,6 +853,18 @@ const CreateOrder = () => {
         onDismiss={onDismissSingle}
         date={new Date(date)}
         onConfirm={onConfirmSingle}
+      />
+      <AppDialog
+        open={openDialog}
+        errorType
+        message={getLabel('confirmDeleteOrder')}
+        closeLabel={getLabel('cancel')}
+        submitLabel={getLabel('confirm')}
+        buttonType={{width: 150}}
+        showButton
+        onClose={() => setOpenDialog(false)}
+        onSubmit={() => onDeleteOrder()}
+        modalType={{width: '90%'}}
       />
     </SafeAreaView>
   );

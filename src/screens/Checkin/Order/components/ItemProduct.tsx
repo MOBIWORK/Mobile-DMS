@@ -24,6 +24,7 @@ const ItemProduct = ({
   tax_amount,
   totalPrice,
   onRemove,
+  isAddProduct,
 }: ProductProps) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
@@ -54,47 +55,16 @@ const ItemProduct = ({
       </View>
 
       <View style={styles.contaienrIf}>
-        {/* {tax_percentage !== undefined && tax_percentage !== 0 && (
+        {tax_percentage !== undefined && tax_percentage !== 0 && (
           <View style={[styles.flexSpace, {paddingVertical: 4}]}>
             <Text style={styles.textIf(colors.text_secondary)}>
-              {getLabel('VAT')} (%)
+              {getLabel('VAT')}(%)
             </Text>
             <Text style={styles.textIf(colors.text_primary)}>
-
+              {tax_percentage.toString()}%
             </Text>
           </View>
-        )} */}
-        {tax_amount !== undefined &&
-          tax_amount !== 0 &&
-          tax_percentage !== undefined &&
-          tax_percentage !== 0 && (
-            <View style={[styles.flexSpace, {paddingVertical: 4}]}>
-              <Text style={styles.textIf(colors.text_secondary)}>
-                {getLabel('VAT')}(VND)
-              </Text>
-              <Text style={styles.textIf(colors.text_primary)}>
-                {tax_percentage.toString()}%
-                <Text
-                  fontSize={12}
-                  colorTheme="text_secondary"
-                  fontWeight="100"
-                  textAlign="center">
-                  {' → '}
-                </Text>
-                {price && CommonUtils.convertToTwoDecimalPlaces(tax_amount)}
-              </Text>
-            </View>
-          )}
-        {/* {percentage_discount !== undefined && percentage_discount !== 0 && (
-          <View style={[styles.flexSpace, {paddingVertical: 4}]}>
-            <Text style={styles.textIf(colors.text_secondary)}>
-              {getLabel('discount')} (%)
-            </Text>
-            <Text style={styles.textIf(colors.text_primary)}>
-              {percentage_discount?.toString()} %
-            </Text>
-          </View>
-        )} */}
+        )}
         {discount_amount !== undefined &&
           discount_amount !== 0 &&
           percentage_discount !== undefined &&
@@ -130,6 +100,7 @@ const ItemProduct = ({
 
       {onRemove && (
         <TouchableOpacity
+          disabled={!isAddProduct}
           onPress={() => onRemove && onRemove(name)}
           style={[styles.iconRemove]}>
           <AppIcons
@@ -155,6 +126,7 @@ interface ProductProps {
   discount_amount?: number;
   tax_percentage?: number;
   tax_amount?: number;
+  isAddProduct?: boolean;
   onRemove?: (item_code: string) => void;
 }
 

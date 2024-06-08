@@ -36,17 +36,21 @@ import {MainAddress, MainContactAddress} from './CardAddress';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
-import {AppService} from '../../../services';
+import {AppService, CheckinService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
 import {backgroundErrorListener} from '../../../config/function';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
+import {ResponseGenerator} from '../../../saga/app-saga/saga';
+import {IUpdateAddress} from '../../../services/checkinService';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
   listData: IDataCustomer;
   setData: (item: IDataCustomer) => void;
+  dataCustomer?: any;
+  getDetailCustomer?: () => Promise<void>;
 };
 
 export const AddressType = {
@@ -109,15 +113,19 @@ const FormAddress = (props: Props) => {
   const isValidAddress = useMemo(() => {
     return addressSelectedData?.length === 3 && txtAddressDetail !== '';
   }, [addressSelectedData, txtAddressDetail]);
+
   const checkGPS = async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
-        setEnableGPS(checkEnabled);
-        // isEnable.current = checkEnabled;
+        setEnableGPS(true);
+        onPressButtonGetLocation();
+      } else {
+        setEnableGPS(false);
       }
     } else {
       setEnableGPS(true);
+      onPressButtonGetLocation();
     }
   };
 
@@ -148,18 +156,14 @@ const FormAddress = (props: Props) => {
     }
   };
 
-  const onPressButtonGetLocation = () => {
-    if(enableGPS){
+  const onPressButtonGetLocation = React.useCallback(() => {
     CommonUtils.getCurrentLocation(
       locations => {
         fetchData(locations.coords.latitude, locations.coords.longitude);
       },
       err => backgroundErrorListener(err.code),
     );
-  }else{
-    backgroundErrorListener(1)
-  }
-  };
+  }, [enableGPS]);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
@@ -181,17 +185,15 @@ const FormAddress = (props: Props) => {
   };
 
   const handleSaveMainAddress = async () => {
-    if (
-      !addressValue.city?.id ||
-      !addressValue.district?.id ||
-      !addressValue.ward?.id
-    ) {
+    console.log('runnnn')
+  {
       const locationIDRes: any = await AppService.getIDLocation({
         province_name: addressValue.city?.value ?? '',
         district_name: addressValue.district?.value ?? '',
         ward_name: addressValue.ward?.value ?? '',
       });
       if (locationIDRes?.status === ApiConstant.STT_OK) {
+        console.log(locationIDRes,'ress')
         const newAddressValue: MainAddress = {
           ...addressValue,
           city: {
@@ -207,29 +209,41 @@ const FormAddress = (props: Props) => {
             id: locationIDRes.data.result.ward_id,
           } as any,
         };
+        const data: IUpdateAddress = {
+          customer: props.dataCustomer.name!  || '',
+          long: location?.coords.longitude || NaN,
+          lat: location?.coords.latitude || NaN,
+          address_line1: txtAddressDetail,
+          state: {
+            code: locationIDRes.data.result.ward_id,
+            name: addressValue.ward?.value ?? '',
+          },
+          county: {
+            code: locationIDRes.data.result.district_id,
+            name: addressValue.district?.value ?? '',
+          },
+          city: {
+            code: locationIDRes.data.result.city_id,
+            name: addressValue.city?.value ?? '',
+          },
+        };
         dispatch(
           customerActions.setMainAddress({
             ...newAddressValue,
+            data,
             detailAddress: txtAddressDetail,
           }),
         );
       }
-    } else {
-      dispatch(
-        customerActions.setMainAddress({
-          ...addressValue,
-          detailAddress: txtAddressDetail,
-        }),
-      );
-    }
+      onPressClose()
     setData({
       ...listData,
       latitude: location?.coords.latitude,
       longitude: location?.coords.longitude,
     });
-    onPressClose();
-  };
 
+  };
+  }
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisitAble(true);
@@ -330,7 +344,7 @@ const FormAddress = (props: Props) => {
           }
         />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
-        <Block paddingHorizontal={16}>
+        <Block  block>
           <Block style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
               label="Địa chỉ chính"
@@ -351,8 +365,9 @@ const FormAddress = (props: Props) => {
             <TouchableOpacity
               style={styles.buttonStyle}
               onPress={() => {
+                checkGPS();
+
                 onPressButtonGetLocation();
-                checkGPS()
               }}>
               <SvgIcon source="iconMap" size={20} colorTheme="action" />
               <AppText
@@ -364,7 +379,7 @@ const FormAddress = (props: Props) => {
               </AppText>
             </TouchableOpacity>
           </Block>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
             <AppInput
               label={`${getLabel('province')}/${getLabel('city')}`}
               contentStyle={styles.contentStyle(
@@ -809,6 +824,7 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
         flexDirection: 'column',
         justifyContent: 'flex-end',
         marginHorizontal: 16,
+        // backgroundColor:'red'
       } as ViewStyle),
     containContentButton: {
       flexDirection: 'row',
