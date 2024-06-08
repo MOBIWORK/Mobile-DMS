@@ -111,6 +111,7 @@ const SelectProducts = () => {
     group: '',
     industry: '',
   });
+  const previousProductNameRef = useRef<string | null>(null);
 
   const openBottomSheetDataFilter = React.useCallback(
     (type: string, item?: IProduct) => {
