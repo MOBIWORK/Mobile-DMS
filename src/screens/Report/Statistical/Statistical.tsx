@@ -61,11 +61,6 @@ const Statistical = () => {
 
   const [from_date, setFromDate] = useState<number>(new Date().getTime());
   const [to_date, setToDate] = useState<number>(new Date().getTime());
-  const dayHeadings = React.useRef<any[]>(
-    [...Array(7).keys()]
-      .map(day => moment().weekday(day).format('dd'))
-      .map(_capitalize),
-  );
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
@@ -85,10 +80,20 @@ const Statistical = () => {
     }
   };
 
-  const onChangeDateCalender = (date: any) => {
-    setHeaderDate(CommonUtils.convertDate(Number(date)));
-    setFromDate(new Date(date).getTime());
-    setToDate(new Date(date).getTime());
+  const onChangeDateCalender = (startDate: any, endDate?: any) => {
+    setHeaderDate(
+      endDate
+        ? `${CommonUtils.convertDate(
+            Number(startDate),
+          )} - ${CommonUtils.convertDate(Number(endDate))}`
+        : CommonUtils.convertDate(Number(startDate)),
+    );
+    setFromDate(new Date(startDate).getTime());
+    if (endDate) {
+      setToDate(new Date(endDate).getTime());
+    } else {
+      setToDate(new Date(startDate).getTime());
+    }
   };
 
   useEffect(() => {

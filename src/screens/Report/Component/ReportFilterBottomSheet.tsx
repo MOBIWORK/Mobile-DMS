@@ -99,7 +99,6 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
       setStartDateCalender(date);
       setEndDate(null);
     }
-
     // onChangeDateCalender(date);
 
     // filerBottomSheetRef?.current.close();
@@ -165,40 +164,42 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
                   </Text>
                 </TouchableOpacity>
               </Block>
-              <Block
-                direction="row"
-                justifyContent="space-around"
-                alignItems="center">
-                <AppInput
-                  label={'Ngày bắt đầu'}
-                  value={
-                    startDate === null
-                      ? 'Chọn ngày'
-                      : moment(startDate).format('DD/MM/YYYY')
-                  }
-                  editable={false}
-                  styles={styles.appInput}
-                  hiddenRightIcon={startDate === null}
-                  onChangeValue={() => setStartDateCalender(null)}
-                />
-                <AppInput
-                  label={'Ngày kết thúc'}
-                  value={
-                    endDate === null
-                      ? 'Chọn ngày'
-                      : moment(endDate).format('DD/MM/YYYY')
-                  }
-                  editable={false}
-                  styles={styles.appInput}
-                  hiddenRightIcon={endDate === null}
-                  onChangeValue={() => setEndDate(null)}
-                />
-              </Block>
+              {!isNonCustomer && (
+                <Block
+                  direction="row"
+                  justifyContent="space-around"
+                  alignItems="center">
+                  <AppInput
+                    label={'Ngày bắt đầu'}
+                    value={
+                      startDate === null
+                        ? 'Chọn ngày'
+                        : moment(startDate).format('DD/MM/YYYY')
+                    }
+                    editable={false}
+                    styles={styles.appInput}
+                    hiddenRightIcon={startDate === null}
+                    onChangeValue={() => setStartDateCalender(null)}
+                  />
+                  <AppInput
+                    label={'Ngày kết thúc'}
+                    value={
+                      endDate === null
+                        ? 'Chọn ngày'
+                        : moment(endDate).format('DD/MM/YYYY')
+                    }
+                    editable={false}
+                    styles={styles.appInput}
+                    hiddenRightIcon={endDate === null}
+                    onChangeValue={() => setEndDate(null)}
+                  />
+                </Block>
+              )}
             </Block>
 
             <CalendarPicker
               startFromMonday={true}
-              allowRangeSelection={true}
+              allowRangeSelection={!isNonCustomer}
               // selectedEndDate={endDate}
               weekdays={calenderConfig.weekdays}
               // disabledDates={(date: any) => {

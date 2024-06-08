@@ -33,12 +33,15 @@ import BottomSheet, {
 import {useTranslation} from 'react-i18next';
 import ReportFilterBottomSheet from '../Component/ReportFilterBottomSheet';
 import {ReportService} from '../../../services';
+import {useDispatch} from 'react-redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const ReportDebt = () => {
   const theme = useTheme();
   const {bottom} = useSafeAreaInsets();
   const {t: getLabel} = useTranslation();
   const styles = createStyle(theme);
+  const dispatch = useDispatch();
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
   const {
@@ -98,8 +101,20 @@ const ReportDebt = () => {
     }
   };
 
-  const onChangeDateCalender = (date: any) => {
-    setHeaderDate(CommonUtils.convertDate(Number(date)));
+  const onChangeDateCalender = (startDate: any, endDate?: any) => {
+    setHeaderDate(
+      endDate
+        ? `${CommonUtils.convertDate(
+            Number(startDate),
+          )} - ${CommonUtils.convertDate(Number(endDate))}`
+        : CommonUtils.convertDate(Number(startDate)),
+    );
+    setFromDate(new Date(startDate).getTime());
+    if (endDate) {
+      setToDate(new Date(endDate).getTime());
+    } else {
+      setToDate(new Date(startDate).getTime());
+    }
   };
 
   const handleItemFilter = useCallback(
@@ -168,7 +183,7 @@ const ReportDebt = () => {
 
   useEffect(() => {
     const getData = async () => {
-      console.log('fromDate', fromDate, 'toDate', toDate);
+      dispatch(appActions.setProcessingStatus(true));
       const res: any = await ReportService.getReportDebt({
         from_date: fromDate / 1000,
         to_date: toDate / 1000,
@@ -177,6 +192,7 @@ const ReportDebt = () => {
         setDebtData(res.data.result);
         setDebtMasterData(res.data.result);
       }
+      dispatch(appActions.setProcessingStatus(false));
     };
     getData().then();
   }, [fromDate, toDate]);

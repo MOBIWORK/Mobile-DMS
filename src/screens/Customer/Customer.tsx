@@ -44,7 +44,6 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   calculateDistance,
   handleBackgroundLocation,
-  useDeepCompareEffect,
   useEffectOnce,
   useSelector,
 } from '../../config/function';
@@ -64,11 +63,10 @@ import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 import ModalSearchCustomer from './components/ModalSearchCustomer';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import Modal from 'react-native-modal';
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
-  customerBirthday: string;
+  // customerBirthday: string;
 };
 
 const Customer = () => {
@@ -96,7 +94,7 @@ const Customer = () => {
   );
   const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
   const page = useSelector(
-    state => state.customer.listCustomer.page_number,
+    state => state.customer?.listCustomer?.page_number ?? 1,
     shallowEqual,
   );
 
@@ -104,17 +102,6 @@ const Customer = () => {
     state => state.app.currentLocation,
     shallowEqual,
   );
-
-  // const handleEnabledPressed = useCallback(async () => {
-  //   if (Platform.OS === 'android') {
-  //     const checkEnabled: boolean = await isLocationEnabled();
-  //     if (checkEnabled === true) {
-  //       setModalErrorGPS(false);
-  //     } else {
-  //       setModalErrorGPS(true);
-  //     }
-  //   }
-  // }, [modalErrorGPS]);
 
   const [value, setValue] = React.useState({
     first: getLabel('nearest'),
@@ -129,7 +116,6 @@ const Customer = () => {
   const [valueFilter, setValueFilter] = React.useState<IValueType>({
     customerType: getLabel('all'),
     customerGroupType: getLabel('all'),
-    customerBirthday: getLabel('all'),
   });
   //  console.log(listCustomerResult,'listCustomer')
   const [typeFilter, setTypeFilter] = React.useState<string>(
@@ -149,7 +135,7 @@ const Customer = () => {
   const mounted = useRef<boolean>(true);
   const snapPoints = useMemo(() => ['100%'], []);
   const totalPage = useRef<number>(
-    Math.ceil(listCustomerResult.total / listCustomerResult.page_size),
+    Math.ceil(listCustomerResult?.total / listCustomerResult?.page_size),
   );
 
   const onPressType1 = useCallback(() => {
@@ -256,7 +242,6 @@ const Customer = () => {
 
   useEffect(() => {
     mounted.current = true;
-    console.log('run fist');
     if (listCustomer && listCustomer?.length > 0) {
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
@@ -266,23 +251,22 @@ const Customer = () => {
       );
       setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
       dispatch(appActions.onLoadAppEnd());
-      mounted.current = false;
-    } else {
+    } else if (
+      valueFilter.customerType === 'Tất cả' &&
+      valueFilter.customerGroupType === 'Tất cả'
+    ) {
       dispatch(customerActions.onGetCustomer());
-      mounted.current = false;
-
-      // onRefreshData();
+    } else {
+      setCustomerData([]);
     }
-
+    mounted.current = false;
     dispatch(onLoadAppEnd());
-
-    console.log('run last');
     setLoading(false);
 
     return () => {
       mounted.current = false;
     };
-  }, [isFocus,listCustomer]);
+  }, [isFocus, listCustomer]);
 
   useEffectOnce(() => {
     dispatch(customerActions.getCustomerType());
@@ -290,72 +274,43 @@ const Customer = () => {
 
   const handleApplyFilter = () => {
     if (
-      valueFilter.customerType === getLabel('all') &&
-      valueFilter.customerGroupType === getLabel('all') &&
-      valueFilter.customerBirthday === getLabel('all')
+      valueFilter.customerType !== 'Tất cả' &&
+      valueFilter.customerGroupType !== 'Tất cả'
     ) {
-      bottomRef2.current?.close();
+      dispatch(
+        customerActions.onGetCustomer({
+          customer_type: valueFilter.customerType,
+          customer_group: valueFilter.customerGroupType,
+        }),
+      );
     } else if (
-      valueFilter.customerType !== getLabel('all') &&
-      valueFilter.customerGroupType === getLabel('all') &&
-      valueFilter.customerBirthday === getLabel('all')
+      valueFilter.customerType !== 'Tất cả' &&
+      valueFilter.customerGroupType === 'Tất cả'
     ) {
-      startTransition(() => {
-        const newData1 = listCustomer?.filter(
-          item => item.customer_type === valueFilter.customerType,
-        );
-        setCustomerData(newData1);
-      });
-
-      bottomRef2.current?.close();
+      dispatch(
+        customerActions.onGetCustomer({
+          customer_type: valueFilter.customerType,
+          customer_group: '',
+        }),
+      );
     } else if (
-      valueFilter.customerGroupType !== getLabel('all') &&
-      valueFilter.customerType !== getLabel('all') &&
-      valueFilter.customerBirthday === getLabel('all')
+      valueFilter.customerType === 'Tất cả' &&
+      valueFilter.customerGroupType !== 'Tất cả'
     ) {
-      startTransition(() => {
-        const newData2 = listCustomer?.filter(
-          item =>
-            item.customer_group === valueFilter.customerGroupType &&
-            item.customer_type === valueFilter.customerType,
-        );
-        setCustomerData(newData2);
-      });
-    } else if (
-      valueFilter.customerGroupType !== getLabel('all') &&
-      valueFilter.customerType === getLabel('all') &&
-      valueFilter.customerBirthday === getLabel('all')
-    ) {
-      startTransition(() => {
-        const newData3 = listCustomer?.filter(
-          item => item.customer_group === valueFilter.customerGroupType,
-        );
-        setCustomerData(newData3);
-      });
-
-      bottomRef2.current?.close();
-    } else if (
-      valueFilter.customerGroupType !== getLabel('all') &&
-      valueFilter.customerType !== getLabel('all') &&
-      valueFilter.customerBirthday !== getLabel('all')
-    ) {
-      startTransition(() => {
-        const newData3 = listCustomer?.filter(
-          item =>
-            item.customer_group === valueFilter.customerGroupType &&
-            item.customer_type != valueFilter.customerType,
-        );
-        setCustomerData(newData3);
-      });
-
-      bottomRef2.current?.close();
+      dispatch(
+        customerActions.onGetCustomer({
+          customer_type: '',
+          customer_group: valueFilter.customerGroupType,
+        }),
+      );
+    } else {
+      dispatch(customerActions.onGetCustomer());
     }
   };
   const handleCancel = useCallback(() => {
-    bottomRef2.current && bottomRef2.current.close();
+    // bottomRef2.current && bottomRef2.current.close();
     setValueFilter({
       customerType: getLabel('all'),
-      customerBirthday: getLabel('all'),
       customerGroupType: getLabel('all'),
     });
   }, [valueFilter]);
@@ -368,19 +323,56 @@ const Customer = () => {
     if (
       page <= Math.ceil(listCustomerResult.total / listCustomerResult.page_size)
     ) {
-      console.log('run if', page);
       startTransition(() => {
-        dispatch(customerActions.getCustomerNewPage(page + 1));
+        if (
+          valueFilter.customerType !== 'Tất cả' &&
+          valueFilter.customerGroupType !== 'Tất cả'
+        ) {
+          dispatch(
+            customerActions.getCustomerNewPage({
+              page: page + 1,
+              customer_type: valueFilter.customerType,
+              customer_group: valueFilter.customerGroupType,
+            }),
+          );
+        } else if (
+          valueFilter.customerType !== 'Tất cả' &&
+          valueFilter.customerGroupType === 'Tất cả'
+        ) {
+          dispatch(
+            customerActions.getCustomerNewPage({
+              page: page + 1,
+              customer_type: valueFilter.customerType,
+              customer_group: '',
+            }),
+          );
+        } else if (
+          valueFilter.customerType === 'Tất cả' &&
+          valueFilter.customerGroupType !== 'Tất cả'
+        ) {
+          dispatch(
+            customerActions.getCustomerNewPage({
+              page: page + 1,
+              customer_type: '',
+              customer_group: valueFilter.customerGroupType,
+            }),
+          );
+        } else {
+          dispatch(
+            customerActions.getCustomerNewPage({
+              page: page + 1,
+            }),
+          );
+        }
       });
       flatListRef.current?.scrollToIndex({
         animated: true,
         index: currentIndex.current,
       });
     } else {
-      console.log('run else');
       return null;
     }
-  }, [page]);
+  }, [page, valueFilter]);
 
   const onPressAdding = useCallback(() => {
     dispatch(customerActions.setMainAddress({}));
@@ -442,24 +434,24 @@ const Customer = () => {
               />
             }
           />
-          <AppInput
-            label={getLabel('customerBirthDay')}
-            value={valueFilter.customerBirthday}
-            editable={false}
-            onPress={() => {
-              startTransition(() => {
-                setTypeFilter(AppConstant.CustomerFilterType.ngay_sinh_nhat);
-              });
-              filterRef.current?.snapToIndex(0);
-            }}
-            rightIcon={
-              <TextInput.Icon
-                icon={'chevron-down'}
-                style={{width: 24, height: 24}}
-                color={theme.colors.text_secondary}
-              />
-            }
-          />
+          {/*<AppInput*/}
+          {/*  label={getLabel('customerBirthDay')}*/}
+          {/*  value={valueFilter.customerBirthday}*/}
+          {/*  editable={false}*/}
+          {/*  onPress={() => {*/}
+          {/*    startTransition(() => {*/}
+          {/*      setTypeFilter(AppConstant.CustomerFilterType.ngay_sinh_nhat);*/}
+          {/*    });*/}
+          {/*    filterRef.current?.snapToIndex(0);*/}
+          {/*  }}*/}
+          {/*  rightIcon={*/}
+          {/*    <TextInput.Icon*/}
+          {/*      icon={'chevron-down'}*/}
+          {/*      style={{width: 24, height: 24}}*/}
+          {/*      color={theme.colors.text_secondary}*/}
+          {/*    />*/}
+          {/*  }*/}
+          {/*/>*/}
         </View>
         <View style={styles.containButtonBottom}>
           <View style={styles.containContentButton}>

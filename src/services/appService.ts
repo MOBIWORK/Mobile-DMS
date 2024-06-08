@@ -148,6 +148,12 @@ export type IDLocation = {
   ward_name: string;
 };
 
+export type ICustomerParams = {
+  page?: number;
+  customer_type?: string;
+  customer_group?: string;
+};
+
 export const login = (data: ILogin, deleteHeader: boolean) =>
   createApi(deleteHeader).post(ApiConstant.POST_USER_LOGIN, data);
 
@@ -190,14 +196,12 @@ export const checkOut = (checkin_id: string, customer_id: any) =>
     customer_id: customer_id,
   });
 
-export const getCustomer = () =>
-  createApi()
-    .get(ApiConstant.GET_CUSTOMER)
-    .then(res => res.data);
+export const getCustomer = (params?: ICustomerParams) =>
+  createApi().get(ApiConstant.GET_CUSTOMER, params);
 
-export const getPageCustomer = (page: number) =>
+export const getPageCustomer = (params?: ICustomerParams) =>
   createApi()
-    .get(ApiConstant.GET_CUSTOMER + `?page=${page}`)
+    .get(ApiConstant.GET_CUSTOMER, params)
     .then(res => res.data);
 
 export const getCustomerByName = (name: string) =>

@@ -63,10 +63,20 @@ const VisitResult = () => {
     }
   };
 
-  const onChangeDateCalender = (date: any) => {
-    setHeaderDate(CommonUtils.convertDate(Number(date)));
-    setFromDate(new Date(date).getTime());
-    setToDate(new Date(date).getTime());
+  const onChangeDateCalender = (startDate: any, endDate?: any) => {
+    setHeaderDate(
+      endDate
+        ? `${CommonUtils.convertDate(
+            Number(startDate),
+          )} - ${CommonUtils.convertDate(Number(endDate))}`
+        : CommonUtils.convertDate(Number(startDate)),
+    );
+    setFromDate(new Date(startDate).getTime());
+    if (endDate) {
+      setToDate(new Date(endDate).getTime());
+    } else {
+      setToDate(new Date(startDate).getTime());
+    }
   };
 
   const changeIndex = (value: string | number) => {

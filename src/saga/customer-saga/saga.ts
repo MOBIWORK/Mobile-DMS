@@ -40,9 +40,12 @@ export function* onGetCustomer(action: PayloadAction) {
   if (customerActions.onGetCustomer.match(action)) {
     try {
       yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(getCustomer);
-      if (Object.keys(response.result).length > 0) {
-        yield put(setCustomer(response.result));
+      const response: ResponseGenerator = yield call(
+        getCustomer,
+        action.payload,
+      );
+      if (response?.status === ApiConstant.STT_OK) {
+        yield put(setCustomer(response.data.result));
       }
     } catch (err) {
       console.log('errCustomer: ', err);
@@ -125,7 +128,6 @@ export function* getMoreDataCustomer(action: PayloadAction) {
         getPageCustomer,
         action.payload,
       );
-      console.log('response new page', response);
       if (response.message === 'Thành công') {
         yield put(customerActions.addingListCustomer(response.result?.data));
         yield put(customerActions.setPage(response.result?.page_number));
