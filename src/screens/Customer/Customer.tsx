@@ -41,6 +41,7 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   calculateDistance,
   handleBackgroundLocation,
+  useDeepCompareEffect,
   useSelector,
 } from '../../config/function';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
@@ -74,7 +75,8 @@ const Customer = () => {
 
   const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer?.data,
-    shallowEqual,
+    // shallowEqual,
+    isEqual,
   );
   const listCustomerResult = useSelector(
     state => state.customer.listCustomer,
@@ -146,36 +148,33 @@ const Customer = () => {
     bottomRef2.current?.snapToIndex(0);
   }, [bottomRef2.current]);
 
-  const sortedData = useCallback(
-    (filteredData: IDataCustomers[]) => {
-      return (
-        filteredData.slice().sort((a, b) => {
-          const locationA: LocationProps = JSON.parse(
-            a.customer_location_primary,
-          );
-          const locationB: LocationProps = JSON.parse(
-            b.customer_location_primary,
-          );
-          const distance1 = calculateDistance(
-            location?.coords?.latitude,
-            location?.coords?.longitude,
-            locationA.lat != null ? locationA.lat : 0,
-            locationA.long != null ? locationA.long : 0,
-          );
-          const distance2 = calculateDistance(
-            location?.coords?.latitude,
-            location?.coords?.longitude,
-            locationB.lat != null ? locationB.lat : 0,
-            locationB.long != null ? locationB.long : 0,
-          );
-          return value.first === getLabel('nearest')
-            ? distance1 - distance2
-            : distance2 - distance1;
-        }) || filteredData
-      );
-    },
-    [listCustomer?.length],
-  );
+  const sortedData = useCallback((filteredData: IDataCustomers[]) => {
+    return (
+      filteredData.slice().sort((a, b) => {
+        const locationA: LocationProps = JSON.parse(
+          a.customer_location_primary,
+        );
+        const locationB: LocationProps = JSON.parse(
+          b.customer_location_primary,
+        );
+        const distance1 = calculateDistance(
+          location?.coords?.latitude,
+          location?.coords?.longitude,
+          locationA.lat != null ? locationA.lat : 0,
+          locationA.long != null ? locationA.long : 0,
+        );
+        const distance2 = calculateDistance(
+          location?.coords?.latitude,
+          location?.coords?.longitude,
+          locationB.lat != null ? locationB.lat : 0,
+          locationB.long != null ? locationB.long : 0,
+        );
+        return value.first === getLabel('nearest')
+          ? distance1 - distance2
+          : distance2 - distance1;
+      }) || filteredData
+    );
+  }, [customerData]);
 
   const onRefreshData = useCallback(async () => {
     try {
@@ -189,7 +188,7 @@ const Customer = () => {
     } finally {
       dispatch(onLoadAppEnd());
     }
-  }, [dispatch, appLoading, mounted]);
+  }, [dispatch]);
 
   React.useEffect(() => {
     if (isFocus) {
@@ -198,7 +197,7 @@ const Customer = () => {
     }
   }, [isFocus]);
 
-  const checkGPS = async () => {
+  const checkGPS = useCallback(async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       isEnable.current = checkEnabled;
@@ -206,21 +205,21 @@ const Customer = () => {
         setModalErrorGPS(false);
         handleBackgroundLocation();
       } else {
-        return null;
         setModalErrorGPS(true);
+        return null;
       }
+    }else{
+      handleBackgroundLocation()
     }
-  };
+  }, [modalErrorGPS]);
 
   React.useLayoutEffect(() => {
     checkGPS();
     // handleEnabledPressed();
   }, []);
 
-  React.useEffect(() => {
+  useDeepCompareEffect(() => {
     mounted.current = true;
-    // checkGPS();
-
     if (listCustomer && listCustomer?.length > 0) {
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
@@ -228,25 +227,20 @@ const Customer = () => {
       const noLocationCustomer = listCustomer.filter(
         item => !item.customer_location_primary,
       );
-      console.log('run  here ');
-
       setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
     } else {
       dispatch(customerActions.onGetCustomer());
       onRefreshData();
     }
 
-    const getDataType = () => {
-      dispatch(customerActions.getCustomerType());
-    };
-    getDataType();
+    dispatch(customerActions.getCustomerType());
 
     mounted.current = false;
 
     return () => {
       mounted.current = false;
     };
-  }, [listCustomer, isFocus]);
+  }, [isFocus,dispatch]);
 
   const handleApplyFilter = () => {
     if (
@@ -311,14 +305,14 @@ const Customer = () => {
       bottomRef2.current?.close();
     }
   };
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     bottomRef2.current && bottomRef2.current.close();
     setValueFilter({
       customerType: getLabel('all'),
       customerBirthday: getLabel('all'),
       customerGroupType: getLabel('all'),
     });
-  };
+  },[valueFilter]);
 
   const onBackButtonPress = useCallback(() => {
     setShowModal(false);
@@ -337,6 +331,12 @@ const Customer = () => {
       return null;
     }
   }, [page]);
+
+  const onPressAdding = useCallback(() => {
+    dispatch(customerActions.setMainAddress({}));
+    dispatch(customerActions.setMainContactAddress({}));
+    navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER);
+  }, []);
 
   const renderBottomView = React.useCallback(() => {
     return (
@@ -530,13 +530,7 @@ const Customer = () => {
           valueFilter={valueFilter}
         />
       </AppBottomSheet>
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(customerActions.setMainAddress({}));
-          dispatch(customerActions.setMainContactAddress({}));
-          navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER);
-        }}
-        style={styles.fab}>
+      <TouchableOpacity onPress={onPressAdding} style={styles.fab}>
         <AppIcons
           iconType="IonIcon"
           name="add-outline"

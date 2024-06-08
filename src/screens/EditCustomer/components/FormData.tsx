@@ -71,8 +71,8 @@ const FormData = (props: Props) => {
   const styles = formStyles(theme);
   const initStateData = React.useRef<DetailCustomerType>({
     ...data,
-    customer_code: data.customer_code,
-    customer_name: data.customer_name,
+    customer_code: data.customer_code || '',
+    customer_name: data.customer_name || '',
     customer_type: translate(data.customer_type!),
     customer_group: data.customer_group,
     territory: data.territory,
@@ -133,12 +133,12 @@ const FormData = (props: Props) => {
     }
   };
 
-  const getCustomerRoute = async () => {
+  const getCustomerRoute = useCallback(async () => {
     const response: any = await CustomerService.getCustomerRoute();
     if (response?.result.length > 0) {
       dispatch(customerActions.setListCustomerRoute(response.result));
     }
-  };
+  },[]);
 
   const handleImagePicker = useCallback(async () => {
     const granted = await PermissionsAndroid.requestMultiple([

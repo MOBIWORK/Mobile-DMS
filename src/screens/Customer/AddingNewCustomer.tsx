@@ -193,10 +193,6 @@ const AddingNewCustomer = () => {
     console.log(updateListData, 'updateData');
     const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
-      const cusRes: any = await AppService.getCustomer();
-      if (Object.keys(cusRes?.result).length > 0) {
-        await dispatch(customerActions.setCustomer(cusRes.result));
-      }
       navigation.navigate(ScreenConstant.MAIN_TAB, {
         screen: ScreenConstant.CUSTOMER,
       });
@@ -296,6 +292,9 @@ const AddingNewCustomer = () => {
   const onBackButtonPress = useCallback(() => {
     setOpenModal(false);
   }, [openModal]);
+  const onPressClose = useCallback(() =>{
+    setModalAddress(false)
+  },[modalAddress])
 
   console.log(listData.credit_limit, 'bbb');
   return (
@@ -404,12 +403,11 @@ const AddingNewCustomer = () => {
           onBackdropPress={() => setModalAddress(false)}>
           <Block block>
             <FormAddress
-              onPressClose={() => {
-                setModalAddress(false);
-              }}
+              onPressClose={onPressClose}
               typeFilter={typeFilter}
               listData={listData}
               setData={setListData}
+              dataCustomer={listData.customer_name}
             />
           </Block>
         </Modal>

@@ -110,7 +110,7 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         console.log('app System err');
       }
     } catch (err) {
-      console.error('err: ', err);
+      console.error('errSystemConfig: ', err);
     } finally {
       yield put(onLoadAppEnd());
     }
