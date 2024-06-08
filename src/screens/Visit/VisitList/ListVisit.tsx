@@ -412,8 +412,6 @@ const ListVisit = () => {
     index: number,
   ) => ({length: slideSizeRef.current, offset: 50 * index, index});
 
-  // console.log(fla)
-
   const renderContent = useCallback(() => {
     return (
       <Block marginTop={8}>
@@ -448,11 +446,9 @@ const ListVisit = () => {
                   />
                 }
                 maxToRenderPerBatch={2}
-                // scrollToIndex={}
                 getItemLayout={getItemLayout}
                 updateCellsBatchingPeriod={4}
                 windowSize={14}
-                // onScroll={(event) => console.log(event.nativeEvent.)}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
                   <VisitItem
@@ -943,8 +939,6 @@ const ListVisit = () => {
     );
   }, []);
 
-  // console.log(currentIndex,'current')
-
   const onPressToDetail = useCallback((item: VisitListItemType) => {
     currentSelect.current = item;
     startEffect(() => {
@@ -1028,11 +1022,9 @@ const ListVisit = () => {
           isEnable.current = checkEnabled;
         }
       }
-      checkGPS();
     };
+    checkGPS();
   }, []);
-
-  // console.log(sortDataCustomer,'bbb')
 
   useEffect(() => {
     mounted.current = true;
@@ -1055,13 +1047,7 @@ const ListVisit = () => {
     } else {
       return undefined;
     }
-  }, [listCustomer, isFocus]);
-
-  // useEffect(() => {
-  //   if (isEnable.current === false && Platform.OS === 'android') {
-  //     // setModalErrorGPS(true);
-  //   }
-  // }, [isEnable.current]);
+  }, [listCustomer, isFocus, distanceFilterValue]);
 
   return (
     <SafeAreaView
