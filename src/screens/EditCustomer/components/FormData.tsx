@@ -133,12 +133,12 @@ const FormData = (props: Props) => {
     }
   };
 
-  const getCustomerRoute = useCallback(async () => {
-    const response: any = await CustomerService.getCustomerRoute();
-    if (response?.result.length > 0) {
-      dispatch(customerActions.setListCustomerRoute(response.result));
-    }
-  },[]);
+  // const getCustomerRoute = useCallback(async () => {
+  //   const response: any = await CustomerService.getCustomerRoute();
+  //   if (response?.result.length > 0) {
+  //     dispatch(customerActions.setListCustomerRoute(response.result));
+  //   }
+  // },[]);
 
   const handleImagePicker = useCallback(async () => {
     const granted = await PermissionsAndroid.requestMultiple([
@@ -304,9 +304,9 @@ const FormData = (props: Props) => {
     if (listTerritory.length === 0) {
       getCustomerTerritory();
     }
-    if (lisCustomerRoute.length === 0) {
-      getCustomerRoute();
-    }
+    // if (lisCustomerRoute.length === 0) {
+    //   getCustomerRoute();
+    // }
   }, []);
 
   console.log(dataCustomer.routers);

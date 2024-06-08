@@ -20,6 +20,7 @@ import {IListVisitParams} from '../../../services/appService';
 import {listFilterType} from '../../Customer/components/data';
 import ListFilterItem from './ListFilterItem';
 import FilterItem from './Component/FilterItem';
+import isEqual from 'react-fast-compare';
 
 const FilterContainer: FC<FilterContainerProps> = ({
   bottomSheetRef,
@@ -197,4 +198,4 @@ interface FilterContainerProps {
   handleReset: () => void;
 }
 
-export default React.memo(FilterContainer);
+export default React.memo(FilterContainer,isEqual);

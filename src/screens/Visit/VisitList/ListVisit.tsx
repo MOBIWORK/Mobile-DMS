@@ -132,7 +132,7 @@ const ListVisit = () => {
     state => state.customer.listCustomerVisit,
     shallowEqual,
   );
-  const lisCustomerRoute = useSelector(
+  const listCustomerRoute = useSelector(
     state => state.customer.listCustomerRoute,
     shallowEqual,
   );
@@ -414,7 +414,7 @@ const ListVisit = () => {
 
   // console.log(fla)
 
-  const renderContent = () => {
+  const renderContent = useCallback(() => {
     return (
       <Block marginTop={8}>
         {isShowListVisit ? (
@@ -495,7 +495,7 @@ const ListVisit = () => {
         )}
       </Block>
     );
-  };
+  }, [loading, listCustomer, customerDataSort, location]);
 
   useLayoutEffect(() => {
     if (Object.keys(systemConfig).length === 0) {
@@ -508,27 +508,30 @@ const ListVisit = () => {
     );
   }, []);
 
-  const getCustomer = async (params?: IListVisitParams, isMore?: boolean) => {
-    await getCustomerVisit(params).then((res: any) => {
-      if (Object.keys(res.result).length > 0) {
-        const data: VisitListItemResult = res?.result;
-        if (isMore) {
-          const newData: VisitListItemType[] = [
-            ...listCustomer.data,
-            ...data.data,
-          ];
-          dispatch(
-            customerActions.setCustomerVisit({
-              ...data,
-              data: newData,
-            }),
-          );
-        } else {
-          dispatch(customerActions.setCustomerVisit(data));
+  const getCustomer = useCallback(
+    async (params?: IListVisitParams, isMore?: boolean) => {
+      await getCustomerVisit(params).then((res: any) => {
+        if (Object.keys(res.result).length > 0) {
+          const data: VisitListItemResult = res?.result;
+          if (isMore) {
+            const newData: VisitListItemType[] = [
+              ...listCustomer.data,
+              ...data.data,
+            ];
+            dispatch(
+              customerActions.setCustomerVisit({
+                ...data,
+                data: newData,
+              }),
+            );
+          } else {
+            dispatch(customerActions.setCustomerVisit(data));
+          }
         }
-      }
-    });
-  };
+      });
+    },
+    [],
+  );
 
   const sortDataCustomer = (distanceLabel: string) => {
     startEffect(() => {
@@ -582,7 +585,7 @@ const ListVisit = () => {
     });
   };
 
-  const getCustomerRoute = async () => {
+  const getCustomerRoute = useCallback(async () => {
     const all_route: ListCustomerRoute = {
       name: '',
       channel_name: 'Tất cả',
@@ -614,7 +617,7 @@ const ListVisit = () => {
       routeTodayRef.current = all_route;
       await getCustomer();
     }
-  };
+  }, [customerType, listCustomer]);
 
   const getDataGroup = async () => {
     if (customerType.length === 0) {
@@ -625,24 +628,35 @@ const ListVisit = () => {
     }
   };
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     setLoading(true);
-    await getCustomerRoute();
-    await getDataGroup();
-    setLoading(false);
-  };
+    if (listCustomerRoute && listCustomerRoute.length === 0) {
+      await getCustomerRoute();
+    } else {
+      setLoading(false);
+    }
+    if (customerType && customerType.length === 0) {
+      getDataGroup();
+    } else {
+      setLoading(false);
+    }
 
-  const handleReset = async () => {
+    setLoading(false);
+  }, [listCustomerRoute, customerType]);
+
+  const handleReset = useCallback(async () => {
     try {
       setLoading(true);
       setFilterParams({router: routeTodayRef.current});
       await getCustomer({router: routeTodayRef.current.channel_code});
+      await getCustomerRoute();
+      // await getDataGroup()
     } catch (e) {
       //
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleFilterData = async () => {
     bottomSheetRef.current && bottomSheetRef.current.close();
@@ -1006,8 +1020,6 @@ const ListVisit = () => {
     // sortDataCustomer(distanceFilterValue);
   }, []);
 
-
-
   useEffect(() => {
     const checkGPS = async () => {
       if (Platform.OS === 'android') {
@@ -1019,7 +1031,6 @@ const ListVisit = () => {
       checkGPS();
     };
   }, []);
-
 
   // console.log(sortDataCustomer,'bbb')
 
@@ -1039,7 +1050,11 @@ const ListVisit = () => {
   }, [searchVisit, dataCheckIn, isFocus]);
 
   useEffect(() => {
-    sortDataCustomer(distanceFilterValue);
+    if (listCustomer.data && listCustomer.data.length > 0) {
+      sortDataCustomer(distanceFilterValue);
+    } else {
+      return undefined;
+    }
   }, [listCustomer, isFocus]);
 
   // useEffect(() => {
@@ -1108,7 +1123,7 @@ const ListVisit = () => {
             filterRef={filterRef}
             filterValue={filterParams}
             setFilter={setFilterParams}
-            channelData={lisCustomerRoute}
+            channelData={listCustomerRoute}
             customerGroupData={customerType}
             handleFilter={handleFilterData}
             handleReset={handleReset}
