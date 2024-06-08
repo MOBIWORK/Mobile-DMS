@@ -190,7 +190,7 @@ const CheckinInventory = () => {
     dispatch(productActions.updateProductSelect(newProducts));
   };
 
-  const renderItem = (item: IProduct, index: number) => {
+  const renderItem = useCallback((item: IProduct, index: number) => {
     return (
       <Block>
         <Block
@@ -244,7 +244,7 @@ const CheckinInventory = () => {
         </TouchableOpacity>
       </Block>
     );
-  };
+  }, []);
 
   const openBottonSheetDetail = (item: IProduct, index: number) => {
     indexSelect.current = index;
@@ -418,20 +418,20 @@ const CheckinInventory = () => {
                 });
               }}
             />
-            <IconButton
-              style={{borderColor: colors.action}}
-              mode="outlined"
-              icon="barcode-scan"
-              iconColor={colors.action}
-              size={16}
-              onPress={() => console.log('Pressed')}
-            />
+            {/*<IconButton*/}
+            {/*  style={{borderColor: colors.action}}*/}
+            {/*  mode="outlined"*/}
+            {/*  icon="barcode-scan"*/}
+            {/*  iconColor={colors.action}*/}
+            {/*  size={16}*/}
+            {/*  onPress={() => console.log('Pressed')}*/}
+            {/*/>*/}
           </View>
         </View>
       )}
 
       <AppContainer>
-        {listProducts && listProducts?.length > 0 && (
+        {listProducts && listProducts?.length > 0 ? (
           <View style={{rowGap: 16}}>
             {listProducts &&
               listProducts?.map((item: any, index: number) => (
@@ -443,9 +443,7 @@ const CheckinInventory = () => {
                 </TouchableOpacity>
               ))}
           </View>
-        )}
-
-        {listProducts && listProducts?.length == 0 && (
+        ) : (
           <View style={[styles.containerNodata as any]}>
             <View style={{alignItems: 'center'}}>
               <Image
@@ -480,15 +478,15 @@ const CheckinInventory = () => {
                 }}>
                 {getLabel('selectProduct')}
               </Button>
-              <Button
-                style={{width: '45%', borderColor: colors.action}}
-                textColor={colors.action}
-                labelStyle={[styles.textInventory as any, {fontWeight: '500'}]}
-                icon="barcode-scan"
-                mode="outlined"
-                onPress={() => console.log('Pressed')}>
-                {getLabel('scanCode')}
-              </Button>
+              {/*<Button*/}
+              {/*  style={{width: '45%', borderColor: colors.action}}*/}
+              {/*  textColor={colors.action}*/}
+              {/*  labelStyle={[styles.textInventory as any, {fontWeight: '500'}]}*/}
+              {/*  icon="barcode-scan"*/}
+              {/*  mode="outlined"*/}
+              {/*  onPress={() => console.log('Pressed')}>*/}
+              {/*  {getLabel('scanCode')}*/}
+              {/*</Button>*/}
             </View>
           </View>
         )}

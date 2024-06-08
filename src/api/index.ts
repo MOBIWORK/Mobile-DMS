@@ -56,7 +56,7 @@ const handleErrorResponse = (
     dispatch(setProcessingStatus(false));
     dispatch(
       setError({
-        title: 'Không có kết nối đến máy chủ',
+        title: response?.data ?? 'No response',
         message: null,
         viewOnly: true,
       }),

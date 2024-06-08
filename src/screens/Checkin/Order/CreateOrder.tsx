@@ -472,6 +472,7 @@ const CreateOrder = () => {
     switch (type) {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
+        // console.log('object', objectData);
         if (!orderResultData) {
           const orderRes: any = await OrderService.createdOrder(objectData);
           if (orderRes?.status === ApiConstant.STT_CREATED) {
@@ -757,9 +758,7 @@ const CreateOrder = () => {
           </Text>
         </Block>
         <AppButton
-          label={
-            orderResultData ? getLabel('completed') : getLabel('orderCreated')
-          }
+          label={orderResultData ? getLabel('completed') : getLabel('continue')}
           style={styles.button}
           disabled={isDisabled}
           onPress={() => onCreatedOrder()}

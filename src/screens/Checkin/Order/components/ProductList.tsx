@@ -56,18 +56,18 @@ const ProductList: FC<UpdateItemProductProps> = ({
               onPress={() => console.log('Pressed')}>
               {getLabel('selectProduct')}
             </Button>
-            <Button
-              style={{width: '48%', borderColor: colors.action}}
-              textColor={colors.action}
-              labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}
-              icon="barcode-scan"
-              mode="outlined"
-              // onPress={() =>
-              //   navigation.navigate(ScreenConstant.BARCODE_SCANNER)
-              // }
-            >
-              {getLabel('scanCode')}
-            </Button>
+            {/*<Button*/}
+            {/*  style={{width: '48%', borderColor: colors.action}}*/}
+            {/*  textColor={colors.action}*/}
+            {/*  labelStyle={[styles.textBtt as any, {fontWeight: '500'}]}*/}
+            {/*  icon="barcode-scan"*/}
+            {/*  mode="outlined"*/}
+            {/*  // onPress={() =>*/}
+            {/*  //   navigation.navigate(ScreenConstant.BARCODE_SCANNER)*/}
+            {/*  // }*/}
+            {/*>*/}
+            {/*  {getLabel('scanCode')}*/}
+            {/*</Button>*/}
           </View>
         ) : (
           isAddProduct && <UINoData customer_id={customerId} />
@@ -90,6 +90,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
                 tax_percentage={item?.rate_tax_item ?? 0}
                 totalPrice={item.total_item_money}
                 price={item?.price ?? 0}
+                isAddProduct={isAddProduct}
               />
             </Pressable>
           ))}
@@ -129,7 +130,8 @@ interface UpdateItemProductProps {
 const styles = StyleSheet.create({
   flexSpace: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
   } as ViewStyle,
   textBtt: {
