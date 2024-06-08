@@ -12,11 +12,14 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
 import {IFilterType} from '../../../components/common/FilterListComponent';
 import {ReportService} from '../../../services';
+import {useDispatch} from 'react-redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 const NewCustomer = () => {
   const theme = useTheme();
   const styles = createStyle(theme);
   const {bottom} = useSafeAreaInsets();
   const {t: getLabel} = useTranslation();
+  const dispatch = useDispatch();
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
 
@@ -124,6 +127,7 @@ const NewCustomer = () => {
 
   useEffect(() => {
     const getData = async () => {
+      dispatch(appActions.setProcessingStatus(true));
       const response: any = await ReportService.getReportNewCustomer({
         from_date: fromDate / 1000,
         to_date: toDate / 1000,
@@ -138,7 +142,9 @@ const NewCustomer = () => {
               address: item?.address ?? '---',
               customerType: item?.customer_type ?? '---',
               customerGroup: item?.customer_group ?? '---',
-              collectionDate: item?.date_collection ?? '---',
+              collectionDate: item?.date_collection
+                ? item.date_collection * 1000
+                : '---',
             };
           });
         setNewCustomerData({total_new_cus: total, list_customer: listCustomer});
@@ -148,8 +154,8 @@ const NewCustomer = () => {
           list_customer: [],
         });
       }
+      dispatch(appActions.setProcessingStatus(false));
     };
-    console.log('fromDate', 'toDate', fromDate, toDate);
     getData();
   }, [fromDate, toDate]);
 

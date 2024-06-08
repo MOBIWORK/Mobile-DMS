@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {MainLayout} from '../../layouts';
 import {AppBottomSheet, AppHeader, AppIcons} from '../../components/common';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -195,7 +195,7 @@ const OrderList = () => {
     }
   };
 
-  const renderUiItem = (item: IOrderList) => {
+  const renderUiItem = useCallback((item: IOrderList) => {
     const status = CommonUtils.getStatusColor(item.status, colors);
     return (
       <View style={[styles.containerItem]}>
@@ -276,17 +276,21 @@ const OrderList = () => {
             </Text>
           </View>
         </View>
-        <View style={[styles.flexSpace as any, {marginTop: 8}]}>
-          <Button
-            icon="printer-outline"
-            mode="outlined"
-            style={{
-              borderColor: colors.action,
-            }}
-            textColor={colors.action}
-            onPress={() => console.log('Pressed')}>
-            {getLabel('printOrder')}
-          </Button>
+        <View
+          style={[
+            styles.flexSpace as any,
+            {marginTop: 8, justifyContent: 'flex-end'},
+          ]}>
+          {/*<Button*/}
+          {/*  icon="printer-outline"*/}
+          {/*  mode="outlined"*/}
+          {/*  style={{*/}
+          {/*    borderColor: colors.action,*/}
+          {/*  }}*/}
+          {/*  textColor={colors.action}*/}
+          {/*  onPress={() => console.log('Pressed')}>*/}
+          {/*  {getLabel('printOrder')}*/}
+          {/*</Button>*/}
           <View style={styles.flex}>
             <Text style={styles.itemTotal}>{getLabel('totalPrice')} :</Text>
             <Text style={[styles.nameCustomer]}>
@@ -298,7 +302,7 @@ const OrderList = () => {
         </View>
       </View>
     );
-  };
+  }, []);
 
   const onEndReachedThreshold = () => {
     const totalPage = Math.ceil(totalData / pageSize);
@@ -328,22 +332,22 @@ const OrderList = () => {
       <MainLayout style={{backgroundColor: colors.bg_neutral}}>
         <AppHeader
           label={getLabel('order')}
-          labelStyle={{textAlign: 'left', marginLeft: 8}}
+          labelStyle={{textAlign: 'center', marginLeft: 8}}
           onBack={() => navigation.goBack()}
-          rightButton={
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(ScreenConstant.SEARCH_COMMON_SCREEN, {
-                  type: 'order',
-                })
-              }>
-              <Image
-                source={ImageAssets.SearchIcon}
-                style={styles.iconBack}
-                resizeMode={'cover'}
-              />
-            </TouchableOpacity>
-          }
+          // rightButton={
+          //   <TouchableOpacity
+          //     onPress={() =>
+          //       navigation.navigate(ScreenConstant.SEARCH_COMMON_SCREEN, {
+          //         type: 'order',
+          //       })
+          //     }>
+          //     <Image
+          //       source={ImageAssets.SearchIcon}
+          //       style={styles.iconBack}
+          //       resizeMode={'cover'}
+          //     />
+          //   </TouchableOpacity>
+          // }
         />
         <View style={[styles.containerFilter]}>
           <ButtonFilter

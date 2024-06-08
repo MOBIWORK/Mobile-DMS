@@ -182,11 +182,11 @@ const TabOverview = ({data}: PropsType) => {
             <View>
               <View style={[styles.flexSpace]}>
                 <Text style={[styles.textLabel]}>{getLabel('customer')}</Text>
-                <TouchableOpacity>
-                  <Text style={[styles.textLabel, {color: colors.action}]}>
-                    {getLabel('detail')}
-                  </Text>
-                </TouchableOpacity>
+                {/*<TouchableOpacity>*/}
+                {/*  <Text style={[styles.textLabel, {color: colors.action}]}>*/}
+                {/*    {getLabel('detail')}*/}
+                {/*  </Text>*/}
+                {/*</TouchableOpacity>*/}
               </View>
 
               <View

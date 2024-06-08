@@ -25,7 +25,7 @@ import {
 } from '../../../models/types';
 import {useSelector} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
-import { ImageAssets } from '../../../assets';
+import {ImageAssets} from '../../../assets';
 
 type Props = {
   type: string;
@@ -54,26 +54,25 @@ const ListFilterAdding = (props: Props) => {
 
   const dataMemo = useMemo(() => {
     const normalizedFilterText = filterText
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .split(' '); // Normalize,
-    
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .split(' '); // Normalize,
+
     const filteredItems = customerType?.filter(item => {
       const normalizedName = item.name
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .split(' '); // Normalize, remove diacritics, convert to lowercase, and split into words
-  
+
       // Check if every word in normalizedFilterText is included in normalizedName
-      return normalizedFilterText.every(word => normalizedName.some(nameWord => nameWord.includes(word)));
+      return normalizedFilterText.every(word =>
+        normalizedName.some(nameWord => nameWord.includes(word)),
+      );
     });
     return filteredItems.length > 1 ? filteredItems : customerType;
-
-
   }, [filterText]);
-
 
   const handleItem = (text: any) => {
     setSearchValue(text);
@@ -110,58 +109,59 @@ const ListFilterAdding = (props: Props) => {
 
   return (
     <Block>
-      {type === AppConstant.CustomerFilterType.ngay_sinh_nhat ? (
-        <Block>
-          <Block style={styles.headerBottomSheet}>
-            <TouchableOpacity
-              onPress={() => {
-                filterRef.current?.close();
-              }}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name={'close'}
-                size={24}
-                color={theme.colors.text_primary}
-              />
-            </TouchableOpacity>
+      {/*{type === AppConstant.CustomerFilterType.ngay_sinh_nhat ? (*/}
+      {/*  <Block>*/}
+      {/*    <Block style={styles.headerBottomSheet}>*/}
+      {/*      <TouchableOpacity*/}
+      {/*        onPress={() => {*/}
+      {/*          filterRef.current?.close();*/}
+      {/*        }}>*/}
+      {/*        <AppIcons*/}
+      {/*          iconType={AppConstant.ICON_TYPE.IonIcon}*/}
+      {/*          name={'close'}*/}
+      {/*          size={24}*/}
+      {/*          color={theme.colors.text_primary}*/}
+      {/*        />*/}
+      {/*      </TouchableOpacity>*/}
 
-            <Text style={styles.titleHeaderText}>
-              {getLabel('customerBirthDay')}{' '}
-            </Text>
-            <Text style={styles.titleHeaderText} />
-          </Block>
-          {listBirthDayType.map((item: any) => {
-            return (
-              <TouchableOpacity
-                style={styles.containItemBottomView}
-                key={item.id.toString()}
-                onPress={() => {
-                  setValueFilter(prev => ({
-                    ...prev,
-                    customerBirthday: item.title,
-                  }));
-                  filterRef?.current?.close();
-                }}>
-                <Text
-                  style={styles.itemText(
-                    item.title,
-                    valueFilter.customerBirthday,
-                  )}>
-                  {item.title}
-                </Text>
-                {item.title === valueFilter.customerBirthday && (
-                  <AppIcons
-                    iconType={AppConstant.ICON_TYPE.Feather}
-                    name="check"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </Block>
-      ) : type === AppConstant.CustomerFilterType.loai_khach_hang ? (
+      {/*      <Text style={styles.titleHeaderText}>*/}
+      {/*        {getLabel('customerBirthDay')}{' '}*/}
+      {/*      </Text>*/}
+      {/*      <Text style={styles.titleHeaderText} />*/}
+      {/*    </Block>*/}
+      {/*    {listBirthDayType.map((item: any) => {*/}
+      {/*      return (*/}
+      {/*        <TouchableOpacity*/}
+      {/*          style={styles.containItemBottomView}*/}
+      {/*          key={item.id.toString()}*/}
+      {/*          onPress={() => {*/}
+      {/*            setValueFilter(prev => ({*/}
+      {/*              ...prev,*/}
+      {/*              customerBirthday: item.title,*/}
+      {/*            }));*/}
+      {/*            filterRef?.current?.close();*/}
+      {/*          }}>*/}
+      {/*          <Text*/}
+      {/*            style={styles.itemText(*/}
+      {/*              item.title,*/}
+      {/*              valueFilter.customerBirthday,*/}
+      {/*            )}>*/}
+      {/*            {item.title}*/}
+      {/*          </Text>*/}
+      {/*          {item.title === valueFilter.customerBirthday && (*/}
+      {/*            <AppIcons*/}
+      {/*              iconType={AppConstant.ICON_TYPE.Feather}*/}
+      {/*              name="check"*/}
+      {/*              size={24}*/}
+      {/*              color={theme.colors.primary}*/}
+      {/*            />*/}
+      {/*          )}*/}
+      {/*        </TouchableOpacity>*/}
+      {/*      );*/}
+      {/*    })}*/}
+      {/*  </Block>*/}
+      {/*) :*/}
+      {type === AppConstant.CustomerFilterType.loai_khach_hang ? (
         <Block>
           <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
@@ -237,24 +237,24 @@ const ListFilterAdding = (props: Props) => {
             <Text style={styles.titleHeaderText} />
           </Block>
           <Block
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-start"
-          marginBottom={20}
-          width={'100%'}>
-          <Searchbar
-            placeholder={getLabel('search') + '...'}
-            value={searchValue}
-            onChangeText={handleItem}
-            onSubmitEditing={onSubmitEnd}
-            icon={ImageAssets.SearchIcon}
-            placeholderTextColor={theme.colors.text_disable}
-            inputStyle={{color: theme.colors.text_primary}}
-            style={styles.searchBar}
-            iconColor={theme.colors.text_disable}
-            onClearIconPress={() => setSearchValue('')}
-          />
-        </Block>
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            marginBottom={20}
+            width={'100%'}>
+            <Searchbar
+              placeholder={getLabel('search') + '...'}
+              value={searchValue}
+              onChangeText={handleItem}
+              onSubmitEditing={onSubmitEnd}
+              icon={ImageAssets.SearchIcon}
+              placeholderTextColor={theme.colors.text_disable}
+              inputStyle={{color: theme.colors.text_primary}}
+              style={styles.searchBar}
+              iconColor={theme.colors.text_disable}
+              onClearIconPress={() => setSearchValue('')}
+            />
+          </Block>
           <FlatList
             data={customerType && customerType.length > 0 ? dataMemo : []}
             keyExtractor={item => item.name}

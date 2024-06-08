@@ -17,12 +17,16 @@ import {IOrderDetail, KeyAbleProps} from '../../../models/types';
 import {useTranslation} from 'react-i18next';
 import {useTheme} from '../../../layouts/theme';
 import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
+import {useDispatch} from 'react-redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
 
 const OrderDetail = () => {
   const layout = useWindowDimensions();
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
+  const dispatch = useDispatch();
+
   const [index, setIndex] = React.useState(0);
   const bottomSheet = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['15%'], []);
@@ -93,42 +97,46 @@ const OrderDetail = () => {
   });
 
   const fetchDataDetail = async () => {
+    dispatch(appActions.setProcessingStatus(true));
     const {status, data}: KeyAbleProps = await OrderService.getDetail(name);
     if (status === ApiConstant.STT_OK) {
       setData(data.result);
     }
+    dispatch(appActions.setProcessingStatus(false));
   };
 
   useEffect(() => {
     fetchDataDetail();
   }, [name]);
   return (
-    <MainLayout style={{paddingHorizontal: 0}}>
+    <MainLayout
+      style={{paddingHorizontal: 0, backgroundColor: colors.bg_neutral}}>
       <AppHeader
         label={getLabel('orderDetail')}
         onBack={() => navigation.goBack()}
-        style={{paddingHorizontal: 16, marginBottom: 20}}
-        rightButton={
-          <TouchableOpacity
-            onPress={() =>
-              bottomSheet.current && bottomSheet.current.snapToIndex(0)
-            }>
-            <AppIcons
-              iconType={ICON_TYPE.MateriallIcon}
-              name="more-vert"
-              size={24}
-              color={colors.text_secondary}
-            />
-          </TouchableOpacity>
-        }
+        style={{paddingHorizontal: 16, marginBottom: 20, height: 50}}
+        // rightButton={
+        //   <TouchableOpacity
+        //     onPress={() =>
+        //       bottomSheet.current && bottomSheet.current.snapToIndex(0)
+        //     }>
+        //     <AppIcons
+        //       iconType={ICON_TYPE.MateriallIcon}
+        //       name="more-vert"
+        //       size={24}
+        //       color={colors.text_secondary}
+        //     />
+        //   </TouchableOpacity>
+        // }
       />
-      <TabView
-        navigationState={{index, routes}}
-        renderTabBar={renderTabBar}
-        renderScene={renderScreen}
-        onIndexChange={setIndex}
-        initialLayout={{width: layout.width}}
-      />
+      {/*<TabView*/}
+      {/*  navigationState={{index, routes}}*/}
+      {/*  renderTabBar={renderTabBar}*/}
+      {/*  renderScene={renderScreen}*/}
+      {/*  onIndexChange={setIndex}*/}
+      {/*  initialLayout={{width: layout.width}}*/}
+      {/*/>*/}
+      <TabOverview data={data} />
 
       <AppBottomSheet
         snapPointsCustom={snapPoints}

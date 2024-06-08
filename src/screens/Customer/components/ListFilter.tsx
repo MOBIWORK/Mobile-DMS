@@ -5,7 +5,7 @@ import {
   View,
   TextStyle,
   ViewStyle,
-  FlatList
+  FlatList,
 } from 'react-native';
 import React from 'react';
 import {AppIcons} from '../../../components/common';
@@ -33,54 +33,55 @@ const ListFilter = (props: Props) => {
   const {t: getLabel} = useTranslation();
   return (
     <View>
-      {type === AppConstant.CustomerFilterType.ngay_sinh_nhat ? (
-        <View>
-          <View style={styles.headerBottomSheet}>
-            <TouchableOpacity onPress={() => filterRef.current?.close()}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name={'close'}
-                size={24}
-                color={theme.colors.text_primary}
-              />
-            </TouchableOpacity>
+      {/*{type === AppConstant.CustomerFilterType.ngay_sinh_nhat ? (*/}
+      {/*  <View>*/}
+      {/*    <View style={styles.headerBottomSheet}>*/}
+      {/*      <TouchableOpacity onPress={() => filterRef.current?.close()}>*/}
+      {/*        <AppIcons*/}
+      {/*          iconType={AppConstant.ICON_TYPE.IonIcon}*/}
+      {/*          name={'close'}*/}
+      {/*          size={24}*/}
+      {/*          color={theme.colors.text_primary}*/}
+      {/*        />*/}
+      {/*      </TouchableOpacity>*/}
 
-            <Text style={styles.titleHeaderText}>
-              {getLabel('customerBirthDay')}{' '}
-            </Text>
-          </View>
-          {listBirthDayType.map((item: any) => {
-            return (
-              <TouchableOpacity
-                style={styles.containItemBottomView}
-                key={item.id.toString()}
-                onPress={() => {
-                  setValueFilter(prev => ({
-                    ...prev,
-                    customerBirthday: item.title,
-                  }));
-                  filterRef?.current?.close();
-                }}>
-                <Text
-                  style={styles.itemText(
-                    item.title,
-                    valueFilter.customerBirthday,
-                  )}>
-                  {item.title}
-                </Text>
-                {item.title === valueFilter.customerBirthday && (
-                  <AppIcons
-                    iconType={AppConstant.ICON_TYPE.Feather}
-                    name="check"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      ) : type === AppConstant.CustomerFilterType.loai_khach_hang ? (
+      {/*      <Text style={styles.titleHeaderText}>*/}
+      {/*        {getLabel('customerBirthDay')}{' '}*/}
+      {/*      </Text>*/}
+      {/*    </View>*/}
+      {/*    {listBirthDayType.map((item: any) => {*/}
+      {/*      return (*/}
+      {/*        <TouchableOpacity*/}
+      {/*          style={styles.containItemBottomView}*/}
+      {/*          key={item.id.toString()}*/}
+      {/*          onPress={() => {*/}
+      {/*            setValueFilter(prev => ({*/}
+      {/*              ...prev,*/}
+      {/*              customerBirthday: item.title,*/}
+      {/*            }));*/}
+      {/*            filterRef?.current?.close();*/}
+      {/*          }}>*/}
+      {/*          <Text*/}
+      {/*            style={styles.itemText(*/}
+      {/*              item.title,*/}
+      {/*              valueFilter.customerBirthday,*/}
+      {/*            )}>*/}
+      {/*            {item.title}*/}
+      {/*          </Text>*/}
+      {/*          {item.title === valueFilter.customerBirthday && (*/}
+      {/*            <AppIcons*/}
+      {/*              iconType={AppConstant.ICON_TYPE.Feather}*/}
+      {/*              name="check"*/}
+      {/*              size={24}*/}
+      {/*              color={theme.colors.primary}*/}
+      {/*            />*/}
+      {/*          )}*/}
+      {/*        </TouchableOpacity>*/}
+      {/*      );*/}
+      {/*    })}*/}
+      {/*  </View>*/}
+      {/*) :*/}
+      {type === AppConstant.CustomerFilterType.loai_khach_hang ? (
         <View>
           <View style={styles.headerBottomSheet}>
             <TouchableOpacity onPress={() => filterRef.current?.close()}>

@@ -3,6 +3,7 @@ import {IProduct} from './type';
 import {SLICE_NAME} from '../app-reducer/type';
 import * as Actions from '../app-reducer/type';
 import {DataCustomersUpdate, IDataCustomer} from '../../models/types';
+import {ICustomerParams} from '../../services/appService';
 
 const initialState: IProduct = {
   listCustomer: {
@@ -70,7 +71,10 @@ const customerSlice = createSlice({
   },
 });
 
-const onGetCustomer = createAction(Actions.GET_CUSTOMER);
+const onGetCustomer = createAction(
+  Actions.GET_CUSTOMER,
+  (params?: ICustomerParams) => ({payload: params}),
+);
 
 const onGetCustomerVisit = createAction(Actions.GET_CUSTOMER_VISIT);
 
@@ -87,12 +91,12 @@ const addingCustomer = createAction(
 const getCustomerTerritory = createAction(Actions.GET_CUSTOMER_TERRITORY);
 const getCustomerNewPage = createAction(
   Actions.GET_CUSTOMER_PAGE,
-  (page: number) => ({payload: page}),
+  (params?: ICustomerParams) => ({payload: params}),
 );
 
 const updateCustomerAction = createAction(
   Actions.UPDATE_CUSTOMER,
-  (data: any,name:string) => ({payload: {data,name}}),
+  (data: any, name: string) => ({payload: {data, name}}),
 );
 
 export const customerReducer = customerSlice.reducer;
@@ -114,5 +118,5 @@ export const customerActions = {
   addingCustomer,
   getCustomerTerritory,
   getCustomerNewPage,
-  updateCustomerAction
+  updateCustomerAction,
 };
