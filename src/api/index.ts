@@ -56,7 +56,7 @@ const handleErrorResponse = (
     dispatch(setProcessingStatus(false));
     dispatch(
       setError({
-        title: response?.data ?? 'No response',
+        title: 'Đường truyền không ổn định, vui lòng thử lại!',
         message: null,
         viewOnly: true,
       }),
