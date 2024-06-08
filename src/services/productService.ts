@@ -7,8 +7,8 @@ export type PramsTypeProduct = {
   item_name?: string;
   industry?: string;
   item_group?: string;
-  page_size?: number;
-  page_number?: number;
+  page_size?: number | null;
+  page_number?: number | null;
   customer?: string;
 };
 

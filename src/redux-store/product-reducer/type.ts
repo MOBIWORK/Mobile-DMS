@@ -2,6 +2,7 @@ import {IProduct} from '../../models/types';
 
 export type StateType = {
   data: IProduct[];
+  dataCustomer: IProduct[];
   totalItem: number;
   dataSelected: IProduct[];
   message: string;
