@@ -221,7 +221,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         break;
       }
     }
-  }, [data]);
+  }, [data,listCity]);
 
   useEffect(() => {
     getListCity();
