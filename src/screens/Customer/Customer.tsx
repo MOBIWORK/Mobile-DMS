@@ -516,7 +516,7 @@ const Customer = () => {
           <SkeletonLoading />
         ) : (
           <ListCard
-            data={customerData || []}
+            data={customerData || []} 
             loading={loading}
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}
