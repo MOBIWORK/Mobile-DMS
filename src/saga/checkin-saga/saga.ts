@@ -58,6 +58,8 @@ export function* getListProgramData(action: PayloadAction) {
         CheckinService.getListProgram,
         action.payload,
       );
+      console.log(action.payload)
+      console.log(response.result,'response list program')
       if (response?.message === 'ok') {
         yield put(checkinActions.setDataListProgram(response.result?.data));
       } else {
@@ -116,7 +118,7 @@ export function* createReportMarkScoreSaga(action: PayloadAction) {
       yield put(onLoadAppEnd());
       action.payload.screen === ScreenConstant.TAKE_PICTURE_SCORE
         ? pop(2)
-        : pop(1);
+        : goBack();
     }
   }
 }

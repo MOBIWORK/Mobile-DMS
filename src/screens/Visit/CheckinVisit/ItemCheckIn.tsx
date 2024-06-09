@@ -27,6 +27,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
                 navigate(item.screenName, {
                   type: item.type ? item.type : '',
                   data: navData,
+                  screen:item.screenName
                 });
               })
             // console.log(item.screenName,'screen name')

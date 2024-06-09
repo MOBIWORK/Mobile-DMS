@@ -929,8 +929,9 @@ const ListVisit = () => {
           isDetail: false,
           ...item,
         };
-        setModalAlert(prev => ({...prev, status: false}));
+       
         dispatch(appActions.setDataCheckIn(data));
+        setModalAlert(prev => ({...prev, status: false}));
         navigate(ScreenConstant.CHECKIN, {
           item: data,
         });

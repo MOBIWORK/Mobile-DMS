@@ -190,7 +190,7 @@ const TakePicture = () => {
       item.key === 'camera' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    dispatch(appActions.clearListImage([]));
+    dispatch(appActions.clearListImage());
     setLoading(false);
     navigation.goBack();
   };
@@ -254,7 +254,7 @@ const TakePicture = () => {
   };
 
   const onBackButtonUpdate = useCallback(() => {
-    dispatch(appActions.clearListImage([]));
+    dispatch(appActions.clearListImage());
     setLoading(false);
   }, [loading]);
 

@@ -38,13 +38,15 @@ export type DataSendMarkScore = {
   setting_score_audit: any;
 };
 
+const {selectedProgram} = getState('checkin');
+
 export const categoriesCheckinList: IItemCheckIn[] = [
   {
     icon: 'OrangeBox',
     isDone: false,
     isRequire: true,
     name: 'Kiểm tồn',
-    screenName: 'CHECKIN_INVENTORY',
+    screenName: ScreenConstant.CHECKIN_INVENTORY,
     backgroundColor: 'orangeBackground',
     key: 'inventory',
   },
@@ -53,7 +55,7 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Chụp ảnh',
-    screenName: 'TAKE_PICTURE_VISIT',
+    screenName: ScreenConstant.TAKE_PICTURE_VISIT,
     backgroundColor: 'purpleBackground',
     key: 'camera',
   },
@@ -62,7 +64,7 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: true,
     name: 'Đặt hàng',
-    screenName: 'CHECKIN_ORDER_CREATE',
+    screenName: ScreenConstant.CHECKIN_ORDER_CREATE,
     backgroundColor: 'blueBackground',
     type: 'ORDER',
     key: 'order',
@@ -72,7 +74,7 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Ghi chú',
-    screenName: 'CHECKIN_NOTE_VISIT',
+    screenName: ScreenConstant.CHECKIN_NOTE_VISIT,
     backgroundColor: 'greenBackground',
     key: 'note',
   },
@@ -81,7 +83,7 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Vị trí',
-    screenName: 'CHECKIN_LOCATION',
+    screenName: ScreenConstant.CHECKIN_LOCATION,
     backgroundColor: 'redBackground',
     type: 'CHECKIN',
     key: 'location',
@@ -91,7 +93,7 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Trả hàng',
-    screenName: 'CHECKIN_ORDER_CREATE',
+    screenName: ScreenConstant.CHECKIN_ORDER_CREATE,
     backgroundColor: 'undoBackground',
     type: 'RETURN_ORDER',
     key: 'return_order',
@@ -101,7 +103,11 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Chấm điểm trưng bày',
-    screenName: 'TAKE_PICTURE_SCORE',
+    screenName:
+      selectedProgram && selectedProgram.length > 0
+        ? ScreenConstant.LIST_ALBUM_SCORE
+        : ScreenConstant.TAKE_PICTURE_SCORE,
+
     backgroundColor: 'undoBackground',
     type: 'take_picture_score',
     key: 'take_picture_score',

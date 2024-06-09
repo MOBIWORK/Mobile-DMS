@@ -55,7 +55,7 @@ const checkinSlice = createSlice({
       state.listImageSelect = [];
       state.imageToMark = [];
       state.listProgramImage = []
-      state.listProgramCampaign = [];
+      // state.listProgramCampaign = [];
       state.selectedProgram = []
     
     },

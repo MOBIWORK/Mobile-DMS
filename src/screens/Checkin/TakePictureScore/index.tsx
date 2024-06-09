@@ -22,7 +22,7 @@ import {
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {CameraUtils} from '../../../utils';
 import isEqual from 'react-fast-compare';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {RouteProp, useIsFocused, useRoute} from '@react-navigation/native';
 import {useDisableBackHandler, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {IUser} from '../../../models/types';
@@ -58,7 +58,7 @@ const TakePictureScore = () => {
   const styles = rootStyles(theme);
   const [albumImage, setAlbumImage] = React.useState<any[]>([]);
   const [selectedImages, setSelectedImages] = React.useState<ImageSelect[]>([]);
-
+  const isFocus = useIsFocused();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [showModal, setShowModal] = React.useState(false);
   const itemParams =
@@ -193,7 +193,8 @@ const TakePictureScore = () => {
     ]);
     if (
       (granted['android.permission.CAMERA'] &&
-      granted['android.permission.WRITE_EXTERNAL_STORAGE']) || Platform.OS === 'ios'
+        granted['android.permission.WRITE_EXTERNAL_STORAGE']) ||
+      Platform.OS === 'ios'
     ) {
       await CameraUtils.openImagePickerCamera(img => {
         setAlbumImage(prevImages => {
@@ -220,11 +221,11 @@ const TakePictureScore = () => {
     }
   }, [selectedImages]);
 
-  const onBack = useCallback(() =>{
+  const onBack = useCallback(() => {
     goBack();
     dispatch(checkinActions.setListImageProgram([]));
     dispatch(checkinActions.setListImageSelect([]));
-  },[])
+  }, []);
 
   const handleSelectImage = useCallback(
     (image: ImageSelect) => {
@@ -254,12 +255,15 @@ const TakePictureScore = () => {
     [selectedImages, setSelectedImages],
   );
 
+  // console.log(listProgram,'program')
+
   const onPressMarkProgram = () => {
     if (listProgramSelected < listProgram) {
       setShowModal(true);
     } else {
       navigate(ScreenConstant.LIST_ALBUM_SCORE, {
         data: itemParams,
+        screen: screen,
       });
       setShowModal(false);
     }
@@ -281,6 +285,7 @@ const TakePictureScore = () => {
       </Block>
     );
   }, []);
+  console.log(listProgram,'vbv')
 
   useEffect(() => {
     const data = {
@@ -289,6 +294,7 @@ const TakePictureScore = () => {
     };
     dispatch(checkinActions.getListProgram(data));
   }, []);
+  // dispatch(checkinActions.getListProgram(data));
 
   return (
     <SafeAreaView

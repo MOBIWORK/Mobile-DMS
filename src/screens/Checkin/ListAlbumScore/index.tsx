@@ -84,27 +84,37 @@ const ListAlbumScore = (props: Props) => {
   );
 
   const confirmUploadImage = async () => {
-    try {
-      setAppLoading(true);
-      const newData: any = itemCheckin.map(item =>
-        item.key === 'take_picture_score'
-          ? {...item, isDone: true, screenName: ScreenConstant.LIST_ALBUM_SCORE}
-          : item,
-      );
+    if (screens === ScreenConstant.TAKE_PICTURE_SCORE) {
+      console.log(screens,'g')
+      try {
+        setAppLoading(true);
+        const newData: any = itemCheckin.map(item =>
+          item.key === 'take_picture_score'
+            ? {
+                ...item,
+                isDone: true,
+                screenName: ScreenConstant.LIST_ALBUM_SCORE,
+              }
+            : item,
+        );
 
-      dispatch(checkinActions.setDataCategoriesCheckin(newData));
+        dispatch(checkinActions.setDataCategoriesCheckin(newData));
 
-      for (let index = 0; index < resultData.length; index++) {
-        const element = resultData[index];
-        dispatch(checkinActions.createReportMarkScore(element, screens));
+        for (let index = 0; index < resultData.length; index++) {
+          const element = resultData[index];
+          dispatch(checkinActions.createReportMarkScore(element, screens));
+        }
+        //remove store: listProgramSelected, listImageSelected:
+        dispatch(checkinActions.setSelectedProgram([]));
+        dispatch(checkinActions.setListImageSelect([]));
+      } catch (err) {
+        console.log('[err: ]', err);
+      } finally {
+        setAppLoading(false);
       }
-      //remove store: listProgramSelected, listImageSelected:
-      dispatch(checkinActions.setSelectedProgram([]));
-      dispatch(checkinActions.setListImageSelect([]));
-    } catch (err) {
-      console.log('[err: ]', err);
-    } finally {
-      setAppLoading(false);
+    } else {
+      console.log(screens,'else')
+      goBack();
     }
   };
   const listHeaderComponent = useMemo(() => {
@@ -114,7 +124,7 @@ const ListAlbumScore = (props: Props) => {
           style={styles.header}
           label="Chấm điểm trưng bày"
           onBack={() =>
-            screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(1) : goBack()
+            screens === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2) : goBack()
           }
           // hiddenBackButton={true}
         />
