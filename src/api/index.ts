@@ -72,8 +72,8 @@ const createInstance = (deleteHeader?: boolean) => {
   let organization = CommonUtils.storage.getString(AppConstant.Organization);
   if (organization) {
     const organizationObj = JSON.parse(organization);
-    // Api.setBaseURL(organizationObj.erpnext_url);
-    Api.setBaseURL('http://hr.mbwcloud.com:8011');
+    Api.setBaseURL(organizationObj.erpnext_url);
+    // Api.setBaseURL('http://hr.mbwcloud.com:8011');
   }
   if (deleteHeader) {
     Api.deleteHeader('Authorization');
