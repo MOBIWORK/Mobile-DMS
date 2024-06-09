@@ -66,7 +66,7 @@ const ModalSearchCustomer = (props: Props) => {
       );
     });
 
-    return  data && filteredItems?.length > 0  ? filteredItems : [];
+    return data && filteredItems?.length > 0 ? filteredItems : [];
   }, [filterText]);
 
   const handleItem = (text: any) => {
@@ -113,7 +113,7 @@ const ModalSearchCustomer = (props: Props) => {
       onBackButtonPress={onBackButtonPress}
       onBackdropPress={onBackButtonPress}
       style={styles.modalStyle}>
-      <Block block colorTheme="bg_default">
+      <Block block colorTheme="bg_default" paddingVertical={30}>
         <Block
           direction="row"
           marginTop={10}
@@ -145,7 +145,7 @@ const ModalSearchCustomer = (props: Props) => {
             </Text>
           </Block>
           {listSearch &&
-          typeof listSearch != 'undefined' &&
+          typeof listSearch !== 'undefined' &&
           listSearch?.length > 0 ? (
             <Block>
               {listSearch.map((item: string, index: number) => {
