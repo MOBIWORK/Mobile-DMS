@@ -285,7 +285,6 @@ const TakePictureScore = () => {
       </Block>
     );
   }, []);
-  console.log(listProgram,'vbv')
 
   useEffect(() => {
     const data = {

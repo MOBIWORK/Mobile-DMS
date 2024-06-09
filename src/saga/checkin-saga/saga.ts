@@ -15,7 +15,6 @@ import {goBack, pop} from '../../navigation/navigation-service';
 
 export function* getDataNote(action: PayloadAction) {
   if (checkinActions.getListNoteCheckin.match(action)) {
-    console.log('parammm', action.payload);
     const {data, status}: KeyAbleProps = yield call(
       CheckinService.getNoteCheckin,
       action.payload,
@@ -58,17 +57,8 @@ export function* getListProgramData(action: PayloadAction) {
         CheckinService.getListProgram,
         action.payload,
       );
-      console.log(action.payload)
-      console.log(response.result,'response list program')
       if (response?.message === 'ok') {
         yield put(checkinActions.setDataListProgram(response.result?.data));
-      } else {
-        console.log('run this ???????')
-        setError({
-          title: null,
-          message: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
-          viewOnly: true,
-        });
       }
     } catch (err) {
       console.log('err: ', err);
