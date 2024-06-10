@@ -226,7 +226,7 @@ const Customer = () => {
   }, [isFocus]);
 
   React.useEffect(() => {
-    if (searchCustomerValue) {
+    if ( searchCustomerValue &&  searchCustomerValue.trim().length > 0) {
       dispatch(
         customerActions.onGetCustomer({customer_name: searchCustomerValue}),
       );
@@ -356,9 +356,10 @@ const Customer = () => {
 
   const onEndReachedThreshold = useCallback(() => {
     if (
-      page <= Math.ceil(listCustomerResult.total / listCustomerResult.page_size)
+      page <= Math.ceil(listCustomerResult.total / listCustomerResult.page_size) && listCustomer.length > 4
     ) {
       startTransition(() => {
+        console.log('run   end')
         if (
           valueFilter.customerType !== 'Tất cả' &&
           valueFilter.customerGroupType !== 'Tất cả'
