@@ -213,15 +213,7 @@ const Customer = () => {
 
   React.useEffect(() => {
     if (!isFocus) {
-      //delete search visit value in ListVisit.tsx
-      // onResetSearchValueOfVisit();
       dispatch(appActions.setSearchCustomerValue(''));
-      // if (currentIndex.current > 0) {
-      //   flatListRef.current?.scrollToIndex({
-      //     animated: true,
-      //     index: currentIndex.current,
-      //   });
-      // }
     }
   }, [isFocus]);
 
@@ -257,7 +249,6 @@ const Customer = () => {
   useEffect(() => {
     mounted.current = true;
     if (listCustomer && listCustomer?.length > 0) {
-      console.log('lissss', listCustomer.length);
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
       );

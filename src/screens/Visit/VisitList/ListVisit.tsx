@@ -91,7 +91,7 @@ import ModalUpdateLocation from './Component/ModalUpdateLocation';
 import {ObjectId} from 'bson';
 import {MapView} from './Component/MapView';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import { storage } from '../../../utils/commom.utils';
+import {storage} from '../../../utils/commom.utils';
 
 //config Mapbox
 
@@ -492,7 +492,7 @@ const ListVisit = () => {
         )}
       </Block>
     );
-  }, [loading, listCustomer, customerDataSort, location,isShowListVisit]);
+  }, [loading, listCustomer, customerDataSort, location, isShowListVisit]);
 
   useLayoutEffect(() => {
     if (Object.keys(systemConfig).length === 0) {
@@ -933,86 +933,159 @@ const ListVisit = () => {
 
         dispatch(appActions.setDataCheckIn(data));
         setModalAlert(prev => ({...prev, status: false}));
-          const curTime = moment(new Date()).valueOf()
-        storage.set('curTime',curTime)
+        const curTime = moment(new Date()).valueOf();
+        storage.set('curTime', curTime);
         navigate(ScreenConstant.CHECKIN, {
           item: data,
         });
-      
       },
       error => backgroundErrorListener(error.code),
     );
   }, []);
 
-  const onPressToDetail = useCallback((item: VisitListItemType) => {
+  const onPressToDetail = useCallback(async (item: VisitListItemType) => {
     currentSelect.current = item;
-    startEffect(() => {
-      let log: LocationProps = JSON.parse(item.customer_location_primary!);
-      setModalAlert({status: true, type: 'loading'});
-      let uniqueID = new ObjectId();
-      startEffect(() => {
-        CommonUtils.getCurrentLocation(
-          location => {
-            let distanceCal = calculateDistance(
-              location.coords.latitude,
-              location.coords.longitude,
-              log?.lat || 0,
-              log?.long || 0,
+    if (Platform.OS === 'android') {
+      const checkEnabled: boolean = await isLocationEnabled();
+      if (checkEnabled) {
+        setModalErrorGPS(false)
+        startEffect(() => {
+          let log: LocationProps = JSON.parse(item.customer_location_primary!);
+          let uniqueID = new ObjectId();
+          startEffect(() => {
+            CommonUtils.getCurrentLocation(
+              location => {
+                let distanceCal = calculateDistance(
+                  location.coords.latitude,
+                  location.coords.longitude,
+                  log?.lat || 0,
+                  log?.long || 0,
+                );
+                let data: any = {
+                  checkin_id:
+                    dataCheckIn &&
+                    dataCheckIn?.kh_ma === item.customer_code &&
+                    dataCheckIn.checkin_id !== undefined
+                      ? dataCheckIn.checkin_id
+                      : uniqueID,
+                  kh_ma: item.customer_code,
+                  kh_ten: item.customer_name,
+                  kh_diachi:
+                    item.customer_primary_address?.address_title ?? null,
+                  kh_long: log?.long ?? '',
+                  kh_lat: log?.lat ?? '',
+                  checkin_giovao: new Date().getTime() / 1000,
+                  checkin_pinvao:
+                    batteryLevel > 0
+                      ? Math.round(batteryLevel * 10000) / 100
+                      : -Math.round(batteryLevel * 10000) / 100,
+                  checkin_khoangcach: distanceCal,
+                  createdDate: moment(new Date()).valueOf(),
+                  checkin_timegps: moment(
+                    new Date(location.timestamp * 1000),
+                  ).format('hh:mm'),
+                  checkin_dochinhxac: location.coords.accuracy,
+                  checkinvalidate_khoangcachcheckin:
+                    systemConfig.saiso_chophep_kb_vitringoaisaiso,
+                  checkinvalidate_khoangcachcheckout:
+                    systemConfig.saiso_chophep_checkout_ngoaisaiso,
+                  checkin_trangthaicuahang: true,
+                  checkin_donhang: '',
+                  checkin_giora: null,
+                  checkin_hinhanh: [],
+                  checkin_lat: location.coords.latitude,
+                  checkin_long: location.coords.longitude,
+                  checkin_pinra: 0,
+                  checkout_khoangcach: 0,
+                  createByName: '',
+                  createdByEmail: '',
+                  item: item,
+                  isDetail: true,
+                  ...item,
+                };
+
+                // setModalAlert(prev => ({...prev, status: false}));
+
+                navigate(ScreenConstant.VISIT_DETAIL, {
+                  data: data,
+                });
+                dispatch(appActions.setDataCheckIn(data));
+              },
+              error => backgroundErrorListener(error.code),
             );
-            let data: any = {
-              checkin_id:
-                dataCheckIn &&
-                dataCheckIn?.kh_ma === item.customer_code &&
-                dataCheckIn.checkin_id !== undefined
-                  ? dataCheckIn.checkin_id
-                  : uniqueID,
-              kh_ma: item.customer_code,
-              kh_ten: item.customer_name,
-              kh_diachi: item.customer_primary_address?.address_title ?? null,
-              kh_long: log?.long ?? '',
-              kh_lat: log?.lat ?? '',
-              checkin_giovao: new Date().getTime() / 1000,
-              checkin_pinvao:
-                batteryLevel > 0
-                  ? Math.round(batteryLevel * 10000) / 100
-                  : -Math.round(batteryLevel * 10000) / 100,
-              checkin_khoangcach: distanceCal,
-              createdDate: moment(new Date()).valueOf(),
-              checkin_timegps: moment(
-                new Date(location.timestamp * 1000),
-              ).format('hh:mm'),
-              checkin_dochinhxac: location.coords.accuracy,
-              checkinvalidate_khoangcachcheckin:
-                systemConfig.saiso_chophep_kb_vitringoaisaiso,
-              checkinvalidate_khoangcachcheckout:
-                systemConfig.saiso_chophep_checkout_ngoaisaiso,
-              checkin_trangthaicuahang: true,
-              checkin_donhang: '',
-              checkin_giora: null,
-              checkin_hinhanh: [],
-              checkin_lat: location.coords.latitude,
-              checkin_long: location.coords.longitude,
-              checkin_pinra: 0,
-              checkout_khoangcach: 0,
-              createByName: '',
-              createdByEmail: '',
-              item: item,
-              isDetail: true,
-              ...item,
-            };
+          });
+        });
+      } else {
+        setModalErrorGPS(true);
+      }
+    } else {
+      startEffect(() => {
+        let log: LocationProps = JSON.parse(item.customer_location_primary!);
+        let uniqueID = new ObjectId();
+        startEffect(() => {
+          CommonUtils.getCurrentLocation(
+            location => {
+              let distanceCal = calculateDistance(
+                location.coords.latitude,
+                location.coords.longitude,
+                log?.lat || 0,
+                log?.long || 0,
+              );
+              let data: any = {
+                checkin_id:
+                  dataCheckIn &&
+                  dataCheckIn?.kh_ma === item.customer_code &&
+                  dataCheckIn.checkin_id !== undefined
+                    ? dataCheckIn.checkin_id
+                    : uniqueID,
+                kh_ma: item.customer_code,
+                kh_ten: item.customer_name,
+                kh_diachi: item.customer_primary_address?.address_title ?? null,
+                kh_long: log?.long ?? '',
+                kh_lat: log?.lat ?? '',
+                checkin_giovao: new Date().getTime() / 1000,
+                checkin_pinvao:
+                  batteryLevel > 0
+                    ? Math.round(batteryLevel * 10000) / 100
+                    : -Math.round(batteryLevel * 10000) / 100,
+                checkin_khoangcach: distanceCal,
+                createdDate: moment(new Date()).valueOf(),
+                checkin_timegps: moment(
+                  new Date(location.timestamp * 1000),
+                ).format('hh:mm'),
+                checkin_dochinhxac: location.coords.accuracy,
+                checkinvalidate_khoangcachcheckin:
+                  systemConfig.saiso_chophep_kb_vitringoaisaiso,
+                checkinvalidate_khoangcachcheckout:
+                  systemConfig.saiso_chophep_checkout_ngoaisaiso,
+                checkin_trangthaicuahang: true,
+                checkin_donhang: '',
+                checkin_giora: null,
+                checkin_hinhanh: [],
+                checkin_lat: location.coords.latitude,
+                checkin_long: location.coords.longitude,
+                checkin_pinra: 0,
+                checkout_khoangcach: 0,
+                createByName: '',
+                createdByEmail: '',
+                item: item,
+                isDetail: true,
+                ...item,
+              };
 
-            setModalAlert(prev => ({...prev, status: false}));
+              // setModalAlert(prev => ({...prev, status: false}));
 
-            navigate(ScreenConstant.VISIT_DETAIL, {
-              data: data,
-            });
-            dispatch(appActions.setDataCheckIn(data));
-          },
-          error => backgroundErrorListener(error.code),
-        );
+              navigate(ScreenConstant.VISIT_DETAIL, {
+                data: data,
+              });
+              dispatch(appActions.setDataCheckIn(data));
+            },
+            error => backgroundErrorListener(error.code),
+          );
+        });
       });
-    });
-  }, []);
+    }
+  }, [modalErrorGPS]);
 
   const onBackButtonPress = useCallback(() => {
     setModalUpdateLocation(prev => ({...prev, status: false}));
@@ -1052,7 +1125,7 @@ const ListVisit = () => {
     } else {
       setCustomerData([]);
     }
-  }, [listCustomer, isFocus, distanceFilterValue,isFocus]);
+  }, [listCustomer, isFocus, distanceFilterValue, isFocus]);
 
   return (
     <SafeAreaView

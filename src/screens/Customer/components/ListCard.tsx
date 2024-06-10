@@ -64,6 +64,7 @@ const ListCard = (props: Props) => {
       updateCellsBatchingPeriod={50}
       scrollEventThrottle={100}
       windowSize={21}
+      
       initialNumToRender={5}
       refreshControl={
         <RefreshControl onRefresh={onLoadingData} refreshing={props.loading} />

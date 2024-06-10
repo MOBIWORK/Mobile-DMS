@@ -250,12 +250,12 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   return (
     <SafeAreaView style={{flex: 1}} edges={['top', 'bottom']}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {item?.is_checkin && (
+        {/* {item?.is_checkin && (
           <StatisticalItem
             orderCount={otherInfo?.so_don_trong_thang ?? 0}
             payment={otherInfo?.doanh_thu_thang ?? 0}
           />
-        )}
+        )} */}
         {_renderCustomer()}
         {_renderInfo()}
         {!item.is_checkin &&
