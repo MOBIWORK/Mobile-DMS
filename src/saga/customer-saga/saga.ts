@@ -23,6 +23,7 @@ import {ApiConstant, ScreenConstant} from '../../const';
 import {goBack, navigate} from '../../navigation/navigation-service';
 import {updateCustomer} from '../../services/customerService';
 import {showSnack} from '../../components/common';
+import data from '../../../node_modules/ansi-escapes/node_modules/type-fest/source/readonly-deep.d';
 
 export type ResponseGenerator = {
   config?: any;
@@ -150,8 +151,7 @@ export function* updateCustomerSaga(action: PayloadAction) {
       console.log(action.payload.data);
       const response: ResponseGenerator = yield call(
         updateCustomer,
-        action.payload.data.data,
-        action.payload.name,
+        action.payload.data,
       );
       console.log(response.message, 'bbb');
       if (response.message === 'OK') {
@@ -167,6 +167,7 @@ export function* updateCustomerSaga(action: PayloadAction) {
       console.error(err, 'err');
     } finally {
       yield put(appActions.onLoadAppEnd());
+      goBack()
     }
   }
 }

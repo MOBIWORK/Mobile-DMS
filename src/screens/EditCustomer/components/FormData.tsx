@@ -72,8 +72,8 @@ const FormData = (props: Props) => {
   const styles = formStyles(theme);
   const initStateData = React.useRef<DetailCustomerType>({
     ...data,
-    customer_code: data.customer_code || '',
-    customer_name: data.customer_name || '',
+    customer_code: data?.customer_code || '',
+    customer_name: data?.customer_name || '',
     customer_type: translate(data.customer_type!),
     customer_group: data.customer_group,
     territory: data.territory,
@@ -311,7 +311,7 @@ const FormData = (props: Props) => {
     // }
   }, []);
 
-  console.log(dataCustomer.routers);
+
 
   const onPressData = useCallback(
     (data: any, type: string) => {
