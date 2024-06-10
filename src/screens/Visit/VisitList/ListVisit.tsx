@@ -491,7 +491,7 @@ const ListVisit = () => {
         )}
       </Block>
     );
-  }, [loading, listCustomer, customerDataSort, location]);
+  }, [loading, listCustomer, customerDataSort, location,isShowListVisit]);
 
   useLayoutEffect(() => {
     if (Object.keys(systemConfig).length === 0) {

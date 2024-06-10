@@ -61,10 +61,10 @@ const ListAlbumScore = (props: Props) => {
 
   const resultData: DataSendMarkScore[] = listProgramSelected?.map(
     (campaign, index) => {
-      const imageUrls = listImageResponse[index].image.map(
+      const imageUrls = listImageResponse[index]?.image.map(
         (item: any) => item.file_url,
       );
-      const lastImageDateTime = listImageResponse[index].image.map(
+      const lastImageDateTime = listImageResponse[index]?.image.map(
         (item: any) => item.date_time ?? 0,
       );
 
@@ -76,7 +76,7 @@ const ListAlbumScore = (props: Props) => {
         customer_code: itemParams.kh_ten,
         images: JSON.stringify(imageUrls),
         images_time: parseFloat(
-          lastImageDateTime[lastImageDateTime.length - 1],
+          lastImageDateTime &&  lastImageDateTime?.[lastImageDateTime?.length - 1] || 0,
         ),
         setting_score_audit: campaign.setting_score_audit,
       };
@@ -84,7 +84,7 @@ const ListAlbumScore = (props: Props) => {
   );
 
   const confirmUploadImage = async () => {
-    if (screens === ScreenConstant.TAKE_PICTURE_SCORE) {
+    if ( screens &&  screens === ScreenConstant.TAKE_PICTURE_SCORE) {
       console.log(screens,'g')
       try {
         setAppLoading(true);

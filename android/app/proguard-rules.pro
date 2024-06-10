@@ -11,3 +11,7 @@
 
 # [react-native-background-fetch]
 #-keep class com.transistorsoft.rnbackgroundfetch.HeadlessTask { *; }
+-keep class com.android.installreferrer.api.** {
+  *;
+}
+keep class com.google.android.gms.common.** {*;}
