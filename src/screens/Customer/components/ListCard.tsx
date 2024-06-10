@@ -32,21 +32,21 @@ const ListCard = (props: Props) => {
   const onEndReachedThreshold = () => {
     if (props.onLoadData && typeof props.onLoadData === 'function') {
       props.onLoadData();
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: props.data && props.data.length -1,
-      });
+      // flatListRef.current?.scrollToIndex({
+      //   animated: true,
+      //   index: props.data && props.data.length -1,
+      // });
     }
   };
-  const onLoadingData = () =>{
-    if(props.onRefresh && typeof props.onRefresh === 'function'){
+  const onLoadingData = () => {
+    if (props.onRefresh && typeof props.onRefresh === 'function') {
       props.onRefresh();
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: props.currentIndex,
-      });
+      // flatListRef.current?.scrollToIndex({
+      //   animated: true,
+      //   index: props.currentIndex,
+      // });
     }
-  }
+  };
 
   // const memorizedValue = useCallback(() => renderItem, [props.data, props.loading]);
   // console.log(props.data,'data')
@@ -66,10 +66,7 @@ const ListCard = (props: Props) => {
       windowSize={21}
       initialNumToRender={5}
       refreshControl={
-        <RefreshControl
-          onRefresh={onLoadingData}
-          refreshing={props.loading}
-        />
+        <RefreshControl onRefresh={onLoadingData} refreshing={props.loading} />
       }
       removeClippedSubviews={true}
       ListFooterComponent={props.listFooter}
