@@ -39,7 +39,7 @@ export const openImagePickerCamera = async (
 
   await launchCamera(options, async response => {
     const timeStamp = moment(new Date()).valueOf();
-    storage.set('time', String(timeStamp));
+    // storage.set('time', String(timeStamp));
     if (response.didCancel) {
     } else if (response.errorMessage) {
     } else if (
@@ -71,7 +71,7 @@ export const openImagePicker = async (
 
   await launchImageLibrary(options, async response => {
     const timeStamp = moment(new Date()).valueOf();
-    storage.set('time', String(timeStamp));
+    // storage.set('time', String(timeStamp));
     if (response.didCancel) {
       console.log('User cancelled image picker');
     } else if (response.errorMessage) {
