@@ -91,6 +91,7 @@ import ModalUpdateLocation from './Component/ModalUpdateLocation';
 import {ObjectId} from 'bson';
 import {MapView} from './Component/MapView';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
+import { storage } from '../../../utils/commom.utils';
 
 //config Mapbox
 
@@ -932,9 +933,12 @@ const ListVisit = () => {
        
         dispatch(appActions.setDataCheckIn(data));
         setModalAlert(prev => ({...prev, status: false}));
+          const curTime = moment(new Date()).valueOf()
+        storage.set('curTime',curTime)
         navigate(ScreenConstant.CHECKIN, {
           item: data,
         });
+      
       },
       error => backgroundErrorListener(error.code),
     );
@@ -1048,7 +1052,7 @@ const ListVisit = () => {
     } else {
       return undefined;
     }
-  }, [listCustomer, isFocus, distanceFilterValue]);
+  }, [listCustomer, isFocus, distanceFilterValue,isFocus]);
 
   return (
     <SafeAreaView
