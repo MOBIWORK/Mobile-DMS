@@ -39,15 +39,22 @@ export type ResponseGenerator = {
 export function* onGetCustomer(action: PayloadAction) {
   if (customerActions.onGetCustomer.match(action)) {
     try {
+      const customerType =
+        // @ts-ignore
+        action.payload?.customer_type === 'Công ty'
+          ? 'Company'
+          : // @ts-ignore
+          action.payload?.customer_type === 'Cá nhân'
+          ? 'Individual'
+          : '';
       yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(
-        getCustomer,
-        action.payload,
-      );
-      console.log('payload', action.payload);
+      const response: ResponseGenerator = yield call(getCustomer, {
+        // @ts-ignore
+        ...action.payload,
+        customer_type: customerType,
+      });
 
       if (response?.status === ApiConstant.STT_OK) {
-        console.log('result', response.data.result);
         yield put(setCustomer(response.data.result));
       }
     } catch (err) {
@@ -77,7 +84,6 @@ export function* getCustomerVisitSaga(action: PayloadAction) {
   if (customerActions.onGetCustomerVisit.match(action)) {
     try {
       const response: ResponseGenerator = yield call(getCustomerVisit);
-      console.log(response, 'response visit');
       if (Object.keys(response.result?.length > 0)) {
         yield put(setCustomerVisit(response.result.data));
       }
@@ -147,13 +153,11 @@ export function* updateCustomerSaga(action: PayloadAction) {
   if (customerActions.updateCustomerAction.match(action)) {
     try {
       yield put(appActions.onLoadApp());
-      console.log(action.payload.data);
       const response: ResponseGenerator = yield call(
         updateCustomer,
         action.payload.data.data,
         action.payload.name,
       );
-      console.log(response.message, 'bbb');
       if (response.message === 'OK') {
         showSnack({
           msg: 'Cập nhật thành công',
