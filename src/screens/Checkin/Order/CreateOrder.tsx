@@ -700,49 +700,51 @@ const CreateOrder = () => {
             </View>
           </View>
 
-          <View style={{marginBottom: 50}}>
-            <View style={styles.flexSpace}>
-              <Text style={styles.titleSection}>{getLabel('detailPay')}</Text>
-              <TouchableOpacity>
-                <AppIcons
-                  name="chevron-down"
-                  size={22}
-                  iconType={ICON_TYPE.Feather}
-                />
-              </TouchableOpacity>
-            </View>
-            <View
-              style={[
-                styles.containerSection,
-                styles.shadow,
-                {paddingVertical: 16, rowGap: 12},
-              ]}>
+          {orderResultData && (
+            <View style={{marginBottom: 50}}>
               <View style={styles.flexSpace}>
-                <Text style={styles.labelPay}>{getLabel('discount')}</Text>
-                <Text style={styles.price}>
-                  {CommonUtils.convertToTwoDecimalPlaces(
-                    orderResultData?.discount_amount ?? 0,
-                  )}
-                </Text>
+                <Text style={styles.titleSection}>{getLabel('detailPay')}</Text>
+                <TouchableOpacity>
+                  <AppIcons
+                    name="chevron-down"
+                    size={22}
+                    iconType={ICON_TYPE.Feather}
+                  />
+                </TouchableOpacity>
               </View>
-              <View style={styles.flexSpace}>
-                <Text style={styles.labelPay}>VAT</Text>
-                <Text style={styles.price}>
-                  {CommonUtils.convertToTwoDecimalPlaces(
-                    orderResultData?.total_taxes_and_charges ?? 0,
-                  )}
-                </Text>
-              </View>
-              <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
-                <Text style={styles.labelPay}>{getLabel('totalPrice')}</Text>
-                <Text style={styles.totalPrice}>
-                  {CommonUtils.convertToTwoDecimalPlaces(
-                    orderResultData?.total ?? 0,
-                  )}
-                </Text>
+              <View
+                style={[
+                  styles.containerSection,
+                  styles.shadow,
+                  {paddingVertical: 16, rowGap: 12},
+                ]}>
+                <View style={styles.flexSpace}>
+                  <Text style={styles.labelPay}>{getLabel('discount')}</Text>
+                  <Text style={styles.price}>
+                    {CommonUtils.convertToTwoDecimalPlaces(
+                      orderResultData?.discount_amount ?? 0,
+                    )}
+                  </Text>
+                </View>
+                <View style={styles.flexSpace}>
+                  <Text style={styles.labelPay}>VAT</Text>
+                  <Text style={styles.price}>
+                    {CommonUtils.convertToTwoDecimalPlaces(
+                      orderResultData?.total_taxes_and_charges ?? 0,
+                    )}
+                  </Text>
+                </View>
+                <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
+                  <Text style={styles.labelPay}>{getLabel('totalPrice')}</Text>
+                  <Text style={styles.totalPrice}>
+                    {CommonUtils.convertToTwoDecimalPlaces(
+                      orderResultData?.total ?? 0,
+                    )}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
+          )}
         </View>
       </AppContainer>
 
