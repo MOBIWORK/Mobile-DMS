@@ -929,7 +929,7 @@ const ListVisit = () => {
           isDetail: false,
           ...item,
         };
-       
+
         dispatch(appActions.setDataCheckIn(data));
         setModalAlert(prev => ({...prev, status: false}));
         navigate(ScreenConstant.CHECKIN, {
@@ -1046,7 +1046,7 @@ const ListVisit = () => {
     if (listCustomer.data && listCustomer.data.length > 0) {
       sortDataCustomer(distanceFilterValue);
     } else {
-      return undefined;
+      setCustomerData([]);
     }
   }, [listCustomer, isFocus, distanceFilterValue]);
 

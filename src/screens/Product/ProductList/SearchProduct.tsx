@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {MainLayout} from '../../../layouts';
 import {
   Image,
+  Keyboard,
   NativeSyntheticEvent,
   Text,
   TextInputSubmitEditingEventData,
@@ -15,14 +16,15 @@ import {NavigationProp} from '../../../navigation/screen-type';
 import {useMMKVString} from 'react-native-mmkv';
 import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
-import { dispatch } from '../../../utils/redux';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-import { useTranslation } from 'react-i18next';
+import {dispatch} from '../../../utils/redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {useTranslation} from 'react-i18next';
+import {CommonUtils} from '../../../utils';
 
 const SearchProduct = ({}) => {
   const {colors} = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const {t :getLabel} = useTranslation()
+  const {t: getLabel} = useTranslation();
   const [listProductNearly, setListProductNearly] = useMMKVString(
     AppConstant.ListSearchProductNearly,
   );
@@ -50,7 +52,8 @@ const SearchProduct = ({}) => {
                   <Text
                     onPress={() => {
                       dispatch(appActions.setSearchProductValue(item.label));
-                      navigation.goBack();
+                      Keyboard.dismiss();
+                      CommonUtils.sleep(100).then(() => navigation.goBack());
                     }}
                     style={{
                       color: colors.text_primary,
@@ -81,10 +84,12 @@ const SearchProduct = ({}) => {
     const newListNearly = listProductNearly && JSON.parse(listProductNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
     setListProductNearly(JSON.stringify(newListNearly));
-    navigation.goBack();
+    Keyboard.dismiss();
+    CommonUtils.sleep(100).then(() => navigation.goBack());
   };
 
   const handleItem = (item: any) => {
+    Keyboard.dismiss();
     const newData =
       listProductNearly &&
       JSON.parse(listProductNearly).filter(
@@ -108,7 +113,10 @@ const SearchProduct = ({}) => {
           justifyContent: 'flex-start',
           width: '100%',
         }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() =>
+            CommonUtils.sleep(100).then(() => navigation.goBack())
+          }>
           <Image
             source={ImageAssets.ArrowLeftIcon}
             style={{width: 24, height: 24}}
@@ -123,7 +131,7 @@ const SearchProduct = ({}) => {
             width: '90%',
             marginLeft: 12,
           }}
-          placeholder={getLabel("searchProduct")}
+          placeholder={getLabel('searchProduct')}
           placeholderTextColor={colors.text_disable}
           icon={ImageAssets.SearchIcon}
           value={searchValue}

@@ -195,10 +195,10 @@ const Customer = () => {
       totalPage.current = Math.ceil(
         listCustomerResult.total / listCustomerResult.page_size,
       );
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: currentIndex.current,
-      });
+      // flatListRef.current?.scrollToIndex({
+      //   animated: true,
+      //   index: currentIndex.current,
+      // });
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
@@ -210,12 +210,12 @@ const Customer = () => {
     if (isFocus) {
       //delete search visit value in ListVisit.tsx
       onResetSearchValueOfVisit();
-      if (currentIndex.current > 0) {
-        flatListRef.current?.scrollToIndex({
-          animated: true,
-          index: currentIndex.current,
-        });
-      }
+      // if (currentIndex.current > 0) {
+      //   flatListRef.current?.scrollToIndex({
+      //     animated: true,
+      //     index: currentIndex.current,
+      //   });
+      // }
     }
   }, [isFocus]);
 
@@ -365,10 +365,10 @@ const Customer = () => {
           );
         }
       });
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: currentIndex.current,
-      });
+      // flatListRef.current?.scrollToIndex({
+      //   animated: true,
+      //   index: currentIndex.current,
+      // });
     } else {
       return null;
     }
@@ -508,7 +508,7 @@ const Customer = () => {
           <SkeletonLoading />
         ) : (
           <ListCard
-            data={customerData || []} 
+            data={customerData || []}
             loading={loading}
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}
