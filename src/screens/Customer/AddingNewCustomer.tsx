@@ -35,7 +35,6 @@ import {
   SvgIcon,
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
-import {Colors} from '../../assets';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {NavigationProp} from '../../navigation/screen-type';
 import {
@@ -50,8 +49,7 @@ import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
 import {dispatch} from '../../utils/redux';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
-import {AppService, CustomerService} from '../../services';
-import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import {CustomerService} from '../../services';
 import {useSelector} from '../../config/function';
 import {MainAddress, MainContactAddress} from './components/CardAddress';
 
@@ -65,6 +63,7 @@ import {
 import isEqual from 'react-fast-compare';
 import Modal from 'react-native-modal';
 import ModalArea from './components/ModalArea';
+import {storage} from '../../utils/commom.utils';
 
 function listDataReducer(newState: any, oldState: any) {
   return {...newState, ...oldState};
@@ -79,7 +78,7 @@ const AddingNewCustomer = () => {
   const initValueState = useRef<IValueType>({
     customerType: 'Cá nhân',
     customerGroupType: '',
-    customerBirthday: 'Tất cả',
+    // customerBirthday: 'Tất cả',
   });
   const [valueFilter, setValueFilter] = useReducer(
     listDataReducer,
@@ -190,7 +189,7 @@ const AddingNewCustomer = () => {
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
-    console.log(updateListData, 'updateData');
+    storage.set('time', '');
     const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
       navigation.navigate(ScreenConstant.MAIN_TAB, {
@@ -198,7 +197,6 @@ const AddingNewCustomer = () => {
       });
     }
     dispatch(setProcessingStatus(false));
-    console.log('updateListData', updateListData);
   };
 
   const onDismissSingle = React.useCallback(() => {
@@ -292,9 +290,9 @@ const AddingNewCustomer = () => {
   const onBackButtonPress = useCallback(() => {
     setOpenModal(false);
   }, [openModal]);
-  const onPressClose = useCallback(() =>{
-    setModalAddress(false)
-  },[modalAddress])
+  const onPressClose = useCallback(() => {
+    setModalAddress(false);
+  }, [modalAddress]);
 
   console.log(listData.credit_limit, 'bbb');
   return (

@@ -63,11 +63,14 @@ import moment from 'moment';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import {ListCustomerRoute} from '../../../models/types';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<any>(0);
   const mmkv: any = storage.getString('time');
+  const curTIme: any = storage.getString('curTime');
+
   const [appState, setAppState] = useState(AppState.currentState);
   const isFocus = useIsFocused();
 
@@ -80,9 +83,12 @@ const useTimer = () => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
             setElapsedTime(Math.ceil(currentTime / 1000) + 2);
           });
+          intervalIdRef.current = setInterval(() => {
+            setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+          }, 1000);
         }
         // Update every 1 second
-      } else if (nextAppState === 'background' || !isFocus) {
+      } else if (nextAppState === 'background' && !isFocus) {
         if (mmkv?.trim().length > 0) {
           setAppState(nextAppState);
         } else {
@@ -107,8 +113,12 @@ const useTimer = () => {
   useEffect(() => {
     if (mmkv?.trim().length > 0 && isFocus) {
       const newTimeStamp = moment(new Date()).valueOf();
+      console.log(newTimeStamp, 'new TimeStamp');
+      const current = curTIme * 1000;
       startTransition(() => {
-        const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
+        const currentTime = Math.ceil(
+          Number(newTimeStamp) - Number(mmkv) + current,
+        );
         setElapsedTime(Math.ceil(currentTime / 1000));
         // clearInterval(intervalIdRef.current);
       });
@@ -116,6 +126,8 @@ const useTimer = () => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
     } else {
+      // const newTimeStamp = moment(new Date()).valueOf();
+      storage.set('curTime', String(elapsedTime));
       intervalIdRef.current = setInterval(() => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
@@ -137,7 +149,7 @@ const CheckIn = () => {
   const navigation =
     useNavigation<NavigationProp<AuthorizeParamsList, 'CHECKIN'>>();
   const batteryLevel = useBatteryLevel();
-
+  const isFocus = useIsFocused();
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -239,7 +251,6 @@ const CheckIn = () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
-        console.log(checkEnabled, 'response');
         if (checkEnabled === true) {
           setEnableGPS(true);
           onCheckout();
@@ -255,7 +266,7 @@ const CheckIn = () => {
       setEnableGPS(true);
       onCheckout();
     }
-  }, [enableGPS]);
+  }, [enableGPS, isFocus]);
 
   const checkGPSConfirmCheckout = useCallback(async () => {
     if (Platform.OS === 'android') {
@@ -271,7 +282,7 @@ const CheckIn = () => {
             dataCheckIn.item.name,
           );
           if (res?.status === ApiConstant.STT_OK) {
-            // dispatch(checkinActions.resetData());
+            dispatch(checkinActions.resetData());
             // dispatch
             dispatch(appActions.setDataCheckIn({}));
             storage.set('time', '');
@@ -300,7 +311,7 @@ const CheckIn = () => {
         dataCheckIn.item.name,
       );
       if (res?.status === ApiConstant.STT_OK) {
-        // dispatch(checkinActions.resetData());
+        dispatch(checkinActions.resetData());
         // dispatch
         dispatch(appActions.setDataCheckIn({}));
         storage.set('time', '');
@@ -419,11 +430,22 @@ const CheckIn = () => {
   );
 
   const getCustomerRoute = useCallback(async () => {
+    const all_route: ListCustomerRoute = {
+      name: '',
+      channel_name: 'Tất cả',
+      channel_code: '',
+      travel_date: '',
+      is_today: false,
+    };
     const response: any = await CustomerService.getCustomerRoute();
-    if (response?.result.length > 0) {
-      dispatch(customerActions.setListCustomerRoute(response.result));
+    if (response?.result?.length > 0) {
+      //add "all" to list route:
+      const newListRoute: ListCustomerRoute[] = [all_route].concat(
+        response.result,
+      );
+      dispatch(customerActions.setListCustomerRoute(newListRoute));
     }
-  }, [dispatch]);
+  }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
   const onCheckout = useCallback(async () => {
     // dispatch(appActions.setProcessingStatus(true));
@@ -444,8 +466,8 @@ const CheckIn = () => {
               checkin_giora: new Date().getTime() / 1000,
             }),
           );
+          getCustomerRoute();
           dispatch(checkinActions.resetData());
-          await getCustomerRoute();
         }
       },
       err => backgroundErrorListener(err.code),
