@@ -148,6 +148,6 @@ export const GET_NOTIFICATION =
 export const GET_NOTIFICATION_DETAIL =
   '/api/method/mbw_dms.api.notification.notification.get_notifi_detail';
 export const UPDATE_CUSTOMER =
-  URL_PREFIX + '.api.selling.customer.update_customer?name=';
+  URL_PREFIX + '.api.selling.customer.update_customer';
 export const GET_REPORT_DEBT =
   '/api/method/mbw_dms.api.kpi.receivable_summary_report';

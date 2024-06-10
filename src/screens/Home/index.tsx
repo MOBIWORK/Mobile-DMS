@@ -55,7 +55,7 @@ import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
 import {NavigationProp} from '../../navigation/screen-type';
 import ModalErrorLocation from './components/ModalErrorLocation';
-import {getCustomerVisit, IListVisitParams} from '../../services/appService';
+import {CheckinData, getCustomerVisit, IListVisitParams} from '../../services/appService';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import Geolocation, {
   GeolocationResponse,
@@ -76,6 +76,8 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
   const isFocus = useIsFocused();
+  const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
+
 
   const location = useRef<GeolocationResponse | null>(null);
   const [enabled, setEnabled] = React.useState(false);
@@ -121,6 +123,9 @@ const HomeScreen = () => {
       setWidgets(JSON.stringify(arrWg));
     }
   };
+
+
+  console.log(dataCheckIn,'dd')
 
   const renderUiWidget = useCallback(() => {
     return (

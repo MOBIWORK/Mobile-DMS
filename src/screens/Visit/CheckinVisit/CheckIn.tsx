@@ -75,13 +75,16 @@ const useTimer = () => {
   const isFocus = useIsFocused();
 
   useEffect(() => {
+
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active' && isFocus) {
         const newTimeStamp = moment(new Date()).valueOf();
+      const current = curTIme * 1000;
+
         if (mmkv?.trim().length > 0) {
           startTransition(() => {
-            const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
-            setElapsedTime(Math.ceil(currentTime / 1000) + 2);
+            const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv) + current);
+            setElapsedTime(Math.ceil(currentTime / 1000) );
           });
           intervalIdRef.current = setInterval(() => {
             setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
@@ -91,12 +94,22 @@ const useTimer = () => {
       } else if (nextAppState === 'background' && !isFocus) {
         if (mmkv?.trim().length > 0) {
           setAppState(nextAppState);
+          storage.set('curTime', String(elapsedTime));
+          intervalIdRef.current = setInterval(() => {
+            setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+          }, 1000);
         } else {
           const timeStamp = moment(new Date()).valueOf();
           storage.set('time', String(timeStamp));
+          storage.set('curTime', String(elapsedTime));
+
         }
       } else {
         setAppState(nextAppState);
+        const timeStamp = moment(new Date()).valueOf();
+        storage.set('time', String(timeStamp));
+        storage.set('curTime', String(elapsedTime));
+
       }
     };
 
@@ -108,12 +121,13 @@ const useTimer = () => {
     return () => {
       subscription.remove();
     };
-  }, [appState]);
+  }, []);
+
 
   useEffect(() => {
     if (mmkv?.trim().length > 0 && isFocus) {
+      console.log('run ???')
       const newTimeStamp = moment(new Date()).valueOf();
-      console.log(newTimeStamp, 'new TimeStamp');
       const current = curTIme * 1000;
       startTransition(() => {
         const currentTime = Math.ceil(
