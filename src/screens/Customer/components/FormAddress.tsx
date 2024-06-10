@@ -595,7 +595,7 @@ const FormAddress = (props: Props) => {
               }
             />
           </Block>
-          <MainLayout style={{paddingTop: 0}}>
+          <Block block>
             <AppInput
               label={getLabel('contactName')}
               value={contactValue.nameContact}
@@ -731,7 +731,7 @@ const FormAddress = (props: Props) => {
                 </TouchableOpacity>
               </Block>
             </Block>
-          </MainLayout>
+          </Block>
         </>
       )}
     </SafeAreaView>
@@ -744,6 +744,7 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
   StyleSheet.create({
     root: {
       flex: 1,
+      marginBottom:8
     } as ViewStyle,
     buttonStyle: {
       backgroundColor: theme.colors.bg_neutral,
@@ -768,8 +769,8 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       ({
         marginHorizontal: 16,
         marginBottom: 20,
-        marginTop: label === getLabel('mainAddress') ? 20 : 0,
-        top: label === getLabel('mainAddress') ? 0 : -10,
+        marginTop: label === getLabel('mainAddress') ? 0 : 0,
+        top: label === getLabel('mainAddress') ? 0 : 0,
       } as ViewStyle),
     containInput: {
       paddingBottom: 24,
@@ -819,34 +820,36 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
     } as ViewStyle,
     containButtonBottom: (typeFilter: string) =>
       ({
-        flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 1 : 0,
+        flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 1 : 1,
         padding: 16,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        marginHorizontal: 16,
+        paddingHorizontal: 16,
         // backgroundColor:'red'
       } as ViewStyle),
     containContentButton: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      justifyContent: 'space-between',
       alignItems: 'center',
+      // backgroundColor:'blue'
     } as ViewStyle,
     buttonApply: {
       backgroundColor: theme.colors.primary,
       borderRadius: 24,
       alignItems: 'center',
       paddingHorizontal: 12,
-      paddingVertical: 12,
+      paddingVertical: 6,
       flex: 1,
-      marginHorizontal: 6,
+      marginLeft:6
+      // marginHorizontal: 6,
     } as ViewStyle,
     buttonRestart: {
       backgroundColor: theme.colors.bg_neutral,
       borderRadius: 24,
       alignItems: 'center',
       paddingHorizontal: 12,
-      paddingVertical: 12,
-      marginHorizontal: 6,
+      paddingVertical: 6,
+      // marginHorizontal: 6,
       // width:'100%',
       flex: 1,
     } as ViewStyle,

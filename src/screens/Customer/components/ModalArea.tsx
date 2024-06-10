@@ -222,7 +222,7 @@ const rootStyles = (theme: AppTheme) =>
       // backgroundColor:'red'
     } as ViewStyle,
     searchBar: {
-      backgroundColor: theme.colors.bg_default,
+      backgroundColor: theme.colors.bg_neutral,
       borderRadius: 10,
       width: '90%',
       marginLeft: 12,

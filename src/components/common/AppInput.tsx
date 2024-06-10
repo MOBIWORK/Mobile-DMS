@@ -27,18 +27,19 @@ const AppInput: FC<AppInputProps> = ({
   isRequire = false,
   labelStyle,
   contentStyle,
-  onEndEditing
-  
+  onEndEditing,
 }) => {
   const {colors} = useTheme();
   const [isFocus, setFocus] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [enable, setEnable] = useState(disable);
   const theme = useTheme();
   const inputStyle = rootStyles(theme);
   return (
-    <TouchableOpacity disabled={disable} onPress={onPress}>
+    <TouchableOpacity disabled={ editable ? !enable : false} onPress={onPress}>
       <TextInput
-        onPressIn={onPress}
+        onPressIn={() => setEnable(true)}
+        onPressOut={() => setEnable(false)}
         onEndEditing={onEndEditing}
         contentStyle={[inputStyle.contentStyle, contentStyle]}
         style={[inputStyle.rootStyle, styles]}
@@ -105,12 +106,16 @@ interface AppInputPropsBase {
 }
 type AppInputPropsEditable = {
   editable?: true;
-  onEndEditing?:(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => void
+  onEndEditing?: (
+    e: NativeSyntheticEvent<TextInputEndEditingEventData>,
+  ) => void;
 } & AppInputPropsBase;
 
 type AppInputPropsNonEditable = {
   editable?: false;
-  onEndEditing?:(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => void
+  onEndEditing?: (
+    e: NativeSyntheticEvent<TextInputEndEditingEventData>,
+  ) => void;
   listData?: any; // Adjust the type accordingly
   show?: boolean; // Adjust the type accordingly
 } & AppInputPropsBase;
