@@ -63,6 +63,7 @@ import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 import ModalSearchCustomer from './components/ModalSearchCustomer';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
+import {getCustomer} from '../../services/appService';
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -91,6 +92,10 @@ const Customer = () => {
   const customerType: ListCustomerType[] = useSelector(
     state => state.customer.listCustomerType,
     shallowEqual,
+  );
+
+  const searchCustomerValue = useSelector(
+    state => state.app.searchCustomerValue,
   );
   const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
   const page = useSelector(
@@ -125,8 +130,7 @@ const Customer = () => {
   const [showModal, setShowModal] = React.useState(false);
   const [isPending, startTransition] = useTransition();
   // const customerData = React.useRef<IDataCustomers[]>(listCustomer);
-  const [customerData, setCustomerData] =
-    React.useState<IDataCustomers[]>(listCustomer);
+  const [customerData, setCustomerData] = React.useState<IDataCustomers[]>([]);
   const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
@@ -189,16 +193,17 @@ const Customer = () => {
   );
 
   const onRefreshData = useCallback(async () => {
+    console.log('onRefreshData');
     try {
       dispatch(onLoadApp());
       dispatch(customerActions.onGetCustomer());
       totalPage.current = Math.ceil(
         listCustomerResult.total / listCustomerResult.page_size,
       );
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: currentIndex.current,
-      });
+      // flatListRef.current?.scrollToIndex({
+      //   animated: true,
+      //   index: currentIndex.current,
+      // });
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
@@ -207,17 +212,26 @@ const Customer = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (isFocus) {
+    if (!isFocus) {
       //delete search visit value in ListVisit.tsx
-      onResetSearchValueOfVisit();
-      if (currentIndex.current > 0) {
-        flatListRef.current?.scrollToIndex({
-          animated: true,
-          index: currentIndex.current,
-        });
-      }
+      // onResetSearchValueOfVisit();
+      dispatch(appActions.setSearchCustomerValue(''));
+      // if (currentIndex.current > 0) {
+      //   flatListRef.current?.scrollToIndex({
+      //     animated: true,
+      //     index: currentIndex.current,
+      //   });
+      // }
     }
   }, [isFocus]);
+
+  React.useEffect(() => {
+    if (searchCustomerValue) {
+      dispatch(
+        customerActions.onGetCustomer({customer_name: searchCustomerValue}),
+      );
+    }
+  }, [searchCustomerValue]);
 
   const checkGPS = useCallback(async () => {
     if (Platform.OS === 'android') {
@@ -243,20 +257,28 @@ const Customer = () => {
   useEffect(() => {
     mounted.current = true;
     if (listCustomer && listCustomer?.length > 0) {
+      console.log('lissss', listCustomer.length);
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
       );
       const noLocationCustomer = listCustomer.filter(
         item => !item.customer_location_primary,
       );
-      setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
+      // console.log('hehehe', [
+      //   ...sortedData(filteredData),
+      //   ...noLocationCustomer,
+      // ]);
+      // setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
+      setCustomerData(listCustomer);
       dispatch(appActions.onLoadAppEnd());
     } else if (
       valueFilter.customerType === 'Tất cả' &&
-      valueFilter.customerGroupType === 'Tất cả'
+      valueFilter.customerGroupType === 'Tất cả' &&
+      !searchCustomerValue
     ) {
-      dispatch(customerActions.onGetCustomer());
-    } else {
+      console.log('131212');
+      // dispatch(customerActions.onGetCustomer());
+    } else if (listCustomer?.length === 0) {
       setCustomerData([]);
     }
     mounted.current = false;
@@ -266,13 +288,25 @@ const Customer = () => {
     return () => {
       mounted.current = false;
     };
-  }, [isFocus, listCustomer]);
+  }, [listCustomerResult]);
+
+  // useEffect(() => {
+  //   console.log('liscustomer', listCustomerResult.data);
+  // }, [listCustomerResult]);
+
+  useEffect(() => {
+    if (isFocus && !searchCustomerValue) {
+      console.log('123333');
+      dispatch(customerActions.onGetCustomer());
+    }
+  }, [isFocus, searchCustomerValue]);
 
   useEffectOnce(() => {
     dispatch(customerActions.getCustomerType());
   });
 
   const handleApplyFilter = () => {
+    console.log('handleApplyFilter');
     if (
       valueFilter.customerType !== 'Tất cả' &&
       valueFilter.customerGroupType !== 'Tất cả'
@@ -304,6 +338,7 @@ const Customer = () => {
         }),
       );
     } else {
+      console.log('handleApplyFilter2222');
       dispatch(customerActions.onGetCustomer());
     }
   };
@@ -365,10 +400,10 @@ const Customer = () => {
           );
         }
       });
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: currentIndex.current,
-      });
+      // flatListRef.current?.scrollToIndex({
+      //   animated: true,
+      //   index: currentIndex.current,
+      // });
     } else {
       return null;
     }
@@ -484,7 +519,7 @@ const Customer = () => {
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity
-            onPress={() => setShowModal(true)}
+            onPress={() => navigation.navigate(ScreenConstant.SEARCH_CUSTOMER)}
             style={styles.iconSearch}>
             <AppImage source="IconSearch" style={styles.iconSearch} />
           </TouchableOpacity>
@@ -508,7 +543,7 @@ const Customer = () => {
           <SkeletonLoading />
         ) : (
           <ListCard
-            data={customerData || []} 
+            data={customerData || []}
             loading={loading}
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}
@@ -582,12 +617,12 @@ const Customer = () => {
           color={theme.colors.white}
         />
       </TouchableOpacity>
-      <ModalSearchCustomer
-        data={customerData}
-        setDataCustomer={setCustomerData}
-        showModal={showModal}
-        onBackButtonPress={onBackButtonPress}
-      />
+      {/*<ModalSearchCustomer*/}
+      {/*  data={customerData}*/}
+      {/*  setDataCustomer={setCustomerData}*/}
+      {/*  showModal={showModal}*/}
+      {/*  onBackButtonPress={onBackButtonPress}*/}
+      {/*/>*/}
     </SafeAreaView>
   );
 };

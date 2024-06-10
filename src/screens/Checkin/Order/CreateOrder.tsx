@@ -170,6 +170,7 @@ const CreateOrder = () => {
   };
 
   const onDeleteOrder = async () => {
+    console.log('123', orderResultData?.name);
     setOpenDialog(false);
     dispatch(appActions.setProcessingStatus(true));
     const res: any = await OrderService.deleteOrder(

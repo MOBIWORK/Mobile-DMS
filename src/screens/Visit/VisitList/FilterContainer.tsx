@@ -156,7 +156,6 @@ const FilterContainer: FC<FilterContainerProps> = ({
             styleLabel={{color: colors.text_secondary}}
             onPress={() => {
               // setFilter({});
-              bottomSheetRef.current?.close();
               handleReset();
             }}
           />
@@ -198,4 +197,4 @@ interface FilterContainerProps {
   handleReset: () => void;
 }
 
-export default React.memo(FilterContainer,isEqual);
+export default React.memo(FilterContainer, isEqual);
