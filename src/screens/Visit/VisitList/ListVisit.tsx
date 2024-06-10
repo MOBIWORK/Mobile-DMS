@@ -53,9 +53,6 @@ import SkeletonLoading from '../SkeletonLoading';
 import {
   backgroundErrorListener,
   calculateDistance,
-  generateRandomObjectId,
-  useDeepCompareEffect,
-  useEffectOnce,
   useSelector,
 } from '../../../config/function';
 import {useTranslation} from 'react-i18next';

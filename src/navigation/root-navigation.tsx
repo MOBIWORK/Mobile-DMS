@@ -26,8 +26,8 @@ const RootNavigation = () => {
     dispatch(appActions.setProcessingStatus(false));
     if (
       dataCheckIn &&
-      Object.keys(dataCheckIn)?.length > 0 &&
-      dataCheckIn.isDetail === false
+      Object.keys(dataCheckIn)?.length > 0 
+      // dataCheckIn.isDetail === false || dataCheckIn.isDetail === true
     ) {
       navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
     } else {
