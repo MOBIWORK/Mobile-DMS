@@ -85,6 +85,10 @@ const TakePictureScore = () => {
     state => state.checkin.listImageSelect,
     shallowEqual,
   );
+  const listImageResponse = useSelector(
+    state => state.checkin?.imageToMark,
+    shallowEqual,
+  );
 
   const {listProgramImage} = getState('checkin');
 
@@ -268,7 +272,7 @@ const TakePictureScore = () => {
       setShowModal(false);
     }
   };
-
+  // console.log(,'ccccc')
   const EmptyAlbum = React.useCallback(() => {
     return (
       <Block middle block justifyContent="center">
@@ -285,7 +289,7 @@ const TakePictureScore = () => {
       </Block>
     );
   }, []);
-  console.log(listProgram,'vbv')
+  // console.log(listProgram,'vbv')
 
   useEffect(() => {
     const data = {
@@ -405,11 +409,13 @@ const TakePictureScore = () => {
               <TouchableOpacity
                 style={styles.buttonContinue}
                 onPress={() => {
-                  navigate(ScreenConstant.LIST_ALBUM_SCORE, {
-                    data: itemParams,
-                    screen: ScreenConstant.TAKE_PICTURE_SCORE,
-                  });
-                  setShowModal(false);
+                  if (listImageResponse && listImageResponse.length > 0) {
+                    navigate(ScreenConstant.LIST_ALBUM_SCORE, {
+                      data: itemParams,
+                      screen: ScreenConstant.TAKE_PICTURE_SCORE,
+                    });
+                    setShowModal(false);
+                  }
                 }}>
                 <Text
                   fontSize={14}
