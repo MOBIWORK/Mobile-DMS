@@ -86,6 +86,7 @@ const SelectProducts = () => {
   const [dataIndustry, setDataIndustry] = useState<IFilterType[]>([]);
 
   const {
+    data: dataProduct,
     totalItem,
     dataCustomer: products,
     isLoading,
@@ -440,7 +441,7 @@ const SelectProducts = () => {
     });
     if (res?.status === ApiConstant.STT_OK) {
       dispatch(
-        productActions.setDataCusProduct({
+        productActions.setSearchDataProduct({
           data: res?.data.result.data,
           total: res?.data.result.total,
         }),
@@ -456,12 +457,21 @@ const SelectProducts = () => {
   }
 
   useEffect(() => {
-    if (products?.length > 0) {
-      setData(products);
-    } else {
-      setData([]);
+    if (isSearch) {
+      if (products?.length > 0) {
+        setData(products);
+      } else {
+        setData([]);
+      }
     }
-  }, [products]);
+    if (!isSearch) {
+      if (dataProduct?.length > 0) {
+        setData(dataProduct);
+      } else {
+        setData([]);
+      }
+    }
+  }, [dataProduct, products]);
 
   useEffect(() => {
     if (data?.length > 0 && countSelect < data.length) {
@@ -487,7 +497,7 @@ const SelectProducts = () => {
       });
       if (res?.status === ApiConstant.STT_OK) {
         dispatch(
-          productActions.setDataCusProduct({
+          productActions.setDataProduct({
             data: res?.data.result.data,
             total: res?.data.result.total,
           }),
