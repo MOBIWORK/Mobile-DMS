@@ -58,6 +58,7 @@ import ModalChoose from './ModalChoose';
 import ModalData from './ModalData';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import {storage} from '../../../utils/commom.utils';
 // import {Contact} from '../../DetailCustomer/screen';
 
 type Props = {
@@ -231,11 +232,12 @@ const FormData = (props: Props) => {
     });
   }, [modalChoose.type]);
 
-  
   const onUpdateCustomer = useCallback(() => {
     // let dataAddress = dataCustomer.address;
     let route = dataCustomer.routers;
-    route?.[0].frequency && Array(route?.[0].frequency) && typeof route?.[0].frequency != 'string'
+    route?.[0].frequency &&
+    Array(route?.[0].frequency) &&
+    typeof route?.[0].frequency != 'string'
       ? route?.[0].frequency?.join(';')
       : dataCustomer.routers;
     const dataUpdate = {
@@ -255,11 +257,11 @@ const FormData = (props: Props) => {
       website: dataCustomer.website || '',
       territory: dataCustomer.territory || '',
     };
-    console.log(dataUpdate.address,'dataUpdate')
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
+      storage.set('time', '');
     });
   }, [dataCustomer]);
 

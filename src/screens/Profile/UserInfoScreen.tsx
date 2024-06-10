@@ -18,6 +18,7 @@ import {IProfile} from '../../services/appService';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import {storage} from '../../utils/commom.utils';
 
 const UserInfoScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -130,6 +131,7 @@ const UserInfoScreen = () => {
     if (response.status === ApiConstant.STT_OK) {
       await updateUser();
     }
+    storage.set('time', '');
     dispatch(appActions.setProcessingStatus(false));
   };
 

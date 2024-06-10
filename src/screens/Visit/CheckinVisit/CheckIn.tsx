@@ -80,6 +80,9 @@ const useTimer = () => {
             const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv));
             setElapsedTime(Math.ceil(currentTime / 1000) + 2);
           });
+          intervalIdRef.current = setInterval(() => {
+            setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+          }, 1000);
         }
         // Update every 1 second
       } else if (nextAppState === 'background' || !isFocus) {
@@ -137,7 +140,7 @@ const CheckIn = () => {
   const navigation =
     useNavigation<NavigationProp<AuthorizeParamsList, 'CHECKIN'>>();
   const batteryLevel = useBatteryLevel();
-
+  const isFocus = useIsFocused()
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -239,7 +242,6 @@ const CheckIn = () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
-        console.log(checkEnabled, 'response');
         if (checkEnabled === true) {
           setEnableGPS(true);
           onCheckout();
@@ -255,7 +257,7 @@ const CheckIn = () => {
       setEnableGPS(true);
       onCheckout();
     }
-  }, [enableGPS]);
+  }, [enableGPS,isFocus]);
 
   const checkGPSConfirmCheckout = useCallback(async () => {
     if (Platform.OS === 'android') {
@@ -271,7 +273,7 @@ const CheckIn = () => {
             dataCheckIn.item.name,
           );
           if (res?.status === ApiConstant.STT_OK) {
-            // dispatch(checkinActions.resetData());
+            dispatch(checkinActions.resetData());
             // dispatch
             dispatch(appActions.setDataCheckIn({}));
             storage.set('time', '');
@@ -300,7 +302,7 @@ const CheckIn = () => {
         dataCheckIn.item.name,
       );
       if (res?.status === ApiConstant.STT_OK) {
-        // dispatch(checkinActions.resetData());
+        dispatch(checkinActions.resetData());
         // dispatch
         dispatch(appActions.setDataCheckIn({}));
         storage.set('time', '');

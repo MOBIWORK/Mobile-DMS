@@ -1,9 +1,11 @@
-import { PermissionsAndroid } from 'react-native';
+import {PermissionsAndroid} from 'react-native';
 import {
   ImageLibraryOptions,
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import {storage} from './commom.utils';
+import moment from 'moment';
 
 export default async function base64File(url: string) {
   const data = await fetch(url);
@@ -17,8 +19,6 @@ export default async function base64File(url: string) {
     };
   });
 }
-
-
 
 export const openImagePickerCamera = async (
   callBack: (
@@ -34,13 +34,12 @@ export const openImagePickerCamera = async (
     maxHeight: 1000,
     maxWidth: 1000,
     presentationStyle: 'fullScreen',
-    
-    
   };
   let base64Image: string;
-  
 
   await launchCamera(options, async response => {
+    const timeStamp = moment(new Date()).valueOf();
+    storage.set('time', String(timeStamp));
     if (response.didCancel) {
     } else if (response.errorMessage) {
     } else if (
@@ -71,6 +70,8 @@ export const openImagePicker = async (
   let base64Image: string;
 
   await launchImageLibrary(options, async response => {
+    const timeStamp = moment(new Date()).valueOf();
+    storage.set('time', String(timeStamp));
     if (response.didCancel) {
       console.log('User cancelled image picker');
     } else if (response.errorMessage) {

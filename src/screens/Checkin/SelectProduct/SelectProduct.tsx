@@ -331,7 +331,8 @@ const SelectProducts = () => {
   const onEndReachedThreshold = () => {
     const totalPage = Math.ceil(totalItem / 20);
     if (pageNumber <= totalPage && data.length > 5) {
-      setPageNumber(pageNumber + 1);
+      if (isSearch) return
+      else setPageNumber(pageNumber + 1);
       //   // dispatch(
       //   //   productActions.onGetData({
       //   //     item_group: filterProduct.group,
@@ -421,7 +422,6 @@ const SelectProducts = () => {
   };
 
   const searchCusProduct = async () => {
-    if (productName === '') fetchProduct()
     const res: any = await ProductService.get({
       item_group: filterProduct.group,
       brand: filterProduct.brand,
