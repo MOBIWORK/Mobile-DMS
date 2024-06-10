@@ -271,7 +271,7 @@ const CheckIn = () => {
             dataCheckIn.item.name,
           );
           if (res?.status === ApiConstant.STT_OK) {
-            // dispatch(checkinActions.resetData());
+            dispatch(checkinActions.resetData());
             // dispatch
             dispatch(appActions.setDataCheckIn({}));
             storage.set('time', '');
@@ -300,7 +300,7 @@ const CheckIn = () => {
         dataCheckIn.item.name,
       );
       if (res?.status === ApiConstant.STT_OK) {
-        // dispatch(checkinActions.resetData());
+        dispatch(checkinActions.resetData());
         // dispatch
         dispatch(appActions.setDataCheckIn({}));
         storage.set('time', '');
