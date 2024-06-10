@@ -44,7 +44,10 @@ export function* onGetCustomer(action: PayloadAction) {
         getCustomer,
         action.payload,
       );
+      console.log('payload', action.payload);
+
       if (response?.status === ApiConstant.STT_OK) {
+        console.log('result', response.data.result);
         yield put(setCustomer(response.data.result));
       }
     } catch (err) {

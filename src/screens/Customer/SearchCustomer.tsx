@@ -1,4 +1,5 @@
 import {
+  Keyboard,
   NativeSyntheticEvent,
   StyleSheet,
   TextInputSubmitEditingEventData,
@@ -23,6 +24,7 @@ import {Searchbar} from 'react-native-paper';
 import {ImageAssets} from '../../assets';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {useTranslation} from 'react-i18next';
+import {CommonUtils} from '../../utils';
 
 type Props = {};
 
@@ -63,7 +65,7 @@ const SearchCustomer = (props: Props) => {
                   <Text
                     onPress={() => {
                       dispatch(appActions.setSearchCustomerValue(item.label));
-                      navigation.goBack();
+                      CommonUtils.sleep(100).then(() => navigation.goBack());
                     }}
                     colorTheme="text_primary"
                     style={{width: '80%'}}>
@@ -90,7 +92,8 @@ const SearchCustomer = (props: Props) => {
     const newListNearly = listCustomerNearly && JSON.parse(listCustomerNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
     setListCustomerNearly(JSON.stringify(newListNearly));
-    navigation.goBack();
+    Keyboard.dismiss();
+    CommonUtils.sleep(100).then(() => navigation.goBack());
   };
   useEffect(() => {
     if (!listCustomerNearly) {
@@ -99,13 +102,16 @@ const SearchCustomer = (props: Props) => {
   }, []);
 
   return (
-    <MainLayout style={{paddingTop: 24, backgroundColor: 'red'}}>
+    <MainLayout>
       <Block
         direction="row"
         alignItems="center"
         justifyContent="flex-start"
         width={'100%'}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() =>
+            CommonUtils.sleep(100).then(() => navigation.goBack())
+          }>
           <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
         </TouchableOpacity>
         <Searchbar

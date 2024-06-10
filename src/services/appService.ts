@@ -149,6 +149,7 @@ export type IDLocation = {
 };
 
 export type ICustomerParams = {
+  customer_name?: string;
   page?: number;
   customer_type?: string;
   customer_group?: string;
