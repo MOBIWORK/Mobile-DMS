@@ -52,6 +52,7 @@ import {
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
 import { ProductService } from '../../../services';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const initFilterValue = {
   label: '',
@@ -111,7 +112,7 @@ const SelectProducts = () => {
     group: '',
     industry: '',
   });
-  const previousProductNameRef = useRef<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const openBottomSheetDataFilter = React.useCallback(
     (type: string, item?: IProduct) => {
@@ -331,8 +332,14 @@ const SelectProducts = () => {
   const onEndReachedThreshold = () => {
     const totalPage = Math.ceil(totalItem / 20);
     if (pageNumber <= totalPage && data.length > 5) {
-      if (isSearch) return
-      else setPageNumber(pageNumber + 1);
+      if (pageNumber == totalPage) return
+      if (isSearch) {
+        return
+      }
+      else {
+        setPageNumber(pageNumber + 1);
+      }
+
       //   // dispatch(
       //   //   productActions.onGetData({
       //   //     item_group: filterProduct.group,
@@ -440,6 +447,9 @@ const SelectProducts = () => {
       );
     }
   }
+  const onRefreshData = useCallback(async () => {
+    setPageNumber(1);
+  }, [dispatch]);
   const cancelResetData = async () => {
     await fetchProduct()
     await setShowSearch(false)
@@ -620,11 +630,11 @@ const SelectProducts = () => {
                   </Pressable>
                 )}
                 initialNumToRender={20}
-                maxToRenderPerBatch={4}
+                // maxToRenderPerBatch={4}
                 windowSize={11}
-                // bounces={true}
+                bounces={true}
                 decelerationRate={'fast'}
-                removeClippedSubviews={true}
+                removeClippedSubviews={false}
                 keyExtractor={(item, index) => index.toString()}
                 showsVerticalScrollIndicator={false}
                 style={{ flex: 1 }}
@@ -634,11 +644,16 @@ const SelectProducts = () => {
                   ) : undefined
                 }
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0.5}
+                onEndReachedThreshold={0}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={loading}
+                    onRefresh={onRefreshData}
+                  />
+                }
               />
             </View>
           )}
-
           {countSelect > 0 && (
             <TouchableOpacity
               onPress={() => onSubmitProductSelect(data)}
