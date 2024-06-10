@@ -39,7 +39,7 @@ const productSlice = createSlice({
       });
       state.data = state.data.concat(newData);
     },
-    setDataCusProduct: (state, action: PayloadAction<DataType>) => {
+    setSearchDataProduct: (state, action: PayloadAction<DataType>) => {
       state.totalItem = action.payload.total;
       const newData = action.payload.data.map(item => {
         let priceUom = item.details.find(
@@ -54,7 +54,7 @@ const productSlice = createSlice({
           ? {...neItem, quantity: 1}
           : {...neItem, quantity: item.min_order_qty};
       });
-      state.dataCustomer =  state.data.concat(newData);
+      state.dataCustomer =  newData;
     },
     resetDataProduct: (state, action: PayloadAction) => {
       state.data = [];
