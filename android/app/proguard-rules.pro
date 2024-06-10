@@ -14,4 +14,4 @@
 -keep class com.android.installreferrer.api.** {
   *;
 }
-keep class com.google.android.gms.common.** {*;}
+#keep class com.google.android.gms.common.** {*;}
