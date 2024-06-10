@@ -118,13 +118,13 @@ const FilterContainer: FC<FilterContainerProps> = ({
               setFilterType={setFilterType}
               filterRef={filterRef}
             />
-            <FilterItem
-              label={getLabel('customerBirthDay')}
-              value={filterValue?.birthDay ?? getLabel('all')}
-              type={AppConstant.VisitFilterType.birthday}
-              setFilterType={setFilterType}
-              filterRef={filterRef}
-            />
+            {/*<FilterItem*/}
+            {/*  label={getLabel('customerBirthDay')}*/}
+            {/*  value={filterValue?.birthDay ?? getLabel('all')}*/}
+            {/*  type={AppConstant.VisitFilterType.birthday}*/}
+            {/*  setFilterType={setFilterType}*/}
+            {/*  filterRef={filterRef}*/}
+            {/*/>*/}
             <FilterItem
               label={getLabel('groupCustomer')}
               value={filterValue?.customer_group ?? getLabel('all')}

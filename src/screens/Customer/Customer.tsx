@@ -59,11 +59,8 @@ import {
   onLoadAppEnd,
 } from '../../redux-store/app-reducer/reducer';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {onResetSearchValueOfVisit} from '../Visit/VisitList/SearchVisit';
 import SkeletonLoading from '../Visit/SkeletonLoading';
-import ModalSearchCustomer from './components/ModalSearchCustomer';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {getCustomer} from '../../services/appService';
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -122,7 +119,6 @@ const Customer = () => {
     customerType: getLabel('all'),
     customerGroupType: getLabel('all'),
   });
-  //  console.log(listCustomerResult,'listCustomer')
   const [typeFilter, setTypeFilter] = React.useState<string>(
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
@@ -193,7 +189,6 @@ const Customer = () => {
   );
 
   const onRefreshData = useCallback(async () => {
-    console.log('onRefreshData');
     try {
       dispatch(onLoadApp());
       dispatch(customerActions.onGetCustomer());
@@ -226,7 +221,7 @@ const Customer = () => {
   }, [isFocus]);
 
   React.useEffect(() => {
-    if ( searchCustomerValue &&  searchCustomerValue.trim().length > 0) {
+    if (searchCustomerValue && searchCustomerValue.trim().length > 0) {
       dispatch(
         customerActions.onGetCustomer({customer_name: searchCustomerValue}),
       );
@@ -257,27 +252,20 @@ const Customer = () => {
   useEffect(() => {
     mounted.current = true;
     if (listCustomer && listCustomer?.length > 0) {
-      console.log('lissss', listCustomer.length);
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
       );
       const noLocationCustomer = listCustomer.filter(
         item => !item.customer_location_primary,
       );
-      // console.log('hehehe', [
-      //   ...sortedData(filteredData),
-      //   ...noLocationCustomer,
-      // ]);
-      // setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
-      setCustomerData(listCustomer);
+      setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
       dispatch(appActions.onLoadAppEnd());
     } else if (
       valueFilter.customerType === 'Tất cả' &&
       valueFilter.customerGroupType === 'Tất cả' &&
       !searchCustomerValue
     ) {
-      console.log('131212');
-      // dispatch(customerActions.onGetCustomer());
+      dispatch(customerActions.onGetCustomer());
     } else if (listCustomer?.length === 0) {
       setCustomerData([]);
     }
@@ -296,7 +284,6 @@ const Customer = () => {
 
   useEffect(() => {
     if (isFocus && !searchCustomerValue) {
-      console.log('123333');
       dispatch(customerActions.onGetCustomer());
     }
   }, [isFocus, searchCustomerValue]);
@@ -306,7 +293,7 @@ const Customer = () => {
   });
 
   const handleApplyFilter = () => {
-    console.log('handleApplyFilter');
+    console.log('filter', valueFilter);
     if (
       valueFilter.customerType !== 'Tất cả' &&
       valueFilter.customerGroupType !== 'Tất cả'
@@ -338,7 +325,6 @@ const Customer = () => {
         }),
       );
     } else {
-      console.log('handleApplyFilter2222');
       dispatch(customerActions.onGetCustomer());
     }
   };
@@ -350,16 +336,13 @@ const Customer = () => {
     });
   }, [valueFilter]);
 
-  const onBackButtonPress = useCallback(() => {
-    setShowModal(false);
-  }, [showModal]);
-
   const onEndReachedThreshold = useCallback(() => {
     if (
-      page <= Math.ceil(listCustomerResult.total / listCustomerResult.page_size) && listCustomer.length > 4
+      page <=
+        Math.ceil(listCustomerResult.total / listCustomerResult.page_size) &&
+      listCustomer.length > 4
     ) {
       startTransition(() => {
-        console.log('run   end')
         if (
           valueFilter.customerType !== 'Tất cả' &&
           valueFilter.customerGroupType !== 'Tất cả'
@@ -509,9 +492,6 @@ const Customer = () => {
       </Block>
     );
   }, [valueFilter]);
-  // console.log(customerData.current,'customerData')
-
-  // console.log(modalErrorGPS)
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
