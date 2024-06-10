@@ -208,15 +208,7 @@ const Customer = () => {
 
   React.useEffect(() => {
     if (!isFocus) {
-      //delete search visit value in ListVisit.tsx
-      // onResetSearchValueOfVisit();
       dispatch(appActions.setSearchCustomerValue(''));
-      // if (currentIndex.current > 0) {
-      //   flatListRef.current?.scrollToIndex({
-      //     animated: true,
-      //     index: currentIndex.current,
-      //   });
-      // }
     }
   }, [isFocus]);
 
