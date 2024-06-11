@@ -98,9 +98,8 @@ const ItemProduct = ({
         </View>
       )}
 
-      {onRemove && (
+      {onRemove && isAddProduct && (
         <TouchableOpacity
-          disabled={!isAddProduct}
           onPress={() => onRemove && onRemove(name)}
           style={[styles.iconRemove]}>
           <AppIcons

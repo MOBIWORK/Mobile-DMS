@@ -185,15 +185,15 @@ const FormAddress = (props: Props) => {
   };
 
   const handleSaveMainAddress = async () => {
-    console.log('runnnn')
-  {
+    console.log('runnnn');
+    {
       const locationIDRes: any = await AppService.getIDLocation({
         province_name: addressValue.city?.value ?? '',
         district_name: addressValue.district?.value ?? '',
         ward_name: addressValue.ward?.value ?? '',
       });
       if (locationIDRes?.status === ApiConstant.STT_OK) {
-        console.log(locationIDRes,'ress')
+        console.log(locationIDRes, 'ress');
         const newAddressValue: MainAddress = {
           ...addressValue,
           city: {
@@ -210,7 +210,7 @@ const FormAddress = (props: Props) => {
           } as any,
         };
         const data: IUpdateAddress = {
-          customer: props.dataCustomer.name!  || '',
+          customer: props.dataCustomer.name! || '',
           long: location?.coords.longitude || NaN,
           lat: location?.coords.latitude || NaN,
           address_line1: txtAddressDetail,
@@ -235,15 +235,14 @@ const FormAddress = (props: Props) => {
           }),
         );
       }
-      onPressClose()
-    setData({
-      ...listData,
-      latitude: location?.coords.latitude,
-      longitude: location?.coords.longitude,
-    });
-
+      onPressClose();
+      setData({
+        ...listData,
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
+      });
+    }
   };
-  }
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisitAble(true);
@@ -324,7 +323,7 @@ const FormAddress = (props: Props) => {
   }, [contactSelectedData]);
 
   return (
-    <SafeAreaView style={styles.root} edges={['bottom','top']}>
+    <SafeAreaView style={styles.root} edges={['bottom', 'top']}>
       {(screen === 'Adding' || screen === 'AddingContact') &&
       ((typeFilter === AppConstant.CustomerFilterType.dia_chi &&
         addressSelectedData.length !== 3) ||
@@ -344,7 +343,7 @@ const FormAddress = (props: Props) => {
           }
         />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
-        <Block  block>
+        <Block block>
           <Block style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
               label="Địa chỉ chính"
@@ -705,34 +704,33 @@ const FormAddress = (props: Props) => {
               onChangeValue={setTxtContactDetail}
               hiddenRightIcon={true}
             />
-          
           </Block>
-          <Block style={styles.containButtonBottom(typeFilter)} >
-              <Block style={styles.containContentButton} >
-                <TouchableOpacity
-                  style={styles.buttonRestart}
-                  onPress={() => {
-                    setContactSelectedData([]);
-                    setScreen('');
-                    onPressClose();
-                  }}>
-                  <AppText style={styles.restartText}>Hủy</AppText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonApply}
-                  onPress={() => {
-                    dispatch(
-                      customerActions.setMainContactAddress({
-                        ...contactValue,
-                        addressContact: txtContactDetail,
-                      }),
-                    );
-                    onPressClose();
-                  }}>
-                  <AppText style={styles.applyText}>{getLabel('save')}</AppText>
-                </TouchableOpacity>
-              </Block>
+          <Block style={styles.containButtonBottom(typeFilter)}>
+            <Block style={styles.containContentButton}>
+              <TouchableOpacity
+                style={styles.buttonRestart}
+                onPress={() => {
+                  setContactSelectedData([]);
+                  setScreen('');
+                  onPressClose();
+                }}>
+                <AppText style={styles.restartText}>Hủy</AppText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonApply}
+                onPress={() => {
+                  dispatch(
+                    customerActions.setMainContactAddress({
+                      ...contactValue,
+                      addressContact: txtContactDetail,
+                    }),
+                  );
+                  onPressClose();
+                }}>
+                <AppText style={styles.applyText}>{getLabel('save')}</AppText>
+              </TouchableOpacity>
             </Block>
+          </Block>
         </>
       )}
     </SafeAreaView>
@@ -745,7 +743,7 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
   StyleSheet.create({
     root: {
       flex: 1,
-      marginBottom:8
+      marginBottom: 8,
     } as ViewStyle,
     buttonStyle: {
       backgroundColor: theme.colors.bg_neutral,
@@ -770,8 +768,8 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       ({
         marginHorizontal: 16,
         marginBottom: 20,
-        marginTop: label === getLabel('mainAddress') ? 0 : 0,
-        top: label === getLabel('mainAddress') ? 0 : 0,
+        marginTop: 16,
+        // top: label === getLabel('mainAddress') ? 0 : 0,
       } as ViewStyle),
     containInput: {
       paddingBottom: 24,
@@ -841,7 +839,7 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       paddingHorizontal: 12,
       paddingVertical: 6,
       flex: 1,
-      marginLeft:6
+      marginLeft: 6,
       // marginHorizontal: 6,
     } as ViewStyle,
     buttonRestart: {
