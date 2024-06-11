@@ -76,6 +76,7 @@ const useTimer = () => {
   const [storedStartTime, set] = useMMKVString('time');
   const [storedElapsedTime, setS] = useMMKVString('curTime');
 
+  // console.log(storedElapsedTime,'store')
   const loadStoredTime = () => {
     if (storedStartTime && storedElapsedTime) {
       const currentTimeStamp = moment(new Date()).valueOf();
@@ -246,6 +247,7 @@ const CheckIn = () => {
     } else {
       console.log('run back');
       setAppState(nextAppState);
+      storage.set('curTime',String(elapsedTime))
       dispatch(checkinActions.setDataCategoriesCheckin(categoriesCheckin));
     }
   };
@@ -469,8 +471,10 @@ const CheckIn = () => {
       async locations => {
         if (!isValidCheckOut(locations)) {
           dispatch(appActions.setProcessingStatus(false));
+
           return;
         } else {
+          console.log('run here')
           dispatch(
             appActions.onCheckIn({
               ...dataCheckIn,

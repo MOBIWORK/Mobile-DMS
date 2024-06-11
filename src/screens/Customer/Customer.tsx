@@ -249,7 +249,7 @@ const Customer = () => {
     } else if (
       valueFilter.customerType === 'Tất cả' &&
       valueFilter.customerGroupType === 'Tất cả' &&
-      !searchCustomerValue
+      !searchCustomerValue 
     ) {
       dispatch(customerActions.onGetCustomer());
     } else if (listCustomer?.length === 0) {
