@@ -165,7 +165,7 @@ const VisitItem: FC<VisitItemProps> = ({
               tintColor={colors.text_primary}
             />
             <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
-              {item.phone ?? '---'}
+              {item.mobile_no ?? '---'}
             </Text>
           </View>
           <Block
