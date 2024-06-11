@@ -125,23 +125,23 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 2,
       borderRadius: 16,
       marginTop: 4,
-      shadowColor: !theme.dark ? Colors.darker : 'transparent',
-      ...Platform.select({
-        android: {
-          elevation: 2,
-          shadowColor: !theme.dark ? Colors.darker : 'transparent',
-        },
-        ios: {
-          shadowColor: !theme.dark ? Colors.darker : 'transparent',
-          shadowOffset: {
-            width: 0,
-            height: 1,
-          },
-          shadowOpacity: 0,
-          shadowRadius: 1.41,
-          elevation: 0,
-        },
-      }),
+      // shadowColor: !theme.dark ? Colors.darker : 'transparent',
+      // ...Platform.select({
+      //   android: {
+      //     elevation: 2,
+      //     shadowColor: !theme.dark ? Colors.darker : 'transparent',
+      //   },
+      //   ios: {
+      //     shadowColor: !theme.dark ? Colors.darker : 'transparent',
+      //     shadowOffset: {
+      //       width: 0,
+      //       height: 1,
+      //     },
+      //     shadowOpacity: 0,
+      //     shadowRadius: 1.41,
+      //     elevation: 0,
+      //   },
+      // }),
     } as ViewStyle,
     contentContainLayout: {
       flexDirection: 'row',

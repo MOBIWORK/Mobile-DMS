@@ -78,3 +78,11 @@ export const ColorDark = {
   facebook:'#1877F2'
 
 };
+
+type ColorDefaultType = typeof ColorDefault;
+
+export function getRandomColor(): ColorDefaultType[keyof ColorDefaultType] {
+  const keys = Object.keys(ColorDefault) as (keyof ColorDefaultType)[];
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  return ColorDefault[randomKey];
+}

@@ -84,6 +84,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
   const isFocus = useIsFocused();
+  const visualRef = useRef<VirtualizedList<any>>(null)
 
   const location = useRef<GeolocationResponse | null>(null);
   const [enabled, setEnabled] = React.useState(false);
@@ -510,6 +511,13 @@ const HomeScreen = () => {
     CellRendererProps<React.JSX.Element | null>
   > = React.useCallback(({item}) => item, []);
 
+
+  // useDeepCompareEffect(() =>{
+  //     visualRef.current?.scrollToIndex({animated:true,index:0})
+
+  // },[isFocus])
+
+
   const getItem = (data: any, index: number) => {
     switch (index) {
       case 0: {
@@ -522,7 +530,7 @@ const HomeScreen = () => {
                 {Object.keys(userProfile).length > 0 && userProfile?.image ? (
                   <AppAvatar url={userProfile.image} size={48} />
                 ) : (
-                  <AppAvatar name={userProfile.employee_name ?? ''} size={48} />
+                  <AppAvatar name={userProfile.employee_name?.slice(0,2) || ''} size={48} />
                 )}
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}>{getLabel('welcome')},</Text>
@@ -679,6 +687,8 @@ const HomeScreen = () => {
             stickyHeaderIndices={[0]}
             bounces={true}
             decelerationRate={'fast'}
+            ref={visualRef}
+            initialScrollIndex={0}
             keyExtractor={(item, index) => index.toString()}
             getItem={getItem}
             contentContainerStyle={styles.root}

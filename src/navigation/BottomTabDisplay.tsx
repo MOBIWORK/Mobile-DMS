@@ -30,6 +30,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
     (curTab: any) => {
       const previousRouteName = navigationRef?.current?.getCurrentRoute()?.name;
       const currentRouteName = state.routes[curTab].name;
+      
       startEffect(() => {
         if (curTab === 0 || curTab === 1 || curTab === 2) {
           navigation.emit({
@@ -37,6 +38,7 @@ const BottomTabDisplay = (props: BottomTabBarProps) => {
             target: state.routes[curTab].name,
             canPreventDefault: true,
           });
+          
           navigation.navigate(state.routes[curTab].name);
           if (curTab === 0) {
             if (previousRouteName != currentRouteName) {
