@@ -450,6 +450,8 @@ const SelectProducts = () => {
     }
   };
   const onRefreshData = useCallback(async () => {
+    setTextSearch('');
+    setShowSearch(false);
     dispatch(productActions.resetDataProduct());
     dispatch(productActions.updateListProduct([]));
     dispatch(productActions.updateProductSelect([]));
