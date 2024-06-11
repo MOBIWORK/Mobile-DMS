@@ -321,4 +321,5 @@ export default {
   bill: 'Hóa đơn',
   amountOwed: 'Số tiền nợ',
   noData: ' Không có dữ liệu',
+  profile: 'Hồ sơ',
 };

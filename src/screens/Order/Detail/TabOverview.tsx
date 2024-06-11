@@ -301,12 +301,8 @@ const TabOverview = ({data}: PropsType) => {
               <View style={[styles.containerOrder]}>
                 {data &&
                   data?.list_items &&
-                  data.list_items.map((item: ItemProductOrder, index: any) => (
-                    <Pressable
-                      key={index}
-                      onPress={() => onOpenBottomSheetProduct(item)}>
-                      <ItemOrderProduct item={item} />
-                    </Pressable>
+                  data.list_items.map((item: ItemProductOrder) => (
+                    <ItemOrderProduct item={item} />
                   ))}
               </View>
             </View>

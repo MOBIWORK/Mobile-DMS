@@ -12,6 +12,7 @@ import {AppConstant} from '../../../const';
 import {AppIcons} from '../../../components/common';
 import {useTheme} from '@react-navigation/native';
 import {ListCustomerRoute, ListCustomerType} from '../../../models/types';
+import {useTranslation} from 'react-i18next';
 
 // @ts-ignore
 const ListFilterItem: FC<ListFilterItemProps> = ({
@@ -22,6 +23,7 @@ const ListFilterItem: FC<ListFilterItemProps> = ({
   data,
 }) => {
   const theme = useTheme();
+  const {t: getLabel} = useTranslation();
 
   const _renderContent = () => {
     switch (type) {
@@ -57,7 +59,7 @@ const ListFilterItem: FC<ListFilterItemProps> = ({
                       item.title,
                       valueFilter.customer_type ?? '',
                     )}>
-                    {item.title}
+                    {getLabel(item.title)}
                   </Text>
                   {item.title === valueFilter.customer_type && (
                     <AppIcons

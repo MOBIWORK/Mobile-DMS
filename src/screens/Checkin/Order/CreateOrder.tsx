@@ -749,17 +749,19 @@ const CreateOrder = () => {
       </AppContainer>
 
       <View style={styles.footerView}>
-        <Block
-          paddingVertical={12}
-          alignItems="flex-end"
-          style={[styles.flexSpace]}>
-          <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
-          <Text style={styles.totalPrice}>
-            {CommonUtils.convertToTwoDecimalPlaces(
-              orderResultData?.grand_total ?? 0,
-            )}
-          </Text>
-        </Block>
+        {orderResultData && (
+          <Block
+            paddingVertical={12}
+            alignItems="flex-end"
+            style={[styles.flexSpace]}>
+            <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
+            <Text style={styles.totalPrice}>
+              {CommonUtils.convertToTwoDecimalPlaces(
+                orderResultData?.grand_total ?? 0,
+              )}
+            </Text>
+          </Block>
+        )}
         <AppButton
           label={orderResultData ? getLabel('completed') : getLabel('continue')}
           style={styles.button}

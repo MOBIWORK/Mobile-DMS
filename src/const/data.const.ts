@@ -5,13 +5,13 @@ import {IWidget} from '../models/types';
 export const DataWidget: IWidget[] = [
   {
     id: 1,
-    name: 'Hồ sơ',
+    name: 'profile',
     icon: 'iconUser',
     navigate: ScreenConstant.PROFILE,
   },
   {
     id: 2,
-    name: 'Sản phảm',
+    name: 'product',
     icon: 'iconContainer',
     navigate: ScreenConstant.LIST_PRODUCT,
   },
@@ -23,7 +23,7 @@ export const DataWidget: IWidget[] = [
   // },
   {
     id: 4,
-    name: 'Thông báo nội bộ',
+    name: 'internalNotifi',
     icon: 'iconBell',
     navigate: ScreenConstant.NOTIFYCATION,
   },
@@ -41,42 +41,15 @@ export const DataWidget: IWidget[] = [
   // },
   {
     id: 7,
-    name: 'Đơn hàng',
+    name: 'order',
     icon: 'iconCart',
     navigate: ScreenConstant.ORDER_SCREEN,
   },
   {
     id: 8,
-    name: 'Báo cáo',
+    name: 'report',
     icon: 'iconBar',
     navigate: ScreenConstant.REPORT_SCREEN,
-  },
-];
-
-export const newArrayWid: IWidget[] = [
-  {
-    id: 5,
-    name: 'Nhắc nhở',
-    icon: 'iconClock',
-    navigate: '',
-  },
-  {
-    id: 6,
-    name: 'Quản lý hình ảnh',
-    icon: 'iconImage',
-    navigate: '',
-  },
-  {
-    id: 7,
-    name: 'Đơn hàng',
-    icon: 'iconCart',
-    navigate: ScreenConstant.ORDER_SCREEN,
-  },
-  {
-    id: 8,
-    name: 'Báo cáo',
-    icon: 'iconBar',
-    navigate: '',
   },
 ];
 

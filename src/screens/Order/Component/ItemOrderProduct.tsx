@@ -13,19 +13,6 @@ const ItemOrderProduct = ({item}: ProductProps) => {
   const {colors} = useTheme();
   const styles = createSheetStyle(useTheme());
 
-  // const VAT_amount = useMemo(() => {
-  //   const intoMoney = item.rate * item.qty - item.discount_amount;
-  //   if (order_discount_type === 'Grand Total') {
-  //     return item?.item_tax_rate ? (item.item_tax_rate * intoMoney) / 100 : 0; //VAT = VAT * thành tiền
-  //   } else {
-  //     return item?.item_tax_rate
-  //       ? (item.item_tax_rate / 100) *
-  //           (intoMoney - (intoMoney * additional_discount_percentage) / 100)
-  //       : 0;
-  //     // VAT(sp) = %VAT x (thành tiền - chiết khấu đơn(net))
-  //   }
-  // }, [item]);
-
   return (
     <View style={styles.container}>
       <View style={styles.flex}>

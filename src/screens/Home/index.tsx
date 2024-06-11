@@ -49,13 +49,21 @@ import {rootStyles} from './styles';
 
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
-import {backgroundErrorListener, useDeepCompareEffect, useSelector} from '../../config/function';
+import {
+  backgroundErrorListener,
+  useDeepCompareEffect,
+  useSelector,
+} from '../../config/function';
 import ModalUpdate from './components/ModalUpdate';
 import {AppService, ReportService} from '../../services';
 import {useTranslation} from 'react-i18next';
 import {NavigationProp} from '../../navigation/screen-type';
 import ModalErrorLocation from './components/ModalErrorLocation';
-import {CheckinData, getCustomerVisit, IListVisitParams} from '../../services/appService';
+import {
+  CheckinData,
+  getCustomerVisit,
+  IListVisitParams,
+} from '../../services/appService';
 import {customerActions} from '../../redux-store/customer-reducer/reducer';
 import Geolocation, {
   GeolocationResponse,
@@ -76,8 +84,6 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
   const isFocus = useIsFocused();
-  const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
-
 
   const location = useRef<GeolocationResponse | null>(null);
   const [enabled, setEnabled] = React.useState(false);
@@ -124,9 +130,6 @@ const HomeScreen = () => {
     }
   };
 
-
-  console.log(dataCheckIn,'dd')
-
   const renderUiWidget = useCallback(() => {
     return (
       <Block marginTop={16} marginBottom={16}>
@@ -148,7 +151,7 @@ const HomeScreen = () => {
                 JSON.parse(widgets).map((item: IWidget, i: any) => (
                   <View key={i} style={styles.containItemWidget}>
                     <ItemWidget
-                      name={item.name}
+                      name={getLabel(item.name)}
                       source={item.icon}
                       navigate={item.navigate}
                     />
@@ -160,7 +163,6 @@ const HomeScreen = () => {
       </Block>
     );
   }, [widgets]);
-
 
   const renderUiStatistical = useCallback(() => {
     return (
