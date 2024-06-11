@@ -36,10 +36,17 @@ const AppInput: FC<AppInputProps> = ({
   const theme = useTheme();
   const inputStyle = rootStyles(theme);
 
+
+  const onPressIn =  React.useCallback(() =>{
+    setEnable(true)
+    typeof onPress === 'function' ? onPress() : undefined
+
+  },[enable])
+
   return (
     <TouchableOpacity disabled={ editable ? !enable : false} onPress={onPress}>
       <TextInput
-        onPressIn={() => setEnable(true)}
+        onPressIn={onPressIn}
         onPressOut={() => setEnable(false)}
         onEndEditing={onEndEditing}
         contentStyle={[inputStyle.contentStyle, contentStyle]}

@@ -451,7 +451,9 @@ const SelectProducts = () => {
   };
   const onRefreshData = useCallback(async () => {
     setPageNumber(1);
-  }, [dispatch]);
+  }, []);
+
+
   const cancelResetData = async () => {
     // await fetchProduct()
     await setShowSearch(false);
