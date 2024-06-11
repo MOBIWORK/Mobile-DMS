@@ -4,7 +4,7 @@ import isEqual from 'react-fast-compare';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import {Address, Contact} from '../../../models/types';
+import {Address, Contact, ContactCard} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import {formatPhoneNumber} from '../../../config/function';
@@ -18,8 +18,8 @@ type CardListAddress = {
 };
 type CardListContact = {
   type: 'contact';
-  data: Contact;
-  onPress:(data:Contact,type:'contact') => void
+  data: ContactCard;
+  onPress:(data:ContactCard,type:'contact') => void
 
 };
 
@@ -40,14 +40,26 @@ const CardChoose = (props: Props) => {
                   
                 </Block>
                 <Block>
-                  {props.data.address_title && (
+                  {props.data.address_title.trim().length > 0    && (
                     <Text
                       numberOfLines={2}
                       fontSize={16}
                       fontWeight="300"
                       colorTheme="black"
                       lineHeight={21}>
-                      {props.data.address_title.split(',', 4)[0]}
+                      {props.data.address_title.split(',', 4)[0].trim()}
+                    </Text>
+                  )}
+                </Block>
+                <Block>
+                  {props.data.address_line1    && (
+                    <Text
+                      numberOfLines={2}
+                      fontSize={16}
+                      fontWeight="300"
+                      colorTheme="black"
+                      lineHeight={21}>
+                      {props.data.address_line1}
                     </Text>
                   )}
                 </Block>
@@ -119,8 +131,8 @@ const CardChoose = (props: Props) => {
                 fontWeight="300"
                 colorTheme="black"
                 lineHeight={21}>
-                {props.data.mobile_no != null
-                  ? formatPhoneNumber(props.data.mobile_no)
+                {props.data.phone != null
+                  ? formatPhoneNumber(props.data.phone)
                   : '---'}
               </Text>
             </Block>

@@ -510,6 +510,7 @@ export interface Address {
   is_shipping_address: number;
   address_title: string;
   address_location: string;
+  address_line1?:string
 }
 
 export interface Contact {

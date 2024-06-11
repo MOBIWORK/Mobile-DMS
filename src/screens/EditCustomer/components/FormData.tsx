@@ -257,6 +257,7 @@ const FormData = (props: Props) => {
       website: dataCustomer.website || '',
       territory: dataCustomer.territory || '',
     };
+    console.log(dataUpdate,'dataUpdate')
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
@@ -310,6 +311,8 @@ const FormData = (props: Props) => {
     //   getCustomerRoute();
     // }
   }, []);
+
+  console.log(dataCustomer?.routers,'sss')
 
   const onPressData = useCallback(
     (data: any, type: string) => {
@@ -525,13 +528,13 @@ const FormData = (props: Props) => {
           label={translate('frequency')}
           // value={dataCustomer.frequency ? converArr(dataCustomer.frequency) : ''}
           value={
-            dataCustomer?.routers?.[0]?.frequency &&
+            dataCustomer?.routers  &&     dataCustomer?.routers?.length > 0 ?  dataCustomer?.routers?.[0].frequency &&  dataCustomer?.routers?.[0]?.frequency &&
             typeof dataCustomer?.routers?.[0]?.frequency === 'string'
               ? dataCustomer.routers[0].frequency
               : dataCustomer?.routers?.[0].frequency &&
                 dataCustomer?.routers[0].frequency.length > 0
               ? dataCustomer?.routers?.[0].frequency.join(';')
-              : ''
+              : '' : ''
           }
           editable={false}
           isRequire={false}

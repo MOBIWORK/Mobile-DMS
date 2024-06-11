@@ -49,6 +49,16 @@ const CardEditAddress = (props: Props) => {
                       {getLabel('addressDetail')}
                     </Text>
                   )}
+                   {props.address.address_line1 && (
+                    <Text
+                      numberOfLines={2}
+                      fontSize={16}
+                      fontWeight="300"
+                      colorTheme="black"
+                      lineHeight={21}>
+                      {getLabel('addressDetail')}
+                    </Text>
+                  )}
                   <Text
                     numberOfLines={2}
                     fontSize={14}
@@ -56,7 +66,7 @@ const CardEditAddress = (props: Props) => {
                     style={{maxWidth: '90%'}}
                     colorTheme="black"
                     lineHeight={21}>
-                    {props.address.address_title}
+                    {props.address.address_title.trim().length > 0 ? props.address.address_title : props.address.address_line1}
                   </Text>
                 </Block>
               </Block>
