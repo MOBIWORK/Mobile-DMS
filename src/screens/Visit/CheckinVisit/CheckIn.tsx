@@ -90,8 +90,11 @@ const useTimer = () => {
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active' && isFocus) {
       loadStoredTime();
-    } else if (nextAppState === 'background') {
-      setS( String(elapsedTime));
+    } else if (nextAppState != 'active') {
+      setS(String(elapsedTime));
+      set(String(moment(new Date()).valueOf()));
+    } else if (!isFocus) {
+      setS(String(elapsedTime));
       set(String(moment(new Date()).valueOf()));
     }
   };
@@ -116,7 +119,7 @@ const useTimer = () => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
     } else {
-      setS( String(elapsedTime));
+      setS(String(elapsedTime));
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
       }
@@ -241,14 +244,19 @@ const CheckIn = () => {
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
-      console.log('run active');
+      // console.log('run active');
       setAppState(nextAppState);
       return null;
-    } else {
-      console.log('run back');
+    } else if (!isFocus) {
+      let currentCate = categoriesCheckin;
+      console.log('run outfocus');
       setAppState(nextAppState);
-      storage.set('curTime',String(elapsedTime))
-      dispatch(checkinActions.setDataCategoriesCheckin(categoriesCheckin));
+      dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
+    } else {
+      let currentCate = categoriesCheckin;
+      console.log('run backstate');
+      setAppState(nextAppState);
+      dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
     }
   };
 
@@ -474,7 +482,7 @@ const CheckIn = () => {
 
           return;
         } else {
-          console.log('run here')
+          console.log('run here');
           dispatch(
             appActions.onCheckIn({
               ...dataCheckIn,
@@ -495,8 +503,6 @@ const CheckIn = () => {
 
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
-
-
 
   useDeepCompareEffect(() => {
     if (route === false) {
