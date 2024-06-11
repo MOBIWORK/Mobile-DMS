@@ -7,7 +7,7 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import {MainLayout} from '../../../layouts';
+import { MainLayout } from '../../../layouts';
 import {
   AppBottomSheet,
   AppButton,
@@ -16,8 +16,8 @@ import {
   AppIcons,
   AppInput,
 } from '../../../components/common';
-import {ApiConstant, AppConstant} from '../../../const';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import { ApiConstant, AppConstant } from '../../../const';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   Text,
   TextStyle,
@@ -30,29 +30,29 @@ import {
   ActivityIndicator,
   Keyboard,
 } from 'react-native';
-import {StyleSheet} from 'react-native';
-import {Searchbar, TextInput} from 'react-native-paper';
-import {ImageAssets} from '../../../assets';
+import { StyleSheet } from 'react-native';
+import { Searchbar, TextInput } from 'react-native-paper';
+import { ImageAssets } from '../../../assets';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
-import {useDeepCompareEffect, useSelector} from '../../../config/function';
-import {dispatch} from '../../../utils/redux';
-import {productActions} from '../../../redux-store/product-reducer/reducer';
-import {IProduct} from '../../../models/types';
-import {useTranslation} from 'react-i18next';
-import {CommonUtils} from '../../../utils';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import { NavigationProp, RouterProp } from '../../../navigation/screen-type';
+import { useDeepCompareEffect, useSelector } from '../../../config/function';
+import { dispatch } from '../../../utils/redux';
+import { productActions } from '../../../redux-store/product-reducer/reducer';
+import { IProduct } from '../../../models/types';
+import { useTranslation } from 'react-i18next';
+import { CommonUtils } from '../../../utils';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 import ItemSkeleton from './components/ItemSkeleton';
 import ItemProductOrderComponent from './components/ItemProductOrderComponent';
 import {
   BottomSheetScrollView,
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
-import {ProductService} from '../../../services';
-import {RefreshControl} from 'react-native-gesture-handler';
+import { ProductService } from '../../../services';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const initFilterValue = {
   label: '',
@@ -61,8 +61,8 @@ const initFilterValue = {
 };
 
 const SelectProducts = () => {
-  const {colors} = useTheme();
-  const {t: getLabel} = useTranslation();
+  const { colors } = useTheme();
+  const { t: getLabel } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetRefData = useRef<BottomSheet>(null);
@@ -118,7 +118,7 @@ const SelectProducts = () => {
   const openBottomSheetDataFilter = React.useCallback(
     (type: string, item?: IProduct) => {
       setDataFilter([]);
-      const defautItem = {label: 'all', value: '', isSelected: false};
+      const defautItem = { label: 'all', value: '', isSelected: false };
       switch (type) {
         case 'category':
           setLabel('groupProduct');
@@ -138,15 +138,15 @@ const SelectProducts = () => {
             const newData = item.unit.map(unitItems => {
               return item.stock_uom === unitItems.uom
                 ? {
-                    label: unitItems.uom,
-                    value: item.item_code,
-                    isSelected: true,
-                  }
+                  label: unitItems.uom,
+                  value: item.item_code,
+                  isSelected: true,
+                }
                 : {
-                    label: unitItems.uom,
-                    value: item.item_code,
-                    isSelected: false,
-                  };
+                  label: unitItems.uom,
+                  value: item.item_code,
+                  isSelected: false,
+                };
             });
             setDataFilter(newData);
           }
@@ -181,7 +181,7 @@ const SelectProducts = () => {
   const bottomSheetFilter = React.useCallback(() => {
     return (
       <View
-        style={{padding: 16, paddingTop: 0, height: '100%', marginTop: -25}}>
+        style={{ padding: 16, paddingTop: 0, height: '100%', marginTop: -25 }}>
         <AppHeader
           label={getLabel('filter')}
           onBack={() =>
@@ -196,7 +196,7 @@ const SelectProducts = () => {
             />
           }
         />
-        <View style={{marginTop: 32, rowGap: 24}}>
+        <View style={{ marginTop: 32, rowGap: 24 }}>
           <AppInput
             label={getLabel('groupProduct')}
             value={category?.label || getLabel('all')}
@@ -206,7 +206,7 @@ const SelectProducts = () => {
               <TextInput.Icon
                 onPress={() => openBottomSheetDataFilter('category')}
                 icon={'chevron-down'}
-                style={{width: 24, height: 24}}
+                style={{ width: 24, height: 24 }}
                 color={colors.text_secondary}
               />
             }
@@ -220,7 +220,7 @@ const SelectProducts = () => {
               <TextInput.Icon
                 onPress={() => openBottomSheetDataFilter('brand')}
                 icon={'chevron-down'}
-                style={{width: 24, height: 24}}
+                style={{ width: 24, height: 24 }}
                 color={colors.text_secondary}
               />
             }
@@ -234,7 +234,7 @@ const SelectProducts = () => {
               <TextInput.Icon
                 onPress={() => openBottomSheetDataFilter('industry')}
                 icon={'chevron-down'}
-                style={{width: 24, height: 24}}
+                style={{ width: 24, height: 24 }}
                 color={colors.text_secondary}
               />
             }
@@ -242,13 +242,13 @@ const SelectProducts = () => {
         </View>
         <View style={styles.containerButton}>
           <AppButton
-            style={{width: '45%', backgroundColor: colors.bg_neutral}}
+            style={{ width: '45%', backgroundColor: colors.bg_neutral }}
             label={getLabel('reset')}
-            styleLabel={{color: colors.text_secondary}}
+            styleLabel={{ color: colors.text_secondary }}
             onPress={() => resetFilter()}
           />
           <AppButton
-            style={{width: '45%'}}
+            style={{ width: '45%' }}
             label={getLabel('apply')}
             onPress={() => onSubmitFilter()}
           />
@@ -264,9 +264,9 @@ const SelectProducts = () => {
         startEffect(() => {
           newData = dataCategoryProduct.map(itemRes => {
             if (item.label === itemRes.label) {
-              return {...itemRes, isSelected: true};
+              return { ...itemRes, isSelected: true };
             } else {
-              return {...itemRes, isSelected: false};
+              return { ...itemRes, isSelected: false };
             }
           });
         });
@@ -278,9 +278,9 @@ const SelectProducts = () => {
         startEffect(() => {
           newData = dataBrandProduct.map(itemRes => {
             if (item.label === itemRes.label) {
-              return {...itemRes, isSelected: true};
+              return { ...itemRes, isSelected: true };
             } else {
-              return {...itemRes, isSelected: false};
+              return { ...itemRes, isSelected: false };
             }
           });
         });
@@ -292,9 +292,9 @@ const SelectProducts = () => {
         startEffect(() => {
           newData = dataIndustry.map(itemRes => {
             if (item.label === itemRes.label) {
-              return {...itemRes, isSelected: true};
+              return { ...itemRes, isSelected: true };
             } else {
-              return {...itemRes, isSelected: false};
+              return { ...itemRes, isSelected: false };
             }
           });
         });
@@ -308,13 +308,13 @@ const SelectProducts = () => {
             let priceUom = item1.unit.find(item2 => item2.uom === item.label);
             return item1.item_code === item.value
               ? {
-                  ...item1,
-                  stock_uom: item.label,
-                  price: priceUom
-                    ? Number(priceUom.conversion_factor) * item1.price
-                    : 0,
-                  stock_qty: priceUom ? Number(priceUom.conversion_factor) : 0,
-                }
+                ...item1,
+                stock_uom: item.label,
+                price: priceUom
+                  ? Number(priceUom.conversion_factor) * item1.price
+                  : 0,
+                stock_qty: priceUom ? Number(priceUom.conversion_factor) : 0,
+              }
               : item1;
           });
           setData(newProducts);
@@ -365,7 +365,7 @@ const SelectProducts = () => {
       startEffect(() => {
         newData = data.map(item => {
           return item.item_code === id
-            ? {...item, isSelected: !isSelected}
+            ? { ...item, isSelected: !isSelected }
             : item;
         });
       });
@@ -385,7 +385,7 @@ const SelectProducts = () => {
   const onSelectAllProduct = () => {
     Keyboard.dismiss();
     setStatusSelectAll(prevState => !prevState);
-    const newData = data.map(item => ({...item, isSelected: !isSelectAll}));
+    const newData = data.map(item => ({ ...item, isSelected: !isSelectAll }));
     setCountSelect(!isSelectAll ? data.length : 0);
     setData(newData);
   };
@@ -399,7 +399,7 @@ const SelectProducts = () => {
   const onChangeQuantityProduct = React.useCallback(
     (idItem: string, qty: number) => {
       const newData = data.map(item =>
-        item.item_code === idItem ? {...item, quantity: qty} : item,
+        item.item_code === idItem ? { ...item, quantity: qty } : item,
       );
       setData(newData);
     },
@@ -449,13 +449,17 @@ const SelectProducts = () => {
       );
     }
   };
-  const onRefreshData = useCallback(async () => {
-    setPageNumber(1);
+
+  const onRefreshData = useCallback(() => {
+    setTextSearch('');
+    setShowSearch(false);
+    dispatch(productActions.resetDataProduct());
+    dispatch(productActions.updateListProduct([]));
+    dispatch(productActions.updateProductSelect([]));
+    fetchProduct();
   }, []);
 
-
   const cancelResetData = async () => {
-    // await fetchProduct()
     await setShowSearch(false);
   };
 
@@ -537,7 +541,7 @@ const SelectProducts = () => {
               <View
                 style={[
                   styles.flex,
-                  {columnGap: 16, width: 50, justifyContent: 'flex-end'},
+                  { columnGap: 16, width: 50, justifyContent: 'flex-end' },
                 ]}>
                 {/*<TouchableOpacity*/}
                 {/*  onPress={() =>*/}
@@ -575,7 +579,7 @@ const SelectProducts = () => {
                 {
                   marginTop: 16,
                   columnGap: 8,
-                  transform: [{translateX: animatedValue}],
+                  transform: [{ translateX: animatedValue }],
                 },
               ]}>
               <Searchbar
@@ -586,12 +590,12 @@ const SelectProducts = () => {
                 value={textSearch}
                 autoFocus
                 onChangeText={(txt: string) => setTextSearch(txt)}
-                inputStyle={{color: colors.text_primary}}
+                inputStyle={{ color: colors.text_primary }}
                 onSubmitEditing={() => searchCusProduct()}
               />
               <TouchableOpacity onPress={() => cancelResetData()}>
                 <Text
-                  style={[styles.headerAction as any, {color: colors.action}]}>
+                  style={[styles.headerAction as any, { color: colors.action }]}>
                   {getLabel('cancel')}
                 </Text>
               </TouchableOpacity>
@@ -605,7 +609,7 @@ const SelectProducts = () => {
           {/*    {!isSelectedAll ? getLabel('selectAll') : getLabel('deselectAll')}*/}
           {/*  </Text>*/}
           {/*</TouchableOpacity>*/}
-          <View style={[styles.flex, {gap: 6}]}>
+          <View style={[styles.flex, { gap: 6 }]}>
             <AppCheckBox
               status={statusSelectAll}
               onChangeValue={() => onSelectAllProduct()}
@@ -615,28 +619,28 @@ const SelectProducts = () => {
             />
             <Text style={styles.action}>{getLabel('selectAll')}</Text>
           </View>
-          <Text style={[styles.filter as any, {color: colors.text_secondary}]}>
+          <Text style={[styles.filter as any, { color: colors.text_secondary }]}>
             {getLabel('total')} :{' '}
-            <Text style={{color: colors.text_primary, fontWeight: '500'}}>
+            <Text style={{ color: colors.text_primary, fontWeight: '500' }}>
               {totalItem}{' '}
             </Text>
             {getLabel('product').toLowerCase()}
           </Text>
         </View>
 
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           {isLoading ? (
             <FlatList
               data={new Array(3)}
               renderItem={() => <ItemSkeleton />}
-              contentContainerStyle={{rowGap: 16}}
+              contentContainerStyle={{ rowGap: 16 }}
               showsVerticalScrollIndicator={false}
             />
           ) : (
-            <View style={{paddingHorizontal: 16, flex: 1}}>
+            <View style={{ paddingHorizontal: 16, flex: 1 }}>
               <FlatList
                 data={data}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                   <Pressable>
                     <ItemProductOrderComponent
                       item={item}
@@ -654,7 +658,7 @@ const SelectProducts = () => {
                 removeClippedSubviews={false}
                 keyExtractor={(item, index) => index.toString()}
                 showsVerticalScrollIndicator={false}
-                style={{flex: 1}}
+                style={{ flex: 1 }}
                 ListFooterComponent={
                   bottomLoading ? (
                     <ActivityIndicator size="large" color={colors.primary} />
@@ -674,12 +678,12 @@ const SelectProducts = () => {
           {countSelect > 0 && (
             <TouchableOpacity
               onPress={() => onSubmitProductSelect(data)}
-              style={[{position: 'absolute', left: 16, bottom: 50, right: 16}]}>
+              style={[{ position: 'absolute', left: 16, bottom: 50, right: 16 }]}>
               <View style={[styles.flex, styles.actionSubmit]}>
-                <Text style={[styles.action, {color: colors.bg_default}]}>
+                <Text style={[styles.action, { color: colors.bg_default }]}>
                   {countSelect} {getLabel('product').toLocaleLowerCase()}
                 </Text>
-                <View style={[styles.flex, {columnGap: 16}]}>
+                <View style={[styles.flex, { columnGap: 16 }]}>
                   <Text style={[styles.headerAction]}>
                     {getLabel('continue')}
                   </Text>
@@ -702,7 +706,7 @@ const SelectProducts = () => {
         handleHeight={animatedHandleHeight}
         contentHeight={animatedContentHeight}>
         <BottomSheetScrollView
-          style={{paddingBottom: 30}}
+          style={{ paddingBottom: 30 }}
           onLayout={handleContentLayout}>
           {bottomSheetFilter()}
         </BottomSheetScrollView>
@@ -714,7 +718,7 @@ const SelectProducts = () => {
         handleHeight={animatedHandleHeight}
         contentHeight={animatedContentHeight}>
         <BottomSheetScrollView
-          style={{paddingBottom: 30}}
+          style={{ paddingBottom: 30 }}
           onLayout={handleContentLayout}>
           <FilterListComponent
             title={getLabel(label)}
