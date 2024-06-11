@@ -4,7 +4,7 @@ import isEqual from 'react-fast-compare';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import {Address, Contact} from '../../../models/types';
+import {Address, Contact, ContactCard} from '../../../models/types';
 import {formatPhoneNumber} from '../../../config/function';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
@@ -19,7 +19,7 @@ interface CardTypeAddress {
 
 interface CardContactAddress {
   type: 'contact';
-  contact: Contact;
+  contact: ContactCard;
   primaryContact?: any;
 }
 
@@ -49,6 +49,16 @@ const CardEditAddress = (props: Props) => {
                       {getLabel('addressDetail')}
                     </Text>
                   )}
+                   {props.address.address_line1 && (
+                    <Text
+                      numberOfLines={2}
+                      fontSize={16}
+                      fontWeight="300"
+                      colorTheme="black"
+                      lineHeight={21}>
+                      {getLabel('addressDetail')}
+                    </Text>
+                  )}
                   <Text
                     numberOfLines={2}
                     fontSize={14}
@@ -56,7 +66,7 @@ const CardEditAddress = (props: Props) => {
                     style={{maxWidth: '90%'}}
                     colorTheme="black"
                     lineHeight={21}>
-                    {props.address.address_title}
+                    {props.address.address_title.trim().length > 0 ? props.address.address_title : props.address.address_line1}
                   </Text>
                 </Block>
               </Block>
@@ -124,8 +134,8 @@ const CardEditAddress = (props: Props) => {
                 fontWeight="300"
                 colorTheme="black"
                 lineHeight={21}>
-                {props.contact.mobile_no != null
-                  ? formatPhoneNumber(props.contact.mobile_no)
+                {props.contact.phone != null
+                  ? formatPhoneNumber(props.contact.phone)
                   : '---'}
               </Text>
             </Block>

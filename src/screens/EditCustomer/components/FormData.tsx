@@ -251,12 +251,13 @@ const FormData = (props: Props) => {
           ? dataCustomer.customer_group
           : null,
       customer_name: dataCustomer.customer_name || '',
-      customer_type: dataCustomer.customer_type || '',
+      customer_type:  dataCustomer.customer_type &&  dataCustomer?.customer_type?.slice(0,1).toUpperCase() + dataCustomer?.customer_type?.slice(1, dataCustomer?.customer_type?.length) || '',
       image: dataCustomer.image || '',
       routers: route || '',
       website: dataCustomer.website || '',
       territory: dataCustomer.territory || '',
     };
+    console.log(dataUpdate,'dataUpdate')
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
@@ -311,7 +312,7 @@ const FormData = (props: Props) => {
     // }
   }, []);
 
-
+  console.log(dataCustomer?.routers,'sss')
 
   const onPressData = useCallback(
     (data: any, type: string) => {
@@ -411,7 +412,9 @@ const FormData = (props: Props) => {
           isRequire={true}
           contentStyle={styles.contentStyle}
           value={
-            dataCustomer.customer_type ? dataCustomer.customer_type : '---'
+            dataCustomer.customer_type
+              ? translate(dataCustomer.customer_type)
+              : '---'
           }
           editable={false}
           styles={{marginBottom: 20}}
@@ -525,13 +528,13 @@ const FormData = (props: Props) => {
           label={translate('frequency')}
           // value={dataCustomer.frequency ? converArr(dataCustomer.frequency) : ''}
           value={
-            dataCustomer?.routers?.[0]?.frequency &&
+            dataCustomer?.routers  &&     dataCustomer?.routers?.length > 0 ?  dataCustomer?.routers?.[0].frequency &&  dataCustomer?.routers?.[0]?.frequency &&
             typeof dataCustomer?.routers?.[0]?.frequency === 'string'
               ? dataCustomer.routers[0].frequency
               : dataCustomer?.routers?.[0].frequency &&
                 dataCustomer?.routers[0].frequency.length > 0
               ? dataCustomer?.routers?.[0].frequency.join(';')
-              : ''
+              : '' : ''
           }
           editable={false}
           isRequire={false}
@@ -662,21 +665,29 @@ const FormData = (props: Props) => {
             colorTheme="text_secondary">
             {translate('contact')}
           </Text>
-          {dataCustomer.contacts && dataCustomer.contacts.length > 0 && (
-            <TouchableOpacity
-              onPress={() =>
-                setDataCustomer(prev => ({
-                  ...prev,
-                  contacts: [],
-                }))
-              }>
-              <SvgIcon source="Trash" size={26} color="text_disable" />
-            </TouchableOpacity>
-          )}
+          {dataCustomer.contacts &&
+            dataCustomer.customer_primary_contact &&
+            dataCustomer.contacts.length > 0 &&
+            dataCustomer.contacts[0].first_name.includes(
+              dataCustomer.customer_primary_contact!,
+            ) && (
+              <TouchableOpacity
+                onPress={() =>
+                  setDataCustomer(prev => ({
+                    ...prev,
+                    contacts: [],
+                  }))
+                }>
+                <SvgIcon source="Trash" size={26} color="text_disable" />
+              </TouchableOpacity>
+            )}
         </Block>
         {dataCustomer.contacts &&
+        dataCustomer.customer_primary_contact &&
         dataCustomer.contacts.length > 0 &&
-        dataCustomer.contacts.map(item => item.is_primary_contact === 1) ? (
+        dataCustomer.contacts[0].first_name.includes(
+          dataCustomer.customer_primary_contact!,
+        ) ? (
           dataCustomer.contacts.map((item, index) => {
             return (
               <CardEditAddress

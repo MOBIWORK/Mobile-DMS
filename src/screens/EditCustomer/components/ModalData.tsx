@@ -97,7 +97,7 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
         return {
           ...prev,
           frequency: updatedFrequency,
-          routers:[{frequency:updatedFrequency,router_code:prev.routers?.[0].router_code, router_name:prev.routers?.[0].router_code}]
+          routers:[{frequency:updatedFrequency,router_code:prev.routers?.[0]?.router_code  ? prev.routers?.[0]?.router_code : '', router_name:prev.routers?.[0]?.router_code  ? prev.routers?.[0]?.router_code : ''}]
         };
       });
     },
@@ -142,7 +142,7 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
                 onPress={() => {
                   setData(prev => ({
                     ...prev,
-                    customer_type: getLabel(item.title),
+                    customer_type: item.title,
                   }));
                 }}>
                 <Text
@@ -370,7 +370,7 @@ const modalStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginHorizontal: 16,
+      marginHorizontal: 16, 
       marginBottom: 5,
     } as ViewStyle,
     titleHeaderText: {

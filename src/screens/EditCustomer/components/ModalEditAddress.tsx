@@ -153,7 +153,7 @@ const ModalEditAddress = ({
     }
   }, []);
 
-  console.log(addressObj, 'sss');
+
   const onPressButtonGetLocation = () => {
     CommonUtils.getCurrentLocation(
       locations => {
@@ -203,7 +203,7 @@ const ModalEditAddress = ({
     const contact = {
       last_name: contactValue.nameContact,
       first_name: contactValue.nameContact,
-      mobile_no: contactValue.phoneNumber,
+      phone: contactValue.phoneNumber,
       address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       is_billing_contact: contactValue.isMainAddress ? 1 : 0,
       is_primary_contact: 0,
@@ -702,15 +702,8 @@ const ModalEditAddress = ({
                   <Text style={styles.restartText}>Hủy</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[
-                    styles.buttonApply,
-                    {
-                      backgroundColor: isValidAddress
-                        ? theme.colors.primary
-                        : theme.colors.bg_disable,
-                    },
-                  ]}
-                  disabled={!isValidAddress}
+                  style={[styles.buttonApply]}
+                  // disabled={!isValidAddress}
                   onPress={handleSaveMainAddress}>
                   <Text
                     fontSize={14}
