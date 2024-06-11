@@ -515,9 +515,7 @@ const CheckIn = () => {
 
 
 
-  useEffect(() => {
-    dispatch(checkinActions.setDataCategoriesCheckin(categoriesCheckinList));
-  }, []);
+
 
   useDeepCompareEffect(() => {
     if (route === false) {

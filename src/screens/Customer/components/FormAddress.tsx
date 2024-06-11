@@ -20,8 +20,6 @@ import {
 } from '../../../components/common';
 import {ApiConstant, AppConstant} from '../../../const';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {MainLayout} from '../../../layouts';
-
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {
@@ -36,12 +34,11 @@ import {MainAddress, MainContactAddress} from './CardAddress';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
-import {AppService, CheckinService} from '../../../services';
+import {AppService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
 import {backgroundErrorListener} from '../../../config/function';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {ResponseGenerator} from '../../../saga/app-saga/saga';
 import {IUpdateAddress} from '../../../services/checkinService';
 
 type Props = {
