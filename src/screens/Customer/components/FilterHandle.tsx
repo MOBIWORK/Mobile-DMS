@@ -1,7 +1,7 @@
 import {
   ImageStyle,
   StyleSheet,
-  Text,
+  
   TextStyle,
   View,
   ViewStyle,
@@ -11,7 +11,7 @@ import {Colors} from '../../../assets';
 import {TouchableOpacity} from 'react-native';
 import AppImage from '../../../components/common/AppImage';
 import {useTranslation} from 'react-i18next';
-
+import { AppText as Text } from '../../../components/common';
 type Props = {
   type: string;
   onPress: () => void;

@@ -34,16 +34,16 @@ export const rootStyles = (theme: AppTheme) =>
 
       ...Platform.select({
         android: {
-          elevation: 12,
+          elevation: 7,
           // borderTopWidth: 2,
         },
         ios: {
           shadowOffset: {
             width: 0,
-            height: 8,
+            height: 3,
           },
           shadowOpacity: 0.2,
-          shadowRadius: 1.41,
+          shadowRadius: 4.65,
         },
       }),
     } as ViewStyle,

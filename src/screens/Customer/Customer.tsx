@@ -519,7 +519,7 @@ const rootStyles = (theme: AppTheme) =>
     iconSearch: {
       width: 28,
       height: 28,
-      marginRight: 16,
+      // marginRight: 16,
     } as ImageStyle,
     searchButtonStyle: {
       alignItems: 'flex-end',
