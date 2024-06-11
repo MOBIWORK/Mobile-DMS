@@ -449,6 +449,7 @@ const SelectProducts = () => {
       );
     }
   };
+
   const onRefreshData = useCallback(() => {
     setTextSearch('');
     setShowSearch(false);
