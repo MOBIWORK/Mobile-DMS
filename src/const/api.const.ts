@@ -74,8 +74,7 @@ export const POST_ADD_NEW_CUSTOMER =
   '/api/method/mbw_dms.api.selling.customer.create_customer';
 // Order
 export const GET_ORDER = URL_PREFIX + '.api.selling.order.get_list_sales_order';
-export const GET_ORDER_DETAIL =
-  URL_PREFIX + '.api.selling.order.get_sale_order';
+export const GET_ORDER_DETAIL = URL_PREFIX + '.api.selling.order.get_so_si';
 export const GET_VATS = URL_PREFIX + '.api.selling.product.list_vat';
 export const POST_ORDER = URL_PREFIX + '.api.selling.order.create_sale_order';
 export const POST_RETuRN_ORDER =

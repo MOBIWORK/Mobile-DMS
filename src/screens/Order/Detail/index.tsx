@@ -98,7 +98,10 @@ const OrderDetail = () => {
 
   const fetchDataDetail = async () => {
     dispatch(appActions.setProcessingStatus(true));
-    const {status, data}: KeyAbleProps = await OrderService.getDetail(name);
+    const {status, data}: KeyAbleProps = await OrderService.getDetail(
+      name,
+      'Sales Order',
+    );
     if (status === ApiConstant.STT_OK) {
       setData(data.result);
     }

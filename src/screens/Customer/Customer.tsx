@@ -19,24 +19,15 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import {TextInput} from 'react-native-paper';
-import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
-
-import {AppConstant, ScreenConstant} from '../../const';
-
+import {ScreenConstant} from '../../const';
 import AppImage from '../../components/common/AppImage';
-import FilterHandle from './components/FilterHandle';
-import {listFilter} from './components/data';
 import ListCard from './components/ListCard';
 import {
   AppBottomSheet,
-  AppHeader,
   AppIcons,
-  AppInput,
   Block,
   AppText as Text,
 } from '../../components/common';
-import ListFilter from './components/ListFilter';
 import {NavigationProp} from '../../navigation/screen-type';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
@@ -60,6 +51,13 @@ import {
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import SkeletonLoading from '../Visit/SkeletonLoading';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
+import BottomSheet, {
+  BottomSheetScrollView,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
+import FilterListComponent, {
+  IFilterType,
+} from '../../components/common/FilterListComponent';
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -73,8 +71,26 @@ const Customer = () => {
   const dispatch = useDispatch();
   const {bottom} = useSafeAreaInsets();
   const isFocus = useIsFocused();
+
+  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
   const isEnable = useRef<boolean>(false);
   const [modalErrorGPS, setModalErrorGPS] = useState(false);
+  const [isFilterType, setFilterType] = useState<boolean>(true);
+  const [filterTypeData, setFilterTypeData] = useState<IFilterType[]>(
+    CustomerTypeFilterData,
+  );
+  const [filterGroupData, setFilterGroupData] = useState<IFilterType[]>(
+    CustomerGroupFilterData,
+  );
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer?.data,
@@ -103,42 +119,19 @@ const Customer = () => {
   );
 
   const [value, setValue] = React.useState({
-    first: getLabel('nearest'),
-    second: '',
+    first: 'all',
+    second: 'all',
   });
-  const [show, setShow] = React.useState({
-    firstModal: false,
-    secondModal: false,
-  });
-
   const [loading, setLoading] = useState(true);
-  const [valueFilter, setValueFilter] = React.useState<IValueType>({
-    customerType: getLabel('all'),
-    customerGroupType: getLabel('all'),
-  });
-  const [typeFilter, setTypeFilter] = React.useState<string>(
-    AppConstant.CustomerFilterType.loai_khach_hang,
-  );
   const currentIndex = useRef<number>(0);
   const [isPending, startTransition] = useTransition();
   const [customerData, setCustomerData] = React.useState<IDataCustomers[]>([]);
   const navigation = useNavigation<NavigationProp>();
-  const bottomRef = useRef<BottomSheetMethods>(null);
-  const bottomRef2 = useRef<BottomSheetMethods>(null);
-  const filterRef = useRef<BottomSheetMethods>(null);
   const mounted = useRef<boolean>(true);
-  const snapPoints = useMemo(() => ['100%'], []);
+
   const totalPage = useRef<number>(
     Math.ceil(listCustomerResult?.total / listCustomerResult?.page_size),
   );
-
-  const onPressType1 = useCallback(() => {
-    bottomRef.current?.snapToIndex(0);
-  }, [bottomRef.current]);
-
-  const onPressType2 = useCallback(() => {
-    bottomRef2.current?.snapToIndex(0);
-  }, [bottomRef2.current]);
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -182,6 +175,34 @@ const Customer = () => {
     [customerData],
   );
 
+  const handleItemFilter = useCallback(
+    (item: IFilterType) => {
+      if (isFilterType) {
+        const newData = filterTypeData.map(filterTypeItem => {
+          if (item.value === filterTypeItem.value) {
+            return {...filterTypeItem, isSelected: true};
+          } else {
+            return {...filterTypeItem, isSelected: false};
+          }
+        });
+        setValue(prevState => ({...prevState, first: item.label}));
+        setFilterTypeData(newData);
+      } else {
+        const newData = filterGroupData.map(filterGroupItem => {
+          if (item.value === filterGroupItem.value) {
+            return {...filterGroupItem, isSelected: true};
+          } else {
+            return {...filterGroupItem, isSelected: false};
+          }
+        });
+        setValue(prevState => ({...prevState, second: item.label}));
+        setFilterGroupData(newData);
+      }
+      bottomSheetRef.current?.close();
+    },
+    [isFilterType],
+  );
+
   const onRefreshData = useCallback(async () => {
     try {
       dispatch(onLoadApp());
@@ -200,16 +221,32 @@ const Customer = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (customerType?.length > 0) {
+      const newDataGroup = customerType.map((item, index) => {
+        return {
+          label: item.customer_group_name,
+          value: index + 1,
+          isSelected: false,
+        };
+      });
+      setFilterGroupData(
+        [{label: 'all', value: 0, isSelected: true}].concat(newDataGroup),
+      );
+    }
+  }, [customerType]);
+
   React.useEffect(() => {
     if (!isFocus) {
       dispatch(appActions.setSearchCustomerValue(''));
+      setValue({first: 'all', second: 'all'});
     }
   }, [isFocus]);
 
   React.useEffect(() => {
     if (searchCustomerValue && searchCustomerValue.trim().length > 0) {
       dispatch(
-        customerActions.onGetCustomer({customer_name: searchCustomerValue}),
+        customerActions.onGetCustomer({search_key: searchCustomerValue}),
       );
     }
   }, [searchCustomerValue]);
@@ -247,9 +284,9 @@ const Customer = () => {
       setCustomerData([...sortedData(filteredData), ...noLocationCustomer]);
       dispatch(appActions.onLoadAppEnd());
     } else if (
-      valueFilter.customerType === 'Tất cả' &&
-      valueFilter.customerGroupType === 'Tất cả' &&
-      !searchCustomerValue 
+      value.first === 'all' &&
+      value.second === 'all' &&
+      !searchCustomerValue
     ) {
       dispatch(customerActions.onGetCustomer());
     } else if (listCustomer?.length === 0) {
@@ -264,10 +301,6 @@ const Customer = () => {
     };
   }, [listCustomerResult]);
 
-  // useEffect(() => {
-  //   console.log('liscustomer', listCustomerResult.data);
-  // }, [listCustomerResult]);
-
   useEffect(() => {
     if (isFocus && !searchCustomerValue) {
       dispatch(customerActions.onGetCustomer());
@@ -278,49 +311,32 @@ const Customer = () => {
     dispatch(customerActions.getCustomerType());
   });
 
-  const handleApplyFilter = () => {
-    console.log('filter', valueFilter);
-    if (
-      valueFilter.customerType !== 'Tất cả' &&
-      valueFilter.customerGroupType !== 'Tất cả'
-    ) {
+  useEffect(() => {
+    if (value.first !== 'all' && value.second !== 'all') {
       dispatch(
         customerActions.onGetCustomer({
-          customer_type: valueFilter.customerType,
-          customer_group: valueFilter.customerGroupType,
+          customer_type: value.first,
+          customer_group: value.second,
         }),
       );
-    } else if (
-      valueFilter.customerType !== 'Tất cả' &&
-      valueFilter.customerGroupType === 'Tất cả'
-    ) {
+    } else if (value.first !== 'all' && value.second === 'all') {
       dispatch(
         customerActions.onGetCustomer({
-          customer_type: valueFilter.customerType,
+          customer_type: value.first,
           customer_group: '',
         }),
       );
-    } else if (
-      valueFilter.customerType === 'Tất cả' &&
-      valueFilter.customerGroupType !== 'Tất cả'
-    ) {
+    } else if (value.first === 'all' && value.second !== 'all') {
       dispatch(
         customerActions.onGetCustomer({
           customer_type: '',
-          customer_group: valueFilter.customerGroupType,
+          customer_group: value.second,
         }),
       );
     } else {
       dispatch(customerActions.onGetCustomer());
     }
-  };
-  const handleCancel = useCallback(() => {
-    // bottomRef2.current && bottomRef2.current.close();
-    setValueFilter({
-      customerType: getLabel('all'),
-      customerGroupType: getLabel('all'),
-    });
-  }, [valueFilter]);
+  }, [value]);
 
   const onEndReachedThreshold = useCallback(() => {
     if (
@@ -329,37 +345,28 @@ const Customer = () => {
       listCustomer.length > 4
     ) {
       startTransition(() => {
-        if (
-          valueFilter.customerType !== 'Tất cả' &&
-          valueFilter.customerGroupType !== 'Tất cả'
-        ) {
+        if (value.first !== 'all' && value.second !== 'all') {
           dispatch(
             customerActions.getCustomerNewPage({
               page: page + 1,
-              customer_type: valueFilter.customerType,
-              customer_group: valueFilter.customerGroupType,
+              customer_type: value.first,
+              customer_group: value.second,
             }),
           );
-        } else if (
-          valueFilter.customerType !== 'Tất cả' &&
-          valueFilter.customerGroupType === 'Tất cả'
-        ) {
+        } else if (value.first !== 'all' && value.second === 'all') {
           dispatch(
             customerActions.getCustomerNewPage({
               page: page + 1,
-              customer_type: valueFilter.customerType,
+              customer_type: value.first,
               customer_group: '',
             }),
           );
-        } else if (
-          valueFilter.customerType === 'Tất cả' &&
-          valueFilter.customerGroupType !== 'Tất cả'
-        ) {
+        } else if (value.first === 'all' && value.second !== 'all') {
           dispatch(
             customerActions.getCustomerNewPage({
               page: page + 1,
               customer_type: '',
-              customer_group: valueFilter.customerGroupType,
+              customer_group: value.first,
             }),
           );
         } else {
@@ -377,7 +384,7 @@ const Customer = () => {
     } else {
       return null;
     }
-  }, [page, valueFilter]);
+  }, [page, value, listCustomer]);
 
   const onPressAdding = useCallback(() => {
     dispatch(customerActions.setMainAddress({}));
@@ -385,99 +392,37 @@ const Customer = () => {
     navigation.navigate(ScreenConstant.ADDING_NEW_CUSTOMER);
   }, []);
 
-  const renderBottomView = React.useCallback(() => {
+  const _renderFilter = () => {
+    const Item = (isCustomerType: boolean) => {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            if (isCustomerType) {
+              setFilterType(true);
+            } else {
+              setFilterType(false);
+            }
+            bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0);
+          }}
+          style={styles.filterItem}>
+          <Text style={{color: theme.colors.text_secondary, fontSize: 16}}>
+            {isCustomerType ? 'Loại KH' : 'Nhóm KH'}
+            {': '}
+            <Text style={{color: theme.colors.text_primary}}>
+              {isCustomerType ? getLabel(value.first) : getLabel(value.second)}
+            </Text>
+          </Text>
+        </TouchableOpacity>
+      );
+    };
+
     return (
-      <Block block paddingHorizontal={16}>
-        <AppHeader
-          label={getLabel('customer')}
-          onBack={() => bottomRef2.current && bottomRef2.current.close()}
-          backButtonIcon={
-            <AppIcons
-              iconType={AppConstant.ICON_TYPE.IonIcon}
-              name={'close'}
-              size={24}
-              color={theme.colors.text_primary}
-            />
-          }
-        />
-        <View style={styles.containListFilter}>
-          <AppInput
-            label={getLabel('groupCustomer')}
-            value={valueFilter.customerGroupType}
-            editable={false}
-            styles={{marginBottom: 24}}
-            onPress={() => {
-              startTransition(() => {
-                setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
-              });
-              filterRef.current?.snapToIndex(0);
-            }}
-            rightIcon={
-              <TextInput.Icon
-                icon={'chevron-down'}
-                style={{width: 24, height: 24}}
-                color={theme.colors.text_secondary}
-              />
-            }
-          />
-          <AppInput
-            label={getLabel('customerType')}
-            value={valueFilter.customerType}
-            editable={false}
-            styles={{marginBottom: 24}}
-            onPress={() => {
-              startTransition(() => {
-                setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
-              });
-              filterRef.current?.snapToIndex(0);
-            }}
-            rightIcon={
-              <TextInput.Icon
-                icon={'chevron-down'}
-                style={{width: 24, height: 24}}
-                color={theme.colors.text_secondary}
-              />
-            }
-          />
-          {/*<AppInput*/}
-          {/*  label={getLabel('customerBirthDay')}*/}
-          {/*  value={valueFilter.customerBirthday}*/}
-          {/*  editable={false}*/}
-          {/*  onPress={() => {*/}
-          {/*    startTransition(() => {*/}
-          {/*      setTypeFilter(AppConstant.CustomerFilterType.ngay_sinh_nhat);*/}
-          {/*    });*/}
-          {/*    filterRef.current?.snapToIndex(0);*/}
-          {/*  }}*/}
-          {/*  rightIcon={*/}
-          {/*    <TextInput.Icon*/}
-          {/*      icon={'chevron-down'}*/}
-          {/*      style={{width: 24, height: 24}}*/}
-          {/*      color={theme.colors.text_secondary}*/}
-          {/*    />*/}
-          {/*  }*/}
-          {/*/>*/}
-        </View>
-        <View style={styles.containButtonBottom}>
-          <View style={styles.containContentButton}>
-            <TouchableOpacity
-              style={styles.buttonRestart}
-              onPress={handleCancel}>
-              <Text style={styles.restartText}>{getLabel('reset')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.buttonApply}
-              onPress={() => {
-                handleApplyFilter();
-                bottomRef2.current?.close();
-              }}>
-              <Text style={styles.applyText}>{getLabel('apply')}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Block>
+      <View style={styles.filterContainer}>
+        {Item(true)}
+        {Item(false)}
+      </View>
     );
-  }, [valueFilter]);
+  };
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
@@ -491,15 +436,7 @@ const Customer = () => {
             <AppImage source="IconSearch" style={styles.iconSearch} />
           </TouchableOpacity>
         </View>
-        <View style={styles.containFilterView}>
-          <FilterHandle type={'1'} value={value.first} onPress={onPressType1} />
-          <FilterHandle
-            type={'2'}
-            value={value.second}
-            onPress={onPressType2}
-          />
-        </View>
-
+        {_renderFilter()}
         <Text style={styles.containCustomer}>
           <Text style={styles.numberCustomer}>
             {listCustomerResult ? listCustomerResult.total : 0}{' '}
@@ -519,63 +456,24 @@ const Customer = () => {
           />
         )}
       </Block>
-
       <AppBottomSheet
-        bottomSheetRef={bottomRef}
-        useBottomSheetView={show.firstModal}
-        enablePanDownToClose={true}>
-        <View>
-          <View style={styles.tittleHeader}>
-            <Text style={styles.titleText}>{getLabel('distance')}</Text>
-          </View>
-          {listFilter.map(item => {
-            return (
-              <TouchableOpacity
-                style={styles.containItemBottomView}
-                key={item.id.toString()}
-                onPress={() => {
-                  bottomRef.current?.close();
-                  setValue(prev => ({
-                    ...prev,
-                    first: item.title,
-                  }));
-                }}>
-                <Text style={styles.itemText(item.title, value.first)}>
-                  {item.title}
-                </Text>
-                {item.title === value.first && (
-                  <AppIcons
-                    iconType={AppConstant.ICON_TYPE.Feather}
-                    name="check"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </AppBottomSheet>
-      <AppBottomSheet
-        bottomSheetRef={bottomRef2}
-        useBottomSheetView={show.secondModal}
-        snapPointsCustom={snapPoints}
-        // onClose={() => dispatch(appActions.setShowModal(false)) }
-
-        enablePanDownToClose={true}>
-        {renderBottomView()}
-      </AppBottomSheet>
-      <AppBottomSheet
-        bottomSheetRef={filterRef}
-        enablePanDownToClose={true}
-        snapPointsCustom={['60%']}>
-        <ListFilter
-          type={typeFilter}
-          filterRef={filterRef}
-          customerType={customerType}
-          setValueFilter={setValueFilter}
-          valueFilter={valueFilter}
-        />
+        bottomSheetRef={bottomSheetRef}
+        snapPointsCustom={animatedSnapPoints}
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: bottom + 16, paddingHorizontal: 16}}
+          onLayout={handleContentLayout}>
+          <FilterListComponent
+            title={isFilterType ? 'Loại khách hàng' : 'Nhóm khách hàng'}
+            data={isFilterType ? filterTypeData : filterGroupData}
+            handleItem={handleItemFilter}
+            isSearch={false}
+            onClose={() =>
+              bottomSheetRef.current && bottomSheetRef.current.close()
+            }
+          />
+        </BottomSheetScrollView>
       </AppBottomSheet>
       <TouchableOpacity onPress={onPressAdding} style={styles.fab}>
         <AppIcons
@@ -585,12 +483,6 @@ const Customer = () => {
           color={theme.colors.white}
         />
       </TouchableOpacity>
-      {/*<ModalSearchCustomer*/}
-      {/*  data={customerData}*/}
-      {/*  setDataCustomer={setCustomerData}*/}
-      {/*  showModal={showModal}*/}
-      {/*  onBackButtonPress={onBackButtonPress}*/}
-      {/*/>*/}
     </SafeAreaView>
   );
 };
@@ -766,4 +658,47 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'center',
       alignItems: 'center',
     } as ViewStyle,
+    filterItem: {
+      padding: 8,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    } as ViewStyle,
+    filterContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      gap: 16,
+      marginBottom: 16,
+    } as ViewStyle,
   });
+const CustomerTypeFilterData: IFilterType[] = [
+  {
+    label: 'all',
+    value: 1,
+    isSelected: true,
+  },
+  {
+    label: 'Company',
+    value: 2,
+    isSelected: false,
+  },
+  {
+    label: 'Individual',
+    value: 3,
+    isSelected: false,
+  },
+];
+
+const CustomerGroupFilterData: IFilterType[] = [
+  {
+    label: 'all',
+    value: 1,
+    isSelected: true,
+  },
+  {
+    label: 'Loyal',
+    value: 2,
+    isSelected: false,
+  },
+];

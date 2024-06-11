@@ -40,20 +40,11 @@ export type ResponseGenerator = {
 export function* onGetCustomer(action: PayloadAction) {
   if (customerActions.onGetCustomer.match(action)) {
     try {
-      const customerType =
-        // @ts-ignore
-        action.payload?.customer_type === 'Công ty'
-          ? 'Company'
-          : // @ts-ignore
-          action.payload?.customer_type === 'Cá nhân'
-          ? 'Individual'
-          : '';
       yield put(onLoadApp());
-      const response: ResponseGenerator = yield call(getCustomer, {
-        // @ts-ignore
-        ...action.payload,
-        customer_type: customerType,
-      });
+      const response: ResponseGenerator = yield call(
+        getCustomer,
+        action.payload,
+      );
 
       if (response?.status === ApiConstant.STT_OK) {
         yield put(setCustomer(response.data.result));
@@ -171,7 +162,7 @@ export function* updateCustomerSaga(action: PayloadAction) {
       console.error(err, 'err');
     } finally {
       yield put(appActions.onLoadAppEnd());
-      goBack()
+      goBack();
     }
   }
 }
