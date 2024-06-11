@@ -40,8 +40,8 @@ type GetDetailOrder = {
 
 export const get = (params?: PramsTypeOrder) =>
   createApi().get(ApiConstant.GET_ORDER, params);
-export const getDetail = (name: string) =>
-  createApi().get(ApiConstant.GET_ORDER_DETAIL, {name});
+export const getDetail = (name: string, doctype: string) =>
+  createApi().get(ApiConstant.GET_ORDER_DETAIL, {name, doctype});
 export const getListVat = (company: string) =>
   createApi().get(ApiConstant.GET_VATS, {company});
 export const createdOrder = (data: POST_DATA) =>
@@ -50,5 +50,8 @@ export const createdReturnOrder = (data: POST_DATA) =>
   createApi().post(ApiConstant.POST_RETuRN_ORDER, data);
 export const getDetailCheckinOrder = (params: GetDetailOrder) =>
   createApi().get(ApiConstant.GET_DETAIL_CHECKIN_ORDER, params);
-export const deleteOrder = (orderName: string) =>
-  createApi().delete(ApiConstant.DELETE_ORDER, {name: orderName});
+export const deleteOrder = (orderName: string, doctype: string) =>
+  createApi().delete(ApiConstant.DELETE_ORDER, {
+    name: orderName,
+    doctype: doctype,
+  });

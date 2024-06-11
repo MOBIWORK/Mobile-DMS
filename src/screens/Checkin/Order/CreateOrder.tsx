@@ -170,11 +170,11 @@ const CreateOrder = () => {
   };
 
   const onDeleteOrder = async () => {
-    console.log('123', orderResultData?.name);
     setOpenDialog(false);
     dispatch(appActions.setProcessingStatus(true));
     const res: any = await OrderService.deleteOrder(
       orderResultData?.name ?? '',
+      type === 'ORDER' ? 'Sales Order' : 'Sales Invoice',
     );
     if (res?.status === ApiConstant.STT_OK) {
       if (customer) {
@@ -198,11 +198,11 @@ const CreateOrder = () => {
       ) {
         return {
           ...productItem,
-          rate_tax_item: element.item_tax_rate,
-          discount_item_percent: element.discount_percentage,
-          discount_item_amount: element.discount_amount,
-          price: element.rate,
-          total_item_money: element.amount,
+          rate_tax_item: element?.item_tax_rate ?? 0,
+          discount_item_percent: element?.discount_percentage ?? 0,
+          discount_item_amount: element?.discount_amount ?? 0,
+          price: element?.rate ?? 0,
+          total_item_money: element?.amount ? Math.abs(element.amount) : 0,
         };
       } else {
         return productItem;
@@ -446,13 +446,13 @@ const CreateOrder = () => {
   }, [setOpenDate]);
 
   const onCreatedOrder = async () => {
-    dispatch(appActions.setProcessingStatus(true));
+    // dispatch(appActions.setProcessingStatus(true));
     const arrItems = products.map(item => ({
       item_code: item?.item_code,
       qty: item?.quantity,
       rate: item?.price,
       uom: item?.stock_uom,
-      item_tax_template: item?.item_tax_template[0]?.item_tax_template,
+      item_tax_template: item?.item_tax_template[0]?.item_tax_template ?? '',
       rate_tax_item: item?.rate_tax_item,
     }));
     const objectData: any = {
@@ -469,11 +469,10 @@ const CreateOrder = () => {
     if (customer) {
       objectData.customer = customer.name;
     }
-
+    console.log('object', objectData);
     switch (type) {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
-        // console.log('object', objectData);
         if (!orderResultData) {
           const orderRes: any = await OrderService.createdOrder(objectData);
           if (orderRes?.status === ApiConstant.STT_CREATED) {
@@ -486,24 +485,26 @@ const CreateOrder = () => {
         }
         break;
       case 'RETURN_ORDER':
-        const returnOrderRes: any = await OrderService.createdReturnOrder(
-          objectData,
-        );
-        if (returnOrderRes?.status === ApiConstant.STT_CREATED) {
-          setOrderResultData({
-            ...returnOrderRes.data.result?.detail_order,
-            name: returnOrderRes.data.result?.name,
-          });
-          onUpdateItemProduct(
-            returnOrderRes.data.result?.detail_order?.list_items,
+        if (!orderResultData) {
+          const returnOrderRes: any = await OrderService.createdReturnOrder(
+            objectData,
           );
+          if (returnOrderRes?.status === ApiConstant.STT_CREATED) {
+            setOrderResultData({
+              ...returnOrderRes.data.result?.detail_invoice,
+              name: returnOrderRes.data.result?.name,
+            });
+            onUpdateItemProduct(
+              returnOrderRes.data.result?.detail_invoice?.list_items,
+            );
+          }
         }
         break;
       default:
         break;
     }
 
-    dispatch(appActions.setProcessingStatus(false));
+    // dispatch(appActions.setProcessingStatus(false));
     if (orderResultData) {
       completeCheckin();
     }
@@ -722,7 +723,9 @@ const CreateOrder = () => {
                   <Text style={styles.labelPay}>{getLabel('discount')}</Text>
                   <Text style={styles.price}>
                     {CommonUtils.convertToTwoDecimalPlaces(
-                      orderResultData?.discount_amount ?? 0,
+                      orderResultData?.discount_amount
+                        ? Math.abs(orderResultData?.discount_amount)
+                        : 0,
                     )}
                   </Text>
                 </View>
@@ -730,7 +733,9 @@ const CreateOrder = () => {
                   <Text style={styles.labelPay}>VAT</Text>
                   <Text style={styles.price}>
                     {CommonUtils.convertToTwoDecimalPlaces(
-                      orderResultData?.total_taxes_and_charges ?? 0,
+                      orderResultData?.total_taxes_and_charges
+                        ? Math.abs(orderResultData.total_taxes_and_charges)
+                        : 0,
                     )}
                   </Text>
                 </View>
@@ -738,7 +743,9 @@ const CreateOrder = () => {
                   <Text style={styles.labelPay}>{getLabel('totalPrice')}</Text>
                   <Text style={styles.totalPrice}>
                     {CommonUtils.convertToTwoDecimalPlaces(
-                      orderResultData?.total ?? 0,
+                      orderResultData?.total
+                        ? Math.abs(orderResultData.total)
+                        : 0,
                     )}
                   </Text>
                 </View>
@@ -757,7 +764,9 @@ const CreateOrder = () => {
             <Text style={styles.tTotalPrice}>{getLabel('totalPrice')}</Text>
             <Text style={styles.totalPrice}>
               {CommonUtils.convertToTwoDecimalPlaces(
-                orderResultData?.grand_total ?? 0,
+                orderResultData?.grand_total
+                  ? Math.abs(orderResultData.grand_total)
+                  : 0,
               )}
             </Text>
           </Block>
