@@ -446,7 +446,7 @@ const CreateOrder = () => {
   }, [setOpenDate]);
 
   const onCreatedOrder = async () => {
-    // dispatch(appActions.setProcessingStatus(true));
+    dispatch(appActions.setProcessingStatus(true));
     const arrItems = products.map(item => ({
       item_code: item?.item_code,
       qty: item?.quantity,
@@ -503,8 +503,7 @@ const CreateOrder = () => {
       default:
         break;
     }
-
-    // dispatch(appActions.setProcessingStatus(false));
+    dispatch(appActions.setProcessingStatus(false));
     if (orderResultData) {
       completeCheckin();
     }
