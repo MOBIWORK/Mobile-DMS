@@ -186,10 +186,11 @@ const AddingNewCustomer = () => {
       image: newListData.faceimage ? newListData.faceimage : '',
     };
 
+    console.log(updateListData,'update List Data')
     dispatch(setNewCustomer(newListData));
     dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
-    storage.set('time', '');
+    // storage.set('time', '');
     const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
       navigation.navigate(ScreenConstant.MAIN_TAB, {
@@ -254,6 +255,7 @@ const AddingNewCustomer = () => {
     params => {
       setOpenDate(false);
       setDate(params.date);
+      setListData(prev =>({...prev,custom_birthday:params.date?.getTime()}))
     },
     [setOpenDate, setDate],
   );

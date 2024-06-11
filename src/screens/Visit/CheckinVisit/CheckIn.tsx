@@ -53,7 +53,10 @@ import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {IItemCheckIn, categoriesCheckinList} from '../../../redux-store/checkin-reducer/type';
+import {
+  IItemCheckIn,
+  categoriesCheckinList,
+} from '../../../redux-store/checkin-reducer/type';
 import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
@@ -64,88 +67,64 @@ import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import {ListCustomerRoute} from '../../../models/types';
+import {useMMKVString} from 'react-native-mmkv';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
-  const intervalIdRef = useRef<any>(0);
-  const mmkv: any = storage.getString('time');
-  const curTIme: any = storage.getString('curTime');
-
-  const [appState, setAppState] = useState(AppState.currentState);
+  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const isFocus = useIsFocused();
+  const [storedStartTime, set] = useMMKVString('time');
+  const [storedElapsedTime, setS] = useMMKVString('curTime');
+
+  const loadStoredTime = () => {
+    if (storedStartTime && storedElapsedTime) {
+      const currentTimeStamp = moment().valueOf();
+      const elapsedSinceStored = currentTimeStamp - Number(storedStartTime);
+      const totalElapsedTime =
+        Number(storedElapsedTime) * 1000 + elapsedSinceStored;
+      setElapsedTime(Math.ceil(totalElapsedTime / 1000));
+    }
+  };
+
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (nextAppState === 'active' && isFocus) {
+      loadStoredTime();
+    } else if (nextAppState === 'background') {
+      setS( String(elapsedTime));
+      set(String(moment(new Date()).valueOf()));
+    }
+  };
 
   useEffect(() => {
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active' && isFocus) {
-        const newTimeStamp = moment(new Date()).valueOf();
-        const current = curTIme * 1000;
-
-        if (mmkv?.trim().length > 0) {
-          startTransition(() => {
-            const currentTime = Math.ceil(
-              Number(newTimeStamp) - Number(mmkv) + current,
-            );
-            setElapsedTime(Math.ceil(currentTime / 1000));
-          });
-          intervalIdRef.current = setInterval(() => {
-            setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-          }, 1000);
-        }
-        // Update every 1 second
-      } else if (nextAppState === 'background' && !isFocus) {
-        if (mmkv?.trim().length > 0) {
-          setAppState(nextAppState);
-          storage.set('curTime', String(elapsedTime));
-          intervalIdRef.current = setInterval(() => {
-            setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-          }, 1000);
-        } else {
-          const timeStamp = moment(new Date()).valueOf();
-          storage.set('time', String(timeStamp));
-          storage.set('curTime', String(elapsedTime));
-        }
-      } else {
-        setAppState(nextAppState);
-        const timeStamp = moment(new Date()).valueOf();
-        storage.set('time', String(timeStamp));
-        storage.set('curTime', String(elapsedTime));
-      }
-    };
-
     const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,
     );
-    // Start the interval
     return () => {
       subscription.remove();
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
+      }
     };
   }, []);
 
   useEffect(() => {
-    if (mmkv?.trim().length > 0 && isFocus) {
-      console.log('run ???');
-      const newTimeStamp = moment(new Date()).valueOf();
-      const current = curTIme * 1000;
-      startTransition(() => {
-        const currentTime = Math.ceil(
-          Number(newTimeStamp) - Number(mmkv) + current,
-        );
-        setElapsedTime(Math.ceil(currentTime / 1000));
-        // clearInterval(intervalIdRef.current);
-      });
+    if (isFocus) {
+      loadStoredTime();
       intervalIdRef.current = setInterval(() => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
     } else {
-      // const newTimeStamp = moment(new Date()).valueOf();
-      storage.set('curTime', String(elapsedTime));
-      intervalIdRef.current = setInterval(() => {
-        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-      }, 1000);
+      setS( String(elapsedTime));
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
+      }
     }
+
     return () => {
-      clearInterval(intervalIdRef.current);
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
+      }
     };
   }, [isFocus]);
 
@@ -180,7 +159,7 @@ const CheckIn = () => {
       ? dataCheckIn.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
-
+  const [appState, setAppState] = useState(AppState.currentState);
   const elapsedTime = useTimer();
 
   const systemConfig: DMSConfigMobile = useSelector(
@@ -237,7 +216,7 @@ const CheckIn = () => {
     return totalSeconds;
   };
 
-  const onSubmitErrDialog = () => {
+  const onSubmitErrDialog = useCallback(() => {
     switch (msgCheckOutErr.type) {
       case 'inventory':
         return navigation.navigate(ScreenConstant.CHECKIN_INVENTORY, {
@@ -257,7 +236,30 @@ const CheckIn = () => {
       case 'distance':
         return setOpenDialogErr(false);
     }
+  }, [msgCheckOutErr, openDialogErr]);
+
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (nextAppState === 'active') {
+      console.log('run active');
+      setAppState(nextAppState);
+      return null;
+    } else {
+      console.log('run back');
+      setAppState(nextAppState);
+      dispatch(checkinActions.setDataCategoriesCheckin(categoriesCheckin));
+    }
   };
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+    // Start the interval
+    return () => {
+      subscription.remove();
+    };
+  }, [appState]);
 
   const checkGPS = useCallback(async () => {
     if (Platform.OS === 'android') {
@@ -337,6 +339,8 @@ const CheckIn = () => {
       // }
     }
   }, [enableGPS]);
+
+  // console.log(categoriesCheckin.map(item => item.isDone),'cate')
 
   const isValidCheckOut = useCallback(
     (currentLocation: GeolocationResponse) => {
@@ -487,33 +491,6 @@ const CheckIn = () => {
 
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
-
-  // const onConfirmCheckout = useCallback(async () => {
-  //   // console.log(enableGPS,'enable')
-  //   if (enableGPS || Platform.OS === 'ios') {
-  //     try {
-  //       dispatch(appActions.setProcessingStatus(true));
-  //       const res: any = await AppService.checkOut(
-  //         dataCheckIn.checkin_id,
-  //         dataCheckIn.item.name,
-  //       );
-  //       if (res?.status === ApiConstant.STT_OK) {
-  //         dispatch(checkinActions.resetData());
-  //         // dispatch
-  //         dispatch(appActions.setDataCheckIn({}));
-  //         storage.set('time', '');
-  //         goBack();
-  //       }
-  //     } catch (e) {
-  //       dispatch(appActions.setProcessingStatus(false));
-  //     } finally {
-  //       dispatch(appActions.setProcessingStatus(false));
-  //     }
-  //   }
-  //   setShow(false);
-  // }, [dataCheckIn, enableGPS]);
-
-
 
 
 

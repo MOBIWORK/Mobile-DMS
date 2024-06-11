@@ -30,8 +30,8 @@ const Overview = (props: Props) => {
   return (
     <Block block>
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
-        {props.data != null &&
-          props.data.contacts.length > 0 &&
+        {props.data != null && props.data.contacts != undefined &&
+           props.data.contacts.length > 0 &&
           props.data.contacts != null && (
             <Block paddingTop={16} paddingHorizontal={16}>
               <AppText fontSize={14} fontWeight="500" lineHeight={21}>
@@ -45,7 +45,7 @@ const Overview = (props: Props) => {
             </Block>
           )}
 
-        {props.data != null &&
+        {props.data != null &&props.data.address != undefined &&
           props.data.address.length > 0 &&
           props.data.address != null && (
             <Block paddingHorizontal={16} paddingTop={16}>

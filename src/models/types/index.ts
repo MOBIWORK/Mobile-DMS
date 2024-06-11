@@ -391,7 +391,7 @@ export interface DetailCustomerType {
   credit_limits?: any[];
   companies?: any[];
   address?: Address[];
-  contacts?: Contact[];
+  contacts?: ContactCard[];
   routers?: any[];
   frequency?: any[];
 }
@@ -519,6 +519,13 @@ export interface Contact {
   last_name: string;
   is_primary_contact: number;
   is_billing_contact: number;
+}
+export interface ContactCard {
+  address: string
+  first_name: string
+  last_name: any
+  name: string
+  phone: string
 }
 
 export interface IDataItem {

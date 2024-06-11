@@ -58,7 +58,7 @@ const Contact = (props: Props) => {
           maxToRenderPerBatch={10}
           decelerationRate={'fast'}
           renderItem={({item}) => {
-            return <CardContactView data={item} />;
+            return <CardContactView data={item} primary={props.data.customer_primary_contact} />;
           }}
         />
       ) : props.data != null && props.data?.customer_primary_contact != null ? (

@@ -10,14 +10,14 @@ import {
 import Modal from 'react-native-modal';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 
-import {Address, Contact} from '../../../models/types';
+import {Address, Contact, ContactCard} from '../../../models/types';
 import CardChoose from './CardChoose';
 type Props = {
   visible: boolean;
   onBackButtonPress: () => void;
   type: string;
   listAddress: Address[];
-  listContact: Contact[];
+  listContact: ContactCard[];
   onPressData:(data:any,type:string) => void
 };
 

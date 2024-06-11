@@ -11,7 +11,6 @@ import {
 import React, {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   useTransition,
@@ -25,7 +24,6 @@ import {AppTheme, useTheme} from '../../layouts/theme';
 import {Address, Contact, Overview} from './screen';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import FormAddress from '../Customer/components/FormAddress';
-import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {AppConstant, ScreenConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
@@ -81,7 +79,7 @@ const DetailCustomer = () => {
     };
   }, []);
 
-  // console.log(data,'data customer')
+  console.log(data,'data customer')
 
 
   const routes = useRef([

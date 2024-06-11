@@ -6,7 +6,7 @@ import {AppText as Text, SvgIcon, Block} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
 
 import {useTranslation} from 'react-i18next';
-import {Address, Contact} from '../../../models/types';
+import {Address, Contact, ContactCard} from '../../../models/types';
 
 type Props = CardAddressType | CardContactType;
 
@@ -17,7 +17,7 @@ type CardAddressType = {
 };
 type CardContactType = {
   type: 'contact';
-  mainContactAddress: Contact;
+  mainContactAddress: ContactCard;
   priContact?: string;
 };
 
@@ -27,6 +27,8 @@ const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+
+console.log(props,'props')
 
   return (
     <Block style={styles.card}>
@@ -118,11 +120,11 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="black"
               lineHeight={21}>
-              {/* {`${
-                props.mainContactAddress.first_name
-                  ? `${props.mainContactAddress.first_name}, `
+              {`${
+                props.mainContactAddress.address
+                  ? `${props.mainContactAddress.address.replace(/\//g, ', ')}, `
                   : ''
-              }`} */}
+              }`}
             </Text>
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
@@ -135,8 +137,8 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="black"
               lineHeight={21}>
-              {props.mainContactAddress.mobile_no != null
-                ? formatPhoneNumber(props.mainContactAddress.mobile_no)
+              {props.mainContactAddress.phone != null
+                ? formatPhoneNumber(props.mainContactAddress.phone)
                 : '---'}
             </Text>
           </Block>

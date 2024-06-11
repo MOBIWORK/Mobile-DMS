@@ -142,7 +142,7 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
                 onPress={() => {
                   setData(prev => ({
                     ...prev,
-                    customer_type: getLabel(item.title),
+                    customer_type: item.title,
                   }));
                 }}>
                 <Text
