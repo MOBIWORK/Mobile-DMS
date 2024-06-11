@@ -324,7 +324,7 @@ const FormAddress = (props: Props) => {
   }, [contactSelectedData]);
 
   return (
-    <SafeAreaView style={styles.root} edges={['bottom']}>
+    <SafeAreaView style={styles.root} edges={['bottom','top']}>
       {(screen === 'Adding' || screen === 'AddingContact') &&
       ((typeFilter === AppConstant.CustomerFilterType.dia_chi &&
         addressSelectedData.length !== 3) ||
@@ -705,8 +705,10 @@ const FormAddress = (props: Props) => {
               onChangeValue={setTxtContactDetail}
               hiddenRightIcon={true}
             />
-            <Block style={styles.containButtonBottom(typeFilter)}>
-              <Block style={styles.containContentButton}>
+          
+          </Block>
+          <Block style={styles.containButtonBottom(typeFilter)} >
+              <Block style={styles.containContentButton} >
                 <TouchableOpacity
                   style={styles.buttonRestart}
                   onPress={() => {
@@ -731,7 +733,6 @@ const FormAddress = (props: Props) => {
                 </TouchableOpacity>
               </Block>
             </Block>
-          </Block>
         </>
       )}
     </SafeAreaView>
@@ -820,7 +821,7 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
     } as ViewStyle,
     containButtonBottom: (typeFilter: string) =>
       ({
-        flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 1 : 1,
+        flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 0 : 0,
         padding: 16,
         flexDirection: 'column',
         justifyContent: 'flex-end',

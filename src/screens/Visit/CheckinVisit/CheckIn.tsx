@@ -53,7 +53,7 @@ import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
+import {IItemCheckIn, categoriesCheckinList} from '../../../redux-store/checkin-reducer/type';
 import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
@@ -75,16 +75,17 @@ const useTimer = () => {
   const isFocus = useIsFocused();
 
   useEffect(() => {
-
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active' && isFocus) {
         const newTimeStamp = moment(new Date()).valueOf();
-      const current = curTIme * 1000;
+        const current = curTIme * 1000;
 
         if (mmkv?.trim().length > 0) {
           startTransition(() => {
-            const currentTime = Math.ceil(Number(newTimeStamp) - Number(mmkv) + current);
-            setElapsedTime(Math.ceil(currentTime / 1000) );
+            const currentTime = Math.ceil(
+              Number(newTimeStamp) - Number(mmkv) + current,
+            );
+            setElapsedTime(Math.ceil(currentTime / 1000));
           });
           intervalIdRef.current = setInterval(() => {
             setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
@@ -102,14 +103,12 @@ const useTimer = () => {
           const timeStamp = moment(new Date()).valueOf();
           storage.set('time', String(timeStamp));
           storage.set('curTime', String(elapsedTime));
-
         }
       } else {
         setAppState(nextAppState);
         const timeStamp = moment(new Date()).valueOf();
         storage.set('time', String(timeStamp));
         storage.set('curTime', String(elapsedTime));
-
       }
     };
 
@@ -123,10 +122,9 @@ const useTimer = () => {
     };
   }, []);
 
-
   useEffect(() => {
     if (mmkv?.trim().length > 0 && isFocus) {
-      console.log('run ???')
+      console.log('run ???');
       const newTimeStamp = moment(new Date()).valueOf();
       const current = curTIme * 1000;
       startTransition(() => {
@@ -514,6 +512,12 @@ const CheckIn = () => {
   //   }
   //   setShow(false);
   // }, [dataCheckIn, enableGPS]);
+
+
+
+  useEffect(() => {
+    dispatch(checkinActions.setDataCategoriesCheckin(categoriesCheckinList));
+  }, []);
 
   useDeepCompareEffect(() => {
     if (route === false) {

@@ -35,6 +35,7 @@ const AppInput: FC<AppInputProps> = ({
   const [enable, setEnable] = useState(disable);
   const theme = useTheme();
   const inputStyle = rootStyles(theme);
+
   return (
     <TouchableOpacity disabled={ editable ? !enable : false} onPress={onPress}>
       <TextInput
@@ -121,6 +122,7 @@ type AppInputPropsNonEditable = {
 } & AppInputPropsBase;
 type AppInputProps = AppInputPropsEditable | AppInputPropsNonEditable;
 export default React.memo(AppInput, isEqual);
+
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     contentStyle: {
