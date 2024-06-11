@@ -449,14 +449,15 @@ const SelectProducts = () => {
       );
     }
   };
-  const onRefreshData = useCallback(async () => {
+  const onRefreshData = useCallback(() => {
     setTextSearch('');
     setShowSearch(false);
     dispatch(productActions.resetDataProduct());
     dispatch(productActions.updateListProduct([]));
     dispatch(productActions.updateProductSelect([]));
     fetchProduct();
-  }, [dispatch]);
+  }, []);
+
   const cancelResetData = async () => {
     await setShowSearch(false);
   };
