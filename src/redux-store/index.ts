@@ -9,7 +9,7 @@ const persistedReducer = persistReducer(
   {
     key: 'root',
     storage: reduxPersistStorage,
-    whitelist: ['app'],
+    whitelist: ['app','checkin'],
     timeout: 1000,
   },
   allReducer,
