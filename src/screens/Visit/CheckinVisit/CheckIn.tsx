@@ -78,7 +78,7 @@ const useTimer = () => {
 
   const loadStoredTime = () => {
     if (storedStartTime && storedElapsedTime) {
-      const currentTimeStamp = moment().valueOf();
+      const currentTimeStamp = moment(new Date()).valueOf();
       const elapsedSinceStored = currentTimeStamp - Number(storedStartTime);
       const totalElapsedTime =
         Number(storedElapsedTime) * 1000 + elapsedSinceStored;

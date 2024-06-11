@@ -50,6 +50,9 @@ import ProgressCircle from 'react-native-progress-circle';
 import {CheckinService} from '../../../services';
 import {useTranslation} from 'react-i18next';
 import Modal from 'react-native-modal';
+import {storage} from '../../../utils/commom.utils';
+import moment from 'moment';
+import {useMMKVString} from 'react-native-mmkv';
 export interface AlbumBottomSheet extends IFilterType {
   numPicsRequired?: string;
 }
@@ -67,6 +70,8 @@ const TakePicture = () => {
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
   const [error, setError] = useState(false);
   const [albumError, setAlbumError] = useState<any[]>([]);
+  const [storedStartTime, set] = useMMKVString('time');
+
   const totalImageRequire = useMemo(
     () =>
       albumImageData
@@ -164,6 +169,12 @@ const TakePicture = () => {
                   startTransition(() => {
                     setMessage(totalItemsProcessed);
                     dispatch(appActions.postImageCheckIn(data.current));
+                    storage.set(
+                      'time',
+                      String(
+                        Number(storedStartTime) - moment(new Date()).valueOf(),
+                      ),
+                    );
                     setError(false);
                   });
                 }
@@ -191,6 +202,12 @@ const TakePicture = () => {
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
     dispatch(appActions.clearListImage());
+    // storage.set('time',String(moment(new Date()).valueOf()))
+    storage.set(
+      'time',
+      String(Number(storedStartTime) - moment(new Date()).valueOf()),
+    );
+
     setLoading(false);
     navigation.goBack();
   };
@@ -202,7 +219,8 @@ const TakePicture = () => {
     ]);
     if (
       (granted['android.permission.CAMERA'] &&
-      granted['android.permission.WRITE_EXTERNAL_STORAGE']) || Platform.OS === 'ios'
+        granted['android.permission.WRITE_EXTERNAL_STORAGE']) ||
+      Platform.OS === 'ios'
     ) {
       await CameraUtils.openImagePickerCamera((img, base64) => {
         const newListImage = [
@@ -269,7 +287,7 @@ const TakePicture = () => {
       const res: any = await CheckinService.getListAlbum();
       if (res?.result?.length > 0) {
         const listAlbumResult: ListAlbumType[] = res.result;
-        console.log(res.result,'result album')
+        console.log(res.result, 'result album');
         const listAlbum = listAlbumResult.map((item, index) => {
           return {
             id: item.ma_album,
@@ -702,7 +720,11 @@ const createStyleSheet = (theme: ExtendedTheme) =>
     uploadImage: (mess: number, total: number) =>
       ({
         backgroundColor:
-          mess >= total ? theme.colors.primary : theme.colors.bg_disable,
+          total != 0
+            ? mess >= total
+              ? theme.colors.primary
+              : theme.colors.bg_disable
+            : theme.colors.primary,
       } as ViewStyle),
     buttonCancel: {
       height: 36,

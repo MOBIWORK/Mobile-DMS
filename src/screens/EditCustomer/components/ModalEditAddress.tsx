@@ -153,7 +153,7 @@ const ModalEditAddress = ({
     }
   }, []);
 
-  console.log(addressObj, 'sss');
+
   const onPressButtonGetLocation = () => {
     CommonUtils.getCurrentLocation(
       locations => {
