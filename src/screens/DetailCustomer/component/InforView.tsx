@@ -2,7 +2,12 @@ import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {DetailCustomerType, IDataCustomers} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
-import {AppText, Block, SvgIcon} from '../../../components/common';
+import {
+  AppText,
+  Block,
+  SvgIcon,
+  AppText as Text,
+} from '../../../components/common';
 import {MainLayout} from '../../../layouts';
 import Mapbox from '@rnmapbox/maps';
 import {useTranslation} from 'react-i18next';
@@ -20,6 +25,7 @@ const InforBlock = (props: Props) => {
   const styles = rootStyles(theme);
   const ref = useRef<Mapbox.Camera>(null);
   const {t: translate} = useTranslation();
+  const [isError, setIsError] = useState(false);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
 
@@ -29,14 +35,34 @@ const InforBlock = (props: Props) => {
   return (
     <Block style={styles.root}>
       <Block style={styles.containImage}>
-        {props?.data?.image && (
+        {props?.data?.image && !isError ? (
           <Image
             source={{
               uri: props.data.image !== undefined && props.data.image,
             }}
             style={styles.imageStyle}
             resizeMode="center"
+            onError={err => {
+              if (err.nativeEvent.error === 'unknown image format') {
+                setIsError(true);
+              } else {
+                false;
+              }
+            }}
+            alt="customerImage"
           />
+        ) : (
+          <Block
+            width={90}
+            height={90}
+            colorTheme="bg_neutral"
+            borderRadius={10}
+            justifyContent="center"
+            alignItems="center">
+            <Text numberOfLines={1} fontSize={30}  colorTheme='text_secondary' >
+              {props.data.name && props.data.name.slice(0,2)}
+            </Text>
+          </Block>
         )}
       </Block>
       <MainLayout style={styles.containContent}>
@@ -91,7 +117,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-             {props.data.customer_type != null
+            {props.data.customer_type != null
               ? translate(props.data.customer_type.toLowerCase())
               : ' ---'}
           </AppText>

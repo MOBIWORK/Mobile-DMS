@@ -20,11 +20,13 @@ import {
 import {
   FlatList,
   Image,
+  ImageStyle,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Platform,
   RefreshControl,
   StyleSheet,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -89,6 +91,7 @@ import {ObjectId} from 'bson';
 import {MapView} from './Component/MapView';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {storage} from '../../../utils/commom.utils';
+import FilterHandle from '../../Customer/components/FilterHandle';
 
 //config Mapbox
 
@@ -320,63 +323,62 @@ const ListVisit = () => {
   const _renderHeader = () => {
     return (
       <Block paddingHorizontal={16}>
-        <AppHeader
-          hiddenBackButton
-          label={getLabel('visit')}
-          labelStyle={{textAlign: 'left'}}
-          rightButton={
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <TouchableOpacity
-                onPress={() => {
-                  setShowListVisit(!isShowListVisit);
-                  setVisitItemSelected(null);
-                }}>
-                <Image
-                  source={
-                    isShowListVisit ? ImageAssets.MapIcon : ImageAssets.ListIcon
-                  }
-                  style={{width: 28, height: 28}}
-                  tintColor={colors.text_secondary}
-                  resizeMode={'cover'}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(ScreenConstant.SEARCH_VISIT)
-                }>
-                <Image
-                  source={ImageAssets.SearchIcon}
-                  style={{width: 28, height: 28, marginLeft: 16}}
-                  tintColor={colors.text_secondary}
-                  resizeMode={'cover'}
-                />
-              </TouchableOpacity>
-            </View>
-          }
-        />
-        <Block
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-start"
-          marginTop={16}>
+        <Block style={styles.rootHeader}>
+          <Text style={styles.labelStyle}>{getLabel('visit')}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() => {
+                setShowListVisit(!isShowListVisit);
+                setVisitItemSelected(null);
+              }}>
+              <Image
+                source={
+                  isShowListVisit ? ImageAssets.MapIcon : ImageAssets.ListIcon
+                }
+                style={{width: 28, height: 28}}
+                tintColor={colors.text_secondary}
+                resizeMode={'cover'}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(ScreenConstant.SEARCH_VISIT)}>
+              <Image
+                source={ImageAssets.SearchIcon}
+                style={{width: 28, height: 28, marginLeft: 16}}
+                tintColor={colors.text_secondary}
+                resizeMode={'cover'}
+              />
+            </TouchableOpacity>
+          </View>
+        </Block>
+
+        <Block direction="row" alignItems="center" justifyContent="flex-start">
           <TouchableOpacity
             onPress={() =>
               distanceRef.current && distanceRef.current.snapToIndex(0)
             }
             style={styles.touchableButton}>
-            <Text style={{color: colors.text_secondary}}>
-              {getLabel('distance')}:
+            <Text style={styles.titleText}>
+              {getLabel('distance')}:{'  '}
             </Text>
-            <Text style={{color: colors.text_primary, marginLeft: 8}}>
-              {distanceFilterValue}
+            <Text style={styles.contentText}>{distanceFilterValue}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.touchableButton}
+            onPress={() =>
+              bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
+            }>
+            <AppImage source="IconFilter" style={styles.iconStyle} />
+            <Text style={styles.contentSecondText}>
+              {getLabel('otherFilters')}
             </Text>
           </TouchableOpacity>
-          <FilterView
+          {/* <FilterView
             style={{marginLeft: 12}}
             onPress={() =>
               bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
             }
-          />
+          /> */}
         </Block>
       </Block>
     );
@@ -940,12 +942,85 @@ const ListVisit = () => {
     );
   }, []);
 
-  const onPressToDetail = useCallback(async (item: VisitListItemType) => {
-    currentSelect.current = item;
-    if (Platform.OS === 'android') {
-      const checkEnabled: boolean = await isLocationEnabled();
-      if (checkEnabled) {
-        setModalErrorGPS(false)
+  const onPressToDetail = useCallback(
+    async (item: VisitListItemType) => {
+      currentSelect.current = item;
+      if (Platform.OS === 'android') {
+        const checkEnabled: boolean = await isLocationEnabled();
+        if (checkEnabled) {
+          setModalErrorGPS(false);
+          startEffect(() => {
+            let log: LocationProps = JSON.parse(
+              item.customer_location_primary!,
+            );
+            let uniqueID = new ObjectId();
+            startEffect(() => {
+              CommonUtils.getCurrentLocation(
+                location => {
+                  let distanceCal = calculateDistance(
+                    location.coords.latitude,
+                    location.coords.longitude,
+                    log?.lat || 0,
+                    log?.long || 0,
+                  );
+                  let data: any = {
+                    checkin_id:
+                      dataCheckIn &&
+                      dataCheckIn?.kh_ma === item.customer_code &&
+                      dataCheckIn.checkin_id !== undefined
+                        ? dataCheckIn.checkin_id
+                        : uniqueID,
+                    kh_ma: item.customer_code,
+                    kh_ten: item.customer_name,
+                    kh_diachi:
+                      item.customer_primary_address?.address_title ?? null,
+                    kh_long: log?.long ?? '',
+                    kh_lat: log?.lat ?? '',
+                    checkin_giovao: new Date().getTime() / 1000,
+                    checkin_pinvao:
+                      batteryLevel > 0
+                        ? Math.round(batteryLevel * 10000) / 100
+                        : -Math.round(batteryLevel * 10000) / 100,
+                    checkin_khoangcach: distanceCal,
+                    createdDate: moment(new Date()).valueOf(),
+                    checkin_timegps: moment(
+                      new Date(location.timestamp * 1000),
+                    ).format('hh:mm'),
+                    checkin_dochinhxac: location.coords.accuracy,
+                    checkinvalidate_khoangcachcheckin:
+                      systemConfig.saiso_chophep_kb_vitringoaisaiso,
+                    checkinvalidate_khoangcachcheckout:
+                      systemConfig.saiso_chophep_checkout_ngoaisaiso,
+                    checkin_trangthaicuahang: true,
+                    checkin_donhang: '',
+                    checkin_giora: null,
+                    checkin_hinhanh: [],
+                    checkin_lat: location.coords.latitude,
+                    checkin_long: location.coords.longitude,
+                    checkin_pinra: 0,
+                    checkout_khoangcach: 0,
+                    createByName: '',
+                    createdByEmail: '',
+                    item: item,
+                    isDetail: true,
+                    ...item,
+                  };
+
+                  // setModalAlert(prev => ({...prev, status: false}));
+
+                  navigate(ScreenConstant.VISIT_DETAIL, {
+                    data: data,
+                  });
+                  dispatch(appActions.setDataCheckIn(data));
+                },
+                error => backgroundErrorListener(error.code),
+              );
+            });
+          });
+        } else {
+          setModalErrorGPS(true);
+        }
+      } else {
         startEffect(() => {
           let log: LocationProps = JSON.parse(item.customer_location_primary!);
           let uniqueID = new ObjectId();
@@ -1012,77 +1087,10 @@ const ListVisit = () => {
             );
           });
         });
-      } else {
-        setModalErrorGPS(true);
       }
-    } else {
-      startEffect(() => {
-        let log: LocationProps = JSON.parse(item.customer_location_primary!);
-        let uniqueID = new ObjectId();
-        startEffect(() => {
-          CommonUtils.getCurrentLocation(
-            location => {
-              let distanceCal = calculateDistance(
-                location.coords.latitude,
-                location.coords.longitude,
-                log?.lat || 0,
-                log?.long || 0,
-              );
-              let data: any = {
-                checkin_id:
-                  dataCheckIn &&
-                  dataCheckIn?.kh_ma === item.customer_code &&
-                  dataCheckIn.checkin_id !== undefined
-                    ? dataCheckIn.checkin_id
-                    : uniqueID,
-                kh_ma: item.customer_code,
-                kh_ten: item.customer_name,
-                kh_diachi: item.customer_primary_address?.address_title ?? null,
-                kh_long: log?.long ?? '',
-                kh_lat: log?.lat ?? '',
-                checkin_giovao: new Date().getTime() / 1000,
-                checkin_pinvao:
-                  batteryLevel > 0
-                    ? Math.round(batteryLevel * 10000) / 100
-                    : -Math.round(batteryLevel * 10000) / 100,
-                checkin_khoangcach: distanceCal,
-                createdDate: moment(new Date()).valueOf(),
-                checkin_timegps: moment(
-                  new Date(location.timestamp * 1000),
-                ).format('hh:mm'),
-                checkin_dochinhxac: location.coords.accuracy,
-                checkinvalidate_khoangcachcheckin:
-                  systemConfig.saiso_chophep_kb_vitringoaisaiso,
-                checkinvalidate_khoangcachcheckout:
-                  systemConfig.saiso_chophep_checkout_ngoaisaiso,
-                checkin_trangthaicuahang: true,
-                checkin_donhang: '',
-                checkin_giora: null,
-                checkin_hinhanh: [],
-                checkin_lat: location.coords.latitude,
-                checkin_long: location.coords.longitude,
-                checkin_pinra: 0,
-                checkout_khoangcach: 0,
-                createByName: '',
-                createdByEmail: '',
-                item: item,
-                isDetail: true,
-                ...item,
-              };
-
-              // setModalAlert(prev => ({...prev, status: false}));
-
-              navigate(ScreenConstant.VISIT_DETAIL, {
-                data: data,
-              });
-              dispatch(appActions.setDataCheckIn(data));
-            },
-            error => backgroundErrorListener(error.code),
-          );
-        });
-      });
-    }
-  }, [modalErrorGPS]);
+    },
+    [modalErrorGPS],
+  );
 
   const onBackButtonPress = useCallback(() => {
     setModalUpdateLocation(prev => ({...prev, status: false}));
@@ -1254,12 +1262,15 @@ const rootStyles = (theme: ExtendedTheme) =>
     touchableButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'flex-start',
-      padding: 8,
-      borderRadius: 16,
+      justifyContent: 'center',
+      backgroundColor: theme.colors.divider,
       borderWidth: 1,
+      padding: 6,
+      borderRadius: 16,
       borderColor: theme.colors.border,
-      maxWidth: 180,
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+      marginRight:8
     } as ViewStyle,
     buttonModal: {
       flex: 1,
@@ -1271,4 +1282,42 @@ const rootStyles = (theme: ExtendedTheme) =>
       justifyContent: 'center',
       alignItems: 'center',
     } as ViewStyle,
+    rootHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      height: 48,
+      marginBottom: 16,
+    } as ViewStyle,
+    labelStyle: {
+      fontSize: 24,
+      color: theme.colors.text_primary,
+      lineHeight: 25,
+      fontWeight: '500',
+      textAlign: 'left',
+      // alignSelf:'flex-end'
+    } as TextStyle,
+    titleText: {
+      color: theme.colors.text_secondary,
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '500',
+    } as TextStyle,
+    contentText: {
+      color: '#000',
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '500',
+    } as TextStyle,
+    iconStyle: {
+      width: 16,
+      height: 16,
+      marginRight: 4,
+    } as ImageStyle,
+    contentSecondText: {
+      color: '#000',
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '400',
+    } as TextStyle,
   });

@@ -202,12 +202,6 @@ const TakePicture = () => {
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
     dispatch(appActions.clearListImage());
-    // storage.set('time',String(moment(new Date()).valueOf()))
-    storage.set(
-      'time',
-      String(Number(storedStartTime) - moment(new Date()).valueOf()),
-    );
-
     setLoading(false);
     navigation.goBack();
   };
