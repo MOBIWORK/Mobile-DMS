@@ -7,7 +7,6 @@ import {
   ImageStyle,
   StatusBar,
   Platform,
-  FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
@@ -79,7 +78,6 @@ const Customer = () => {
 
   const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer?.data,
-    // shallowEqual,
     isEqual,
   );
   const listCustomerResult = useSelector(
@@ -94,7 +92,6 @@ const Customer = () => {
   const searchCustomerValue = useSelector(
     state => state.app.searchCustomerValue,
   );
-  const appLoading = useSelector(state => state.app.loadingApp, shallowEqual);
   const page = useSelector(
     state => state.customer?.listCustomer?.page_number ?? 1,
     shallowEqual,
@@ -123,15 +120,12 @@ const Customer = () => {
     AppConstant.CustomerFilterType.loai_khach_hang,
   );
   const currentIndex = useRef<number>(0);
-  const [showModal, setShowModal] = React.useState(false);
   const [isPending, startTransition] = useTransition();
-  // const customerData = React.useRef<IDataCustomers[]>(listCustomer);
   const [customerData, setCustomerData] = React.useState<IDataCustomers[]>([]);
   const navigation = useNavigation<NavigationProp>();
   const bottomRef = useRef<BottomSheetMethods>(null);
   const bottomRef2 = useRef<BottomSheetMethods>(null);
   const filterRef = useRef<BottomSheetMethods>(null);
-  const flatListRef = useRef<FlatList>(null);
   const mounted = useRef<boolean>(true);
   const snapPoints = useMemo(() => ['100%'], []);
   const totalPage = useRef<number>(
@@ -539,12 +533,13 @@ const Customer = () => {
               <TouchableOpacity
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
-                onPress={() =>
+                onPress={() => {
+                  bottomRef.current?.close();
                   setValue(prev => ({
                     ...prev,
                     first: item.title,
-                  }))
-                }>
+                  }));
+                }}>
                 <Text style={styles.itemText(item.title, value.first)}>
                   {item.title}
                 </Text>

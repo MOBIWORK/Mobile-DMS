@@ -113,7 +113,7 @@ const FilterContainer: FC<FilterContainerProps> = ({
             />
             <FilterItem
               label={getLabel('sortByName')}
-              value={filterValue?.order_by ?? 'Z -> A'}
+              value={filterValue?.order_by ?? 'A -> Z'}
               type={AppConstant.VisitFilterType.name}
               setFilterType={setFilterType}
               filterRef={filterRef}
@@ -134,7 +134,11 @@ const FilterContainer: FC<FilterContainerProps> = ({
             />
             <FilterItem
               label={getLabel('customerType')}
-              value={filterValue?.customer_type ?? getLabel('all')}
+              value={
+                filterValue?.customer_type
+                  ? getLabel(filterValue.customer_type)
+                  : getLabel('all')
+              }
               type={AppConstant.VisitFilterType.customerType}
               setFilterType={setFilterType}
               filterRef={filterRef}
