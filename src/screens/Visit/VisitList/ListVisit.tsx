@@ -445,7 +445,7 @@ const ListVisit = () => {
                     onRefresh={onRefreshData}
                   />
                 }
-                maxToRenderPerBatch={2}
+                maxToRenderPerBatch={4}
                 getItemLayout={getItemLayout}
                 updateCellsBatchingPeriod={4}
                 windowSize={14}
