@@ -5,13 +5,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-  startTransition,
-} from 'react';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
   AppText as Text,
@@ -38,7 +32,6 @@ import {
   decimalMinutesToTime,
   useDeepCompareEffect,
   useDisableBackHandler,
-  useEffectOnce,
   useSelector,
 } from '../../../config/function';
 import {shallowEqual} from 'react-redux';
@@ -53,10 +46,7 @@ import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
 // @ts-ignore
 import StringFormat from 'string-format';
-import {
-  IItemCheckIn,
-  categoriesCheckinList,
-} from '../../../redux-store/checkin-reducer/type';
+import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
 import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
@@ -73,29 +63,57 @@ const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const isFocus = useIsFocused();
-  const [storedStartTime, set] = useMMKVString('time');
-  const [storedElapsedTime, setS] = useMMKVString('curTime');
-
-  // console.log(storedElapsedTime,'store')
+  const storedStartTime  = storage.getString('time');
+  const storedElapsedTime = storage.getString('elapse');
+  const storedCurTime = storage.getString('currentTime')
+  const [appState,setAppState] = useState(AppState.currentState)
   const loadStoredTime = () => {
-    if (storedStartTime && storedElapsedTime) {
+    if (  storedElapsedTime && storedCurTime) {
       const currentTimeStamp = moment(new Date()).valueOf();
-      const elapsedSinceStored = currentTimeStamp - Number(storedStartTime);
       const totalElapsedTime =
-        Number(storedElapsedTime) * 1000 + elapsedSinceStored;
-      setElapsedTime(Math.ceil(totalElapsedTime / 1000));
+        Number(storedElapsedTime) +  Number(currentTimeStamp) - Number(storedCurTime);
+      //  console.log('run',totalElapsedTime,storedCurTime,currentTimeStamp,'ewq')
+       const timeDiff = Number(currentTimeStamp) - Number(storedCurTime)
+       if(timeDiff > 1000){
+        console.log('run diff')
+        console.log(timeDiff/1000,'timeDiff',storedElapsedTime)
+         setElapsedTime(Math.round(timeDiff/1000) + Number(storedElapsedTime))  ;
+       }else{
+        console.log(Number(storedElapsedTime) + elapsedTime,'stored')
+        setElapsedTime(Number(storedElapsedTime) + elapsedTime)
+       }
+      // console.log(totalElapsedTime, 'total elap');
     }
+    // else{
+    //   const currentTimeStamp = moment(new Date()).valueOf();
+    //   const totalElapsedTime = currentTimeStamp - Number(storedCurTime)
+    //   setElapsedTime(totalElapsedTime + Number(storedElapsedTime));
+
+
+    // }
   };
+  // console.log(storedCurTime,storedElapsedTime,storedStartTime,'storage')
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active' && isFocus) {
       loadStoredTime();
-    } else if (nextAppState != 'active') {
-      setS(String(elapsedTime));
-      set(String(moment(new Date()).valueOf()));
+    } else if (nextAppState != 'active' && !isFocus) {
+      console.log('run not focus')
+      setAppState(nextAppState)
+
+      storage.set('elapse',String(elapsedTime));
+      storage.set('currentTime',String(moment(new Date()).valueOf()));
+
     } else if (!isFocus) {
-      setS(String(elapsedTime));
-      set(String(moment(new Date()).valueOf()));
+      setAppState(nextAppState)
+      storage.set('elapse',String(elapsedTime));
+      storage.set('currentTime',String(moment(new Date()).valueOf()));
+    }else{
+      setAppState(nextAppState)
+      storage.set('elapse',String(elapsedTime));
+      storage.set('currentTime',String(moment(new Date()).valueOf()));
+
+
     }
   };
 
@@ -119,7 +137,7 @@ const useTimer = () => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
     } else {
-      setS(String(elapsedTime));
+      storage.set('elapse',String(elapsedTime));
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
       }
@@ -130,7 +148,7 @@ const useTimer = () => {
         clearInterval(intervalIdRef.current);
       }
     };
-  }, [isFocus]);
+  }, [isFocus,appState]);
 
   return elapsedTime;
 };
@@ -248,13 +266,17 @@ const CheckIn = () => {
       setAppState(nextAppState);
       return null;
     } else if (!isFocus) {
-      let currentCate = categoriesCheckin;
+      let currentCate = {...categoriesCheckin};
       console.log('run outfocus');
+      storage.set('elapse', String(elapsedTime));
+      storage.set('time',String(moment(new Date()).valueOf()));
       setAppState(nextAppState);
       dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
     } else {
       let currentCate = categoriesCheckin;
       console.log('run backstate');
+      storage.set('elapse', String(elapsedTime));
+      storage.set('time',String(moment(new Date()).valueOf()));
       setAppState(nextAppState);
       dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
     }
@@ -310,6 +332,10 @@ const CheckIn = () => {
             // dispatch
             dispatch(appActions.setDataCheckIn({}));
             storage.set('time', '');
+            storage.set('elapse', '');
+            storage.set('currentTime', '');
+
+
             dispatch(appActions.setProcessingStatus(false));
 
             goBack();
@@ -339,6 +365,8 @@ const CheckIn = () => {
         // dispatch
         dispatch(appActions.setDataCheckIn({}));
         storage.set('time', '');
+        storage.set('elapse', '');
+        storage.set('currentTime', '');
         dispatch(appActions.setProcessingStatus(false));
 
         goBack();
@@ -495,7 +523,11 @@ const CheckIn = () => {
             }),
           );
           getCustomerRoute();
+          storage.set('time', '');
+          storage.set('elapse', '');
+          storage.set('currentTime', '');
           dispatch(checkinActions.resetData());
+          dispatch(customerActions.onGetCustomerVisit())
         }
       },
       err => backgroundErrorListener(err.code),

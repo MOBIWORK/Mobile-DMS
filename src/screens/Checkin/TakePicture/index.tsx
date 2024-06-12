@@ -169,12 +169,12 @@ const TakePicture = () => {
                   startTransition(() => {
                     setMessage(totalItemsProcessed);
                     dispatch(appActions.postImageCheckIn(data.current));
-                    storage.set(
-                      'time',
-                      String(
-                        Number(storedStartTime) - moment(new Date()).valueOf(),
-                      ),
-                    );
+                    // storage.set(
+                    //   'time',
+                    //   String(
+                    //     Number(storedStartTime) - moment(new Date()).valueOf(),
+                    //   ),
+                    // );
                     setError(false);
                   });
                 }
