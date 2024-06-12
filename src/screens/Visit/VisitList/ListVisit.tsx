@@ -261,10 +261,13 @@ const ListVisit = () => {
     }
   }, [dispatch, filterParams, filterDataRef.current]);
 
-  const onEndReachedThreshold = () => {
+  const onEndReachedThreshold = useCallback(() => {
     setBottomLoading(true);
-    const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
-    if (listCustomer.page_number <= totalPage && listCustomer.data.length > 3) {
+    const totalPage = Math.ceil(listCustomer.total / 20);
+    if (
+      listCustomer.page_number <= totalPage &&
+      listCustomer.data.length > 19
+    ) {
       if (Object.keys(filterDataRef.current).length > 0) {
         getCustomer(
           {
@@ -287,10 +290,10 @@ const ListVisit = () => {
       }
     } else {
       setBottomLoading(false);
-      return null;
+      return;
     }
     setBottomLoading(false);
-  };
+  }, [listCustomer]);
 
   const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
     distanceRef.current?.close();
@@ -435,10 +438,10 @@ const ListVisit = () => {
                   `${item.customer_code} - ${index}`
                 }
                 decelerationRate={'normal'}
-                bounces={true}
+                bounces={false}
                 initialNumToRender={4}
                 // onScroll={onScroll}
-                onMomentumScrollEnd={onScroll}
+                // onMomentumScrollEnd={onScroll}
                 refreshControl={
                   <RefreshControl
                     refreshing={loading}
@@ -447,7 +450,7 @@ const ListVisit = () => {
                 }
                 maxToRenderPerBatch={2}
                 getItemLayout={getItemLayout}
-                updateCellsBatchingPeriod={4}
+                // updateCellsBatchingPeriod={4}
                 windowSize={14}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
@@ -461,7 +464,7 @@ const ListVisit = () => {
                   />
                 )}
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0.5}
+                onEndReachedThreshold={0}
                 ListEmptyComponent={
                   <View
                     style={{
@@ -516,8 +519,10 @@ const ListVisit = () => {
             ];
             dispatch(
               customerActions.setCustomerVisit({
-                ...data,
                 data: newData,
+                total: data.total,
+                page_size: data.page_size,
+                page_number: params?.page_number,
               }),
             );
           } else {
@@ -526,7 +531,7 @@ const ListVisit = () => {
         }
       });
     },
-    [],
+    [listCustomer],
   );
 
   const sortDataCustomer = (distanceLabel: string) => {
@@ -1130,7 +1135,7 @@ const ListVisit = () => {
     } else {
       setCustomerData([]);
     }
-  }, [listCustomer, isFocus, distanceFilterValue, isFocus]);
+  }, [listCustomer, isFocus, distanceFilterValue]);
 
   return (
     <SafeAreaView
@@ -1270,7 +1275,7 @@ const rootStyles = (theme: ExtendedTheme) =>
       borderColor: theme.colors.border,
       paddingHorizontal: 8,
       paddingVertical: 6,
-      marginRight:8
+      marginRight: 8,
     } as ViewStyle,
     buttonModal: {
       flex: 1,

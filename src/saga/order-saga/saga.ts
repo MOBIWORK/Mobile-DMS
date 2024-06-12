@@ -49,6 +49,7 @@ export function* onGetDetailOrder(action: PayloadAction<string>) {
   if (orderAction.onGetDetailData.match(action)) {
     try {
       const {status, data}: KeyAbleProps = yield call(
+        // @ts-ignore
         OrderService.getDetail,
         action.payload,
       );
