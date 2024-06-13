@@ -313,19 +313,19 @@ const ListVisit = () => {
     sortDataCustomer(getLabel(itemData.label));
   }, []);
 
-  const presentMap = (item: VisitListItemType) => {
-    const item_location: any = JSON.parse(item.customer_location_primary);
-    CommonUtils.sleep(100).then(() => {
-      mapboxCameraRef.current &&
-        mapboxCameraRef.current.moveTo(
-          [Number(item_location.long), Number(item_location.lat)],
-          1000,
-        );
-    });
+  // const presentMap = (item: VisitListItemType) => {
+  //   const item_location: any = JSON.parse(item.customer_location_primary);
+  //   CommonUtils.sleep(100).then(() => {
+  //     mapboxCameraRef.current &&
+  //       mapboxCameraRef.current.moveTo(
+  //         [Number(item_location.long), Number(item_location.lat)],
+  //         1000,
+  //       );
+  //   });
 
-    setShowListVisit(false);
-    setVisitItemSelected(item);
-  };
+  //   setShowListVisit(false);
+  //   setVisitItemSelected(item);
+  // };
 
   const _renderHeader = () => {
     return (
