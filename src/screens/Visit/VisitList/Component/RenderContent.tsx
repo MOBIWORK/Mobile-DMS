@@ -143,7 +143,7 @@ const [isPending,startTransition] = useTransition()
               onEndReachedThreshold={0.5}
               ListEmptyComponent={
                 <Block
-                color='red'
+                // color='red'
                   alignSelf="center"
                   height={AppConstant.HEIGHT * 0.5}
                   justifyContent="center">
