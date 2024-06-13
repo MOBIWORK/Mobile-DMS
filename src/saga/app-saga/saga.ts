@@ -69,7 +69,7 @@ export function* onCheckInData(action: PayloadAction) {
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(checkinActions.setRefreshVisitWhenCheckOut(true));
-        storage.set('time', '');
+        // storage.set('time', '');
       }
     } catch (err) {
       console.log(err, 'err');

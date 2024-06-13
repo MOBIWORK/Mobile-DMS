@@ -941,7 +941,7 @@ const ListVisit = () => {
         dispatch(appActions.setDataCheckIn(data));
         setModalAlert(prev => ({...prev, status: false}));
         const curTime = moment(new Date()).valueOf();
-        storage.set('curTime', curTime);
+        // storage.set('curTime', curTime);
         navigate(ScreenConstant.CHECKIN, {
           item: data,
         });
