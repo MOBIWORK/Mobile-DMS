@@ -118,12 +118,16 @@ const TabOverview = ({data}: PropsType) => {
           />
           <AppInput
             label={getLabel('quantity')}
-            value={productSelect?.qty.toString() || ''}
+            value={productSelect?.qty ? productSelect.qty.toString() : ''}
             hiddenRightIcon
           />
           <AppInput
             label={`${getLabel('discount')} (%)`}
-            value={productSelect?.discount_percentage.toString() || ''}
+            value={
+              productSelect?.discount_percentage
+                ? productSelect.discount_percentage.toString()
+                : ''
+            }
             editable={false}
             styles={{
               backgroundColor: colors.bg_neutral,
@@ -132,7 +136,11 @@ const TabOverview = ({data}: PropsType) => {
           />
           <AppInput
             label={getLabel('discount')}
-            value={CommonUtils.formatCash(discountProduct.toString())}
+            value={
+              discountProduct > 0
+                ? CommonUtils.formatCash(discountProduct.toString())
+                : '0'
+            }
             editable={false}
             styles={{
               backgroundColor: colors.bg_neutral,
@@ -338,8 +346,10 @@ const TabOverview = ({data}: PropsType) => {
                   </Text>
                   <Text style={[styles.textInforO]}>
                     {data?.additional_discount_percentage
-                      .toString()
-                      .replace('.', ',')}
+                      ? data?.additional_discount_percentage
+                          .toString()
+                          .replace('.', ',')
+                      : '0'}
                   </Text>
                 </View>
                 <View style={[styles.flexSpace]}>

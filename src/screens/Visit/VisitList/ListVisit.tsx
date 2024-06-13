@@ -11,9 +11,7 @@ import React, {
 } from 'react';
 import {
   AppBottomSheet,
-  AppHeader,
   Block,
-  FilterView,
   AppImage,
   AppText as Text,
 } from '../../../components/common';
@@ -36,6 +34,7 @@ import {
   ExtendedTheme,
   useIsFocused,
   useNavigation,
+  useRoute,
   useTheme,
 } from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
@@ -92,6 +91,8 @@ import {MapView} from './Component/MapView';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {storage} from '../../../utils/commom.utils';
 import FilterHandle from '../../Customer/components/FilterHandle';
+import checkIn from '../CheckinVisit/CheckIn';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 
 //config Mapbox
 
@@ -122,6 +123,10 @@ const ListVisit = () => {
   const searchVisit = useSelector(state => state.app.searchVisitValue);
   const [isPending, startEffect] = useTransition();
   const [modalErrorGPS, setModalErrorGPS] = useState(false);
+
+  const isRefreshVisitWhenCheckOut = useSelector(
+    state => state.checkin.isRefreshVisitWhenCheckOut,
+  );
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -261,10 +266,13 @@ const ListVisit = () => {
     }
   }, [dispatch, filterParams, filterDataRef.current]);
 
-  const onEndReachedThreshold = () => {
+  const onEndReachedThreshold = useCallback(() => {
     setBottomLoading(true);
-    const totalPage = Math.ceil(listCustomer.total / listCustomer.page_size);
-    if (listCustomer.page_number <= totalPage && listCustomer.data.length > 3) {
+    const totalPage = Math.ceil(listCustomer.total / 20);
+    if (
+      listCustomer.page_number <= totalPage &&
+      listCustomer.data.length > 19
+    ) {
       if (Object.keys(filterDataRef.current).length > 0) {
         getCustomer(
           {
@@ -287,10 +295,10 @@ const ListVisit = () => {
       }
     } else {
       setBottomLoading(false);
-      return null;
+      return;
     }
     setBottomLoading(false);
-  };
+  }, [listCustomer]);
 
   const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
     distanceRef.current?.close();
@@ -438,7 +446,7 @@ const ListVisit = () => {
                 bounces={true}
                 initialNumToRender={4}
                 // onScroll={onScroll}
-                onMomentumScrollEnd={onScroll}
+                // onMomentumScrollEnd={onScroll}
                 refreshControl={
                   <RefreshControl
                     refreshing={loading}
@@ -447,7 +455,7 @@ const ListVisit = () => {
                 }
                 maxToRenderPerBatch={4}
                 getItemLayout={getItemLayout}
-                updateCellsBatchingPeriod={4}
+                // updateCellsBatchingPeriod={4}
                 windowSize={14}
                 contentContainerStyle={{rowGap: 16}}
                 renderItem={({item}) => (
@@ -461,7 +469,7 @@ const ListVisit = () => {
                   />
                 )}
                 onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0.5}
+                onEndReachedThreshold={0}
                 ListEmptyComponent={
                   <View
                     style={{
@@ -516,8 +524,10 @@ const ListVisit = () => {
             ];
             dispatch(
               customerActions.setCustomerVisit({
-                ...data,
                 data: newData,
+                total: data.total,
+                page_size: data.page_size,
+                page_number: params?.page_number,
               }),
             );
           } else {
@@ -526,7 +536,7 @@ const ListVisit = () => {
         }
       });
     },
-    [],
+    [listCustomer],
   );
 
   const sortDataCustomer = (distanceLabel: string) => {
@@ -1122,7 +1132,14 @@ const ListVisit = () => {
         mounted.current = false;
       };
     }
-  }, [searchVisit, dataCheckIn, isFocus]);
+  }, [searchVisit]);
+
+  useEffect(() => {
+    if (isRefreshVisitWhenCheckOut) {
+      dispatch(checkinActions.setRefreshVisitWhenCheckOut(false));
+      onRefreshData();
+    }
+  }, [isRefreshVisitWhenCheckOut]);
 
   useEffect(() => {
     if (listCustomer.data && listCustomer.data.length > 0) {
@@ -1130,7 +1147,7 @@ const ListVisit = () => {
     } else {
       setCustomerData([]);
     }
-  }, [listCustomer, isFocus, distanceFilterValue, isFocus]);
+  }, [listCustomer, distanceFilterValue]);
 
   return (
     <SafeAreaView
@@ -1270,7 +1287,7 @@ const rootStyles = (theme: ExtendedTheme) =>
       borderColor: theme.colors.border,
       paddingHorizontal: 8,
       paddingVertical: 6,
-      marginRight:8
+      marginRight: 8,
     } as ViewStyle,
     buttonModal: {
       flex: 1,

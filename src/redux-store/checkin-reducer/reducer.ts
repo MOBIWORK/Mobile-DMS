@@ -17,6 +17,7 @@ const initState: TypeState = {
   listImageSelect: [],
   imageToMark: [],
   listProgramImage: [],
+  isRefreshVisitWhenCheckOut: false,
 };
 
 const checkinSlice = createSlice({
@@ -54,10 +55,9 @@ const checkinSlice = createSlice({
       state.orderDetail = null;
       state.listImageSelect = [];
       state.imageToMark = [];
-      state.listProgramImage = []
+      state.listProgramImage = [];
       // state.listProgramCampaign = [];
-      state.selectedProgram = []
-    
+      state.selectedProgram = [];
     },
     setDataCategoriesCheckin: (
       state,
@@ -117,6 +117,9 @@ const checkinSlice = createSlice({
     },
     resetDataState: (state: any) => {
       state = undefined;
+    },
+    setRefreshVisitWhenCheckOut: (state, action: PayloadAction<boolean>) => {
+      state.isRefreshVisitWhenCheckOut = action.payload;
     },
   },
 });

@@ -288,7 +288,7 @@ export default {
   confirmDeleteOrder: 'Xác nhận xoá đơn hàng này?',
   welcome: 'Xin chào',
   noAlbum: 'Không có album nào',
-  addAlbum: 'Thêm album',
+  chooseAlbum: 'Chọn album',
   addAlbumToTakePicture: 'Thêm album để chụp ảnh',
   currentPassword: 'Mật khẩu hiện tại',
   checkOutTimeErr: 'Thời gian viếng thăm phải lớn hơn {time} phút',

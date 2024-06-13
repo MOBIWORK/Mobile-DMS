@@ -28,6 +28,8 @@ import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {CommonUtils} from '../../../utils';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {navigate} from '../../../navigation/navigation-service';
+import {ScreenConstant} from '../../../const';
 
 export interface LocationProps {
   long: number;
@@ -125,10 +127,14 @@ const VisitItem: FC<VisitItemProps> = ({
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
       <TouchableOpacity
-        onPress={() =>
-          startTransition(() => {
-            handlePressDetail(item);
-          })
+        onPress={
+          () =>
+            navigate(ScreenConstant.VISIT_DETAIL, {
+              data: item,
+            })
+          // startTransition(() => {
+          //   handlePressDetail(item);
+          // })
         }>
         <Block style={styles.viewContainer}>
           <Block style={styles.user}>
