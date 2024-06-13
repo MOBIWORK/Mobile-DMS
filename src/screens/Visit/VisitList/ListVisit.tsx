@@ -91,8 +91,7 @@ import {MapView} from './Component/MapView';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {storage} from '../../../utils/commom.utils';
 import FilterHandle from '../../Customer/components/FilterHandle';
-import checkIn from '../CheckinVisit/CheckIn';
-import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import RenderContent from './Component/RenderContent';
 
 //config Mapbox
 
@@ -298,7 +297,7 @@ const ListVisit = () => {
       return;
     }
     setBottomLoading(false);
-  }, [listCustomer]);
+  }, [bottomLoading]);
 
   const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
     distanceRef.current?.close();
@@ -415,91 +414,86 @@ const ListVisit = () => {
     }, 500);
   };
 
-  const getItemLayout = (
-    data: ArrayLike<VisitListItemType> | null | undefined,
-    index: number,
-  ) => ({length: slideSizeRef.current, offset: 50 * index, index});
+  
 
-  const renderContent = useCallback(() => {
-    return (
-      <Block marginTop={8}>
-        {isShowListVisit ? (
-          <Block marginTop={16} paddingHorizontal={16}>
-            <Text style={{color: colors.text_secondary}}>
-              {StringFormat(getLabel('customerVisitedCount'), {
-                customerCheckinCount: customerCheckinCount,
-                allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
-              })}
-            </Text>
-            {loading ? (
-              <SkeletonLoading />
-            ) : (
-              <FlatList
-                ref={flatlistRef}
-                style={{height: '85%', paddingVertical: 8}}
-                showsVerticalScrollIndicator={false}
-                data={customerDataSort ?? listCustomer.data}
-                keyExtractor={(item, index) =>
-                  `${item.customer_code} - ${index}`
-                }
-                decelerationRate={'normal'}
-                bounces={true}
-                initialNumToRender={4}
-                // onScroll={onScroll}
-                // onMomentumScrollEnd={onScroll}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={loading}
-                    onRefresh={onRefreshData}
-                  />
-                }
-                maxToRenderPerBatch={4}
-                getItemLayout={getItemLayout}
-                // updateCellsBatchingPeriod={4}
-                windowSize={14}
-                contentContainerStyle={{rowGap: 16}}
-                renderItem={({item}) => (
-                  <VisitItem
-                    item={item}
-                    handlePressDetail={onPressToDetail}
-                    handlePressing={handleEnabledPressed}
-                    handleOpenMap={() =>
-                      startTransition(() => presentMap(item))
-                    }
-                  />
-                )}
-                onEndReached={onEndReachedThreshold}
-                onEndReachedThreshold={0}
-                ListEmptyComponent={
-                  <View
-                    style={{
-                      alignSelf: 'center',
-                      height: AppConstant.HEIGHT * 0.5,
-                      justifyContent: 'center',
-                    }}>
-                    <Text style={{color: colors.text_primary, fontSize: 20}}>
-                      {getLabel('noVisit')}
-                    </Text>
-                  </View>
-                }
-              />
-            )}
-          </Block>
-        ) : (
-          <MapView
-            visitItemSelected={visitItemSelected}
-            location={location}
-            customerDataSort={customerDataSort}
-            mapboxCameraRef={mapboxCameraRef}
-            setVisitItemSelected={setVisitItemSelected}
-            onPressToDetail={onPressToDetail}
-            handleCompareDistance={handleCompareDistance}
-            handleRegainLocation={handleRegainLocation}
-          />
-        )}
-      </Block>
-    );
-  }, [loading, listCustomer, customerDataSort, location, isShowListVisit]);
+  // const renderContent = () => {
+  //   return (
+  //     <Block marginTop={8}>
+  //       {isShowListVisit ? (
+  //         <Block marginTop={16} paddingHorizontal={16}>
+  //           <Text style={{color: colors.text_secondary}}>
+  //             {StringFormat(getLabel('customerVisitedCount'), {
+  //               customerCheckinCount: customerCheckinCount,
+  //               allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
+  //             })}
+  //           </Text>
+  //           {loading ? (
+  //             <SkeletonLoading />
+  //           ) : (
+  //             <FlatList
+  //               ref={flatlistRef}
+  //               style={{height: '85%', paddingVertical: 8}}
+  //               showsVerticalScrollIndicator={false}
+  //               data={customerDataSort ?? listCustomer.data}
+  //               keyExtractor={(item, index) =>
+  //                 `${item.customer_code} - ${index}`
+  //               }
+  //               decelerationRate={'normal'}
+  //               bounces={true}
+  //               initialNumToRender={10}
+  //               // onScroll={onScroll}
+  //               onMomentumScrollEnd={onScroll}
+  //               refreshControl={
+  //                 <RefreshControl
+  //                   refreshing={loading}
+  //                   onRefresh={onRefreshData}
+  //                 />
+  //               }
+  //               maxToRenderPerBatch={10}
+  //               getItemLayout={getItemLayout}
+  //               updateCellsBatchingPeriod={4}
+  //               windowSize={21}
+  //               contentContainerStyle={{rowGap: 16}}
+  //               renderItem={({item}) => (
+  //                 <VisitItem
+  //                   item={item}
+  //                   handlePressDetail={onPressToDetail}
+  //                   handlePressing={handleEnabledPressed}
+  //                   handleOpenMap={() =>
+  //                     startTransition(() => presentMap(item))
+  //                   }
+  //                 />
+  //               )}
+  //               onEndReached={onEndReachedThreshold}
+  //               onEndReachedThreshold={0.5}
+  //               ListEmptyComponent={
+  //                 <Block
+  //                   alignSelf="center"
+  //                   height={AppConstant.HEIGHT * 0.5}
+  //                   justifyContent="center">
+  //                   <Text fontSize={20} color={colors.text_primary}>
+  //                     {getLabel('noVisit')}
+  //                   </Text>
+  //                 </Block>
+  //               }
+  //             />
+  //           )}
+  //         </Block>
+  //       ) : (
+  //         <MapView
+  //           visitItemSelected={visitItemSelected}
+  //           location={location}
+  //           customerDataSort={customerDataSort}
+  //           mapboxCameraRef={mapboxCameraRef}
+  //           setVisitItemSelected={setVisitItemSelected}
+  //           onPressToDetail={onPressToDetail}
+  //           handleCompareDistance={handleCompareDistance}
+  //           handleRegainLocation={handleRegainLocation}
+  //         />
+  //       )}
+  //     </Block>
+  //   );
+  // };
 
   useLayoutEffect(() => {
     if (Object.keys(systemConfig).length === 0) {
@@ -536,60 +530,63 @@ const ListVisit = () => {
         }
       });
     },
-    [listCustomer],
+    [listCustomer?.data?.length],
   );
 
-  const sortDataCustomer = (distanceLabel: string) => {
-    startEffect(() => {
-      if (listCustomer && listCustomer?.data?.length > 0) {
-        const filteredData = listCustomer.data.filter(
-          item => item.customer_location_primary != null,
-        );
-        const noLocationCustomer = listCustomer.data.filter(
-          item => item.customer_location_primary === null,
-        );
-        const sortedData = () => {
-          return (
-            filteredData.slice().sort((a, b) => {
-              const locationA: LocationProps =
-                JSON.parse(
-                  a.customer_location_primary
-                    ? a.customer_location_primary
-                    : '{"long": 0, "lat": 0}',
-                ) || {};
-              const locationB: LocationProps = JSON.parse(
-                b.customer_location_primary
-                  ? b.customer_location_primary
-                  : '{"long": 0, "lat": 0}',
-              );
-              const distance1 = calculateDistance(
-                currentLocation?.coords?.latitude
-                  ? currentLocation?.coords?.latitude
-                  : 0,
-                currentLocation?.coords?.longitude
-                  ? currentLocation?.coords?.longitude
-                  : 0,
-                locationA.lat != null ? locationA.lat : 0,
-                locationA.long != null ? locationA.long : 0,
-              );
-              const distance2 = calculateDistance(
-                currentLocation?.coords?.latitude,
-                currentLocation?.coords?.longitude,
-                locationB.lat != null ? locationB.lat : 0,
-                locationB.long != null ? locationB.long : 0,
-              );
-              return distanceLabel === getLabel('nearest')
-                ? distance1 - distance2
-                : distance2 - distance1;
-            }) || null
+  const sortDataCustomer = useCallback(
+    (distanceLabel: string) => {
+      startEffect(() => {
+        if (listCustomer && listCustomer?.data?.length > 0) {
+          const filteredData = listCustomer.data.filter(
+            item => item.customer_location_primary != null,
           );
-        };
-        setCustomerData([...sortedData(), ...noLocationCustomer]);
-      } else {
-        setCustomerData([]);
-      }
-    });
-  };
+          const noLocationCustomer = listCustomer.data.filter(
+            item => item.customer_location_primary === null,
+          );
+          const sortedData = () => {
+            return (
+              filteredData.slice().sort((a, b) => {
+                const locationA: LocationProps =
+                  JSON.parse(
+                    a.customer_location_primary
+                      ? a.customer_location_primary
+                      : '{"long": 0, "lat": 0}',
+                  ) || {};
+                const locationB: LocationProps = JSON.parse(
+                  b.customer_location_primary
+                    ? b.customer_location_primary
+                    : '{"long": 0, "lat": 0}',
+                );
+                const distance1 = calculateDistance(
+                  currentLocation?.coords?.latitude
+                    ? currentLocation?.coords?.latitude
+                    : 0,
+                  currentLocation?.coords?.longitude
+                    ? currentLocation?.coords?.longitude
+                    : 0,
+                  locationA.lat != null ? locationA.lat : 0,
+                  locationA.long != null ? locationA.long : 0,
+                );
+                const distance2 = calculateDistance(
+                  currentLocation?.coords?.latitude,
+                  currentLocation?.coords?.longitude,
+                  locationB.lat != null ? locationB.lat : 0,
+                  locationB.long != null ? locationB.long : 0,
+                );
+                return distanceLabel === getLabel('nearest')
+                  ? distance1 - distance2
+                  : distance2 - distance1;
+              }) || null
+            );
+          };
+          setCustomerData([...sortedData(), ...noLocationCustomer]);
+        } else {
+          setCustomerData([]);
+        }
+      });
+    },
+    [customerDataSort, listCustomer.data.length],
+  );
 
   const getCustomerRoute = useCallback(async () => {
     const all_route: ListCustomerRoute = {
@@ -625,14 +622,14 @@ const ListVisit = () => {
     }
   }, [customerType, listCustomer]);
 
-  const getDataGroup = async () => {
+  const getDataGroup = useCallback(async () => {
     if (customerType.length === 0) {
       const response: any = await getCustomerType();
       if (response?.result?.length > 0) {
         dispatch(setListCustomerType(response?.result));
       }
     }
-  };
+  }, [[]]);
 
   const getData = useCallback(async () => {
     setLoading(true);
@@ -664,7 +661,7 @@ const ListVisit = () => {
     }
   }, []);
 
-  const handleFilterData = async () => {
+  const handleFilterData = useCallback(async () => {
     bottomSheetRef.current && bottomSheetRef.current.close();
     try {
       setLoading(true);
@@ -711,9 +708,9 @@ const ListVisit = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterParams, listCustomer.data.length]);
 
-  const handleRegainLocation = async () => {
+  const handleRegainLocation = useCallback(async () => {
     CommonUtils.getCurrentLocation(
       locations => {
         setLocation(locations);
@@ -725,9 +722,9 @@ const ListVisit = () => {
       },
       err => backgroundErrorListener(err.code),
     );
-  };
+  }, [location]);
 
-  const handleSearchVisit = async () => {
+  const handleSearchVisit = useCallback(async () => {
     try {
       setLoading(true);
       if (Object.keys(filterDataRef.current).length > 0) {
@@ -749,7 +746,7 @@ const ListVisit = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [customerDataSort]);
 
   const handleCheckin = useCallback(
     (
@@ -1203,7 +1200,27 @@ const ListVisit = () => {
         </>
       ) : (
         <>
-          {renderContent()}
+          <RenderContent
+            isShowListVisit={isShowListVisit}
+            ref={flatlistRef}
+            customerDataSort={customerDataSort}
+            listCustomer={listCustomer}
+            loading={loading}
+            visitItemSelected={visitItemSelected}
+            location={location}
+            mapboxCameraRef={mapboxCameraRef}
+            customerCheckinCount={customerCheckinCount}
+            onScroll={onScroll}
+            onRefreshData={onRefreshData}
+            setVisitItemSelected={setVisitItemSelected}
+            slideSizeRef={slideSizeRef}
+            onPressToDetail={onPressToDetail}
+            handleCompareDistance={handleCompareDistance}
+            handleRegainLocation={handleRegainLocation}
+            handleEnabledPressed={handleEnabledPressed}
+            setShowListVisit={setShowListVisit}
+            onEndReachedThreshold={onEndReachedThreshold}
+          />
           <FilterContainer
             bottomSheetRef={bottomSheetRef}
             filterRef={filterRef}

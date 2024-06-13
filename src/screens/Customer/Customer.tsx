@@ -203,10 +203,18 @@ const Customer = () => {
     [isFilterType],
   );
 
+
+
+  const getCustomer = useCallback(() =>{
+    dispatch(customerActions.onGetCustomer());
+
+  },[])
+
+
   const onRefreshData = useCallback(async () => {
     try {
       dispatch(onLoadApp());
-      dispatch(customerActions.onGetCustomer());
+      getCustomer()
       totalPage.current = Math.ceil(
         listCustomerResult.total / listCustomerResult.page_size,
       );
@@ -219,7 +227,7 @@ const Customer = () => {
     } finally {
       dispatch(onLoadAppEnd());
     }
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (customerType?.length > 0) {
