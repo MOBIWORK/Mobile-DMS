@@ -741,8 +741,8 @@ const CreateOrder = () => {
                   </Text>
                 </View>
                 <View style={[styles.flexSpace, {alignItems: 'flex-end'}]}>
-                  <Text style={styles.labelPay}>{getLabel('totalPrice')}</Text>
-                  <Text style={styles.totalPrice}>
+                  <Text style={styles.labelPay}>{getLabel('intoMoney')}</Text>
+                  <Text style={[styles.price, {fontWeight: '500'}]}>
                     {CommonUtils.convertToTwoDecimalPlaces(
                       orderResultData?.total
                         ? Math.abs(orderResultData.total)
