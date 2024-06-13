@@ -63,32 +63,33 @@ const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const isFocus = useIsFocused();
-  const storedStartTime  = storage.getString('time');
+  const storedStartTime = storage.getString('time');
   const storedElapsedTime = storage.getString('elapse');
-  const storedCurTime = storage.getString('currentTime')
-  const [appState,setAppState] = useState(AppState.currentState)
+  const storedCurTime = storage.getString('currentTime');
+  const [appState, setAppState] = useState(AppState.currentState);
   const loadStoredTime = () => {
-    if (  storedElapsedTime && storedCurTime) {
+    if (storedElapsedTime && storedCurTime) {
       const currentTimeStamp = moment(new Date()).valueOf();
       const totalElapsedTime =
-        Number(storedElapsedTime) +  Number(currentTimeStamp) - Number(storedCurTime);
+        Number(storedElapsedTime) +
+        Number(currentTimeStamp) -
+        Number(storedCurTime);
       //  console.log('run',totalElapsedTime,storedCurTime,currentTimeStamp,'ewq')
-       const timeDiff = Number(currentTimeStamp) - Number(storedCurTime)
-       if(timeDiff > 1000){
-        console.log('run diff')
-        console.log(timeDiff/1000,'timeDiff',storedElapsedTime)
-         setElapsedTime(Math.round(timeDiff/1000) + Number(storedElapsedTime))  ;
-       }else{
-        console.log(Number(storedElapsedTime) + elapsedTime,'stored')
-        setElapsedTime(Number(storedElapsedTime) + elapsedTime)
-       }
+      const timeDiff = Number(currentTimeStamp) - Number(storedCurTime);
+      if (timeDiff > 1000) {
+        console.log('run diff');
+        console.log(timeDiff / 1000, 'timeDiff', storedElapsedTime);
+        setElapsedTime(Math.round(timeDiff / 1000) + Number(storedElapsedTime));
+      } else {
+        console.log(Number(storedElapsedTime) + elapsedTime, 'stored');
+        setElapsedTime(Number(storedElapsedTime) + elapsedTime);
+      }
       // console.log(totalElapsedTime, 'total elap');
     }
     // else{
     //   const currentTimeStamp = moment(new Date()).valueOf();
     //   const totalElapsedTime = currentTimeStamp - Number(storedCurTime)
     //   setElapsedTime(totalElapsedTime + Number(storedElapsedTime));
-
 
     // }
   };
@@ -98,22 +99,19 @@ const useTimer = () => {
     if (nextAppState === 'active' && isFocus) {
       loadStoredTime();
     } else if (nextAppState != 'active' && !isFocus) {
-      console.log('run not focus')
-      setAppState(nextAppState)
+      console.log('run not focus');
+      setAppState(nextAppState);
 
-      storage.set('elapse',String(elapsedTime));
-      storage.set('currentTime',String(moment(new Date()).valueOf()));
-
+      storage.set('elapse', String(elapsedTime));
+      storage.set('currentTime', String(moment(new Date()).valueOf()));
     } else if (!isFocus) {
-      setAppState(nextAppState)
-      storage.set('elapse',String(elapsedTime));
-      storage.set('currentTime',String(moment(new Date()).valueOf()));
-    }else{
-      setAppState(nextAppState)
-      storage.set('elapse',String(elapsedTime));
-      storage.set('currentTime',String(moment(new Date()).valueOf()));
-
-
+      setAppState(nextAppState);
+      storage.set('elapse', String(elapsedTime));
+      storage.set('currentTime', String(moment(new Date()).valueOf()));
+    } else {
+      setAppState(nextAppState);
+      storage.set('elapse', String(elapsedTime));
+      storage.set('currentTime', String(moment(new Date()).valueOf()));
     }
   };
 
@@ -137,7 +135,7 @@ const useTimer = () => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
     } else {
-      storage.set('elapse',String(elapsedTime));
+      storage.set('elapse', String(elapsedTime));
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
       }
@@ -148,7 +146,7 @@ const useTimer = () => {
         clearInterval(intervalIdRef.current);
       }
     };
-  }, [isFocus,appState]);
+  }, [isFocus, appState]);
 
   return elapsedTime;
 };
@@ -269,14 +267,14 @@ const CheckIn = () => {
       let currentCate = {...categoriesCheckin};
       console.log('run outfocus');
       storage.set('elapse', String(elapsedTime));
-      storage.set('time',String(moment(new Date()).valueOf()));
+      storage.set('time', String(moment(new Date()).valueOf()));
       setAppState(nextAppState);
       dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
     } else {
       let currentCate = categoriesCheckin;
       console.log('run backstate');
       storage.set('elapse', String(elapsedTime));
-      storage.set('time',String(moment(new Date()).valueOf()));
+      storage.set('time', String(moment(new Date()).valueOf()));
       setAppState(nextAppState);
       dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
     }
@@ -334,8 +332,6 @@ const CheckIn = () => {
             storage.set('time', '');
             storage.set('elapse', '');
             storage.set('currentTime', '');
-
-
             dispatch(appActions.setProcessingStatus(false));
 
             goBack();
@@ -483,24 +479,6 @@ const CheckIn = () => {
     [openDialogErr, msgCheckOutErr],
   );
 
-  const getCustomerRoute = useCallback(async () => {
-    const all_route: ListCustomerRoute = {
-      name: '',
-      channel_name: 'Tất cả',
-      channel_code: '',
-      travel_date: '',
-      is_today: false,
-    };
-    const response: any = await CustomerService.getCustomerRoute();
-    if (response?.result?.length > 0) {
-      //add "all" to list route:
-      const newListRoute: ListCustomerRoute[] = [all_route].concat(
-        response.result,
-      );
-      dispatch(customerActions.setListCustomerRoute(newListRoute));
-    }
-  }, [dataCheckIn, categoriesCheckin, enableGPS]);
-
   const onCheckout = useCallback(async () => {
     // dispatch(appActions.setProcessingStatus(true));
     CommonUtils.getCurrentLocation(
@@ -522,17 +500,14 @@ const CheckIn = () => {
               checkin_giora: new Date().getTime() / 1000,
             }),
           );
-          getCustomerRoute();
           storage.set('time', '');
           storage.set('elapse', '');
           storage.set('currentTime', '');
           dispatch(checkinActions.resetData());
-          dispatch(customerActions.onGetCustomerVisit())
         }
       },
       err => backgroundErrorListener(err.code),
     );
-
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
 

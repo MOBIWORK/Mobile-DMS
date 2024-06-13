@@ -282,7 +282,7 @@ export default {
   confirmDeleteOrder: 'Confirm deletion of this order?',
   welcome: 'Welcome',
   noAlbum: 'No albums',
-  addAlbum: 'Add album',
+  chooseAlbum: 'Choose album',
   addAlbumToTakePicture: 'Add albums to take photos',
   currentPassword: 'Current password',
   checkOutTimeErr: 'Visit time must be greater than {time} minutes',

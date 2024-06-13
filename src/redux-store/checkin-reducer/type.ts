@@ -27,6 +27,7 @@ export type TypeState = {
   listImageSelect: any;
   imageToMark: any;
   listProgramImage: any;
+  isRefreshVisitWhenCheckOut: boolean;
 };
 export type DataSendMarkScore = {
   customer_code: string;

@@ -458,7 +458,9 @@ const CreateOrder = () => {
     const objectData: any = {
       set_warehouse: warehouse?.value,
       apply_discount_on: discount.label,
-      additional_discount_percentage: discount.discount_percentage,
+      additional_discount_percentage: percentageLabel
+        ? Number(percentageLabel.replace(',', '.'))
+        : 0,
       company: organization?.company_name,
       items: arrItems,
     };
@@ -469,7 +471,7 @@ const CreateOrder = () => {
     if (customer) {
       objectData.customer = customer.name;
     }
-    console.log('object', objectData);
+    // console.log('object', objectData);
     switch (type) {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
@@ -671,13 +673,13 @@ const CreateOrder = () => {
                 inputProp={{
                   keyboardType: 'numeric',
                   returnKeyType: 'done',
-                  onEndEditing: event => {
-                    const txt = event.nativeEvent.text;
-                    setDiscount((prev: any) => ({
-                      ...prev,
-                      discount_percentage: Number(txt.replace(',', '.')),
-                    }));
-                  },
+                  // onEndEditing: event => {
+                  //   const txt = event.nativeEvent.text;
+                  //   setDiscount((prev: any) => ({
+                  //     ...prev,
+                  //     discount_percentage: Number(txt.replace(',', '.')),
+                  //   }));
+                  // },
                 }}
                 rightIcon={<TextInput.Affix text="%" />}
               />

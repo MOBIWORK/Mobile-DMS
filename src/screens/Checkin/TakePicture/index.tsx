@@ -316,7 +316,7 @@ const TakePicture = () => {
           onPress={() =>
             bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0)
           }>
-          {getLabel('addAlbum')}
+          {getLabel('chooseAlbum')}
         </Button>
       </>
     );
@@ -461,7 +461,7 @@ const TakePicture = () => {
           mode={'text'}
           icon={'plus'}
           labelStyle={{color: theme.colors.action}}>
-          Thêm album
+          {getLabel('chooseAlbum')}
         </Button>
       </View>
       <View style={styles.body}>

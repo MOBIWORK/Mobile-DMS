@@ -11,9 +11,7 @@ import React, {
 } from 'react';
 import {
   AppBottomSheet,
-  AppHeader,
   Block,
-  FilterView,
   AppImage,
   AppText as Text,
 } from '../../../components/common';
@@ -36,6 +34,7 @@ import {
   ExtendedTheme,
   useIsFocused,
   useNavigation,
+  useRoute,
   useTheme,
 } from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
@@ -92,6 +91,8 @@ import {MapView} from './Component/MapView';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {storage} from '../../../utils/commom.utils';
 import FilterHandle from '../../Customer/components/FilterHandle';
+import checkIn from '../CheckinVisit/CheckIn';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 
 //config Mapbox
 
@@ -122,6 +123,10 @@ const ListVisit = () => {
   const searchVisit = useSelector(state => state.app.searchVisitValue);
   const [isPending, startEffect] = useTransition();
   const [modalErrorGPS, setModalErrorGPS] = useState(false);
+
+  const isRefreshVisitWhenCheckOut = useSelector(
+    state => state.checkin.isRefreshVisitWhenCheckOut,
+  );
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -438,7 +443,7 @@ const ListVisit = () => {
                   `${item.customer_code} - ${index}`
                 }
                 decelerationRate={'normal'}
-                bounces={false}
+                bounces={true}
                 initialNumToRender={4}
                 // onScroll={onScroll}
                 // onMomentumScrollEnd={onScroll}
@@ -1127,7 +1132,14 @@ const ListVisit = () => {
         mounted.current = false;
       };
     }
-  }, [searchVisit, dataCheckIn, isFocus]);
+  }, [searchVisit]);
+
+  useEffect(() => {
+    if (isRefreshVisitWhenCheckOut) {
+      dispatch(checkinActions.setRefreshVisitWhenCheckOut(false));
+      onRefreshData();
+    }
+  }, [isRefreshVisitWhenCheckOut]);
 
   useEffect(() => {
     if (listCustomer.data && listCustomer.data.length > 0) {
@@ -1135,7 +1147,7 @@ const ListVisit = () => {
     } else {
       setCustomerData([]);
     }
-  }, [listCustomer, isFocus, distanceFilterValue]);
+  }, [listCustomer, distanceFilterValue]);
 
   return (
     <SafeAreaView

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback} from 'react';
 import {
   FlatList,
   Image,
@@ -26,10 +26,9 @@ const Order: FC<OrderProps> = ({
   const styles = createStyleSheet(useTheme());
   const {t: getLabel} = useTranslation();
 
-  const OrderItem = (item: ReportOrderItemType, index: number) => {
+  const OrderItem = useCallback((item: ReportOrderItemType, index: number) => {
     return (
       <Pressable
-        onPress={() => handleItem(item)}
         style={[
           styles.itemContainer as ViewStyle,
           {borderBottomWidth: index === orderData.length - 1 ? 0 : 1},
@@ -52,7 +51,7 @@ const Order: FC<OrderProps> = ({
         </Text>
       </Pressable>
     );
-  };
+  }, []);
 
   return (
     <View style={{marginTop: 32}}>
@@ -82,9 +81,9 @@ interface OrderProps {
   orderCount: number;
   payment: number;
   orderData: ReportOrderItemType[];
-  handleItem: (item: ReportOrderItemType) => void;
+  handleItem?: (item: ReportOrderItemType) => void;
 }
-export default React.memo(Order,isEqual);
+export default React.memo(Order, isEqual);
 const createStyleSheet = (theme: ExtendedTheme) =>
   StyleSheet.create({
     itemContainer: {
