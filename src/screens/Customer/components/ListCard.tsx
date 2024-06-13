@@ -29,24 +29,24 @@ const ListCard = (props: Props) => {
 
   const flatListRef = useRef<FlatList>(null);
 
-  const onEndReachedThreshold = () => {
+  const onEndReachedThreshold = useCallback(() => {
     if (props.onLoadData && typeof props.onLoadData === 'function') {
       props.onLoadData();
-      // flatListRef.current?.scrollToIndex({
-      //   animated: true,
-      //   index: props.data && props.data.length -1,
-      // });
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: props.data && props.data.length - 1,
+      });
     }
-  };
-  const onLoadingData = () => {
+  }, []);
+  const onLoadingData = useCallback(() => {
     if (props.onRefresh && typeof props.onRefresh === 'function') {
       props.onRefresh();
-      // flatListRef.current?.scrollToIndex({
-      //   animated: true,
-      //   index: props.currentIndex,
-      // });
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: props.currentIndex,
+      });
     }
-  };
+  }, [props.currentIndex]);
 
   // const memorizedValue = useCallback(() => renderItem, [props.data, props.loading]);
   // console.log(props.data,'data')
@@ -59,19 +59,18 @@ const ListCard = (props: Props) => {
       onScroll={onScroll}
       onEndReached={onEndReachedThreshold}
       showsVerticalScrollIndicator={false}
-      onEndReachedThreshold={0}
+      onEndReachedThreshold={0.1}
       maxToRenderPerBatch={10}
       updateCellsBatchingPeriod={50}
       scrollEventThrottle={100}
       windowSize={21}
-      
-      initialNumToRender={5}
+      initialNumToRender={10}
       refreshControl={
         <RefreshControl onRefresh={onLoadingData} refreshing={props.loading} />
       }
       removeClippedSubviews={true}
       ListFooterComponent={props.listFooter}
-      keyExtractor={(item, index) => index.toString()}
+      keyExtractor={(item, index) => item.customer_code.toString()}
       renderItem={renderItem}
     />
   ) : (

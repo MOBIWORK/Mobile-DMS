@@ -131,7 +131,7 @@ const UserInfoScreen = () => {
     if (response.status === ApiConstant.STT_OK) {
       await updateUser();
     }
-    storage.set('time', '');
+    // storage.set('time', '');
     dispatch(appActions.setProcessingStatus(false));
   };
 

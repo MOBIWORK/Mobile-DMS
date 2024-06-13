@@ -289,7 +289,7 @@ export default {
   welcome: 'Xin chào',
   noAlbum: 'Không có album nào',
   chooseAlbum: 'Chọn album',
-  addAlbumToTakePicture: 'Thêm album để chụp ảnh',
+  addAlbumToTakePicture: 'Chọn album để chụp ảnh',
   currentPassword: 'Mật khẩu hiện tại',
   checkOutTimeErr: 'Thời gian viếng thăm phải lớn hơn {time} phút',
   inventoryNotComplete: 'Bạn chưa thực hiện kiểm tồn',

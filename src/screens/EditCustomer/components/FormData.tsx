@@ -262,7 +262,7 @@ const FormData = (props: Props) => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
-      storage.set('time', '');
+      // storage.set('time', '');
     });
   }, [dataCustomer]);
 

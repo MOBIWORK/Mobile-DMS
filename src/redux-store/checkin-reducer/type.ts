@@ -39,7 +39,7 @@ export type DataSendMarkScore = {
   setting_score_audit: any;
 };
 
-const {selectedProgram} = getState('checkin');
+const {imageToMark} = getState('checkin');
 
 export const categoriesCheckinList: IItemCheckIn[] = [
   {
@@ -105,7 +105,7 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isRequire: false,
     name: 'Chấm điểm trưng bày',
     screenName:
-      selectedProgram && selectedProgram.length > 0
+      imageToMark && imageToMark.length > 0
         ? ScreenConstant.LIST_ALBUM_SCORE
         : ScreenConstant.TAKE_PICTURE_SCORE,
 
