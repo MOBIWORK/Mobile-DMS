@@ -44,7 +44,7 @@ type Props = {
   handleRegainLocation: () => Promise<void>
   handleEnabledPressed: (item?: VisitListItemType, type?: boolean) => Promise<void>
   setShowListVisit: (value: React.SetStateAction<boolean>) => void;
-  onEndReachedThreshold: () => null | undefined
+  onEndReachedThreshold: () => void
 
 };
 

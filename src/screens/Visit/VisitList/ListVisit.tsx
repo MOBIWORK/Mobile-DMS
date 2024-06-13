@@ -92,6 +92,7 @@ import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {storage} from '../../../utils/commom.utils';
 import FilterHandle from '../../Customer/components/FilterHandle';
 import RenderContent from './Component/RenderContent';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 
 //config Mapbox
 
