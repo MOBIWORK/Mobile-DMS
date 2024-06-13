@@ -542,7 +542,7 @@ const CheckIn = () => {
               checkin_giora: new Date().getTime() / 1000,
             }),
           );
-          console.log('run reset data line 552');
+          console.log('run reset data line 545');
           storage.set('time', '');
           storage.set('elapse', '');
           storage.set('currentTime', '');
