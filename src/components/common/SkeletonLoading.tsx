@@ -39,7 +39,8 @@ const SkeletonLoading = ({width,height,borderRadius,color}: Props) => {
                     height : height ? height : 10 ,
                     borderRadius: borderRadius ? borderRadius : 0 ,
                     opacity: loadingAnimation,
-                    backgroundColor : color ? color : theme.colors.border
+                    backgroundColor : color ? color : theme.colors.border,
+                    // flex:1
                 }
             ]}>
         </Animated.View>

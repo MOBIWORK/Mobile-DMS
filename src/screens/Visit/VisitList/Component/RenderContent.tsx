@@ -23,6 +23,7 @@ import VisitItem from '../VisitItem';
 import { AppConstant } from '../../../../const';
 import { MapView } from './MapView';
 import { CommonUtils } from '../../../../utils';
+import { HEIGHT } from '../../../../const/app.const';
 
 
 type Props = {
@@ -92,26 +93,27 @@ const [isPending,startTransition] = useTransition()
     setShowListVisit(false);
     setVisitItemSelected(item);
   },[]);
+  console.log(customerDataSort,'data',listCustomer.data,'cc')
 
 
   return (
     <Block marginTop={8}>
       {isShowListVisit ? (
         <Block marginTop={16} paddingHorizontal={16}>
-          <Text style={{color: colors.text_secondary}}>
+          <Text style={{color: colors.text_secondary,paddingBottom:10}}>
             {StringFormat(getLabel('customerVisitedCount'), {
               customerCheckinCount: customerCheckinCount,
               allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
             })}
           </Text>
           {loading ? (
-            <SkeletonLoading />
+            <SkeletonLoading height={HEIGHT}  />
           ) : (
             <FlatList
               ref={ref}
               style={{height: '85%', paddingVertical: 8}}
               showsVerticalScrollIndicator={false}
-              data={customerDataSort ?? listCustomer.data}
+              data={customerDataSort && customerDataSort.length > 0 ? customerDataSort :  listCustomer.data}
               keyExtractor={(item, index) => `${item.customer_code} - ${index}`}
               decelerationRate={'normal'}
               bounces={true}
@@ -141,6 +143,7 @@ const [isPending,startTransition] = useTransition()
               onEndReachedThreshold={0.5}
               ListEmptyComponent={
                 <Block
+                color='red'
                   alignSelf="center"
                   height={AppConstant.HEIGHT * 0.5}
                   justifyContent="center">

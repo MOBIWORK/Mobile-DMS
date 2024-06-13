@@ -36,7 +36,7 @@ import {
 } from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {dispatch} from '../../../utils/redux/index';
+import {dispatch, getState} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
@@ -55,9 +55,9 @@ import {AppStateStatus} from 'react-native';
 import moment from 'moment';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-import {ListCustomerRoute} from '../../../models/types';
-import {useMMKVString} from 'react-native-mmkv';
+// import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+// import {ListCustomerRoute} from '../../../models/types';
+// import {useMMKVString} from 'react-native-mmkv';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -79,7 +79,9 @@ const useTimer = () => {
       if (timeDiff > 1000) {
         console.log('run diff');
         console.log(timeDiff / 1000, 'timeDiff', storedElapsedTime);
-        setElapsedTime(Math.round(timeDiff / 1000) + Number(storedElapsedTime));
+        const total = timeDiff + Number(storedElapsedTime)*1000;
+        console.log(total, 'total');
+        setElapsedTime(Math.ceil(Number(total/1000)));
       } else {
         console.log(Number(storedElapsedTime) + elapsedTime, 'stored');
         setElapsedTime(Number(storedElapsedTime) + elapsedTime);
@@ -106,10 +108,12 @@ const useTimer = () => {
       storage.set('currentTime', String(moment(new Date()).valueOf()));
     } else if (!isFocus) {
       setAppState(nextAppState);
+      console.log('case 1 ')
       storage.set('elapse', String(elapsedTime));
       storage.set('currentTime', String(moment(new Date()).valueOf()));
     } else {
       setAppState(nextAppState);
+      console.log('case 2 ')
       storage.set('elapse', String(elapsedTime));
       storage.set('currentTime', String(moment(new Date()).valueOf()));
     }
@@ -130,6 +134,7 @@ const useTimer = () => {
 
   useEffect(() => {
     if (isFocus) {
+      console.log('run is focuse effect');
       loadStoredTime();
       intervalIdRef.current = setInterval(() => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
@@ -191,6 +196,8 @@ const CheckIn = () => {
       systemConfig?.tgcheckin_toithieu ? systemConfig.thoigian_toithieu : 0,
     ),
   );
+  const {imageToMark} = getState('checkin');
+  // console.log(imageToMark,'ssss')
   useDisableBackHandler(true);
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
@@ -267,16 +274,36 @@ const CheckIn = () => {
       let currentCate = {...categoriesCheckin};
       console.log('run outfocus');
       storage.set('elapse', String(elapsedTime));
-      storage.set('time', String(moment(new Date()).valueOf()));
+      storage.set('currentTime', String(moment(new Date()).valueOf()));
+      storage.set('cate', JSON.stringify(currentCate));
       setAppState(nextAppState);
-      dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
-    } else {
+      // dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
+    } else if(nextAppState === 'inactive') {
+      console.log('run inactive')
       let currentCate = categoriesCheckin;
-      console.log('run backstate');
+      // console.log('run backstate');
       storage.set('elapse', String(elapsedTime));
-      storage.set('time', String(moment(new Date()).valueOf()));
+      storage.set('currentTime', String(moment(new Date()).valueOf()));
       setAppState(nextAppState);
-      dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
+      storage.set('cate', JSON.stringify(currentCate));
+
+      // dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
+    }else if(nextAppState === 'background'){
+      console.log('run background')
+      let currentCate = categoriesCheckin;
+      // console.log('run backstate');
+      storage.set('elapse', String(elapsedTime));
+      storage.set('currentTime', String(moment(new Date()).valueOf()));
+      setAppState(nextAppState);
+      storage.set('cate', JSON.stringify(currentCate));
+    }else{
+      console.log('run appteste',nextAppState)
+      let currentCate = categoriesCheckin;
+      // console.log('run backstate');
+      storage.set('elapse', String(elapsedTime));
+      storage.set('currentTime', String(moment(new Date()).valueOf()));
+      setAppState(nextAppState);
+      storage.set('cate', JSON.stringify(currentCate));
     }
   };
 
@@ -312,7 +339,7 @@ const CheckIn = () => {
     }
   }, [enableGPS, isFocus]);
 
-  const checkGPSConfirmCheckout = useCallback(async () => {
+  const checkGPSConfirmCheckout = async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
@@ -333,7 +360,7 @@ const CheckIn = () => {
             storage.set('elapse', '');
             storage.set('currentTime', '');
             dispatch(appActions.setProcessingStatus(false));
-
+            console.log('run back', res);
             goBack();
           }
           // } catch (e) {
@@ -372,7 +399,7 @@ const CheckIn = () => {
       // dispatch(appActions.setProcessingStatus(false));
       // }
     }
-  }, [enableGPS]);
+  };
 
   // console.log(categoriesCheckin.map(item => item.isDone),'cate')
 
@@ -602,6 +629,7 @@ const CheckIn = () => {
           colorTheme="white"
           borderRadius={16}>
           {categoriesCheckin &&
+            categoriesCheckin.length > 0 &&
             categoriesCheckin.map((item, index) => {
               return <ItemCheckIn key={index} item={item} navData={params} />;
             })}

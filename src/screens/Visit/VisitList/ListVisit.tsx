@@ -586,7 +586,7 @@ const ListVisit = () => {
         }
       });
     },
-    [customerDataSort, listCustomer.data.length],
+    [customerDataSort],
   );
 
   const getCustomerRoute = useCallback(async () => {
@@ -709,7 +709,7 @@ const ListVisit = () => {
     } finally {
       setLoading(false);
     }
-  }, [filterParams, listCustomer.data.length]);
+  }, [filterParams, listCustomer]);
 
   const handleRegainLocation = useCallback(async () => {
     CommonUtils.getCurrentLocation(
