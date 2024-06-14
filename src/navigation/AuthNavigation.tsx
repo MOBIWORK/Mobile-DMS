@@ -69,6 +69,7 @@ const AuthNavigation = () => {
         headerShown: false,
         gestureEnabled: false,
         animation: 'slide_from_left',
+        // contentStyle:{zIndex:-10000}
       }}
       initialRouteName={'MAIN_TAB'}>
       <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />

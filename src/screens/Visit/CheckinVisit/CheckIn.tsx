@@ -44,6 +44,7 @@ import {goBack, navigate} from '../../../navigation/navigation-service';
 import {AppService, CustomerService} from '../../../services';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // @ts-ignore
 import StringFormat from 'string-format';
 import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
@@ -55,9 +56,7 @@ import {AppStateStatus} from 'react-native';
 import moment from 'moment';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-// import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-// import {ListCustomerRoute} from '../../../models/types';
-// import {useMMKVString} from 'react-native-mmkv';
+
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -67,93 +66,33 @@ const useTimer = () => {
   const storedElapsedTime = storage.getString('elapse');
   const storedCurTime = storage.getString('currentTime');
   const [appState, setAppState] = useState(AppState.currentState);
-  const loadStoredTime = () => {
-    if (storedElapsedTime && storedCurTime) {
+  const loadStoredTime = async () => {
+    const elapseStore = await AsyncStorage.getItem('elapse');
+    const currentStore = await AsyncStorage.getItem('currentTime');
+    if (elapseStore && currentStore) {
       const currentTimeStamp = moment(new Date()).valueOf();
-      //  console.log('run',totalElapsedTime,storedCurTime,currentTimeStamp,'ewq')
-      const timeDiff = Number(currentTimeStamp) - Number(storedCurTime);
-      if (timeDiff > 1000) {
-       
-        const total = timeDiff + Number(storedElapsedTime) * 1000;
-        console.log(total, 'total');
-        setElapsedTime(Math.ceil(Number(total / 1000)));
-      } else {
-        // console.log(Number(storedElapsedTime) + elapsedTime, 'stored');
-        setElapsedTime(Number(storedElapsedTime) + elapsedTime);
-      }
-      // console.log(totalElapsedTime, 'total elap');
+      const timeDiff = (Number(currentTimeStamp) - Number(currentStore)) / 1000;
+      const total = timeDiff + Number(elapseStore);
+      setElapsedTime(Math.ceil(Number(total)));
+    }else{
+      const currentTimeStamp = moment(new Date()).valueOf();
+      const timeDiff = (Number(currentTimeStamp) - Number(storedCurTime)) / 1000;
+      const total = timeDiff + Number(storedElapsedTime);
+      setElapsedTime(Math.ceil(Number(total)));
     }
-    // else{
-    //   const currentTimeStamp = moment(new Date()).valueOf();
-    //   const totalElapsedTime = currentTimeStamp - Number(storedCurTime)
-    //   setElapsedTime(totalElapsedTime + Number(storedElapsedTime));
 
-    // }
-  };
-  // console.log(storedCurTime,storedElapsedTime,storedStartTime,'storage')
-
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === 'active' && isFocus) {
-      setAppState(nextAppState);
-
-      loadStoredTime();
-    } else if (nextAppState != 'active' && !isFocus) {
-      console.log('run not focus');
-      setAppState(nextAppState);
-
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
-    } else if (!isFocus) {
-      setAppState(nextAppState);
-      console.log('case 1 ');
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
-    } else if (nextAppState === 'background') {
-      setAppState(nextAppState);
-      // console.log('case background ');
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
-    } else if (nextAppState === 'unknown') {
-      console.log('case unknow ');
-      setAppState(nextAppState);
-
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
-    } else if (nextAppState === 'extension') {
-      console.log('case extension ');
-      setAppState(nextAppState);
-
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
-    } else {
-      setAppState(nextAppState);
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
-    }
   };
 
-  useEffect(() => {
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
-    return () => {
-      subscription.remove();
-      if (intervalIdRef.current) {
-        clearInterval(intervalIdRef.current);
-      }
-    };
-  }, []);
-
+  
   useEffect(() => {
     if (isFocus) {
-      console.log('run is focus effect');
+      // console.log('run is focus effect');
       loadStoredTime();
       intervalIdRef.current = setInterval(() => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
     } else {
-      // storage.set('elapse', String(elapsedTime));
+      storage.set('elapse', String(elapsedTime));
       console.log('run not focus effect');
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
@@ -279,13 +218,13 @@ const CheckIn = () => {
     }
   }, [msgCheckOutErr, openDialogErr]);
 
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+  const handleAppStateChange = async (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
-      console.log('run active');
+      // storage.set('elapse', String(elapsedTime));
       setAppState(nextAppState);
     } else if (!isFocus) {
       let currentCate = {...categoriesCheckin};
-      
+      console.log('run active');
       storage.set('elapse', String(elapsedTime));
       storage.set('currentTime', String(moment(new Date()).valueOf()));
       storage.set('cate', JSON.stringify(currentCate));
@@ -300,17 +239,16 @@ const CheckIn = () => {
       storage.set('cate', JSON.stringify(currentCate));
       setAppState(nextAppState);
     } else if (nextAppState === 'background') {
-      // console.log('run background');
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
+      console.log('run background');
+      await storage.set('elapse', String(elapsedTime));
+      await storage.set('currentTime', String(moment(new Date()).valueOf()));
       let currentCate = categoriesCheckin;
-      console.log(elapsedTime, 'elapse');
-      // console.log('run backstate');
 
       setAppState(nextAppState);
       storage.set('cate', JSON.stringify(currentCate));
     } else {
-      console.log('run appteste', nextAppState);
+      console.log('run null');
+
       let currentCate = categoriesCheckin;
       // console.log('run backstate');
       storage.set('elapse', String(elapsedTime));
@@ -329,7 +267,7 @@ const CheckIn = () => {
     return () => {
       subscription.remove();
     };
-  }, [appState,isFocus]);
+  }, [isFocus]);
 
   const checkGPS = useCallback(async () => {
     if (Platform.OS === 'android') {
@@ -373,6 +311,7 @@ const CheckIn = () => {
             storage.set('time', '');
             storage.set('elapse', '');
             storage.set('currentTime', '');
+            await AsyncStorage.clear();
             dispatch(appActions.setProcessingStatus(false));
             console.log('run back', res);
             goBack();
@@ -405,6 +344,8 @@ const CheckIn = () => {
         storage.set('time', '');
         storage.set('elapse', '');
         storage.set('currentTime', '');
+        await AsyncStorage.clear();
+
         dispatch(appActions.setProcessingStatus(false));
 
         goBack();

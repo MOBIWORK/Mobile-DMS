@@ -347,6 +347,7 @@ const Customer = () => {
   }, [value]);
 
   const onEndReachedThreshold = useCallback(() => {
+    // console.log('on end reach')
     if (
       page <=
         Math.ceil(listCustomerResult.total / listCustomerResult.page_size) &&
@@ -390,6 +391,7 @@ const Customer = () => {
       //   index: currentIndex.current,
       // });
     } else {
+      console.log('onEnd')
       return null;
     }
   }, [page, value, listCustomer]);
@@ -435,7 +437,7 @@ const Customer = () => {
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
       <StatusBar barStyle={'dark-content'} />
-      <Block paddingHorizontal={16} block paddingBottom={bottom + 24}>
+      <Block paddingHorizontal={16} block paddingBottom={bottom + 50}>
         <View style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('customer')}</Text>
           <TouchableOpacity

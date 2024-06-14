@@ -30,21 +30,23 @@ const ListCard = (props: Props) => {
   const flatListRef = useRef<FlatList>(null);
 
   const onEndReachedThreshold = useCallback(() => {
-    if (props.onLoadData && typeof props.onLoadData === 'function') {
-      props.onLoadData();
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: props.data && props.data.length - 1,
-      });
-    }
+    // console.log('on end Reach')
+    props.onLoadData&&   props.onLoadData();
+    // flatListRef.current?.scrollToIndex({
+    //   animated: true,
+    //   index: props.data && props.data.length - 1,
+    // });
+    // if (props.onLoadData && typeof props.onLoadData() === 'function') {
+     
+    // }
   }, []);
   const onLoadingData = useCallback(() => {
     if (props.onRefresh && typeof props.onRefresh === 'function') {
       props.onRefresh();
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: props.currentIndex,
-      });
+      // flatListRef.current?.scrollToIndex({
+      //   animated: true,
+      //   index: props.currentIndex,
+      // });
     }
   }, [props.currentIndex]);
 
@@ -59,18 +61,17 @@ const ListCard = (props: Props) => {
       onScroll={onScroll}
       onEndReached={onEndReachedThreshold}
       showsVerticalScrollIndicator={false}
-      onEndReachedThreshold={0.1}
-      maxToRenderPerBatch={10}
-      updateCellsBatchingPeriod={50}
-      scrollEventThrottle={100}
-      windowSize={21}
-      initialNumToRender={10}
+      onEndReachedThreshold={0.6}
+      maxToRenderPerBatch={30}
+      updateCellsBatchingPeriod={2}
+      windowSize={31}
+      initialNumToRender={25}
       refreshControl={
         <RefreshControl onRefresh={onLoadingData} refreshing={props.loading} />
       }
       removeClippedSubviews={true}
       ListFooterComponent={props.listFooter}
-      keyExtractor={(item, index) => item.customer_code.toString()}
+      keyExtractor={(item, index) => item.customer_code.toString() + index.toString()}
       renderItem={renderItem}
     />
   ) : (

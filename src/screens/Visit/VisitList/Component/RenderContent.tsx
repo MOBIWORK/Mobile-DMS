@@ -8,7 +8,7 @@ import React, {useTransition} from 'react';
 import isEqual from 'react-fast-compare';
 import {
   Block,
-  SkeletonLoading,
+
   AppText as Text,
 } from '../../../../components/common';
 import {VisitListItemResult, VisitListItemType} from '../../../../models/types';
@@ -23,6 +23,7 @@ import {AppConstant} from '../../../../const';
 import {MapView} from './MapView';
 import {CommonUtils} from '../../../../utils';
 import {HEIGHT} from '../../../../const/app.const';
+import SkeletonLoading from '../../../Visit/SkeletonLoading';
 
 type Props = {
   isShowListVisit: boolean;
@@ -110,7 +111,7 @@ const RenderContentVisit = ({
             })}
           </Text>
           {loading ? (
-            <SkeletonLoading height={HEIGHT} />
+            <SkeletonLoading/>
           ) : (
             <FlatList
               ref={flatListRef}
@@ -147,10 +148,9 @@ const RenderContentVisit = ({
                 />
               )}
               onEndReached={onEndReachedThreshold}
-              onEndReachedThreshold={0}
+              onEndReachedThreshold={0.2}
               ListEmptyComponent={
                 <Block
-                  // color='red'
                   alignSelf="center"
                   height={AppConstant.HEIGHT * 0.5}
                   justifyContent="center">
