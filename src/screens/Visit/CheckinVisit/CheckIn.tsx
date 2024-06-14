@@ -56,9 +56,7 @@ import {AppStateStatus} from 'react-native';
 import moment from 'moment';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-// import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-// import {ListCustomerRoute} from '../../../models/types';
-// import {useMMKVString} from 'react-native-mmkv';
+
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -76,78 +74,16 @@ const useTimer = () => {
       const timeDiff = (Number(currentTimeStamp) - Number(currentStore)) / 1000;
       const total = timeDiff + Number(elapseStore);
       setElapsedTime(Math.ceil(Number(total)));
+    }else{
+      const currentTimeStamp = moment(new Date()).valueOf();
+      const timeDiff = (Number(currentTimeStamp) - Number(storedCurTime)) / 1000;
+      const total = timeDiff + Number(storedElapsedTime);
+      setElapsedTime(Math.ceil(Number(total)));
     }
-    // else{
-    //   const currentTimeStamp = moment(new Date()).valueOf();
-    //   const timeDiff = (Number(currentTimeStamp) - Number(storedCurTime))/1000;
-    //   const total = timeDiff + Number(sto);
-    //   setElapsedTime(Math.ceil(Number(total)));
-    // }
+
   };
 
-  // const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-  //   if (nextAppState === 'active' && isFocus) {
-  //     setAppState(nextAppState);
-
-  //     loadStoredTime();
-  //   } else if (nextAppState != 'active' && !isFocus) {
-  //     console.log('run not focus');
-  //     setAppState(nextAppState);
-  //     await AsyncStorage.setItem('elapse', String(elapsedTime));
-  //     await AsyncStorage.setItem('currentTime', String(moment().valueOf()));
-  //     storage.set('elapse', String(elapsedTime));
-  //     storage.set('currentTime', String(moment(new Date()).valueOf()));
-  //   } else if (!isFocus) {
-  //     setAppState(nextAppState);
-  //     console.log('case 1 ');
-  //     await AsyncStorage.setItem('elapse', String(elapsedTime));
-  //     await AsyncStorage.setItem('currentTime', String(moment().valueOf()));
-  //     storage.set('elapse', String(elapsedTime));
-  //     storage.set('currentTime', String(moment(new Date()).valueOf()));
-  //   } else if (nextAppState === 'background') {
-  //     setAppState(nextAppState);
-  //     // console.log('case background ');
-  //     await AsyncStorage.setItem('elapse', String(elapsedTime));
-  //     await AsyncStorage.setItem('currentTime', String(moment().valueOf()));
-  //     storage.set('elapse', String(elapsedTime));
-  //     storage.set('currentTime', String(moment(new Date()).valueOf()));
-  //   } else if (nextAppState === 'unknown') {
-  //     console.log('case unknow ');
-  //     setAppState(nextAppState);
-  //     await AsyncStorage.setItem('elapse', String(elapsedTime));
-  //     await AsyncStorage.setItem('currentTime', String(moment().valueOf()));
-  //     storage.set('elapse', String(elapsedTime));
-  //     storage.set('currentTime', String(moment(new Date()).valueOf()));
-  //   } else if (nextAppState === 'extension') {
-  //     console.log('case extension ');
-  //     setAppState(nextAppState);
-  //     await AsyncStorage.setItem('elapse', String(elapsedTime));
-  //     await AsyncStorage.setItem('currentTime', String(moment().valueOf()));
-  //     storage.set('elapse', String(elapsedTime));
-  //     storage.set('currentTime', String(moment(new Date()).valueOf()));
-  //   } else {
-  //     setAppState(nextAppState);
-  //     await AsyncStorage.setItem('elapse', String(elapsedTime));
-  //     await AsyncStorage.setItem('currentTime', String(moment().valueOf()));
-  //     storage.set('elapse', String(elapsedTime));
-  //     storage.set('currentTime', String(moment(new Date()).valueOf()));
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   // const subscription = AppState.addEventListener(
-  //   //   'change',
-  //   //   handleAppStateChange,
-  //   // );
-
-  //   return () => {
-  //     // subscription.remove();
-  //     if (intervalIdRef.current) {
-  //       clearInterval(intervalIdRef.current);
-  //     }
-  //   };
-  // }, [isFocus]);
-
+  
   useEffect(() => {
     if (isFocus) {
       // console.log('run is focus effect');
