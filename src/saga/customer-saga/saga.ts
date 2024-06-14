@@ -41,6 +41,7 @@ export function* onGetCustomer(action: PayloadAction) {
   if (customerActions.onGetCustomer.match(action)) {
     try {
       yield put(onLoadApp());
+      yield put(appActions.setProcessingStatus(true));
       const response: ResponseGenerator = yield call(
         getCustomer,
         action.payload,
@@ -51,8 +52,10 @@ export function* onGetCustomer(action: PayloadAction) {
       }
     } catch (err) {
       console.log('errCustomer: ', err);
+      yield put(appActions.setProcessingStatus(false));
     } finally {
       yield put(onLoadAppEnd());
+      yield put(appActions.setProcessingStatus(false));
     }
   }
 }
@@ -125,6 +128,7 @@ export function* getMoreDataCustomer(action: PayloadAction) {
   if (customerActions.getCustomerNewPage.match(action)) {
     try {
       yield put(appActions.onLoadApp());
+      yield put(appActions.setProcessingStatus(true));
       const response: ResponseGenerator = yield call(
         getPageCustomer,
         action.payload,
@@ -135,8 +139,10 @@ export function* getMoreDataCustomer(action: PayloadAction) {
       }
     } catch (err) {
       console.log(err, 'error');
+      yield put(appActions.setProcessingStatus(false));
     } finally {
       yield put(appActions.onLoadAppEnd());
+      yield put(appActions.setProcessingStatus(false));
     }
   }
 }

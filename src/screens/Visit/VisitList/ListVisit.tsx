@@ -22,7 +22,6 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   Platform,
-  RefreshControl,
   StyleSheet,
   TextStyle,
   TouchableOpacity,
@@ -34,7 +33,6 @@ import {
   ExtendedTheme,
   useIsFocused,
   useNavigation,
-  useRoute,
   useTheme,
 } from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
@@ -44,13 +42,12 @@ import {
   VisitListItemResult,
   VisitListItemType,
 } from '../../../models/types';
-import VisitItem, {LocationProps} from './VisitItem';
+import {LocationProps} from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import SkeletonLoading from '../SkeletonLoading';
 import {
   backgroundErrorListener,
   calculateDistance,
@@ -77,8 +74,6 @@ import FilterListComponent, {
 import {CustomerService} from '../../../services';
 import {CommonUtils} from '../../../utils';
 import {shallowEqual, useDispatch} from 'react-redux';
-// @ts-ignore
-import StringFormat from 'string-format';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
 import ModalAlert from './Component/ModalAlert';
@@ -87,12 +82,9 @@ import moment from 'moment';
 import {useBatteryLevel} from 'expo-battery';
 import ModalUpdateLocation from './Component/ModalUpdateLocation';
 import {ObjectId} from 'bson';
-import {MapView} from './Component/MapView';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {storage} from '../../../utils/commom.utils';
-import FilterHandle from '../../Customer/components/FilterHandle';
 import RenderContent from './Component/RenderContent';
-import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
+import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 
 //config Mapbox
 
@@ -217,26 +209,6 @@ const ListVisit = () => {
     },
     [modalErrorGPS],
   );
-  // const backgroundErrorListener = useCallback(
-  //   (errorCode: number) => {
-  //     // Handle background location errors
-  //     switch (errorCode) {
-  //       case 0:
-  //         setError(
-  //           'Không thể lấy được vị trí GPS. Bạn nên di chuyển đến vị trí không bị che khuất và thử lại.',
-  //         );
-  //         break;
-  //       case 1:
-  //         setError('GPS đã bị tắt. Vui lòng bật lại.');
-  //         break;
-  //       default:
-  //         setError(
-  //           'Kết nỗi mạng không ổn định. Bạn nên kết nối lại và thử lại',
-  //         );
-  //     }
-  //   },
-  //   [error],
-  // );
 
   const customerCheckinCount = useMemo(() => {
     if (listCustomer && customerDataSort && customerDataSort.length > 0) {
@@ -267,13 +239,14 @@ const ListVisit = () => {
   }, [dispatch, filterParams, filterDataRef.current]);
 
   const onEndReachedThreshold = useCallback(() => {
+    console.log('onEndReachedThreshold');
     setBottomLoading(true);
     const totalPage = Math.ceil(listCustomer.total / 20);
-    if (
-      listCustomer.page_number <= totalPage &&
-      listCustomer.data.length > 19
-    ) {
+    console.log('pageNumber', listCustomer.page_number);
+    console.log('pageTotal', totalPage);
+    if (listCustomer.page_number < totalPage && listCustomer.data.length > 19) {
       if (Object.keys(filterDataRef.current).length > 0) {
+        console.log('hahaa');
         getCustomer(
           {
             ...filterDataRef.current,
@@ -283,22 +256,23 @@ const ListVisit = () => {
         );
         setBottomLoading(false);
       } else {
-        getCustomer(
-          {
-            ...filterParams,
-            router: filterParams?.router?.channel_code,
-            page_number: listCustomer.page_number + 1,
-          },
-          true,
-        );
-        setBottomLoading(false);
+        console.log('hehe');
+        // getCustomer(
+        //   {
+        //     ...filterParams,
+        //     router: filterParams?.router?.channel_code,
+        //     page_number: listCustomer.page_number + 1,
+        //   },
+        //   true,
+        // );
+        // setBottomLoading(false);
       }
     } else {
       setBottomLoading(false);
       return;
     }
     setBottomLoading(false);
-  }, [bottomLoading]);
+  }, [listCustomer]);
 
   const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
     distanceRef.current?.close();
@@ -415,8 +389,6 @@ const ListVisit = () => {
     }, 500);
   };
 
-  
-
   // const renderContent = () => {
   //   return (
   //     <Block marginTop={8}>
@@ -531,63 +503,70 @@ const ListVisit = () => {
         }
       });
     },
-    [listCustomer?.data?.length],
+    [listCustomer],
   );
 
-  const sortDataCustomer = useCallback(
-    (distanceLabel: string) => {
-      startEffect(() => {
-        if (listCustomer && listCustomer?.data?.length > 0) {
-          const filteredData = listCustomer.data.filter(
-            item => item.customer_location_primary != null,
-          );
-          const noLocationCustomer = listCustomer.data.filter(
-            item => item.customer_location_primary === null,
-          );
-          const sortedData = () => {
-            return (
-              filteredData.slice().sort((a, b) => {
-                const locationA: LocationProps =
-                  JSON.parse(
-                    a.customer_location_primary
-                      ? a.customer_location_primary
-                      : '{"long": 0, "lat": 0}',
-                  ) || {};
-                const locationB: LocationProps = JSON.parse(
-                  b.customer_location_primary
-                    ? b.customer_location_primary
-                    : '{"long": 0, "lat": 0}',
-                );
-                const distance1 = calculateDistance(
-                  currentLocation?.coords?.latitude
-                    ? currentLocation?.coords?.latitude
-                    : 0,
-                  currentLocation?.coords?.longitude
-                    ? currentLocation?.coords?.longitude
-                    : 0,
-                  locationA.lat != null ? locationA.lat : 0,
-                  locationA.long != null ? locationA.long : 0,
-                );
-                const distance2 = calculateDistance(
-                  currentLocation?.coords?.latitude,
-                  currentLocation?.coords?.longitude,
-                  locationB.lat != null ? locationB.lat : 0,
-                  locationB.long != null ? locationB.long : 0,
-                );
-                return distanceLabel === getLabel('nearest')
-                  ? distance1 - distance2
-                  : distance2 - distance1;
-              }) || null
-            );
-          };
-          setCustomerData([...sortedData(), ...noLocationCustomer]);
-        } else {
-          setCustomerData([]);
-        }
-      });
-    },
-    [customerDataSort],
-  );
+  const sortedData = (
+    distanceLabel: string,
+    filteredData: VisitListItemType[],
+  ) => {
+    return (
+      filteredData.slice().sort((a, b) => {
+        const locationA: LocationProps =
+          JSON.parse(
+            a.customer_location_primary
+              ? a.customer_location_primary
+              : '{"long": 0, "lat": 0}',
+          ) || {};
+        const locationB: LocationProps = JSON.parse(
+          b.customer_location_primary
+            ? b.customer_location_primary
+            : '{"long": 0, "lat": 0}',
+        );
+        const distance1 = calculateDistance(
+          currentLocation?.coords?.latitude
+            ? currentLocation?.coords?.latitude
+            : 0,
+          currentLocation?.coords?.longitude
+            ? currentLocation?.coords?.longitude
+            : 0,
+          locationA.lat != null ? locationA.lat : 0,
+          locationA.long != null ? locationA.long : 0,
+        );
+        const distance2 = calculateDistance(
+          currentLocation?.coords?.latitude,
+          currentLocation?.coords?.longitude,
+          locationB.lat != null ? locationB.lat : 0,
+          locationB.long != null ? locationB.long : 0,
+        );
+        return distanceLabel === getLabel('nearest')
+          ? distance1 - distance2
+          : distance2 - distance1;
+      }) || null
+    );
+  };
+
+  const sortDataCustomer = (distanceLabel: string) => {
+    if (listCustomer && listCustomer?.data?.length > 0) {
+      const filteredData = listCustomer.data.filter(
+        item => item.customer_location_primary != null,
+      );
+      const noLocationCustomer = listCustomer.data.filter(
+        item => item.customer_location_primary === null,
+      );
+
+      // setCustomerData([
+      //   ...sortedData(distanceLabel, filteredData),
+      //   ...noLocationCustomer,
+      // ]);
+    } else {
+      setCustomerData([]);
+    }
+  };
+
+  useEffect(() => {
+    sortDataCustomer(distanceFilterValue);
+  }, [listCustomer]);
 
   const getCustomerRoute = useCallback(async () => {
     const all_route: ListCustomerRoute = {
@@ -654,7 +633,6 @@ const ListVisit = () => {
       setFilterParams({router: routeTodayRef.current});
       await getCustomer({router: routeTodayRef.current.channel_code});
       await getCustomerRoute();
-      // await getDataGroup()
     } catch (e) {
       //
     } finally {
@@ -684,10 +662,10 @@ const ListVisit = () => {
                 filterParams.status === getLabel('notVisited')
               ? 'not_checkin'
               : 'all',
-          order_by:
-            filterParams?.order_by && filterParams.order_by === 'A -> Z'
-              ? 'asc'
-              : 'desc',
+          // order_by:
+          //   filterParams?.order_by && filterParams.order_by === 'A -> Z'
+          //     ? 'asc'
+          //     : 'desc',
           birthday_from: birthDayObj
             ? new Date(birthDayObj.from_date).getTime() / 1000
             : '',
@@ -747,7 +725,7 @@ const ListVisit = () => {
     } finally {
       setLoading(false);
     }
-  }, [customerDataSort]);
+  }, [listCustomer, searchVisit]);
 
   const handleCheckin = useCallback(
     (
@@ -1203,7 +1181,7 @@ const ListVisit = () => {
         <>
           <RenderContent
             isShowListVisit={isShowListVisit}
-            ref={flatlistRef}
+            flatListRef={flatlistRef}
             customerDataSort={customerDataSort}
             listCustomer={listCustomer}
             loading={loading}
