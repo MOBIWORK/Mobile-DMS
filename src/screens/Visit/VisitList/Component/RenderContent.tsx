@@ -9,7 +9,7 @@ import React, { useTransition } from 'react';
 import isEqual from 'react-fast-compare';
 import {
   Block,
-  SkeletonLoading,
+
   AppText as Text,
 } from '../../../../components/common';
 import {VisitListItemResult, VisitListItemType} from '../../../../models/types';
@@ -24,6 +24,7 @@ import { AppConstant } from '../../../../const';
 import { MapView } from './MapView';
 import { CommonUtils } from '../../../../utils';
 import { HEIGHT } from '../../../../const/app.const';
+import SkeletonLoading from '../../../Visit/SkeletonLoading';
 
 
 type Props = {
@@ -93,7 +94,10 @@ const [isPending,startTransition] = useTransition()
     setShowListVisit(false);
     setVisitItemSelected(item);
   },[]);
-  console.log(customerDataSort,'data',listCustomer.data,'cc')
+  // console.log(customerDataSort,'data',listCustomer.data,'cc')
+
+
+
 
 
   return (
@@ -107,7 +111,7 @@ const [isPending,startTransition] = useTransition()
             })}
           </Text>
           {loading ? (
-            <SkeletonLoading height={HEIGHT}  />
+            <SkeletonLoading/>
           ) : (
             <FlatList
               ref={ref}
@@ -142,15 +146,7 @@ const [isPending,startTransition] = useTransition()
               onEndReached={onEndReachedThreshold}
               onEndReachedThreshold={0.5}
               ListEmptyComponent={
-                <Block
-                // color='red'
-                  alignSelf="center"
-                  height={AppConstant.HEIGHT * 0.5}
-                  justifyContent="center">
-                  <Text fontSize={20} color={colors.text_primary}>
-                    {getLabel('noVisit')}
-                  </Text>
-                </Block>
+              <SkeletonLoading/>
               }
             />
           )}

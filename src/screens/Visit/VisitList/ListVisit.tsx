@@ -405,14 +405,14 @@ const ListVisit = () => {
 
   const onPresClose = () => {
     setModalErrorGPS(false);
-    setTimeout(() => {
-      flatlistRef?.current?.scrollToIndex({
-        animated: true,
-        viewOffset: 0,
-        viewPosition: 1,
-        index: currentIndex + 1,
-      });
-    }, 500);
+    // setTimeout(() => {
+    //   flatlistRef?.current?.scrollToIndex({
+    //     animated: true,
+    //     viewOffset: 0,
+    //     viewPosition: 1,
+    //     index: currentIndex + 1,
+    //   });
+    // }, 500);
   };
 
   
