@@ -34,19 +34,15 @@ import {
   useDisableBackHandler,
   useSelector,
 } from '../../../config/function';
-import {shallowEqual} from 'react-redux';
+import {shallowEqual, useDispatch} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {dispatch, getState} from '../../../utils/redux/index';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
 import {goBack, navigate} from '../../../navigation/navigation-service';
-import {AppService, CustomerService} from '../../../services';
+import {AppService} from '../../../services';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// @ts-ignore
-import StringFormat from 'string-format';
 import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
 import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
@@ -54,64 +50,11 @@ import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {AppStateStatus} from 'react-native';
 import moment from 'moment';
-import {storage} from '../../../utils/commom.utils';
+import {formatTime2, storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {useMMKV, useMMKVString} from 'react-native-mmkv';
-
-const useTimer = () => {
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  const isFocus = useIsFocused();
-  const [storedElapsedTime, setElap] = useMMKVString('elapsed');
-  const [storedCurTime, setCur] = useMMKVString('currentTime');
-
-  const loadStoredTime = () => {
-    // console.log(storedCurTime, storedElapsedTime, 'null');
-    if (storedCurTime != null && storedElapsedTime != null) {
-      const currentTimeStamp = moment(new Date()).valueOf();
-    console.log(Number(currentTimeStamp) - Number(storedCurTime), storedElapsedTime, 'null');
-
-      const timeDiff =
-        Math.ceil((Number(currentTimeStamp) - Number(storedCurTime)) / 1000);
-      const total = timeDiff + Number(storedElapsedTime);
-      setElapsedTime(Math.ceil(Number(total)));
-    } else {
-      setElapsedTime(prev => prev + 1);
-    }
-    if(!isFocus){
-      console.log('run else focus')
-      setElap(String(elapsedTime));
-      setCur(String(moment(new Date()).valueOf()));
-    }
-  };
-
-  useEffect(() => {
-    if (isFocus) {
-      loadStoredTime();
-      // setElap(String(elapsedTime));
-      console.log('run load')
-      intervalIdRef.current = setInterval(() => {
-        setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
-      }, 1000);
-    } else {
-      console.log('run else focus')
-      setElap(String(elapsedTime));
-      setCur(String(moment(new Date()).valueOf()));
-      if (intervalIdRef.current) {
-        clearInterval(intervalIdRef.current);
-        // setElap(String(elapsedTime));
-      }
-    }
-
-    return () => {
-      if (intervalIdRef.current) {
-        clearInterval(intervalIdRef.current);
-      }
-    };
-  }, [isFocus,storedElapsedTime]);
-
-  return elapsedTime;
-};
+import {useMMKVNumber, useMMKVString} from 'react-native-mmkv';
+// @ts-ignore
+import StringFormat from 'string-format';
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -123,12 +66,23 @@ const CheckIn = () => {
     useNavigation<NavigationProp<AuthorizeParamsList, 'CHECKIN'>>();
   const batteryLevel = useBatteryLevel();
   const isFocus = useIsFocused();
+  const dispatch = useDispatch();
+  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [checkinTimeStorage, setCheckinTimeStorage] = useMMKVNumber(
+    AppConstant.CheckinTime,
+  );
+  const [elapsedTime, setElapsedTime] = useState<number>(
+    checkinTimeStorage
+      ? Math.floor((new Date().getTime() - checkinTimeStorage) / 1000)
+      : 0,
+  );
+  console.log('checkinTimeStorage', checkinTimeStorage);
+
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
   );
-  const [_, setElap] = useMMKVString('elapsed');
-  const [__, setCur] = useMMKVString('currentTime');
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
     shallowEqual,
@@ -142,8 +96,6 @@ const CheckIn = () => {
       ? dataCheckIn.checkin_trangthaicuahang
       : params.checkin_trangthaicuahang,
   );
-  const [appState, setAppState] = useState(AppState.currentState);
-  const elapsedTime = useTimer();
 
   const systemConfig: DMSConfigMobile = useSelector(
     state => state.app.systemConfig,
@@ -166,6 +118,40 @@ const CheckIn = () => {
     msg: '',
   });
   const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
+
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (
+      appState.match(/inactive|background/) &&
+      nextAppState === 'background'
+    ) {
+      console.log('App has come to the background!');
+      setCheckinTimeStorage(new Date().getTime());
+    }
+    setAppState(nextAppState);
+  };
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+    // Start the interval
+    return () => {
+      subscription.remove();
+    };
+  }, [appState]);
+
+  useEffect(() => {
+    intervalIdRef.current = setInterval(() => {
+      setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
+    }, 1000);
+
+    return () => {
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
+      }
+    };
+  }, []);
 
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
@@ -222,42 +208,6 @@ const CheckIn = () => {
     }
   }, [msgCheckOutErr, openDialogErr]);
 
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === 'active') {
-      // setElap(String(elapsedTime));
-      setAppState(nextAppState);
-    } else if (!isFocus) {
-      let currentCate = {...categoriesCheckin};
-      console.log('run active');
-      setElap('');
-      setElap(String(elapsedTime));
-      setCur(String(moment(new Date()).valueOf()));
-      storage.set('cate', JSON.stringify(currentCate));
-      setAppState(nextAppState);
-      // dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
-    } else if (nextAppState === 'background' && elapsedTime > 0) {
-      console.log('run background');
-      setElap('');
-      setElap(String(elapsedTime));
-      setCur(String(moment(new Date()).valueOf()));
-      let currentCate = categoriesCheckin;
-      setAppState(nextAppState);
-      storage.set('cate', JSON.stringify(currentCate));
-    }
-  };
-  // console.log(elapsedTime)
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
-    // Start the interval
-    return () => {
-      subscription.remove();
-    };
-  }, [isFocus]);
-
   const checkGPS = useCallback(async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
@@ -283,7 +233,6 @@ const CheckIn = () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
-        console.log(checkEnabled, 'response');
         if (checkEnabled === true) {
           setEnableGPS(true);
           // try {
@@ -293,63 +242,40 @@ const CheckIn = () => {
             dataCheckIn.item.name,
           );
           if (res?.status === ApiConstant.STT_OK) {
+            if (intervalIdRef.current) {
+              clearInterval(intervalIdRef.current);
+            }
+            storage.delete(AppConstant.CheckinTime);
             dispatch(checkinActions.resetData());
-            // dispatch
             dispatch(appActions.setDataCheckIn({}));
-            console.log('run reset storage line 379');
-            setCur('');
-            setElap('');
-            useMMKV().delete('time');
-            useMMKV().delete('currentTime');
-            useMMKV().delete('elapse');
-
-            await AsyncStorage.clear();
             dispatch(appActions.setProcessingStatus(false));
-            console.log('run back', res);
             goBack();
           }
-          // } catch (e) {
-
-          // } finally {
-          // }
         } else {
-          console.log('run');
           setEnableGPS(false);
         }
-        // isEnable.current = checkEnabled;
       } else {
         backgroundErrorListener(1);
       }
     } else {
       setEnableGPS(true);
-      // try {
       dispatch(appActions.setProcessingStatus(true));
       const res: any = await AppService.checkOut(
         dataCheckIn.checkin_id,
         dataCheckIn.item.name,
       );
       if (res?.status === ApiConstant.STT_OK) {
+        if (intervalIdRef.current) {
+          clearInterval(intervalIdRef.current);
+        }
+        storage.delete(AppConstant.CheckinTime);
         dispatch(checkinActions.resetData());
-        // dispatch
         dispatch(appActions.setDataCheckIn({}));
-
-        setCur('');
-        setElap('');
-        useMMKV().delete('time');
-        useMMKV().delete('currentTime');
-        useMMKV().delete('elapse');
         dispatch(appActions.setProcessingStatus(false));
-
         goBack();
       }
-      // } catch (e) {
-      // } finally {
-      // dispatch(appActions.setProcessingStatus(false));
-      // }
     }
   };
-
-  // console.log(categoriesCheckin.map(item => item.isDone),'cate')
 
   const isValidCheckOut = useCallback(
     (currentLocation: GeolocationResponse) => {
@@ -455,15 +381,15 @@ const CheckIn = () => {
   );
 
   const onCheckout = useCallback(async () => {
-    // dispatch(appActions.setProcessingStatus(true));
     CommonUtils.getCurrentLocation(
       async locations => {
         if (!isValidCheckOut(locations)) {
           dispatch(appActions.setProcessingStatus(false));
-
           return;
         } else {
-          console.log('run here');
+          if (intervalIdRef.current) {
+            clearInterval(intervalIdRef.current);
+          }
           dispatch(
             appActions.onCheckIn({
               ...dataCheckIn,
@@ -475,14 +401,6 @@ const CheckIn = () => {
               checkin_giora: new Date().getTime() / 1000,
             }),
           );
-          console.log('run reset data line 545');
-          setCur('');
-          setElap('');
-          useMMKV().delete('time');
-          useMMKV().delete('currentTime');
-          useMMKV().delete('elapse');
-          await AsyncStorage.clear();
-          dispatch(checkinActions.resetData());
         }
       },
       err => backgroundErrorListener(err.code),

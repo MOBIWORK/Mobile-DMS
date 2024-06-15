@@ -16,7 +16,7 @@ type Props = {
 
 const ItemCheckIn = ({item, navData}: Props) => {
   const {colors} = useTheme();
-  const [isPending, startTrans] = useTransition();
+  const [_, startTrans] = useTransition();
   return (
     <ErrorBoundary fallbackRender={ErrorFallBack}>
       <Block colorTheme="bg_default">
@@ -27,7 +27,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
                 navigate(item.screenName, {
                   type: item.type ? item.type : '',
                   data: navData,
-                  screen:item.screenName
+                  screen: item.screenName,
                 });
               })
             // console.log(item.screenName,'screen name')
