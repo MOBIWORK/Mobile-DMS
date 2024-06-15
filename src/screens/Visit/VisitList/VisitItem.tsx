@@ -62,23 +62,23 @@ const VisitItem: FC<VisitItemProps> = ({
   );
   // console.log(item.customer_location_primary,"????")
 
-  const distanceCal = useMemo(() => {
-    let location: LocationProps = JSON.parse(
-      item.customer_location_primary != null && item.customer_location_primary,
-    );
-    let distance: any;
-    if (Object.keys(currentLocation).length > 0 && location) {
-      distance = calculateDistance(
-        currentLocation?.coords?.latitude,
-        currentLocation?.coords?.longitude,
-        location?.lat,
-        location?.long,
-      );
-    } else {
-      distance = NaN;
-    }
-    return {location, distance};
-  }, [item.customer_location_primary, currentLocation, isEnable.current]);
+  // const distanceCal = useMemo(() => {
+  //   let location: LocationProps = JSON.parse(
+  //     item.customer_location_primary != null && item.customer_location_primary,
+  //   );
+  //   let distance: any;
+  //   if (Object.keys(currentLocation).length > 0 && location) {
+  //     distance = calculateDistance(
+  //       currentLocation?.coords?.latitude,
+  //       currentLocation?.coords?.longitude,
+  //       location?.lat,
+  //       location?.long,
+  //     );
+  //   } else {
+  //     distance = NaN;
+  //   }
+  //   return {location, distance};
+  // }, [item.customer_location_primary, currentLocation, isEnable.current]);
 
   const statusItem = React.useCallback(
     (status: boolean) => {
@@ -212,30 +212,30 @@ const VisitItem: FC<VisitItemProps> = ({
                 typeof handleOpenMap === 'function' && handleOpenMap(item)
               }
               style={styles.content}
-              disabled={!distanceCal.distance}>
+              >
               <Image
                 source={ImageAssets.SendIcon}
                 style={{width: 16, height: 16}}
                 resizeMode={'cover'}
                 tintColor={
-                  !Number.isNaN(distanceCal.distance)
+                  !Number.isNaN(item.distance)
                     ? colors.action
                     : colors.text_secondary
                 }
               />
               <Text
                 color={
-                  !Number.isNaN(distanceCal.distance)
+                  !Number.isNaN(item.distance)
                     ? colors.action
                     : colors.text_secondary
                 }
                 style={{
-                  textDecorationLine: distanceCal.distance
+                  textDecorationLine: item.distance
                     ? 'underline'
                     : 'none',
                 }}>
-                {!Number.isNaN(distanceCal.distance)
-                  ? `${Math.floor(distanceCal.distance)}km`
+                {!Number.isNaN(item.distance)
+                  ? `${Math.floor(item.distance/1000)}km`
                   : getLabel('unknown')}
               </Text>
             </TouchableOpacity>
