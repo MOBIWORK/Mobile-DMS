@@ -47,7 +47,8 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import SkeletonLoading from '../SkeletonLoading';
 import {
   backgroundErrorListener,
   calculateDistance,
@@ -239,14 +240,10 @@ const ListVisit = () => {
   }, [dispatch, filterParams, filterDataRef.current]);
 
   const onEndReachedThreshold = useCallback(() => {
-    console.log('onEndReachedThreshold');
     setBottomLoading(true);
     const totalPage = Math.ceil(listCustomer.total / 20);
-    console.log('pageNumber', listCustomer.page_number);
-    console.log('pageTotal', totalPage);
     if (listCustomer.page_number < totalPage && listCustomer.data.length > 19) {
       if (Object.keys(filterDataRef.current).length > 0) {
-        console.log('hahaa');
         getCustomer(
           {
             ...filterDataRef.current,
@@ -256,16 +253,15 @@ const ListVisit = () => {
         );
         setBottomLoading(false);
       } else {
-        console.log('hehe');
-        // getCustomer(
-        //   {
-        //     ...filterParams,
-        //     router: filterParams?.router?.channel_code,
-        //     page_number: listCustomer.page_number + 1,
-        //   },
-        //   true,
-        // );
-        // setBottomLoading(false);
+        getCustomer(
+          {
+            ...filterParams,
+            router: filterParams?.router?.channel_code,
+            page_number: listCustomer.page_number + 1,
+          },
+          true,
+        );
+        setBottomLoading(false);
       }
     } else {
       setBottomLoading(false);

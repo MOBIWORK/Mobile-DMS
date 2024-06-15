@@ -136,9 +136,9 @@ const RenderContentVisit = ({
               }
               maxToRenderPerBatch={30}
               getItemLayout={getItemLayout}
+              contentContainerStyle={{rowGap: 16,paddingBottom:50}}
               updateCellsBatchingPeriod={2}
               windowSize={31}
-              contentContainerStyle={{rowGap: 16}}
               renderItem={({item}) => (
                 <VisitItem
                   item={item}

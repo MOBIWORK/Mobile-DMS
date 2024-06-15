@@ -56,46 +56,50 @@ import {AppStateStatus} from 'react-native';
 import moment from 'moment';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-
+import {useMMKV, useMMKVString} from 'react-native-mmkv';
 
 const useTimer = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const isFocus = useIsFocused();
-  // const storedStartTime = storage.getString('time');
-  const storedElapsedTime = storage.getString('elapse');
-  const storedCurTime = storage.getString('currentTime');
-  const [appState, setAppState] = useState(AppState.currentState);
-  const loadStoredTime = async () => {
-    const elapseStore = await AsyncStorage.getItem('elapse');
-    const currentStore = await AsyncStorage.getItem('currentTime');
-    if (elapseStore && currentStore) {
+  const [storedElapsedTime, setElap] = useMMKVString('elapsed');
+  const [storedCurTime, setCur] = useMMKVString('currentTime');
+
+  const loadStoredTime = () => {
+    // console.log(storedCurTime, storedElapsedTime, 'null');
+    if (storedCurTime != null && storedElapsedTime != null) {
       const currentTimeStamp = moment(new Date()).valueOf();
-      const timeDiff = (Number(currentTimeStamp) - Number(currentStore)) / 1000;
-      const total = timeDiff + Number(elapseStore);
-      setElapsedTime(Math.ceil(Number(total)));
-    }else{
-      const currentTimeStamp = moment(new Date()).valueOf();
-      const timeDiff = (Number(currentTimeStamp) - Number(storedCurTime)) / 1000;
+    console.log(Number(currentTimeStamp) - Number(storedCurTime), storedElapsedTime, 'null');
+
+      const timeDiff =
+        Math.ceil((Number(currentTimeStamp) - Number(storedCurTime)) / 1000);
       const total = timeDiff + Number(storedElapsedTime);
       setElapsedTime(Math.ceil(Number(total)));
+    } else {
+      setElapsedTime(prev => prev + 1);
     }
-
+    if(!isFocus){
+      console.log('run else focus')
+      setElap(String(elapsedTime));
+      setCur(String(moment(new Date()).valueOf()));
+    }
   };
 
-  
   useEffect(() => {
     if (isFocus) {
-      // console.log('run is focus effect');
       loadStoredTime();
+      // setElap(String(elapsedTime));
+      console.log('run load')
       intervalIdRef.current = setInterval(() => {
         setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
       }, 1000);
     } else {
-      storage.set('elapse', String(elapsedTime));
-      console.log('run not focus effect');
+      console.log('run else focus')
+      setElap(String(elapsedTime));
+      setCur(String(moment(new Date()).valueOf()));
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current);
+        // setElap(String(elapsedTime));
       }
     }
 
@@ -104,7 +108,7 @@ const useTimer = () => {
         clearInterval(intervalIdRef.current);
       }
     };
-  }, [isFocus, appState]);
+  }, [isFocus,storedElapsedTime]);
 
   return elapsedTime;
 };
@@ -123,7 +127,8 @@ const CheckIn = () => {
     state => state.app.dataCheckIn,
     shallowEqual,
   );
-
+  const [_, setElap] = useMMKVString('elapsed');
+  const [__, setCur] = useMMKVString('currentTime');
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
     shallowEqual,
@@ -149,8 +154,7 @@ const CheckIn = () => {
       systemConfig?.tgcheckin_toithieu ? systemConfig.thoigian_toithieu : 0,
     ),
   );
-  const {imageToMark} = getState('checkin');
-  // console.log(imageToMark,'ssss')
+
   useDisableBackHandler(true);
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
@@ -218,45 +222,30 @@ const CheckIn = () => {
     }
   }, [msgCheckOutErr, openDialogErr]);
 
-  const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
-      // storage.set('elapse', String(elapsedTime));
+      // setElap(String(elapsedTime));
       setAppState(nextAppState);
     } else if (!isFocus) {
       let currentCate = {...categoriesCheckin};
       console.log('run active');
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
+      setElap('');
+      setElap(String(elapsedTime));
+      setCur(String(moment(new Date()).valueOf()));
       storage.set('cate', JSON.stringify(currentCate));
       setAppState(nextAppState);
       // dispatch(checkinActions.setDataCategoriesCheckin(currentCate));
-    } else if (nextAppState === 'inactive') {
-      console.log('run inactive');
-      let currentCate = categoriesCheckin;
-      // console.log('run backstate');
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
-      storage.set('cate', JSON.stringify(currentCate));
-      setAppState(nextAppState);
-    } else if (nextAppState === 'background') {
+    } else if (nextAppState === 'background' && elapsedTime > 0) {
       console.log('run background');
-      await storage.set('elapse', String(elapsedTime));
-      await storage.set('currentTime', String(moment(new Date()).valueOf()));
+      setElap('');
+      setElap(String(elapsedTime));
+      setCur(String(moment(new Date()).valueOf()));
       let currentCate = categoriesCheckin;
-
-      setAppState(nextAppState);
-      storage.set('cate', JSON.stringify(currentCate));
-    } else {
-      console.log('run null');
-
-      let currentCate = categoriesCheckin;
-      // console.log('run backstate');
-      storage.set('elapse', String(elapsedTime));
-      storage.set('currentTime', String(moment(new Date()).valueOf()));
       setAppState(nextAppState);
       storage.set('cate', JSON.stringify(currentCate));
     }
   };
+  // console.log(elapsedTime)
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -308,9 +297,12 @@ const CheckIn = () => {
             // dispatch
             dispatch(appActions.setDataCheckIn({}));
             console.log('run reset storage line 379');
-            storage.set('time', '');
-            storage.set('elapse', '');
-            storage.set('currentTime', '');
+            setCur('');
+            setElap('');
+            useMMKV().delete('time');
+            useMMKV().delete('currentTime');
+            useMMKV().delete('elapse');
+
             await AsyncStorage.clear();
             dispatch(appActions.setProcessingStatus(false));
             console.log('run back', res);
@@ -340,12 +332,12 @@ const CheckIn = () => {
         dispatch(checkinActions.resetData());
         // dispatch
         dispatch(appActions.setDataCheckIn({}));
-        console.log('run reset storage line 411');
-        storage.set('time', '');
-        storage.set('elapse', '');
-        storage.set('currentTime', '');
-        await AsyncStorage.clear();
 
+        setCur('');
+        setElap('');
+        useMMKV().delete('time');
+        useMMKV().delete('currentTime');
+        useMMKV().delete('elapse');
         dispatch(appActions.setProcessingStatus(false));
 
         goBack();
@@ -484,9 +476,12 @@ const CheckIn = () => {
             }),
           );
           console.log('run reset data line 545');
-          storage.set('time', '');
-          storage.set('elapse', '');
-          storage.set('currentTime', '');
+          setCur('');
+          setElap('');
+          useMMKV().delete('time');
+          useMMKV().delete('currentTime');
+          useMMKV().delete('elapse');
+          await AsyncStorage.clear();
           dispatch(checkinActions.resetData());
         }
       },

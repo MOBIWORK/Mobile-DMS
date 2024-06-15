@@ -406,6 +406,7 @@ const Customer = () => {
     const Item = (isCustomerType: boolean) => {
       return (
         <TouchableOpacity
+        style={styles.touchableButton}
           onPress={() => {
             if (isCustomerType) {
               setFilterType(true);
@@ -414,11 +415,11 @@ const Customer = () => {
             }
             bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0);
           }}
-          style={styles.filterItem}>
-          <Text style={{color: theme.colors.text_secondary, fontSize: 16}}>
+          >
+          <Text style={styles.titleTextFilter}>
             {isCustomerType ? 'Loại KH' : 'Nhóm KH'}
             {': '}
-            <Text style={{color: theme.colors.text_primary}}>
+            <Text style={styles.contentText}>
               {isCustomerType ? getLabel(value.first) : getLabel(value.second)}
             </Text>
           </Text>
@@ -569,6 +570,19 @@ const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 16,
       marginBottom: 5,
     } as ViewStyle,
+    touchableButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.divider,
+      borderWidth: 1,
+      padding: 6,
+      borderRadius: 16,
+      borderColor: theme.colors.border,
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+      // marginRight: 2,
+    } as ViewStyle,
     itemText: (text: string, value: string) =>
       ({
         fontSize: 16,
@@ -681,6 +695,18 @@ const rootStyles = (theme: AppTheme) =>
       gap: 16,
       marginBottom: 16,
     } as ViewStyle,
+    titleTextFilter: {
+      color: theme.colors.text_secondary,
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '500',
+    } as TextStyle,
+    contentText: {
+      color: '#000',
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '500',
+    } as TextStyle,
   });
 const CustomerTypeFilterData: IFilterType[] = [
   {
