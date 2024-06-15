@@ -17,7 +17,7 @@ import {
 } from '../../services/appService';
 import {all, call, put} from 'typed-redux-saga';
 import {goBack, navigate} from '../../navigation/navigation-service';
-import {ApiConstant, ScreenConstant} from '../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {
   categoriesCheckinList,
   IItemCheckIn,
@@ -63,13 +63,13 @@ export function* onCheckInData(action: PayloadAction) {
       );
       if (Object.keys(response?.result).length > 0) {
         yield put(appActions.setDataCheckIn({}));
-        navigate(ScreenConstant.AUTHORIZED, {
-          screen: ScreenConstant.LIST_VISIT,
-        });
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(checkinActions.setRefreshVisitWhenCheckOut(true));
-        // storage.set('time', '');
+        storage.delete(AppConstant.CheckinTime);
+        navigate(ScreenConstant.AUTHORIZED, {
+          screen: ScreenConstant.MAIN_TAB,
+        });
       }
     } catch (err) {
       console.log(err, 'err');

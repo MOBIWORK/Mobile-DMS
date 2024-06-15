@@ -19,6 +19,7 @@ import Geolocation, {
 } from '@react-native-community/geolocation';
 // @ts-ignore
 import stringSimilarity from 'string-similarity';
+import moment from 'moment';
 
 export const storage = new MMKV();
 
@@ -173,6 +174,11 @@ export const formatTime2 = (timeStamp: number | string) => {
     padTo2Digits(date.getMinutes()),
     padTo2Digits(date.getSeconds()),
   ].join(':');
+};
+
+//convert miniSecond to hh:mm:ss
+export const convertNumberToTime = (miniSecond: number) => {
+  return moment().startOf('day').milliseconds(miniSecond).format('H:mm:ss');
 };
 
 //format dateTime to mm/yyyy
