@@ -50,16 +50,14 @@ const VisitItem: FC<VisitItemProps> = ({
   // const batteryLevel = useBatteryLevel();
   const [isPending, startTransition] = useTransition();
 
-  const currentLocation = useSelector(
-    state => state.app.currentLocation,
-    shallowEqual,
-  );
+
   const isEnable = React.useRef<boolean>(false);
 
   const systemConfig: DMSConfigMobile = useSelector(
     state => state.app.systemConfig,
     shallowEqual,
   );
+
   // console.log(item.customer_location_primary,"????")
 
   // const distanceCal = useMemo(() => {
@@ -211,31 +209,28 @@ const VisitItem: FC<VisitItemProps> = ({
               onPress={() =>
                 typeof handleOpenMap === 'function' && handleOpenMap(item)
               }
-              style={styles.content}
-              >
+              style={styles.content}>
               <Image
                 source={ImageAssets.SendIcon}
                 style={{width: 16, height: 16}}
                 resizeMode={'cover'}
                 tintColor={
-                  !Number.isNaN(item.distance)
+                  item.distance != undefined
                     ? colors.action
                     : colors.text_secondary
                 }
               />
               <Text
                 color={
-                  !Number.isNaN(item.distance)
+                  item.distance != undefined
                     ? colors.action
                     : colors.text_secondary
                 }
                 style={{
-                  textDecorationLine: item.distance
-                    ? 'underline'
-                    : 'none',
+                  textDecorationLine: item.distance ? 'underline' : 'none',
                 }}>
-                {!Number.isNaN(item.distance)
-                  ? `${Math.floor(item.distance/1000)}km`
+                {item.distance != undefined
+                  ? `${Math.floor(item.distance / 1000)}km`
                   : getLabel('unknown')}
               </Text>
             </TouchableOpacity>
