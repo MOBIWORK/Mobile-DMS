@@ -135,6 +135,7 @@ export type VisitListItemType = {
   total?: number;
   page_size?: number;
   is_route?: boolean;
+  distance?:any
 };
 
 export type VisitListItemResult = {
