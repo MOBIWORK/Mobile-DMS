@@ -420,7 +420,7 @@ const ListVisit = () => {
         }
       });
     },
-    [listCustomer],
+    [listCustomer, location],
   );
 
   const sortedData = (
@@ -515,10 +515,14 @@ const ListVisit = () => {
             order_by: 'asc',
           });
         } else {
-          await getCustomer({
-            router: route_today[0].channel_code,
-            field_order: 'customer_name',
-            order_by: 'asc',
+          CommonUtils.getCurrentLocation(async location => {
+            await getCustomer({
+              router: route_today[0].channel_code,
+              field_order: 'customer_name',
+              order_by: 'asc',
+              long: location.coords.longitude,
+              lat: location.coords.latitude,
+            });
           });
         }
       } else {
@@ -532,7 +536,14 @@ const ListVisit = () => {
             order_by: 'asc',
           });
         } else {
-          await getCustomer({field_order: 'customer_name', order_by: 'asc'});
+          CommonUtils.getCurrentLocation(async location => {
+            await getCustomer({
+              long: location.coords.longitude,
+              lat: location.coords.latitude,
+              field_order: 'customer_name',
+              order_by: 'asc',
+            });
+          });
         }
       }
     } else {
@@ -546,7 +557,14 @@ const ListVisit = () => {
           order_by: 'asc',
         });
       } else {
-        await getCustomer({field_order: 'customer_name', order_by: 'asc'});
+        CommonUtils.getCurrentLocation(async location => {
+          await getCustomer({
+            long: location.coords.longitude,
+            lat: location.coords.latitude,
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
+        });
       }
     }
   }, [customerType, listCustomer]);
@@ -588,10 +606,14 @@ const ListVisit = () => {
           order_by: 'asc',
         });
       } else {
-        await getCustomer({
-          router: routeTodayRef.current.channel_code,
-          field_order: 'customer_name',
-          order_by: 'asc',
+        CommonUtils.getCurrentLocation(async location => {
+          await getCustomer({
+            long: location.coords.longitude,
+            lat: location.coords.latitude,
+            router: routeTodayRef.current.channel_code,
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
         });
       }
       await getCustomerRoute();
