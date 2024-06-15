@@ -111,13 +111,13 @@ const FilterContainer: FC<FilterContainerProps> = ({
               setFilterType={setFilterType}
               filterRef={filterRef}
             />
-            <FilterItem
-              label={getLabel('sortByName')}
-              value={filterValue?.order_by ?? 'A -> Z'}
-              type={AppConstant.VisitFilterType.name}
-              setFilterType={setFilterType}
-              filterRef={filterRef}
-            />
+            {/*<FilterItem*/}
+            {/*  label={getLabel('sortByName')}*/}
+            {/*  value={filterValue?.order_by ?? 'A -> Z'}*/}
+            {/*  type={AppConstant.VisitFilterType.name}*/}
+            {/*  setFilterType={setFilterType}*/}
+            {/*  filterRef={filterRef}*/}
+            {/*/>*/}
             {/*<FilterItem*/}
             {/*  label={getLabel('customerBirthDay')}*/}
             {/*  value={filterValue?.birthDay ?? getLabel('all')}*/}

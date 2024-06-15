@@ -84,7 +84,7 @@ const SearchVisit = () => {
   ) => {
     Keyboard.dismiss();
     //TODO:save to redux
-    dispatch(appActions.setSearchVisitValue(String(e.nativeEvent.text)));
+    dispatch(appActions.setSearchVisitValue(e.nativeEvent.text));
     const newListNearly = listVisitNearly && JSON.parse(listVisitNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
     setListVisitNearly(JSON.stringify(newListNearly));

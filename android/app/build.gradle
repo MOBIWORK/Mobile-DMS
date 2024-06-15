@@ -92,7 +92,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 46
-        versionName "1.0.5-test01"
+        versionName "1.0.5"
         multiDexEnabled true
     }
     signingConfigs {

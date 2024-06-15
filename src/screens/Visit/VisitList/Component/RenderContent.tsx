@@ -3,9 +3,8 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
-  StyleSheet,
 } from 'react-native';
-import React, { useTransition } from 'react';
+import React, {useTransition} from 'react';
 import isEqual from 'react-fast-compare';
 import {
   Block,
@@ -20,16 +19,15 @@ import StringFormat from 'string-format';
 import {useTheme} from '../../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import VisitItem from '../VisitItem';
-import { AppConstant } from '../../../../const';
-import { MapView } from './MapView';
-import { CommonUtils } from '../../../../utils';
-import { HEIGHT } from '../../../../const/app.const';
+import {AppConstant} from '../../../../const';
+import {MapView} from './MapView';
+import {CommonUtils} from '../../../../utils';
+import {HEIGHT} from '../../../../const/app.const';
 import SkeletonLoading from '../../../Visit/SkeletonLoading';
-
 
 type Props = {
   isShowListVisit: boolean;
-  ref: React.RefObject<FlatList<any>>;
+  flatListRef: React.RefObject<FlatList<any>>;
   customerDataSort: VisitListItemType[] | undefined;
   listCustomer: VisitListItemResult;
   loading: boolean;
@@ -39,20 +37,24 @@ type Props = {
   customerCheckinCount: number;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   onRefreshData: () => Promise<void>;
-  setVisitItemSelected: React.Dispatch<React.SetStateAction<VisitListItemType | null>>
+  setVisitItemSelected: React.Dispatch<
+    React.SetStateAction<VisitListItemType | null>
+  >;
   slideSizeRef: React.MutableRefObject<number>;
   onPressToDetail: (item: VisitListItemType) => void;
   handleCompareDistance: (item: VisitListItemType, isDetail: boolean) => void;
-  handleRegainLocation: () => Promise<void>
-  handleEnabledPressed: (item?: VisitListItemType, type?: boolean) => Promise<void>
+  handleRegainLocation: () => Promise<void>;
+  handleEnabledPressed: (
+    item?: VisitListItemType,
+    type?: boolean,
+  ) => Promise<void>;
   setShowListVisit: (value: React.SetStateAction<boolean>) => void;
-  onEndReachedThreshold: () => void
-
+  onEndReachedThreshold: () => void;
 };
 
 const RenderContentVisit = ({
   isShowListVisit,
-  ref,
+  flatListRef,
   customerDataSort,
   listCustomer,
   loading,
@@ -69,17 +71,20 @@ const RenderContentVisit = ({
   handleRegainLocation,
   handleEnabledPressed,
   setShowListVisit,
-  onEndReachedThreshold
-
+  onEndReachedThreshold,
 }: Props) => {
   const {colors} = useTheme();
   const {t: getLabel} = useTranslation();
-const [isPending,startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition();
 
-  const getItemLayout = React.useCallback((
-    data: ArrayLike<VisitListItemType> | null | undefined,
-    index: number,
-  ) => ({length: slideSizeRef.current, offset: 50 * index, index}),[]);
+  const getItemLayout = React.useCallback(
+    (data: ArrayLike<VisitListItemType> | null | undefined, index: number) => ({
+      length: slideSizeRef.current,
+      offset: 50 * index,
+      index,
+    }),
+    [],
+  );
 
   const presentMap = React.useCallback((item: VisitListItemType) => {
     const item_location: any = JSON.parse(item.customer_location_primary);
@@ -93,18 +98,13 @@ const [isPending,startTransition] = useTransition()
 
     setShowListVisit(false);
     setVisitItemSelected(item);
-  },[]);
-  // console.log(customerDataSort,'data',listCustomer.data,'cc')
-
-
-
-
+  }, []);
 
   return (
     <Block marginTop={8}>
       {isShowListVisit ? (
         <Block marginTop={16} paddingHorizontal={16}>
-          <Text style={{color: colors.text_secondary,paddingBottom:10}}>
+          <Text style={{color: colors.text_secondary, paddingBottom: 10}}>
             {StringFormat(getLabel('customerVisitedCount'), {
               customerCheckinCount: customerCheckinCount,
               allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
@@ -114,15 +114,19 @@ const [isPending,startTransition] = useTransition()
             <SkeletonLoading/>
           ) : (
             <FlatList
-              ref={ref}
+              ref={flatListRef}
+              removeClippedSubviews={true}
               style={{height: '85%', paddingVertical: 8}}
               showsVerticalScrollIndicator={false}
-              data={customerDataSort && customerDataSort.length > 0 ? customerDataSort :  listCustomer.data}
+              data={
+                customerDataSort && customerDataSort.length > 0
+                  ? customerDataSort
+                  : listCustomer.data
+              }
               keyExtractor={(item, index) => `${item.customer_code} - ${index}`}
               decelerationRate={'normal'}
               bounces={true}
-              initialNumToRender={10}
-              // onScroll={onScroll}
+              initialNumToRender={25}
               onMomentumScrollEnd={onScroll}
               refreshControl={
                 <RefreshControl
@@ -130,11 +134,11 @@ const [isPending,startTransition] = useTransition()
                   onRefresh={onRefreshData}
                 />
               }
-              maxToRenderPerBatch={10}
+              maxToRenderPerBatch={30}
               getItemLayout={getItemLayout}
-              updateCellsBatchingPeriod={4}
-              windowSize={21}
               contentContainerStyle={{rowGap: 16,paddingBottom:50}}
+              updateCellsBatchingPeriod={2}
+              windowSize={31}
               renderItem={({item}) => (
                 <VisitItem
                   item={item}
@@ -144,9 +148,16 @@ const [isPending,startTransition] = useTransition()
                 />
               )}
               onEndReached={onEndReachedThreshold}
-              onEndReachedThreshold={0.5}
+              onEndReachedThreshold={0.2}
               ListEmptyComponent={
-              <SkeletonLoading/>
+                <Block
+                  alignSelf="center"
+                  height={AppConstant.HEIGHT * 0.5}
+                  justifyContent="center">
+                  <Text fontSize={20} color={colors.text_primary}>
+                    {getLabel('noVisit')}
+                  </Text>
+                </Block>
               }
             />
           )}
@@ -168,5 +179,3 @@ const [isPending,startTransition] = useTransition()
 };
 
 export default React.memo(RenderContentVisit, isEqual);
-
-
