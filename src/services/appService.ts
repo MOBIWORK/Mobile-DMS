@@ -123,7 +123,7 @@ export type IListVisitParams = {
   page_size?: number;
   page_number?: number;
   router?: any;
-  distance?: string;
+  // distance?: string;
   status?: 'active' | 'lock' | string;
   order_by?: 'asc' | 'desc' | string;
   birthDay?: string;
@@ -133,6 +133,9 @@ export type IListVisitParams = {
   customer_type?: string;
   search_key?: string;
   checkin_status?: string;
+  field_order?: string;
+  long?:any,
+  lat?:any
 };
 
 export type Account = {

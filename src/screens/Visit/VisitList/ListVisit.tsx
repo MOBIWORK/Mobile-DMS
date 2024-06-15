@@ -385,85 +385,6 @@ const ListVisit = () => {
     // }, 500);
   };
 
-  // const renderContent = () => {
-  //   return (
-  //     <Block marginTop={8}>
-  //       {isShowListVisit ? (
-  //         <Block marginTop={16} paddingHorizontal={16}>
-  //           <Text style={{color: colors.text_secondary}}>
-  //             {StringFormat(getLabel('customerVisitedCount'), {
-  //               customerCheckinCount: customerCheckinCount,
-  //               allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
-  //             })}
-  //           </Text>
-  //           {loading ? (
-  //             <SkeletonLoading />
-  //           ) : (
-  //             <FlatList
-  //               ref={flatlistRef}
-  //               style={{height: '85%', paddingVertical: 8}}
-  //               showsVerticalScrollIndicator={false}
-  //               data={customerDataSort ?? listCustomer.data}
-  //               keyExtractor={(item, index) =>
-  //                 `${item.customer_code} - ${index}`
-  //               }
-  //               decelerationRate={'normal'}
-  //               bounces={true}
-  //               initialNumToRender={10}
-  //               // onScroll={onScroll}
-  //               onMomentumScrollEnd={onScroll}
-  //               refreshControl={
-  //                 <RefreshControl
-  //                   refreshing={loading}
-  //                   onRefresh={onRefreshData}
-  //                 />
-  //               }
-  //               maxToRenderPerBatch={10}
-  //               getItemLayout={getItemLayout}
-  //               updateCellsBatchingPeriod={4}
-  //               windowSize={21}
-  //               contentContainerStyle={{rowGap: 16}}
-  //               renderItem={({item}) => (
-  //                 <VisitItem
-  //                   item={item}
-  //                   handlePressDetail={onPressToDetail}
-  //                   handlePressing={handleEnabledPressed}
-  //                   handleOpenMap={() =>
-  //                     startTransition(() => presentMap(item))
-  //                   }
-  //                 />
-  //               )}
-  //               onEndReached={onEndReachedThreshold}
-  //               onEndReachedThreshold={0.5}
-  //               ListEmptyComponent={
-  //                 <Block
-  //                   alignSelf="center"
-  //                   height={AppConstant.HEIGHT * 0.5}
-  //                   justifyContent="center">
-  //                   <Text fontSize={20} color={colors.text_primary}>
-  //                     {getLabel('noVisit')}
-  //                   </Text>
-  //                 </Block>
-  //               }
-  //             />
-  //           )}
-  //         </Block>
-  //       ) : (
-  //         <MapView
-  //           visitItemSelected={visitItemSelected}
-  //           location={location}
-  //           customerDataSort={customerDataSort}
-  //           mapboxCameraRef={mapboxCameraRef}
-  //           setVisitItemSelected={setVisitItemSelected}
-  //           onPressToDetail={onPressToDetail}
-  //           handleCompareDistance={handleCompareDistance}
-  //           handleRegainLocation={handleRegainLocation}
-  //         />
-  //       )}
-  //     </Block>
-  //   );
-  // };
-
   useLayoutEffect(() => {
     if (Object.keys(systemConfig).length === 0) {
       dispatch(appActions.onGetSystemConfig());
@@ -585,16 +506,48 @@ const ListVisit = () => {
       if (route_today && route_today?.length > 0) {
         setFilterParams({router: route_today[0]});
         routeTodayRef.current = route_today[0];
-        await getCustomer({router: route_today[0].channel_code});
+        if (location?.coords && Object.keys(location?.coords).length > 0) {
+          await getCustomer({
+            router: route_today[0].channel_code,
+            long: location.coords.longitude,
+            lat: location.coords.latitude,
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
+        } else {
+          await getCustomer({
+            router: route_today[0].channel_code,
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
+        }
       } else {
         setFilterParams({router: all_route});
         routeTodayRef.current = all_route;
-        await getCustomer();
+        if (location?.coords && Object.keys(location?.coords).length > 0) {
+          await getCustomer({
+            long: location.coords.longitude,
+            lat: location.coords.latitude,
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
+        } else {
+          await getCustomer({field_order: 'customer_name', order_by: 'asc'});
+        }
       }
     } else {
       setFilterParams({router: all_route});
       routeTodayRef.current = all_route;
-      await getCustomer();
+      if (location?.coords && Object.keys(location?.coords).length > 0) {
+        await getCustomer({
+          long: location.coords.longitude,
+          lat: location.coords.latitude,
+          field_order: 'customer_name',
+          order_by: 'asc',
+        });
+      } else {
+        await getCustomer({field_order: 'customer_name', order_by: 'asc'});
+      }
     }
   }, [customerType, listCustomer]);
 
@@ -627,7 +580,20 @@ const ListVisit = () => {
     try {
       setLoading(true);
       setFilterParams({router: routeTodayRef.current});
-      await getCustomer({router: routeTodayRef.current.channel_code});
+      if (location?.coords && Object.keys(location?.coords).length > 0) {
+        await getCustomer({
+          long: location.coords.longitude,
+          lat: location.coords.latitude,
+          field_order: 'customer_name',
+          order_by: 'asc',
+        });
+      } else {
+        await getCustomer({
+          router: routeTodayRef.current.channel_code,
+          field_order: 'customer_name',
+          order_by: 'asc',
+        });
+      }
       await getCustomerRoute();
     } catch (e) {
       //
