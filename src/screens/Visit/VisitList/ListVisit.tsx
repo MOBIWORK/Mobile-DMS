@@ -244,23 +244,37 @@ const ListVisit = () => {
     const totalPage = Math.ceil(listCustomer.total / 20);
     if (listCustomer.page_number < totalPage && listCustomer.data.length > 19) {
       if (Object.keys(filterDataRef.current).length > 0) {
-        getCustomer(
-          {
-            ...filterDataRef.current,
-            page_number: listCustomer.page_number + 1,
-          },
-          true,
+        CommonUtils.getCurrentLocation(location =>
+          getCustomer(
+            {
+              ...filterDataRef.current,
+              page_number: listCustomer.page_number + 1,
+              lat: location.coords.latitude,
+              long: location.coords.longitude,
+              field_order: 'customer_name',
+              order_by: 'asc',
+            },
+            true,
+          ),
         );
+
         setBottomLoading(false);
       } else {
-        getCustomer(
-          {
-            ...filterParams,
-            router: filterParams?.router?.channel_code,
-            page_number: listCustomer.page_number + 1,
-          },
-          true,
+        CommonUtils.getCurrentLocation(location =>
+          getCustomer(
+            {
+              ...filterParams,
+              router: filterParams?.router?.channel_code,
+              page_number: listCustomer.page_number + 1,
+              lat: location.coords.latitude,
+              long: location.coords.longitude,
+              field_order: 'customer_name',
+              order_by: 'asc',
+            },
+            true,
+          ),
         );
+
         setBottomLoading(false);
       }
     } else {
