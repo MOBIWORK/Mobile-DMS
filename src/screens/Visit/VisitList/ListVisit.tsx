@@ -49,7 +49,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {
   backgroundErrorListener,
@@ -112,6 +112,7 @@ const ListVisit = () => {
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
   const dispatch = useDispatch();
+  const {bottom} = useSafeAreaInsets();
 
   const mapboxCameraRef = useRef<Mapbox.Camera>(null);
   const filterRef = useRef<BottomSheet>(null);
@@ -1200,7 +1201,7 @@ const ListVisit = () => {
           </Modal>
         </>
       ) : (
-        <>
+        <> 
           <RenderContent
             isShowListVisit={isShowListVisit}
             ref={flatlistRef}

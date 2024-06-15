@@ -134,7 +134,7 @@ const [isPending,startTransition] = useTransition()
               getItemLayout={getItemLayout}
               updateCellsBatchingPeriod={4}
               windowSize={21}
-              contentContainerStyle={{rowGap: 16}}
+              contentContainerStyle={{rowGap: 16,paddingBottom:50}}
               renderItem={({item}) => (
                 <VisitItem
                   item={item}
