@@ -72,9 +72,17 @@ const CheckIn = () => {
   const [checkinTimeStorage, setCheckinTimeStorage] = useMMKVNumber(
     AppConstant.CheckinTime,
   );
+  const [currentElapsed, setCurrentElapsed] = useMMKVNumber(
+    AppConstant.CurrentElaps,
+  );
   const [elapsedTime, setElapsedTime] = useState<number>(
     checkinTimeStorage
-      ? Math.floor((new Date().getTime() - checkinTimeStorage) / 1000)
+      ? Math.floor(
+          (new Date().getTime() -
+            checkinTimeStorage +
+            (currentElapsed ? currentElapsed : 0)) /
+            1000,
+        )
       : 0,
   );
   console.log('checkinTimeStorage', checkinTimeStorage);
@@ -126,6 +134,7 @@ const CheckIn = () => {
     ) {
       console.log('App has come to the background!');
       setCheckinTimeStorage(new Date().getTime());
+      setCurrentElapsed(elapsedTime);
     }
     setAppState(nextAppState);
   };
@@ -229,7 +238,7 @@ const CheckIn = () => {
     }
   }, [enableGPS, isFocus]);
 
-  const checkGPSConfirmCheckout = async () => {
+  const checkGPSConfirmCheckout = useCallback(async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
@@ -246,6 +255,8 @@ const CheckIn = () => {
               clearInterval(intervalIdRef.current);
             }
             storage.delete(AppConstant.CheckinTime);
+            storage.delete(AppConstant.CurrentElaps);
+
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));
@@ -269,13 +280,15 @@ const CheckIn = () => {
           clearInterval(intervalIdRef.current);
         }
         storage.delete(AppConstant.CheckinTime);
+        storage.delete(AppConstant.CurrentElaps);
+
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(appActions.setProcessingStatus(false));
         goBack();
       }
     }
-  };
+  }, [enableGPS, isFocus]);
 
   const isValidCheckOut = useCallback(
     (currentLocation: GeolocationResponse) => {
