@@ -78,7 +78,6 @@ const CheckIn = () => {
       : 0,
   );
   const appState = useRef(AppState.currentState);
-
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
