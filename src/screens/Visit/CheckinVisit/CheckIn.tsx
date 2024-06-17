@@ -1,4 +1,10 @@
-import {Platform, StyleSheet, TouchableOpacity, ViewStyle,AppState} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle,
+  AppState,
+} from 'react-native';
 import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
@@ -124,6 +130,7 @@ const CheckIn = () => {
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
+        Platform.OS === 'android' &&
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
