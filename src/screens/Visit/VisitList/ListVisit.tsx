@@ -303,6 +303,28 @@ const ListVisit = () => {
       }
     });
     setDistanceFilterData(newData);
+    if (Object.keys(filterDataRef.current).length > 0) {
+      getCustomer({
+        ...filterDataRef.current,
+        search_key: '',
+        lat: location?.coords?.latitude,
+        long: location?.coords.longitude,
+        field_order: 'distance',
+        order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
+      });
+      // await sortDataCustomer()
+    } else {
+      getCustomer({
+        ...filterParams,
+        router: filterParams?.router?.channel_code,
+        search_key: '',
+        lat: location?.coords?.latitude,
+        long: location?.coords.longitude,
+        field_order: 'distance',
+        order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
+      });
+    }
+    console.log('itemData', itemData.label);
     // sortDataCustomer(getLabel(itemData.label));
   }, []);
 
@@ -536,15 +558,22 @@ const ListVisit = () => {
             order_by: 'asc',
           });
         } else {
-          CommonUtils.getCurrentLocation(async location => {
-            await getCustomer({
-              router: route_today[0].channel_code,
-              field_order: 'distance',
-              order_by: 'asc',
-              long: location.coords.longitude,
-              lat: location.coords.latitude,
-            });
-          });
+          CommonUtils.getCurrentLocation(
+            async location => {
+              await getCustomer({
+                router: route_today[0].channel_code,
+                field_order: 'distance',
+                order_by: 'asc',
+                long: location.coords.longitude,
+                lat: location.coords.latitude,
+              });
+            },
+            async () => {
+              await getCustomer({
+                router: route_today[0].channel_code,
+              });
+            },
+          );
         }
       } else {
         setFilterParams({router: all_route});
@@ -557,14 +586,19 @@ const ListVisit = () => {
             order_by: 'asc',
           });
         } else {
-          CommonUtils.getCurrentLocation(async location => {
-            await getCustomer({
-              long: location.coords.longitude,
-              lat: location.coords.latitude,
-              field_order: 'distance',
-              order_by: 'asc',
-            });
-          });
+          CommonUtils.getCurrentLocation(
+            async location => {
+              await getCustomer({
+                long: location.coords.longitude,
+                lat: location.coords.latitude,
+                field_order: 'distance',
+                order_by: 'asc',
+              });
+            },
+            async () => {
+              await getCustomer();
+            },
+          );
         }
       }
     } else {
@@ -578,14 +612,19 @@ const ListVisit = () => {
           order_by: 'asc',
         });
       } else {
-        CommonUtils.getCurrentLocation(async location => {
-          await getCustomer({
-            long: location.coords.longitude,
-            lat: location.coords.latitude,
-            field_order: 'distance',
-            order_by: 'asc',
-          });
-        });
+        CommonUtils.getCurrentLocation(
+          async location => {
+            await getCustomer({
+              long: location.coords.longitude,
+              lat: location.coords.latitude,
+              field_order: 'distance',
+              order_by: 'asc',
+            });
+          },
+          async () => {
+            await getCustomer();
+          },
+        );
       }
     }
   }, [customerType, listCustomer]);
