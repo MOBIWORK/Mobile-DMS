@@ -1,4 +1,10 @@
-import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle,
+  AppState,
+} from 'react-native';
 import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
@@ -66,6 +72,7 @@ const CheckIn = () => {
       ? Math.floor((new Date().getTime() - checkinTimeStorage) / 1000)
       : 0,
   );
+  const appState = useRef(AppState.currentState);
 
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
@@ -106,6 +113,27 @@ const CheckIn = () => {
     msg: '',
   });
   const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        Platform.OS === 'android' &&
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        if (checkinTimeStorage) {
+          setElapsedTime(
+            Math.floor((new Date().getTime() - checkinTimeStorage) / 1000),
+          );
+        }
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     intervalIdRef.current = setInterval(() => {

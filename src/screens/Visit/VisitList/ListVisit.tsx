@@ -303,7 +303,7 @@ const ListVisit = () => {
       }
     });
     setDistanceFilterData(newData);
-    sortDataCustomer(getLabel(itemData.label));
+    // sortDataCustomer(getLabel(itemData.label));
   }, []);
 
   // const presentMap = (item: VisitListItemType) => {

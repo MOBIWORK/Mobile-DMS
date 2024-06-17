@@ -403,7 +403,7 @@ const SelectProducts = () => {
     }));
     startEffect(() => {
       dispatch(productActions.setProductSelected(newDataSelect));
-      dispatch(productActions.setListProductSelect(dataSelect));
+      dispatch(productActions.setListProductSelect(newDataSelect));
       dispatch(productActions.resetDataProduct());
     });
     navigation.goBack();
