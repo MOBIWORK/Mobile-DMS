@@ -225,6 +225,10 @@ const ListVisit = () => {
         await getCustomer({
           ...filterDataRef.current,
           search_key: '',
+          lat: location?.coords?.latitude,
+          long: location?.coords.longitude,
+          field_order: 'distance',
+          order_by: 'asc',
         });
         // await sortDataCustomer()
       } else {
@@ -232,6 +236,10 @@ const ListVisit = () => {
           ...filterParams,
           router: filterParams?.router?.channel_code,
           search_key: '',
+          lat: location?.coords?.latitude,
+          long: location?.coords.longitude,
+          field_order: 'distance',
+          order_by: 'asc',
         });
       }
     } catch (er) {
@@ -525,14 +533,14 @@ const ListVisit = () => {
             router: route_today[0].channel_code,
             long: location.coords.longitude,
             lat: location.coords.latitude,
-            field_order: 'customer_name',
+            field_order: 'distance',
             order_by: 'asc',
           });
         } else {
           CommonUtils.getCurrentLocation(async location => {
             await getCustomer({
               router: route_today[0].channel_code,
-              field_order: 'customer_name',
+              field_order: 'distance',
               order_by: 'asc',
               long: location.coords.longitude,
               lat: location.coords.latitude,
@@ -546,7 +554,7 @@ const ListVisit = () => {
           await getCustomer({
             long: location.coords.longitude,
             lat: location.coords.latitude,
-            field_order: 'customer_name',
+            field_order: 'distance',
             order_by: 'asc',
           });
         } else {
@@ -554,7 +562,7 @@ const ListVisit = () => {
             await getCustomer({
               long: location.coords.longitude,
               lat: location.coords.latitude,
-              field_order: 'customer_name',
+              field_order: 'distance',
               order_by: 'asc',
             });
           });
@@ -567,7 +575,7 @@ const ListVisit = () => {
         await getCustomer({
           long: location.coords.longitude,
           lat: location.coords.latitude,
-          field_order: 'customer_name',
+          field_order: 'distance',
           order_by: 'asc',
         });
       } else {
@@ -575,7 +583,7 @@ const ListVisit = () => {
           await getCustomer({
             long: location.coords.longitude,
             lat: location.coords.latitude,
-            field_order: 'customer_name',
+            field_order: 'distance',
             order_by: 'asc',
           });
         });
@@ -611,25 +619,25 @@ const ListVisit = () => {
   const handleReset = useCallback(async () => {
     try {
       setLoading(true);
-      setFilterParams({router: routeTodayRef.current});
-      if (location?.coords && Object.keys(location?.coords).length > 0) {
-        await getCustomer({
-          long: location.coords.longitude,
-          lat: location.coords.latitude,
-          field_order: 'customer_name',
-          order_by: 'asc',
-        });
-      } else {
-        CommonUtils.getCurrentLocation(async location => {
-          await getCustomer({
-            long: location.coords.longitude,
-            lat: location.coords.latitude,
-            router: routeTodayRef.current.channel_code,
-            field_order: 'customer_name',
-            order_by: 'asc',
-          });
-        });
-      }
+      // setFilterParams({router: routeTodayRef.current});
+      // if (location?.coords && Object.keys(location?.coords).length > 0) {
+      //   await getCustomer({
+      //     long: location.coords.longitude,
+      //     lat: location.coords.latitude,
+      //     field_order: 'distance',
+      //     order_by: 'asc',
+      //   });
+      // } else {
+      //   CommonUtils.getCurrentLocation(async location => {
+      //     await getCustomer({
+      //       long: location.coords.longitude,
+      //       lat: location.coords.latitude,
+      //       router: routeTodayRef.current.channel_code,
+      //       field_order: 'distance',
+      //       order_by: 'asc',
+      //     });
+      //   });
+      // }
       await getCustomerRoute();
     } catch (e) {
       //
@@ -916,8 +924,9 @@ const ListVisit = () => {
 
         dispatch(appActions.setDataCheckIn(data));
         setModalAlert(prev => ({...prev, status: false}));
-        const curTime = moment(new Date()).valueOf();
-        // storage.set('curTime', curTime);
+        //set CheckIn Time:
+        CommonUtils.storage.set(AppConstant.CheckinTime, new Date().getTime());
+        //navigation
         navigate(ScreenConstant.CHECKIN, {
           item: data,
         });
