@@ -9,8 +9,8 @@ import {ImageAssets} from '../../../../assets';
 import MarkerItem from '../../../../components/common/MarkerItem';
 import {AppConstant} from '../../../../const';
 import VisitItem, {LocationProps} from '../VisitItem';
-import { AppTheme, useTheme } from '../../../../layouts/theme';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {AppTheme, useTheme} from '../../../../layouts/theme';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type Props = {
   customerDataSort?: VisitListItemType[];
@@ -18,9 +18,9 @@ type Props = {
   mapboxCameraRef: any;
   setVisitItemSelected: React.Dispatch<React.SetStateAction<any>>;
   handleRegainLocation: () => void;
-  visitItemSelected:VisitListItemType | null;
+  visitItemSelected: VisitListItemType | null;
   onPressToDetail: (item: VisitListItemType) => void;
-  handleCompareDistance: (item: VisitListItemType, isDetail: boolean) => void
+  handleCompareDistance: (item: VisitListItemType, isDetail: boolean) => void;
 };
 
 const MapViewComponent = ({
@@ -31,12 +31,13 @@ const MapViewComponent = ({
   handleRegainLocation,
   visitItemSelected,
   onPressToDetail,
-  handleCompareDistance
+  handleCompareDistance,
 }: Props) => {
+  console.log('visitItemSelected', visitItemSelected);
   const {t: getLabel} = useTranslation();
-  const theme = useTheme()
-  const styles = rootStyles(theme)
-const {bottom}  = useSafeAreaInsets()
+  const theme = useTheme();
+  const styles = rootStyles(theme);
+  const {bottom} = useSafeAreaInsets();
   return (
     <Block style={styles.map as ViewStyle}>
       <Mapbox.MapView
@@ -107,7 +108,7 @@ const {bottom}  = useSafeAreaInsets()
           resizeMode={'cover'}
           tintColor={theme.colors.bg_default}
         />
-        <Text  colorTheme='bg_default' style={{marginLeft: 4}}>
+        <Text colorTheme="bg_default" style={{marginLeft: 4}}>
           {getLabel('currentPosition')}
         </Text>
       </TouchableOpacity>
@@ -127,25 +128,26 @@ const {bottom}  = useSafeAreaInsets()
 
 export const MapView = React.memo(MapViewComponent, isEqual);
 
-const rootStyles = (theme:AppTheme) =>StyleSheet.create({
+const rootStyles = (theme: AppTheme) =>
+  StyleSheet.create({
     regainPosition: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        backgroundColor: theme.colors.action,
-        alignSelf: 'flex-end',
-        marginRight: 24,
-        borderRadius: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        position: 'absolute',
-        top: 16,
-        right: 0,
-        zIndex: 99999999,
-      } as ViewStyle,
-      map: {
-        overflow: 'hidden',
-        width: '100%',
-        height: AppConstant.HEIGHT * 0.8,
-      },
-});
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.action,
+      alignSelf: 'flex-end',
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 16,
+      right: 0,
+      zIndex: 99999999,
+    } as ViewStyle,
+    map: {
+      overflow: 'hidden',
+      width: '100%',
+      height: AppConstant.HEIGHT * 0.8,
+    },
+  });
