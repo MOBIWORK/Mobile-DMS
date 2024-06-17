@@ -1,10 +1,4 @@
-import {
-  AppState,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  ViewStyle,
-} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity, ViewStyle,AppState} from 'react-native';
 import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
@@ -48,7 +42,6 @@ import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {AppStateStatus} from 'react-native';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {useMMKVNumber, useMMKVObject} from 'react-native-mmkv';
