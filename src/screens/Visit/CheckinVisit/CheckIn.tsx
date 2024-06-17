@@ -1,10 +1,4 @@
-import {
-  AppState,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  ViewStyle,
-} from 'react-native';
+import {AppState, Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
@@ -129,30 +123,6 @@ const CheckIn = () => {
     msg: '',
   });
   const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
-
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.match(/inactive|background/) &&
-      nextAppState === 'background'
-    ) {
-      console.log('App has come to the background!');
-      setCheckinTimeStorage(new Date().getTime());
-      setCurrentElapsed(elapsedTime);
-      setCateCheckinList(categoriesCheckin);
-    }
-    setAppState(nextAppState);
-  };
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
-    // Start the interval
-    return () => {
-      subscription.remove();
-    };
-  }, [appState]);
 
   useEffect(() => {
     setCateCheckinList(categoriesCheckin);
