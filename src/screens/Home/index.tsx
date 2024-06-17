@@ -421,9 +421,11 @@ const HomeScreen = () => {
       getReportVisit();
       getNotification();
       //permission
-      PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      ).then();
+      if (Platform.OS === 'android') {
+        PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        ).then();
+      }
     }
   }, []);
 

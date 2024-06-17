@@ -117,7 +117,6 @@ const CheckIn = () => {
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
-        Platform.OS === 'android' &&
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
@@ -371,7 +370,7 @@ const CheckIn = () => {
       }
       return true;
     },
-    [openDialogErr, msgCheckOutErr],
+    [openDialogErr, msgCheckOutErr, categoriesCheckin],
   );
 
   const onCheckout = useCallback(async () => {

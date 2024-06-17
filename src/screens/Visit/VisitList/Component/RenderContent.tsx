@@ -6,11 +6,7 @@ import {
 } from 'react-native';
 import React, {useTransition} from 'react';
 import isEqual from 'react-fast-compare';
-import {
-  Block,
-
-  AppText as Text,
-} from '../../../../components/common';
+import {Block, AppText as Text} from '../../../../components/common';
 import {VisitListItemResult, VisitListItemType} from '../../../../models/types';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
@@ -111,7 +107,7 @@ const RenderContentVisit = ({
             })}
           </Text>
           {loading ? (
-            <SkeletonLoading/>
+            <SkeletonLoading />
           ) : (
             <FlatList
               ref={flatListRef}
@@ -136,7 +132,7 @@ const RenderContentVisit = ({
               }
               maxToRenderPerBatch={30}
               getItemLayout={getItemLayout}
-              contentContainerStyle={{rowGap: 16,paddingBottom:50}}
+              contentContainerStyle={{rowGap: 16, paddingBottom: 50}}
               updateCellsBatchingPeriod={2}
               windowSize={31}
               renderItem={({item}) => (
@@ -166,7 +162,7 @@ const RenderContentVisit = ({
         <MapView
           visitItemSelected={visitItemSelected || null}
           location={location}
-          customerDataSort={customerDataSort}
+          customerDataSort={listCustomer.data}
           mapboxCameraRef={mapboxCameraRef}
           setVisitItemSelected={setVisitItemSelected}
           onPressToDetail={onPressToDetail}
