@@ -85,7 +85,7 @@ const CheckIn = () => {
         )
       : 0,
   );
-  console.log('checkinTimeStorage', checkinTimeStorage);
+  // console.log('checkinTimeStorage', checkinTimeStorage);
 
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,

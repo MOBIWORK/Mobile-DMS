@@ -176,19 +176,6 @@ const TakePictureScore = () => {
     [selectedImages],
   );
 
-  // const handleCameraPicture = React.useCallback(async () => {
-  //   await CameraUtils.openImagePicker((img, base64,timeStamp) => {
-  //     setAlbumImage(prevImages => {
-  //       if (prevImages.length === 0) {
-  //         // If no images exist, add the new image as the initial picture
-  //         return ['IconCamera', ...prevImages.slice(1), img];
-  //       } else {
-  //         // If images exist, keep the initial picture at index 0 and add the new image at the end
-  //         return [prevImages[0], ...prevImages.slice(1), img];
-  //       }
-  //     });
-  //   });
-  // }, [selectedImages]);
   const handleCameraPicture = React.useCallback(async () => {
     dispatch(appActions.setProcessingStatus(true));
     const granted = await PermissionsAndroid.requestMultiple([
@@ -223,7 +210,7 @@ const TakePictureScore = () => {
     } else {
       Alert.alert('Bạn chưa cấp quyền');
     }
-  }, [selectedImages]);
+  }, [selectedImages, albumImage]);
 
   const onBack = useCallback(() => {
     goBack();
@@ -261,7 +248,7 @@ const TakePictureScore = () => {
 
   // console.log(listProgram,'program')
 
-  const onPressMarkProgram = () => {
+  const onPressMarkProgram = useCallback(() => {
     if (listProgramSelected < listProgram) {
       setShowModal(true);
     } else {
@@ -271,7 +258,7 @@ const TakePictureScore = () => {
       });
       setShowModal(false);
     }
-  };
+  }, [showModal]);
   // console.log(,'ccccc')
   const EmptyAlbum = React.useCallback(() => {
     return (
@@ -300,13 +287,7 @@ const TakePictureScore = () => {
   // dispatch(checkinActions.getListProgram(data));
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: theme.colors.white,
-        paddingHorizontal: 16,
-        flex: 1,
-      }}
-      edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.rootSafe} edges={['top', 'bottom']}>
       <AppHeader
         style={styles.header}
         label={
@@ -510,4 +491,9 @@ const rootStyles = (theme: AppTheme) =>
       // width: '100%',
       marginHorizontal: 16,
     } as ViewStyle,
+    rootSafe: {
+      backgroundColor: theme.colors.white,
+      paddingHorizontal: 16,
+      flex: 1,
+    },
   });
