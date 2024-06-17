@@ -61,7 +61,6 @@ const CheckIn = () => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  const [appState, setAppState] = useState(AppState.currentState);
   const [checkinTimeStorage, setCheckinTimeStorage] = useMMKVNumber(
     AppConstant.CheckinTime,
   );
@@ -78,7 +77,7 @@ const CheckIn = () => {
         )
       : 0,
   );
-  // console.log('checkinTimeStorage', checkinTimeStorage);
+  const appState = useRef(AppState.currentState);
 
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
