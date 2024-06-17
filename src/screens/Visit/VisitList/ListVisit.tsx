@@ -315,7 +315,6 @@ const ListVisit = () => {
   //         1000,
   //       );
   //   });
-
   //   setShowListVisit(false);
   //   setVisitItemSelected(item);
   // };
@@ -329,7 +328,7 @@ const ListVisit = () => {
             <TouchableOpacity
               onPress={() => {
                 setShowListVisit(!isShowListVisit);
-                setVisitItemSelected(null);
+                // setVisitItemSelected(null);
               }}>
               <Image
                 source={
@@ -806,6 +805,11 @@ const ListVisit = () => {
           if (isDetail) {
             navigate(ScreenConstant.VISIT_DETAIL, {data});
           } else {
+            //set CheckIn Time:
+            CommonUtils.storage.set(
+              AppConstant.CheckinTime,
+              new Date().getTime(),
+            );
             navigate(ScreenConstant.CHECKIN, {
               item: data,
               isLocation: false,

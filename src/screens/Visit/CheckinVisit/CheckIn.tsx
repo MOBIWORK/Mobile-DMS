@@ -130,7 +130,6 @@ const CheckIn = () => {
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
-        Platform.OS === 'android' &&
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
