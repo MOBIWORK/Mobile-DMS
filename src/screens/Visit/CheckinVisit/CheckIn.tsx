@@ -1,9 +1,9 @@
 import {
-  AppState,
   Platform,
   StyleSheet,
   TouchableOpacity,
   ViewStyle,
+  AppState,
 } from 'react-native';
 import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
@@ -48,11 +48,9 @@ import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {AppStateStatus} from 'react-native';
-import moment from 'moment';
-import {formatTime2, storage} from '../../../utils/commom.utils';
+import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {useMMKVNumber, useMMKVString} from 'react-native-mmkv';
+import {useMMKVNumber} from 'react-native-mmkv';
 // @ts-ignore
 import StringFormat from 'string-format';
 
@@ -68,16 +66,13 @@ const CheckIn = () => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  const [appState, setAppState] = useState(AppState.currentState);
-  const [checkinTimeStorage, setCheckinTimeStorage] = useMMKVNumber(
-    AppConstant.CheckinTime,
-  );
+  const [checkinTimeStorage] = useMMKVNumber(AppConstant.CheckinTime);
   const [elapsedTime, setElapsedTime] = useState<number>(
     checkinTimeStorage
       ? Math.floor((new Date().getTime() - checkinTimeStorage) / 1000)
       : 0,
   );
-  console.log('checkinTimeStorage', checkinTimeStorage);
+  const appState = useRef(AppState.currentState);
 
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
@@ -119,27 +114,26 @@ const CheckIn = () => {
   });
   const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
 
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.match(/inactive|background/) &&
-      nextAppState === 'background'
-    ) {
-      console.log('App has come to the background!');
-      setCheckinTimeStorage(new Date().getTime());
-    }
-    setAppState(nextAppState);
-  };
-
   useEffect(() => {
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
-    // Start the interval
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        Platform.OS === 'android' &&
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        if (checkinTimeStorage) {
+          setElapsedTime(
+            Math.floor((new Date().getTime() - checkinTimeStorage) / 1000),
+          );
+        }
+      }
+      appState.current = nextAppState;
+    });
+
     return () => {
       subscription.remove();
     };
-  }, [appState]);
+  }, []);
 
   useEffect(() => {
     intervalIdRef.current = setInterval(() => {
