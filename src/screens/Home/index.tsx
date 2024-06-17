@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   VirtualizedList,
   CellRendererProps,
+  PermissionsAndroid,
 } from 'react-native';
 import codePush, {DownloadProgress} from 'react-native-code-push';
 import {IconButton} from 'react-native-paper';
@@ -84,7 +85,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
   const isFocus = useIsFocused();
-  const visualRef = useRef<VirtualizedList<any>>(null)
+  const visualRef = useRef<VirtualizedList<any>>(null);
 
   const location = useRef<GeolocationResponse | null>(null);
   const [enabled, setEnabled] = React.useState(false);
@@ -419,6 +420,10 @@ const HomeScreen = () => {
       getReportRevenue();
       getReportVisit();
       getNotification();
+      //permission
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      ).then();
     }
   }, []);
 
@@ -511,12 +516,10 @@ const HomeScreen = () => {
     CellRendererProps<React.JSX.Element | null>
   > = React.useCallback(({item}) => item, []);
 
-
   // useDeepCompareEffect(() =>{
   //     visualRef.current?.scrollToIndex({animated:true,index:0})
 
   // },[isFocus])
-
 
   const getItem = (data: any, index: number) => {
     switch (index) {
@@ -530,7 +533,10 @@ const HomeScreen = () => {
                 {Object.keys(userProfile).length > 0 && userProfile?.image ? (
                   <AppAvatar url={userProfile.image} size={48} />
                 ) : (
-                  <AppAvatar name={userProfile.employee_name?.slice(0,2) || ''} size={48} />
+                  <AppAvatar
+                    name={userProfile.employee_name?.slice(0, 2) || ''}
+                    size={48}
+                  />
                 )}
                 <View style={[styles.containerIfU]}>
                   <Text style={[styles.userName]}>{getLabel('welcome')},</Text>

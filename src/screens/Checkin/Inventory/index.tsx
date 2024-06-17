@@ -185,66 +185,74 @@ const CheckinInventory = () => {
   }, [dataCheckin, products]);
 
   const removeItem = (idx: number) => {
-    const newProducts = listProducts.filter((item, index) => index !== idx);
+    const newProducts = listProducts.filter(
+      (item: IProduct) => item.index !== idx,
+    );
     dispatch(productActions.updateListProduct(newProducts));
     dispatch(productActions.updateProductSelect(newProducts));
   };
 
-  const renderItem = useCallback((item: IProduct, index: number) => {
-    return (
-      <Block>
-        <Block
-          paddingHorizontal={16}
-          paddingVertical={12}
-          colorTheme="bg_default"
-          borderRadius={16}>
-          <View style={[styles.flex as any, {columnGap: 5, paddingTop: 8}]}>
-            <AppIcons
-              iconType={ICON_TYPE.IonIcon}
-              name="barcode-outline"
-              size={20}
-              color={colors.text_primary}
-            />
-            <Text
-              style={[styles.nameProduct as any, {color: colors.text_primary}]}>
-              {item.item_code}
-            </Text>
-          </View>
-          <Text style={styles.nameProduct}>{item.item_name}</Text>
-          <View style={[styles.flexSpace]}>
-            <Text style={[styles.dateProduct]}>
-              {CommonUtils.formatCash(item.price.toString())} đ
-            </Text>
-            <Text style={[styles.dateProduct]}>
-              x{item.quantity}
-              {`(${item.stock_uom})`}
-            </Text>
-          </View>
+  const renderItem = useCallback(
+    (item: IProduct) => {
+      return (
+        <Block>
           <Block
-            paddingTop={12}
-            borderTopWidth={1}
-            borderColor={colors.divider}
-            borderStyle="dashed"
-            marginTop={8}>
-            <Text style={[styles.dateProduct]}>
-              Hạn sử dụng :
-              {item.expiry ? CommonUtils.convertDate(item.expiry) : ''}
-            </Text>
+            paddingHorizontal={16}
+            paddingVertical={12}
+            colorTheme="bg_default"
+            borderRadius={16}>
+            <View style={[styles.flex as any, {columnGap: 5, paddingTop: 8}]}>
+              <AppIcons
+                iconType={ICON_TYPE.IonIcon}
+                name="barcode-outline"
+                size={20}
+                color={colors.text_primary}
+              />
+              <Text
+                style={[
+                  styles.nameProduct as any,
+                  {color: colors.text_primary},
+                ]}>
+                {item.item_code}
+              </Text>
+            </View>
+            <Text style={styles.nameProduct}>{item.item_name}</Text>
+            <View style={[styles.flexSpace]}>
+              <Text style={[styles.dateProduct]}>
+                {CommonUtils.formatCash(item.price.toString())} đ
+              </Text>
+              <Text style={[styles.dateProduct]}>
+                x{item.quantity}
+                {`(${item.stock_uom})`}
+              </Text>
+            </View>
+            <Block
+              paddingTop={12}
+              borderTopWidth={1}
+              borderColor={colors.divider}
+              borderStyle="dashed"
+              marginTop={8}>
+              <Text style={[styles.dateProduct]}>
+                Hạn sử dụng :
+                {item.expiry ? CommonUtils.convertDate(item.expiry) : ''}
+              </Text>
+            </Block>
           </Block>
+          <TouchableOpacity
+            style={[styles.removeIcon]}
+            onPress={() => removeItem(item.index)}>
+            <AppIcons
+              iconType={AppConstant.ICON_TYPE.AweIcons}
+              name="trash-o"
+              size={22}
+              color={colors.error}
+            />
+          </TouchableOpacity>
         </Block>
-        <TouchableOpacity
-          style={[styles.removeIcon]}
-          onPress={() => removeItem(index)}>
-          <AppIcons
-            iconType={AppConstant.ICON_TYPE.AweIcons}
-            name="trash-o"
-            size={22}
-            color={colors.error}
-          />
-        </TouchableOpacity>
-      </Block>
-    );
-  }, []);
+      );
+    },
+    [listProducts],
+  );
 
   const openBottonSheetDetail = (item: IProduct, index: number) => {
     indexSelect.current = index;
@@ -439,7 +447,7 @@ const CheckinInventory = () => {
                   key={index}
                   onPress={() => openBottonSheetDetail(item, index)}
                   activeOpacity={0.5}>
-                  {renderItem(item, index)}
+                  {renderItem(item)}
                 </TouchableOpacity>
               ))}
           </View>
