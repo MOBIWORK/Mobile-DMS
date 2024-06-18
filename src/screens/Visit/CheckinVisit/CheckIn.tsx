@@ -5,7 +5,7 @@ import {
   ViewStyle,
   AppState,
 } from 'react-native';
-import React, {useCallback, useState, useEffect, useRef} from 'react';
+import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
 import {
   Block,
   AppText as Text,
@@ -29,6 +29,7 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   backgroundErrorListener,
   calculateDistance,
+  compareArrays,
   decimalMinutesToTime,
   useDeepCompareEffect,
   useDisableBackHandler,
@@ -46,7 +47,7 @@ import {useBatteryLevel} from 'expo-battery';
 import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
 import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
-import {CommonUtils} from '../../../utils';
+import {CommonUtils, reduxPersistStorage} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {AppStateStatus} from 'react-native';
 import {storage} from '../../../utils/commom.utils';
@@ -128,6 +129,8 @@ const CheckIn = () => {
   });
   const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
 
+  // console.log(categoriesCheckin,'????')
+
   // const handleAppStateChange = (nextAppState: AppStateStatus) => {
   //   if (
   //     appState.current.match(/inactive|background/) &&
@@ -141,61 +144,48 @@ const CheckIn = () => {
   // };
 
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        if (checkinTimeStorage) {
+    const subscription = AppState.addEventListener(
+      'change',
+      async nextAppState => {
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextAppState === 'active'
+        ) {
+          if (checkinTimeStorage) {
+            setElapsedTime(
+              Math.floor(
+                (new Date().getTime() -
+                  checkinTimeStorage +
+                  (currentElapsed ? currentElapsed : 0)) /
+                  1000,
+              ),
+            );
+          }
+        } else {
+          console.log('run background');
           setCheckinTimeStorage(new Date().getTime());
           setCurrentElapsed(elapsedTime);
-          // dispatch(checkinActions.setDataCategoriesCheckin(cate))
-          setElapsedTime(
-            Math.floor(
-              (new Date().getTime() -
-                checkinTimeStorage +
-                (currentElapsed ? currentElapsed : 0)) /
-                1000,
-            ),
-          );
+          if (
+            categoriesCheckin.filter(item => item.isDone != false).length > 0
+          ) {
+            console.log('run set item');
+            await reduxPersistStorage.setItem('listCate', categoriesCheckin);
+          }
+          // dispatch(checkinActions.setDataCategoriesCheckin(cateCheckinList!));
         }
-      }
-      appState.current = nextAppState;
-    });
+        appState.current = nextAppState;
+      },
+    );
 
     return () => {
       subscription.remove();
     };
   }, []);
 
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        if (checkinTimeStorage) {
-          // dispatch()
-          setElapsedTime(
-            Math.floor(
-              (new Date().getTime() -
-                checkinTimeStorage +
-                (currentElapsed ? currentElapsed : 0)) /
-                1000,
-            ),
-          );
-        }
-      }
-      appState.current = nextAppState;
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
+  // console.log(cateCheckinList,'check')
 
   useEffect(() => {
-    setCateCheckinList(categoriesCheckin);
+    // setCateCheckinList(categoriesCheckin);
     intervalIdRef.current = setInterval(() => {
       setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
     }, 1000);
@@ -206,6 +196,37 @@ const CheckIn = () => {
       }
     };
   }, []);
+
+  const res = async () => {
+    const list = await reduxPersistStorage.getItem('listCate');
+    // console.log(JSON.parse(list).filter(item => item.isDone != false));
+    if (
+      list &&
+      list.length > 0 &&
+      JSON.parse(list)?.filter((item: any) => item.isDone != false).length > 0
+    ) {
+      // console.log( JSON.parse(list ),'lisstqqre')
+      console.log('run ss');
+      dispatch(checkinActions.setDataCategoriesCheckin(JSON.parse(list)));
+    } else if (
+      categoriesCheckin.filter(item => item.isDone != false).length > 0
+    ) {
+      await reduxPersistStorage.setItem('listCate', categoriesCheckin);
+      console.log('run case else');
+    } else {
+      return;
+    }
+  };
+
+
+  // console.log(categoriesCheckin,'???????')
+  useEffect(() => {
+    res();
+  }, [isFocus, appState.current]);
+
+  // console.log(cateCheckinList,'?????')
+
+  // console.log(cateCheckinList,'ss')
 
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
@@ -269,6 +290,7 @@ const CheckIn = () => {
         if (checkEnabled === true) {
           setEnableGPS(true);
           onCheckout();
+          dispatch(checkinActions.setDataCategoriesCheckin([]))
         } else {
           console.log('run');
           setEnableGPS(false);
@@ -301,11 +323,14 @@ const CheckIn = () => {
             }
             storage.delete(AppConstant.CheckinTime);
             storage.delete(AppConstant.CurrentElaps);
-
+            storage.delete(AppConstant.CateList);
+            dispatch(checkinActions.setDataCategoriesCheckin([]))
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));
-            pop(1);
+            navigate(ScreenConstant.MAIN_TAB, {
+              screen: ScreenConstant.VISIT,
+            });
           }
         } else {
           setEnableGPS(false);
@@ -326,6 +351,7 @@ const CheckIn = () => {
         }
         storage.delete(AppConstant.CheckinTime);
         storage.delete(AppConstant.CurrentElaps);
+        storage.delete(AppConstant.CateList);
 
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
@@ -466,7 +492,7 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
-  // console.log(cateCheckinList,'cateCheckinList')
+  // console.log(params?.item?.customer_primary_address?.address_title,'cateCheckinList')
 
   useDeepCompareEffect(() => {
     if (route === false) {
@@ -481,7 +507,7 @@ const CheckIn = () => {
     }
   }, [route]);
   // console.log(params?.item?.customer_primary_address,'ss')
-// console.log(cateCheckinList?.find(item => item.isDone,'vvv'),'vvv')
+  // console.log(cateCheckinList?.find(item => item.isDone,'vvv'),'vvv')
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <Block block colorTheme="bg_neutral">
@@ -532,7 +558,8 @@ const CheckIn = () => {
               <SvgIcon source="MapPin" size={16} />
               <Text numberOfLines={1}>
                 {' '}
-                {params?.item?.customer_primary_address.address_title != undefined &&
+                {params?.item?.customer_primary_address?.address_title !=
+                  undefined &&
                 Object.keys(params?.item?.customer_primary_address)?.length > 0
                   ? params?.item?.customer_primary_address.address_title
                   : (params?.item?.customer_primary_address as any)}{' '}
@@ -561,8 +588,8 @@ const CheckIn = () => {
           marginRight={16}
           colorTheme="white"
           borderRadius={16}>
-          {categoriesCheckin && 
-            categoriesCheckin?.length  > 0 &&
+          {categoriesCheckin &&
+            categoriesCheckin?.length > 0 &&
             categoriesCheckin?.map((item, index) => {
               return <ItemCheckIn key={index} item={item} navData={params} />;
             })}

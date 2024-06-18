@@ -42,6 +42,38 @@ const convertToMoneyFormat = (amount: any) => {
   return formattedAmount;
 };
 
+
+export function compareArrays<T>(arr1: T[], arr2: T[]): string[] {
+  const differences: string[] = [];
+
+  if (arr1.length !== arr2.length) {
+    differences.push('Arrays have different lengths.');
+    return differences;
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    const item1 = arr1[i] as any;
+    const item2 = arr2[i] as any;
+
+    const keys1 = Object.keys(item1) as (keyof T)[];
+    const keys2 = Object.keys(item2) as (keyof T)[];
+
+    if (keys1.length !== keys2.length) {
+      differences.push(`Objects at index ${i} have different number of keys.`);
+      continue;
+    }
+
+    for (const key of keys1) {
+      if (item1[key] !== item2[key]) {
+        differences.push(`Difference found at index ${i} for key ${key.toString()}: ${item1[key]} !== ${item2[key]}`);
+      }
+    }
+  }
+
+  return differences;
+}
+
+
 const reverseFormatNumber = (formattedNumber: any) => {
   // Check if the formattedNumber contains a dot
   const hasDot = /\./.test(formattedNumber);

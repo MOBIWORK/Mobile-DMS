@@ -400,7 +400,7 @@ const ListVisit = () => {
   };
 
   useLayoutEffect(() => {
-    if (Object.keys(systemConfig).length === 0) {
+    if (Object.keys(systemConfig).length === 0 ) {
       dispatch(appActions.onGetSystemConfig());
     }
     // handleEnabledPressed();

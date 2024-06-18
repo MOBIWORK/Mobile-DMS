@@ -23,7 +23,7 @@ import {
   IItemCheckIn,
 } from '../../redux-store/checkin-reducer/type';
 import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
-import {dispatch} from '../../utils/redux';
+import {dispatch, getState} from '../../utils/redux';
 import {storage} from '../../utils/commom.utils';
 
 export const checkKeyInObject = (T: any, key: string) => {
@@ -89,6 +89,7 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         action.payload,
       );
       if (response.message === 'Thành công') {
+        console.log('run get system config');
         const systemData: DMSConfigMobile = response.result;
         const newCategoriesCheckin: IItemCheckIn[] = categoriesCheckinList.map(
           item => {
@@ -104,9 +105,14 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
           },
         );
         yield put(appActions.setSystemConfig(systemData));
-        yield put(
-          checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
-        );
+        const cateList = getState('checkin').categoriesCheckin;
+        if (cateList && cateList.length > 0) {
+          return;
+        } else {
+          yield put(
+            checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
+          );
+        }
       } else {
         console.log('app System err');
       }
