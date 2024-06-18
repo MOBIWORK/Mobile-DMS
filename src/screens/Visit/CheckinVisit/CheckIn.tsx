@@ -123,6 +123,26 @@ const CheckIn = () => {
   const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
 
   useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        if (checkinTimeStorage) {
+          setElapsedTime(
+            Math.floor((new Date().getTime() - checkinTimeStorage) / 1000),
+          );
+        }
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
     setCateCheckinList(categoriesCheckin);
     intervalIdRef.current = setInterval(() => {
       setElapsedTime(prevElapsedTime => prevElapsedTime + 1);

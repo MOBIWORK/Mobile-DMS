@@ -225,10 +225,6 @@ const ListVisit = () => {
         await getCustomer({
           ...filterDataRef.current,
           search_key: '',
-          lat: location?.coords?.latitude,
-          long: location?.coords.longitude,
-          field_order: 'distance',
-          order_by: 'asc',
         });
         // await sortDataCustomer()
       } else {
@@ -236,10 +232,6 @@ const ListVisit = () => {
           ...filterParams,
           router: filterParams?.router?.channel_code,
           search_key: '',
-          lat: location?.coords?.latitude,
-          long: location?.coords.longitude,
-          field_order: 'distance',
-          order_by: 'asc',
         });
       }
     } catch (er) {
@@ -303,29 +295,7 @@ const ListVisit = () => {
       }
     });
     setDistanceFilterData(newData);
-    if (Object.keys(filterDataRef.current).length > 0) {
-      getCustomer({
-        ...filterDataRef.current,
-        search_key: '',
-        lat: location?.coords?.latitude,
-        long: location?.coords.longitude,
-        field_order: 'distance',
-        order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
-      });
-      // await sortDataCustomer()
-    } else {
-      getCustomer({
-        ...filterParams,
-        router: filterParams?.router?.channel_code,
-        search_key: '',
-        lat: location?.coords?.latitude,
-        long: location?.coords.longitude,
-        field_order: 'distance',
-        order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
-      });
-    }
-    console.log('itemData', itemData.label);
-    // sortDataCustomer(getLabel(itemData.label));
+    sortDataCustomer(getLabel(itemData.label));
   }, []);
 
   // const presentMap = (item: VisitListItemType) => {
@@ -337,6 +307,7 @@ const ListVisit = () => {
   //         1000,
   //       );
   //   });
+
   //   setShowListVisit(false);
   //   setVisitItemSelected(item);
   // };
@@ -350,7 +321,7 @@ const ListVisit = () => {
             <TouchableOpacity
               onPress={() => {
                 setShowListVisit(!isShowListVisit);
-                // setVisitItemSelected(null);
+                setVisitItemSelected(null);
               }}>
               <Image
                 source={
@@ -554,26 +525,19 @@ const ListVisit = () => {
             router: route_today[0].channel_code,
             long: location.coords.longitude,
             lat: location.coords.latitude,
-            field_order: 'distance',
+            field_order: 'customer_name',
             order_by: 'asc',
           });
         } else {
-          CommonUtils.getCurrentLocation(
-            async location => {
-              await getCustomer({
-                router: route_today[0].channel_code,
-                field_order: 'distance',
-                order_by: 'asc',
-                long: location.coords.longitude,
-                lat: location.coords.latitude,
-              });
-            },
-            async () => {
-              await getCustomer({
-                router: route_today[0].channel_code,
-              });
-            },
-          );
+          CommonUtils.getCurrentLocation(async location => {
+            await getCustomer({
+              router: route_today[0].channel_code,
+              field_order: 'customer_name',
+              order_by: 'asc',
+              long: location.coords.longitude,
+              lat: location.coords.latitude,
+            });
+          });
         }
       } else {
         setFilterParams({router: all_route});
@@ -582,23 +546,18 @@ const ListVisit = () => {
           await getCustomer({
             long: location.coords.longitude,
             lat: location.coords.latitude,
-            field_order: 'distance',
+            field_order: 'customer_name',
             order_by: 'asc',
           });
         } else {
-          CommonUtils.getCurrentLocation(
-            async location => {
-              await getCustomer({
-                long: location.coords.longitude,
-                lat: location.coords.latitude,
-                field_order: 'distance',
-                order_by: 'asc',
-              });
-            },
-            async () => {
-              await getCustomer();
-            },
-          );
+          CommonUtils.getCurrentLocation(async location => {
+            await getCustomer({
+              long: location.coords.longitude,
+              lat: location.coords.latitude,
+              field_order: 'customer_name',
+              order_by: 'asc',
+            });
+          });
         }
       }
     } else {
@@ -608,23 +567,18 @@ const ListVisit = () => {
         await getCustomer({
           long: location.coords.longitude,
           lat: location.coords.latitude,
-          field_order: 'distance',
+          field_order: 'customer_name',
           order_by: 'asc',
         });
       } else {
-        CommonUtils.getCurrentLocation(
-          async location => {
-            await getCustomer({
-              long: location.coords.longitude,
-              lat: location.coords.latitude,
-              field_order: 'distance',
-              order_by: 'asc',
-            });
-          },
-          async () => {
-            await getCustomer();
-          },
-        );
+        CommonUtils.getCurrentLocation(async location => {
+          await getCustomer({
+            long: location.coords.longitude,
+            lat: location.coords.latitude,
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
+        });
       }
     }
   }, [customerType, listCustomer]);
@@ -657,25 +611,25 @@ const ListVisit = () => {
   const handleReset = useCallback(async () => {
     try {
       setLoading(true);
-      // setFilterParams({router: routeTodayRef.current});
-      // if (location?.coords && Object.keys(location?.coords).length > 0) {
-      //   await getCustomer({
-      //     long: location.coords.longitude,
-      //     lat: location.coords.latitude,
-      //     field_order: 'distance',
-      //     order_by: 'asc',
-      //   });
-      // } else {
-      //   CommonUtils.getCurrentLocation(async location => {
-      //     await getCustomer({
-      //       long: location.coords.longitude,
-      //       lat: location.coords.latitude,
-      //       router: routeTodayRef.current.channel_code,
-      //       field_order: 'distance',
-      //       order_by: 'asc',
-      //     });
-      //   });
-      // }
+      setFilterParams({router: routeTodayRef.current});
+      if (location?.coords && Object.keys(location?.coords).length > 0) {
+        await getCustomer({
+          long: location.coords.longitude,
+          lat: location.coords.latitude,
+          field_order: 'customer_name',
+          order_by: 'asc',
+        });
+      } else {
+        CommonUtils.getCurrentLocation(async location => {
+          await getCustomer({
+            long: location.coords.longitude,
+            lat: location.coords.latitude,
+            router: routeTodayRef.current.channel_code,
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
+        });
+      }
       await getCustomerRoute();
     } catch (e) {
       //
@@ -688,11 +642,7 @@ const ListVisit = () => {
     bottomSheetRef.current && bottomSheetRef.current.close();
     try {
       setLoading(true);
-      if (
-        Object.keys(filterParams).length > 0 &&
-        location?.coords &&
-        Object.keys(location?.coords).length > 0
-      ) {
+      if (Object.keys(filterParams).length > 0) {
         const birthDayObj: any =
           filterParams?.birthDay && filterParams.birthDay === getLabel('today')
             ? CommonUtils.dateToDate('today')
@@ -726,9 +676,6 @@ const ListVisit = () => {
           customer_type: filterParams?.customer_type
             ? filterParams.customer_type
             : '',
-          field_order: 'distance',
-          long: location.coords.longitude,
-          lat: location.coords.latitude,
         };
         filterDataRef.current = params;
         await getCustomer(params);
@@ -846,11 +793,6 @@ const ListVisit = () => {
           if (isDetail) {
             navigate(ScreenConstant.VISIT_DETAIL, {data});
           } else {
-            //set CheckIn Time:
-            CommonUtils.storage.set(
-              AppConstant.CheckinTime,
-              new Date().getTime(),
-            );
             navigate(ScreenConstant.CHECKIN, {
               item: data,
               isLocation: false,
@@ -977,9 +919,8 @@ const ListVisit = () => {
 
         dispatch(appActions.setDataCheckIn(data));
         setModalAlert(prev => ({...prev, status: false}));
-        //set CheckIn Time:
-        CommonUtils.storage.set(AppConstant.CheckinTime, new Date().getTime());
-        //navigation
+        const curTime = moment(new Date()).valueOf();
+        // storage.set('curTime', curTime);
         navigate(ScreenConstant.CHECKIN, {
           item: data,
         });
@@ -1180,6 +1121,7 @@ const ListVisit = () => {
   useEffect(() => {
     if (listCustomer.data && listCustomer.data.length > 0) {
       sortDataCustomer(distanceFilterValue);
+    
     } else {
       setCustomerData([]);
     }
