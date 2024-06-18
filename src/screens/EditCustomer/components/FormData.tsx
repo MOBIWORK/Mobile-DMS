@@ -100,10 +100,7 @@ const FormData = (props: Props) => {
     shallowEqual,
   );
 
-  const lisCustomerRoute = useSelector(
-    state => state.customer.listCustomerRoute,
-    shallowEqual,
-  );
+
 
   const [isPending, startTransition] = useTransition();
   const [date, setDate] = useState<Date>();

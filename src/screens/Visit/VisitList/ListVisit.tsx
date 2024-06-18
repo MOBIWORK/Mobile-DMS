@@ -701,6 +701,9 @@ const ListVisit = () => {
     );
   }, [location]);
 
+
+  console.log(customerDataSort,'â')
+
   const handleSearchVisit = useCallback(async () => {
     try {
       setLoading(true);

@@ -39,7 +39,7 @@ import {useTranslation} from 'react-i18next';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
-import {goBack, navigate} from '../../../navigation/navigation-service';
+import {goBack, navigate, pop} from '../../../navigation/navigation-service';
 import {AppService} from '../../../services';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
@@ -49,10 +49,9 @@ import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {AppStateStatus} from 'react-native';
-import moment from 'moment';
-import {formatTime2, storage} from '../../../utils/commom.utils';
+import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {useMMKVNumber, useMMKVString} from 'react-native-mmkv';
+import {useMMKVNumber, useMMKVObject} from 'react-native-mmkv';
 // @ts-ignore
 import StringFormat from 'string-format';
 
@@ -95,6 +94,10 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
+  const [cateCheckinList, setCateCheckinList] = useMMKVObject(
+    AppConstant.CateList,
+  );
+
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
   const [enableGPS, setEnableGPS] = useState(false);
@@ -135,6 +138,7 @@ const CheckIn = () => {
       console.log('App has come to the background!');
       setCheckinTimeStorage(new Date().getTime());
       setCurrentElapsed(elapsedTime);
+      setCateCheckinList(categoriesCheckin);
     }
     setAppState(nextAppState);
   };
@@ -151,6 +155,7 @@ const CheckIn = () => {
   }, [appState]);
 
   useEffect(() => {
+    setCateCheckinList(categoriesCheckin);
     intervalIdRef.current = setInterval(() => {
       setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
     }, 1000);
@@ -260,7 +265,7 @@ const CheckIn = () => {
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));
-            goBack();
+            pop(1);
           }
         } else {
           setEnableGPS(false);
@@ -421,6 +426,8 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
+  console.log(cateCheckinList,'cateCheckinList')
+
   useDeepCompareEffect(() => {
     if (route === false) {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
@@ -511,7 +518,7 @@ const CheckIn = () => {
           marginRight={16}
           colorTheme="white"
           borderRadius={16}>
-          {categoriesCheckin &&
+          {     categoriesCheckin &&
             categoriesCheckin.length > 0 &&
             categoriesCheckin.map((item, index) => {
               return <ItemCheckIn key={index} item={item} navData={params} />;
