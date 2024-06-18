@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   ViewStyle,
   AppState,
-  AppStateStatus,
 } from 'react-native';
 import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
@@ -49,6 +48,7 @@ import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
+import {AppStateStatus} from 'react-native';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {useMMKVNumber, useMMKVObject} from 'react-native-mmkv';
@@ -92,7 +92,7 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
-  const [cateCheckinList, setCateCheckinList] = useMMKVObject<any[]>(
+  const [cateCheckinList, setCateCheckinList] = useMMKVObject(
     AppConstant.CateList,
   );
 
