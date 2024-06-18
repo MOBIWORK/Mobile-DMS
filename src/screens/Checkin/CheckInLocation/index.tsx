@@ -322,6 +322,7 @@ const CheckInLocation = () => {
       item.key === 'location' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    
     navigation.navigate(ScreenConstant.CHECKIN, {
       item: {
         ...route.params.data,

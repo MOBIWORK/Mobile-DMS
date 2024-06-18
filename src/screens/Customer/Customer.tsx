@@ -34,6 +34,7 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   calculateDistance,
   handleBackgroundLocation,
+  useDeepCompareEffect,
   useEffectOnce,
   useSelector,
 } from '../../config/function';
@@ -307,17 +308,19 @@ const Customer = () => {
     return () => {
       mounted.current = false;
     };
-  }, [listCustomerResult]);
+  }, [])
 
-  useEffect(() => {
-    if (isFocus && !searchCustomerValue) {
-      dispatch(customerActions.onGetCustomer());
-    }
-  }, [isFocus, searchCustomerValue]);
+  // useEffect(() => {
+  //   if (isFocus && !searchCustomerValue) {
+  //     dispatch(customerActions.onGetCustomer());
+  //   }
+  // }, [isFocus, searchCustomerValue]);
 
-  useEffectOnce(() => {
+  useDeepCompareEffect(() => {
     dispatch(customerActions.getCustomerType());
-  });
+    dispatch(customerActions.onGetCustomer());
+
+  },[isFocus]);
 
   useEffect(() => {
     if (value.first !== 'all' && value.second !== 'all') {
@@ -344,7 +347,7 @@ const Customer = () => {
     } else {
       dispatch(customerActions.onGetCustomer());
     }
-  }, [value]);
+  }, [value.first]);
 
   const onEndReachedThreshold = useCallback(() => {
     // console.log('on end reach')

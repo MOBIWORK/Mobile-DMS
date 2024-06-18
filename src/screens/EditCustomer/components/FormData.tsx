@@ -74,12 +74,13 @@ const FormData = (props: Props) => {
     ...data,
     customer_code: data?.customer_code || '',
     customer_name: data?.customer_name || '',
-    customer_type: data?.customer_type || '',
-    customer_group: data.customer_group,
-    territory: data.territory,
-    custom_birthday: data.custom_birthday,
-    routers: data.routers,
-    image: data.image,
+    customer_type: data?.customer_type  || '',
+    customer_group: data?.customer_group || '',
+    territory: data?.territory || '',
+    custom_birthday: data?.custom_birthday || '', 
+    routers: data?.routers || [],
+    image: data?.image || '',
+
     address:
       data.address &&
       data.address.map(item => ({
@@ -100,10 +101,7 @@ const FormData = (props: Props) => {
     shallowEqual,
   );
 
-  const lisCustomerRoute = useSelector(
-    state => state.customer.listCustomerRoute,
-    shallowEqual,
-  );
+
 
   const [isPending, startTransition] = useTransition();
   const [date, setDate] = useState<Date>();

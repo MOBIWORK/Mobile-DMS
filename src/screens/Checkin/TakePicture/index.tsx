@@ -42,7 +42,7 @@ import {RouterProp} from '../../../navigation/screen-type';
 import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {dispatch} from '../../../utils/redux';
-import {useSelector} from '../../../config/function';
+import {useEffectOnce, useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import {shallowEqual} from 'react-redux';
 import {useTheme} from '../../../layouts/theme';
@@ -50,9 +50,7 @@ import ProgressCircle from 'react-native-progress-circle';
 import {CheckinService} from '../../../services';
 import {useTranslation} from 'react-i18next';
 import Modal from 'react-native-modal';
-import {storage} from '../../../utils/commom.utils';
-import moment from 'moment';
-import {useMMKVString} from 'react-native-mmkv';
+
 export interface AlbumBottomSheet extends IFilterType {
   numPicsRequired?: string;
 }
@@ -70,7 +68,6 @@ const TakePicture = () => {
   const params = useRoute<RouterProp<'TAKE_PICTURE_VISIT'>>().params;
   const [error, setError] = useState(false);
   const [albumError, setAlbumError] = useState<any[]>([]);
-  const [storedStartTime, set] = useMMKVString('time');
 
   const totalImageRequire = useMemo(
     () =>
@@ -112,6 +109,12 @@ const TakePicture = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
+
+  
+
+
+
   const handlePushImageData = async () => {
     setMessage(0);
     if (albumImageData.length > 0) {
@@ -169,12 +172,6 @@ const TakePicture = () => {
                   startTransition(() => {
                     setMessage(totalItemsProcessed);
                     dispatch(appActions.postImageCheckIn(data.current));
-                    // storage.set(
-                    //   'time',
-                    //   String(
-                    //     Number(storedStartTime) - moment(new Date()).valueOf(),
-                    //   ),
-                    // );
                     setError(false);
                   });
                 }
@@ -276,7 +273,7 @@ const TakePicture = () => {
   }, [error]);
   // console.log(systemConfig.batbuoc_chupanh,'ap')
 
-  useEffect(() => {
+  useEffectOnce(() => {
     const getListAlbum = async () => {
       const res: any = await CheckinService.getListAlbum();
       if (res?.result?.length > 0) {
@@ -299,7 +296,7 @@ const TakePicture = () => {
       }
     };
     getListAlbum();
-  }, []);
+  });
 
   const EmptyAlbum = useCallback(() => {
     return (
@@ -405,11 +402,12 @@ const TakePicture = () => {
                         </Pressable>
                       </Block>
                     ) : (
-                      <View
+                      <Block
+                        padding={5}
+                        marginLeft={4}
+                        marginRight={4}
                         style={{
-                          padding: 5,
                           rowGap: 8,
-                          marginHorizontal: 4,
                         }}>
                         <View style={styles.img}>
                           <Image
@@ -434,7 +432,7 @@ const TakePicture = () => {
                             resizeMode={'contain'}
                           />
                         </TouchableOpacity>
-                      </View>
+                      </Block>
                     )}
                   </>
                 );
@@ -444,7 +442,7 @@ const TakePicture = () => {
         </View>
       );
     },
-    [handleCamera, albumBottomSheet],
+    [handleCamera, albumBottomSheet, albumImageData],
   );
 
   return (
