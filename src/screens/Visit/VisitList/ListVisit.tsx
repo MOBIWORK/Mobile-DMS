@@ -486,10 +486,10 @@ const ListVisit = () => {
         item => item.customer_location_primary === null,
       );
 
-      // setCustomerData([
-      //   ...sortedData(distanceLabel, filteredData),
-      //   ...noLocationCustomer,
-      // ]);
+      setCustomerData([
+        ...sortedData(distanceLabel, filteredData),
+        ...noLocationCustomer,
+      ]);
     } else {
       setCustomerData([]);
     }
@@ -676,6 +676,12 @@ const ListVisit = () => {
           customer_type: filterParams?.customer_type
             ? filterParams.customer_type
             : '',
+          lat: location?.coords.latitude
+            ? location.coords.latitude
+            : 0,
+          long: location?.coords.longitude
+            ? location.coords.longitude
+            : 0,
         };
         filterDataRef.current = params;
         await getCustomer(params);
@@ -701,8 +707,7 @@ const ListVisit = () => {
     );
   }, [location]);
 
-
-  console.log(customerDataSort,'â')
+  // console.log(customerDataSort, 'â');
 
   const handleSearchVisit = useCallback(async () => {
     try {
@@ -1121,7 +1126,6 @@ const ListVisit = () => {
   useEffect(() => {
     if (listCustomer.data && listCustomer.data.length > 0) {
       sortDataCustomer(distanceFilterValue);
-    
     } else {
       setCustomerData([]);
     }

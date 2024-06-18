@@ -1,4 +1,10 @@
-import {AppState, Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {
+  AppState,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
 import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
@@ -86,7 +92,7 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
-  const [cateCheckinList, setCateCheckinList] = useMMKVObject(
+  const [cateCheckinList, setCateCheckinList] = useMMKVObject<any[]>(
     AppConstant.CateList,
   );
 
@@ -109,7 +115,7 @@ const CheckIn = () => {
       systemConfig?.tgcheckin_toithieu ? systemConfig.thoigian_toithieu : 0,
     ),
   );
-
+  // console.log(params,'param')
   useDisableBackHandler(true);
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
@@ -129,8 +135,14 @@ const CheckIn = () => {
         nextAppState === 'active'
       ) {
         if (checkinTimeStorage) {
+          // dispatch()
           setElapsedTime(
-            Math.floor((new Date().getTime() - checkinTimeStorage) / 1000),
+            Math.floor(
+              (new Date().getTime() -
+                checkinTimeStorage +
+                (currentElapsed ? currentElapsed : 0)) /
+                1000,
+            ),
           );
         }
       }
@@ -414,7 +426,7 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
-  console.log(cateCheckinList,'cateCheckinList')
+  // console.log(cateCheckinList,'cateCheckinList')
 
   useDeepCompareEffect(() => {
     if (route === false) {
@@ -428,7 +440,8 @@ const CheckIn = () => {
       return;
     }
   }, [route]);
-
+  // console.log(params?.item?.customer_primary_address,'ss')
+// console.log(cateCheckinList?.find(item => item.isDone,'vvv'),'vvv')
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <Block block colorTheme="bg_neutral">
@@ -479,8 +492,10 @@ const CheckIn = () => {
               <SvgIcon source="MapPin" size={16} />
               <Text numberOfLines={1}>
                 {' '}
-                {params?.item?.customer_primary_address?.address_title ??
-                  ''}{' '}
+                {params?.item?.customer_primary_address.address_title != undefined &&
+                Object.keys(params?.item?.customer_primary_address)?.length > 0
+                  ? params?.item?.customer_primary_address.address_title
+                  : (params?.item?.customer_primary_address as any)}{' '}
               </Text>
             </Block>
             <Block
@@ -506,9 +521,9 @@ const CheckIn = () => {
           marginRight={16}
           colorTheme="white"
           borderRadius={16}>
-          {     categoriesCheckin &&
-            categoriesCheckin.length > 0 &&
-            categoriesCheckin.map((item, index) => {
+          {categoriesCheckin && 
+            categoriesCheckin?.length  > 0 &&
+            categoriesCheckin?.map((item, index) => {
               return <ItemCheckIn key={index} item={item} navData={params} />;
             })}
         </Block>
