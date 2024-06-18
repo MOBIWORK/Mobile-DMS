@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   ViewStyle,
   AppState,
+  AppStateStatus
 } from 'react-native';
 import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
 import {
@@ -49,10 +50,10 @@ import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils, reduxPersistStorage} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {AppStateStatus} from 'react-native';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {useMMKVNumber, useMMKVObject} from 'react-native-mmkv';
+
 // @ts-ignore
 import StringFormat from 'string-format';
 
@@ -68,12 +69,14 @@ const CheckIn = () => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+
   const [checkinTimeStorage, setCheckinTimeStorage] = useMMKVNumber(
     AppConstant.CheckinTime,
   );
   const [currentElapsed, setCurrentElapsed] = useMMKVNumber(
     AppConstant.CurrentElaps,
   );
+
   const [elapsedTime, setElapsedTime] = useState<number>(
     checkinTimeStorage
       ? Math.floor(
@@ -177,12 +180,12 @@ const CheckIn = () => {
       },
     );
 
+
     return () => {
       subscription.remove();
     };
   }, []);
 
-  // console.log(cateCheckinList,'check')
 
   useEffect(() => {
     // setCateCheckinList(categoriesCheckin);

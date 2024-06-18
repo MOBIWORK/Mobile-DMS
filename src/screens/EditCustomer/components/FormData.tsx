@@ -80,6 +80,7 @@ const FormData = (props: Props) => {
     custom_birthday: data?.custom_birthday || '', 
     routers: data?.routers || [],
     image: data?.image || '',
+
     address:
       data.address &&
       data.address.map(item => ({
