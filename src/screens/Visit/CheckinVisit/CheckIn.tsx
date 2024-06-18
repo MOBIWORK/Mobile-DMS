@@ -92,7 +92,7 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
-  const [cateCheckinList, setCateCheckinList] = useMMKVObject(
+  const [cateCheckinList, setCateCheckinList] = useMMKVObject<any[]>(
     AppConstant.CateList,
   );
 
@@ -175,8 +175,14 @@ const CheckIn = () => {
         nextAppState === 'active'
       ) {
         if (checkinTimeStorage) {
+          // dispatch()
           setElapsedTime(
-            Math.floor((new Date().getTime() - checkinTimeStorage) / 1000),
+            Math.floor(
+              (new Date().getTime() -
+                checkinTimeStorage +
+                (currentElapsed ? currentElapsed : 0)) /
+                1000,
+            ),
           );
         }
       }

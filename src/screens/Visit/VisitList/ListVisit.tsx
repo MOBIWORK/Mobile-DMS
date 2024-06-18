@@ -1128,7 +1128,6 @@ const ListVisit = () => {
   useEffect(() => {
     if (listCustomer.data && listCustomer.data.length > 0) {
       sortDataCustomer(distanceFilterValue);
-    
     } else {
       setCustomerData([]);
     }
