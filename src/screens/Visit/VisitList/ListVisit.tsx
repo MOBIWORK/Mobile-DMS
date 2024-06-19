@@ -28,35 +28,35 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {ImageAssets} from '../../../assets';
+import { ImageAssets } from '../../../assets';
 import {
   ExtendedTheme,
   useIsFocused,
   useNavigation,
   useTheme,
 } from '@react-navigation/native';
-import {NavigationProp} from '../../../navigation/screen-type';
+import { NavigationProp } from '../../../navigation/screen-type';
 import {
   ListCustomerRoute,
   ListCustomerType,
   VisitListItemResult,
   VisitListItemType,
 } from '../../../models/types';
-import {LocationProps} from './VisitItem';
+import { LocationProps } from './VisitItem';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
-import {AppConstant, ScreenConstant} from '../../../const';
+import { AppConstant, ScreenConstant } from '../../../const';
 import Mapbox from '@rnmapbox/maps';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SkeletonLoading from '../SkeletonLoading';
 import {
   backgroundErrorListener,
   calculateDistance,
   useSelector,
 } from '../../../config/function';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import Modal from 'react-native-modal';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 import {
   customerActions,
   setListCustomerType,
@@ -72,20 +72,20 @@ import {
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {CustomerService} from '../../../services';
-import {CommonUtils} from '../../../utils';
-import {shallowEqual, useDispatch} from 'react-redux';
-import {GeolocationResponse} from '@react-native-community/geolocation';
+import { CustomerService } from '../../../services';
+import { CommonUtils } from '../../../utils';
+import { shallowEqual, useDispatch } from 'react-redux';
+import { GeolocationResponse } from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
 import ModalAlert from './Component/ModalAlert';
-import {navigate} from '../../../navigation/navigation-service';
+import { navigate } from '../../../navigation/navigation-service';
 import moment from 'moment';
-import {useBatteryLevel} from 'expo-battery';
+import { useBatteryLevel } from 'expo-battery';
 import ModalUpdateLocation from './Component/ModalUpdateLocation';
-import {ObjectId} from 'bson';
-import {isLocationEnabled} from 'react-native-android-location-enabler';
+import { ObjectId } from 'bson';
+import { isLocationEnabled } from 'react-native-android-location-enabler';
 import RenderContent from './Component/RenderContent';
-import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 
 //config Mapbox
 
@@ -100,8 +100,8 @@ export interface ModalUpdateType {
 }
 
 const ListVisit = () => {
-  const {colors} = useTheme();
-  const {t: getLabel} = useTranslation();
+  const { colors } = useTheme();
+  const { t: getLabel } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const styles = rootStyles(useTheme());
   const dispatch = useDispatch();
@@ -297,9 +297,9 @@ const ListVisit = () => {
     setDistanceFilterValue(getLabel(itemData.label));
     const newData = distanceFilterData.map(item => {
       if (itemData.value === item.value) {
-        return {...item, isSelected: true};
+        return { ...item, isSelected: true };
       } else {
-        return {...item, isSelected: false};
+        return { ...item, isSelected: false };
       }
     });
     setDistanceFilterData(newData);
@@ -370,7 +370,7 @@ const ListVisit = () => {
       <Block paddingHorizontal={16}>
         <Block style={styles.rootHeader}>
           <Text style={styles.labelStyle}>{getLabel('visit')}</Text>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity
               onPress={() => {
                 setShowListVisit(!isShowListVisit);
@@ -380,7 +380,7 @@ const ListVisit = () => {
                 source={
                   isShowListVisit ? ImageAssets.MapIcon : ImageAssets.ListIcon
                 }
-                style={{width: 28, height: 28}}
+                style={{ width: 28, height: 28 }}
                 tintColor={colors.text_secondary}
                 resizeMode={'cover'}
               />
@@ -389,7 +389,7 @@ const ListVisit = () => {
               onPress={() => navigation.navigate(ScreenConstant.SEARCH_VISIT)}>
               <Image
                 source={ImageAssets.SearchIcon}
-                style={{width: 28, height: 28, marginLeft: 16}}
+                style={{ width: 28, height: 28, marginLeft: 16 }}
                 tintColor={colors.text_secondary}
                 resizeMode={'cover'}
               />
@@ -453,7 +453,7 @@ const ListVisit = () => {
   };
 
   useLayoutEffect(() => {
-    if (Object.keys(systemConfig).length === 0) {
+    if (Object.keys(systemConfig).length === 0 ) {
       dispatch(appActions.onGetSystemConfig());
     }
     // handleEnabledPressed();
@@ -539,10 +539,10 @@ const ListVisit = () => {
         item => item.customer_location_primary === null,
       );
 
-      // setCustomerData([
-      //   ...sortedData(distanceLabel, filteredData),
-      //   ...noLocationCustomer,
-      // ]);
+      setCustomerData([
+        ...sortedData(distanceLabel, filteredData),
+        ...noLocationCustomer,
+      ]);
     } else {
       setCustomerData([]);
     }
@@ -571,7 +571,7 @@ const ListVisit = () => {
         (item: ListCustomerRoute) => item.is_today,
       );
       if (route_today && route_today?.length > 0) {
-        setFilterParams({router: route_today[0]});
+        setFilterParams({ router: route_today[0] });
         routeTodayRef.current = route_today[0];
         if (location?.coords && Object.keys(location?.coords).length > 0) {
           await getCustomer({
@@ -582,6 +582,7 @@ const ListVisit = () => {
             order_by: 'asc',
           });
         } else {
+
           CommonUtils.getCurrentLocation(
             async location => {
               await getCustomer({
@@ -598,9 +599,10 @@ const ListVisit = () => {
               });
             },
           );
+
         }
       } else {
-        setFilterParams({router: all_route});
+        setFilterParams({ router: all_route });
         routeTodayRef.current = all_route;
         if (location?.coords && Object.keys(location?.coords).length > 0) {
           await getCustomer({
@@ -610,6 +612,7 @@ const ListVisit = () => {
             order_by: 'asc',
           });
         } else {
+
           CommonUtils.getCurrentLocation(
             async location => {
               await getCustomer({
@@ -623,10 +626,11 @@ const ListVisit = () => {
               await getCustomer();
             },
           );
+
         }
       }
     } else {
-      setFilterParams({router: all_route});
+      setFilterParams({ router: all_route });
       routeTodayRef.current = all_route;
       if (location?.coords && Object.keys(location?.coords).length > 0) {
         await getCustomer({
@@ -636,6 +640,7 @@ const ListVisit = () => {
           order_by: 'asc',
         });
       } else {
+
         CommonUtils.getCurrentLocation(
           async location => {
             await getCustomer({
@@ -649,6 +654,7 @@ const ListVisit = () => {
             await getCustomer();
           },
         );
+
       }
     }
   }, [customerType, listCustomer]);
@@ -712,19 +718,21 @@ const ListVisit = () => {
     bottomSheetRef.current && bottomSheetRef.current.close();
     try {
       setLoading(true);
+
       if (
         Object.keys(filterParams).length > 0 &&
         location?.coords &&
         Object.keys(location?.coords).length > 0
       ) {
+
         const birthDayObj: any =
           filterParams?.birthDay && filterParams.birthDay === getLabel('today')
             ? CommonUtils.dateToDate('today')
             : filterParams.birthDay === getLabel('thisWeek')
-            ? CommonUtils.dateToDate('weekly')
-            : filterParams.birthDay === getLabel('thisMonth')
-            ? CommonUtils.dateToDate('monthly')
-            : undefined;
+              ? CommonUtils.dateToDate('weekly')
+              : filterParams.birthDay === getLabel('thisMonth')
+                ? CommonUtils.dateToDate('monthly')
+                : undefined;
         const params: IListVisitParams = {
           router: filterParams?.router ? filterParams.router.channel_code : '',
           checkin_status:
@@ -732,8 +740,8 @@ const ListVisit = () => {
               ? 'is_checkin'
               : filterParams?.status &&
                 filterParams.status === getLabel('notVisited')
-              ? 'not_checkin'
-              : 'all',
+                ? 'not_checkin'
+                : 'all',
           // order_by:
           //   filterParams?.order_by && filterParams.order_by === 'A -> Z'
           //     ? 'asc'
@@ -750,6 +758,7 @@ const ListVisit = () => {
           customer_type: filterParams?.customer_type
             ? filterParams.customer_type
             : '',
+
           field_order: 'distance',
           long: location.coords.longitude,
           lat: location.coords.latitude,
@@ -777,6 +786,8 @@ const ListVisit = () => {
       err => backgroundErrorListener(err.code),
     );
   }, [location]);
+
+  // console.log(customerDataSort, 'â');
 
   const handleSearchVisit = useCallback(async () => {
     try {
@@ -822,8 +833,8 @@ const ListVisit = () => {
           let data: CheckinData = {
             checkin_id:
               dataCheckIn &&
-              dataCheckIn?.kh_ma === item.customer_code &&
-              dataCheckIn.checkin_id !== undefined
+                dataCheckIn?.kh_ma === item.customer_code &&
+                dataCheckIn.checkin_id !== undefined
                 ? dataCheckIn.checkin_id
                 : uniqueID,
             kh_ma: item.customer_code,
@@ -862,10 +873,10 @@ const ListVisit = () => {
             item: item,
             ...item,
           };
-          setModalAlert(prev => ({...prev, status: false}));
+          setModalAlert(prev => ({ ...prev, status: false }));
           dispatch(appActions.setDataCheckIn(data));
           if (isDetail) {
-            navigate(ScreenConstant.VISIT_DETAIL, {data});
+            navigate(ScreenConstant.VISIT_DETAIL, { data });
           } else {
             //set CheckIn Time:
             CommonUtils.storage.set(
@@ -910,9 +921,9 @@ const ListVisit = () => {
               );
               if (
                 data >
-                  (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-                    AppConstant.additional_distance) /
-                    1000 &&
+                (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                  AppConstant.additional_distance) /
+                1000 &&
                 isDetail === false
               ) {
                 currentSelect.current = item;
@@ -944,7 +955,7 @@ const ListVisit = () => {
 
   const handleBackground = useCallback((item: VisitListItemType) => {
     let log: LocationProps = JSON.parse(item.customer_location_primary!);
-    setModalAlert({status: true, type: 'loading'});
+    setModalAlert({ status: true, type: 'loading' });
     let uniqueID = new ObjectId();
     CommonUtils.getCurrentLocation(
       location => {
@@ -957,8 +968,8 @@ const ListVisit = () => {
         let data: CheckinData = {
           checkin_id:
             dataCheckIn &&
-            dataCheckIn?.kh_ma === item.customer_code &&
-            dataCheckIn.checkin_id !== undefined
+              dataCheckIn?.kh_ma === item.customer_code &&
+              dataCheckIn.checkin_id !== undefined
               ? dataCheckIn.checkin_id
               : uniqueID,
           kh_ma: item.customer_code,
@@ -997,7 +1008,7 @@ const ListVisit = () => {
         };
 
         dispatch(appActions.setDataCheckIn(data));
-        setModalAlert(prev => ({...prev, status: false}));
+        setModalAlert(prev => ({ ...prev, status: false }));
         //set CheckIn Time:
         CommonUtils.storage.set(AppConstant.CheckinTime, new Date().getTime());
         //navigation
@@ -1033,8 +1044,8 @@ const ListVisit = () => {
                   let data: any = {
                     checkin_id:
                       dataCheckIn &&
-                      dataCheckIn?.kh_ma === item.customer_code &&
-                      dataCheckIn.checkin_id !== undefined
+                        dataCheckIn?.kh_ma === item.customer_code &&
+                        dataCheckIn.checkin_id !== undefined
                         ? dataCheckIn.checkin_id
                         : uniqueID,
                     kh_ma: item.customer_code,
@@ -1103,8 +1114,8 @@ const ListVisit = () => {
                 let data: any = {
                   checkin_id:
                     dataCheckIn &&
-                    dataCheckIn?.kh_ma === item.customer_code &&
-                    dataCheckIn.checkin_id !== undefined
+                      dataCheckIn?.kh_ma === item.customer_code &&
+                      dataCheckIn.checkin_id !== undefined
                       ? dataCheckIn.checkin_id
                       : uniqueID,
                   kh_ma: item.customer_code,
@@ -1160,7 +1171,7 @@ const ListVisit = () => {
   );
 
   const onBackButtonPress = useCallback(() => {
-    setModalUpdateLocation(prev => ({...prev, status: false}));
+    setModalUpdateLocation(prev => ({ ...prev, status: false }));
     // sortDataCustomer(distanceFilterValue);
   }, []);
 
@@ -1209,7 +1220,7 @@ const ListVisit = () => {
   return (
     <SafeAreaView
       edges={['bottom', 'top']}
-      style={{backgroundColor: colors.bg_neutral, paddingHorizontal: 0}}>
+      style={{ backgroundColor: colors.bg_neutral, paddingHorizontal: 0 }}>
       {_renderHeader()}
 
       {modalErrorGPS ? (
@@ -1219,7 +1230,7 @@ const ListVisit = () => {
             isVisible={modalErrorGPS}
             backdropOpacity={0.5}
             onBackButtonPress={() => setModalErrorGPS(false)}
-            style={{marginHorizontal: 0}}
+            style={{ marginHorizontal: 0 }}
             onBackdropPress={() => setModalErrorGPS(false)}
             animationIn="slideInUp"
             animationOut="slideOutDown">

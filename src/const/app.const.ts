@@ -33,10 +33,10 @@ export const ListSearchCustomerNearly = 'ListSearchCustomerNearly';
 export const Widget = 'Widget';
 export const NotificationData = 'NotificationData';
 export const CheckinTime = 'CheckinTime';
-
+export const CurrentElaps = 'CurrentElaps'
 export const Api_key = 'Api_key';
 export const Api_secret = 'Api_secret';
-
+export const CateList = 'CateList'
 //IconsType
 export const ICON_TYPE = {
   EntypoIcon: 'EntypoIcon',

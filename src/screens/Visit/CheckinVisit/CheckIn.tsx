@@ -4,8 +4,9 @@ import {
   TouchableOpacity,
   ViewStyle,
   AppState,
+  AppStateStatus
 } from 'react-native';
-import React, {useCallback, useState, useEffect, useRef} from 'react';
+import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
 import {
   Block,
   AppText as Text,
@@ -29,6 +30,7 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   backgroundErrorListener,
   calculateDistance,
+  compareArrays,
   decimalMinutesToTime,
   useDeepCompareEffect,
   useDisableBackHandler,
@@ -39,18 +41,19 @@ import {useTranslation} from 'react-i18next';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
-import {goBack, navigate} from '../../../navigation/navigation-service';
+import {goBack, navigate, pop} from '../../../navigation/navigation-service';
 import {AppService} from '../../../services';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
 import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
 import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
-import {CommonUtils} from '../../../utils';
+import {CommonUtils, reduxPersistStorage} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {useMMKVNumber} from 'react-native-mmkv';
+import {useMMKVNumber, useMMKVObject} from 'react-native-mmkv';
+
 // @ts-ignore
 import StringFormat from 'string-format';
 
@@ -66,14 +69,25 @@ const CheckIn = () => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  const [checkinTimeStorage] = useMMKVNumber(AppConstant.CheckinTime);
+
+  const [checkinTimeStorage, setCheckinTimeStorage] = useMMKVNumber(
+    AppConstant.CheckinTime,
+  );
+  const [currentElapsed, setCurrentElapsed] = useMMKVNumber(
+    AppConstant.CurrentElaps,
+  );
+
   const [elapsedTime, setElapsedTime] = useState<number>(
     checkinTimeStorage
-      ? Math.floor((new Date().getTime() - checkinTimeStorage) / 1000)
+      ? Math.floor(
+          (new Date().getTime() -
+            checkinTimeStorage +
+            (currentElapsed ? currentElapsed : 0)) /
+            1000,
+        )
       : 0,
   );
   const appState = useRef(AppState.currentState);
-
   const dataCheckIn: CheckinData = useSelector(
     state => state.app.dataCheckIn,
     shallowEqual,
@@ -82,6 +96,10 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
+  const [cateCheckinList, setCateCheckinList] = useMMKVObject<any[]>(
+    AppConstant.CateList,
+  );
+
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
   const [enableGPS, setEnableGPS] = useState(false);
@@ -101,7 +119,7 @@ const CheckIn = () => {
       systemConfig?.tgcheckin_toithieu ? systemConfig.thoigian_toithieu : 0,
     ),
   );
-
+  // console.log(params,'param')
   useDisableBackHandler(true);
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
@@ -114,27 +132,63 @@ const CheckIn = () => {
   });
   const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
 
+  // console.log(categoriesCheckin,'????')
+
+  // const handleAppStateChange = (nextAppState: AppStateStatus) => {
+  //   if (
+  //     appState.current.match(/inactive|background/) &&
+  //     nextAppState === 'background'
+  //   ) {
+  //     console.log('App has come to the background!');
+  //     setCheckinTimeStorage(new Date().getTime());
+  //     setCurrentElapsed(elapsedTime);
+  //   }
+  //  appState.current = nextAppState;
+  // };
+
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        if (checkinTimeStorage) {
-          setElapsedTime(
-            Math.floor((new Date().getTime() - checkinTimeStorage) / 1000),
-          );
+    const subscription = AppState.addEventListener(
+      'change',
+      async nextAppState => {
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextAppState === 'active'
+        ) {
+          if (checkinTimeStorage) {
+            setElapsedTime(
+              Math.floor(
+                (new Date().getTime() -
+                  checkinTimeStorage +
+                  (currentElapsed ? currentElapsed : 0)) /
+                  1000,
+              ),
+            );
+          }
+        } else {
+          console.log('run background');
+          setCheckinTimeStorage(new Date().getTime());
+          setCurrentElapsed(elapsedTime);
+          if (
+            categoriesCheckin.filter(item => item.isDone != false).length > 0
+          ) {
+            console.log('run set item');
+            await reduxPersistStorage.setItem('listCate', categoriesCheckin);
+          }
+          // dispatch(checkinActions.setDataCategoriesCheckin(cateCheckinList!));
         }
-      }
-      appState.current = nextAppState;
-    });
+        appState.current = nextAppState;
+      },
+    );
+
 
     return () => {
       subscription.remove();
     };
   }, []);
 
+
   useEffect(() => {
+    // setCateCheckinList(categoriesCheckin);
     intervalIdRef.current = setInterval(() => {
       setElapsedTime(prevElapsedTime => prevElapsedTime + 1);
     }, 1000);
@@ -145,6 +199,37 @@ const CheckIn = () => {
       }
     };
   }, []);
+
+  const res = async () => {
+    const list = await reduxPersistStorage.getItem('listCate');
+    // console.log(JSON.parse(list).filter(item => item.isDone != false));
+    if (
+      list &&
+      list.length > 0 &&
+      JSON.parse(list)?.filter((item: any) => item.isDone != false).length > 0
+    ) {
+      // console.log( JSON.parse(list ),'lisstqqre')
+      console.log('run ss');
+      dispatch(checkinActions.setDataCategoriesCheckin(JSON.parse(list)));
+    } else if (
+      categoriesCheckin.filter(item => item.isDone != false).length > 0
+    ) {
+      await reduxPersistStorage.setItem('listCate', categoriesCheckin);
+      console.log('run case else');
+    } else {
+      return;
+    }
+  };
+
+
+  // console.log(categoriesCheckin,'???????')
+  useEffect(() => {
+    res();
+  }, [isFocus, appState.current]);
+
+  // console.log(cateCheckinList,'?????')
+
+  // console.log(cateCheckinList,'ss')
 
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
@@ -208,6 +293,7 @@ const CheckIn = () => {
         if (checkEnabled === true) {
           setEnableGPS(true);
           onCheckout();
+          dispatch(checkinActions.setDataCategoriesCheckin([]))
         } else {
           console.log('run');
           setEnableGPS(false);
@@ -222,7 +308,7 @@ const CheckIn = () => {
     }
   }, [enableGPS, isFocus]);
 
-  const checkGPSConfirmCheckout = async () => {
+  const checkGPSConfirmCheckout = useCallback(async () => {
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
@@ -239,10 +325,16 @@ const CheckIn = () => {
               clearInterval(intervalIdRef.current);
             }
             storage.delete(AppConstant.CheckinTime);
+            storage.delete(AppConstant.CurrentElaps);
+            storage.delete(AppConstant.CateList);
+             await reduxPersistStorage.removeItem('listCate')
+            dispatch(checkinActions.setDataCategoriesCheckin([]))
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));
-            goBack();
+            navigate(ScreenConstant.MAIN_TAB, {
+              screen: ScreenConstant.VISIT,
+            });
           }
         } else {
           setEnableGPS(false);
@@ -262,13 +354,17 @@ const CheckIn = () => {
           clearInterval(intervalIdRef.current);
         }
         storage.delete(AppConstant.CheckinTime);
+        storage.delete(AppConstant.CurrentElaps);
+        storage.delete(AppConstant.CateList);
+        await reduxPersistStorage.removeItem('listCate')
+
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(appActions.setProcessingStatus(false));
         goBack();
       }
     }
-  };
+  }, [enableGPS, isFocus]);
 
   const isValidCheckOut = useCallback(
     (currentLocation: GeolocationResponse) => {
@@ -401,6 +497,8 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
+  // console.log(params?.item?.customer_primary_address?.address_title,'cateCheckinList')
+
   useDeepCompareEffect(() => {
     if (route === false) {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
@@ -413,7 +511,8 @@ const CheckIn = () => {
       return;
     }
   }, [route]);
-
+  // console.log(params?.item?.customer_primary_address,'ss')
+  // console.log(cateCheckinList?.find(item => item.isDone,'vvv'),'vvv')
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <Block block colorTheme="bg_neutral">
@@ -464,8 +563,11 @@ const CheckIn = () => {
               <SvgIcon source="MapPin" size={16} />
               <Text numberOfLines={1}>
                 {' '}
-                {params?.item?.customer_primary_address?.address_title ??
-                  ''}{' '}
+                {params?.item?.customer_primary_address?.address_title !=
+                  undefined &&
+                Object.keys(params?.item?.customer_primary_address)?.length > 0
+                  ? params?.item?.customer_primary_address.address_title
+                  : (params?.item?.customer_primary_address as any)}{' '}
               </Text>
             </Block>
             <Block
@@ -492,8 +594,8 @@ const CheckIn = () => {
           colorTheme="white"
           borderRadius={16}>
           {categoriesCheckin &&
-            categoriesCheckin.length > 0 &&
-            categoriesCheckin.map((item, index) => {
+            categoriesCheckin?.length > 0 &&
+            categoriesCheckin?.map((item, index) => {
               return <ItemCheckIn key={index} item={item} navData={params} />;
             })}
         </Block>

@@ -34,14 +34,6 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   const {t: getLabel} = useTranslation();
   const {bottom} = useSafeAreaInsets();
 
-  const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
-
   const [curData, setCurData] = useState<AlbumBottomSheet[] | undefined>(data);
 
   const handleItem = (item: AlbumBottomSheet) => {
@@ -53,7 +45,11 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
             ...itemCur,
             id: itemCur.id,
             isSelected: !itemCur.isSelected,
-            numPicsRequired:(( itemCur.numPicsRequired  != undefined ) ||( itemCur.numPicsRequired != null )) ? itemCur.numPicsRequired : undefined,
+            numPicsRequired:
+              itemCur.numPicsRequired != undefined ||
+              itemCur.numPicsRequired != null
+                ? itemCur.numPicsRequired
+                : undefined,
           };
         } else {
           return itemCur;
@@ -75,19 +71,19 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   const handleAlbum = (selectedItem: AlbumBottomSheet[]) => {
     // Filter only selected items
     const selectedData = selectedItem.filter(item => item.isSelected);
-  
+
     // Create a map for faster lookup
     const selectedLabels = new Set(selectedData.map(item => item.label));
-  
+
     // Filter albumImageDataCopy to remove unselected items
     const albumImageDataCopyFiltered = albumImageData.filter(item =>
-      selectedLabels.has(item.label)
+      selectedLabels.has(item.label),
     );
-  
+
     // Merge selected items with existing albumImageDataCopyFiltered
     const mergedData = selectedData.map(selectedItem => {
       const existingItemIndex = albumImageDataCopyFiltered.findIndex(
-        item => item.label === selectedItem.label
+        item => item.label === selectedItem.label,
       );
       if (existingItemIndex !== -1) {
         // If item exists, return it as is
@@ -102,13 +98,13 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
         };
       }
     });
-  
+
     // Update state only once
     setAlbumImageData(mergedData);
-  
+
     return selectedData;
   };
-  
+
   const ItemAlbum: FC<ItemAlbumProps> = ({item}) => {
     return (
       <Pressable
@@ -137,7 +133,7 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
   const ListAlbumSelected = () => {
     return (
       <View style={styles.listAlbumStyle}>
-        {curData &&
+        {curData && 
           curData
             .filter(item => item.isSelected)
             .map((item, index) => {
@@ -168,14 +164,11 @@ const SelectAlbum: FC<SelectAlbumProps> = ({
     <>
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
-        snapPointsCustom={animatedSnapPoints}
-        handleHeight={animatedHandleHeight}
-        contentHeight={animatedContentHeight}
+        enableDynamicSizing={true}
         // @ts-ignore
       >
         <BottomSheetScrollView
-          style={{paddingBottom: bottom + 16, paddingHorizontal: 16}}
-          onLayout={handleContentLayout}>
+          style={{paddingBottom: bottom + 16, paddingHorizontal: 16}}>
           <View>
             <View style={styles.row}>
               <Text
@@ -235,7 +228,7 @@ interface SelectAlbumProps {
   bottomSheetRef: any;
   data: IFilterType[] | undefined;
   setData: (data: IFilterType[]) => void;
-  setAlbumImageData: React.Dispatch<React.SetStateAction<IAlbumImage[]| any>>;
+  setAlbumImageData: React.Dispatch<React.SetStateAction<IAlbumImage[] | any>>;
   albumImageData: IAlbumImage[];
 }
 interface ItemAlbumProps {
