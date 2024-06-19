@@ -69,9 +69,7 @@ const CheckIn = () => {
   const dispatch = useDispatch();
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [checkinTimeStorage, setCheckinTimeStorage] = useMMKVNumber(
-    AppConstant.CheckinTime,
-  );
+  const [checkinTimeStorage] = useMMKVNumber(AppConstant.CheckinTime);
 
   const [elapsedTime, setElapsedTime] = useState<number>(
     checkinTimeStorage
@@ -122,9 +120,12 @@ const CheckIn = () => {
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
       appState.current.match(/inactive|background/) &&
-      nextAppState === 'background'
+      nextAppState === 'inactive' &&
+      checkinTimeStorage
     ) {
-      setCheckinTimeStorage(new Date().getTime());
+      setElapsedTime(
+        Math.floor((new Date().getTime() - checkinTimeStorage) / 1000),
+      );
     }
     appState.current = nextAppState;
   };
