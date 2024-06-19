@@ -95,7 +95,7 @@ const Customer = () => {
 
   const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer?.data,
-    isEqual,
+    shallowEqual,
   );
   const listCustomerResult = useSelector(
     state => state.customer.listCustomer,
@@ -204,18 +204,15 @@ const Customer = () => {
     [isFilterType],
   );
 
-
-
-  const getCustomer = useCallback(() =>{
+  const getCustomer = useCallback(() => {
     dispatch(customerActions.onGetCustomer());
-
-  },[])
-
+  }, [customerData]);
 
   const onRefreshData = useCallback(async () => {
     try {
+      console.log('run on refresh');
       dispatch(onLoadApp());
-      getCustomer()
+      getCustomer();
       totalPage.current = Math.ceil(
         listCustomerResult.total / listCustomerResult.page_size,
       );
@@ -254,6 +251,7 @@ const Customer = () => {
 
   React.useEffect(() => {
     if (searchCustomerValue && searchCustomerValue.trim().length > 0) {
+      console.log('run on search');
       dispatch(
         customerActions.onGetCustomer({search_key: searchCustomerValue}),
       );
@@ -281,9 +279,18 @@ const Customer = () => {
     // handleEnabledPressed();
   }, []);
 
+  useEffectOnce(() => {
+    console.log('run on deepcompare');
+    dispatch(customerActions.getCustomerType());
+    dispatch(customerActions.onGetCustomer());
+  });
+
+
   useEffect(() => {
     mounted.current = true;
+    console.log('run on mounted');
     if (listCustomer && listCustomer?.length > 0) {
+      console.log('run case 1')
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
       );
@@ -297,8 +304,10 @@ const Customer = () => {
       value.second === 'all' &&
       !searchCustomerValue
     ) {
-      dispatch(customerActions.onGetCustomer());
+      console.log('run case 2 ')
+      // dispatch(customerActions.onGetCustomer());
     } else if (listCustomer?.length === 0) {
+      console.log('run case 3')
       setCustomerData([]);
     }
     mounted.current = false;
@@ -308,7 +317,7 @@ const Customer = () => {
     return () => {
       mounted.current = false;
     };
-  }, [])
+  }, [listCustomer]);
 
   // useEffect(() => {
   //   if (isFocus && !searchCustomerValue) {
@@ -316,11 +325,7 @@ const Customer = () => {
   //   }
   // }, [isFocus, searchCustomerValue]);
 
-  useDeepCompareEffect(() => {
-    dispatch(customerActions.getCustomerType());
-    dispatch(customerActions.onGetCustomer());
-
-  },[isFocus]);
+  
 
   useEffect(() => {
     if (value.first !== 'all' && value.second !== 'all') {
@@ -345,9 +350,9 @@ const Customer = () => {
         }),
       );
     } else {
-      dispatch(customerActions.onGetCustomer());
+      // dispatch(customerActions.onGetCustomer());
     }
-  }, [value.first]);
+  }, [value.first && value.second]);
 
   const onEndReachedThreshold = useCallback(() => {
     // console.log('on end reach')
@@ -394,10 +399,10 @@ const Customer = () => {
       //   index: currentIndex.current,
       // });
     } else {
-      console.log('onEnd')
+      console.log('onEnd');
       return null;
     }
-  }, [page, value, listCustomer]);
+  }, [page, value, listCustomer, customerData]);
 
   const onPressAdding = useCallback(() => {
     dispatch(customerActions.setMainAddress({}));
@@ -409,7 +414,7 @@ const Customer = () => {
     const Item = (isCustomerType: boolean) => {
       return (
         <TouchableOpacity
-        style={styles.touchableButton}
+          style={styles.touchableButton}
           onPress={() => {
             if (isCustomerType) {
               setFilterType(true);
@@ -417,8 +422,7 @@ const Customer = () => {
               setFilterType(false);
             }
             bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0);
-          }}
-          >
+          }}>
           <Text style={styles.titleTextFilter}>
             {isCustomerType ? 'Loại KH' : 'Nhóm KH'}
             {': '}
@@ -437,6 +441,7 @@ const Customer = () => {
       </View>
     );
   };
+  // console.log(customerData,'dd')
 
   return (
     <SafeAreaView style={styles.backgroundRoot} edges={['bottom', 'top']}>
@@ -461,7 +466,7 @@ const Customer = () => {
           <SkeletonLoading />
         ) : (
           <ListCard
-            data={customerData || []}
+            data={customerData}
             loading={loading}
             onRefresh={onRefreshData}
             onLoadData={onEndReachedThreshold}
