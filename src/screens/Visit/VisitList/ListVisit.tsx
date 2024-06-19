@@ -304,28 +304,52 @@ const ListVisit = () => {
     });
     setDistanceFilterData(newData);
     if (Object.keys(filterDataRef.current).length > 0) {
-      getCustomer({
-        ...filterDataRef.current,
-        search_key: '',
-        lat: location?.coords?.latitude,
-        long: location?.coords.longitude,
-        field_order: 'distance',
-        order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
-      });
+      CommonUtils.getCurrentLocation(
+        locations => {
+          getCustomer({
+            ...filterDataRef.current,
+            search_key: '',
+            lat: locations.coords?.latitude,
+            long: locations.coords?.longitude,
+            field_order: 'distance',
+            order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
+          });
+        },
+        () => {
+          getCustomer({
+            ...filterDataRef.current,
+            search_key: '',
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
+        },
+      );
+
       // await sortDataCustomer()
     } else {
-      getCustomer({
-        ...filterParams,
-        router: filterParams?.router?.channel_code,
-        search_key: '',
-        lat: location?.coords?.latitude,
-        long: location?.coords.longitude,
-        field_order: 'distance',
-        order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
-      });
+      CommonUtils.getCurrentLocation(
+        locations => {
+          getCustomer({
+            ...filterParams,
+            router: filterParams?.router?.channel_code,
+            search_key: '',
+            lat: locations.coords?.latitude,
+            long: locations.coords.longitude,
+            field_order: 'distance',
+            order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
+          });
+        },
+        () => {
+          getCustomer({
+            ...filterParams,
+            router: filterParams?.router?.channel_code,
+            search_key: '',
+            field_order: 'customer_name',
+            order_by: 'asc',
+          });
+        },
+      );
     }
-    console.log('itemData', itemData.label);
-    // sortDataCustomer(getLabel(itemData.label));
   }, []);
 
   // const presentMap = (item: VisitListItemType) => {
