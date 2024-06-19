@@ -245,7 +245,7 @@ const ListVisit = () => {
     } catch (er) {
       console.log('errDispatch: ', er);
     }
-  }, [dispatch, filterParams, filterDataRef.current]);
+  }, [filterParams, filterDataRef.current]);
 
   const onEndReachedThreshold = useCallback(() => {
     setBottomLoading(true);
@@ -292,65 +292,68 @@ const ListVisit = () => {
     setBottomLoading(false);
   }, [listCustomer]);
 
-  const handleItemDistanceFilter = useCallback((itemData: IFilterType) => {
-    distanceRef.current?.close();
-    setDistanceFilterValue(getLabel(itemData.label));
-    const newData = distanceFilterData.map(item => {
-      if (itemData.value === item.value) {
-        return {...item, isSelected: true};
-      } else {
-        return {...item, isSelected: false};
-      }
-    });
-    setDistanceFilterData(newData);
-    if (Object.keys(filterDataRef.current).length > 0) {
-      CommonUtils.getCurrentLocation(
-        locations => {
-          getCustomer({
-            ...filterDataRef.current,
-            search_key: '',
-            lat: locations.coords?.latitude,
-            long: locations.coords?.longitude,
-            field_order: 'distance',
-            order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
-          });
-        },
-        () => {
-          getCustomer({
-            ...filterDataRef.current,
-            search_key: '',
-            field_order: 'customer_name',
-            order_by: 'asc',
-          });
-        },
-      );
+  const handleItemDistanceFilter = useCallback(
+    (itemData: IFilterType) => {
+      distanceRef.current?.close();
+      setDistanceFilterValue(getLabel(itemData.label));
+      const newData = distanceFilterData.map(item => {
+        if (itemData.value === item.value) {
+          return {...item, isSelected: true};
+        } else {
+          return {...item, isSelected: false};
+        }
+      });
+      setDistanceFilterData(newData);
+      if (Object.keys(filterDataRef.current).length > 0) {
+        CommonUtils.getCurrentLocation(
+          locations => {
+            getCustomer({
+              ...filterDataRef.current,
+              search_key: '',
+              lat: locations.coords?.latitude,
+              long: locations.coords?.longitude,
+              field_order: 'distance',
+              order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
+            });
+          },
+          () => {
+            getCustomer({
+              ...filterDataRef.current,
+              search_key: '',
+              field_order: 'customer_name',
+              order_by: 'asc',
+            });
+          },
+        );
 
-      // await sortDataCustomer()
-    } else {
-      CommonUtils.getCurrentLocation(
-        locations => {
-          getCustomer({
-            ...filterParams,
-            router: filterParams?.router?.channel_code,
-            search_key: '',
-            lat: locations.coords?.latitude,
-            long: locations.coords.longitude,
-            field_order: 'distance',
-            order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
-          });
-        },
-        () => {
-          getCustomer({
-            ...filterParams,
-            router: filterParams?.router?.channel_code,
-            search_key: '',
-            field_order: 'customer_name',
-            order_by: 'asc',
-          });
-        },
-      );
-    }
-  }, []);
+        // await sortDataCustomer()
+      } else {
+        CommonUtils.getCurrentLocation(
+          locations => {
+            getCustomer({
+              ...filterParams,
+              router: filterParams?.router?.channel_code,
+              search_key: '',
+              lat: locations.coords?.latitude,
+              long: locations.coords.longitude,
+              field_order: 'distance',
+              order_by: itemData.label === 'nearest' ? 'asc' : 'desc',
+            });
+          },
+          () => {
+            getCustomer({
+              ...filterParams,
+              router: filterParams?.router?.channel_code,
+              search_key: '',
+              field_order: 'customer_name',
+              order_by: 'asc',
+            });
+          },
+        );
+      }
+    },
+    [filterParams, filterDataRef.current],
+  );
 
   // const presentMap = (item: VisitListItemType) => {
   //   const item_location: any = JSON.parse(item.customer_location_primary);

@@ -85,7 +85,7 @@ const Inventory: FC<InventoryProps> = ({inventoryData}) => {
         </Accordion>
       );
     },
-    [],
+    [inventoryData],
   );
 
   return (
