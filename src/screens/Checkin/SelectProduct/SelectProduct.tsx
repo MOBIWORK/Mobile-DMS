@@ -92,13 +92,14 @@ const SelectProducts = () => {
     isLoading,
   } = useSelector(state => state.product);
 
+  const [selectedData, setSelectedData] = useState<IProduct[]>([]);
+
   const [pageNumber, setPageNumber] = useState<number>(1);
   const bottomLoading = useSelector(
     state => state.product.productBottomLoading,
   );
 
   const [statusSelectAll, setStatusSelectAll] = useState<boolean>(false);
-  const [countSelect, setCountSelect] = useState<number>(0);
   const [data, setData] = useState<IProduct[]>([]);
   const [dataFilter, setDataFilter] = useState<IFilterType[]>([]);
   const [label, setLabel] = useState<string>('');
@@ -349,7 +350,7 @@ const SelectProducts = () => {
   const onSelectProduct = React.useCallback(
     (id: string, isSelected: boolean) => {
       Keyboard.dismiss();
-      let newData: any;
+      let newData: IProduct[] = [];
       startEffect(() => {
         newData = data.map(item => {
           return item.item_code === id
@@ -357,11 +358,22 @@ const SelectProducts = () => {
             : item;
         });
       });
-      const numberSelect = newData.filter(
-        (item: any) => item.isSelected == true,
-      );
-      setCountSelect(numberSelect.length);
       setData(newData);
+      //add item to selected data
+      if (isSelected && selectedData.length > 0) {
+        setSelectedData(prevState =>
+          prevState.filter(item => item.item_code !== id),
+        );
+      } else {
+        setSelectedData(prevState =>
+          prevState.concat([
+            {
+              ...data.filter(item => item.item_code === id)[0],
+              isSelected: true,
+            },
+          ]),
+        );
+      }
     },
     [data],
   );
@@ -374,16 +386,9 @@ const SelectProducts = () => {
     Keyboard.dismiss();
     setStatusSelectAll(prevState => !prevState);
     const newData = data.map(item => ({...item, isSelected: !isSelectAll}));
-    setCountSelect(!isSelectAll ? data.length : 0);
     setData(newData);
+    setSelectedData(!isSelectAll ? newData : []);
   };
-
-  // useDeepCompareEffect(() => {
-  //   if (bottomLoading) {
-  //     setCountSelect(0);
-  //     console.log('111');
-  //   }
-  // }, [bottomLoading]);
 
   const onChangeQuantityProduct = React.useCallback(
     (idItem: string, qty: number) => {
@@ -395,9 +400,8 @@ const SelectProducts = () => {
     [data],
   );
 
-  const onSubmitProductSelect = async (data: IProduct[]) => {
-    const dataSelect = data.filter(item => item.isSelected);
-    const newDataSelect = dataSelect.map(item => ({
+  const onSubmitProductSelect = async () => {
+    const newDataSelect = selectedData.map(item => ({
       ...item,
       index: CommonUtils.randomInt(1, 1e6),
     }));
@@ -448,48 +452,62 @@ const SelectProducts = () => {
     fetchProduct();
   }, []);
 
-  const cancelResetData = async () => {
-    await setShowSearch(false);
+  const cancelResetData = () => {
+    setShowSearch(false);
+    if (textSearch) {
+      setTextSearch('');
+      // setData(dataProduct?.length > 0 ? dataProduct : products);
+      fetchProduct();
+    }
   };
 
   useEffect(() => {
     if (isSearch) {
-      setCountSelect(0);
-      if (products?.length > 0) {
+      if (products?.length > 0 && selectedData.length > 0) {
+        const newData = products.map((item, index) => {
+          const elementData = selectedData[index];
+          if (elementData && item.item_code === elementData.item_code) {
+            return {
+              ...item,
+              isSelected: elementData.isSelected,
+            };
+          } else {
+            return item;
+          }
+        });
+        setData(newData);
+      } else {
         setData(products);
-      } else {
-        setData([]);
       }
-    }
-    if (!isSearch) {
-      if (dataProduct?.length > 0) {
-        if (data?.length > 0) {
-          const newData = dataProduct.map((item, index) => {
-            const elementData = data[index];
-            if (elementData && item.item_code === elementData.item_code) {
-              return {
-                ...item,
-                isSelected: elementData.isSelected,
-              };
-            } else {
-              return item;
-            }
-          });
-          setData(newData);
-        } else {
-          setData(dataProduct);
-        }
+    } else if (dataProduct?.length > 0) {
+      if (selectedData.length > 0) {
+        const newData = dataProduct.map((item, index) => {
+          const elementData = selectedData[index];
+          if (elementData && item.item_code === elementData.item_code) {
+            return {
+              ...item,
+              isSelected: elementData.isSelected,
+            };
+          } else {
+            return item;
+          }
+        });
+        setData(newData);
       } else {
-        setData([]);
+        setData(dataProduct);
       }
+    } else if (products?.length > 0) {
+      setData(products);
+    } else {
+      setData([]);
     }
   }, [dataProduct, products]);
 
   useEffect(() => {
-    if (data?.length > 0 && countSelect < data.length) {
+    if (data?.length > 0 && selectedData.length < data.length) {
       setStatusSelectAll(false);
     }
-  }, [countSelect, data]);
+  }, [selectedData, data]);
 
   const fetchProduct = async () => {
     if (pageNumber === 1) {
@@ -526,9 +544,6 @@ const SelectProducts = () => {
 
   useEffect(() => {
     fetchProduct();
-    // setCountSelect(0);
-    // setStatusSelectAll(false);
-    console.log('setCountSelect', countSelect);
   }, [filterProduct, pageNumber]);
 
   return (
@@ -540,7 +555,7 @@ const SelectProducts = () => {
             onBack={() => {
               dispatch(productActions.resetDataProduct());
               dispatch(productActions.updateListProduct([]));
-              dispatch(productActions.updateProductSelect([]));
+              // dispatch(productActions.updateProductSelect([]));
               navigation.goBack();
             }}
             rightButton={
@@ -676,13 +691,14 @@ const SelectProducts = () => {
               />
             </View>
           )}
-          {countSelect > 0 && (
+          {selectedData.length > 0 && (
             <TouchableOpacity
-              onPress={() => onSubmitProductSelect(data)}
+              onPress={() => onSubmitProductSelect()}
               style={[{position: 'absolute', left: 16, bottom: 50, right: 16}]}>
               <View style={[styles.flex, styles.actionSubmit]}>
                 <Text style={[styles.action, {color: colors.bg_default}]}>
-                  {countSelect} {getLabel('product').toLocaleLowerCase()}
+                  {selectedData.length}{' '}
+                  {getLabel('product').toLocaleLowerCase()}
                 </Text>
                 <View style={[styles.flex, {columnGap: 16}]}>
                   <Text style={[styles.headerAction]}>
