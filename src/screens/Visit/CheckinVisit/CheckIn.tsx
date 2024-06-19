@@ -327,6 +327,7 @@ const CheckIn = () => {
             storage.delete(AppConstant.CheckinTime);
             storage.delete(AppConstant.CurrentElaps);
             storage.delete(AppConstant.CateList);
+             await reduxPersistStorage.removeItem('listCate')
             dispatch(checkinActions.setDataCategoriesCheckin([]))
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
@@ -355,6 +356,7 @@ const CheckIn = () => {
         storage.delete(AppConstant.CheckinTime);
         storage.delete(AppConstant.CurrentElaps);
         storage.delete(AppConstant.CateList);
+        await reduxPersistStorage.removeItem('listCate')
 
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
