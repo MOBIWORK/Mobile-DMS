@@ -120,7 +120,7 @@ const CheckIn = () => {
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
       appState.current.match(/inactive|background/) &&
-      nextAppState === 'inactive' &&
+      nextAppState === 'active' &&
       checkinTimeStorage
     ) {
       setElapsedTime(
