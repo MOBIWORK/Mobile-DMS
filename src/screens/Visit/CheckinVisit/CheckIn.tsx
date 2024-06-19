@@ -96,10 +96,6 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
-  const [cateCheckinList, setCateCheckinList] = useMMKVObject<any[]>(
-    AppConstant.CateList,
-  );
-
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
   const [enableGPS, setEnableGPS] = useState(false);

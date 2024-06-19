@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   FlatList,
   Image,
   Pressable,
@@ -12,6 +13,7 @@ import {MainLayout} from '../../../layouts';
 import {
   AppButton,
   AppHeader,
+  Block,
   SvgIcon,
   AppText as Text,
 } from '../../../components/common';
@@ -59,16 +61,21 @@ const CheckinNote = () => {
   // }, [isFocus]);
 
   const completeCheckin = () => {
-    const newData = categoriesCheckin.map(item =>
-      item.key === 'note' ? {...item, isDone: true} : item,
-    );
-    dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    navigation.goBack();
+    if(data.length > 0){
+      const newData = categoriesCheckin.map(item =>
+        item.key === 'note' ? {...item, isDone: true} : item,
+      );
+      dispatch(checkinActions.setDataCategoriesCheckin(newData));
+      navigation.goBack();
+    }else{
+      Alert.alert('Bạn chưa hoàn thành bước ghi chú')
+    }
+  
   };
 
   const EmptyNote = React.memo(() => {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Block block justifyContent="center" alignItems="center">
         <SvgIcon source={'EmptyNote'} size={90} />
         <Text style={{color: theme.colors.text_secondary}}>
           Chưa có ghi chú nào
@@ -81,7 +88,7 @@ const CheckinNote = () => {
           onPress={() => navigation.navigate(ScreenConstant.ADD_NOTE)}>
           Tạo ghi chú
         </Button>
-      </View>
+      </Block>
     );
   }, isEqual);
 
@@ -142,6 +149,9 @@ const CheckinNote = () => {
           style={{width: '100%'}}
           showsVerticalScrollIndicator={false}
           data={data}
+          initialNumToRender={10}
+          decelerationRate={'normal'}
+          windowSize={21}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => _renderNoteItem(item)}
         />
@@ -163,6 +173,7 @@ const CheckinNote = () => {
         <AppButton
           style={{width: '100%'}}
           label={getLabel('completed')}
+          disabled={data.length > 0 ? false:true}
           onPress={() => completeCheckin()}
         />
       </View>

@@ -50,18 +50,6 @@ const Report = () => {
           label="Báo cáo"
           onBack={() => navigation.goBack()}
           labelStyle={{flex: 0}}
-          // rightButton={
-          //   <TouchableOpacity
-          //     onPress={() =>
-          //       navigation.navigate(ScreenConstant.SEARCH_PRODUCT)
-          //     }>
-          //     <AppImage
-          //       source={'SearchIcon'}
-          //       style={styles.iconSearch}
-          //       resizeMode={'cover'}
-          //     />
-          //   </TouchableOpacity>
-          // }
         />
       </Block>
       <Block marginTop={24} marginLeft={16} marginRight={16} marginBottom={30}>
