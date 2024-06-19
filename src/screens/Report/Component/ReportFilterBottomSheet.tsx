@@ -104,19 +104,6 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
     // filerBottomSheetRef?.current.close();
   };
 
-  const calculateDaysDifference = React.useCallback(
-    (startDate: any, endDate: any) => {
-      // Parse the input dates using moment
-      const start = moment(startDate, 'DD/MM/YYYY');
-      const end = moment(endDate, 'DD/MM/YYYY');
-
-      // Calculate the difference in days
-      const differenceInDays = end.diff(start, 'days');
-
-      return differenceInDays;
-    },
-    [startDate, endDate],
-  );
   const onApply = React.useCallback(() => {
     onChangeDateCalender(startDate, endDate);
     filerBottomSheetRef?.current.close();
@@ -144,7 +131,11 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
                 paddingHorizontal={16}
                 marginBottom={20}>
                 <TouchableOpacity
-                  onPress={() => filerBottomSheetRef?.current.close()}>
+                  onPress={() => {
+                    filerBottomSheetRef?.current.close();
+                    setStartDateCalender(null);
+                    setEndDate(null);
+                  }}>
                   <Text fontSize={16} colorTheme="primary" fontWeight="400">
                     Hủy
                   </Text>
@@ -200,21 +191,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
             <CalendarPicker
               startFromMonday={true}
               allowRangeSelection={!isNonCustomer}
-              // selectedEndDate={endDate}
               weekdays={calenderConfig.weekdays}
-              // disabledDates={(date: any) => {
-              //   if (date.isBetween(startDate, endDate)) {
-              //     // if (
-              //     //   startDate != null &&
-              //     //   endDate != null
-              //     //   // calculateDaysDifference(startDate, endDate) <= 7
-              //     // )
-
-              //     return false;
-              //   } else {
-              //     return true;
-              //   }
-              // }}
               maxDate={new Date()}
               maxRangeDuration={[6]}
               months={calenderConfig.months}
@@ -237,7 +214,8 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
                   color={theme.colors.text_primary}
                 />
               }
-              // selectedStartDate={startDate}
+              selectedStartDate={startDate ? startDate : undefined}
+              selectedEndDate={endDate ? endDate : undefined}
               selectedDayStyle={{
                 backgroundColor: theme.colors.primary,
               }}
