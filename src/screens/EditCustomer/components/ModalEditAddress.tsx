@@ -717,7 +717,7 @@ const ModalEditAddress = ({
             </Block>
           </>
         ) : (
-          <Block block height={'100%'}>
+          <Block block height={'100%'} paddingHorizontal={16}>
             <AppHeader
               label={getLabel('mainContact')}
               onBack={() => {}}

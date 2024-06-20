@@ -53,6 +53,7 @@ const DetailCustomer = () => {
 
   const getDetailCustomer = async () => {
     try {
+      setLoading(true)
       let res: any = await CustomerService.getCustomerDetail(
         params.data.name,
       );
@@ -69,9 +70,7 @@ const DetailCustomer = () => {
 
   const listData = useSelector(state => state.customer.mainAddress,shallowEqual)
   useEffect(() => {
-    setLoading(true);
-    
-
+    // setLoading(true);
     getDetailCustomer();
 
     return () => {

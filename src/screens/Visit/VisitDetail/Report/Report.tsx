@@ -31,6 +31,8 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
     reportData?.cong_no_chi_tiet,
   );
 
+ 
+
   const changeReportIndex = React.useCallback(
     (value: string | number) => {
       // setIndexPage(Number(value));

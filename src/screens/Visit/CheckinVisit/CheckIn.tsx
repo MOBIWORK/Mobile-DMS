@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
   ViewStyle,
   AppState,
-  AppStateStatus
+  AppStateStatus,
 } from 'react-native';
 import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
 import {
@@ -176,12 +176,10 @@ const CheckIn = () => {
       },
     );
 
-
     return () => {
       subscription.remove();
     };
   }, []);
-
 
   useEffect(() => {
     // setCateCheckinList(categoriesCheckin);
@@ -216,7 +214,6 @@ const CheckIn = () => {
       return;
     }
   };
-
 
   // console.log(categoriesCheckin,'???????')
   useEffect(() => {
@@ -289,7 +286,7 @@ const CheckIn = () => {
         if (checkEnabled === true) {
           setEnableGPS(true);
           onCheckout();
-          dispatch(checkinActions.setDataCategoriesCheckin([]))
+          dispatch(checkinActions.setDataCategoriesCheckin([]));
         } else {
           console.log('run');
           setEnableGPS(false);
@@ -323,14 +320,14 @@ const CheckIn = () => {
             storage.delete(AppConstant.CheckinTime);
             storage.delete(AppConstant.CurrentElaps);
             storage.delete(AppConstant.CateList);
-             await reduxPersistStorage.removeItem('listCate')
-            dispatch(checkinActions.setDataCategoriesCheckin([]))
+            await reduxPersistStorage.removeItem('listCate');
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));
             navigate(ScreenConstant.MAIN_TAB, {
               screen: ScreenConstant.VISIT,
             });
+            dispatch(checkinActions.setDataCategoriesCheckin([]));
           }
         } else {
           setEnableGPS(false);
@@ -352,12 +349,15 @@ const CheckIn = () => {
         storage.delete(AppConstant.CheckinTime);
         storage.delete(AppConstant.CurrentElaps);
         storage.delete(AppConstant.CateList);
-        await reduxPersistStorage.removeItem('listCate')
+        await reduxPersistStorage.removeItem('listCate');
 
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(appActions.setProcessingStatus(false));
-        goBack();
+        navigate(ScreenConstant.MAIN_TAB, {
+          screen: ScreenConstant.VISIT,
+        });
+        dispatch(checkinActions.setDataCategoriesCheckin([]));
       }
     }
   }, [enableGPS, isFocus]);
@@ -462,7 +462,7 @@ const CheckIn = () => {
       }
       return true;
     },
-    [openDialogErr, msgCheckOutErr, categoriesCheckin],
+    [openDialogErr, msgCheckOutErr, categoriesCheckin, enableGPS],
   );
 
   const onCheckout = useCallback(async () => {
