@@ -237,28 +237,28 @@ const Index = () => {
         />
       )}
 
-      <AppBottomSheet
-        bottomSheetRef={bottomSheetRef}
-        snapPointsCustom={snapPoints}>
-        <FilterListComponent
-          title={getLabel('time')}
-          data={filterData}
-          handleItem={handleItem}
-          onClose={() =>
-            bottomSheetRef.current && bottomSheetRef.current.close()
-          }
-        />
-      </AppBottomSheet>
-      <DatePickerModal
-        locale={languageCode ?? 'vi'}
-        mode="single"
-        startYear={2010}
-        visible={openDate}
-        label={getLabel('selectDate')}
-        onDismiss={onDismissSingle}
-        date={date}
-        onConfirm={onConfirmSingle}
-      />
+      {/*<AppBottomSheet*/}
+      {/*  bottomSheetRef={bottomSheetRef}*/}
+      {/*  snapPointsCustom={snapPoints}>*/}
+      {/*  <FilterListComponent*/}
+      {/*    title={getLabel('time')}*/}
+      {/*    data={filterData}*/}
+      {/*    handleItem={handleItem}*/}
+      {/*    onClose={() =>*/}
+      {/*      bottomSheetRef.current && bottomSheetRef.current.close()*/}
+      {/*    }*/}
+      {/*  />*/}
+      {/*</AppBottomSheet>*/}
+      {/*<DatePickerModal*/}
+      {/*  locale={languageCode ?? 'vi'}*/}
+      {/*  mode="single"*/}
+      {/*  startYear={2010}*/}
+      {/*  visible={openDate}*/}
+      {/*  label={getLabel('selectDate')}*/}
+      {/*  onDismiss={onDismissSingle}*/}
+      {/*  date={date}*/}
+      {/*  onConfirm={onConfirmSingle}*/}
+      {/*/>*/}
     </SafeAreaView>
   );
 };

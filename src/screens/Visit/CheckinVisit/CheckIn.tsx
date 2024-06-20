@@ -30,7 +30,6 @@ import {CheckinData, DMSConfigMobile} from '../../../services/appService';
 import {
   backgroundErrorListener,
   calculateDistance,
-  compareArrays,
   decimalMinutesToTime,
   useDeepCompareEffect,
   useDisableBackHandler,
@@ -52,7 +51,7 @@ import {CommonUtils, reduxPersistStorage} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {useMMKVNumber, useMMKVObject} from 'react-native-mmkv';
+import {useMMKVNumber} from 'react-native-mmkv';
 
 // @ts-ignore
 import StringFormat from 'string-format';
@@ -70,21 +69,11 @@ const CheckIn = () => {
   const dispatch = useDispatch();
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [checkinTimeStorage, setCheckinTimeStorage] = useMMKVNumber(
-    AppConstant.CheckinTime,
-  );
-  const [currentElapsed, setCurrentElapsed] = useMMKVNumber(
-    AppConstant.CurrentElaps,
-  );
+  const [checkinTimeStorage] = useMMKVNumber(AppConstant.CheckinTime);
 
   const [elapsedTime, setElapsedTime] = useState<number>(
     checkinTimeStorage
-      ? Math.floor(
-          (new Date().getTime() -
-            checkinTimeStorage +
-            (currentElapsed ? currentElapsed : 0)) /
-            1000,
-        )
+      ? Math.floor((new Date().getTime() - checkinTimeStorage) / 1000)
       : 0,
   );
   const appState = useRef(AppState.currentState);
@@ -128,54 +117,24 @@ const CheckIn = () => {
   });
   const [openDialogErr, setOpenDialogErr] = useState<boolean>(false);
 
-  // console.log(categoriesCheckin,'????')
-
-  // const handleAppStateChange = (nextAppState: AppStateStatus) => {
-  //   if (
-  //     appState.current.match(/inactive|background/) &&
-  //     nextAppState === 'background'
-  //   ) {
-  //     console.log('App has come to the background!');
-  //     setCheckinTimeStorage(new Date().getTime());
-  //     setCurrentElapsed(elapsedTime);
-  //   }
-  //  appState.current = nextAppState;
-  // };
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active' &&
+      checkinTimeStorage
+    ) {
+      setElapsedTime(
+        Math.floor((new Date().getTime() - checkinTimeStorage) / 1000),
+      );
+    }
+    appState.current = nextAppState;
+  };
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
       'change',
-      async nextAppState => {
-        if (
-          appState.current.match(/inactive|background/) &&
-          nextAppState === 'active'
-        ) {
-          if (checkinTimeStorage) {
-            setElapsedTime(
-              Math.floor(
-                (new Date().getTime() -
-                  checkinTimeStorage +
-                  (currentElapsed ? currentElapsed : 0)) /
-                  1000,
-              ),
-            );
-          }
-        } else {
-          console.log('run background');
-          setCheckinTimeStorage(new Date().getTime());
-          setCurrentElapsed(elapsedTime);
-          if (
-            categoriesCheckin.filter(item => item.isDone != false).length > 0
-          ) {
-            console.log('run set item');
-            await reduxPersistStorage.setItem('listCate', categoriesCheckin);
-          }
-          // dispatch(checkinActions.setDataCategoriesCheckin(cateCheckinList!));
-        }
-        appState.current = nextAppState;
-      },
+      handleAppStateChange,
     );
-
     return () => {
       subscription.remove();
     };
@@ -318,16 +277,15 @@ const CheckIn = () => {
               clearInterval(intervalIdRef.current);
             }
             storage.delete(AppConstant.CheckinTime);
-            storage.delete(AppConstant.CurrentElaps);
             storage.delete(AppConstant.CateList);
             await reduxPersistStorage.removeItem('listCate');
+            dispatch(checkinActions.setDataCategoriesCheckin([]));
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));
             navigate(ScreenConstant.MAIN_TAB, {
               screen: ScreenConstant.VISIT,
             });
-            dispatch(checkinActions.setDataCategoriesCheckin([]));
           }
         } else {
           setEnableGPS(false);
@@ -347,17 +305,13 @@ const CheckIn = () => {
           clearInterval(intervalIdRef.current);
         }
         storage.delete(AppConstant.CheckinTime);
-        storage.delete(AppConstant.CurrentElaps);
         storage.delete(AppConstant.CateList);
         await reduxPersistStorage.removeItem('listCate');
 
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(appActions.setProcessingStatus(false));
-        navigate(ScreenConstant.MAIN_TAB, {
-          screen: ScreenConstant.VISIT,
-        });
-        dispatch(checkinActions.setDataCategoriesCheckin([]));
+        goBack();
       }
     }
   }, [enableGPS, isFocus]);
@@ -462,7 +416,7 @@ const CheckIn = () => {
       }
       return true;
     },
-    [openDialogErr, msgCheckOutErr, categoriesCheckin, enableGPS],
+    [openDialogErr, msgCheckOutErr, categoriesCheckin],
   );
 
   const onCheckout = useCallback(async () => {

@@ -137,19 +137,19 @@ const SelectOrganization = () => {
           label={getLabel('organizationName')}
           value={organizationName}
           onChangeValue={setOrganizationName}
-          rightIcon={
-            <TextInput.Icon
-              icon={'line-scan'}
-              size={35}
-              color={colors.primary}
-              onPress={() => {
-                Keyboard.dismiss();
-                CommonUtils.sleep(200).then(() =>
-                  navigation.navigate(ScreenConstant.SCANNER),
-                );
-              }}
-            />
-          }
+          // rightIcon={
+          //   <TextInput.Icon
+          //     icon={'line-scan'}
+          //     size={35}
+          //     color={colors.primary}
+          //     onPress={() => {
+          //       Keyboard.dismiss();
+          //       CommonUtils.sleep(200).then(() =>
+          //         navigation.navigate(ScreenConstant.SCANNER),
+          //       );
+          //     }}
+          //   />
+          // }
         />
         <AppButton
           style={{width: '100%'}}
