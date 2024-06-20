@@ -242,7 +242,7 @@ const FormData = (props: Props) => {
       name: dataCustomer.name,
       address: dataCustomer.address || [{}],
       contact: dataCustomer.contacts || [{}],
-      credit_limits: dataCustomer.credit_limits || '',
+      // credit_limits: dataCustomer.credit_limits || '',
       customer_code: dataCustomer.customer_code || '',
       customer_group:
         dataCustomer.customer_group != null
@@ -573,7 +573,7 @@ const FormData = (props: Props) => {
             console.log(revText, 'revText');
             startTransition(() => {
               let val = convertToMoneyFormat(revText);
-              setDataCustomer(prev => ({ ...prev, credit_limits: [val] }));
+              setDataCustomer(prev => ({ ...prev, credit_limits: [{credit_limit:val}] }));
             });
           }}
         />

@@ -155,7 +155,7 @@ export function* updateCustomerSaga(action: PayloadAction) {
         updateCustomer,
         action.payload.data,
       );
-      if (response.message === 'OK') {
+      if (response.message === 'oK') {
         showSnack({
           msg: 'Cập nhật thành công',
           interval: 2000,
