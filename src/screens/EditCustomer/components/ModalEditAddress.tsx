@@ -496,7 +496,7 @@ const ModalEditAddress = ({
                 <SvgIcon source="Close" colorTheme="black" size={22} />
               }
             />
-            <Block marginBottom={24} marginTop={10}>
+            <Block marginBottom={24} marginTop={10} paddingHorizontal={16}>
               <TouchableOpacity
                 style={styles.buttonStyle}
                 onPress={() => onPressButtonGetLocation()}>
