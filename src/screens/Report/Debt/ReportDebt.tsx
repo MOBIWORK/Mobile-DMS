@@ -200,8 +200,12 @@ const ReportDebt = () => {
   const _renderChart = () => {
     const chartSize = AppConstant.WIDTH * 0.5;
     const series = [
-      debtMasterData?.total_paids ?? 1,
-      debtMasterData?.remaining ?? 1,
+      debtMasterData && debtMasterData?.total_paids > 0
+        ? debtMasterData.total_paids
+        : 1,
+      debtMasterData && debtMasterData?.remaining > 0
+        ? debtMasterData.remaining
+        : 1,
     ];
     const sliceColor = [theme.colors.success, theme.colors.warning];
 
@@ -246,6 +250,7 @@ const ReportDebt = () => {
             style={{
               position: 'absolute',
               rowGap: 4,
+              alignItems: 'center',
             }}>
             <Text style={styles.txt12}>Tổng</Text>
             <Text style={styles.txtNumberMoney}>
@@ -367,7 +372,7 @@ const ReportDebt = () => {
       />
       <AppContainer style={{marginBottom: bottom, marginTop: 24}}>
         {_renderChart()}
-        {_renderFilter()}
+        {debtData && debtData?.customers?.length > 0 && _renderFilter()}
         {_renderListCustomer()}
       </AppContainer>
       <AppBottomSheet
