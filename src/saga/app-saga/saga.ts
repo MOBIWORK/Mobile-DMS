@@ -105,14 +105,9 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
           },
         );
         yield put(appActions.setSystemConfig(systemData));
-        const cateList = getState('checkin').categoriesCheckin;
-        if (cateList && cateList.length > 0) {
-          return;
-        } else {
-          yield put(
-            checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
-          );
-        }
+        yield put(
+          checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
+        );
       } else {
         console.log('app System err');
       }
