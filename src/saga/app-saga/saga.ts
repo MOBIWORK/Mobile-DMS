@@ -63,12 +63,17 @@ export function* onCheckInData(action: PayloadAction) {
       );
       if (Object.keys(response?.result).length > 0) {
         yield put(appActions.setDataCheckIn({}));
-        dispatch(checkinActions.resetData());
-        dispatch(appActions.setDataCheckIn({}));
-        dispatch(checkinActions.setRefreshVisitWhenCheckOut(true));
+        yield put(checkinActions.resetData());
+        yield put(appActions.setDataCheckIn({}));
+        yield put(checkinActions.setRefreshVisitWhenCheckOut(true));
         storage.delete(AppConstant.CheckinTime);
+        yield put(checkinActions.setDataCategoriesCheckin([]));
+
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
+          params: {
+            screen: ScreenConstant.VISIT,
+          },
         });
       }
     } catch (err) {

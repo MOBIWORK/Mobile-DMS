@@ -248,7 +248,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1}} edges={['top', 'bottom']}>
+    <SafeAreaView style={{flex: 1}} edges={[ 'bottom']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* {item?.is_checkin && (
           <StatisticalItem

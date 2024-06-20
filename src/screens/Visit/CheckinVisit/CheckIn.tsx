@@ -214,7 +214,6 @@ const CheckIn = () => {
         if (checkEnabled === true) {
           setEnableGPS(true);
           onCheckout();
-          dispatch(checkinActions.setDataCategoriesCheckin([]));
         } else {
           setEnableGPS(false);
         }
@@ -370,6 +369,7 @@ const CheckIn = () => {
           return true;
         }
       } else {
+        console.log('run case else valid checkout');
         setMsgCheckOutErr({
           type: '',
           msg: '',

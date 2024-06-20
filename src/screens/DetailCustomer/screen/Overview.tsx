@@ -28,7 +28,7 @@ const Overview = (props: Props) => {
   const {t: getLabel} = useTranslation();
 
   return (
-    <Block block>
+    <Block block  colorTheme='bg_neutral' >
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
         {props.data != null && props.data.contacts != undefined &&
            props.data.contacts.length > 0 &&
@@ -69,7 +69,7 @@ const Overview = (props: Props) => {
             </Block>
           )}
 
-        <Block paddingHorizontal={16}>
+        <Block paddingHorizontal={16} paddingVertical={16}>
           <AppText
             fontSize={14}
             fontWeight="500"

@@ -254,6 +254,7 @@ const FormData = (props: Props) => {
       routers: route || '',
       website: dataCustomer.website || '',
       territory: dataCustomer.territory || '',
+      customer_details:dataCustomer.customer_details || ''
     };
     console.log(dataUpdate, 'dataUpdate')
     startTransition(() => {
@@ -573,7 +574,7 @@ const FormData = (props: Props) => {
             console.log(revText, 'revText');
             startTransition(() => {
               let val = convertToMoneyFormat(revText);
-              setDataCustomer(prev => ({ ...prev, credit_limits: [{credit_limit:val}] }));
+              setDataCustomer(prev => ({ ...prev, credit_limits: [val] }));
             });
           }}
         />
