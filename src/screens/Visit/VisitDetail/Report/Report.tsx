@@ -52,6 +52,8 @@ const Report: FC<ReportProps> = ({onOpenReportFilter, timeLabel, itemData}) => {
   const [from_date, setFromDate] = useState<number>(new Date().getTime());
   const [to_date, setToDate] = useState<number>(new Date().getTime());
 
+ 
+
   const changeReportIndex = React.useCallback(
     (value: string | number) => {
       // setIndexPage(Number(value));

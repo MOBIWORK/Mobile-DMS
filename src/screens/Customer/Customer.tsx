@@ -280,17 +280,16 @@ const Customer = () => {
   }, []);
 
   useEffectOnce(() => {
-    console.log('run on deepcompare');
+    // console.log('run on deepcompare');
     dispatch(customerActions.getCustomerType());
     dispatch(customerActions.onGetCustomer());
   });
 
-
   useEffect(() => {
     mounted.current = true;
-    console.log('run on mounted');
+    // console.log('run on mounted');
     if (listCustomer && listCustomer?.length > 0) {
-      console.log('run case 1')
+      // console.log('run case 1');
       const filteredData = listCustomer.filter(
         item => item.customer_location_primary,
       );
@@ -304,10 +303,10 @@ const Customer = () => {
       value.second === 'all' &&
       !searchCustomerValue
     ) {
-      console.log('run case 2 ')
+      // console.log('run case 2 ');
       // dispatch(customerActions.onGetCustomer());
     } else if (listCustomer?.length === 0) {
-      console.log('run case 3')
+      // console.log('run case 3');
       setCustomerData([]);
     }
     mounted.current = false;
@@ -324,8 +323,6 @@ const Customer = () => {
   //     dispatch(customerActions.onGetCustomer());
   //   }
   // }, [isFocus, searchCustomerValue]);
-
-  
 
   useEffect(() => {
     if (value.first !== 'all' && value.second !== 'all') {
@@ -354,13 +351,16 @@ const Customer = () => {
     }
   }, [value.first && value.second]);
 
+  // console.log( listCustomer.length,'sss')
+
   const onEndReachedThreshold = useCallback(() => {
-    // console.log('on end reach')
+    // console.log('run on end reach');
     if (
       page <=
         Math.ceil(listCustomerResult.total / listCustomerResult.page_size) &&
-      listCustomer.length > 4
+      listCustomer.length >= 4
     ) {
+      // console.log('run if');
       startTransition(() => {
         if (value.first !== 'all' && value.second !== 'all') {
           dispatch(
@@ -399,7 +399,11 @@ const Customer = () => {
       //   index: currentIndex.current,
       // });
     } else {
-      console.log('onEnd');
+      dispatch(
+        customerActions.getCustomerNewPage({
+          page: page + 1,
+        }),
+      );
       return null;
     }
   }, [page, value, listCustomer, customerData]);

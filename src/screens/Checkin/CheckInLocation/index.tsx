@@ -322,7 +322,7 @@ const CheckInLocation = () => {
       item.key === 'location' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
-    
+
     navigation.navigate(ScreenConstant.CHECKIN, {
       item: {
         ...route.params.data,
@@ -521,6 +521,17 @@ const CheckInLocation = () => {
     };
   }, []);
 
+  const onBack = useCallback(() => {
+    if (route.params.type === 'CHECKIN') {
+      navigation.goBack();
+    } else {
+      navigation.navigate(ScreenConstant.AUTHORIZED, {
+        screen: ScreenConstant.MAIN_TAB,
+      });
+      dispatch(appActions.setDataCheckIn({}));
+    }
+  }, [route.params.type]);
+
   return (
     <SafeAreaView
       style={{
@@ -540,13 +551,7 @@ const CheckInLocation = () => {
         <Block block>
           <AppHeader
             style={{paddingHorizontal: 16, marginTop: 0}}
-            onBack={() => {
-              route.params.type === 'CHECKIN'
-                ? navigation.goBack()
-                : navigation.navigate(ScreenConstant.AUTHORIZED, {
-                    screen: ScreenConstant.MAIN_TAB,
-                  });
-            }}
+            onBack={onBack}
             label={getLabel('location')}
           />
           <KeyboardAvoidingView

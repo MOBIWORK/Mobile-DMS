@@ -6,7 +6,7 @@ import {
   AppState,
   AppStateStatus,
 } from 'react-native';
-import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
   AppText as Text,
@@ -104,7 +104,6 @@ const CheckIn = () => {
       systemConfig?.tgcheckin_toithieu ? systemConfig.thoigian_toithieu : 0,
     ),
   );
-  // console.log(params,'param')
   useDisableBackHandler(true);
 
   const [msgCheckOutErr, setMsgCheckOutErr] = useState<{
@@ -153,36 +152,6 @@ const CheckIn = () => {
     };
   }, []);
 
-  const res = async () => {
-    const list = await reduxPersistStorage.getItem('listCate');
-    // console.log(JSON.parse(list).filter(item => item.isDone != false));
-    if (
-      list &&
-      list.length > 0 &&
-      JSON.parse(list)?.filter((item: any) => item.isDone != false).length > 0
-    ) {
-      // console.log( JSON.parse(list ),'lisstqqre')
-      console.log('run ss');
-      dispatch(checkinActions.setDataCategoriesCheckin(JSON.parse(list)));
-    } else if (
-      categoriesCheckin.filter(item => item.isDone != false).length > 0
-    ) {
-      await reduxPersistStorage.setItem('listCate', categoriesCheckin);
-      console.log('run case else');
-    } else {
-      return;
-    }
-  };
-
-  // console.log(categoriesCheckin,'???????')
-  useEffect(() => {
-    res();
-  }, [isFocus, appState.current]);
-
-  // console.log(cateCheckinList,'?????')
-
-  // console.log(cateCheckinList,'ss')
-
   // Format seconds into HH:mm:ss
   const formatTime = (seconds: any) => {
     const hours = Math.floor(seconds / 3600);
@@ -205,6 +174,7 @@ const CheckIn = () => {
       dispatch(appActions.setCheckInStoreStatus(true));
     }
   }, [status]);
+
   const isCurrentTimeGreaterOrEqual = (minTime: any) => {
     const currentTime = elapsedTime;
     return currentTime >= timeToSeconds(minTime);
@@ -245,12 +215,9 @@ const CheckIn = () => {
         if (checkEnabled === true) {
           setEnableGPS(true);
           onCheckout();
-          dispatch(checkinActions.setDataCategoriesCheckin([]));
         } else {
-          console.log('run');
           setEnableGPS(false);
         }
-        // isEnable.current = checkEnabled;
       } else {
         backgroundErrorListener(1);
       }
@@ -258,7 +225,7 @@ const CheckIn = () => {
       setEnableGPS(true);
       onCheckout();
     }
-  }, [enableGPS, isFocus]);
+  }, [enableGPS, isFocus, dataCheckIn, categoriesCheckin]);
 
   const checkGPSConfirmCheckout = useCallback(async () => {
     if (Platform.OS === 'android') {
@@ -277,8 +244,6 @@ const CheckIn = () => {
               clearInterval(intervalIdRef.current);
             }
             storage.delete(AppConstant.CheckinTime);
-            storage.delete(AppConstant.CateList);
-            await reduxPersistStorage.removeItem('listCate');
             dispatch(checkinActions.setDataCategoriesCheckin([]));
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
@@ -305,9 +270,6 @@ const CheckIn = () => {
           clearInterval(intervalIdRef.current);
         }
         storage.delete(AppConstant.CheckinTime);
-        storage.delete(AppConstant.CateList);
-        await reduxPersistStorage.removeItem('listCate');
-
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(appActions.setProcessingStatus(false));
@@ -327,8 +289,21 @@ const CheckIn = () => {
       function isNote(categoriesItem: IItemCheckIn) {
         return categoriesItem.key === 'note';
       }
-
-      if (
+      if (!dataCheckIn?.checkin_trangthaicuahang) {
+        if (
+          systemConfig.batbuoc_chupanh &&
+          !categoriesCheckin.find(isCamera).isDone
+        ) {
+          setMsgCheckOutErr({
+            type: 'camera',
+            msg: getLabel('cameraNotComplete'),
+          });
+          setOpenDialogErr(true);
+          return false;
+        } else {
+          return true;
+        }
+      } else if (
         systemConfig.batbuoc_kiemton &&
         !categoriesCheckin.find(isInventory).isDone
       ) {
@@ -408,6 +383,7 @@ const CheckIn = () => {
           return true;
         }
       } else {
+        console.log('run case else valid checkout');
         setMsgCheckOutErr({
           type: '',
           msg: '',
@@ -416,12 +392,12 @@ const CheckIn = () => {
       }
       return true;
     },
-    [openDialogErr, msgCheckOutErr, categoriesCheckin],
+    [openDialogErr, msgCheckOutErr, categoriesCheckin, dataCheckIn],
   );
 
-  const onCheckout = useCallback(async () => {
+  const onCheckout = useCallback(() => {
     CommonUtils.getCurrentLocation(
-      async locations => {
+      locations => {
         if (!isValidCheckOut(locations)) {
           dispatch(appActions.setProcessingStatus(false));
           return;
@@ -447,8 +423,6 @@ const CheckIn = () => {
     setShow(false);
   }, [dataCheckIn, categoriesCheckin, enableGPS]);
 
-  // console.log(params?.item?.customer_primary_address?.address_title,'cateCheckinList')
-
   useDeepCompareEffect(() => {
     if (route === false) {
       navigate(ScreenConstant.CHECKIN_LOCATION, {
@@ -461,8 +435,7 @@ const CheckIn = () => {
       return;
     }
   }, [route]);
-  // console.log(params?.item?.customer_primary_address,'ss')
-  // console.log(cateCheckinList?.find(item => item.isDone,'vvv'),'vvv')
+
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <Block block colorTheme="bg_neutral">
@@ -496,6 +469,7 @@ const CheckIn = () => {
             type="text"
             status={status!}
             onSwitch={handleSwitch}
+            setStatus={setStatus!}
             title={title}
           />
         </Block>

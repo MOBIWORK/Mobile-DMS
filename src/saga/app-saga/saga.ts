@@ -63,12 +63,17 @@ export function* onCheckInData(action: PayloadAction) {
       );
       if (Object.keys(response?.result).length > 0) {
         yield put(appActions.setDataCheckIn({}));
-        dispatch(checkinActions.resetData());
-        dispatch(appActions.setDataCheckIn({}));
-        dispatch(checkinActions.setRefreshVisitWhenCheckOut(true));
+        yield put(checkinActions.resetData());
+        yield put(appActions.setDataCheckIn({}));
+        yield put(checkinActions.setRefreshVisitWhenCheckOut(true));
         storage.delete(AppConstant.CheckinTime);
+        yield put(checkinActions.setDataCategoriesCheckin([]));
+
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
+          params: {
+            screen: ScreenConstant.VISIT,
+          },
         });
       }
     } catch (err) {
@@ -88,8 +93,8 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         getSystemConfig,
         action.payload,
       );
-      if (response.message === 'Thành công') {
-        console.log('run get system config');
+      if (response?.status === ApiConstant.STT_OK) {
+        // console.log('run get system config');
         const systemData: DMSConfigMobile = response.result;
         const newCategoriesCheckin: IItemCheckIn[] = categoriesCheckinList.map(
           item => {
@@ -105,14 +110,9 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
           },
         );
         yield put(appActions.setSystemConfig(systemData));
-        const cateList = getState('checkin').categoriesCheckin;
-        if (cateList && cateList.length > 0) {
-          return;
-        } else {
-          yield put(
-            checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
-          );
-        }
+        yield put(
+          checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
+        );
       } else {
         console.log('app System err');
       }
