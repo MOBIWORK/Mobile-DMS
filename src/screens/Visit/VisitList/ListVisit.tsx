@@ -871,7 +871,6 @@ const ListVisit = () => {
           };
           setModalAlert(prev => ({...prev, status: false}));
           dispatch(appActions.setDataCheckIn(data));
-          dispatch(appActions.onGetSystemConfig());
           if (isDetail) {
             navigate(ScreenConstant.VISIT_DETAIL, {data});
           } else {
@@ -1009,7 +1008,6 @@ const ListVisit = () => {
         //set CheckIn Time:
         CommonUtils.storage.set(AppConstant.CheckinTime, new Date().getTime());
         //navigation
-        dispatch(appActions.onGetSystemConfig());
         navigate(ScreenConstant.CHECKIN, {
           item: data,
         });

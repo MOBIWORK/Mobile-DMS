@@ -6,7 +6,7 @@ import {
   AppState,
   AppStateStatus,
 } from 'react-native';
-import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {
   Block,
   AppText as Text,
@@ -175,7 +175,6 @@ const CheckIn = () => {
     }
   }, [status]);
 
-
   const isCurrentTimeGreaterOrEqual = (minTime: any) => {
     const currentTime = elapsedTime;
     return currentTime >= timeToSeconds(minTime);
@@ -226,7 +225,7 @@ const CheckIn = () => {
       setEnableGPS(true);
       onCheckout();
     }
-  }, [enableGPS, isFocus]);
+  }, [enableGPS, isFocus, dataCheckIn, categoriesCheckin]);
 
   const checkGPSConfirmCheckout = useCallback(async () => {
     if (Platform.OS === 'android') {
@@ -290,8 +289,21 @@ const CheckIn = () => {
       function isNote(categoriesItem: IItemCheckIn) {
         return categoriesItem.key === 'note';
       }
-
-      if (
+      if (!dataCheckIn?.checkin_trangthaicuahang) {
+        if (
+          systemConfig.batbuoc_chupanh &&
+          !categoriesCheckin.find(isCamera).isDone
+        ) {
+          setMsgCheckOutErr({
+            type: 'camera',
+            msg: getLabel('cameraNotComplete'),
+          });
+          setOpenDialogErr(true);
+          return false;
+        } else {
+          return true;
+        }
+      } else if (
         systemConfig.batbuoc_kiemton &&
         !categoriesCheckin.find(isInventory).isDone
       ) {
@@ -380,12 +392,12 @@ const CheckIn = () => {
       }
       return true;
     },
-    [openDialogErr, msgCheckOutErr, categoriesCheckin],
+    [openDialogErr, msgCheckOutErr, categoriesCheckin, dataCheckIn],
   );
 
-  const onCheckout = useCallback(async () => {
+  const onCheckout = useCallback(() => {
     CommonUtils.getCurrentLocation(
-      async locations => {
+      locations => {
         if (!isValidCheckOut(locations)) {
           dispatch(appActions.setProcessingStatus(false));
           return;
