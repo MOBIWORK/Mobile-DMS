@@ -93,8 +93,8 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         getSystemConfig,
         action.payload,
       );
-      if (response.message === 'Thành công') {
-        console.log('run get system config');
+      if (response?.status === ApiConstant.STT_OK) {
+        // console.log('run get system config');
         const systemData: DMSConfigMobile = response.result;
         const newCategoriesCheckin: IItemCheckIn[] = categoriesCheckinList.map(
           item => {
