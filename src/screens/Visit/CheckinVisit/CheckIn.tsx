@@ -174,6 +174,8 @@ const CheckIn = () => {
       dispatch(appActions.setCheckInStoreStatus(true));
     }
   }, [status]);
+
+
   const isCurrentTimeGreaterOrEqual = (minTime: any) => {
     const currentTime = elapsedTime;
     return currentTime >= timeToSeconds(minTime);
@@ -455,6 +457,7 @@ const CheckIn = () => {
             type="text"
             status={status!}
             onSwitch={handleSwitch}
+            setStatus={setStatus!}
             title={title}
           />
         </Block>

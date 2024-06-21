@@ -221,7 +221,6 @@ const Index = () => {
           justifyContent="center"
           alignItems="center"
           colorTheme="primary">
-          {' '}
           <ActivityIndicator size="large" color={colors.primary} />{' '}
         </Block>
       ) : (

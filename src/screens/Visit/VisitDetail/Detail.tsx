@@ -11,7 +11,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {ImageAssets} from '../../../assets';
 import {AppButton, Block, AppText as Text} from '../../../components/common';
-import StatisticalItem from './StatisticalItem';
+// import StatisticalItem from './StatisticalItem';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {AppConstant, ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';

@@ -16,26 +16,27 @@ type Props = {
   title?: string;
   type: 'text' | 'none';
   status: boolean;
+  setStatus:React.Dispatch<React.SetStateAction<boolean | any>>
 };
 
 const AppSwitch = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const {onSwitch, status = false} = props;
+  const {onSwitch, status = false,setStatus} = props;
   // ()
   const switchTranslate = useSharedValue(0);
   // state for activate Switch
-  const [active, setActive] = useState(status);
+  // const [active, setActive] = useState(status);
   // Progress Value
   const progress = useDerivedValue(() => {
-    return withTiming(active ? 22 : 0);
+    return withTiming(status ? 22 : 0);
   });
   const textValue = useSharedValue(0);
   const [isText, setIsText] = useState<boolean>(
     props.title !== '' || props.title !== undefined,
   );
 
-  // const progress = useSharedValue(() =>{return withTiming(active ? 22 :0)})
+  // const progress = useSharedValue(() =>{return withTiming(status ? 22 :0)})
 
   useEffect(() => {
     if (props.title !== '' && props.title !== undefined) {
@@ -44,7 +45,7 @@ const AppSwitch = (props: Props) => {
       setIsText(false);
     }
 
-    if (active) {
+    if (status) {
       if (isText) {
         if (props.type === 'none') {
           switchTranslate.value = 22;
@@ -65,7 +66,7 @@ const AppSwitch = (props: Props) => {
 
       // setText(false);
     }
-  }, [active, switchTranslate, onSwitch, props.title, textValue, status]);
+  }, [status, switchTranslate, onSwitch, props.title, textValue, status]);
 
   const customSpringStyles = useAnimatedStyle(() => {
     return {
@@ -123,7 +124,7 @@ const AppSwitch = (props: Props) => {
   return (
     <TouchableWithoutFeedback
       onPress={() => {
-        setActive(!active);
+        setStatus(!status);
         onSwitch();
         // setText(!text);
       }}>
