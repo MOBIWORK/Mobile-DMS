@@ -15,6 +15,7 @@ import {
   AppIcons,
   Block,
   AppDialog,
+  AppCheckBox,
 } from '../../../components/common';
 import {
   NavigationProp,
@@ -99,6 +100,8 @@ const CreateOrder = () => {
     animatedContentHeight,
     handleContentLayout,
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+
+  const [isApplyPromotion, setApplyPromotion] = useState<boolean>(false);
 
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [openDate, setOpenDate] = useState<boolean>(false);
@@ -415,7 +418,14 @@ const CreateOrder = () => {
       const newProducts = products.map(item =>
         item.item_code === productDetail.item_code &&
         item.index === productDetail.index
-          ? productDetail
+          ? {
+              ...productDetail,
+              discount_item_percent: Number(
+                productDetail?.discount_item_percent
+                  .toString()
+                  .replace(',', '.'),
+              ),
+            }
           : item,
       );
       setProducts(newProducts);
@@ -584,6 +594,23 @@ const CreateOrder = () => {
                 />
               }
             />
+            {type === 'ORDER' && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  gap: 8,
+                }}>
+                <AppCheckBox
+                  status={isApplyPromotion}
+                  onChangeValue={() => setApplyPromotion(prev => !prev)}
+                />
+                <Text style={{color: colors.text_primary}}>
+                  {getLabel('noApplyPromotion')}
+                </Text>
+              </View>
+            )}
           </View>
 
           <View>
@@ -804,6 +831,7 @@ const CreateOrder = () => {
               }
             />
             <UpdateProductItem
+              isApplyPromotion={isApplyPromotion}
               productDetail={productDetail}
               setProductDetail={item =>
                 dispatch(productActions.setDataProductDetail(item))

@@ -315,4 +315,5 @@ export default {
   bill: 'Bill',
   amountOwed: 'Amount owed',
   noData: 'No data',
+  noApplyPromotion: 'Promotions do not apply',
 };
