@@ -101,7 +101,7 @@ const CreateOrder = () => {
     handleContentLayout,
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
-  const [isApplyPromotion, setApplyPromotion] = useState<boolean>(false);
+  const [isNotApplyPromotion, setNotApplyPromotion] = useState<boolean>(false);
 
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [openDate, setOpenDate] = useState<boolean>(false);
@@ -422,8 +422,10 @@ const CreateOrder = () => {
               ...productDetail,
               discount_item_percent: Number(
                 productDetail?.discount_item_percent
-                  .toString()
-                  .replace(',', '.'),
+                  ? productDetail?.discount_item_percent
+                      .toString()
+                      .replace(',', '.')
+                  : 0,
               ),
             }
           : item,
@@ -464,6 +466,8 @@ const CreateOrder = () => {
       uom: item?.stock_uom,
       item_tax_template: item?.item_tax_template[0]?.item_tax_template ?? '',
       rate_tax_item: item?.rate_tax_item,
+      discount_percentage: item?.discount_item_percent ?? 0,
+      discount_amount: item?.discount_item_amount ?? 0,
     }));
     const objectData: any = {
       set_warehouse: warehouse?.value,
@@ -481,10 +485,11 @@ const CreateOrder = () => {
     if (customer) {
       objectData.customer = customer.name;
     }
-    // console.log('object', objectData);
     switch (type) {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
+        objectData.ignore_pricing_rule = isNotApplyPromotion ? 1 : 0;
+        // console.log('object', objectData);
         if (!orderResultData) {
           const orderRes: any = await OrderService.createdOrder(objectData);
           if (orderRes?.status === ApiConstant.STT_CREATED) {
@@ -594,7 +599,7 @@ const CreateOrder = () => {
                 />
               }
             />
-            {type === 'ORDER' && (
+            {type === 'ORDER' && !orderResultData && (
               <View
                 style={{
                   flexDirection: 'row',
@@ -603,8 +608,8 @@ const CreateOrder = () => {
                   gap: 8,
                 }}>
                 <AppCheckBox
-                  status={isApplyPromotion}
-                  onChangeValue={() => setApplyPromotion(prev => !prev)}
+                  status={isNotApplyPromotion}
+                  onChangeValue={() => setNotApplyPromotion(prev => !prev)}
                 />
                 <Text style={{color: colors.text_primary}}>
                   {getLabel('noApplyPromotion')}
@@ -831,7 +836,7 @@ const CreateOrder = () => {
               }
             />
             <UpdateProductItem
-              isApplyPromotion={isApplyPromotion}
+              isNotApplyPromotion={isNotApplyPromotion}
               productDetail={productDetail}
               setProductDetail={item =>
                 dispatch(productActions.setDataProductDetail(item))

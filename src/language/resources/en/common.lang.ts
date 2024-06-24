@@ -316,4 +316,6 @@ export default {
   amountOwed: 'Amount owed',
   noData: 'No data',
   noApplyPromotion: 'Promotions do not apply',
+  totalCustomer: 'Total of customers',
+  customerNotOrder: 'The customer has no orders yet',
 };

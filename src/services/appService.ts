@@ -134,8 +134,8 @@ export type IListVisitParams = {
   search_key?: string;
   checkin_status?: string;
   field_order?: string;
-  long?:any,
-  lat?:any
+  long?: any;
+  lat?: any;
 };
 
 export type Account = {
@@ -242,9 +242,7 @@ export const getCustomerVisit = (data?: IListVisitParams) =>
     .then(res => res.data);
 
 export const getSystemConfig = () =>
-  createApi()
-    .get(ApiConstant.GET_SYSTEM_CONFIG)
-    .then(res => res.data);
+  createApi().get(ApiConstant.GET_SYSTEM_CONFIG);
 
 export const getListCity = () => createApi().get(ApiConstant.GET_LIST_CITY);
 export const getListDistrict = (ma_tinh_thanh: any) =>

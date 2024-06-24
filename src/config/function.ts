@@ -42,7 +42,6 @@ const convertToMoneyFormat = (amount: any) => {
   return formattedAmount;
 };
 
-
 export function compareArrays<T>(arr1: T[], arr2: T[]): string[] {
   const differences: string[] = [];
 
@@ -65,7 +64,11 @@ export function compareArrays<T>(arr1: T[], arr2: T[]): string[] {
 
     for (const key of keys1) {
       if (item1[key] !== item2[key]) {
-        differences.push(`Difference found at index ${i} for key ${key.toString()}: ${item1[key]} !== ${item2[key]}`);
+        differences.push(
+          `Difference found at index ${i} for key ${key.toString()}: ${
+            item1[key]
+          } !== ${item2[key]}`,
+        );
       }
     }
   }
@@ -73,14 +76,12 @@ export function compareArrays<T>(arr1: T[], arr2: T[]): string[] {
   return differences;
 }
 
-
 const reverseFormatNumber = (formattedNumber: any) => {
   // Check if the formattedNumber contains a dot
   const hasDot = /\./.test(formattedNumber);
 
   if (hasDot) {
-
-  return formattedNumber.replace(/\./g, '')
+    return formattedNumber.replace(/\./g, '');
   } else {
     // If no dot is present, return the number as it is
     return formattedNumber;
@@ -201,21 +202,14 @@ export const hexStringFromCSSColor = (color: string) => {
   return `#${withoutAlpha}${alpha}`;
 };
 
-function calculateDateDifference(targetDate: string) {
-  const currentDate = moment();
-  const targetDateObj = moment(targetDate, 'DD/MM/YYYY');
-
-  const daysDifference = currentDate.diff(targetDateObj, 'days');
-  const monthsDifference = currentDate.diff(targetDateObj, 'months');
-  const yearsDifference = currentDate.diff(targetDateObj, 'years');
-
-  const remainingDays = daysDifference - monthsDifference * 30;
-
-  return {
-    years: yearsDifference,
-    months: monthsDifference,
-    days: remainingDays,
-  };
+function calculateDateDifference(targetDate: number) {
+  if (Math.floor(targetDate / 365) > 0) {
+    return `${Math.floor(targetDate / 365)} năm`;
+  } else if (Math.floor(targetDate / 30) > 0) {
+    return `${Math.floor(targetDate / 30)} tháng`;
+  } else {
+    return `${Math.floor(targetDate)} ngày`;
+  }
 }
 
 function useSelector<T>(
@@ -275,12 +269,14 @@ const useEffectOnce = (cb: React.EffectCallback) => {
 };
 
 const mergeProducts = (products: IProduct[]) => {
-  const productMap: { [key: string]: IProduct } = {};
+  const productMap: {[key: string]: IProduct} = {};
 
   // Iterate through the products array and merge products with the same item_code
   products.forEach(product => {
-    const key = `${product.item_code}-${product.unit ?? ''}-${product.end_of_life ?? ''}`;
-    if (key in productMap ) {
+    const key = `${product.item_code}-${product.unit ?? ''}-${
+      product.end_of_life ?? ''
+    }`;
+    if (key in productMap) {
       // If the item_code already exists, add the quantities
       productMap[key].quantity += product.quantity;
     } else {

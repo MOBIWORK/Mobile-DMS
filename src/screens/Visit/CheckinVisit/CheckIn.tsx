@@ -85,6 +85,7 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
+  // console.log('listCate', categoriesCheckin);
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
   const [enableGPS, setEnableGPS] = useState(false);
@@ -244,7 +245,6 @@ const CheckIn = () => {
               clearInterval(intervalIdRef.current);
             }
             storage.delete(AppConstant.CheckinTime);
-            dispatch(checkinActions.setDataCategoriesCheckin([]));
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));

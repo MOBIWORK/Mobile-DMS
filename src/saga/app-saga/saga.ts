@@ -67,8 +67,6 @@ export function* onCheckInData(action: PayloadAction) {
         yield put(appActions.setDataCheckIn({}));
         yield put(checkinActions.setRefreshVisitWhenCheckOut(true));
         storage.delete(AppConstant.CheckinTime);
-        yield put(checkinActions.setDataCategoriesCheckin([]));
-
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
           params: {
@@ -95,7 +93,7 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
       );
       if (response?.status === ApiConstant.STT_OK) {
         // console.log('run get system config');
-        const systemData: DMSConfigMobile = response.result;
+        const systemData: DMSConfigMobile = response.data.result;
         const newCategoriesCheckin: IItemCheckIn[] = categoriesCheckinList.map(
           item => {
             if (item.key === 'camera' && systemData.batbuoc_chupanh) {

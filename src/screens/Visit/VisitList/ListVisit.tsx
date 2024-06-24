@@ -29,12 +29,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {ImageAssets} from '../../../assets';
-import {
-  ExtendedTheme,
-  useIsFocused,
-  useNavigation,
-  useTheme,
-} from '@react-navigation/native';
+import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
 import {NavigationProp} from '../../../navigation/screen-type';
 import {
   ListCustomerRoute,
@@ -47,8 +42,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import FilterContainer from './FilterContainer';
 import {AppConstant, ScreenConstant} from '../../../const';
 import Mapbox from '@rnmapbox/maps';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import SkeletonLoading from '../SkeletonLoading';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   backgroundErrorListener,
   calculateDistance,
@@ -114,8 +108,13 @@ const ListVisit = () => {
     state => state.app.systemConfig,
   );
   const searchVisit = useSelector(state => state.app.searchVisitValue);
-  const [isPending, startEffect] = useTransition();
+  const [_, startEffect] = useTransition();
   const [modalErrorGPS, setModalErrorGPS] = useState(false);
+
+  const categoriesCheckin = useSelector(
+    state => state.checkin.categoriesCheckin,
+    shallowEqual,
+  );
 
   const isRefreshVisitWhenCheckOut = useSelector(
     state => state.checkin.isRefreshVisitWhenCheckOut,
@@ -124,7 +123,6 @@ const ListVisit = () => {
     state => state.app.dataCheckIn,
     shallowEqual,
   );
-  const isFocus = useIsFocused();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const listCustomer: VisitListItemResult = useSelector(
@@ -456,7 +454,10 @@ const ListVisit = () => {
   };
 
   useLayoutEffect(() => {
-    if (Object.keys(systemConfig).length === 0) {
+    if (
+      Object.keys(systemConfig).length === 0 ||
+      categoriesCheckin?.length === 0
+    ) {
       dispatch(appActions.onGetSystemConfig());
     }
     // handleEnabledPressed();
@@ -541,7 +542,6 @@ const ListVisit = () => {
       const noLocationCustomer = listCustomer.data.filter(
         item => item.customer_location_primary === null,
       );
-
       setCustomerData([
         ...sortedData(distanceLabel, filteredData),
         ...noLocationCustomer,
