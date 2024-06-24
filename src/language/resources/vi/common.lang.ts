@@ -323,4 +323,6 @@ export default {
   noData: ' Không có dữ liệu',
   profile: 'Hồ sơ',
   noApplyPromotion: 'Không áp dụng chương trình khuyến mại',
+  totalCustomer: 'Tổng số khách hàng',
+  customerNotOrder: 'Khách hàng chưa phát sinh đơn',
 };

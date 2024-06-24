@@ -13,7 +13,7 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
   productDetail,
   setProductDetail,
   onOpenBottomSheetData,
-  isApplyPromotion,
+  isNotApplyPromotion,
 }) => {
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
@@ -207,12 +207,12 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
           returnKeyType: 'done',
         }}
       />
-      {!isApplyPromotion && _renderDiscount()}
+      {isNotApplyPromotion && _renderDiscount()}
     </View>
   );
 };
 interface UpdateProductItemProps {
-  isApplyPromotion: boolean;
+  isNotApplyPromotion: boolean;
   productDetail: IProduct;
   setProductDetail: (item: IProduct) => void;
   onOpenBottomSheetData: (type: string) => void;

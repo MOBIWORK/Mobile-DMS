@@ -2,20 +2,18 @@ import {StyleSheet} from 'react-native';
 import React from 'react';
 import {Block, AppText as Text} from '../../../../../components/common';
 import {calculateDateDifference} from '../../../../../config/function';
-import {IDataNonOrderCustomer} from './ultil';
 import isEqual from 'react-fast-compare';
+import {INonCustomerDetailItem} from '../../../../../models/types';
 type Props = {
-  item: IDataNonOrderCustomer;
+  item: INonCustomerDetailItem;
 };
 
 const CardNonOrder = ({item}: Props) => {
-  const result = calculateDateDifference(item.lastTimeOrder);
   const formattedResult =
-    result.years > 0
-      ? `${result.years} năm`
-      : result.months > 0
-      ? `${result.months} tháng`
-      : `${result.days} ngày`;
+    item?.so_ngay_chua_dat_hang > 0
+      ? calculateDateDifference(item.so_ngay_chua_dat_hang)
+      : null;
+
   return (
     <Block
       colorTheme="white"
@@ -29,22 +27,25 @@ const CardNonOrder = ({item}: Props) => {
           colorTheme="text_primary"
           lineHeight={24}
           fontWeight="500">
-          {item.nameCompany}
+          {item.ten_kh}
         </Text>
         <Text
           fontSize={14}
           colorTheme="text_primary"
           lineHeight={21}
           fontWeight="400">
-          {item.customerCode}
+          {item.ma_kh}
         </Text>
       </Block>
       <Block colorTheme="divider" height={1} marginTop={8} marginBottom={8} />
       <Block direction="row" justifyContent="space-between" alignItems="center">
-        <Text fontSize={12} colorTheme="text_secondary" fontWeight="500">
+        <Text
+          fontSize={12}
+          colorTheme={item?.dia_chi ? 'text_primary' : 'text_secondary'}
+          fontWeight="500">
           Địa chỉ
         </Text>
-        <Text>{item.address === '' ? '---' : item.address}</Text>
+        <Text>{item?.dia_chi ?? '---'}</Text>
       </Block>
       <Block
         direction="row"
@@ -57,23 +58,27 @@ const CardNonOrder = ({item}: Props) => {
         <Block>
           <Text
             fontSize={14}
-            colorTheme="text_primary"
+            colorTheme={
+              item?.ngay_dat_hang_cuoi ? 'text_primary' : 'text_secondary'
+            }
             fontWeight="400"
             textAlign="right">
-            {item.lastTimeOrder}
+            {item?.ngay_dat_hang_cuoi ?? '---'}
           </Text>
-          <Block
-            colorTheme="bg_neutral"
-            alignItems="center"
-            justifyContent="center"
-            marginTop={8}
-            paddingHorizontal={4}
-            borderRadius={8}
-            paddingVertical={8}>
-            <Text fontSize={14} colorTheme="text_primary" fontWeight="400">
-              {formattedResult}
-            </Text>
-          </Block>
+          {formattedResult && (
+            <Block
+              colorTheme="bg_neutral"
+              alignItems="center"
+              justifyContent="center"
+              marginTop={8}
+              paddingHorizontal={4}
+              borderRadius={8}
+              paddingVertical={8}>
+              <Text fontSize={14} colorTheme="text_primary" fontWeight="400">
+                {formattedResult}
+              </Text>
+            </Block>
+          )}
         </Block>
       </Block>
     </Block>

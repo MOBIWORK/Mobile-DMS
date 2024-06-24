@@ -50,7 +50,6 @@ const VisitItem: FC<VisitItemProps> = ({
   // const batteryLevel = useBatteryLevel();
   const [isPending, startTransition] = useTransition();
 
-
   const isEnable = React.useRef<boolean>(false);
 
   const systemConfig: DMSConfigMobile = useSelector(
@@ -121,7 +120,6 @@ const VisitItem: FC<VisitItemProps> = ({
     };
     check();
   }, [isEnable.current]);
-
   return (
     <ErrorBoundary fallbackRender={ErrorFallback}>
       <TouchableOpacity
@@ -176,9 +174,9 @@ const VisitItem: FC<VisitItemProps> = ({
             marginTop={8}
             justifyContent="space-between"
             style={[styles.content]}>
-            {(item.is_route === true && systemConfig.vt_ngoaituyen === 1) ||
-            (item.is_route === true && systemConfig.vt_ngoaituyen === 0) ||
-            (item.is_route === false && systemConfig.vt_ngoaituyen === 1) ? (
+            {!item.is_route && systemConfig.vt_ngoaituyen === 0 ? (
+              <Block />
+            ) : (
               <AppButton
                 onPress={() =>
                   startTransition(() => {
@@ -186,14 +184,7 @@ const VisitItem: FC<VisitItemProps> = ({
                   })
                 }
                 style={createStyleSheet(theme).button(
-                  !(
-                    (item.is_route === true &&
-                      systemConfig.vt_ngoaituyen === 1) ||
-                    (item.is_route === true &&
-                      systemConfig.vt_ngoaituyen === 0) ||
-                    (item.is_route === false &&
-                      systemConfig.vt_ngoaituyen === 1)
-                  ),
+                  !item.is_route && systemConfig.vt_ngoaituyen === 0,
                 )}
                 label={'Checkin'}
                 styleLabel={{
@@ -201,8 +192,6 @@ const VisitItem: FC<VisitItemProps> = ({
                   fontWeight: '400',
                 }}
               />
-            ) : (
-              <Block />
             )}
 
             <TouchableOpacity
