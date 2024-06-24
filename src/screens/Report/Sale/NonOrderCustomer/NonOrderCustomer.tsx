@@ -1,11 +1,9 @@
 import {StyleSheet, ScrollView, ViewStyle} from 'react-native';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import isEqual from 'react-fast-compare';
 import {Block} from '../../../../components/common';
 import {AppTheme, useTheme} from '../../../../layouts/theme';
 import ItemCash from '../../Statistical/components/ItemCash';
-import CardNonOrder from './component/cardNonOrder';
-import {IDataNonOrderCustomer} from './component/ultil';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import ReportHeader from '../../Component/ReportHeader';
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -13,11 +11,17 @@ import {CommonUtils} from '../../../../utils';
 import {useTranslation} from 'react-i18next';
 import {IFilterType} from '../../../../components/common/FilterListComponent';
 import ReportFilterBottomSheet from '../../Component/ReportFilterBottomSheet';
+import {useDispatch} from 'react-redux';
+import {appActions} from '../../../../redux-store/app-reducer/reducer';
+import {ReportService} from '../../../../services';
+import {INonCustomerResult} from '../../../../models/types';
+import CardNonOrder from './component/cardNonOrder';
 
 const NonOrderCustomer = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+  const dispatch = useDispatch();
 
   const filerBottomSheetRef = useRef<BottomSheet>(null);
 
@@ -26,49 +30,8 @@ const NonOrderCustomer = () => {
   );
 
   const [date, setDate] = useState<number>(new Date().getTime());
-  // const [from_date, setFromDate] = useState<number>(new Date().getTime());
-  // const [to_date, setToDate] = useState<number>(new Date().getTime());
-
-  // const generateFakeData = useCallback(() => {
-  //   const fakeData: IDataNonOrderCustomer[] = [];
-  //
-  //   for (let i = 0; i < 15; i++) {
-  //     const data = {
-  //       nameCompany: `Công ty ${i + 1}`,
-  //       customerCode: generateRandomAlphaNumeric(6),
-  //       address: `${i + 1}`,
-  //       lastTimeOrder: generateRandomPastTime(),
-  //     };
-  //     fakeData.push(data);
-  //   }
-  //
-  //   return fakeData;
-  // }, []);
-
-  // const generateRandomAlphaNumeric = useCallback((length: number) => {
-  //   const characters =
-  //     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  //   let result = '';
-  //   for (let i = 0; i < length; i++) {
-  //     result += characters.charAt(
-  //       Math.floor(Math.random() * characters.length),
-  //     );
-  //   }
-  //   return result;
-  // }, []);
-  //
-  // const generateRandomPastTime = useCallback(() => {
-  //   const currentDate = new Date();
-  //   const pastDate = new Date(currentDate);
-  //   pastDate.setDate(currentDate.getDate() - Math.floor(Math.random() * 365));
-  //
-  //   const day = String(pastDate.getDate()).padStart(2, '0');
-  //   const month = String(pastDate.getMonth() + 1).padStart(2, '0');
-  //   const year = pastDate.getFullYear();
-  //
-  //   return `${day}/${month}/${year}`;
-  // }, []);
-  // const fakeDataList = useMemo(() => generateFakeData(), []);
+  const [nonCustomerData, setNonCustomerData] =
+    useState<INonCustomerResult | null>(null);
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
@@ -80,11 +43,6 @@ const NonOrderCustomer = () => {
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      const {from_date, to_date} = CommonUtils.dateToDate(
-        item.value?.toString() || '',
-      );
-      // setFromDate(new Date(from_date).getTime());
-      // setToDate(new Date(to_date).getTime());
       setHeaderDate(getLabel(String(item.label)));
     }
   };
@@ -92,18 +50,27 @@ const NonOrderCustomer = () => {
   const onChangeDateCalender = (date: any) => {
     setHeaderDate(CommonUtils.convertDate(Number(date)));
     setDate(new Date(date).getTime());
-    // setFromDate(new Date(date).getTime());
-    // setToDate(new Date(date).getTime());
+  };
+
+  const getDataNonCustomer = async () => {
+    dispatch(appActions.setProcessingStatus(true));
+    const response: any = await ReportService.getNonCustomerOrder(
+      parseInt(String(date / 1000), 10),
+    );
+    if (Object.keys(response?.result).length > 0) {
+      setNonCustomerData(response.result);
+    }
+    dispatch(appActions.setProcessingStatus(false));
   };
 
   useEffect(() => {
-    console.log('datee', date);
+    getDataNonCustomer().then();
   }, [date]);
 
   return (
     <SafeAreaView edges={['bottom', 'top']} style={styles.root}>
       <ReportHeader
-        title={'Khách hàng chưa phát sinh đơn'}
+        title={getLabel('customerNotOrder')}
         date={headerDate}
         onSelected={() =>
           filerBottomSheetRef.current &&
@@ -111,17 +78,19 @@ const NonOrderCustomer = () => {
         }
       />
       <ItemCash
-        label={'Tổng số khách hàng'}
-        content={15}
+        label={getLabel('totalCustomer')}
+        content={nonCustomerData?.total_customers ?? 0}
         icon={'NewCustomerIcon'}
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Block paddingHorizontal={8}>
-          {/*{fakeDataList.map((item, index) => {*/}
-          {/*  return <CardNonOrder key={index} item={item} />;*/}
-          {/*})}*/}
-        </Block>
-      </ScrollView>
+      {nonCustomerData && nonCustomerData?.details?.length > 0 && (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Block paddingHorizontal={8}>
+            {nonCustomerData.details.map((item, index) => {
+              return <CardNonOrder key={index} item={item} />;
+            })}
+          </Block>
+        </ScrollView>
+      )}
       <ReportFilterBottomSheet
         isNonCustomer
         filerBottomSheetRef={filerBottomSheetRef}

@@ -135,7 +135,7 @@ export type VisitListItemType = {
   total?: number;
   page_size?: number;
   is_route?: boolean;
-  distance?:any
+  distance?: any;
 };
 
 export type VisitListItemResult = {
@@ -511,7 +511,7 @@ export interface Address {
   is_shipping_address: number;
   address_title: string;
   address_location: string;
-  address_line1?:string
+  address_line1?: string;
 }
 
 export interface Contact {
@@ -523,11 +523,11 @@ export interface Contact {
   is_billing_contact: number;
 }
 export interface ContactCard {
-  address: string
-  first_name: string
-  last_name: any
-  name: string
-  phone: string
+  address: string;
+  first_name: string;
+  last_name: any;
+  name: string;
+  phone: string;
 }
 
 export interface IDataItem {
@@ -1132,6 +1132,19 @@ export type ListAlbumType = {
 export type IReportNewCustomer = {
   total_new_cus: number;
   list_customer: ReportCustomerType[];
+};
+
+export type INonCustomerDetailItem = {
+  ten_kh: string;
+  ma_kh: string;
+  dia_chi: string;
+  ngay_dat_hang_cuoi: string;
+  so_ngay_chua_dat_hang: number;
+};
+
+export type INonCustomerResult = {
+  total_customers: number;
+  details: INonCustomerDetailItem[];
 };
 
 export type Notification = {
