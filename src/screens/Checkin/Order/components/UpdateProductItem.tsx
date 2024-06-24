@@ -18,7 +18,10 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
   const [_, startTransition] = useTransition();
-
+  console.log(
+    productDetail.discount_item_percent,
+    productDetail.discount_item_amount,
+  );
   const [isPercentDiscount, setIsPercentDisCount] = useState<boolean>(
     (!productDetail?.discount_item_percent &&
       !productDetail?.discount_item_amount) ||
