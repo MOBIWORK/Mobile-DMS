@@ -461,6 +461,26 @@ const SelectProducts = () => {
     }
   };
 
+  //map lại data selected khi ấn chọn trước, sửa unit sau
+  useEffect(() => {
+    if (data?.length > 0 && selectedData?.length > 0) {
+      const newSelectedData = selectedData.map((item, index) => {
+        const proElement = data[index];
+        if (proElement && item.item_code === proElement.item_code) {
+          return {
+            ...item,
+            quantity: proElement.quantity,
+            stock_uom: proElement.stock_uom,
+            price: proElement.price,
+          };
+        } else {
+          return item;
+        }
+      });
+      setSelectedData(newSelectedData);
+    }
+  }, [data]);
+
   useEffect(() => {
     if (isSearch) {
       if (products?.length > 0 && selectedData.length > 0) {
