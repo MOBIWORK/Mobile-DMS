@@ -223,7 +223,10 @@ const CheckInLocation = () => {
         const districtRes: any = await AppService.getListDistrict(
           addressObj.province.code,
         );
-        if (districtRes?.status === ApiConstant.STT_OK) {
+        if (
+          districtRes?.status === ApiConstant.STT_OK &&
+          districtRes?.data?.result?.length > 0
+        ) {
           const districtNameArr = districtRes.data.result.map(
             (districtNameArrItem: any) => districtNameArrItem.ten_huyen,
           );
@@ -247,7 +250,10 @@ const CheckInLocation = () => {
         const wardRes: any = await AppService.getListWard(
           addressObj.district.code,
         );
-        if (wardRes?.status === ApiConstant.STT_OK) {
+        if (
+          wardRes?.status === ApiConstant.STT_OK &&
+          wardRes?.data?.result?.length > 0
+        ) {
           const wardNameArr = wardRes.data.result.map(
             (wardNameArrItem: any) => wardNameArrItem.ten_xa,
           );
