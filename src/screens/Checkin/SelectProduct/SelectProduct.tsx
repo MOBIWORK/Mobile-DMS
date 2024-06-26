@@ -306,17 +306,19 @@ const SelectProducts = () => {
       case 'unit': {
         startEffect(() => {
           const newProducts = data.map(item1 => {
-            let priceUom = item1.unit.find(item2 => item2.uom === item.label);
-            return item1.item_code === item.value
-              ? {
-                  ...item1,
-                  stock_uom: item.label,
-                  price: priceUom
-                    ? Number(priceUom.conversion_factor) * item1.price
-                    : 0,
-                  stock_qty: priceUom ? Number(priceUom.conversion_factor) : 0,
-                }
-              : item1;
+            if (item1.item_code === item.value) {
+              let priceUom = item1.unit.find(item2 => item2.uom === item.label);
+              return {
+                ...item1,
+                stock_uom: item.label,
+                price: priceUom
+                  ? Number(priceUom.conversion_factor) * item1.price_default
+                  : 0,
+                stock_qty: priceUom ? Number(priceUom.conversion_factor) : 0,
+              };
+            } else {
+              return item1;
+            }
           });
           setData(newProducts);
         });

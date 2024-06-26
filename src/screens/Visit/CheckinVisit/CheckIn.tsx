@@ -1,18 +1,18 @@
 import {
+  AppState,
+  AppStateStatus,
   Platform,
   StyleSheet,
   TouchableOpacity,
   ViewStyle,
-  AppState,
-  AppStateStatus,
 } from 'react-native';
-import React, {useCallback, useState, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  Block,
-  AppText as Text,
   AppSwitch as Switch,
-  SvgIcon,
+  AppText as Text,
+  Block,
   showSnack,
+  SvgIcon,
 } from '../../../components/common/';
 import {
   NavigationProp,
@@ -40,7 +40,7 @@ import {useTranslation} from 'react-i18next';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
-import {goBack, navigate, pop} from '../../../navigation/navigation-service';
+import {goBack, navigate} from '../../../navigation/navigation-service';
 import {AppService} from '../../../services';
 import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {useBatteryLevel} from 'expo-battery';
@@ -177,14 +177,13 @@ const CheckIn = () => {
   }, [status]);
 
   const isCurrentTimeGreaterOrEqual = (minTime: any) => {
-    const currentTime = elapsedTime;
-    return currentTime >= timeToSeconds(minTime);
+    // return elapsedTime >= timeToSeconds(minTime);
+    return status ? elapsedTime >= timeToSeconds(minTime) : true;
   };
 
   const timeToSeconds = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
-    const totalSeconds = hours * 3600 + minutes * 60;
-    return totalSeconds;
+    return hours * 3600 + minutes * 60;
   };
 
   const onSubmitErrDialog = useCallback(() => {
@@ -229,6 +228,7 @@ const CheckIn = () => {
   }, [enableGPS, isFocus, dataCheckIn, categoriesCheckin]);
 
   const checkGPSConfirmCheckout = useCallback(async () => {
+    setShow(false);
     if (Platform.OS === 'android') {
       const checkEnabled: boolean = await isLocationEnabled();
       if (checkEnabled) {
@@ -383,7 +383,6 @@ const CheckIn = () => {
           return true;
         }
       } else {
-        console.log('run case else valid checkout');
         setMsgCheckOutErr({
           type: '',
           msg: '',
