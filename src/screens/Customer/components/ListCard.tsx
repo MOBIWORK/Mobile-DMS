@@ -13,7 +13,7 @@ import SkeletonLoading from '../../Visit/SkeletonLoading';
 
 type Props = {
   data: IDataCustomers[];
-  onLoadData?: () => void;
+  onEndReachedThreshold: () => void;
   listFooter?: () => React.JSX.Element;
   onRefresh: () => Promise<void>;
   loading: boolean;
@@ -22,33 +22,12 @@ type Props = {
 };
 
 const ListCard = (props: Props) => {
-  const {onScroll} = props;
+  const {onScroll, onRefresh, onEndReachedThreshold} = props;
   const renderItem = ({item, index}: {item: IDataCustomers; index: number}) => (
     <CardView data={item as any} key={index} index={index} {...item} />
   );
 
   const flatListRef = useRef<FlatList>(null);
-
-  const onEndReachedThreshold = useCallback(() => {
-    // console.log('on end Reach')
-    props.onLoadData&&   props.onLoadData();
-    // flatListRef.current?.scrollToIndex({
-    //   animated: true,
-    //   index: props.data && props.data.length - 1,
-    // });
-    // if (props.onLoadData && typeof props.onLoadData() === 'function') {
-     
-    // }
-  }, []);
-  const onLoadingData = useCallback(() => {
-    if (props.onRefresh && typeof props.onRefresh === 'function') {
-      props.onRefresh();
-      // flatListRef.current?.scrollToIndex({
-      //   animated: true,
-      //   index: props.currentIndex,
-      // });
-    }
-  }, [props.currentIndex]);
 
   // const memorizedValue = useCallback(() => renderItem, [props.data, props.loading]);
   // console.log(props.data,'data')
@@ -67,11 +46,13 @@ const ListCard = (props: Props) => {
       windowSize={31}
       initialNumToRender={25}
       refreshControl={
-        <RefreshControl onRefresh={onLoadingData} refreshing={props.loading} />
+        <RefreshControl onRefresh={onRefresh} refreshing={props.loading} />
       }
       removeClippedSubviews={true}
       ListFooterComponent={props.listFooter}
-      keyExtractor={(item, index) => item.customer_code.toString() + index.toString()}
+      keyExtractor={(item, index) =>
+        item.customer_code.toString() + index.toString()
+      }
       renderItem={renderItem}
     />
   ) : (

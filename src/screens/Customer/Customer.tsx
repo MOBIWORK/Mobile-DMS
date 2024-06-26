@@ -130,10 +130,6 @@ const Customer = () => {
   const navigation = useNavigation<NavigationProp>();
   const mounted = useRef<boolean>(true);
 
-  const totalPage = useRef<number>(
-    Math.ceil(listCustomerResult?.total / listCustomerResult?.page_size),
-  );
-
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const slideSize = event.nativeEvent.layoutMeasurement.height - 240;
@@ -213,19 +209,12 @@ const Customer = () => {
       console.log('run on refresh');
       dispatch(onLoadApp());
       getCustomer();
-      totalPage.current = Math.ceil(
-        listCustomerResult.total / listCustomerResult.page_size,
-      );
-      // flatListRef.current?.scrollToIndex({
-      //   animated: true,
-      //   index: currentIndex.current,
-      // });
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
       dispatch(onLoadAppEnd());
     }
-  }, []);
+  }, [listCustomerResult]);
 
   useEffect(() => {
     if (customerType?.length > 0) {
@@ -347,25 +336,19 @@ const Customer = () => {
         }),
       );
     } else {
-      // dispatch(customerActions.onGetCustomer());
     }
-  }, [value.first && value.second]);
-
-  // console.log( listCustomer.length,'sss')
+  }, [value]);
 
   const onEndReachedThreshold = useCallback(() => {
-    // console.log('run on end reach');
-    if (
-      page <=
-        Math.ceil(listCustomerResult.total / listCustomerResult.page_size) &&
-      listCustomer.length >= 4
-    ) {
-      // console.log('run if');
+    const totalPage = Math.ceil(
+      listCustomerResult?.total / listCustomerResult?.page_size,
+    );
+    if (page < totalPage && listCustomer.length >= 20) {
       startTransition(() => {
         if (value.first !== 'all' && value.second !== 'all') {
           dispatch(
             customerActions.getCustomerNewPage({
-              page: page + 1,
+              page_number: page + 1,
               customer_type: value.first,
               customer_group: value.second,
             }),
@@ -373,7 +356,7 @@ const Customer = () => {
         } else if (value.first !== 'all' && value.second === 'all') {
           dispatch(
             customerActions.getCustomerNewPage({
-              page: page + 1,
+              page_number: page + 1,
               customer_type: value.first,
               customer_group: '',
             }),
@@ -381,7 +364,7 @@ const Customer = () => {
         } else if (value.first === 'all' && value.second !== 'all') {
           dispatch(
             customerActions.getCustomerNewPage({
-              page: page + 1,
+              page_number: page + 1,
               customer_type: '',
               customer_group: value.first,
             }),
@@ -389,24 +372,60 @@ const Customer = () => {
         } else {
           dispatch(
             customerActions.getCustomerNewPage({
-              page: page + 1,
+              page_number: page + 1,
             }),
           );
         }
       });
-      // flatListRef.current?.scrollToIndex({
-      //   animated: true,
-      //   index: currentIndex.current,
-      // });
     } else {
-      dispatch(
-        customerActions.getCustomerNewPage({
-          page: page + 1,
-        }),
-      );
       return null;
     }
-  }, [page, value, listCustomer, customerData]);
+  }, [page, value, listCustomerResult]);
+
+  // const onEndReachedThreshold = () => {
+  //   console.log('run on end reach');
+  //   console.log('page', page);
+  //   console.log('total', listCustomer);
+  //   console.log('page_size', listCustomerResult.page_size);
+  //   if (page < totalPage && listCustomer.length >= 20) {
+  //     console.log('run if');
+  //     startTransition(() => {
+  //       if (value.first !== 'all' && value.second !== 'all') {
+  //         dispatch(
+  //           customerActions.getCustomerNewPage({
+  //             page_number: page + 1,
+  //             customer_type: value.first,
+  //             customer_group: value.second,
+  //           }),
+  //         );
+  //       } else if (value.first !== 'all' && value.second === 'all') {
+  //         dispatch(
+  //           customerActions.getCustomerNewPage({
+  //             page_number: page + 1,
+  //             customer_type: value.first,
+  //             customer_group: '',
+  //           }),
+  //         );
+  //       } else if (value.first === 'all' && value.second !== 'all') {
+  //         dispatch(
+  //           customerActions.getCustomerNewPage({
+  //             page_number: page + 1,
+  //             customer_type: '',
+  //             customer_group: value.first,
+  //           }),
+  //         );
+  //       } else {
+  //         dispatch(
+  //           customerActions.getCustomerNewPage({
+  //             page_number: page + 1,
+  //           }),
+  //         );
+  //       }
+  //     });
+  //   } else {
+  //     return null;
+  //   }
+  // };
 
   const onPressAdding = useCallback(() => {
     dispatch(customerActions.setMainAddress({}));
@@ -473,7 +492,7 @@ const Customer = () => {
             data={customerData}
             loading={loading}
             onRefresh={onRefreshData}
-            onLoadData={onEndReachedThreshold}
+            onEndReachedThreshold={onEndReachedThreshold}
             onScroll={onScroll}
             currentIndex={currentIndex.current}
           />

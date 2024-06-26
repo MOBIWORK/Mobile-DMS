@@ -127,6 +127,7 @@ export function* getCustomerTerritorySaga(action: PayloadAction) {
 export function* getMoreDataCustomer(action: PayloadAction) {
   if (customerActions.getCustomerNewPage.match(action)) {
     try {
+      console.log('params', action.payload);
       yield put(appActions.onLoadApp());
       yield put(appActions.setProcessingStatus(true));
       const response: ResponseGenerator = yield call(
