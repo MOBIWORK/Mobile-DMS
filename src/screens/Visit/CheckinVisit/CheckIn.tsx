@@ -486,11 +486,7 @@ const CheckIn = () => {
               <SvgIcon source="MapPin" size={16} />
               <Text numberOfLines={1}>
                 {' '}
-                {params?.item?.customer_primary_address?.address_title !=
-                  undefined &&
-                Object.keys(params?.item?.customer_primary_address)?.length > 0
-                  ? params?.item?.customer_primary_address.address_title
-                  : (params?.item?.customer_primary_address as any)}{' '}
+                {params?.item?.customer_primary_address?.address_title}{' '}
               </Text>
             </Block>
             <Block

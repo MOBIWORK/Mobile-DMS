@@ -140,7 +140,6 @@ const CheckinInventory = () => {
           }
         }
         break;
-
       default:
         break;
     }
