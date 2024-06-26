@@ -34,6 +34,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
   setScreen,
   data,
   setData,
+  onBack,
 }) => {
   const theme = useTheme();
   const styles = createStyle(theme);
@@ -221,7 +222,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         break;
       }
     }
-  }, [data,listCity]);
+  }, [data, listCity]);
 
   useEffect(() => {
     getListCity();
@@ -237,7 +238,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         <TouchableOpacity
           onPress={() => {
             setScreen('');
-            setData([]);
+            onBack ? onBack() : undefined;
           }}>
           <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
         </TouchableOpacity>
@@ -267,6 +268,7 @@ interface SelectedAddressProps {
   setScreen: (text: string) => void;
   data: AddressSelected[];
   setData: (data: AddressSelected[]) => void;
+  onBack?: () => void;
 }
 export default SelectedAddress;
 const createStyle = (theme: ExtendedTheme) =>

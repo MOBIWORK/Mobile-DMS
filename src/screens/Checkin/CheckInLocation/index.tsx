@@ -61,7 +61,7 @@ import {
   AddressType,
 } from '../../Customer/components/FormAddress';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
-import {goBack} from '../../../navigation/navigation-service';
+import selectedAddress from '../../Customer/components/SelectedAddress';
 //config Mapbox
 Mapbox.setAccessToken(AppConstant.MAPBOX_TOKEN);
 
@@ -120,7 +120,6 @@ const CheckInLocation = () => {
   const [addressSelectedData, setAddressSelectedData] = useState<
     AddressSelected[]
   >([]);
-  const [errCode, setErrCode] = useState<any>(null);
   const customer_location: LocationProps =
     route.params?.data &&
     JSON.parse(route.params.data.item.customer_location_primary);
@@ -538,6 +537,60 @@ const CheckInLocation = () => {
     }
   }, [route.params.type]);
 
+  const _renderSelectedAddress = useCallback(() => {
+    return (
+      <SelectedAddress
+        setScreen={setScreen}
+        data={addressSelectedData}
+        setData={setAddressSelectedData}
+        onBack={onBackSelectedAddress}
+      />
+    );
+  }, [addressSelectedData, addressObj]);
+
+  const onSelectedAddress = useCallback(
+    (type: string) => {
+      switch (type) {
+        case 'district': {
+          const newData = addressSelectedData.filter(
+            item => item.type === AddressType.city,
+          );
+          setAddressSelectedData(newData);
+          break;
+        }
+        case 'ward': {
+          const newData = addressSelectedData.filter(
+            item => item.type !== AddressType.ward,
+          );
+          setAddressSelectedData(newData);
+          break;
+        }
+        case 'city': {
+          setAddressSelectedData([]);
+          break;
+        }
+      }
+      setScreen('Adding');
+    },
+    [addressSelectedData],
+  );
+
+  const onBackSelectedAddress = useCallback(() => {
+    setAddressSelectedData([
+      {
+        type: 'city',
+        value: addressObj.province.value,
+        id: addressObj.province.code,
+      },
+      {
+        type: 'district',
+        value: addressObj.district.value,
+        id: addressObj.district.code,
+      },
+      {type: 'ward', value: addressObj.ward.value, id: addressObj.ward.code},
+    ]);
+  }, [addressObj]);
+
   return (
     <SafeAreaView
       style={{
@@ -548,11 +601,7 @@ const CheckInLocation = () => {
       }}
       edges={['top']}>
       {screen === 'Adding' && addressSelectedData.length !== 3 ? (
-        <SelectedAddress
-          setScreen={setScreen}
-          data={addressSelectedData}
-          setData={setAddressSelectedData}
-        />
+        _renderSelectedAddress()
       ) : (
         <Block block>
           <AppHeader
@@ -650,10 +699,7 @@ const CheckInLocation = () => {
                 <View style={styles.inputContainer}>
                   <AppInput
                     label={`${getLabel('province')}/${getLabel('city')}`}
-                    onPress={() => {
-                      setScreen('Adding');
-                      setAddressSelectedData([]);
-                    }}
+                    onPress={() => onSelectedAddress('city')}
                     value={addressObj.province.value}
                     editable={false}
                     styles={{marginBottom: 12}}
@@ -671,13 +717,7 @@ const CheckInLocation = () => {
                     value={addressObj.district.value}
                     editable={false}
                     styles={{marginBottom: 12}}
-                    onPress={() => {
-                      setScreen('Adding');
-                      const newData = addressSelectedData.filter(
-                        item => item.type === AddressType.city,
-                      );
-                      setAddressSelectedData(newData);
-                    }}
+                    onPress={() => onSelectedAddress('district')}
                     rightIcon={
                       <TextInputPaper.Icon
                         icon={'chevron-down'}
@@ -691,13 +731,7 @@ const CheckInLocation = () => {
                     styles={{marginBottom: 12}}
                     value={addressObj.ward.value}
                     editable={false}
-                    onPress={() => {
-                      setScreen('Adding');
-                      const newData = addressSelectedData.filter(
-                        item => item.type !== AddressType.district,
-                      );
-                      setAddressSelectedData(newData);
-                    }}
+                    onPress={() => onSelectedAddress('ward')}
                     rightIcon={
                       <TextInputPaper.Icon
                         icon={'chevron-down'}
