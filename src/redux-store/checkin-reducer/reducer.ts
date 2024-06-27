@@ -18,6 +18,7 @@ const initState: TypeState = {
   imageToMark: [],
   listProgramImage: [],
   isRefreshVisitWhenCheckOut: false,
+  isRefreshCustomerWhenAddNew: false,
 };
 
 const checkinSlice = createSlice({
@@ -120,6 +121,9 @@ const checkinSlice = createSlice({
     },
     setRefreshVisitWhenCheckOut: (state, action: PayloadAction<boolean>) => {
       state.isRefreshVisitWhenCheckOut = action.payload;
+    },
+    setRefreshCustomerWhenAddNew: (state, action: PayloadAction<boolean>) => {
+      state.isRefreshCustomerWhenAddNew = action.payload;
     },
   },
 });
