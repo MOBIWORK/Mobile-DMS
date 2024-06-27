@@ -67,6 +67,7 @@ export function* onCheckInData(action: PayloadAction) {
         yield put(appActions.setDataCheckIn({}));
         yield put(checkinActions.setRefreshVisitWhenCheckOut(true));
         storage.delete(AppConstant.CheckinTime);
+        yield put(checkinActions.setDataCategoriesCheckin([]))
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
           params: {
