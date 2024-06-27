@@ -23,7 +23,7 @@ import {
   IItemCheckIn,
 } from '../../redux-store/checkin-reducer/type';
 import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
-import {dispatch, getState} from '../../utils/redux';
+// import {dispatch, getState} from '../../utils/redux';
 import {storage} from '../../utils/commom.utils';
 
 export const checkKeyInObject = (T: any, key: string) => {
@@ -67,7 +67,7 @@ export function* onCheckInData(action: PayloadAction) {
         yield put(appActions.setDataCheckIn({}));
         yield put(checkinActions.setRefreshVisitWhenCheckOut(true));
         storage.delete(AppConstant.CheckinTime);
-        yield put(checkinActions.setDataCategoriesCheckin([]))
+        // yield put(checkinActions.setDataCategoriesCheckin([]))
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
           params: {
@@ -109,9 +109,17 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
           },
         );
         yield put(appActions.setSystemConfig(systemData));
-        yield put(
-          checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
-        );
+        if (
+          categoriesCheckinList
+            .filter(item => item.isDone)
+            .some(item => item.isDone === true)
+        ) {
+          return null;
+        } else {
+          yield put(
+            checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
+          );
+        }
       } else {
         console.log('app System err');
       }
