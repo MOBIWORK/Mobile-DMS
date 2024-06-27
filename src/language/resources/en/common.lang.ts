@@ -315,7 +315,7 @@ export default {
   bill: 'Bill',
   amountOwed: 'Amount owed',
   noData: 'No data',
-  noApplyPromotion: 'Promotions do not apply',
+  noApplyPromotion: 'Apply manual promotions',
   totalCustomer: 'Total of customers',
   customerNotOrder: 'The customer has no orders yet',
 };

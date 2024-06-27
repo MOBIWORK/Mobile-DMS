@@ -140,7 +140,6 @@ const CheckinInventory = () => {
           }
         }
         break;
-
       default:
         break;
     }
@@ -153,15 +152,16 @@ const CheckinInventory = () => {
     dispatch(appActions.setProcessingStatus(true));
     if (listProducts.length > 0) {
       const newItems = listProducts.map(item => {
-        const price = item.details.find(
+        const price = item.unit.find(
           (item2: any) => item2.uom === item.stock_uom,
         );
+        console.log(item.unit);
         return {
           item_code: item.item_code,
           item_unit: item.stock_uom,
           quantity: item.quantity,
           exp_time: item.expiry ? new Date(item.expiry).getTime() / 1000 : null,
-          item_price: price?.price_list_rate,
+          item_price: price ? price.conversion_factor * item.price_default : 0,
         };
       });
       const objectData = {
@@ -173,6 +173,7 @@ const CheckinInventory = () => {
           dataCheckin?.item?.customer_primary_address?.address_title ?? '',
         inventory_items: newItems,
       };
+      // console.log('object', objectData);
       const response: any = await CheckinService.checkinInventory(objectData);
       if (response.status === ApiConstant.STT_CREATED) {
         dispatch(productActions.updateProductSelect([]));

@@ -322,7 +322,7 @@ export default {
   amountOwed: 'Số tiền nợ',
   noData: ' Không có dữ liệu',
   profile: 'Hồ sơ',
-  noApplyPromotion: 'Không áp dụng chương trình khuyến mại',
+  noApplyPromotion: 'Áp dụng khuyến mại thủ công',
   totalCustomer: 'Tổng số khách hàng',
   customerNotOrder: 'Khách hàng chưa phát sinh đơn',
 };

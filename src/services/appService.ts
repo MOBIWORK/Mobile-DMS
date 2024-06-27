@@ -153,7 +153,7 @@ export type IDLocation = {
 
 export type ICustomerParams = {
   search_key?: string;
-  page?: number;
+  page_number?: number;
   customer_type?: string;
   customer_group?: string;
 };
