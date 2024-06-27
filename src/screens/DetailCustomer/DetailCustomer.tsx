@@ -234,7 +234,7 @@ const rootStyles = (theme: AppTheme) =>
       marginBottom: -2,
     },
     tabBar: {
-      backgroundColor: '#ffffff',
+      backgroundColor: theme.colors.bg_default,
       borderBottomWidth: 1,
       borderColor: theme.colors.bg_default,
     },
