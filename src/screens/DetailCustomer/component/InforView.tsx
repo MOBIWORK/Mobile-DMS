@@ -1,20 +1,21 @@
-import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {DetailCustomerType, IDataCustomers} from '../../../models/types';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import { StyleSheet, ViewStyle, Image, ImageStyle } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { DetailCustomerType, IDataCustomers } from '../../../models/types';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 import {
   AppText,
   Block,
   SvgIcon,
   AppText as Text,
 } from '../../../components/common';
-import {MainLayout} from '../../../layouts';
+import { MainLayout } from '../../../layouts';
 import Mapbox from '@rnmapbox/maps';
-import {useTranslation} from 'react-i18next';
-import {AppConstant} from '../../../const';
-import {CommonUtils} from '../../../utils';
-import {GeolocationResponse} from '@react-native-community/geolocation';
-import {formatMoney} from '../../../config/function';
+import { useTranslation } from 'react-i18next';
+import { AppConstant } from '../../../const';
+import { CommonUtils } from '../../../utils';
+import { GeolocationResponse } from '@react-native-community/geolocation';
+import { formatMoney } from '../../../config/function';
+import { GeolocationCustomer } from '../../../services/customerService';
 
 type Props = {
   data: DetailCustomerType;
@@ -24,32 +25,38 @@ const InforBlock = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const ref = useRef<Mapbox.Camera>(null);
-  const {t: translate} = useTranslation();
+  const { t: translate } = useTranslation();
   const [isError, setIsError] = useState(false);
 
-  const [location, setLocation] = useState<GeolocationResponse | null>(null);
+  // const [location, setLocation] = useState<GeolocationResponse | null>(null);
+
+  // useEffect(() => {
+  //   CommonUtils.getCurrentLocation(locations => setLocation(locations));
+  // }, []);
+
+  const [locationCustomer, setLocationCustomer] = useState<GeolocationCustomer | null>(null);
 
   useEffect(() => {
-    CommonUtils.getCurrentLocation(locations => setLocation(locations));
-  }, []);
+    if (props.data?.customer_location_primary) {
+      const parsedLocation = JSON.parse(props.data.customer_location_primary);
+      setLocationCustomer({
+        longitude: parsedLocation.long,
+        latitude: parsedLocation.lat,
+      });
+    }
+  }, [props.data]);
   return (
     <Block style={styles.root}>
       <Block style={styles.containImage}>
         {props?.data?.image && !isError ? (
           <Image
             source={{
-              uri:
-                (props.data.image !== undefined && props.data.image) ||
-                undefined,
+              uri: props.data.image !== undefined && props.data.image,
             }}
             style={styles.imageStyle}
             resizeMode="center"
             onError={err => {
-              if (
-                err.nativeEvent.error === 'unknown image format' ||
-                err.nativeEvent.error ===
-                  'source.uri should not be an empty string'
-              ) {
+              if (err.nativeEvent.error === 'unknown image format') {
                 setIsError(true);
               } else {
                 false;
@@ -65,7 +72,7 @@ const InforBlock = (props: Props) => {
             borderRadius={10}
             justifyContent="center"
             alignItems="center">
-            <Text numberOfLines={1} fontSize={30} colorTheme="text_secondary">
+            <Text numberOfLines={1} fontSize={30} colorTheme='text_secondary' >
               {props.data.name && props.data.name.slice(0, 2)}
             </Text>
           </Block>
@@ -264,14 +271,14 @@ const InforBlock = (props: Props) => {
               <Mapbox.RasterLayer
                 id={'adminmap'}
                 sourceID={'admin'}
-                style={{visibility: 'visible'}}
+                style={{ visibility: 'visible' }}
               />
             </Mapbox.RasterSource>
             <Mapbox.Camera
               ref={ref}
               centerCoordinate={[
-                location?.coords.longitude ?? 0,
-                location?.coords.latitude ?? 0,
+                locationCustomer?.longitude ?? 0,
+                locationCustomer?.latitude ?? 0,
               ]}
               animationMode={'flyTo'}
               animationDuration={500}
@@ -280,8 +287,8 @@ const InforBlock = (props: Props) => {
 
             <Mapbox.MarkerView
               coordinate={[
-                location?.coords.longitude ?? 0,
-                location?.coords.latitude ?? 0,
+                locationCustomer?.longitude ?? 0,
+                locationCustomer?.latitude ?? 0,
               ]}>
               <SvgIcon source="Location" size={32} colorTheme="action" />
             </Mapbox.MarkerView>
