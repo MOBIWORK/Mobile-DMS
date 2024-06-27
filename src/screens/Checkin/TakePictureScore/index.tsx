@@ -89,8 +89,12 @@ const TakePictureScore = () => {
     state => state.checkin?.imageToMark,
     shallowEqual,
   );
+  const listProgramImage = useSelector(
+    state => state.checkin.listProgramImage,
+    shallowEqual,
+  );
 
-  const {listProgramImage} = getState('checkin');
+  // const {listProgramImage} = getState('checkin');
 
   useDisableBackHandler(true);
   // console.log(listProgram,'listProgram')
