@@ -327,6 +327,7 @@ export interface IDataCustomers {
   customer_code: string;
   customer_type: string;
   customer_group: string;
+  mobile_no: string;
   territory: string;
   industry: any;
   image?: any;

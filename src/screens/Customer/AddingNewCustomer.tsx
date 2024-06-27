@@ -64,6 +64,7 @@ import isEqual from 'react-fast-compare';
 import Modal from 'react-native-modal';
 import ModalArea from './components/ModalArea';
 import {storage} from '../../utils/commom.utils';
+import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 
 function listDataReducer(newState: any, oldState: any) {
   return {...newState, ...oldState};
@@ -199,6 +200,7 @@ const AddingNewCustomer = () => {
       navigation.navigate(ScreenConstant.MAIN_TAB, {
         screen: ScreenConstant.CUSTOMER,
       });
+      dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
     }
     dispatch(setProcessingStatus(false));
   };
