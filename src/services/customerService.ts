@@ -12,6 +12,11 @@ export type IReportOrder = {
   to_date?: number;
 };
 
+export type GeolocationCustomer = {
+  latitude: number;
+  longitude: number;
+};
+
 export const getCustomerTerritory = () =>
   createApi()
     .get(ApiConstant.GET_CUSTOMER_TERRITORY)
