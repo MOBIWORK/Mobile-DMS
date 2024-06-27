@@ -34,7 +34,6 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {
   calculateDistance,
   handleBackgroundLocation,
-  useDeepCompareEffect,
   useEffectOnce,
   useSelector,
 } from '../../config/function';
@@ -59,6 +58,7 @@ import BottomSheet, {
 import FilterListComponent, {
   IFilterType,
 } from '../../components/common/FilterListComponent';
+import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -92,6 +92,10 @@ const Customer = () => {
   );
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const isRefreshCustomerWhenAddNew = useSelector(
+    state => state.checkin.isRefreshCustomerWhenAddNew,
+  );
 
   const listCustomer: IDataCustomers[] = useSelector(
     state => state.customer.listCustomer?.data,
@@ -203,6 +207,14 @@ const Customer = () => {
   const getCustomer = useCallback(() => {
     dispatch(customerActions.onGetCustomer());
   }, [customerData]);
+
+  //refresh when add new customer
+  useEffect(() => {
+    if (isRefreshCustomerWhenAddNew) {
+      dispatch(checkinActions.setRefreshCustomerWhenAddNew(false));
+      onRefreshData();
+    }
+  }, [isRefreshCustomerWhenAddNew]);
 
   const onRefreshData = useCallback(async () => {
     try {
@@ -381,51 +393,6 @@ const Customer = () => {
       return null;
     }
   }, [page, value, listCustomerResult]);
-
-  // const onEndReachedThreshold = () => {
-  //   console.log('run on end reach');
-  //   console.log('page', page);
-  //   console.log('total', listCustomer);
-  //   console.log('page_size', listCustomerResult.page_size);
-  //   if (page < totalPage && listCustomer.length >= 20) {
-  //     console.log('run if');
-  //     startTransition(() => {
-  //       if (value.first !== 'all' && value.second !== 'all') {
-  //         dispatch(
-  //           customerActions.getCustomerNewPage({
-  //             page_number: page + 1,
-  //             customer_type: value.first,
-  //             customer_group: value.second,
-  //           }),
-  //         );
-  //       } else if (value.first !== 'all' && value.second === 'all') {
-  //         dispatch(
-  //           customerActions.getCustomerNewPage({
-  //             page_number: page + 1,
-  //             customer_type: value.first,
-  //             customer_group: '',
-  //           }),
-  //         );
-  //       } else if (value.first === 'all' && value.second !== 'all') {
-  //         dispatch(
-  //           customerActions.getCustomerNewPage({
-  //             page_number: page + 1,
-  //             customer_type: '',
-  //             customer_group: value.first,
-  //           }),
-  //         );
-  //       } else {
-  //         dispatch(
-  //           customerActions.getCustomerNewPage({
-  //             page_number: page + 1,
-  //           }),
-  //         );
-  //       }
-  //     });
-  //   } else {
-  //     return null;
-  //   }
-  // };
 
   const onPressAdding = useCallback(() => {
     dispatch(customerActions.setMainAddress({}));

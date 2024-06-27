@@ -41,6 +41,7 @@ import isEqual from 'react-fast-compare';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {shallowEqual} from 'react-redux';
 import {formatCash} from '../../../utils/commom.utils';
+import {CommonUtils} from '../../../utils';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -119,7 +120,10 @@ const FormAdding = (props: Props) => {
       <Text style={styles.titleText}>{translate('generalInformation')} </Text>
       <TouchableOpacity
         style={styles.containContainImage}
-        onPress={() => props.cameraBottomRef.current?.snapToIndex(0)}>
+        onPress={() => {
+          Keyboard.dismiss();
+          props.cameraBottomRef.current?.snapToIndex(0);
+        }}>
         <View style={styles.containImageCamera}>
           {imageSource !== undefined && imageSource ? (
             <Image
@@ -188,6 +192,7 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
+          Keyboard.dismiss();
           setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
           filterRef.current?.snapToIndex(0);
         }}
@@ -207,6 +212,7 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
+          Keyboard.dismiss();
           setModalOpen(true);
         }}
         rightIcon={
@@ -224,6 +230,7 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
+          Keyboard.dismiss();
           setOpen(true);
         }}
         rightIcon={
@@ -242,6 +249,7 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
+          Keyboard.dismiss();
           setTypeFilter(AppConstant.CustomerFilterType.tuyen);
           filterRef.current?.snapToIndex(0);
         }}
@@ -258,10 +266,11 @@ const FormAdding = (props: Props) => {
         // value={valueFilter.frequency ? converArr(valueFilter.frequency) : ''}
         value={valueFilter.frequency ? valueFilter.frequency.toString() : ''}
         editable={false}
-        isRequire={false}
+        isRequire
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
+          Keyboard.dismiss();
           setTypeFilter(AppConstant.CustomerFilterType.tan_suat);
           filterRef.current?.snapToIndex(0);
         }}
@@ -275,21 +284,19 @@ const FormAdding = (props: Props) => {
       />
       <AppInput
         label={translate('debtLimit')}
-        value={
-          valueFilter.credit_limit
-            ? valueFilter.credit_limit || ''
-            : ''
-        }
+        value={valueFilter?.credit_limit ?? ''}
         editable={true}
+        inputProp={{
+          keyboardType: 'numeric',
+          returnKeyType: 'done',
+        }}
         hiddenRightIcon={false}
         isRequire={false}
         rightIcon={<TextInput.Affix text="VND" />}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onChangeValue={text => {
-          // console.log(val,'val')
-          let revText = reverseFormatNumber(text)
-          console.log(revText,'revText')
+          let revText = reverseFormatNumber(text);
           startTransition(() => {
             let val = convertToMoneyFormat(revText);
             setData(prev => ({...prev, credit_limit: val}));

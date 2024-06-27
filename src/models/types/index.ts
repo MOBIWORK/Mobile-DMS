@@ -296,7 +296,7 @@ export type IDataCustomer = {
   customer_details?: string;
   custom_birthday?: number;
   company?: string;
-  credit_limit?: string;
+  credit_limit?: any;
   address_title_cus?: string;
   address_type_cus?: string;
   detail_address_cus?: string;
@@ -327,6 +327,7 @@ export interface IDataCustomers {
   customer_code: string;
   customer_type: string;
   customer_group: string;
+  mobile_no: string;
   territory: string;
   industry: any;
   image?: any;
@@ -434,7 +435,7 @@ export type DataCustomersUpdate = {
   customer_type: string;
   // faceimage?: string
   company?: string;
-  credit_limit?: string;
+  credit_limit?: number;
   address: AddressUpdate;
   contact: ContactUpdate;
   router: RouterUpdate;

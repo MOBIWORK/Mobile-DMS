@@ -64,6 +64,7 @@ import isEqual from 'react-fast-compare';
 import Modal from 'react-native-modal';
 import ModalArea from './components/ModalArea';
 import {storage} from '../../utils/commom.utils';
+import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 
 function listDataReducer(newState: any, oldState: any) {
   return {...newState, ...oldState};
@@ -120,11 +121,12 @@ const AddingNewCustomer = () => {
     state => state.customer.listCustomerTerritory,
   );
 
-  const snapPoint = useMemo(() => ['80%'], []);
+  const snapPoint = useMemo(() => ['60%'], []);
   const filterRef = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
   const onPressAdding = async (newListData: IDataCustomer) => {
+    dispatch(setProcessingStatus(true));
     let address: MainAddress = mainAddress;
     let contact: MainContactAddress = mainContactAddress;
     const updateListData: DataCustomersUpdate = {
@@ -182,20 +184,23 @@ const AddingNewCustomer = () => {
       customer_code: newListData.customer_code || '',
       customer_name: newListData.customer_name || '',
       customer_group: newListData.customer_group || '',
-      credit_limit: newListData.credit_limit || '',
+      territory: newListData?.territory ?? '',
+      credit_limit: newListData?.credit_limit
+        ? Number(newListData.credit_limit.toString().replaceAll('.', ''))
+        : 0,
+      customer_details: newListData?.customer_details ?? '',
       image: newListData.faceimage ? newListData.faceimage : '',
     };
 
-    console.log(updateListData,'update List Data')
+    // console.log(updateListData, 'update List Data');
     dispatch(setNewCustomer(newListData));
-    dispatch(setProcessingStatus(true));
     await CommonUtils.CheckNetworkState();
-    // storage.set('time', '');
     const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
       navigation.navigate(ScreenConstant.MAIN_TAB, {
         screen: ScreenConstant.CUSTOMER,
       });
+      dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
     }
     dispatch(setProcessingStatus(false));
   };
@@ -255,7 +260,7 @@ const AddingNewCustomer = () => {
     params => {
       setOpenDate(false);
       setDate(params.date);
-      setListData(prev =>({...prev,custom_birthday:params.date?.getTime()}))
+      setListData(prev => ({...prev, custom_birthday: params.date?.getTime()}));
     },
     [setOpenDate, setDate],
   );
@@ -296,7 +301,6 @@ const AddingNewCustomer = () => {
     setModalAddress(false);
   }, [modalAddress]);
 
-  console.log(listData.credit_limit, 'bbb');
   return (
     <>
       <MainLayout>

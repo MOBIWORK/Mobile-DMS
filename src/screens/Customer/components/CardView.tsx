@@ -97,9 +97,7 @@ const CardView = (props: Props) => {
           <View style={styles.contentContainLayout}>
             <AppImage source={'IconPhone'} style={styles.iconStyle} />
             <Text style={styles.contentText}>
-              {props?.contact?.[0]?.mobile_no
-                ? props?.contact?.[0]?.mobile_no
-                : '---'}
+              {props?.mobile_no ? props.mobile_no : '---'}
             </Text>
           </View>
           <View style={styles.contentContainLayout}>

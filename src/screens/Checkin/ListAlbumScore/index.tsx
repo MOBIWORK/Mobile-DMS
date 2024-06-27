@@ -76,7 +76,9 @@ const ListAlbumScore = (props: Props) => {
         customer_code: itemParams.kh_ten,
         images: JSON.stringify(imageUrls),
         images_time: parseFloat(
-          lastImageDateTime &&  lastImageDateTime?.[lastImageDateTime?.length - 1] || 0,
+          (lastImageDateTime &&
+            lastImageDateTime?.[lastImageDateTime?.length - 1]) ||
+            0,
         ),
         setting_score_audit: campaign.setting_score_audit,
       };
@@ -84,8 +86,8 @@ const ListAlbumScore = (props: Props) => {
   );
 
   const confirmUploadImage = async () => {
-    if ( screens &&  screens === ScreenConstant.TAKE_PICTURE_SCORE) {
-      console.log(screens,'g')
+    if (screens && screens === ScreenConstant.TAKE_PICTURE_SCORE) {
+      console.log(screens, 'g');
       try {
         setAppLoading(true);
         const newData: any = itemCheckin.map(item =>
@@ -107,13 +109,14 @@ const ListAlbumScore = (props: Props) => {
         //remove store: listProgramSelected, listImageSelected:
         dispatch(checkinActions.setSelectedProgram([]));
         dispatch(checkinActions.setListImageSelect([]));
+        dispatch(checkinActions.setListImageProgram([]));
       } catch (err) {
         console.log('[err: ]', err);
       } finally {
         setAppLoading(false);
       }
     } else {
-      console.log(screens,'else')
+      console.log(screens, 'else');
       goBack();
     }
   };

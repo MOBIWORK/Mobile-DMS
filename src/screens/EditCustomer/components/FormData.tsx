@@ -254,15 +254,18 @@ const FormData = (props: Props) => {
       routers: route || '',
       website: dataCustomer.website || '',
       territory: dataCustomer.territory || '',
-      customer_details:dataCustomer.customer_details || ''
+      customer_details:dataCustomer.customer_details || '',
+      credit_limits:dataCustomer.credit_limits || 0
     };
     console.log(dataUpdate, 'dataUpdate')
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
+      Keyboard.dismiss()
       // storage.set('time', '');
     });
+   
   }, [dataCustomer]);
 
   const onCloseModal = useCallback(() => {

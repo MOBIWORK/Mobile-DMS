@@ -84,6 +84,7 @@ const createInstance = (deleteHeader?: boolean) => {
 };
 
 Api.addResponseTransform(response => {
+  // console.log(response,'dđ')
   handleErrorResponse(response, true);
 });
 export const createApi = (deleteHeader?: boolean) =>

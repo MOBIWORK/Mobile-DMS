@@ -1,5 +1,5 @@
 import {StyleSheet, TouchableOpacity, View, ViewStyle} from 'react-native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {ProfileContent} from '../ultil/config';
 import {useTheme} from '../../../layouts/theme';
 import {AppSwitch, AppText, SvgIcon} from '../../../components/common';
@@ -16,7 +16,8 @@ const ContentItemView = (props: Props) => {
   const {item, onSwitch, onSwitchAutoLocation} = props;
   const theme = useTheme();
   const {t: getLabel, i18n} = useTranslation();
-
+  const [darkTheme,setDarkTheme] = useState(useTheme().dark)
+  const [autoLocation,setAutoLocation] = useState(false)
   const appTheme = useSelector(state => state.app.theme);
   const automaticLocation = useSelector(state => state.app.automaticLocation);
 
@@ -73,7 +74,8 @@ const ContentItemView = (props: Props) => {
             <AppSwitch
               type="none"
               onSwitch={onSwitch}
-              status={appTheme === 'dark'}
+              status={darkTheme}
+              setStatus={setDarkTheme}
             />
           </View>
         ) : item.rightSide && item.name === 'autoLocation' ? (
@@ -81,7 +83,9 @@ const ContentItemView = (props: Props) => {
             <AppSwitch
               type="none"
               onSwitch={onSwitchAutoLocation}
-              status={automaticLocation}
+              status={autoLocation}
+              setStatus={setAutoLocation}
+
             />
           </View>
         ) : null}
