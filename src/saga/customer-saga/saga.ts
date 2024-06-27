@@ -24,6 +24,7 @@ import {goBack, navigate} from '../../navigation/navigation-service';
 import {updateCustomer} from '../../services/customerService';
 import {showSnack} from '../../components/common';
 import data from '../../../node_modules/ansi-escapes/node_modules/type-fest/source/readonly-deep.d';
+import { Keyboard } from 'react-native';
 
 export type ResponseGenerator = {
   config?: any;
@@ -156,20 +157,22 @@ export function* updateCustomerSaga(action: PayloadAction) {
         updateCustomer,
         action.payload.data,
       );
-      if (response.message === 'oK') {
+      if (response.message === 'ok') {
         showSnack({
           msg: 'Cập nhật thành công',
           interval: 2000,
           type: 'success',
         });
-        goBack();
+        Keyboard.dismiss()
       }
     } catch (err) {
       console.log('run error');
       console.error(err, 'err');
     } finally {
       yield put(appActions.onLoadAppEnd());
-      goBack();
+      Keyboard.dismiss()
+      goBack()
+      
     }
   }
 }

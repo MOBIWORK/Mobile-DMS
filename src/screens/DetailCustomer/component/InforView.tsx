@@ -38,12 +38,18 @@ const InforBlock = (props: Props) => {
         {props?.data?.image && !isError ? (
           <Image
             source={{
-              uri: props.data.image !== undefined && props.data.image,
+              uri:
+                (props.data.image !== undefined && props.data.image) ||
+                undefined,
             }}
             style={styles.imageStyle}
             resizeMode="center"
             onError={err => {
-              if (err.nativeEvent.error === 'unknown image format') {
+              if (
+                err.nativeEvent.error === 'unknown image format' ||
+                err.nativeEvent.error ===
+                  'source.uri should not be an empty string'
+              ) {
                 setIsError(true);
               } else {
                 false;
@@ -59,8 +65,8 @@ const InforBlock = (props: Props) => {
             borderRadius={10}
             justifyContent="center"
             alignItems="center">
-            <Text numberOfLines={1} fontSize={30}  colorTheme='text_secondary' >
-              {props.data.name && props.data.name.slice(0,2)}
+            <Text numberOfLines={1} fontSize={30} colorTheme="text_secondary">
+              {props.data.name && props.data.name.slice(0, 2)}
             </Text>
           </Block>
         )}

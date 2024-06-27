@@ -89,8 +89,12 @@ const TakePictureScore = () => {
     state => state.checkin?.imageToMark,
     shallowEqual,
   );
+  const listProgramImage = useSelector(
+    state => state.checkin.listProgramImage,
+    shallowEqual,
+  );
 
-  const {listProgramImage} = getState('checkin');
+  // const {listProgramImage} = getState('checkin');
 
   useDisableBackHandler(true);
   // console.log(listProgram,'listProgram')
@@ -168,8 +172,6 @@ const TakePictureScore = () => {
         console.log('Error uploading images:', err);
       } finally {
         setSelectedImages([]);
-        dispatch(checkinActions.setListImageProgram([]));
-        dispatch(checkinActions.setListImageSelect([]));
         setLoading(false);
       }
     },
@@ -216,7 +218,7 @@ const TakePictureScore = () => {
     goBack();
     dispatch(checkinActions.setListImageProgram([]));
     dispatch(checkinActions.setListImageSelect([]));
-  }, []);
+  }, [isFocus]);
 
   const handleSelectImage = useCallback(
     (image: ImageSelect) => {
@@ -283,7 +285,7 @@ const TakePictureScore = () => {
       e_name: userInfor.employee,
     };
     dispatch(checkinActions.getListProgram(data));
-  }, []);
+  }, [isFocus]);
   // dispatch(checkinActions.getListProgram(data));
 
   return (

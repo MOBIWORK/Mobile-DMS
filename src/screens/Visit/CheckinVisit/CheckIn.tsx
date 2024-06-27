@@ -248,6 +248,7 @@ const CheckIn = () => {
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));
+            // dispatch(checkinActions.setDataCategoriesCheckin(newCa))
             navigate(ScreenConstant.MAIN_TAB, {
               screen: ScreenConstant.VISIT,
             });
