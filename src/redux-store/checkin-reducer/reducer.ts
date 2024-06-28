@@ -65,6 +65,7 @@ const checkinSlice = createSlice({
       action: PayloadAction<Actions.IItemCheckIn[]>,
     ) => {
       state.categoriesCheckin = action.payload;
+      console.log('payloadCategoriesCheckin', action.payload);
     },
 
     setDataListProgram: (state, action: PayloadAction<any>) => {

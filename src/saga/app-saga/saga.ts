@@ -117,6 +117,7 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         ) {
           return null;
         } else {
+          console.log('systemconfigChange');
           yield put(
             checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
           );

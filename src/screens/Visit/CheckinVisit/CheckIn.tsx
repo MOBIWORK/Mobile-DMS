@@ -274,7 +274,12 @@ const listImageMark = useSelector(state => state.checkin.imageToMark)
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(appActions.setProcessingStatus(false));
-        goBack();
+        navigate(ScreenConstant.AUTHORIZED, {
+          screen: ScreenConstant.MAIN_TAB,
+          params: {
+            screen: ScreenConstant.VISIT,
+          },
+        });
       }
     }
   }, [enableGPS, isFocus]);
