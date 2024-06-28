@@ -12,9 +12,10 @@ export interface IItemCheckIn {
   screenName: any;
   backgroundColor: keyof Colors;
   type?: string;
+  screenName2?:any
 }
 
-const {selectedProgram} = getState('checkin')
+// const {selectedProgram} = getState('checkin')
 export const item: IItemCheckIn[] = [
   {
     icon: 'OrangeBox',
@@ -71,7 +72,8 @@ export const item: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Chấm điểm trưng bày',
-    screenName:  selectedProgram && selectedProgram.length > 0 ? 'LIST_ALBUM_SCORE' :  'TAKE_PICTURE_SCORE',
+    screenName:  ScreenConstant.TAKE_PICTURE_SCORE,
+    screenName2:ScreenConstant.LIST_ALBUM_SCORE,
     backgroundColor: 'undoBackground',
     type:''
   },
