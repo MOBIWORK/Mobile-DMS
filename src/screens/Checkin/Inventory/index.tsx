@@ -68,23 +68,19 @@ const CheckinInventory = () => {
   const [labelBottonSheet, setLabelBottonSheet] = useState<string>('');
   const [dataBottomSheet, setDataBottomSheet] = useState<IFilterType[]>([]);
   const [openDate, setOpenDate] = useState<boolean>(false);
-  const indexSelect = useRef<number>(0);
   const onBackScreen = () => {
     dispatch(productActions.updateListProduct([]));
     dispatch(productActions.updateProductSelect([]));
     navigation.goBack();
   };
 
-  const isDisabled = useMemo(
-    () => (products.length > 0 ? false : true),
-    [products],
-  );
+  const isDisabled = useMemo(() => products.length === 0, [products]);
 
   const updateProduct = () => {
     if (detailProduct && listProducts) {
-      const data = listProducts.map((item, index) =>
-        index === indexSelect.current &&
-        item.item_code === detailProduct.item_code
+      const data = listProducts.map(item =>
+        item.item_code === detailProduct.item_code &&
+        item.index === detailProduct.index
           ? detailProduct
           : item,
       );
@@ -97,46 +93,35 @@ const CheckinInventory = () => {
     }
   };
 
-  const onOpenBottonSheetData = (typeData: string) => {
-    switch (typeData) {
-      case 'unit':
-        {
-          setLabelBottonSheet('unit');
-          if (detailProduct) {
-            const units = detailProduct.unit;
-            const newUnits: IFilterType[] = units.map((item1: any) => {
-              return detailProduct.stock_uom === item1.uom
-                ? {
-                    label: item1.uom,
-                    value: detailProduct.item_code,
-                    isSelected: true,
-                  }
-                : {
-                    label: item1.uom,
-                    value: detailProduct.item_code,
-                    isSelected: false,
-                  };
-            });
-            setDataBottomSheet(newUnits);
-          }
-        }
-        break;
-      default:
-        setDataBottomSheet([]);
-        break;
-    }
-    if (bottomSheetData.current) {
-      bottomSheetData.current.snapToIndex(0);
-    }
-  };
-
   const onChangeData = (item: IFilterType | any) => {
     switch (labelBottonSheet) {
       case 'unit':
         {
           if (detailProduct) {
-            const newData = {...detailProduct, stock_uom: item.label};
+            const price = detailProduct.unit.find(
+              (item2: any) => item2.uom === item.label,
+            );
+            const newData = {
+              ...detailProduct,
+              stock_uom: item.label,
+              price: price
+                ? price.conversion_factor * detailProduct.price_default
+                : detailProduct.price,
+            };
+            const units = detailProduct.unit;
+            const newUnits: IFilterType[] = units.map((item1: any) => {
+              return item.label === item1.uom
+                ? {
+                    label: item1.uom,
+                    isSelected: true,
+                  }
+                : {
+                    label: item1.uom,
+                    isSelected: false,
+                  };
+            });
             setDetailProduct(newData);
+            setDataBottomSheet(newUnits);
           }
         }
         break;
@@ -155,12 +140,13 @@ const CheckinInventory = () => {
         const price = item.unit.find(
           (item2: any) => item2.uom === item.stock_uom,
         );
-        console.log(item.unit);
         return {
           item_code: item.item_code,
           item_unit: item.stock_uom,
           quantity: item.quantity,
-          exp_time: item.expiry ? new Date(item.expiry).getTime() / 1000 : null,
+          exp_time: item?.expiry
+            ? new Date(item.expiry).getTime() / 1000
+            : null,
           item_price: price ? price.conversion_factor * item.price_default : 0,
         };
       });
@@ -183,7 +169,7 @@ const CheckinInventory = () => {
       }
     }
     dispatch(appActions.setProcessingStatus(false));
-  }, [dataCheckin, products]);
+  }, [dataCheckin, listProducts]);
 
   const removeItem = (idx: number) => {
     const newProducts = listProducts.filter(
@@ -256,8 +242,23 @@ const CheckinInventory = () => {
   );
 
   const openBottonSheetDetail = (item: IProduct, index: number) => {
-    indexSelect.current = index;
     setDetailProduct(item);
+    setLabelBottonSheet('unit');
+    const units = item.unit;
+    const newUnits: IFilterType[] = units.map((item1: any) => {
+      return item.stock_uom === item1.uom
+        ? {
+            label: item1.uom,
+            value: item.item_code,
+            isSelected: true,
+          }
+        : {
+            label: item1.uom,
+            value: item.item_code,
+            isSelected: false,
+          };
+    });
+    setDataBottomSheet(newUnits);
     if (bottomSheetRefDetail.current) {
       bottomSheetRefDetail.current.snapToIndex(0);
     }
@@ -300,10 +301,10 @@ const CheckinInventory = () => {
                 label={getLabel('unit')}
                 value={detailProduct?.stock_uom || ''}
                 editable={false}
-                onPress={() => onOpenBottonSheetData('unit')}
+                onPress={() => bottomSheetData.current?.snapToIndex(0)}
                 rightIcon={
                   <TextInput.Icon
-                    onPress={() => onOpenBottonSheetData('unit')}
+                    onPress={() => bottomSheetData.current?.snapToIndex(0)}
                     icon={'chevron-down'}
                     style={{width: 24, height: 24}}
                     color={colors.text_secondary}

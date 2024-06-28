@@ -405,7 +405,7 @@ const HomeScreen = () => {
     }
   };
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     if (isFocus) {
       dispatch(appActions.setProcessingStatus(false));
       //delete search visit value in ListVisit.tsx
@@ -427,7 +427,7 @@ const HomeScreen = () => {
         ).then();
       }
     }
-  }, []);
+  }, [isFocus]);
 
   useDeepCompareEffect(() => {
     getWidget();

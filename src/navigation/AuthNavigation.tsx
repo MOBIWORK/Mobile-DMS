@@ -1,8 +1,8 @@
-import { StyleSheet } from 'react-native';
-import React, { useEffect } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AuthorizeParamsList } from './screen-type';
-import { AppConstant, ScreenConstant } from '../const';
+import {StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {AuthorizeParamsList} from './screen-type';
+import {AppConstant, ScreenConstant} from '../const';
 import {
   Home,
   WidgetFavouriteScreen,
@@ -49,15 +49,17 @@ import {
   NotifySetting,
   Scanner,
   NotificationDetail,
-  EditCustomer
+  EditCustomer,
 } from '../screens';
 import MainTab from './MainTab';
-import { CommonUtils } from '../utils';
+import {CommonUtils} from '../utils';
 import BeforeCheckin from '../screens/BeforeCheckin';
-
+import {CheckinData} from '../services/appService';
+import {useSelector} from '../config/function';
 
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
+  const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
 
   useEffect(() => {
     CommonUtils.storage.set(AppConstant.FirstLogin, true);
@@ -69,9 +71,12 @@ const AuthNavigation = () => {
         headerShown: false,
         gestureEnabled: false,
         animation: 'slide_from_left',
-        // contentStyle:{zIndex:-10000}
       }}
-      initialRouteName={'MAIN_TAB'}>
+      initialRouteName={
+        dataCheckIn && Object.keys(dataCheckIn)?.length > 0
+          ? 'CHECKIN'
+          : 'MAIN_TAB'
+      }>
       <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
       <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
       <Stack.Screen
@@ -139,7 +144,15 @@ const AuthNavigation = () => {
         name={ScreenConstant.REPORT_ORDER_DETAIL}
         component={ReportOrderDetail}
       />
-      <Stack.Screen name={ScreenConstant.CHECKIN} component={CheckIn} />
+      <Stack.Screen
+        name={ScreenConstant.CHECKIN}
+        component={CheckIn}
+        initialParams={
+          dataCheckIn && Object.keys(dataCheckIn)?.length > 0
+            ? {item: dataCheckIn}
+            : undefined
+        }
+      />
       <Stack.Screen
         name={ScreenConstant.TAKE_PICTURE_VISIT}
         component={TakePicture}
@@ -193,7 +206,7 @@ const AuthNavigation = () => {
       <Stack.Screen
         name={ScreenConstant.LIST_ALBUM_SCORE}
         component={ListAlbumScore}
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name={ScreenConstant.USER_INFO_SCREEN}
@@ -220,9 +233,14 @@ const AuthNavigation = () => {
         component={BeforeCheckin}
       />
       <Stack.Screen name={ScreenConstant.BARCODE_SCANNER} component={Scanner} />
-      <Stack.Screen name={ScreenConstant.NOTIFY_DETAIL} component={NotificationDetail} />
-      <Stack.Screen name={ScreenConstant.EDIT_CUSTOMER} component={EditCustomer} />
-
+      <Stack.Screen
+        name={ScreenConstant.NOTIFY_DETAIL}
+        component={NotificationDetail}
+      />
+      <Stack.Screen
+        name={ScreenConstant.EDIT_CUSTOMER}
+        component={EditCustomer}
+      />
     </Stack.Navigator>
   );
 };
