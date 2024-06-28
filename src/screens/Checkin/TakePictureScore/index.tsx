@@ -258,7 +258,7 @@ const TakePictureScore = () => {
     } else {
       navigate(ScreenConstant.LIST_ALBUM_SCORE, {
         data: itemParams,
-        screen: screen,
+        screen: ScreenConstant.TAKE_PICTURE_SCORE,
       });
       setShowModal(false);
     }
