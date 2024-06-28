@@ -15,7 +15,7 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import {useRoute} from '@react-navigation/native';
+import {useIsFocused, useRoute} from '@react-navigation/native';
 import {RouterProp} from '../../navigation/screen-type';
 import {AppHeader, Block, SvgIcon} from '../../components/common';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
@@ -31,8 +31,8 @@ import {goBack, navigate} from '../../navigation/navigation-service';
 import {CustomerService} from '../../services';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../layouts/ErrorFallBack';
-import { useSelector } from '../../config/function';
-import { shallowEqual } from 'react-redux';
+import {useSelector} from '../../config/function';
+import {shallowEqual} from 'react-redux';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -42,7 +42,6 @@ const DetailCustomer = () => {
 
   const params = useRoute<RouterProp<'DETAIL_CUSTOMER'>>().params;
 
-
   const [isPending, startTrans] = useTransition();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -50,13 +49,11 @@ const DetailCustomer = () => {
     type: AppConstant.CustomerFilterType.loai_khach_hang,
     status: false,
   });
-
+  const isFocus = useIsFocused();
   const getDetailCustomer = async () => {
     try {
-      setLoading(true)
-      let res: any = await CustomerService.getCustomerDetail(
-        params.data.name,
-      );
+      setLoading(true);
+      let res: any = await CustomerService.getCustomerDetail(params.data.name);
       if (res.message === 'ok' || Object.keys(res.result).length > 0) {
         setData(res.result);
       }
@@ -68,7 +65,10 @@ const DetailCustomer = () => {
     }
   };
 
-  const listData = useSelector(state => state.customer.mainAddress,shallowEqual)
+  const listData = useSelector(
+    state => state.customer.mainAddress,
+    shallowEqual,
+  );
   useEffect(() => {
     // setLoading(true);
     getDetailCustomer();
@@ -76,10 +76,9 @@ const DetailCustomer = () => {
     return () => {
       // mounted.current = false;
     };
-  }, []);
+  }, [isFocus]);
 
-  console.log(data,'data customer')
-
+  console.log(data, 'data customer');
 
   const routes = useRef([
     {key: 'first', title: getLabel('overview')},
@@ -96,7 +95,11 @@ const DetailCustomer = () => {
       ),
       second: () => (
         <ErrorBoundary fallbackRender={ErrorFallBack}>
-          <Address onPressAdding={onPressAdding} data={data as any}     listData={listData} />
+          <Address
+            onPressAdding={onPressAdding}
+            data={data as any}
+            listData={listData}
+          />
         </ErrorBoundary>
       ),
       third: () => (
@@ -115,14 +118,14 @@ const DetailCustomer = () => {
       type: AppConstant.CustomerFilterType.dia_chi,
       status: true,
     });
-  }, [modalShow.status,modalShow.type]);
+  }, [modalShow.status, modalShow.type]);
 
   const onPressAddingContact = useCallback(() => {
     setModalShow({
       type: AppConstant.CustomerFilterType.nguoi_lien_he,
       status: true,
     });
-  }, [modalShow.status,modalShow.type]);
+  }, [modalShow.status, modalShow.type]);
 
   const renderTabBar = useCallback((props: any) => {
     return (
