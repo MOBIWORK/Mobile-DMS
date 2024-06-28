@@ -290,7 +290,7 @@ const InforBlock = (props: Props) => {
                 locationCustomer?.longitude ?? 0,
                 locationCustomer?.latitude ?? 0,
               ]}>
-              <SvgIcon source="Location" size={32} colorTheme="action" />
+              <SvgIcon source="Location" size={32} colorTheme="action"  color={theme.colors.text_primary}  />
             </Mapbox.MarkerView>
           </Mapbox.MapView>
         </Block>

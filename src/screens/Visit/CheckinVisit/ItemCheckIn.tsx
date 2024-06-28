@@ -8,10 +8,10 @@ import {CheckinData} from '../../../services/appService';
 import {navigate} from '../../../navigation/navigation-service';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
-import { useMMKVObject } from 'react-native-mmkv';
-import { AppConstant } from '../../../const';
-import { useDeepCompareEffect, useSelector } from '../../../config/function';
+import { useSelector } from '../../../config/function';
 import { shallowEqual } from 'react-redux';
+// import { useSelector } from 'react-redux';
+
 
 type Props = {
   item: IItemCheckIn;
@@ -21,21 +21,9 @@ type Props = {
 const ItemCheckIn = ({item, navData}: Props) => {
   const {colors} = useTheme();
   const [_, startTrans] = useTransition();
-  // const [cateCheckinList, setCateCheckinList] = useMMKVObject(AppConstant.CateList);
-  // const categoriesCheckin = useSelector(
-  //   state => state.checkin.categoriesCheckin,
-  //   shallowEqual,
-  // );
-
-
-  // useDeepCompareEffect(() =>{
-  //   if(item.isDone){
-  //     setCateCheckinList(categoriesCheckin)
-  //   }else{
-  //     console.log('run bitch')
-  //   }
-  // },[item.isDone])
-
+  const listImageToMark = useSelector(state =>state.checkin.imageToMark,shallowEqual)
+  
+  
 
   return (
     <ErrorBoundary fallbackRender={ErrorFallBack}>
@@ -44,11 +32,23 @@ const ItemCheckIn = ({item, navData}: Props) => {
           onPress={
             () =>
               startTrans(() => {
-                navigate(item.screenName, {
-                  type: item.type ? item.type : '',
-                  data: navData,
-                  screen: item.screenName,
-                });
+                if(listImageToMark && listImageToMark.length > 0){
+                  console.log('run case 1 ')
+                  navigate(item.screenName2, {
+                    type: item.type ? item.type : '',
+                    data: navData,
+                    screen: item.screenName2,
+                  });
+                }else{
+                  console.log('run case 2')
+                  console.log(item.screenName,'screen name')
+                  navigate(item.screenName, {
+                    type: item.type ? item.type : '',
+                    data: navData,
+                    screen: item.screenName,
+                  });
+                }
+                
               })
             // console.log(item.screenName,'screen name')
           }>

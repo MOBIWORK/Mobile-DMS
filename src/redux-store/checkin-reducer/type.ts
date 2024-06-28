@@ -13,6 +13,7 @@ export interface IItemCheckIn {
   backgroundColor: keyof Colors;
   type?: string;
   key: string;
+  screenName2?:any
 }
 
 export type TypeState = {
@@ -105,11 +106,8 @@ export const categoriesCheckinList: IItemCheckIn[] = [
     isDone: false,
     isRequire: false,
     name: 'Chấm điểm trưng bày',
-    screenName:
-      imageToMark && imageToMark.length > 0
-        ? ScreenConstant.LIST_ALBUM_SCORE
-        : ScreenConstant.TAKE_PICTURE_SCORE,
-
+    screenName:ScreenConstant.TAKE_PICTURE_SCORE,
+    screenName2:ScreenConstant.LIST_ALBUM_SCORE,
     backgroundColor: 'undoBackground',
     type: 'take_picture_score',
     key: 'take_picture_score',

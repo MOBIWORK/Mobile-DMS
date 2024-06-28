@@ -86,8 +86,6 @@ const ListAlbumScore = (props: Props) => {
   );
 
   const confirmUploadImage = async () => {
-    if (screens && screens === ScreenConstant.TAKE_PICTURE_SCORE) {
-      console.log(screens, 'g');
       try {
         setAppLoading(true);
         const newData: any = itemCheckin.map(item =>
@@ -95,7 +93,7 @@ const ListAlbumScore = (props: Props) => {
             ? {
                 ...item,
                 isDone: true,
-                screenName: ScreenConstant.LIST_ALBUM_SCORE,
+               
               }
             : item,
         );
@@ -115,10 +113,7 @@ const ListAlbumScore = (props: Props) => {
       } finally {
         setAppLoading(false);
       }
-    } else {
-      console.log(screens, 'else');
-      goBack();
-    }
+   
   };
   const listHeaderComponent = useMemo(() => {
     return (

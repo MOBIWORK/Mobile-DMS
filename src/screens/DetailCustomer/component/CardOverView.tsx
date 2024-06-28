@@ -21,14 +21,12 @@ type CardContactType = {
   priContact?: string;
 };
 
-
-
 const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
-console.log(props,'props')
+  // console.log(props,'props')
 
   return (
     <Block style={styles.card}>
@@ -37,14 +35,15 @@ console.log(props,'props')
           <Block>
             <Block style={styles.containAddressLabel}>
               <Block style={styles.containIcon}>
-                <SvgIcon source="MapPin" size={16} />
+              <SvgIcon source="MapPin" size={16} color={theme.colors.text_primary} />
+              {/* <SvgIcon source="MapPin" size={16}  /> */}
               </Block>
               <Block>
                 <Text
                   numberOfLines={2}
                   fontSize={16}
                   fontWeight="300"
-                  colorTheme="black"
+                  colorTheme="text_primary"
                   lineHeight={21}>
                   {props.mainAddress.address_title
                     ? props.mainAddress.address_title.split(',', 4)[0]
@@ -58,7 +57,7 @@ console.log(props,'props')
                 fontSize={14}
                 fontWeight="300"
                 style={{maxWidth: '90%'}}
-                colorTheme="black"
+                colorTheme="text_primary"
                 lineHeight={21}>
                 {props.mainAddress.address_title
                   ? props.mainAddress.address_title.split(',', 4)[1] +
@@ -103,7 +102,7 @@ console.log(props,'props')
             <Text
               fontSize={16}
               fontWeight="400"
-              colorTheme="black"
+              colorTheme="text_primary"
               lineHeight={21}>
               {props.mainContactAddress.first_name
                 ? props.mainContactAddress.first_name
@@ -112,13 +111,13 @@ console.log(props,'props')
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <Block style={styles.containIcon}>
-              <SvgIcon source="MapPin" size={16} />
+              <SvgIcon source="MapPin" size={16} color={theme.colors.text_primary} />
             </Block>
             <Text
               numberOfLines={2}
               fontSize={14}
               fontWeight="300"
-              colorTheme="black"
+              colorTheme="text_primary"
               lineHeight={21}>
               {`${
                 props.mainContactAddress.address
@@ -129,13 +128,13 @@ console.log(props,'props')
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <Block style={styles.containIcon}>
-              <SvgIcon source="Phone" size={16} />
+              <SvgIcon source="Phone" size={16} color={theme.colors.text_primary} />
             </Block>
             <Text
               numberOfLines={2}
               fontSize={14}
               fontWeight="300"
-              colorTheme="black"
+              colorTheme="text_primary"
               lineHeight={21}>
               {props.mainContactAddress.phone != null
                 ? formatPhoneNumber(props.mainContactAddress.phone)
@@ -164,7 +163,7 @@ export default CardAddress;
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     card: {
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.bg_default,
       shadowColor: theme.colors.text_disable,
       borderRadius: 16,
       paddingVertical: 12,
@@ -216,7 +215,7 @@ const rootStyles = (theme: AppTheme) =>
       borderWidth: 1,
       borderColor: theme.colors.border,
       paddingVertical: 3,
-      borderRadius:16
+      borderRadius: 16,
     } as ViewStyle,
     containMain: {
       marginLeft: 8,
