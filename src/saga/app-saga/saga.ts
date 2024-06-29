@@ -63,7 +63,9 @@ export function* onCheckInData(action: PayloadAction) {
       if (Object.keys(response?.result).length > 0) {
         yield put(appActions.setDataCheckIn({}));
         yield put(checkinActions.resetData());
-        
+        yield put(checkinActions.setSelectedProgram([]));
+        yield put(checkinActions.setListImageSelect([]));
+        yield put(checkinActions.setListImageProgram([]));
         yield put(checkinActions.setRefreshVisitWhenCheckOut(true));
         storage.delete(AppConstant.CheckinTime);
         // yield put(checkinActions.setDataCategoriesCheckin([]))
