@@ -32,7 +32,7 @@ const CardAddressView = (props: Props) => {
             style={styles.labelView}
             justifyContent="center"
             alignItems="center">
-            <SvgIcon source="MapPin" size={18} />
+             <SvgIcon source="MapPin" size={18}   color={theme.colors.text_primary} />
             <AppText
               numberOfLines={1}
               style={{maxWidth: '90%', marginLeft: 8}}
@@ -96,7 +96,7 @@ const CardAddressView = (props: Props) => {
         marginTop={10}>
         <Block style={styles.rootLayout}>
           <Block style={styles.labelView}>
-            <SvgIcon source="MapPin" size={18} />
+            <SvgIcon source="MapPin" size={18} colorTheme='text_primary'  color={theme.colors.text_primary} />
             <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
               {props.data ? props.data.split(',', 4)[0] : '---'}
             </AppText>
@@ -134,7 +134,7 @@ export default React.memo(CardAddressView, isEqual);
 const rootStyles = (theme: AppTheme) =>
   StyleSheet.create({
     card: {
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.bg_default,
       shadowColor: theme.colors.text_disable,
       borderRadius: 16,
       // borderWidth: 0.1,

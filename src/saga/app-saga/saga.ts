@@ -63,6 +63,7 @@ export function* onCheckInData(action: PayloadAction) {
       if (Object.keys(response?.result).length > 0) {
         yield put(appActions.setDataCheckIn({}));
         yield put(checkinActions.resetData());
+        
         yield put(checkinActions.setRefreshVisitWhenCheckOut(true));
         storage.delete(AppConstant.CheckinTime);
         // yield put(checkinActions.setDataCategoriesCheckin([]))
@@ -114,6 +115,7 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
         ) {
           return null;
         } else {
+          console.log('systemconfigChange');
           yield put(
             checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
           );

@@ -101,14 +101,16 @@ export function* createReportMarkScoreSaga(action: PayloadAction) {
   if (checkinActions.createReportMarkScore.match(action)) {
     try {
       yield put(onLoadApp());
-      yield call(CheckinService.createReportMarkingApi, action.payload.data);
+       const response:ResponseGenerator =  yield call(CheckinService.createReportMarkingApi, action.payload.data);
+       if(response.message === 'ok'){
+          action.payload.screen === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2): goBack()
+       }
+       
     } catch (err) {
       console.log('[err: ]', err);
     } finally {
       yield put(onLoadAppEnd());
-      action.payload.screen === ScreenConstant.TAKE_PICTURE_SCORE
-        ? pop(1)
-        : goBack();
+      
     }
   }
 }

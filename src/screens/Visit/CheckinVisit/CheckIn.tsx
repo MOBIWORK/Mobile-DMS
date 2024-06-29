@@ -68,7 +68,6 @@ const CheckIn = () => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-
   const [checkinTimeStorage] = useMMKVNumber(AppConstant.CheckinTime);
 
   const [elapsedTime, setElapsedTime] = useState<number>(
@@ -85,7 +84,7 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
-  // console.log('listCate', categoriesCheckin);
+  // console.log('categoriesCheckin', categoriesCheckin);
   const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
   const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
   const [enableGPS, setEnableGPS] = useState(false);
@@ -274,7 +273,12 @@ const CheckIn = () => {
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(appActions.setProcessingStatus(false));
-        goBack();
+        navigate(ScreenConstant.AUTHORIZED, {
+          screen: ScreenConstant.MAIN_TAB,
+          params: {
+            screen: ScreenConstant.VISIT,
+          },
+        });
       }
     }
   }, [enableGPS, isFocus]);

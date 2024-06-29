@@ -248,19 +248,19 @@ const TakePictureScore = () => {
     [selectedImages, setSelectedImages],
   );
 
-  // console.log(listProgram,'program')
+  
 
   const onPressMarkProgram = useCallback(() => {
-    if (listProgramSelected < listProgram) {
+    if (listProgramSelected?.length < listProgram?.length) {
       setShowModal(true);
     } else {
       navigate(ScreenConstant.LIST_ALBUM_SCORE, {
         data: itemParams,
-        screen: screen,
+        screen: ScreenConstant.TAKE_PICTURE_SCORE,
       });
       setShowModal(false);
     }
-  }, [showModal]);
+  }, [showModal,listProgramSelected.length]);
   // console.log(,'ccccc')
   const EmptyAlbum = React.useCallback(() => {
     return (
