@@ -65,25 +65,26 @@ type Props = {
   data: DetailCustomerType;
 };
 
+const dateToTimestamp = (dateString: string): number => {
+  // const formatDate = moment(dateString).format('DD/MM/YYYY');
+  const date = moment(dateString);
 
-const  dateToTimestamp = (dateString: string): number => {
-  const date = moment(dateString, 'DD/MM/YYYY');
-  
-  if (!date.isValid()) {
-    Alert.alert('Không đúng định dạng ngày',dateString)
-    console.log(dateString,'error')
+  if (!moment(date).isValid) {
+    Alert.alert('Không đúng định dạng ngày', dateString);
+    console.log(dateString, 'error');
   }
-  
+
   return date.unix();
-}
+};
 function dateToISOString(dateString: string): string {
-  const date = moment(dateString, 'DD/MM/YYYY');
-  
-  if (!date.isValid()) {
-    Alert.alert('Không đúng định dạng ngày',dateString)
+  // const dateString = moment(dateString).format('DD/MM/YYYY');
 
+  const date = moment(dateString);
+
+  if (!date.isValid()) {
+    Alert.alert('Không đúng định dạng ngày', dateString);
   }
-  
+
   return date.toISOString(); // .toISOString() returns the ISO string
 }
 
@@ -211,7 +212,7 @@ const FormData = (props: Props) => {
     params => {
       setOpenDate(false);
       setDate(params.date);
-      setDataCustomer(prev =>({...prev,custom_birthday:params.date}))
+      setDataCustomer(prev => ({...prev, custom_birthday: params.date}));
     },
     [setOpenDate],
   );
@@ -283,7 +284,9 @@ const FormData = (props: Props) => {
       website: dataCustomer.website || '',
       territory: dataCustomer.territory || '',
       customer_details: dataCustomer.customer_details || '',
-      custom_birthday: dataCustomer?.custom_birthday ?  dateToTimestamp(dateToISOString(dataCustomer?.custom_birthday)) : dateToTimestamp(new Date().toISOString()),
+      custom_birthday: dataCustomer?.custom_birthday
+        ? dateToTimestamp(dateToISOString(dataCustomer?.custom_birthday))
+        : dateToTimestamp(new Date().toISOString()),
       credit_limits: [
         reverseFormatNumber(
           dataCustomer?.credit_limits![0] ? dataCustomer.credit_limits[0] : 0,
@@ -291,7 +294,7 @@ const FormData = (props: Props) => {
       ],
       // ...dataCustomer,
     };
-    // console.log(dataUpdate, 'dataUpdate')
+    console.log(dataUpdate, 'dataUpdate');
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),

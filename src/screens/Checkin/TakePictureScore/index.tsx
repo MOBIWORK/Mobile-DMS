@@ -248,9 +248,7 @@ const TakePictureScore = () => {
     [selectedImages, setSelectedImages],
   );
 
-  // console.log(listProgram,'program')
-
-  // console.log(listProgramSelected,listProgram,'www')
+  
 
   const onPressMarkProgram = useCallback(() => {
     if (listProgramSelected?.length < listProgram?.length) {
