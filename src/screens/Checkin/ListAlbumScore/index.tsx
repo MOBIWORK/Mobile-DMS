@@ -36,6 +36,7 @@ type Props = {};
 const ListAlbumScore = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
+  const [loading, setLoading] = useState(false);
   const itemParams: ParamsList =
     useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.data;
   const screens =
@@ -57,7 +58,7 @@ const ListAlbumScore = (props: Props) => {
     state => state.app.userProfile,
     shallowEqual,
   );
-  const [appLoading, setAppLoading] = useState<boolean>();
+  // const [appLoading, setAppLoading] = useState<boolean>();
 
   const resultData: DataSendMarkScore[] = listProgramSelected?.map(
     (campaign, index) => {
@@ -86,34 +87,33 @@ const ListAlbumScore = (props: Props) => {
   );
 
   const confirmUploadImage = async () => {
-      try {
-        setAppLoading(true);
-        const newData: any = itemCheckin.map(item =>
-          item.key === 'take_picture_score'
-            ? {
-                ...item,
-                isDone: true,
-               
-              }
-            : item,
-        );
+    setLoading(true);
+    try {
+      // setAppLoading(true);
+      const newData: any = itemCheckin.map(item =>
+        item.key === 'take_picture_score'
+          ? {
+              ...item,
+              isDone: true,
+            }
+          : item,
+      );
+      dispatch(checkinActions.setDataCategoriesCheckin(newData));
 
-        dispatch(checkinActions.setDataCategoriesCheckin(newData));
-
-        for (let index = 0; index < resultData.length; index++) {
-          const element = resultData[index];
-          dispatch(checkinActions.createReportMarkScore(element, screens));
-        }
-        //remove store: listProgramSelected, listImageSelected:
-        dispatch(checkinActions.setSelectedProgram([]));
-        dispatch(checkinActions.setListImageSelect([]));
-        dispatch(checkinActions.setListImageProgram([]));
-      } catch (err) {
-        console.log('[err: ]', err);
-      } finally {
-        setAppLoading(false);
+      for (let index = 0; index < resultData.length; index++) {
+        const element = resultData[index];
+        await dispatch(checkinActions.createReportMarkScore(element, screens));
       }
-   
+
+      dispatch(checkinActions.setSelectedProgram([]));
+      dispatch(checkinActions.setListImageSelect([]));
+      dispatch(checkinActions.setListImageProgram([]));
+    } catch (err) {
+      console.log('[err: ]', err);
+    } finally {
+      // setAppLoading(false);
+    }
+    setLoading(false);
   };
   const listHeaderComponent = useMemo(() => {
     return (
@@ -139,7 +139,7 @@ const ListAlbumScore = (props: Props) => {
             onPress={() =>
               navigate(ScreenConstant.TAKE_PICTURE_SCORE, {
                 data: itemParams,
-                screen: 'ListAlbum',
+                screen: 'TAKE_PICTURE_SCORE',
               })
             }>
             <Text fontSize={14} fontWeight="600" colorTheme="action">
@@ -193,7 +193,7 @@ const ListAlbumScore = (props: Props) => {
         </TouchableOpacity>
       </Block>
 
-      <Modal visible={appLoading!} style={styles.modal}>
+      <Modal visible={loading} style={styles.modal}>
         <Block
           borderRadius={16}
           justifyContent="center"
@@ -201,7 +201,7 @@ const ListAlbumScore = (props: Props) => {
           colorTheme="white"
           padding={80}>
           <ActivityIndicator size="large" color={theme.colors.action} />
-          <Text>Đang tải ảnh, từ từ</Text>
+          <Text>Đang tải ảnh...</Text>
         </Block>
       </Modal>
     </SafeAreaView>
