@@ -32,16 +32,19 @@ const ItemCheckIn = ({item, navData}: Props) => {
           onPress={
             () =>
               startTrans(() => {
-                if(listImageToMark && listImageToMark.length > 0){
-                  console.log('run case 1 ')
-                  navigate(item.screenName2 ? item.screenName2 : item.screenName, {
-                    type: item.type ? item.type : '',
-                    data: navData,
-                    screen: item.screenName2,
-                  });
-                }else{
-                  console.log('run case 2')
-                  console.log(item.screenName,'screen name')
+                if (listImageToMark && listImageToMark.length > 0) {
+                  console.log('run case 1 ');
+                  navigate(
+                    item?.screenName2 ? item.screenName2 : item.screenName,
+                    {
+                      type: item.type ? item.type : '',
+                      data: navData,
+                      screen: item.screenName2,
+                    },
+                  );
+                } else {
+                  console.log('run case 2');
+                  console.log(item.screenName, 'screen name');
                   navigate(item.screenName, {
                     type: item.type ? item.type : '',
                     data: navData,
