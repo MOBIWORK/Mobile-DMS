@@ -248,9 +248,7 @@ const TakePictureScore = () => {
     [selectedImages, setSelectedImages],
   );
 
-  // console.log(listProgram,'program')
-
-  // console.log(listProgramSelected,listProgram,'www')
+  
 
   const onPressMarkProgram = useCallback(() => {
     if (listProgramSelected?.length < listProgram?.length) {
@@ -258,7 +256,7 @@ const TakePictureScore = () => {
     } else {
       navigate(ScreenConstant.LIST_ALBUM_SCORE, {
         data: itemParams,
-        screen: screen,
+        screen: ScreenConstant.TAKE_PICTURE_SCORE,
       });
       setShowModal(false);
     }

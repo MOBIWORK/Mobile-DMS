@@ -78,7 +78,7 @@ const DetailCustomer = () => {
     };
   }, [isFocus]);
 
-  console.log(data, 'data customer');
+  // console.log(data, 'data customer');
 
   const routes = useRef([
     {key: 'first', title: getLabel('overview')},

@@ -102,8 +102,6 @@ export function* createReportMarkScoreSaga(action: PayloadAction) {
     try {
       yield put(onLoadApp());
        const response:ResponseGenerator =  yield call(CheckinService.createReportMarkingApi, action.payload.data);
-       console.log(response,'response update');
-       console.log(action.payload.screen,'screen name')
        if(response.message === 'ok'){
           action.payload.screen === ScreenConstant.TAKE_PICTURE_SCORE ? pop(2): goBack()
        }
