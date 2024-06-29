@@ -68,7 +68,6 @@ const CheckIn = () => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-const listImageMark = useSelector(state => state.checkin.imageToMark)
   const [checkinTimeStorage] = useMMKVNumber(AppConstant.CheckinTime);
 
   const [elapsedTime, setElapsedTime] = useState<number>(
