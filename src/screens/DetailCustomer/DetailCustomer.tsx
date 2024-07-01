@@ -50,6 +50,7 @@ const DetailCustomer = () => {
     status: false,
   });
   const isFocus = useIsFocused();
+
   const getDetailCustomer = async () => {
     try {
       setLoading(true);
@@ -65,10 +66,14 @@ const DetailCustomer = () => {
     }
   };
 
+// console.log(data,'dataAddress')
+
   const listData = useSelector(
     state => state.customer.mainAddress,
     shallowEqual,
   );
+  // const [dataAddress,setDataAddress] = useState<any>(listData)
+// console.log(dataAddress,'dataAddress')
   useEffect(() => {
     // setLoading(true);
     getDetailCustomer();
@@ -209,7 +214,7 @@ const DetailCustomer = () => {
           <FormAddress
             onPressClose={onBackButtonPress}
             typeFilter={modalShow.type}
-            listData={[] as any}
+            listData={listData as any}
             setData={() => {}}
             dataCustomer={data}
             getDetailCustomer={getDetailCustomer}

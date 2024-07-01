@@ -10,7 +10,6 @@ import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
 import {useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
-// import { useSelector } from 'react-redux';
 
 type Props = {
   item: IItemCheckIn;
@@ -33,7 +32,6 @@ const ItemCheckIn = ({item, navData}: Props) => {
             () =>
               startTrans(() => {
                 if (listImageToMark && listImageToMark.length > 0) {
-                  console.log('run case 1 ');
                   navigate(
                     item?.screenName2 ? item.screenName2 : item.screenName,
                     {
@@ -43,8 +41,6 @@ const ItemCheckIn = ({item, navData}: Props) => {
                     },
                   );
                 } else {
-                  console.log('run case 2');
-                  console.log(item.screenName, 'screen name');
                   navigate(item.screenName, {
                     type: item.type ? item.type : '',
                     data: navData,
@@ -52,7 +48,6 @@ const ItemCheckIn = ({item, navData}: Props) => {
                   });
                 }
               })
-            // console.log(item.screenName,'screen name')
           }>
           <Block
             direction="row"

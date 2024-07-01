@@ -27,7 +27,7 @@ const CardEditAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
+// console.log(props.address)
   return (
     <ErrorBoundary fallbackRender={ErrorFallBack}>
       {props.type === 'address' ? (
@@ -56,7 +56,7 @@ const CardEditAddress = (props: Props) => {
                       fontWeight="300"
                       colorTheme="black"
                       lineHeight={21}>
-                      {getLabel('addressDetail')}
+                      {props.address.address_line1}
                     </Text>
                   )}
                   <Text
