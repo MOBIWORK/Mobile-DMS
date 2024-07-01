@@ -402,18 +402,33 @@ const SelectProducts = () => {
     [data],
   );
 
-  const onSubmitProductSelect = async () => {
-    const newDataSelect = selectedData.map(item => ({
-      ...item,
-      index: CommonUtils.randomInt(1, 1e6),
-    }));
-    startEffect(() => {
-      dispatch(productActions.setProductSelected(newDataSelect));
-      dispatch(productActions.setListProductSelect(newDataSelect));
-      dispatch(productActions.resetDataProduct());
-    });
-    navigation.goBack();
-  };
+  const onSubmitProductSelect = useCallback(() => {
+    if (data?.length > 0 && selectedData?.length > 0) {
+      const newSelectedData = selectedData.map(item => {
+        const proElement = data.find(
+          itemPro => itemPro.item_code === item.item_code,
+        );
+        if (proElement && Object.keys(proElement).length > 0) {
+          return {
+            ...item,
+            quantity: proElement.quantity,
+            stock_uom: proElement.stock_uom,
+            price: proElement.price,
+            index: CommonUtils.randomInt(1, 1e6),
+          };
+        } else {
+          return {...item, index: CommonUtils.randomInt(1, 1e6)};
+        }
+      });
+
+      startEffect(() => {
+        dispatch(productActions.setProductSelected(newSelectedData));
+        dispatch(productActions.setListProductSelect(newSelectedData));
+        dispatch(productActions.resetDataProduct());
+      });
+      navigation.goBack();
+    }
+  }, [data, selectedData]);
 
   const animatedValue = useRef(new Animated.Value(1000)).current;
 
@@ -464,24 +479,25 @@ const SelectProducts = () => {
   };
 
   //map lại data selected khi ấn chọn trước, sửa unit sau
-  useEffect(() => {
-    if (data?.length > 0 && selectedData?.length > 0) {
-      const newSelectedData = selectedData.map((item, index) => {
-        const proElement = data[index];
-        if (proElement && item.item_code === proElement.item_code) {
-          return {
-            ...item,
-            quantity: proElement.quantity,
-            stock_uom: proElement.stock_uom,
-            price: proElement.price,
-          };
-        } else {
-          return item;
-        }
-      });
-      setSelectedData(newSelectedData);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data?.length > 0 && selectedData?.length > 0) {
+  //     const newSelectedData = selectedData.map((item, index) => {
+  //       const proElement = data[index];
+  //       if (proElement && item.item_code === proElement.item_code) {
+  //         return {
+  //           ...item,
+  //           quantity: proElement.quantity,
+  //           stock_uom: proElement.stock_uom,
+  //           price: proElement.price,
+  //         };
+  //       } else {
+  //         return item;
+  //       }
+  //     });
+  //     // console.log('newww', newSelectedData);
+  //     setSelectedData(newSelectedData);
+  //   }
+  // }, [data]);
 
   useEffect(() => {
     if (isSearch) {

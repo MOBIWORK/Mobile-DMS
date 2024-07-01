@@ -8,6 +8,7 @@ export type PramsTypeOrder = {
   status?: string;
   page_size?: number;
   page_number?: number;
+  search_key?: string;
 };
 
 export interface POST_DATA {
