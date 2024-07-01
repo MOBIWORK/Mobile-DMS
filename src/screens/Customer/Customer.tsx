@@ -348,6 +348,7 @@ const Customer = () => {
         }),
       );
     } else {
+      dispatch(customerActions.onGetCustomer());
     }
   }, [value]);
 

@@ -27,6 +27,7 @@ export interface IAppRedux {
   isProcessing: boolean;
   showModal: boolean;
   searchProductValue: string;
+  searchOrderValue: string;
   searchVisitValue: string;
   searchCustomerValue: string;
   theme: ThemeType;
@@ -37,12 +38,12 @@ export interface IAppRedux {
   listDataCity: {
     city: ListCity[];
     district: ListDistrict[];
-    ward: ListWard[]; 
+    ward: ListWard[];
   };
   dataCheckIn: any;
   userProfile: any;
   automaticLocation: boolean;
-  listSearch?:any
+  listSearch?: any;
 }
 
 export enum SLICE_NAME {
@@ -77,7 +78,7 @@ export enum SLICE_NAME {
   GET_NOTE_TYPE = 'GET_NOTE_TYPE_',
   GET_LIST_STAFF = 'GET_LIST_STAFF_',
   GET_CUSTOMER_PAGE = 'GET_CUSTOMER_PAGE_',
-  UPDATE_CUSTOMER  = 'UPDATE_CUSTOMER_',
+  UPDATE_CUSTOMER = 'UPDATE_CUSTOMER_',
 }
 
 export const RESET_APP = 'RESET_APP_RESET_APP';
@@ -131,4 +132,4 @@ export const GET_NOTE_TYPE = SLICE_NAME.GET_NOTE_TYPE + 'GET_NOTE_TYPE';
 export const GET_LIST_STAFF = SLICE_NAME.GET_LIST_STAFF + 'GET_LIST_STAFF_';
 export const GET_CUSTOMER_PAGE =
   SLICE_NAME.GET_CUSTOMER_PAGE + 'GET_CUSTOMER_PAGE';
-export const UPDATE_CUSTOMER  = SLICE_NAME.UPDATE_CUSTOMER + 'UPDATE_CUSTOMER'
+export const UPDATE_CUSTOMER = SLICE_NAME.UPDATE_CUSTOMER + 'UPDATE_CUSTOMER';

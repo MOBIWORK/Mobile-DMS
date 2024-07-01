@@ -11,6 +11,7 @@ const initialAppState: IAppRedux = {
   showModal: false,
   searchProductValue: '',
   searchVisitValue: '',
+  searchOrderValue: '',
   theme: 'default',
   newCustomer: [],
   searchCustomerValue: '',
@@ -63,6 +64,9 @@ const appSlice = createSlice({
     setSearchProductValue: (state, action: PayloadAction<any>) => {
       state.searchProductValue = action.payload;
     },
+    setSearchOrderValue: (state, action: PayloadAction<any>) => {
+      state.searchOrderValue = action.payload;
+    },
     setSearchCustomerValue: (state, action: PayloadAction<any>) => {
       state.searchCustomerValue = action.payload;
     },
@@ -102,8 +106,7 @@ const appSlice = createSlice({
       }
       state.dataCheckIn.listImage.push(...action.payload);
     },
-    clearListImage: (state) =>
-      void (state.dataCheckIn.listImage = []),
+    clearListImage: state => void (state.dataCheckIn.listImage = []),
     setImageError: (state, action: PayloadAction<any>) => {
       if (!state.dataCheckIn.imageError) {
         state.dataCheckIn.imageError = [];
@@ -129,9 +132,10 @@ const appSlice = createSlice({
       if (!state.listSearch) {
         state.listSearch = [];
       }
-      state.listSearch = state.listSearch.filter((item: any) => item !== action.payload);
-    }
-    
+      state.listSearch = state.listSearch.filter(
+        (item: any) => item !== action.payload,
+      );
+    },
   },
 });
 
