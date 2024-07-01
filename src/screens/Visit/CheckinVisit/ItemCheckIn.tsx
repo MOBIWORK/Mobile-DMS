@@ -34,7 +34,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
               startTrans(() => {
                 if(listImageToMark && listImageToMark.length > 0){
                   console.log('run case 1 ')
-                  navigate(item.screenName2, {
+                  navigate(item.screenName2 ? item.screenName2 : item.screenName, {
                     type: item.type ? item.type : '',
                     data: navData,
                     screen: item.screenName2,

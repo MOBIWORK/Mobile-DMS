@@ -364,11 +364,12 @@ const ModalEditAddress = ({
     };
 
     startTransition(() => {
+      console.log(newAdd,'newAdd')
       setData(prev => ({
         ...prev,
         customer_primary_address: txtAddressDetail,
         address: [
-          // ...(prev.address || []), // Copy previous address array
+          ...(prev.address || []), // Copy previous address array
           newAdd,
         ],
       }));
@@ -462,6 +463,8 @@ const ModalEditAddress = ({
       dispatch(appActions.onGetListCity());
     }
   }, []);
+
+  // console.log(addressValue,'addValue')
 
   return (
     <Modal

@@ -59,6 +59,7 @@ import ModalData from './ModalData';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import {storage} from '../../../utils/commom.utils';
+import { goBack } from '../../../navigation/navigation-service';
 // import {Contact} from '../../DetailCustomer/screen';
 
 type Props = {
@@ -123,6 +124,7 @@ const FormData = (props: Props) => {
     state => state.customer.listCustomerTerritory,
     shallowEqual,
   );
+  // console.log(dataCustomer.address,'dataCus')
 
   const [isPending, startTransition] = useTransition();
   const [date, setDate] = useState<Date>();
@@ -294,13 +296,14 @@ const FormData = (props: Props) => {
       ],
       // ...dataCustomer,
     };
-    console.log(dataUpdate, 'dataUpdate');
+    // console.log(dataUpdate, 'dataUpdate');
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
       // dispatch()
       Keyboard.dismiss();
+      goBack()
       // storage.set('time', '');
     });
   }, [dataCustomer]);
@@ -357,6 +360,7 @@ const FormData = (props: Props) => {
     (data: any, type: string) => {
       if (type === 'address') {
         let newData: Address = data;
+        console.log(newData,'new Data')
 
         newData.is_primary_address = 1;
         startTransition(() => {

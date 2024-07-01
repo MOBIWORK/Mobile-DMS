@@ -172,7 +172,7 @@ export function* updateCustomerSaga(action: PayloadAction) {
     } finally {
       yield put(appActions.onLoadAppEnd());
       Keyboard.dismiss()
-      goBack()
+      // goBack()
       
     }
   }
