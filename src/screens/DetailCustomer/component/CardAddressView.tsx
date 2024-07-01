@@ -23,7 +23,7 @@ const CardAddressView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
+// console.log(props.data,'rpops data')
   return props.type === 'list' ? (
     <ErrorBoundary fallbackRender={ErrorFallback}>
       <Block style={styles.card}>

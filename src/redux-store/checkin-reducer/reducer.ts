@@ -156,7 +156,7 @@ const postImageScore = createAction(
 
 const createReportMarkScore = createAction(
   Actions.CREATE_REPORT_MARK_SCORE,
-  (data: Actions.DataSendMarkScore, screen?: string) => ({
+  (data: Actions.DataSendMarkScore, screen?:any) => ({
     payload: {data, screen},
   }),
 );

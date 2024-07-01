@@ -13,14 +13,22 @@ import {
 } from '../../../components/common';
 import {useTheme} from '../../../layouts/theme';
 import {goBack, navigate, pop} from '../../../navigation/navigation-service';
-import {RootStackParamList} from '../../../navigation/screen-type';
+import {
+  AuthorizeParamsList,
+  RootStackParamList,
+} from '../../../navigation/screen-type';
 
 import {useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {rootStyles} from './style';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScreenConstant} from '../../../const';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import isEqual from 'react-fast-compare';
 import {dispatch} from '../../../utils/redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
@@ -37,6 +45,7 @@ const ListAlbumScore = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation<NavigationProp<AuthorizeParamsList>>();
   const itemParams: ParamsList =
     useRoute<RouteProp<RootStackParamList, 'LIST_ALBUM_SCORE'>>().params.data;
   const screens =
@@ -88,6 +97,7 @@ const ListAlbumScore = (props: Props) => {
 
   const confirmUploadImage = async () => {
     setLoading(true);
+    console.log('run first');
     try {
       // setAppLoading(true);
       const newData: any = itemCheckin.map(item =>
@@ -102,18 +112,17 @@ const ListAlbumScore = (props: Props) => {
 
       for (let index = 0; index < resultData.length; index++) {
         const element = resultData[index];
-        await dispatch(checkinActions.createReportMarkScore(element, screens));
+        await dispatch(
+          checkinActions.createReportMarkScore(element, itemParams),
+        );
       }
-
-      dispatch(checkinActions.setSelectedProgram([]));
-      dispatch(checkinActions.setListImageSelect([]));
-      dispatch(checkinActions.setListImageProgram([]));
     } catch (err) {
       console.log('[err: ]', err);
     } finally {
       // setAppLoading(false);
     }
     setLoading(false);
+    console.log('run last');
   };
   const listHeaderComponent = useMemo(() => {
     return (
@@ -137,7 +146,7 @@ const ListAlbumScore = (props: Props) => {
           </Text>
           <TouchableOpacity
             onPress={() =>
-              navigate(ScreenConstant.TAKE_PICTURE_SCORE, {
+              navigation.navigate(ScreenConstant.TAKE_PICTURE_SCORE, {
                 data: itemParams,
                 screen: 'TAKE_PICTURE_SCORE',
               })

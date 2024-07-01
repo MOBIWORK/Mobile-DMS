@@ -23,6 +23,7 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {
+  DetailCustomerType,
   IDataCustomer,
   KeyAbleProps,
   RootEkMapResponse,
@@ -40,14 +41,16 @@ import isEqual from 'react-fast-compare';
 import {backgroundErrorListener} from '../../../config/function';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {IUpdateAddress} from '../../../services/checkinService';
+import {dataCustomer} from '../../Report/Statistical/components/data';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
   listData: IDataCustomer;
   setData: (item: IDataCustomer) => void;
-  dataCustomer?: any;
+  dataCustomer?: DetailCustomerType;
   getDetailCustomer?: () => Promise<void>;
+  setDataAddress?:React.Dispatch<React.SetStateAction<any>>
 };
 
 export const AddressType = {
@@ -63,7 +66,7 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter, listData, setData} = props;
+  const {onPressClose, typeFilter, listData, setData,setDataAddress} = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -190,7 +193,6 @@ const FormAddress = (props: Props) => {
         ward_name: addressValue.ward?.value ?? '',
       });
       if (locationIDRes?.status === ApiConstant.STT_OK) {
-        console.log(locationIDRes, 'ress');
         const newAddressValue: MainAddress = {
           ...addressValue,
           city: {
@@ -206,8 +208,9 @@ const FormAddress = (props: Props) => {
             id: locationIDRes.data.result.ward_id,
           } as any,
         };
+
         const data: IUpdateAddress = {
-          customer: props.dataCustomer.name! || '',
+          customer: props.dataCustomer?.name! || '',
           long: location?.coords.longitude || NaN,
           lat: location?.coords.latitude || NaN,
           address_line1: txtAddressDetail,
@@ -220,10 +223,41 @@ const FormAddress = (props: Props) => {
             name: addressValue.district?.value ?? '',
           },
           city: {
-            code: locationIDRes.data.result.city_id,
+            code: locationIDRes.data.result.province_id,
             name: addressValue.city?.value ?? '',
           },
         };
+        // console.log(object)
+        // console.log(locationIDRes.data.result,'locaiton ID res')
+        const dataUpdate = {
+          name: props.dataCustomer?.name || '',
+          address: [
+            ...(props.dataCustomer?.address || []),
+            {
+              is_primary_address: addressValue.addressGet ? 1 : 0,
+              is_shipping_address: addressValue.addressOrder ? 1 : 0,
+              address_title: txtAddressDetail,
+              address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
+              name: txtAddressDetail + '-Billing',
+              // address_line1: txtAddressDetail,
+              address_type: 'Billing',
+              city: locationIDRes.data.result.province_id || '',
+              county: locationIDRes.data.result.district_id || '',
+              state: locationIDRes.data.result.ward_id || '',
+              address_line1: txtAddressDetail,
+            },
+          ],
+        };
+        // setData(prev => )
+        // console.log(dataUpdate,'dataUpdateCus');
+        dispatch(
+          customerActions.updateCustomerAction(
+            dataUpdate,
+            props.dataCustomer?.name || '',
+          ),
+        );
+        // setDataAddress!(prev =>({...prev,}))
+        // setData(prev =>({...prev,.}))
         dispatch(
           customerActions.setMainAddress({
             ...newAddressValue,
@@ -318,6 +352,8 @@ const FormAddress = (props: Props) => {
       }));
     }
   }, [contactSelectedData]);
+
+  // console.log(dataCustomer,'dataCus')
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom', 'top']}>

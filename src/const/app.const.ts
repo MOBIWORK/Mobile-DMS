@@ -28,6 +28,7 @@ export const FirstLogin = 'FirstLogin';
 export const isLogOut = 'LogOut';
 export const Organization = 'organization';
 export const ListSearchProductNearly = 'listSearchProductNearly';
+export const ListSearchOrderNearly = 'listSearchOrderNearly';
 export const ListSearchVisitNearly = 'ListSearchVisitNearly';
 export const ListSearchCustomerNearly = 'ListSearchCustomerNearly';
 export const Widget = 'Widget';
