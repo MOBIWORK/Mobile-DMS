@@ -50,6 +50,7 @@ type Props = {
   setData: (item: IDataCustomer) => void;
   dataCustomer?: DetailCustomerType;
   getDetailCustomer?: () => Promise<void>;
+  setDataAddress?:React.Dispatch<React.SetStateAction<any>>
 };
 
 export const AddressType = {
@@ -65,7 +66,7 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter, listData, setData} = props;
+  const {onPressClose, typeFilter, listData, setData,setDataAddress} = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -222,10 +223,12 @@ const FormAddress = (props: Props) => {
             name: addressValue.district?.value ?? '',
           },
           city: {
-            code: locationIDRes.data.result.city_id,
+            code: locationIDRes.data.result.province_id,
             name: addressValue.city?.value ?? '',
           },
         };
+        // console.log(object)
+        // console.log(locationIDRes.data.result,'locaiton ID res')
         const dataUpdate = {
           name: props.dataCustomer?.name || '',
           address: [
@@ -238,13 +241,14 @@ const FormAddress = (props: Props) => {
               name: txtAddressDetail + '-Billing',
               // address_line1: txtAddressDetail,
               address_type: 'Billing',
-              city: locationIDRes.data.result.city_id || '',
+              city: locationIDRes.data.result.province_id || '',
               county: locationIDRes.data.result.district_id || '',
               state: locationIDRes.data.result.ward_id || '',
               address_line1: txtAddressDetail,
             },
           ],
         };
+        // setData(prev => )
         // console.log(dataUpdate,'dataUpdateCus');
         dispatch(
           customerActions.updateCustomerAction(
@@ -252,6 +256,8 @@ const FormAddress = (props: Props) => {
             props.dataCustomer?.name || '',
           ),
         );
+        // setDataAddress!(prev =>({...prev,}))
+        // setData(prev =>({...prev,.}))
         dispatch(
           customerActions.setMainAddress({
             ...newAddressValue,
