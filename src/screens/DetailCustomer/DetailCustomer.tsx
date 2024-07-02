@@ -54,7 +54,7 @@ const DetailCustomer = () => {
   const getDetailCustomer = async () => {
     try {
       setLoading(true);
-      let res: any = await CustomerService.getCustomerDetail(params.data.name);
+      let res: any = await CustomerService.getCustomerDetail(params?.data.name);
       if (res.message === 'ok' || Object.keys(res.result).length > 0) {
         setData(res.result);
       }
@@ -66,14 +66,14 @@ const DetailCustomer = () => {
     }
   };
 
-// console.log(data,'dataAddress')
+  // console.log(data,'dataAddress')
 
   const listData = useSelector(
     state => state.customer.mainAddress,
     shallowEqual,
   );
   // const [dataAddress,setDataAddress] = useState<any>(listData)
-// console.log(dataAddress,'dataAddress')
+  // console.log(dataAddress,'dataAddress')
   useEffect(() => {
     // setLoading(true);
     getDetailCustomer();
@@ -94,23 +94,21 @@ const DetailCustomer = () => {
   const renderScene = React.useCallback(
     SceneMap({
       first: () => (
-        <ErrorBoundary fallbackRender={ErrorFallBack}>
-          <Overview data={data as any} />
-        </ErrorBoundary>
+        // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})}   >
+        <Overview data={data as any} />
       ),
       second: () => (
-        <ErrorBoundary fallbackRender={ErrorFallBack}>
-          <Address
-            onPressAdding={onPressAdding}
-            data={data as any}
-            listData={listData}
-          />
-        </ErrorBoundary>
+        // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
+        <Address
+          onPressAdding={onPressAdding}
+          data={data as any}
+          listData={data && data?.address ? data.address : []}
+        />
       ),
       third: () => (
-        <ErrorBoundary fallbackRender={ErrorFallBack}>
-          <Contact onPressAdding={onPressAddingContact} data={data as any} />
-        </ErrorBoundary>
+        // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
+        <Contact onPressAdding={onPressAddingContact} data={data as any} />
+        // </ErrorBoundary>
       ),
     }),
     [data],

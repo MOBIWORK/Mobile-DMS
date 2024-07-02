@@ -12,6 +12,8 @@ import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
+import { navigate } from '../../../navigation/navigation-service';
+import { ScreenConstant } from '../../../const';
 
 type Props = {
   data: DetailCustomerType;
@@ -22,7 +24,7 @@ const CardContactOverview = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
       <View style={styles.card}>
         <View style={styles.rootLayout}>
           <AppText
