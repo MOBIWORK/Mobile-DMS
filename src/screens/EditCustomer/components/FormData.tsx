@@ -59,7 +59,9 @@ import ModalData from './ModalData';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import {storage} from '../../../utils/commom.utils';
-import { goBack } from '../../../navigation/navigation-service';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {AuthorizeParamsList} from '../../../navigation/screen-type';
+// import {goBack, pop} from '../../../navigation/navigation-service';
 // import {Contact} from '../../DetailCustomer/screen';
 
 type Props = {
@@ -92,6 +94,7 @@ function dateToISOString(dateString: string): string {
 const FormData = (props: Props) => {
   const {data} = props;
   const {t: translate} = useTranslation();
+  const navigation = useNavigation<NavigationProp<AuthorizeParamsList>>();
   const theme = useTheme();
   const styles = formStyles(theme);
   const initStateData = React.useRef<DetailCustomerType>({
@@ -291,7 +294,10 @@ const FormData = (props: Props) => {
         : dateToTimestamp(new Date().toISOString()),
       credit_limits: [
         reverseFormatNumber(
-          dataCustomer?.credit_limits![0] ? dataCustomer.credit_limits[0] : 0,
+          dataCustomer?.credit_limits![0] &&
+            dataCustomer?.credit_limits[0]?.trim()?.length > 0
+            ? dataCustomer.credit_limits[0]
+            : 0,
         ) || 0,
       ],
       // ...dataCustomer,
@@ -301,11 +307,12 @@ const FormData = (props: Props) => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
-      // dispatch()
       Keyboard.dismiss();
-      goBack()
-      // storage.set('time', '');
+      navigation.goBack();
     });
+    // pop(1);
+
+    // goBack();
   }, [dataCustomer]);
 
   const onCloseModal = useCallback(() => {
@@ -318,19 +325,34 @@ const FormData = (props: Props) => {
     }
   }, [modalChoose.status, modalEditAddress.status, modalData.status]);
 
-  const isPrimary = useMemo(() => {
+  const isPrimaryAddress = useMemo(() => {
     if (dataCustomer.address) {
       // Check if any address has is_primary_address equal to 1
       return dataCustomer.address.some(item => item.is_primary_address === 1);
     } else {
       return false;
     }
-  }, [dataCustomer.address]);
+  }, [
+    dataCustomer.address,
+    modalChoose.status,
+    modalData.status,
+    modalEditAddress.status,
+  ]);
+  const isPrimaryContact = useMemo(() => {
+    if (dataCustomer.contacts) {
+      // Check if any address has is_primary_address equal to 1
+      return dataCustomer.contacts.some(item => item.is_primary_contact === 1);
+    } else {
+      return false;
+    }
+  }, [
+    dataCustomer.contacts,
+    modalChoose.status,
+    modalData.status,
+    modalEditAddress.status,
+  ]);
 
-  // console.log( dataCustomer.address.map(item => item.is_primary_address) ,'ccc')
-
-  // console.log(isPrimary,'isPrimary')
-
+  // console.log(dataCustomer?.credit_limits,'credit')
   const onPressTrash = useCallback(() => {
     const updatedAddressArray = dataCustomer.address
       ? dataCustomer?.address.map(item => {
@@ -355,12 +377,13 @@ const FormData = (props: Props) => {
   }, []);
 
   // console.log(dataCustomer?.routers, 'sss')
-
+  // console.log(dataCustomer.credit_limits,'sss')
   const onPressData = useCallback(
     (data: any, type: string) => {
+      console.log(data, 'data press');
       if (type === 'address') {
         let newData: Address = data;
-        console.log(newData,'new Data')
+        console.log(newData, 'new Data');
 
         newData.is_primary_address = 1;
         startTransition(() => {
@@ -384,6 +407,7 @@ const FormData = (props: Props) => {
     },
     [modalChoose.status],
   );
+  // console.log(dataCustomer.contacts ,'contact data')
 
   return (
     <Block block colorTheme="bg_default" marginTop={10} paddingHorizontal={16}>
@@ -407,7 +431,8 @@ const FormData = (props: Props) => {
                 colorTheme="bg_neutral">
                 <Image
                   source={
-                    dataCustomer.image != null
+                    dataCustomer.image != null &&
+                    dataCustomer.image?.trim()?.length > 0
                       ? {uri: dataCustomer.image}
                       : ImageAssets.CameraSelect
                   }
@@ -509,7 +534,7 @@ const FormData = (props: Props) => {
             dataCustomer.territory != null ? dataCustomer.territory : '---'
           }
           editable={false}
-          isRequire={true}
+          isRequire={false}
           contentStyle={styles.contentStyle}
           styles={{marginBottom: 20}}
           onPress={() => {
@@ -548,7 +573,7 @@ const FormData = (props: Props) => {
               : '---'
           }
           editable={false}
-          isRequire={false}
+          isRequire={true}
           contentStyle={styles.contentStyle}
           styles={{marginBottom: 20}}
           onPress={() => {
@@ -606,7 +631,7 @@ const FormData = (props: Props) => {
           label={translate('debtLimit')}
           value={
             dataCustomer.credit_limits && dataCustomer.credit_limits?.length > 0
-              ? dataCustomer.credit_limits[0]
+              ? String(convertToMoneyFormat(dataCustomer.credit_limits[0]))
               : ''
           }
           editable={true}
@@ -668,13 +693,13 @@ const FormData = (props: Props) => {
             colorTheme="text_secondary">
             {translate('address')}
           </Text>
-          {isPrimary && (
+          {isPrimaryAddress && (
             <TouchableOpacity onPress={onPressTrash}>
               <SvgIcon source="Trash" size={26} color="text_disable" />
             </TouchableOpacity>
           )}
         </Block>
-        {isPrimary ? (
+        {isPrimaryAddress ? (
           dataCustomer.address &&
           dataCustomer.address.map((item, index) => {
             return (
@@ -711,29 +736,20 @@ const FormData = (props: Props) => {
             colorTheme="text_secondary">
             {translate('contact')}
           </Text>
-          {dataCustomer.contacts &&
-            dataCustomer.customer_primary_contact &&
-            dataCustomer.contacts.length > 0 &&
-            dataCustomer.contacts[0].first_name.includes(
-              dataCustomer.customer_primary_contact!,
-            ) && (
-              <TouchableOpacity
-                onPress={() =>
-                  setDataCustomer(prev => ({
-                    ...prev,
-                    contacts: [],
-                  }))
-                }>
-                <SvgIcon source="Trash" size={26} color="text_disable" />
-              </TouchableOpacity>
-            )}
+          {isPrimaryContact && (
+            <TouchableOpacity
+              onPress={() =>
+                setDataCustomer(prev => ({
+                  ...prev,
+                  contacts: [],
+                }))
+              }>
+              <SvgIcon source="Trash" size={26} color="text_disable" />
+            </TouchableOpacity>
+          )}
         </Block>
-        {dataCustomer.contacts &&
-        dataCustomer.customer_primary_contact &&
-        dataCustomer.contacts.length > 0 &&
-        dataCustomer.contacts[0].first_name.includes(
-          dataCustomer.customer_primary_contact!,
-        ) ? (
+        {isPrimaryContact ? (
+          dataCustomer.contacts &&
           dataCustomer.contacts.map((item, index) => {
             return (
               <CardEditAddress
@@ -747,7 +763,7 @@ const FormData = (props: Props) => {
         ) : (
           <ButtonLayout
             firstLabel="Thêm mới"
-            secondLabel="Chọn địa chỉ"
+            secondLabel="Chọn liên hệ"
             onPressAdding={onPressAddingContact}
             onPressChoose={onPressChooseContact}
             isExist={

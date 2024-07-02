@@ -245,7 +245,7 @@ const FormAdding = (props: Props) => {
         label={translate('gland')}
         value={valueFilter.router_name ? valueFilter.router_name[0] : ''}
         editable={false}
-        isRequire={false}
+        isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {

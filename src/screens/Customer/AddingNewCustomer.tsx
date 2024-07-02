@@ -125,10 +125,55 @@ const AddingNewCustomer = () => {
   const filterRef = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
+  const isInvalid = useCallback((newListdata: IDataCustomer) => {
+    let check: boolean = false;
+    if (
+      newListdata?.router_name?.[1] &&
+      newListdata?.router_name?.[1].length > 0
+    ) {
+      return (check = true);
+    }
+    if (
+      newListdata.customer_code &&
+      newListdata.customer_code?.trim()?.length > 0
+    ) {
+      return (check = true);
+    }
+    if (
+      newListdata.customer_name &&
+      newListdata.customer_name?.trim()?.length > 0
+    ) {
+      return (check = true);
+    }
+    if (
+      newListdata.customer_group &&
+      newListdata.customer_group?.trim()?.length > 0
+    ) {
+      return (check = true);
+    }
+    if (
+      newListdata.customer_type &&
+      newListdata.customer_type?.trim()?.length > 0
+    ) {
+      return (check = true);
+    }
+    if (
+      newListdata.frequency &&
+      newListdata.frequency?.toString()?.length > 0
+    ) {
+      return (check = true);
+    }
+    if (newListdata.territory && newListdata.territory.length > 0) {
+      return (check = true);
+    }
+    return check;
+  }, []);
+
   const onPressAdding = async (newListData: IDataCustomer) => {
     dispatch(setProcessingStatus(true));
     let address: MainAddress = mainAddress;
     let contact: MainContactAddress = mainContactAddress;
+
     const updateListData: DataCustomersUpdate = {
       // ...newListData,
       router: {
@@ -193,7 +238,11 @@ const AddingNewCustomer = () => {
     };
 
     // console.log(updateListData, 'update List Data');
-    dispatch(setNewCustomer(newListData));
+    if (isInvalid(newListData)) {
+      dispatch(setNewCustomer(newListData));
+    } else {
+      // Alert.alert('Thiếu thông tin, xin vui lòng thử lại');
+    }
     await CommonUtils.CheckNetworkState();
     const response: any = await CustomerService.addNewCustomer(updateListData);
     if (response?.status === ApiConstant.STT_CREATED) {
@@ -411,7 +460,7 @@ const AddingNewCustomer = () => {
               typeFilter={typeFilter}
               listData={listData}
               setData={setListData}
-              dataCustomer={listData.customer_name}
+              dataCustomer={listData}
             />
           </Block>
         </Modal>

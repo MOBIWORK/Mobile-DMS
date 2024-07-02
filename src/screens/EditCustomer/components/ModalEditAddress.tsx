@@ -153,7 +153,6 @@ const ModalEditAddress = ({
     }
   }, []);
 
-
   const onPressButtonGetLocation = () => {
     CommonUtils.getCurrentLocation(
       locations => {
@@ -198,14 +197,14 @@ const ModalEditAddress = ({
     },
     [location?.coords.longitude, location?.coords.latitude, txtAddressDetail],
   );
-
+  // console.log(contactValue, 'contactValue');
   const handleSaveMainContact = useCallback(() => {
     const contact = {
       last_name: contactValue.nameContact,
       first_name: contactValue.nameContact,
       phone: contactValue.phoneNumber,
       address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
-      is_billing_contact: contactValue.isMainAddress ? 1 : 0,
+      is_billing_contact: 0,
       is_primary_contact: 0,
       name: contactValue.nameContact,
       city: addressObj.province.code || '',
@@ -216,12 +215,13 @@ const ModalEditAddress = ({
     startTransition(() => {
       setData(prev => ({
         ...prev,
-        contacts: [contact],
+        contacts: [...(prev.contacts || []), contact],
       }));
     });
     setContactValue({});
+    setAddressSelectedData([])
     onBackButtonPress();
-  }, [contactValue, txtContactDetail, addressObj]);
+  }, [contactValue, txtContactDetail, addressObj,addressSelectedData]);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
@@ -364,7 +364,7 @@ const ModalEditAddress = ({
     };
 
     startTransition(() => {
-      console.log(newAdd,'newAdd')
+      console.log(newAdd, 'newAdd');
       setData(prev => ({
         ...prev,
         customer_primary_address: txtAddressDetail,
