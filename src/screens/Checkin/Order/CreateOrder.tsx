@@ -427,6 +427,13 @@ const CreateOrder = () => {
                       .replace(',', '.')
                   : 0,
               ),
+              discount_item_amount: Number(
+                productDetail?.discount_item_amount
+                  ? productDetail?.discount_item_amount
+                      .toString()
+                      .replace(',', '.')
+                  : 0,
+              ),
             }
           : item,
       );
@@ -814,60 +821,62 @@ const CreateOrder = () => {
       <AppBottomSheet
         bottomSheetRef={bottomSheetRef}
         snapPointsCustom={['100%']}>
-        {Object.keys(productDetail).length > 0 ? (
-          <Pressable
-            onPress={() => Keyboard.dismiss()}
-            style={{paddingHorizontal: 16, height: AppConstant.HEIGHT * 0.9}}>
-            <AppHeader
-              label={getLabel('product')}
-              onBack={() => {
-                Keyboard.dismiss();
-                bottomSheetRef.current?.close();
-                dispatch(productActions.setDataProductDetail({}));
-              }}
-              backButtonIcon={
-                <Image
-                  source={ImageAssets.CloseIcon}
-                  style={{
-                    width: 28,
-                    height: 28,
-                  }}
-                />
-              }
-            />
-            <UpdateProductItem
-              isNotApplyPromotion={isNotApplyPromotion}
-              productDetail={productDetail}
-              setProductDetail={item =>
-                dispatch(productActions.setDataProductDetail(item))
-              }
-              onOpenBottomSheetData={onOpenBottomSheetData}
-            />
-            <Block
-              marginTop={36}
-              position="absolute"
-              alignSelf="center"
-              bottom={0}
-              block
-              style={[styles.flexSpace]}>
-              <AppButton
-                style={{width: '49%', backgroundColor: colors.bg_neutral}}
-                styleLabel={{color: colors.text_secondary}}
-                label={getLabel('cancel')}
-                onPress={() => {
+        <BottomSheetScrollView>
+          {Object.keys(productDetail).length > 0 ? (
+            <Pressable
+              onPress={() => Keyboard.dismiss()}
+              style={{paddingHorizontal: 16, height: AppConstant.HEIGHT * 0.9}}>
+              <AppHeader
+                label={getLabel('product')}
+                onBack={() => {
                   Keyboard.dismiss();
-                  bottomSheetRef.current && bottomSheetRef.current.close();
+                  bottomSheetRef.current?.close();
                   dispatch(productActions.setDataProductDetail({}));
                 }}
+                backButtonIcon={
+                  <Image
+                    source={ImageAssets.CloseIcon}
+                    style={{
+                      width: 28,
+                      height: 28,
+                    }}
+                  />
+                }
               />
-              <AppButton
-                style={{width: '49%'}}
-                label={getLabel('update')}
-                onPress={() => updateProductOrder()}
+              <UpdateProductItem
+                isNotApplyPromotion={isNotApplyPromotion}
+                productDetail={productDetail}
+                setProductDetail={item =>
+                  dispatch(productActions.setDataProductDetail(item))
+                }
+                onOpenBottomSheetData={onOpenBottomSheetData}
               />
-            </Block>
-          </Pressable>
-        ) : undefined}
+              <Block
+                marginTop={36}
+                position="absolute"
+                alignSelf="center"
+                bottom={0}
+                block
+                style={[styles.flexSpace]}>
+                <AppButton
+                  style={{width: '49%', backgroundColor: colors.bg_neutral}}
+                  styleLabel={{color: colors.text_secondary}}
+                  label={getLabel('cancel')}
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    bottomSheetRef.current && bottomSheetRef.current.close();
+                    dispatch(productActions.setDataProductDetail({}));
+                  }}
+                />
+                <AppButton
+                  style={{width: '49%'}}
+                  label={getLabel('update')}
+                  onPress={() => updateProductOrder()}
+                />
+              </Block>
+            </Pressable>
+          ) : undefined}
+        </BottomSheetScrollView>
       </AppBottomSheet>
 
       <AppBottomSheet

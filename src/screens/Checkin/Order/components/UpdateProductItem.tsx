@@ -108,15 +108,14 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
             label={getLabel('discount')}
             value={
               productDetail?.discount_item_amount
-                ? CommonUtils.convertToTwoDecimalPlaces(
-                    productDetail.discount_item_amount,
-                  )
+                ? productDetail.discount_item_amount.toString()
                 : ''
             }
             onChangeValue={text =>
               setProductDetail({
                 ...productDetail,
-                discount_item_amount: Number(text.replace(',', '.')),
+                // @ts-ignore
+                discount_item_amount: text,
                 discount_item_percent: 0,
               })
             }
