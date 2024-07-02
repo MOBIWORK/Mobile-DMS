@@ -28,7 +28,7 @@ const Contact = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
-
+console.log(props.data.contacts,'cintact')
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <View style={styles.containLabel}>
@@ -58,7 +58,7 @@ const Contact = (props: Props) => {
           maxToRenderPerBatch={10}
           decelerationRate={'fast'}
           renderItem={({item}) => {
-            return <CardContactView data={item} primary={props.data.customer_primary_contact} />;
+            return <CardContactView data={item} primary={props.data.customer_primary_contact || ''} />;
           }}
         />
       ) : props.data != null && props.data?.customer_primary_contact != null ? (

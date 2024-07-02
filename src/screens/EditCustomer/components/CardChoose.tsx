@@ -29,6 +29,8 @@ const CardChoose = (props: Props) => {
   const styles = cardStyles(theme);
   const { t: getLabel } = useTranslation();
 
+  console.log(props.data)
+
   return (
     <ErrorBoundary fallbackRender={ErrorFallBack}>
       {props.type === 'address' ? (
@@ -189,7 +191,7 @@ const cardStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       alignContent: 'center',
       marginBottom: 4,
-      justifyContent: 'space-between',
+      // justifyContent: 'space-between',
       paddingHorizontal: 8,
     } as ViewStyle,
     containIcon: {

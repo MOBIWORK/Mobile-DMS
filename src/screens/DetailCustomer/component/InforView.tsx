@@ -207,7 +207,7 @@ const InforBlock = (props: Props) => {
             colorTheme="text_primary"
             lineHeight={24}>
             {props.data.credit_limits && props.data.credit_limits.length > 0
-              ? formatMoney(props.data.credit_limits[0].credit_limit)
+              ? formatMoney(props.data.credit_limits[0])
               : ' ---'}
           </AppText>
           <Block style={styles.divider} />

@@ -529,6 +529,11 @@ export interface ContactCard {
   last_name: any;
   name: string;
   phone: string;
+  is_primary_contact?: number;
+  is_billing_contact?: number;
+  city?:any,
+  county?:any,
+  state?:any
 }
 
 export interface IDataItem {

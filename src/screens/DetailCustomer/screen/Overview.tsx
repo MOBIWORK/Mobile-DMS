@@ -27,6 +27,7 @@ const Overview = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
+    // console.log(props?.data?.credit_limits,'credit')
   return (
     <Block block  colorTheme='bg_neutral' >
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
