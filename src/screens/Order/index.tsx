@@ -35,6 +35,7 @@ import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../layouts/ErrorFallBack';
 import {OrderService} from '../../services';
 import {appActions} from '../../redux-store/app-reducer/reducer';
+import { navigate } from '../../navigation/navigation-service';
 
 const OrderList = () => {
   const {t: getLabel} = useTranslation();
@@ -351,7 +352,7 @@ const OrderList = () => {
   }, [searchOrderValue]);
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallback}>
+    <ErrorBoundary fallbackRender={ErrorFallback} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
       <MainLayout style={{backgroundColor: colors.bg_neutral}}>
         <AppHeader
           label={getLabel('order')}

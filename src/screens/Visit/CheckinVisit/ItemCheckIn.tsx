@@ -10,6 +10,7 @@ import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
 import {useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
+import { ScreenConstant } from '../../../const';
 // import { useSelector } from 'react-redux';
 
 type Props = {
@@ -26,7 +27,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
   );
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
       <Block colorTheme="bg_default">
         <TouchableOpacity
           onPress={

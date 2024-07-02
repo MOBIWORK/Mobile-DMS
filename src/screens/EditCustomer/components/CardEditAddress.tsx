@@ -8,6 +8,8 @@ import {Address, Contact, ContactCard} from '../../../models/types';
 import {formatPhoneNumber} from '../../../config/function';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
+import { navigate } from '../../../navigation/navigation-service';
+import { ScreenConstant } from '../../../const';
 
 type Props = CardTypeAddress | CardContactAddress;
 
@@ -29,7 +31,7 @@ const CardEditAddress = (props: Props) => {
   const {t: getLabel} = useTranslation();
 // console.log(props.address)
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
       {props.type === 'address' ? (
         props.address.is_primary_address === 1 && (
           <Block style={styles.card}>

@@ -85,8 +85,9 @@ export type AuthorizeParamsList = {
 export type RootStackParamList = {
   [ScreenConstant.UNAUTHORIZED]: NavigatorScreenParams<UnAuthorizeParamList>;
   [ScreenConstant.AUTHORIZED]: NavigatorScreenParams<AuthorizeParamsList>;
+  [ScreenConstant.ERROR]:{error:any}
 } & UnAuthorizeParamList &
-  AuthorizeParamsList;
+  AuthorizeParamsList & any; 
 
 // Define prop type for useNavigation and useRoute
 export type NavigationProp =

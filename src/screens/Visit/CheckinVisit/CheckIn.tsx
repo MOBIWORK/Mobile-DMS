@@ -85,10 +85,10 @@ const CheckIn = () => {
     shallowEqual,
   );
   // console.log('listCate', listImageMark);
-  const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
-  const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
+  const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>()?.params?.item!;
+  const route = useRoute<RouterProp<'CHECKIN'>>()?.params?.isLocation;
   const [enableGPS, setEnableGPS] = useState(false);
-  const screen = useRoute<RouterProp<'CHECKIN'>>().params.screen;
+  const screen = useRoute<RouterProp<'CHECKIN'>>()?.params?.screen;
   const [status, setStatus] = useState(
     dataCheckIn?.checkin_trangthaicuahang
       ? dataCheckIn.checkin_trangthaicuahang

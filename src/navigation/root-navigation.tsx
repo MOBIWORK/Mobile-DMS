@@ -12,6 +12,8 @@ import {CheckinData} from '../services/appService';
 import {shallowEqual, useDispatch} from 'react-redux';
 import {appActions} from '../redux-store/app-reducer/reducer';
 import {CheckIn} from '../screens';
+import ErrorFallBack from '../layouts/ErrorFallBack';
+import Error from '../layouts/Error';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,12 +21,7 @@ const RootNavigation = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const validate = CommonUtils.storage.getString(AppConstant.Api_key);
   const isLogout = CommonUtils.storage.getBoolean(AppConstant.isLogOut);
-  const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
-  const categoriesCheckin = useSelector(
-    state => state.checkin.categoriesCheckin,
-    shallowEqual,
-  );
-  const dispatch = useDispatch();
+
 
   // useEffect(() => {
   //   dispatch(appActions.setProcessingStatus(false));
@@ -54,6 +51,10 @@ const RootNavigation = () => {
         <Stack.Screen
           name={ScreenConstant.AUTHORIZED}
           component={AuthNavigation}
+        />
+     <Stack.Screen
+          name={ScreenConstant.ERROR}
+          component={Error}
         />
       </RootStack.Navigator>
     </SafeAreaProvider>
