@@ -33,6 +33,8 @@ const CardChoose = (props: Props) => {
 
   // console.log(props.data)
 
+  console.log(props.data)
+
   return (
     <>
       {props.type === 'address' ? (
