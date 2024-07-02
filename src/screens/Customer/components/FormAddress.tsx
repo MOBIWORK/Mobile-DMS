@@ -367,6 +367,7 @@ const FormAddress = (props: Props) => {
         phone: contactValue.phoneNumber,
         last_name: contactValue.nameContact,
         address: txtAddressDetail,
+        is_primary_contact:0,
         state: {
           code: locationIDRes.data.result.ward_id,
           name: addressValue.ward?.value ?? '',
