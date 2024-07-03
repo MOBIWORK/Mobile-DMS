@@ -132,6 +132,8 @@ const HomeScreen = () => {
     }
   };
 
+
+
   const renderUiWidget = useCallback(() => {
     return (
       <Block marginTop={16} marginBottom={16}>

@@ -28,7 +28,7 @@ const Address = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-  console.log(props.listData,'data')
+  // console.log(props.listData,'data')
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
