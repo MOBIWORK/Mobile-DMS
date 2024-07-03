@@ -14,16 +14,47 @@ import isEqual from 'react-fast-compare';
 import RNRestart from 'react-native-restart';
 import {ImageAssets} from '../assets';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from '../config/function';
+import {shallowEqual} from 'react-redux';
+import {DMSConfigMobile, logError} from '../services/appService';
+import {useMMKVObject, useMMKVString} from 'react-native-mmkv';
+import {AppConstant} from '../const';
+import {IResOrganization} from '../models/types';
 
 const ErrorFallback = ({error}: {error: Error}) => {
   const onPressReset = useCallback(() => {
     // Immediately reload the React Native Bundle
-    // handleError(error);
+    handleError(error);
     RNRestart.Restart();
   }, [error]);
 
   const theme = useTheme();
   const styles = styless(theme);
+  const systemConfig: DMSConfigMobile = useSelector(
+    state => state.app.systemConfig,
+    shallowEqual,
+  );
+  const [organiztion] = useMMKVObject<IResOrganization>(
+    AppConstant.Organization,
+  );
+  const [userNameStore] = useMMKVString(AppConstant.userNameStore);
+
+  if (error) {
+    handleError(error);
+  }
+
+  const handleError = async (errorCrash: Error) => {
+    // Ghi lại thông tin lỗi vào sv
+    let data = {
+      orgid: organiztion?.company_name || '',
+      user: userNameStore || '',
+      api: errorCrash.name || '',
+      screen: errorCrash.stack || '',
+      detail: errorCrash.message || '',
+    };
+    await logError(data);
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <Block marginLeft={16} marginRight={16}>

@@ -56,12 +56,11 @@ import CardEditAddress from './CardEditAddress';
 import ModalEditAddress from './ModalEditAddress';
 import ModalChoose from './ModalChoose';
 import ModalData from './ModalData';
-import {DatePickerModal} from 'react-native-paper-dates';
-import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
-import {storage} from '../../../utils/commom.utils';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {AuthorizeParamsList} from '../../../navigation/screen-type';
-// import {goBack, pop} from '../../../navigation/navigation-service';
+import { DatePickerModal } from 'react-native-paper-dates';
+import { SingleChange } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import { storage } from '../../../utils/commom.utils';
+import navigation from '../../../navigation';
+import { goBack } from '../../../navigation/navigation-service';
 // import {Contact} from '../../DetailCustomer/screen';
 
 type Props = {
@@ -308,7 +307,7 @@ const FormData = (props: Props) => {
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
       Keyboard.dismiss();
-      navigation.goBack();
+      goBack();
     });
     // pop(1);
 
