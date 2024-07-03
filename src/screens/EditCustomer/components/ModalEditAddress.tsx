@@ -15,7 +15,7 @@ import React, {
   useTransition,
 } from 'react';
 import isEqual from 'react-fast-compare';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 import {
   AppHeader,
   AppIcons,
@@ -25,34 +25,35 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import Modal from 'react-native-modal';
-import {CommonUtils} from '../../../utils';
-import {useTranslation} from 'react-i18next';
-import {TextInput} from 'react-native-paper';
+import { CommonUtils } from '../../../utils';
+import { useTranslation } from 'react-i18next';
+import { TextInput } from 'react-native-paper';
 import {
   AddressSelected,
   AddressType,
 } from '../../Customer/components/FormAddress';
-import {GeolocationResponse} from '@react-native-community/geolocation';
+import { GeolocationResponse } from '@react-native-community/geolocation';
 import {
   Address,
   DetailCustomerType,
   KeyAbleProps,
   RootEkMapResponse,
 } from '../../../models/types';
-import {getDetailLocation} from '../../../services/appService';
-import {ApiConstant, AppConstant} from '../../../const';
-import {AppService} from '../../../services';
+import { getDetailLocation } from '../../../services/appService';
+import { ApiConstant, AppConstant } from '../../../const';
+import { AppService } from '../../../services';
 import Mapbox from '@rnmapbox/maps';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
-import {backgroundErrorListener, useSelector} from '../../../config/function';
-import {shallowEqual} from 'react-redux';
-import {dispatch} from '../../../utils/redux';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
+import { backgroundErrorListener, useSelector } from '../../../config/function';
+import { shallowEqual } from 'react-redux';
+import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
 type Props = {
   visible: boolean;
   onBackButtonPress: () => void;
   type: string;
   setData: React.Dispatch<React.SetStateAction<DetailCustomerType>>;
+  dataCustomer: any;
 };
 
 const ModalEditAddress = ({
@@ -60,10 +61,11 @@ const ModalEditAddress = ({
   onBackButtonPress,
   type,
   setData,
+  dataCustomer,
 }: Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
 
   const [screen, setScreen] = useState('');
   const listDataCity = useSelector(
@@ -165,7 +167,6 @@ const ModalEditAddress = ({
   const fetchData = useCallback(
     async (lat: any, lon: any) => {
       const data: RootEkMapResponse = await getDetailLocation(lat, lon);
-      // console.log(data,)
       if (data.status === 'OK' && data.results.length > 0) {
         setAddressValue((prev: any) => ({
           ...prev,
@@ -221,7 +222,7 @@ const ModalEditAddress = ({
     setContactValue({});
     setAddressSelectedData([])
     onBackButtonPress();
-  }, [contactValue, txtContactDetail, addressObj,addressSelectedData]);
+  }, [contactValue, txtContactDetail, addressObj, addressSelectedData]);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
@@ -463,9 +464,12 @@ const ModalEditAddress = ({
       dispatch(appActions.onGetListCity());
     }
   }, []);
-
-  // console.log(addressValue,'addValue')
-
+  useEffect(() => {
+    let data = dataCustomer.address[0].address_title;
+    startTransition(() => {
+      setTxtAddressDetail(data);
+    });
+  }, [dataCustomer]);
   return (
     <Modal
       isVisible={visible}
@@ -477,23 +481,23 @@ const ModalEditAddress = ({
       animationOut={'slideOutDown'}>
       <Block colorTheme="bg_default" block paddingHorizontal={16}>
         {(screen === 'Adding' || screen === 'AddingContact') &&
-        ((type === 'address' && addressSelectedData.length !== 4) ||
-          (type === 'contact' && contactSelectedData.length !== 3)) ? (
+          ((type === 'editAddress' && addressSelectedData.length !== 4) || (type === 'address' && addressSelectedData.length !== 4) ||
+            (type === 'contact' && contactSelectedData.length !== 3)) ? (
           <SelectedAddress
             setScreen={setScreen}
             data={
-              type === 'address' ? addressSelectedData : contactSelectedData
+              type === 'contact' ? contactSelectedData : addressSelectedData
             }
             setData={
-              type === 'address'
-                ? setAddressSelectedData
-                : setContactSelectedData
+              type === 'contact'
+                ? setContactSelectedData
+                : setAddressSelectedData
             }
           />
-        ) : type === 'address' ? (
+        ) : type === 'address' || type === 'editAddress' ? (
           <>
             <AppHeader
-              label="Địa chỉ chính"
+              label={type === 'editAddress' ? 'Sửa địa chỉ' : 'Địa chỉ chính'}
               onBack={onBackButtonPress}
               backButtonIcon={
                 <SvgIcon source="Close" colorTheme="black" size={22} />
@@ -611,13 +615,13 @@ const ModalEditAddress = ({
                         onPress={() => {
                           item.id === '1'
                             ? setAddressValue((prev: any) => ({
-                                ...prev,
-                                addressGet: !addressValue.addressGet,
-                              }))
+                              ...prev,
+                              addressGet: !addressValue.addressGet,
+                            }))
                             : setAddressValue((prev: any) => ({
-                                ...prev,
-                                addressOrder: !addressValue.addressOrder,
-                              }));
+                              ...prev,
+                              addressOrder: !addressValue.addressOrder,
+                            }));
                         }}
                         style={styles.checkBoxBlock}>
                         <Block
@@ -627,7 +631,7 @@ const ModalEditAddress = ({
                               : styles.boxIconOrder(addressValue.addressOrder)
                           }>
                           {addressValue.addressGet ||
-                          addressValue.addressOrder ? (
+                            addressValue.addressOrder ? (
                             <AppIcons
                               iconType={AppConstant.ICON_TYPE.EntypoIcon}
                               size={14}
@@ -653,14 +657,14 @@ const ModalEditAddress = ({
                   scrollEnabled={true}
                   styleURL={Mapbox.StyleURL.Street}
                   logoEnabled={false}
-                  style={{flex: 1}}>
+                  style={{ flex: 1 }}>
                   <Mapbox.RasterSource
                     id="adminmap"
                     tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
                     <Mapbox.RasterLayer
                       id={'adminmap'}
                       sourceID={'admin'}
-                      style={{visibility: 'visible'}}
+                      style={{ visibility: 'visible' }}
                     />
                   </Mapbox.RasterSource>
 
@@ -723,7 +727,7 @@ const ModalEditAddress = ({
           <Block block height={'100%'} paddingHorizontal={16}>
             <AppHeader
               label={getLabel('mainContact')}
-              onBack={() => {}}
+              onBack={() => { }}
               backButtonIcon={
                 <AppIcons
                   iconType={AppConstant.ICON_TYPE.IonIcon}
@@ -842,7 +846,7 @@ const ModalEditAddress = ({
               justifyContent="space-around"
               alignItems="center"
               marginBottom={20}
-              // color='red'
+            // color='red'
             >
               <Block style={styles.containContentButton}>
                 <TouchableOpacity
@@ -904,29 +908,29 @@ const modalEditStyles = (theme: AppTheme) =>
       marginTop: 20,
     } as ViewStyle,
     boxIconGo: (addressGo: boolean) =>
-      ({
-        width: 20,
-        height: 20,
-        borderRadius: 6,
-        borderWidth: !addressGo ? 1 : 0,
-        borderColor: theme.colors.text_secondary,
-        marginBottom: 20,
-        backgroundColor: addressGo ? theme.colors.primary : 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center',
-      } as ViewStyle),
+    ({
+      width: 20,
+      height: 20,
+      borderRadius: 6,
+      borderWidth: !addressGo ? 1 : 0,
+      borderColor: theme.colors.text_secondary,
+      marginBottom: 20,
+      backgroundColor: addressGo ? theme.colors.primary : 'transparent',
+      justifyContent: 'center',
+      alignItems: 'center',
+    } as ViewStyle),
     boxIconOrder: (addressOrder: boolean) =>
-      ({
-        width: 20,
-        height: 20,
-        borderRadius: 6,
-        borderWidth: !addressOrder ? 1 : 0,
-        borderColor: theme.colors.text_secondary,
-        marginBottom: 20,
-        backgroundColor: addressOrder ? theme.colors.primary : 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center',
-      } as ViewStyle),
+    ({
+      width: 20,
+      height: 20,
+      borderRadius: 6,
+      borderWidth: !addressOrder ? 1 : 0,
+      borderColor: theme.colors.text_secondary,
+      marginBottom: 20,
+      backgroundColor: addressOrder ? theme.colors.primary : 'transparent',
+      justifyContent: 'center',
+      alignItems: 'center',
+    } as ViewStyle),
     buttonStyle: {
       backgroundColor: theme.colors.bg_neutral,
       borderRadius: 12,

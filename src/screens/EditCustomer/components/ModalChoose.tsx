@@ -1,4 +1,4 @@
-import {StyleSheet, ViewStyle} from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
 import React from 'react';
 import isEqual from 'react-fast-compare';
 import {
@@ -8,9 +8,9 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import Modal from 'react-native-modal';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 
-import {Address, Contact, ContactCard} from '../../../models/types';
+import { Address, Contact, ContactCard } from '../../../models/types';
 import CardChoose from './CardChoose';
 type Props = {
   visible: boolean;
@@ -18,7 +18,9 @@ type Props = {
   type: string;
   listAddress: Address[];
   listContact: ContactCard[];
-  onPressData:(data:any,type:string) => void
+  onPressData: (data: any, type: string) => void;
+  onEditData: (data: any, type: string) => void;
+
 };
 
 const ModalChoose = ({
@@ -27,14 +29,13 @@ const ModalChoose = ({
   type,
   listAddress,
   listContact,
-  onPressData
+  onPressData,
+  onEditData,
 }: Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
 
-
-
-//  console.log(listAddress,'adâd')
+  //  console.log(listAddress,'adâd')
 
 
   return (
@@ -59,7 +60,7 @@ const ModalChoose = ({
             {listAddress &&
               listAddress.length > 0 &&
               listAddress.map((item, index) => {
-                return <CardChoose key={index} type="address" data={item} onPress={onPressData}  />;
+                return <CardChoose key={index} type="address" data={item} onPress={onPressData} onEditPress={onEditData} />;
               })}
           </Block>
         ) : (
@@ -74,7 +75,7 @@ const ModalChoose = ({
             {listContact &&
               listContact.length > 0 &&
               listContact.map((item, index) => {
-                return <CardChoose key={index} type="contact" data={item}  onPress={onPressData} />;
+                return <CardChoose key={index} type="contact" data={item} onPress={onPressData} />;
               })}
           </Block>
         )}
