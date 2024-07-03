@@ -59,6 +59,8 @@ import ModalData from './ModalData';
 import { DatePickerModal } from 'react-native-paper-dates';
 import { SingleChange } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import { storage } from '../../../utils/commom.utils';
+import navigation from '../../../navigation';
+import { goBack } from '../../../navigation/navigation-service';
 // import {Contact} from '../../DetailCustomer/screen';
 
 type Props = {
@@ -304,7 +306,7 @@ const FormData = (props: Props) => {
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
       Keyboard.dismiss();
-      navigation.goBack();
+      goBack();
     });
     // pop(1);
 

@@ -289,3 +289,7 @@ export const getNotificationDetail = (name: any) => {
     .get(ApiConstant.GET_NOTIFICATION_DETAIL, {name: name})
     .then(res => res.data);
 };
+
+export const logError = (data:any) =>{
+  return createApi().post(ApiConstant.LOG_API,data).then(res => res.data)
+}

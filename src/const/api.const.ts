@@ -150,3 +150,4 @@ export const UPDATE_CUSTOMER =
   URL_PREFIX + '.api.selling.customer.update_customer';
 export const GET_REPORT_DEBT =
   '/api/method/mbw_dms.api.kpi.receivable_summary_report';
+export const LOG_API = '/api/method/mbw_dms.api.logs.write_log'

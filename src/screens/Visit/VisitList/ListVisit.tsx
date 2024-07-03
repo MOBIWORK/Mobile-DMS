@@ -892,6 +892,9 @@ const ListVisit = () => {
     [],
   );
 
+
+  
+
   const handleCompareDistance = useCallback(
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
@@ -927,7 +930,10 @@ const ListVisit = () => {
                   ...prev,
                   type: 'warn',
                   cal:
-                    data - systemConfig.saiso_chophep_kb_vitringoaisaiso / 1000,
+                    data -
+                    (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+                      AppConstant.additional_distance) /
+                      1000,
                 }));
               } else {
                 setModalAlert(prev => ({
@@ -946,7 +952,7 @@ const ListVisit = () => {
         });
       }
     },
-    [modalAlert.status, modalUpdateLocation.status],
+    [modalAlert.status, modalUpdateLocation.status,currentSelect.current],
   );
 
   const handleBackground = useCallback((item: VisitListItemType) => {
