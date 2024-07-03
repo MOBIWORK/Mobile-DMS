@@ -892,6 +892,9 @@ const ListVisit = () => {
     [],
   );
 
+
+  
+
   const handleCompareDistance = useCallback(
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
