@@ -892,9 +892,6 @@ const ListVisit = () => {
     [],
   );
 
-
-  
-
   const handleCompareDistance = useCallback(
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
@@ -912,12 +909,13 @@ const ListVisit = () => {
         setTimeout(() => {
           startEffect(() => {
             CommonUtils.getCurrentLocation(curLocation => {
-              let data = calculateDistance(
+              let data =  calculateDistance(
                 curLocation.coords.latitude,
                 curLocation.coords.longitude,
                 location?.lat,
                 location.long,
               );
+              console.log(data,'data distance')
               if (
                 data >
                   (systemConfig.saiso_chophep_kb_vitringoaisaiso +
@@ -952,7 +950,7 @@ const ListVisit = () => {
         });
       }
     },
-    [modalAlert.status, modalUpdateLocation.status,currentSelect.current],
+    [modalAlert.status, modalUpdateLocation.status, currentSelect.current],
   );
 
   const handleBackground = useCallback((item: VisitListItemType) => {
