@@ -93,7 +93,7 @@ function dateToISOString(dateString: string): string {
 const FormData = (props: Props) => {
   const {data} = props;
   const {t: translate} = useTranslation();
-  const navigation = useNavigation<NavigationProp<AuthorizeParamsList>>();
+  // const navigation = useNavigation<NavigationProp<AuthorizeParamsList>>();
   const theme = useTheme();
   const styles = formStyles(theme);
   const initStateData = React.useRef<DetailCustomerType>({
