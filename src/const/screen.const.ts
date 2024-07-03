@@ -59,3 +59,4 @@ export const BEFORE_CHECKIN = 'BEFORE_CHECKIN';
 export const BARCODE_SCANNER = 'BARCODE_SCANNER';
 export const NOTIFY_DETAIL = 'NOTIFY_DETAIL';
 export const EDIT_CUSTOMER = 'EDIT_CUSTOMER';
+export const ERROR ='ERROR'

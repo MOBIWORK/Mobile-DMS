@@ -1,46 +1,53 @@
-import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import React from 'react';
 import isEqual from 'react-fast-compare';
-import {ErrorBoundary} from 'react-error-boundary';
+import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
-import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import {Address, Contact, ContactCard} from '../../../models/types';
-import {AppTheme, useTheme} from '../../../layouts/theme';
-import {useTranslation} from 'react-i18next';
-import {formatPhoneNumber} from '../../../config/function';
+import { Block, SvgIcon, AppText as Text } from '../../../components/common';
+import { Address, Contact, ContactCard } from '../../../models/types';
+import { AppTheme, useTheme } from '../../../layouts/theme';
+import { useTranslation } from 'react-i18next';
+import { formatPhoneNumber } from '../../../config/function';
+import { navigate } from '../../../navigation/navigation-service';
+import { ScreenConstant } from '../../../const';
 
 type Props = CardListAddress | CardListContact;
 
 type CardListAddress = {
   type: 'address';
   data: Address;
-  onPress:(data:Address,type:'address') => void
+  onPress: (data: Address, type: 'address') => void;
+  onEditPress: (data: Address, type: 'address') => void;
 };
 type CardListContact = {
   type: 'contact';
   data: ContactCard;
-  onPress:(data:ContactCard,type:'contact') => void
+  onPress: (data: ContactCard, type: 'contact') => void
 
 };
 
 const CardChoose = (props: Props) => {
   const theme = useTheme();
   const styles = cardStyles(theme);
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
+
+  // console.log(props.data)
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+
+    <>
+
       {props.type === 'address' ? (
-        <TouchableOpacity style={styles.card} onPress={() => props.onPress(props.data,props.type)}>
+        <TouchableOpacity style={styles.card} onPress={() => props.onPress(props.data, props.type)}>
           <Block paddingHorizontal={16}>
             <Block style={styles.containAddressLabel}>
               <Block direction="row" alignItems="center">
                 <Block style={styles.containIcon}>
                   <SvgIcon source="MapPin" size={16} />
-                  
+
                 </Block>
                 <Block>
-                  {props.data.address_title.trim().length > 0    && (
+                  {props.data.address_title.trim().length > 0 && (
                     <Text
                       numberOfLines={2}
                       fontSize={16}
@@ -52,7 +59,7 @@ const CardChoose = (props: Props) => {
                   )}
                 </Block>
                 <Block>
-                  {props.data.address_line1    && (
+                  {props.data.address_line1 && (
                     <Text
                       numberOfLines={2}
                       fontSize={16}
@@ -64,9 +71,11 @@ const CardChoose = (props: Props) => {
                   )}
                 </Block>
               </Block>
-              <Block>
-                <SvgIcon source="RedEdit" size={16} />
-              </Block>
+              <TouchableOpacity onPress={() => props.onEditPress(props.data, props.type)}>
+                <Block>
+                  <SvgIcon source="RedEdit" size={16} />
+                </Block>
+              </TouchableOpacity>
             </Block>
           </Block>
           <Block style={styles.containAddress}>
@@ -95,7 +104,7 @@ const CardChoose = (props: Props) => {
           </Block>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity style={styles.card} onPress={() => props.onPress(props.data,props.type)}>
+        <TouchableOpacity style={styles.card} onPress={() => props.onPress(props.data, props.type)}>
           <Block paddingHorizontal={16}>
             <Block style={styles.containAddressLabel}>
               <Text
@@ -108,7 +117,7 @@ const CardChoose = (props: Props) => {
                   : '---'}
               </Text>
             </Block>
-            <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
+            <Block style={[styles.containAddressLabel, { paddingHorizontal: 4 }]}>
               <Block style={styles.containIcon}>
                 <SvgIcon source="MapPin" size={16} />
               </Block>
@@ -121,7 +130,7 @@ const CardChoose = (props: Props) => {
                 {`${props.data.address ? `${props.data.address}, ` : ''}`}
               </Text>
             </Block>
-            <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
+            <Block style={[styles.containAddressLabel, { paddingHorizontal: 4 }]}>
               <Block style={styles.containIcon}>
                 <SvgIcon source="Phone" size={16} />
               </Block>
@@ -150,7 +159,7 @@ const CardChoose = (props: Props) => {
           </Block>
         </TouchableOpacity>
       )}
-    </ErrorBoundary>
+    </>
   );
 };
 
@@ -186,7 +195,7 @@ const cardStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       alignContent: 'center',
       marginBottom: 4,
-      justifyContent: 'space-between',
+      // justifyContent: 'space-between',
       paddingHorizontal: 8,
     } as ViewStyle,
     containIcon: {

@@ -8,6 +8,8 @@ import {formatPhoneNumber} from '../../../config/function';
 import {Contact, ContactCard} from '../../../models/types';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
+import { navigate } from '../../../navigation/navigation-service';
+import { ScreenConstant } from '../../../const';
 
 type Props = {
   data: ContactCard;
@@ -20,7 +22,7 @@ const CardContactView = (props: Props) => {
   const {t: getLabel} = useTranslation();
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+   
       <Block style={styles.card}>
         <Block style={styles.rootLayout}>
           <Text
@@ -74,7 +76,7 @@ const CardContactView = (props: Props) => {
           </Block>
         )}
       </Block>
-    </ErrorBoundary>
+  
   );
 };
 

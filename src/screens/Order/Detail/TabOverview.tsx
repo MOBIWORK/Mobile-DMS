@@ -20,7 +20,7 @@ import {
 } from '../../../components/common';
 import {ICON_TYPE} from '../../../const/app.const';
 import {TextInput} from 'react-native-paper';
-import {AppConstant} from '../../../const';
+import {AppConstant, ScreenConstant} from '../../../const';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {IOrderDetail, ItemProductOrder} from '../../../models/types';
@@ -30,6 +30,7 @@ import ErrorFallback from '../../../layouts/ErrorFallBack';
 import {CommonUtils} from '../../../utils';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ItemOrderProduct from '../Component/ItemOrderProduct';
+import { navigate } from '../../../navigation/navigation-service';
 
 const TabOverview = ({data}: PropsType) => {
   const {colors} = useTheme();
@@ -183,7 +184,7 @@ const TabOverview = ({data}: PropsType) => {
   };
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallback}>
+    
       <MainLayout style={styles.layout}>
         <AppContainer>
           <View style={{paddingHorizontal: 16, rowGap: 24, marginTop: 10}}>
@@ -442,7 +443,7 @@ const TabOverview = ({data}: PropsType) => {
           {renderUiBottomSheet()}
         </AppBottomSheet>
       </MainLayout>
-    </ErrorBoundary>
+    
   );
 };
 

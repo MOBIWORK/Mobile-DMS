@@ -9,13 +9,16 @@ import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 
 import {AppIcons, AppText} from '../../../components/common';
-import {AppConstant} from '../../../const';
+import {AppConstant, ScreenConstant} from '../../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {DetailCustomerType, IDataCustomers} from '../../../models/types';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CardContactOverview from '../component/CardView';
 import CardContactView from '../component/CardContactView';
+import {ErrorBoundary} from 'react-error-boundary';
+import ErrorFallBack from '../../../layouts/ErrorFallBack';
+import {navigate} from '../../../navigation/navigation-service';
 
 type Props = {
   onPressAdding: () => void;
@@ -28,43 +31,53 @@ const Contact = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
-
+  // console.log(props.data.contacts,'cintact')
   return (
-    <SafeAreaView style={styles.root} edges={['bottom']}>
-      <View style={styles.containLabel}>
-        <AppText fontSize={14} fontWeight="400" colorTheme="text_secondary">
-          {getLabel('listContact')}
-        </AppText>
-        <TouchableOpacity style={styles.containButton} onPress={onPressAdding}>
-          <AppIcons
-            iconType={AppConstant.ICON_TYPE.AntIcon}
-            name="plus"
-            size={16}
-            color={theme.colors.action}
+  
+      <SafeAreaView style={styles.root} edges={['bottom']}>
+        <View style={styles.containLabel}>
+          <AppText fontSize={14} fontWeight="400" colorTheme="text_secondary">
+            {getLabel('listContact')}
+          </AppText>
+          <TouchableOpacity
+            style={styles.containButton}
+            onPress={onPressAdding}>
+            <AppIcons
+              iconType={AppConstant.ICON_TYPE.AntIcon}
+              name="plus"
+              size={16}
+              color={theme.colors.action}
+            />
+          </TouchableOpacity>
+        </View>
+        {props.data != null &&
+        props.data.contacts &&
+        props.data.contacts != null &&
+        props.data.contacts.length > 0 ? (
+          <FlatList
+            data={props.data.contacts}
+            keyExtractor={(item, index) => item.first_name}
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={10}
+            windowSize={11}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={10}
+            decelerationRate={'fast'}
+            renderItem={({item}) => {
+              return (
+                <CardContactView
+                  data={item}
+                  primary={props.data.customer_primary_contact || ''}
+                />
+              );
+            }}
           />
-        </TouchableOpacity>
-      </View>
-      {props.data != null &&
-      props.data.contacts &&
-      props.data.contacts != null &&
-      props.data.contacts.length > 0 ? (
-        <FlatList
-          data={props.data.contacts}
-          keyExtractor={(item, index) => item.first_name}
-          showsVerticalScrollIndicator={false}
-          initialNumToRender={10}
-          windowSize={11}
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={10}
-          decelerationRate={'fast'}
-          renderItem={({item}) => {
-            return <CardContactView data={item} primary={props.data.customer_primary_contact} />;
-          }}
-        />
-      ) : props.data != null && props.data?.customer_primary_contact != null ? (
-        <CardContactOverview data={props.data} />
-      ) : null}
-    </SafeAreaView>
+        ) : props.data != null &&
+          props.data?.customer_primary_contact != null ? (
+          <CardContactOverview data={props.data} />
+        ) : null}
+      </SafeAreaView>
+    
   );
 };
 

@@ -50,7 +50,7 @@ type Props = {
   setData: (item: IDataCustomer) => void;
   dataCustomer?: DetailCustomerType;
   getDetailCustomer?: () => Promise<void>;
-  setDataAddress?:React.Dispatch<React.SetStateAction<any>>
+  setDataAddress?: React.Dispatch<React.SetStateAction<any>>;
 };
 
 export const AddressType = {
@@ -66,7 +66,7 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter, listData, setData,setDataAddress} = props;
+  const {onPressClose, typeFilter, listData, setData, setDataAddress} = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -354,6 +354,49 @@ const FormAddress = (props: Props) => {
   }, [contactSelectedData]);
 
   // console.log(dataCustomer,'dataCus')
+
+  const handleSaveMainContact = React.useCallback(async () => {
+    const locationIDRes: any = await AppService.getIDLocation({
+      province_name: addressValue.city?.value ?? '',
+      district_name: addressValue.district?.value ?? '',
+      ward_name: addressValue.ward?.value ?? '',
+    });
+    if (locationIDRes?.status === ApiConstant.STT_OK) {
+      const data = {
+        first_name: contactValue.nameContact,
+        phone: contactValue.phoneNumber,
+        last_name: contactValue.nameContact,
+        address: txtAddressDetail,
+        is_primary_contact:0,
+        state: {
+          code: locationIDRes.data.result.ward_id,
+          name: addressValue.ward?.value ?? '',
+        },
+        county: {
+          code: locationIDRes.data.result.district_id,
+          name: addressValue.district?.value ?? '',
+        },
+        city: {
+          code: locationIDRes.data.result.province_id,
+          name: addressValue.city?.value ?? '',
+        },
+      };
+      dispatch(
+        customerActions.updateCustomerAction(
+          data,
+          props.dataCustomer?.name || '',
+        ),
+      );
+      dispatch(
+        customerActions.setMainContactAddress({
+          ...data,
+          addressContact: txtContactDetail,
+        }),
+      );
+    }
+
+    onPressClose();
+  }, [contactValue, txtContactDetail]);
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom', 'top']}>
@@ -751,15 +794,7 @@ const FormAddress = (props: Props) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonApply}
-                onPress={() => {
-                  dispatch(
-                    customerActions.setMainContactAddress({
-                      ...contactValue,
-                      addressContact: txtContactDetail,
-                    }),
-                  );
-                  onPressClose();
-                }}>
+                onPress={handleSaveMainContact}>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </Block>
