@@ -39,9 +39,7 @@ const ErrorFallback = ({error}: {error: Error}) => {
   );
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
 
-  if (error) {
-    handleError(error);
-  }
+
 
   const handleError = async (errorCrash: Error) => {
     // Ghi lại thông tin lỗi vào sv
@@ -55,6 +53,9 @@ const ErrorFallback = ({error}: {error: Error}) => {
     await logError(data);
   };
 
+  if (error) {
+    handleError(error);
+  }
   return (
     <SafeAreaView style={styles.root}>
       <Block marginLeft={16} marginRight={16}>
