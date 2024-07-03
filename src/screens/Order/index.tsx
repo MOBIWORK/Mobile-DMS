@@ -352,7 +352,7 @@ const OrderList = () => {
   }, [searchOrderValue]);
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallback} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
+    <>
       <MainLayout style={{backgroundColor: colors.bg_neutral}}>
         <AppHeader
           label={getLabel('order')}
@@ -437,7 +437,7 @@ const OrderList = () => {
           }
         />
       </AppBottomSheet>
-    </ErrorBoundary>
+    </>
   );
 };
 

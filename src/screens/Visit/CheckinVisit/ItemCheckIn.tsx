@@ -27,7 +27,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
   );
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
+    
       <Block colorTheme="bg_default">
         <TouchableOpacity
           onPress={
@@ -88,7 +88,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
           </Block>
         </TouchableOpacity>
       </Block>
-    </ErrorBoundary>
+    
   );
 };
 
