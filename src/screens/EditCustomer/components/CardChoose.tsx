@@ -31,10 +31,12 @@ const CardChoose = (props: Props) => {
   const styles = cardStyles(theme);
   const { t: getLabel } = useTranslation();
 
-  console.log(props.data)
+  // console.log(props.data)
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, { error: err })}>
+
+    <>
+
       {props.type === 'address' ? (
         <TouchableOpacity style={styles.card} onPress={() => props.onPress(props.data, props.type)}>
           <Block paddingHorizontal={16}>
@@ -157,7 +159,7 @@ const CardChoose = (props: Props) => {
           </Block>
         </TouchableOpacity>
       )}
-    </ErrorBoundary>
+    </>
   );
 };
 

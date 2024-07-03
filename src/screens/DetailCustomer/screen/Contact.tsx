@@ -33,9 +33,7 @@ const Contact = (props: Props) => {
 
   // console.log(props.data.contacts,'cintact')
   return (
-    <ErrorBoundary
-      fallbackRender={ErrorFallBack}
-      onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
+  
       <SafeAreaView style={styles.root} edges={['bottom']}>
         <View style={styles.containLabel}>
           <AppText fontSize={14} fontWeight="400" colorTheme="text_secondary">
@@ -79,7 +77,7 @@ const Contact = (props: Props) => {
           <CardContactOverview data={props.data} />
         ) : null}
       </SafeAreaView>
-    </ErrorBoundary>
+    
   );
 };
 

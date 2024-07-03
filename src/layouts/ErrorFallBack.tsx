@@ -1,55 +1,78 @@
-import {Button, Platform, StyleSheet, ViewStyle} from 'react-native';
-import React from 'react';
+import {
+  Button,
+  Image,
+  ImageStyle,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
+import React, {useCallback} from 'react';
 import {Block, AppText as Text} from '../components/common';
 import {AppTheme, useTheme} from './theme';
 import isEqual from 'react-fast-compare';
+import RNRestart from 'react-native-restart';
+import {ImageAssets} from '../assets';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
-const ErrorFallback = ({
-  error,
-  resetErrorBoundary,
-}: {
-  error: Error;
-  resetErrorBoundary: () => void;
-}) => {
+const ErrorFallback = ({error}: {error: Error}) => {
+  const onPressReset = useCallback(() => {
+    // Immediately reload the React Native Bundle
+    // handleError(error);
+    RNRestart.Restart();
+  }, [error]);
+
   const theme = useTheme();
+  const styles = styless(theme);
   return (
-    <Block
-      justifyContent="center"
-      alignItems="center"
-      style={styles(theme).card}>
-      <Text>Đã có lỗi xảy ra:</Text>
-      <Text>{error.message}</Text>
-      <Button title="Thử lại" onPress={resetErrorBoundary} />
-    </Block>
+    <SafeAreaView style={styles.root}>
+      <Block marginLeft={16} marginRight={16}>
+        <Image
+          source={ImageAssets.ErrorApiIcon}
+          style={styles.image}
+          resizeMode="contain"
+        />
+        <Block justifyContent="center" alignItems="center" maxWidth={200}>
+          <Text
+            textAlign="center"
+            fontSize={14}
+            color={theme.colors.text_primary}>
+            {' '}
+            Đã có lỗi xảy ra, xin vui lòng thử lại
+          </Text>
+          <Text fontSize={15} color={theme.colors.error}>
+            {error.message}
+          </Text>
+        </Block>
+        <TouchableOpacity style={styles.buttonReset} onPress={onPressReset}>
+          <Text
+            fontSize={16}
+            color={theme.colors.bg_default}
+            textAlign="center">
+            Khởi động lại
+          </Text>
+        </TouchableOpacity>
+      </Block>
+    </SafeAreaView>
   );
 };
 
 export default React.memo(ErrorFallback, isEqual);
 
-const styles = (theme: AppTheme) =>
+const styless = (theme: AppTheme) =>
   StyleSheet.create({
-    card: {
-      backgroundColor: theme.colors.white,
-      shadowColor: theme.colors.text_disable,
-      borderRadius: 16,
-      // borderWidth: 0.1,
-      paddingVertical: 12,
-      marginVertical: 8,
-      marginBottom: 20,
-      ...Platform.select({
-        ios: {
-          shadowOffset: {
-            width: 0,
-            height: 1,
-          },
-          shadowOpacity: 0.2,
-          shadowRadius: 1.23,
-          elevation: 2,
-        },
-        android: {
-          elevation: 4,
-          shadowRadius: 6.4,
-        },
-      }),
+    root: {
+      flex: 1,
+      backgroundColor: theme.colors.bg_default,
+      justifyContent: 'center',
+    } as ViewStyle,
+    image: {
+      width: 200,
+      height: 200,
+    } as ImageStyle,
+    buttonReset: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 50,
+      padding: 16,
     } as ViewStyle,
   });
