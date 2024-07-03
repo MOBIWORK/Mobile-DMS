@@ -40,7 +40,6 @@ const ErrorFallback = ({error}: {error: Error}) => {
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
 
 
-
   const handleError = async (errorCrash: Error) => {
     // Ghi lại thông tin lỗi vào sv
     let data = {
