@@ -8,6 +8,8 @@ import { Address, Contact, ContactCard } from '../../../models/types';
 import { AppTheme, useTheme } from '../../../layouts/theme';
 import { useTranslation } from 'react-i18next';
 import { formatPhoneNumber } from '../../../config/function';
+import { navigate } from '../../../navigation/navigation-service';
+import { ScreenConstant } from '../../../const';
 
 type Props = CardListAddress | CardListContact;
 
@@ -29,8 +31,10 @@ const CardChoose = (props: Props) => {
   const styles = cardStyles(theme);
   const { t: getLabel } = useTranslation();
 
+  console.log(props.data)
+
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, { error: err })}>
       {props.type === 'address' ? (
         <TouchableOpacity style={styles.card} onPress={() => props.onPress(props.data, props.type)}>
           <Block paddingHorizontal={16}>
@@ -189,7 +193,7 @@ const cardStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       alignContent: 'center',
       marginBottom: 4,
-      justifyContent: 'space-between',
+      // justifyContent: 'space-between',
       paddingHorizontal: 8,
     } as ViewStyle,
     containIcon: {

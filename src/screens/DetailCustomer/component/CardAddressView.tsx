@@ -7,6 +7,8 @@ import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../../layouts/ErrorFallBack';
+import { navigate } from '../../../navigation/navigation-service';
+import { ScreenConstant } from '../../../const';
 
 type SingleAddress = {
   type: 'single';
@@ -23,9 +25,9 @@ const CardAddressView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
+// console.log(props.data,'rpops data')
   return props.type === 'list' ? (
-    <ErrorBoundary fallbackRender={ErrorFallback}>
+    <ErrorBoundary fallbackRender={ErrorFallback} onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
       <Block style={styles.card}>
         <Block style={styles.rootLayout}>
           <Block
@@ -87,7 +89,7 @@ const CardAddressView = (props: Props) => {
       </Block>
     </ErrorBoundary>
   ) : (
-    <ErrorBoundary fallbackRender={ErrorFallback}>
+    <ErrorBoundary fallbackRender={ErrorFallback} onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
       <Block
         colorTheme="bg_default"
         paddingVertical={12}

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {MainLayout} from '../../layouts';
 import {AppBottomSheet, AppHeader, AppIcons} from '../../components/common';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {RefreshControl, TouchableOpacity} from 'react-native-gesture-handler';
 import {
   FlatList,
   Image,
@@ -34,6 +34,8 @@ import {useSelector} from '../../config/function';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../layouts/ErrorFallBack';
 import {OrderService} from '../../services';
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import { navigate } from '../../navigation/navigation-service';
 
 const OrderList = () => {
   const {t: getLabel} = useTranslation();
@@ -116,6 +118,7 @@ const OrderList = () => {
 
   const orders = useSelector(state => state.order.data);
   const totalData = useSelector(state => state.order.totalItem);
+  const searchOrderValue = useSelector(state => state.app.searchOrderValue);
 
   const [dataFilter, setDataFilter] = useState<IFilterType[]>([]);
   const [label, setLabel] = useState<string>('');
@@ -128,6 +131,7 @@ const OrderList = () => {
   const [filterStatus, setFilterStatus] = useState<string>();
   const [page, setPage] = useState<number>(1);
   const [pageSize] = useState(20);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onOpenBottomSheet = (type: string) => {
     setType(type);
@@ -150,6 +154,7 @@ const OrderList = () => {
   };
 
   const onChangeData = (item: IFilterType) => {
+    dispatch(appActions.setSearchOrderValue(''));
     switch (type) {
       case 'status': {
         const newData = dataStatus.map(itemRes => {
@@ -304,6 +309,15 @@ const OrderList = () => {
     );
   }, []);
 
+  const onRefreshData = () => {
+    dispatch(appActions.setSearchProductValue(''));
+    if (page > 1) {
+      setPage(1);
+    } else {
+      fetchData();
+    }
+  };
+
   const onEndReachedThreshold = () => {
     const totalPage = Math.ceil(totalData / pageSize);
     if (page <= totalPage && orders.length > 3) {
@@ -327,27 +341,40 @@ const OrderList = () => {
     fetchData();
   }, [page, filterStatus, toDate, fromDate]);
 
+  useEffect(() => {
+    if (searchOrderValue) {
+      dispatch(
+        orderAction.onGetData({
+          search_key: searchOrderValue,
+        }),
+      );
+    }
+  }, [searchOrderValue]);
+
   return (
-    <ErrorBoundary fallbackRender={ErrorFallback}>
+    <ErrorBoundary fallbackRender={ErrorFallback} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
       <MainLayout style={{backgroundColor: colors.bg_neutral}}>
         <AppHeader
           label={getLabel('order')}
           labelStyle={{textAlign: 'center', marginLeft: 8}}
-          onBack={() => navigation.goBack()}
-          // rightButton={
-          //   <TouchableOpacity
-          //     onPress={() =>
-          //       navigation.navigate(ScreenConstant.SEARCH_COMMON_SCREEN, {
-          //         type: 'order',
-          //       })
-          //     }>
-          //     <Image
-          //       source={ImageAssets.SearchIcon}
-          //       style={styles.iconBack}
-          //       resizeMode={'cover'}
-          //     />
-          //   </TouchableOpacity>
-          // }
+          onBack={() => {
+            dispatch(appActions.setSearchOrderValue(''));
+            navigation.goBack();
+          }}
+          rightButton={
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(ScreenConstant.SEARCH_COMMON_SCREEN, {
+                  type: 'order',
+                })
+              }>
+              <Image
+                source={ImageAssets.SearchIcon}
+                style={styles.iconBack}
+                resizeMode={'cover'}
+              />
+            </TouchableOpacity>
+          }
         />
         <View style={[styles.containerFilter]}>
           <ButtonFilter
@@ -377,6 +404,9 @@ const OrderList = () => {
           <FlatList
             data={orders}
             onEndReached={onEndReachedThreshold}
+            refreshControl={
+              <RefreshControl refreshing={loading} onRefresh={onRefreshData} />
+            }
             onEndReachedThreshold={0}
             initialNumToRender={20}
             showsVerticalScrollIndicator={false}

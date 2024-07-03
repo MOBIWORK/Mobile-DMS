@@ -1,15 +1,16 @@
-import {TouchableOpacity} from 'react-native';
-import React, {useTransition} from 'react';
-import {IItemCheckIn} from './ultil';
-import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import {useTheme} from '../../../layouts/theme';
+import { TouchableOpacity } from 'react-native';
+import React, { useTransition } from 'react';
+import { IItemCheckIn } from './ultil';
+import { Block, SvgIcon, AppText as Text } from '../../../components/common';
+import { useTheme } from '../../../layouts/theme';
 import isEqual from 'react-fast-compare';
-import {CheckinData} from '../../../services/appService';
-import {navigate} from '../../../navigation/navigation-service';
-import {ErrorBoundary} from 'react-error-boundary';
+import { CheckinData } from '../../../services/appService';
+import { navigate } from '../../../navigation/navigation-service';
+import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
-import {useSelector} from '../../../config/function';
-import {shallowEqual} from 'react-redux';
+import { useSelector } from '../../../config/function';
+import { shallowEqual } from 'react-redux';
+import { ScreenConstant } from '../../../const';
 // import { useSelector } from 'react-redux';
 
 type Props = {
@@ -17,8 +18,8 @@ type Props = {
   navData: CheckinData;
 };
 
-const ItemCheckIn = ({item, navData}: Props) => {
-  const {colors} = useTheme();
+const ItemCheckIn = ({ item, navData }: Props) => {
+  const { colors } = useTheme();
   const [_, startTrans] = useTransition();
   const listImageToMark = useSelector(
     state => state.checkin.imageToMark,
@@ -26,7 +27,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
   );
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, { error: err })} >
       <Block colorTheme="bg_default">
         <TouchableOpacity
           onPress={

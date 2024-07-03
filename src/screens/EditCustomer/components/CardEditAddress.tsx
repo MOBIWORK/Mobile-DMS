@@ -8,6 +8,8 @@ import {Address, Contact, ContactCard} from '../../../models/types';
 import {formatPhoneNumber} from '../../../config/function';
 import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallBack from '../../../layouts/ErrorFallBack';
+import { navigate } from '../../../navigation/navigation-service';
+import { ScreenConstant } from '../../../const';
 
 type Props = CardTypeAddress | CardContactAddress;
 
@@ -27,9 +29,9 @@ const CardEditAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
+// console.log(props.address)
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
       {props.type === 'address' ? (
         props.address.is_primary_address === 1 && (
           <Block style={styles.card}>
@@ -56,7 +58,7 @@ const CardEditAddress = (props: Props) => {
                       fontWeight="300"
                       colorTheme="black"
                       lineHeight={21}>
-                      {getLabel('addressDetail')}
+                      {props.address.address_line1}
                     </Text>
                   )}
                   <Text

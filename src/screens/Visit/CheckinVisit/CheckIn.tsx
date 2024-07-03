@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AppSwitch as Switch,
   AppText as Text,
@@ -20,13 +20,13 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import {AuthorizeParamsList, RouterProp} from '../../../navigation/screen-type';
-import {AppTheme, useTheme} from '../../../layouts/theme';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Modal} from 'react-native-paper';
+import { AuthorizeParamsList, RouterProp } from '../../../navigation/screen-type';
+import { AppTheme, useTheme } from '../../../layouts/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Modal } from 'react-native-paper';
 import ItemCheckIn from './ItemCheckIn';
 import AppImage from '../../../components/common/AppImage';
-import {CheckinData, DMSConfigMobile} from '../../../services/appService';
+import { CheckinData, DMSConfigMobile } from '../../../services/appService';
 import {
   backgroundErrorListener,
   calculateDistance,
@@ -35,23 +35,23 @@ import {
   useDisableBackHandler,
   useSelector,
 } from '../../../config/function';
-import {shallowEqual, useDispatch} from 'react-redux';
-import {useTranslation} from 'react-i18next';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import { shallowEqual, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { checkinActions } from '../../../redux-store/checkin-reducer/reducer';
 import isEqual from 'react-fast-compare';
-import {goBack, navigate} from '../../../navigation/navigation-service';
-import {AppService} from '../../../services';
-import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
-import {useBatteryLevel} from 'expo-battery';
-import {IItemCheckIn} from '../../../redux-store/checkin-reducer/type';
-import {AppDialog} from '../../../components/common';
-import {LocationProps} from '../VisitList/VisitItem';
-import {CommonUtils} from '../../../utils';
-import {GeolocationResponse} from '@react-native-community/geolocation';
-import {storage} from '../../../utils/commom.utils';
-import {isLocationEnabled} from 'react-native-android-location-enabler';
-import {useMMKVNumber} from 'react-native-mmkv';
+import { goBack, navigate } from '../../../navigation/navigation-service';
+import { AppService } from '../../../services';
+import { ApiConstant, AppConstant, ScreenConstant } from '../../../const';
+import { useBatteryLevel } from 'expo-battery';
+import { IItemCheckIn } from '../../../redux-store/checkin-reducer/type';
+import { AppDialog } from '../../../components/common';
+import { LocationProps } from '../VisitList/VisitItem';
+import { CommonUtils } from '../../../utils';
+import { GeolocationResponse } from '@react-native-community/geolocation';
+import { storage } from '../../../utils/commom.utils';
+import { isLocationEnabled } from 'react-native-android-location-enabler';
+import { useMMKVNumber } from 'react-native-mmkv';
 
 // @ts-ignore
 import StringFormat from 'string-format';
@@ -59,7 +59,7 @@ import StringFormat from 'string-format';
 const CheckIn = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState<string>(getLabel('openDoor'));
   const navigation =
@@ -84,11 +84,11 @@ const CheckIn = () => {
     state => state.checkin.categoriesCheckin,
     shallowEqual,
   );
-  // console.log('categoriesCheckin', categoriesCheckin);
-  const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>().params.item;
-  const route = useRoute<RouterProp<'CHECKIN'>>().params.isLocation;
+  // console.log('listCate', listImageMark);
+  const params: CheckinData = useRoute<RouterProp<'CHECKIN'>>()?.params?.item!;
+  const route = useRoute<RouterProp<'CHECKIN'>>()?.params?.isLocation;
   const [enableGPS, setEnableGPS] = useState(false);
-  const screen = useRoute<RouterProp<'CHECKIN'>>().params.screen;
+  const screen = useRoute<RouterProp<'CHECKIN'>>()?.params?.screen;
   const [status, setStatus] = useState(
     dataCheckIn?.checkin_trangthaicuahang
       ? dataCheckIn.checkin_trangthaicuahang
@@ -375,7 +375,7 @@ const CheckIn = () => {
         if (
           distance * 1000 >
           systemConfig.saiso_chophep_checkout_ngoaisaiso +
-            AppConstant.additional_distance
+          AppConstant.additional_distance
         ) {
           setMsgCheckOutErr({
             type: 'distance',
@@ -434,7 +434,7 @@ const CheckIn = () => {
         data: params,
         screen: screen,
       });
-      navigation.setParams({isLocation: true});
+      navigation.setParams({ isLocation: true });
     } else {
       return;
     }
@@ -456,7 +456,7 @@ const CheckIn = () => {
             marginRight={16}>
             <Block>
               <TouchableOpacity
-                style={{padding: 8}}
+                style={{ padding: 8 }}
                 onPress={() => {
                   setShow(true);
                   // checkGPS();
@@ -530,12 +530,12 @@ const CheckIn = () => {
           isCurrentTimeGreaterOrEqual(timeCheckin.current)
             ? checkGPS()
             : showSnack({
-                msg: StringFormat(getLabel('checkOutTimeErr'), {
-                  time: systemConfig.thoigian_toithieu,
-                }),
-                type: 'warn',
-                interval: 2000,
-              })
+              msg: StringFormat(getLabel('checkOutTimeErr'), {
+                time: systemConfig.thoigian_toithieu,
+              }),
+              type: 'warn',
+              interval: 2000,
+            })
         }>
         <Block
           marginLeft={16}
@@ -605,7 +605,7 @@ const CheckIn = () => {
       <AppDialog
         open={openDialogErr}
         errorType
-        modalType={{width: '90%'}}
+        modalType={{ width: '90%' }}
         title={msgCheckOutErr?.title}
         message={msgCheckOutErr.msg}
         showButton
@@ -636,17 +636,17 @@ const rootStyles = (theme: AppTheme) =>
       borderRadius: 16,
     } as ViewStyle,
     containButton: (title: string) =>
-      ({
-        backgroundColor:
-          title === 'exit' ? theme.colors.primary : theme.colors.bg_neutral,
-        flex: 1,
-        marginHorizontal: 6,
-        marginVertical: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 8,
-        borderRadius: 20,
-      } as ViewStyle),
+    ({
+      backgroundColor:
+        title === 'exit' ? theme.colors.primary : theme.colors.bg_neutral,
+      flex: 1,
+      marginHorizontal: 6,
+      marginVertical: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 8,
+      borderRadius: 20,
+    } as ViewStyle),
     containContainerButton: {
       marginBottom: 20,
       backgroundColor: theme.colors.bg_neutral,

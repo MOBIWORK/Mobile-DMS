@@ -121,7 +121,7 @@ const VisitItem: FC<VisitItemProps> = ({
     check();
   }, [isEnable.current]);
   return (
-    <ErrorBoundary fallbackRender={ErrorFallback}>
+    <ErrorBoundary fallbackRender={ErrorFallback}onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
       <TouchableOpacity
         onPress={
           () =>

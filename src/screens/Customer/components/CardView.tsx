@@ -51,7 +51,9 @@ const CardView = (props: Props) => {
   };
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack}>
+    <ErrorBoundary
+      fallbackRender={ErrorFallBack}
+      onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
       <TouchableOpacity
         style={styles.card}
         onPress={() =>

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {MainLayout} from '../../layouts';
 import {
   Image,
+  Keyboard,
   NativeSyntheticEvent,
   Text,
   TextInputSubmitEditingEventData,
@@ -18,6 +19,8 @@ import {AppIcons} from '../../components/common';
 import {useDispatch} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {appActions} from '../../redux-store/app-reducer/reducer';
+import {ListSearchOrderNearly} from '../../const/app.const';
+import {CommonUtils} from '../../utils';
 
 const SearchScreen = ({}) => {
   const {colors} = useTheme();
@@ -25,20 +28,12 @@ const SearchScreen = ({}) => {
   const dispatch = useDispatch();
   const {t: getLabel} = useTranslation();
   const router = useRoute<RouterProp<'SEARCH_COMMON_SCREEN'>>();
-  const {type} = router.params;
-
-  let label: string = '';
-  switch (type) {
-    case 'order':
-      label = 'searchOrder';
-      break;
-
-    default:
-      break;
-  }
 
   const [listProductNearly, setListProductNearly] = useMMKVString(
     AppConstant.ListSearchProductNearly,
+  );
+  const [listOrderNearly, setListOrderNearly] = useMMKVString(
+    AppConstant.ListSearchOrderNearly,
   );
 
   const [searchValue, setSearch] = useState<string>('');
@@ -50,38 +45,72 @@ const SearchScreen = ({}) => {
           {getLabel('recentSearches')}
         </Text>
         <View style={{marginTop: 16}}>
-          {listProductNearly &&
-            JSON.parse(listProductNearly).map((item: any, index: number) => {
-              return (
-                <View
-                  key={index}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginVertical: 6,
-                  }}>
-                  <Text
-                    onPress={() => {
-                      dispatch(appActions.setSearchProductValue(item.label));
-                      navigation.goBack();
-                    }}
+          {router?.params?.type === 'order' && listOrderNearly
+            ? JSON.parse(listOrderNearly).map((item: any, index: number) => {
+                return (
+                  <View
+                    key={index}
                     style={{
-                      color: colors.text_primary,
-                      width: '80%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginVertical: 6,
                     }}>
-                    {item.label}
-                  </Text>
-                  <AppIcons
-                    iconType={AppConstant.ICON_TYPE.IonIcon}
-                    name={'close'}
-                    size={24}
-                    color={colors.text_secondary}
-                    onPress={() => handleItem(item)}
-                  />
-                </View>
-              );
-            })}
+                    <Text
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        dispatch(appActions.setSearchOrderValue(item.label));
+                        CommonUtils.sleep(200).then(() => navigation.goBack());
+                      }}
+                      style={{
+                        color: colors.text_primary,
+                        width: '80%',
+                      }}>
+                      {item.label}
+                    </Text>
+                    <AppIcons
+                      iconType={AppConstant.ICON_TYPE.IonIcon}
+                      name={'close'}
+                      size={24}
+                      color={colors.text_secondary}
+                      onPress={() => handleItem(item)}
+                    />
+                  </View>
+                );
+              })
+            : listProductNearly &&
+              JSON.parse(listProductNearly).map((item: any, index: number) => {
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginVertical: 6,
+                    }}>
+                    <Text
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        dispatch(appActions.setSearchProductValue(item.label));
+                        CommonUtils.sleep(200).then(() => navigation.goBack());
+                      }}
+                      style={{
+                        color: colors.text_primary,
+                        width: '80%',
+                      }}>
+                      {item.label}
+                    </Text>
+                    <AppIcons
+                      iconType={AppConstant.ICON_TYPE.IonIcon}
+                      name={'close'}
+                      size={24}
+                      color={colors.text_secondary}
+                      onPress={() => handleItem(item)}
+                    />
+                  </View>
+                );
+              })}
         </View>
       </View>
     );
@@ -90,26 +119,44 @@ const SearchScreen = ({}) => {
   const onSubmitEditing = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
   ) => {
+    Keyboard.dismiss();
     //TODO:save to redux
-    dispatch(appActions.setSearchProductValue(String(e.nativeEvent.text)));
     const newListNearly = listProductNearly && JSON.parse(listProductNearly);
     newListNearly.push({label: String(e.nativeEvent.text)});
-    setListProductNearly(JSON.stringify(newListNearly));
-    navigation.goBack();
+    if (router?.params?.type === 'order') {
+      dispatch(appActions.setSearchOrderValue(String(e.nativeEvent.text)));
+      setListOrderNearly(JSON.stringify(newListNearly));
+    } else {
+      dispatch(appActions.setSearchProductValue(String(e.nativeEvent.text)));
+      setListProductNearly(JSON.stringify(newListNearly));
+    }
+    CommonUtils.sleep(200).then(() => navigation.goBack());
   };
 
   const handleItem = (item: any) => {
-    const newData =
-      listProductNearly &&
-      JSON.parse(listProductNearly).filter(
-        (res: any) => res.label !== item.label,
-      );
-    setListProductNearly(JSON.stringify(newData));
+    Keyboard.dismiss();
+    if (router?.params.type === 'order') {
+      const newData =
+        listOrderNearly &&
+        JSON.parse(listOrderNearly).filter(
+          (res: any) => res.label !== item.label,
+        );
+      setListOrderNearly(JSON.stringify(newData));
+    } else {
+      const newData =
+        listProductNearly &&
+        JSON.parse(listProductNearly).filter(
+          (res: any) => res.label !== item.label,
+        );
+      setListProductNearly(JSON.stringify(newData));
+    }
   };
 
   useEffect(() => {
     if (!listProductNearly) {
       setListProductNearly(JSON.stringify([]));
+    } else if (!listOrderNearly) {
+      setListOrderNearly(JSON.stringify([]));
     }
   }, []);
 
@@ -137,7 +184,11 @@ const SearchScreen = ({}) => {
             width: '90%',
             marginLeft: 12,
           }}
-          placeholder={getLabel(label)}
+          placeholder={
+            router?.params?.type === 'order'
+              ? getLabel('searchOrder')
+              : getLabel('searchProduct')
+          }
           placeholderTextColor={colors.text_disable}
           icon={ImageAssets.SearchIcon}
           value={searchValue}
