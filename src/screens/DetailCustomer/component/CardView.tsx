@@ -24,7 +24,7 @@ const CardContactOverview = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   return (
-    <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
+  
       <View style={styles.card}>
         <View style={styles.rootLayout}>
           <AppText
@@ -63,7 +63,7 @@ const CardContactOverview = (props: Props) => {
           </View>
         </View>
       </View>
-    </ErrorBoundary>
+   
   );
 };
 

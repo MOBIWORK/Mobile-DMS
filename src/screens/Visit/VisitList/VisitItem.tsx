@@ -121,123 +121,121 @@ const VisitItem: FC<VisitItemProps> = ({
     check();
   }, [isEnable.current]);
   return (
-    <ErrorBoundary fallbackRender={ErrorFallback}onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
-      <TouchableOpacity
-        onPress={
-          () =>
-            navigate(ScreenConstant.VISIT_DETAIL, {
-              data: item,
-            })
-          // startTransition(() => {
-          //   handlePressDetail(item);
-          // })
-        }>
-        <Block style={styles.viewContainer}>
-          <Block style={styles.user}>
-            <Block style={styles.userLeft}>
-              <Image
-                source={ImageAssets.UserGroupIcon}
-                style={{width: 24, height: 24}}
-                resizeMode={'cover'}
-                tintColor={item.is_checkin ? colors.success : colors.warning}
-              />
-              <Text style={styles.userTextLeft}>{item.customer_name}</Text>
-            </Block>
-            {statusItem(item.is_checkin)}
-          </Block>
-          <Block style={styles.content}>
+    <TouchableOpacity
+      onPress={
+        () =>
+          navigate(ScreenConstant.VISIT_DETAIL, {
+            data: item,
+          })
+        // startTransition(() => {
+        //   handlePressDetail(item);
+        // })
+      }>
+      <Block style={styles.viewContainer}>
+        <Block style={styles.user}>
+          <Block style={styles.userLeft}>
             <Image
-              source={ImageAssets.MapPinIcon}
+              source={ImageAssets.UserGroupIcon}
+              style={{width: 24, height: 24}}
+              resizeMode={'cover'}
+              tintColor={item.is_checkin ? colors.success : colors.warning}
+            />
+            <Text style={styles.userTextLeft}>{item.customer_name}</Text>
+          </Block>
+          {statusItem(item.is_checkin)}
+        </Block>
+        <Block style={styles.content}>
+          <Image
+            source={ImageAssets.MapPinIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+            tintColor={colors.text_primary}
+          />
+          <Text
+            style={{color: colors.text_primary, marginHorizontal: 8}}
+            numberOfLines={1}
+            ellipsizeMode={'tail'}>
+            {item?.customer_primary_address?.address_title ?? '---'}
+          </Text>
+        </Block>
+        <View style={styles.content}>
+          <Image
+            source={ImageAssets.PhoneIcon}
+            style={{width: 16, height: 16}}
+            resizeMode={'cover'}
+            tintColor={colors.text_primary}
+          />
+          <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
+            {item.mobile_no ?? '---'}
+          </Text>
+        </View>
+        <Block
+          marginTop={8}
+          justifyContent="space-between"
+          style={[styles.content]}>
+          {!item.is_route && systemConfig.vt_ngoaituyen === 0 ? (
+            <Block />
+          ) : (
+            <AppButton
+              onPress={() =>
+                startTransition(() => {
+                  handlePressing(item, false);
+                })
+              }
+              style={createStyleSheet(theme).button(
+                !item.is_route && systemConfig.vt_ngoaituyen === 0,
+              )}
+              label={'Checkin'}
+              styleLabel={{
+                color: colors.action,
+                fontWeight: '400',
+              }}
+            />
+          )}
+
+          <TouchableOpacity
+            onPress={() =>
+              typeof handleOpenMap === 'function' && handleOpenMap(item)
+            }
+            style={styles.content}>
+            <Image
+              source={ImageAssets.SendIcon}
               style={{width: 16, height: 16}}
               resizeMode={'cover'}
-              tintColor={colors.text_primary}
+              tintColor={
+                item.distance != undefined
+                  ? colors.action
+                  : colors.text_secondary
+              }
             />
             <Text
-              style={{color: colors.text_primary, marginHorizontal: 8}}
-              numberOfLines={1}
-              ellipsizeMode={'tail'}>
-              {item?.customer_primary_address?.address_title ?? '---'}
-            </Text>
-          </Block>
-          <View style={styles.content}>
-            <Image
-              source={ImageAssets.PhoneIcon}
-              style={{width: 16, height: 16}}
-              resizeMode={'cover'}
-              tintColor={colors.text_primary}
-            />
-            <Text style={{color: colors.text_primary, marginHorizontal: 8}}>
-              {item.mobile_no ?? '---'}
-            </Text>
-          </View>
-          <Block
-            marginTop={8}
-            justifyContent="space-between"
-            style={[styles.content]}>
-            {!item.is_route && systemConfig.vt_ngoaituyen === 0 ? (
-              <Block />
-            ) : (
-              <AppButton
-                onPress={() =>
-                  startTransition(() => {
-                    handlePressing(item, false);
-                  })
-                }
-                style={createStyleSheet(theme).button(
-                  !item.is_route && systemConfig.vt_ngoaituyen === 0,
-                )}
-                label={'Checkin'}
-                styleLabel={{
-                  color: colors.action,
-                  fontWeight: '400',
-                }}
-              />
-            )}
-
-            <TouchableOpacity
-              onPress={() =>
-                typeof handleOpenMap === 'function' && handleOpenMap(item)
+              color={
+                item.distance != undefined
+                  ? colors.action
+                  : colors.text_secondary
               }
-              style={styles.content}>
-              <Image
-                source={ImageAssets.SendIcon}
-                style={{width: 16, height: 16}}
-                resizeMode={'cover'}
-                tintColor={
-                  item.distance != undefined
-                    ? colors.action
-                    : colors.text_secondary
-                }
-              />
-              <Text
-                color={
-                  item.distance != undefined
-                    ? colors.action
-                    : colors.text_secondary
-                }
-                style={{
-                  textDecorationLine: item.distance ? 'underline' : 'none',
-                }}>
-                {item.distance != undefined
-                  ? `${Math.floor(item.distance / 1000)}km`
-                  : getLabel('unknown')}
-              </Text>
-            </TouchableOpacity>
-          </Block>
-          {handleClose && (
-            <TouchableOpacity
-              onPress={handleClose}
-              style={{position: 'absolute', top: -12, right: -12}}>
-              <Image
-                source={ImageAssets.CloseFameIcon}
-                style={{width: 32, height: 32}}
-                resizeMode={'contain'}
-              />
-            </TouchableOpacity>
-          )}
+              style={{
+                textDecorationLine: item.distance ? 'underline' : 'none',
+              }}>
+              {item.distance != undefined
+                ? `${Math.floor(item.distance / 1000)}km`
+                : getLabel('unknown')}
+            </Text>
+          </TouchableOpacity>
         </Block>
-      </TouchableOpacity>
-    </ErrorBoundary>
+        {handleClose && (
+          <TouchableOpacity
+            onPress={handleClose}
+            style={{position: 'absolute', top: -12, right: -12}}>
+            <Image
+              source={ImageAssets.CloseFameIcon}
+              style={{width: 32, height: 32}}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        )}
+      </Block>
+    </TouchableOpacity>
   );
 };
 interface VisitItemProps {

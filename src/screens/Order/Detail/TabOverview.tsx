@@ -184,7 +184,7 @@ const TabOverview = ({data}: PropsType) => {
   };
 
   return (
-    <ErrorBoundary fallbackRender={ErrorFallback} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
+    
       <MainLayout style={styles.layout}>
         <AppContainer>
           <View style={{paddingHorizontal: 16, rowGap: 24, marginTop: 10}}>
@@ -443,7 +443,7 @@ const TabOverview = ({data}: PropsType) => {
           {renderUiBottomSheet()}
         </AppBottomSheet>
       </MainLayout>
-    </ErrorBoundary>
+    
   );
 };
 
