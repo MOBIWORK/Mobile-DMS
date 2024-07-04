@@ -206,17 +206,20 @@ const ModalEditAddress = ({
   // console.log(contactValue, 'contactValue');
   const handleSaveMainContact = useCallback(() => {
     let newArr: ContactCard[] | undefined = dataCustomer.contacts;
-    const contact = {
+    const contact:any = {
       last_name: contactValue.nameContact,
       first_name: contactValue.nameContact,
       phone: contactValue.phoneNumber,
       address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       is_billing_contact: 0,
       is_primary_contact: 0,
-      name: contactValue.nameContact,
-      city: addressObj.province.code || '',
-      county: addressObj.district.code || '',
-      state: addressObj.ward.code || '',
+      // name: contactValue.nameContact,
+      city: contactSelectedData[0].id || '',
+      county: contactSelectedData[1].id|| '',
+      state: contactSelectedData[2].id || '',
+      address_title:` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
+      address_line1:txtContactDetail,
+      name:defaultEditData.name!
     };
     if (type === 'contact' || type === 'AddingContact') {
       // console.log('run case nor');
@@ -241,9 +244,11 @@ const ModalEditAddress = ({
           );
           // console.log(indexData,newArr,'check flag')
           if (indexData !== -1 && newArr && newArr.length > 0) {
+            
             // console.log('run done');
             newArr[indexData] = contact;
             setData(prev => ({...prev, contacts: newArr}));
+            console.log(newArr,'data push')
           }
         } else {
           // console.log('run case new');

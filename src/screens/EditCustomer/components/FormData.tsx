@@ -91,8 +91,8 @@ function dateToISOString(dateString: string): string {
 }
 
 const FormData = (props: Props) => {
-  const { data } = props;
-  const { t: translate } = useTranslation();
+  const {data} = props;
+  const {t: translate} = useTranslation();
   const theme = useTheme();
   const styles = formStyles(theme);
   const initStateData = React.useRef<DetailCustomerType>({
@@ -144,7 +144,7 @@ const FormData = (props: Props) => {
     type: 'customer_type',
     status: false,
   });
-  const [defaultDataEdit,setDefaultDataEdit] = useState<any>({})
+  const [defaultDataEdit, setDefaultDataEdit] = useState<any>({});
 
   const onBackButtonPress = useCallback(() => {
     setModalOpen(false);
@@ -298,7 +298,8 @@ const FormData = (props: Props) => {
       ],
       // ...dataCustomer,
     };
-    // console.log(dataUpdate, 'dataUpdate');
+    console.log(dataUpdate, 'dataUpdate');
+    console.log(dataUpdate.contact,dataUpdate.address)
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
@@ -353,7 +354,7 @@ const FormData = (props: Props) => {
     modalData.status,
     modalEditAddress.status,
   ]);
-  console.log(dataCustomer.contacts,'contact')
+  // console.log(isPrimaryContact,'contact')
   // console.log(dataCustomer?.credit_limits,'credit')
   const onPressTrash = useCallback(() => {
     const updatedAddressArray = dataCustomer.address
@@ -390,7 +391,7 @@ const FormData = (props: Props) => {
     // }
   }, []);
 
-  console.log(dataCustomer.contacts,'contact')
+  // console.log(dataCustomer.contacts,'contact')
   const onPressData = useCallback(
     (data: any, type: string) => {
       if (type === 'address') {
@@ -407,7 +408,7 @@ const FormData = (props: Props) => {
       } else {
         let newData: Contact = data;
         newData.is_primary_contact = 1;
-        console.log(newData,'newData,')
+        console.log(newData, 'newData,');
         startTransition(() => {
           setDataCustomer(prev => ({
             ...prev,
@@ -427,11 +428,11 @@ const FormData = (props: Props) => {
             type: 'editAddress',
             status: true,
           });
-          setDefaultDataEdit(data)
+          setDefaultDataEdit(data);
         });
       } else {
         startTransition(() => {
-          setDefaultDataEdit(data)
+          setDefaultDataEdit(data);
           setModalEditAddress({
             type: 'editContact',
             status: true,
@@ -464,7 +465,7 @@ const FormData = (props: Props) => {
                 <Image
                   source={
                     dataCustomer.image != null
-                      ? { uri: dataCustomer.image }
+                      ? {uri: dataCustomer.image}
                       : ImageAssets.CameraSelect
                   }
                   style={styles.imageStyle(dataCustomer.image)}
@@ -777,12 +778,8 @@ const FormData = (props: Props) => {
             </TouchableOpacity>
           )}
         </Block>
-        {dataCustomer.contacts &&
-          dataCustomer.customer_primary_contact &&
-          dataCustomer.contacts.length > 0 &&
-          dataCustomer.contacts[0].first_name.includes(
-            dataCustomer.customer_primary_contact!,
-          ) ? (
+        {isPrimaryContact ? (
+          dataCustomer.contacts &&
           dataCustomer.contacts.map((item, index) => {
             return (
               <CardEditAddress

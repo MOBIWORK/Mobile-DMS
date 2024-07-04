@@ -29,138 +29,142 @@ const CardEditAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-  // console.log(props.address)
+  // console.log(props.contact)
   return (
     <>
-      {props.type === 'address'
-        ? props.address.is_primary_address === 1 && (
-            <Block style={styles.card}>
-              <Block paddingHorizontal={16}>
-                <Block style={styles.containAddressLabel}>
-                  <Block style={styles.containIcon}>
-                    <SvgIcon source="MapPin" size={16} />
-                  </Block>
-                  <Block>
-                    {props.address.address_title && (
-                      <Text
-                        numberOfLines={2}
-                        fontSize={16}
-                        fontWeight="300"
-                        colorTheme="black"
-                        lineHeight={21}>
-                        {getLabel('addressDetail')}
-                      </Text>
-                    )}
-                    {props.address.address_line1 && (
-                      <Text
-                        numberOfLines={2}
-                        fontSize={16}
-                        fontWeight="300"
-                        colorTheme="black"
-                        lineHeight={21}>
-                        {props.address.address_line1}
-                      </Text>
-                    )}
+      {props.type === 'address' ? (
+        props.address.is_primary_address === 1 && (
+          <Block style={styles.card}>
+            <Block paddingHorizontal={16}>
+              <Block style={styles.containAddressLabel}>
+                <Block style={styles.containIcon}>
+                  <SvgIcon source="MapPin" size={16} />
+                </Block>
+                <Block>
+                  {props.address.address_title && (
                     <Text
                       numberOfLines={2}
-                      fontSize={14}
+                      fontSize={16}
                       fontWeight="300"
-                      style={{maxWidth: '90%'}}
                       colorTheme="black"
                       lineHeight={21}>
-                      {props.address.address_title.trim().length > 0
-                        ? props.address.address_title
-                        : props.address.address_line1}
+                      {getLabel('addressDetail')}
                     </Text>
-                  </Block>
+                  )}
+                  {props.address.address_line1 && (
+                    <Text
+                      numberOfLines={2}
+                      fontSize={16}
+                      fontWeight="300"
+                      colorTheme="black"
+                      lineHeight={21}>
+                      {props.address.address_line1}
+                    </Text>
+                  )}
+                  <Text
+                    numberOfLines={2}
+                    fontSize={14}
+                    fontWeight="300"
+                    style={{maxWidth: '90%'}}
+                    colorTheme="black"
+                    lineHeight={21}>
+                    {props.address.address_title.trim().length > 0
+                      ? props.address.address_title
+                      : props.address.address_line1}
+                  </Text>
                 </Block>
               </Block>
-              <Block style={styles.containAddress}>
-                {props.address.is_primary_address === 1 && (
-                  <Block style={styles.addressGetAndOrder}>
-                    <Text
-                      fontSize={14}
-                      lineHeight={21}
-                      fontWeight="400"
-                      colorTheme="primary">
-                      {getLabel('deliveryAddress')}
-                    </Text>
-                  </Block>
-                )}
-                {props.address.is_shipping_address === 1 && (
-                  <Block style={styles.addressGetAndOrder}>
-                    <Text
-                      fontSize={14}
-                      lineHeight={21}
-                      fontWeight="400"
-                      colorTheme="primary">
-                      {getLabel('orderAddress')}
-                    </Text>
-                  </Block>
-                )}
+            </Block>
+            <Block style={styles.containAddress}>
+              {props.address.is_primary_address === 1 && (
+                <Block style={styles.addressGetAndOrder}>
+                  <Text
+                    fontSize={14}
+                    lineHeight={21}
+                    fontWeight="400"
+                    colorTheme="primary">
+                    {getLabel('deliveryAddress')}
+                  </Text>
+                </Block>
+              )}
+              {props.address.is_shipping_address === 1 && (
+                <Block style={styles.addressGetAndOrder}>
+                  <Text
+                    fontSize={14}
+                    lineHeight={21}
+                    fontWeight="400"
+                    colorTheme="primary">
+                    {getLabel('orderAddress')}
+                  </Text>
+                </Block>
+              )}
+            </Block>
+          </Block>
+        )
+      ) : (
+        props.contact.is_primary_contact === 1 && (
+        <Block style={styles.card}>
+           <Block paddingHorizontal={16}>
+              <Block style={styles.containAddressLabel}>
+                <Text
+                  fontSize={16}
+                  fontWeight="400"
+                  colorTheme="black"
+                  lineHeight={21}>
+                  {props.contact.first_name
+                    ? props.contact.first_name + '' + props.contact.last_name
+                    : '---'}
+                </Text>
               </Block>
+              <Block
+                style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
+                <Block style={styles.containIcon}>
+                  <SvgIcon source="MapPin" size={16} />
+                </Block>
+                <Text
+                  numberOfLines={2}
+                  fontSize={14}
+                  fontWeight="300"
+                  colorTheme="black"
+                  lineHeight={21}>
+                  {`${
+                    props.contact.address ? `${props.contact.address}, ` : ''
+                  }`}
+                </Text>
+              </Block>
+              <Block
+                style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
+                <Block style={styles.containIcon}>
+                  <SvgIcon source="Phone" size={16} />
+                </Block>
+                <Text
+                  numberOfLines={2}
+                  fontSize={14}
+                  fontWeight="300"
+                  colorTheme="black"
+                  lineHeight={21}>
+                  {props.contact.phone != null
+                    ? formatPhoneNumber(props.contact.phone)
+                    : '---'}
+                </Text>
+              </Block>
+              <Block style={styles.containMain}>
+                <Block style={styles.addressGetAndOrder}>
+                  <Text
+                    fontSize={14}
+                    lineHeight={21}
+                    fontWeight="400"
+                    colorTheme="primary">
+                    {getLabel('mainContact')}
+                  </Text>
+                </Block>
+              </Block>
+            </Block>
+
+           
             </Block>
           )
-        : props.contact.is_primary_contact === 1 && (
-            <Block style={styles.card}>
-              <Block paddingHorizontal={16}>
-                <Block style={styles.containAddressLabel}>
-                  <Text
-                    fontSize={16}
-                    fontWeight="400"
-                    colorTheme="black"
-                    lineHeight={21}>
-                    {props.contact.first_name
-                      ? props.contact.first_name + '' + props.contact.last_name
-                      : '---'}
-                  </Text>
-                </Block>
-                <Block
-                  style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
-                  <Block style={styles.containIcon}>
-                    <SvgIcon source="MapPin" size={16} />
-                  </Block>
-                  <Text
-                    numberOfLines={2}
-                    fontSize={14}
-                    fontWeight="300"
-                    colorTheme="black"
-                    lineHeight={21}>
-                    {`${
-                      props.contact.address ? `${props.contact.address}, ` : ''
-                    }`}
-                  </Text>
-                </Block>
-                <Block
-                  style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
-                  <Block style={styles.containIcon}>
-                    <SvgIcon source="Phone" size={16} />
-                  </Block>
-                  <Text
-                    numberOfLines={2}
-                    fontSize={14}
-                    fontWeight="300"
-                    colorTheme="black"
-                    lineHeight={21}>
-                    {props.contact.phone != null
-                      ? formatPhoneNumber(props.contact.phone)
-                      : '---'}
-                  </Text>
-                </Block>
-                <Block style={styles.containMain}>
-                  <Block style={styles.addressGetAndOrder}>
-                    <Text
-                      fontSize={14}
-                      lineHeight={21}
-                      fontWeight="400"
-                      colorTheme="primary">
-                      {getLabel('mainContact')}
-                    </Text>
-                  </Block>
-                </Block>
-              </Block>
-            </Block>
-          )}
+      )}
     </>
   );
 };
