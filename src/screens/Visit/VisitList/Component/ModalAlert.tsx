@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Modal from 'react-native-modal';
 import {Block, AppText as Text} from '../../../../components/common';
 import {ModalType} from '../ListVisit';
@@ -55,10 +55,9 @@ const ModalAlert = ({
   const [enable, setEnable] = useState(false);
   const curLocation = useRef<any>(currentLocation);
   const [distance, setDistance] = React.useState<number>(
-    show.cal ? Math.ceil(show.cal * 1000) : 0,
+   show.cal && !isNaN(show.cal!)  ? Math.ceil(show.cal! * 1000) : 0,
   );
   const {t: getLabel} = useTranslation();
-
   useDeepCompareEffect(() => {
     if (currentLocation && Object.keys(currentLocation).length > 0) {
       mapboxCameraRef.current?.flyTo(
@@ -77,14 +76,9 @@ const ModalAlert = ({
       location.long,
     );
     return res;
-  }, [curLocation.current]);
+  }, [curLocation.current,show.cal]);
 
-  const handleCheckPressed = useCallback(async () => {
-    if (Platform.OS === 'android') {
-      const checkEnabled: boolean = await isLocationEnabled();
-      setEnable(checkEnabled);
-    }
-  }, []);
+  
 
   const handleRegainLocation = async () => {
     CommonUtils.getCurrentLocation(
@@ -107,6 +101,15 @@ const ModalAlert = ({
     );
   };
 
+
+   useEffect(() =>{
+    setDistance(Math.ceil(
+      data * 1000 -
+        (systemConfig.saiso_chophep_kb_vitringoaisaiso +
+          AppConstant.additional_distance),
+    ),)
+   },[])
+    // console.log(data,'data distance')
   return (
     <Modal
       isVisible={show.status}
@@ -152,7 +155,7 @@ const ModalAlert = ({
               </Block>
               <Text
                 fontSize={14}
-                textAlign="center">{`Vị trí của bạn đang cách vị trí của khách hàng ${distance}m. Bạn vui lòng lấy lại vị trí hoặc checkin với sai số`}</Text>
+                textAlign="center">{`Vị trí của bạn đang cách vị trí của khách hàng ${Math.ceil(data*1000)/10}m. Bạn vui lòng lấy lại vị trí hoặc checkin với sai số`}</Text>
             </Block>
             <Block marginTop={8}>
               <Block
