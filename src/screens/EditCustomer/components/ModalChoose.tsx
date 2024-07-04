@@ -20,6 +20,7 @@ type Props = {
   listContact: ContactCard[];
   onPressData: (data: any, type: string) => void;
   onEditData: (data: any, type: string) => void;
+  // defaultData?:any
 
 };
 
@@ -31,12 +32,15 @@ const ModalChoose = ({
   listContact,
   onPressData,
   onEditData,
+  // defaultData
 }: Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
 
   //  console.log(listAddress,'adâd')
+  
 
+  console.log(listContact,'listContact')
 
   return (
     <Modal
@@ -66,7 +70,7 @@ const ModalChoose = ({
         ) : (
           <Block>
             <AppHeader
-              label="Chọn địa chỉ"
+              label="Chọn liên hệ"
               onBack={onBackButtonPress}
               backButtonIcon={
                 <SvgIcon source="Close" colorTheme="black" size={22} />
@@ -75,7 +79,7 @@ const ModalChoose = ({
             {listContact &&
               listContact.length > 0 &&
               listContact.map((item, index) => {
-                return <CardChoose key={index} type="contact" data={item} onPress={onPressData} />;
+                return <CardChoose key={index} type="contact" data={item} onPress={onPressData}   onEditContact={onEditData} />;
               })}
           </Block>
         )}

@@ -208,7 +208,7 @@ const DetailCustomer = () => {
         onBackButtonPress={onBackButtonPress}
         onBackdropPress={onBackButtonPress}
         style={styles.modalStyle}>
-        <Block block colorTheme="bg_default">
+        <Block block colorTheme="bg_default" paddingHorizontal={16}>
           <FormAddress
             onPressClose={onBackButtonPress}
             typeFilter={modalShow.type}
