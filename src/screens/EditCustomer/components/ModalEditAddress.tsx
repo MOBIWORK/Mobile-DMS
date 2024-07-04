@@ -222,7 +222,7 @@ const ModalEditAddress = ({
     setContactValue({});
     setAddressSelectedData([])
     onBackButtonPress();
-  }, [contactValue, txtContactDetail, addressObj,addressSelectedData]);
+  }, [contactValue, txtContactDetail, addressObj, addressSelectedData]);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {

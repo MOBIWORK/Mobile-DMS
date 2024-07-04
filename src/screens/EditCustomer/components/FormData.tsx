@@ -91,9 +91,8 @@ function dateToISOString(dateString: string): string {
 }
 
 const FormData = (props: Props) => {
-  const {data} = props;
-  const {t: translate} = useTranslation();
-  // const navigation = useNavigation<NavigationProp<AuthorizeParamsList>>();
+  const { data } = props;
+  const { t: translate } = useTranslation();
   const theme = useTheme();
   const styles = formStyles(theme);
   const initStateData = React.useRef<DetailCustomerType>({
@@ -442,9 +441,8 @@ const FormData = (props: Props) => {
                 colorTheme="bg_neutral">
                 <Image
                   source={
-                    dataCustomer.image != null &&
-                    dataCustomer.image?.trim()?.length > 0
-                      ? {uri: dataCustomer.image}
+                    dataCustomer.image != null
+                      ? { uri: dataCustomer.image }
                       : ImageAssets.CameraSelect
                   }
                   style={styles.imageStyle(dataCustomer.image)}
@@ -759,8 +757,12 @@ const FormData = (props: Props) => {
             </TouchableOpacity>
           )}
         </Block>
-        {isPrimaryContact ? (
-          dataCustomer.contacts &&
+        {dataCustomer.contacts &&
+          dataCustomer.customer_primary_contact &&
+          dataCustomer.contacts.length > 0 &&
+          dataCustomer.contacts[0].first_name.includes(
+            dataCustomer.customer_primary_contact!,
+          ) ? (
           dataCustomer.contacts.map((item, index) => {
             return (
               <CardEditAddress
