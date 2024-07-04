@@ -17,7 +17,7 @@ import {
   AppInput,
 } from '../../../components/common';
 import {ApiConstant, AppConstant} from '../../../const';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {
   Text,
   TextStyle,
@@ -37,8 +37,12 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import FilterListComponent, {
   IFilterType,
 } from '../../../components/common/FilterListComponent';
-import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
-import {useDeepCompareEffect, useSelector} from '../../../config/function';
+import {
+  AuthorizeParamsList,
+  NavigationProp,
+  RouterProp,
+} from '../../../navigation/screen-type';
+import {useSelector} from '../../../config/function';
 import {dispatch} from '../../../utils/redux';
 import {productActions} from '../../../redux-store/product-reducer/reducer';
 import {IProduct} from '../../../models/types';
@@ -67,7 +71,8 @@ const SelectProducts = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetRefData = useRef<BottomSheet>(null);
   const styles = createStyles(useTheme());
-  const route = useRoute<RouterProp<'CHECKIN_SELECT_PRODUCT'>>();
+  const route =
+    useRoute<RouteProp<AuthorizeParamsList, 'CHECKIN_SELECT_PRODUCT'>>();
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
@@ -403,32 +408,13 @@ const SelectProducts = () => {
   );
 
   const onSubmitProductSelect = useCallback(() => {
-    if (data?.length > 0 && selectedData?.length > 0) {
-      const newSelectedData = selectedData.map(item => {
-        const proElement = data.find(
-          itemPro => itemPro.item_code === item.item_code,
-        );
-        if (proElement && Object.keys(proElement).length > 0) {
-          return {
-            ...item,
-            quantity: proElement.quantity,
-            stock_uom: proElement.stock_uom,
-            price: proElement.price,
-            index: CommonUtils.randomInt(1, 1e6),
-          };
-        } else {
-          return {...item, index: CommonUtils.randomInt(1, 1e6)};
-        }
-      });
-
-      startEffect(() => {
-        dispatch(productActions.setProductSelected(newSelectedData));
-        dispatch(productActions.setListProductSelect(newSelectedData));
-        dispatch(productActions.resetDataProduct());
-      });
-      navigation.goBack();
-    }
-  }, [data, selectedData]);
+    startEffect(() => {
+      dispatch(productActions.setProductSelected(selectedData));
+      dispatch(productActions.setListProductSelect(selectedData));
+      dispatch(productActions.resetDataProduct());
+    });
+    navigation.goBack();
+  }, [selectedData]);
 
   const animatedValue = useRef(new Animated.Value(1000)).current;
 
@@ -479,32 +465,36 @@ const SelectProducts = () => {
   };
 
   //map lại data selected khi ấn chọn trước, sửa unit sau
-  // useEffect(() => {
-  //   if (data?.length > 0 && selectedData?.length > 0) {
-  //     const newSelectedData = selectedData.map((item, index) => {
-  //       const proElement = data[index];
-  //       if (proElement && item.item_code === proElement.item_code) {
-  //         return {
-  //           ...item,
-  //           quantity: proElement.quantity,
-  //           stock_uom: proElement.stock_uom,
-  //           price: proElement.price,
-  //         };
-  //       } else {
-  //         return item;
-  //       }
-  //     });
-  //     // console.log('newww', newSelectedData);
-  //     setSelectedData(newSelectedData);
-  //   }
-  // }, [data]);
+  useEffect(() => {
+    if (data?.length > 0 && selectedData?.length > 0) {
+      const newSelectedData = selectedData.map(item => {
+        const proElement = data.find(
+          itemPro => itemPro.item_code === item.item_code,
+        );
+        if (proElement && Object.keys(proElement).length > 0) {
+          return {
+            ...item,
+            quantity: proElement.quantity,
+            stock_uom: proElement.stock_uom,
+            price: proElement.price,
+            index: CommonUtils.randomInt(1, 1e6),
+          };
+        } else {
+          return {...item, index: CommonUtils.randomInt(1, 1e6)};
+        }
+      });
+      setSelectedData(newSelectedData);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (isSearch) {
       if (products?.length > 0 && selectedData.length > 0) {
-        const newData = products.map((item, index) => {
-          const elementData = selectedData[index];
-          if (elementData && item.item_code === elementData.item_code) {
+        const newData = products.map(item => {
+          const elementData = selectedData.find(
+            selectedItem => selectedItem.item_code === item.item_code,
+          );
+          if (elementData && Object.keys(elementData).length > 0) {
             return {
               ...item,
               isSelected: elementData.isSelected,
@@ -519,9 +509,11 @@ const SelectProducts = () => {
       }
     } else if (dataProduct?.length > 0) {
       if (selectedData.length > 0) {
-        const newData = dataProduct.map((item, index) => {
-          const elementData = selectedData[index];
-          if (elementData && item.item_code === elementData.item_code) {
+        const newData = dataProduct.map(item => {
+          const elementData = selectedData.find(
+            selectedItem => selectedItem.item_code === item.item_code,
+          );
+          if (elementData && Object.keys(elementData).length > 0) {
             return {
               ...item,
               isSelected: elementData.isSelected,
