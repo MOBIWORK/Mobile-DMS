@@ -25,21 +25,17 @@ const ErrorFallback = ({error}: {error: Error}) => {
   const onPressReset = useCallback(() => {
     // Immediately reload the React Native Bundle
     handleError(error);
-    RNRestart.Restart();
+
+    RNRestart.restart();
   }, [error]);
 
   const theme = useTheme();
   const styles = styless(theme);
-  const systemConfig: DMSConfigMobile = useSelector(
-    state => state.app.systemConfig,
-    shallowEqual,
-  );
+
   const [organiztion] = useMMKVObject<IResOrganization>(
     AppConstant.Organization,
   );
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
-
-
 
   const handleError = async (errorCrash: Error) => {
     // Ghi lại thông tin lỗi vào sv

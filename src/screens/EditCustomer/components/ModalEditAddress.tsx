@@ -207,7 +207,7 @@ const ModalEditAddress = ({
   const handleSaveMainContact = useCallback(() => {
     let newArr: ContactCard[] | undefined = dataCustomer.contacts;
     const contact:any = {
-      last_name: contactValue.nameContact,
+      // last_name: contactValue.nameContact,
       first_name: contactValue.nameContact,
       phone: contactValue.phoneNumber,
       address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,

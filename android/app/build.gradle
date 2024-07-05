@@ -1,6 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
-
+// apply plugin: 'com.google.gms.google-services'
 // background-geolocation
 //Project background_geolocation = project(':react-native-background-geolocation')
 //apply from: "${background_geolocation.projectDir}/app.gradle"

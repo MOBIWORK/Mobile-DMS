@@ -58,13 +58,12 @@ import ModalChoose from './ModalChoose';
 import ModalData from './ModalData';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
-import {storage} from '../../../utils/commom.utils';
-import navigation from '../../../navigation';
-import {goBack} from '../../../navigation/navigation-service';
-// import {Contact} from '../../DetailCustomer/screen';
+import { pop } from '../../../navigation/navigation-service';
+
 
 type Props = {
   data: DetailCustomerType;
+  goBack():void
 };
 
 const dateToTimestamp = (dateString: string): number => {
@@ -91,7 +90,7 @@ function dateToISOString(dateString: string): string {
 }
 
 const FormData = (props: Props) => {
-  const {data} = props;
+  const {data,goBack} = props;
   const {t: translate} = useTranslation();
   const theme = useTheme();
   const styles = formStyles(theme);
@@ -258,7 +257,7 @@ const FormData = (props: Props) => {
 
   const onUpdateCustomer = useCallback(() => {
     // let dataAddress = dataCustomer.address;
-    let route = dataCustomer.routers;
+    let route = dataCustomer?.routers;
     route?.[0].frequency &&
     Array(route?.[0].frequency) &&
     typeof route?.[0].frequency != 'string'
@@ -298,18 +297,19 @@ const FormData = (props: Props) => {
       ],
       // ...dataCustomer,
     };
-    console.log(dataUpdate, 'dataUpdate');
-    console.log(dataUpdate.contact,dataUpdate.address)
+    // console.log(dataUpdate.contact,'contact update')
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
-      Keyboard.dismiss();
-      goBack();
+      // goBack && goBack() 
+      // Keyboard.dismiss();
     });
+    // pop(1)
+
     // pop(1);
 
-    // goBack();
+     goBack && goBack();
   }, [dataCustomer]);
 
   const onCloseEditAddress = useCallback(() => {

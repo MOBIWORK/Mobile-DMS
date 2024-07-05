@@ -157,15 +157,15 @@ export function* updateCustomerSaga(action: PayloadAction) {
         updateCustomer,
         action.payload.data,
       );
-      console.log(action.payload,'action.payload')
-      console.log(response,'response update customer')
+  console.log(response,'response')
+  console.log(action.payload.data,'payload send')
       if (response.message === 'ok') {
         showSnack({
           msg: 'Cập nhật thành công',
           interval: 2000,
           type: 'success',
         });
-        Keyboard.dismiss()
+        // Keyboard.dismiss()
       }
     } catch (err) {
       console.log('run error');

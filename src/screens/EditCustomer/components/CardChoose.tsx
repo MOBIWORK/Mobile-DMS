@@ -1,15 +1,13 @@
 import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React from 'react';
 import isEqual from 'react-fast-compare';
-import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallBack from '../../../layouts/ErrorFallBack';
+
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import {Address, Contact, ContactCard} from '../../../models/types';
+import {Address,  ContactCard} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import {formatPhoneNumber} from '../../../config/function';
-import {navigate} from '../../../navigation/navigation-service';
-import {ScreenConstant} from '../../../const';
+
 
 type Props = CardListAddress | CardListContact;
 
@@ -77,7 +75,7 @@ const CardChoose = (props: Props) => {
               <TouchableOpacity
                 onPress={() => props.onEditPress(props.data, props.type)}>
                 <Block>
-                  <SvgIcon source="RedEdit" size={16} />
+                  <SvgIcon source="RedEdit" size={24} />
                 </Block>
               </TouchableOpacity>
             </Block>
@@ -124,7 +122,7 @@ const CardChoose = (props: Props) => {
                   colorTheme="black"
                   lineHeight={21}>
                   {props.data.first_name
-                    ? props.data.first_name + '' + props.data.last_name
+                    ? props.data.first_name 
                     : '---'}
                 </Text>
               </Block>
@@ -175,7 +173,7 @@ const CardChoose = (props: Props) => {
             <TouchableOpacity
               onPress={() => props.onEditContact(props.data, props.type)}>
               <Block>
-                <SvgIcon source="RedEdit" size={16} />
+                <SvgIcon source="RedEdit" size={24} />
               </Block>
             </TouchableOpacity>
           </Block>

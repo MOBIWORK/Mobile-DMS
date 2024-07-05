@@ -29,8 +29,6 @@ import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {goBack, navigate} from '../../navigation/navigation-service';
 import {CustomerService} from '../../services';
-import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallBack from '../../layouts/ErrorFallBack';
 import {useSelector} from '../../config/function';
 import {shallowEqual} from 'react-redux';
 
@@ -50,6 +48,7 @@ const DetailCustomer = () => {
     status: false,
   });
   const isFocus = useIsFocused();
+  const indexView = useRef<number>(0);
 
   const getDetailCustomer = async () => {
     try {
@@ -111,10 +110,9 @@ const DetailCustomer = () => {
         // </ErrorBoundary>
       ),
     }),
-    [data],
+    [data,indexView.current],
   );
 
-  const indexView = useRef<number>(0);
 
   const onPressAdding = useCallback(() => {
     setModalShow({

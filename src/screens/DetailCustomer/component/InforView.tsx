@@ -1,21 +1,19 @@
-import { StyleSheet, ViewStyle, Image, ImageStyle } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import { DetailCustomerType, IDataCustomers } from '../../../models/types';
-import { AppTheme, useTheme } from '../../../layouts/theme';
+import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {DetailCustomerType, IDataCustomers} from '../../../models/types';
+import {AppTheme, useTheme} from '../../../layouts/theme';
 import {
   AppText,
   Block,
   SvgIcon,
   AppText as Text,
 } from '../../../components/common';
-import { MainLayout } from '../../../layouts';
+import {MainLayout} from '../../../layouts';
 import Mapbox from '@rnmapbox/maps';
-import { useTranslation } from 'react-i18next';
-import { AppConstant } from '../../../const';
-import { CommonUtils } from '../../../utils';
-import { GeolocationResponse } from '@react-native-community/geolocation';
-import { formatMoney } from '../../../config/function';
-import { GeolocationCustomer } from '../../../services/customerService';
+import {useTranslation} from 'react-i18next';
+import {formatMoney} from '../../../config/function';
+import {GeolocationCustomer} from '../../../services/customerService';
+import {AppConstant} from '../../../const';
 
 type Props = {
   data: DetailCustomerType;
@@ -25,16 +23,17 @@ const InforBlock = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const ref = useRef<Mapbox.Camera>(null);
-  const { t: translate } = useTranslation();
+  const {t: translate} = useTranslation();
   const [isError, setIsError] = useState(false);
-
+  const [mapError, setMapError] = useState(false);
   // const [location, setLocation] = useState<GeolocationResponse | null>(null);
 
   // useEffect(() => {
   //   CommonUtils.getCurrentLocation(locations => setLocation(locations));
   // }, []);
 
-  const [locationCustomer, setLocationCustomer] = useState<GeolocationCustomer | null>(null);
+  const [locationCustomer, setLocationCustomer] =
+    useState<GeolocationCustomer | null>(null);
 
   useEffect(() => {
     if (props.data?.customer_location_primary) {
@@ -45,6 +44,59 @@ const InforBlock = (props: Props) => {
       });
     }
   }, [props.data]);
+
+  const renderMapView = React.useCallback(() => {
+    return !mapError ? (
+      <Mapbox.MapView
+        pitchEnabled={false}
+        styleURL={Mapbox.StyleURL.Street}
+        attributionEnabled={false}
+        onMapLoadingError={() => {
+          setLocationCustomer({
+            longitude: 0,
+            latitude: 0,
+          });
+          setMapError(true);
+        }}
+        scaleBarEnabled={false}
+        logoEnabled={false}
+        style={styles.mapBlock}>
+        <Mapbox.RasterSource
+          id="adminmap"
+          tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+          <Mapbox.RasterLayer
+            id={'adminmap'}
+            sourceID={'admin'}
+            style={{visibility: 'visible'}}
+          />
+        </Mapbox.RasterSource>
+        <Mapbox.Camera
+          ref={ref}
+          centerCoordinate={[
+            locationCustomer?.longitude ?? 0,
+            locationCustomer?.latitude ?? 0,
+          ]}
+          animationMode={'flyTo'}
+          animationDuration={500}
+          zoomLevel={12}
+        />
+
+        <Mapbox.MarkerView
+          coordinate={[
+            locationCustomer?.longitude ?? 0,
+            locationCustomer?.latitude ?? 0,
+          ]}>
+          <SvgIcon
+            source="Location"
+            size={32}
+            colorTheme="action"
+            color={theme.colors.text_primary}
+          />
+        </Mapbox.MarkerView>
+      </Mapbox.MapView>
+    ) : null;
+  }, [locationCustomer?.latitude, locationCustomer?.longitude]);
+
   return (
     <Block style={styles.root}>
       <Block style={styles.containImage}>
@@ -72,7 +124,7 @@ const InforBlock = (props: Props) => {
             borderRadius={10}
             justifyContent="center"
             alignItems="center">
-            <Text numberOfLines={1} fontSize={30} colorTheme='text_secondary' >
+            <Text numberOfLines={1} fontSize={30} colorTheme="text_secondary">
               {props.data.name && props.data.name.slice(0, 2)}
             </Text>
           </Block>
@@ -258,42 +310,8 @@ const InforBlock = (props: Props) => {
             lineHeight={24}>
             {translate('location')}
           </AppText>
-          <Mapbox.MapView
-            pitchEnabled={false}
-            styleURL={Mapbox.StyleURL.Street}
-            attributionEnabled={false}
-            scaleBarEnabled={false}
-            logoEnabled={false}
-            style={styles.mapBlock}>
-            <Mapbox.RasterSource
-              id="adminmap"
-              tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-              <Mapbox.RasterLayer
-                id={'adminmap'}
-                sourceID={'admin'}
-                style={{ visibility: 'visible' }}
-              />
-            </Mapbox.RasterSource>
-            <Mapbox.Camera
-              ref={ref}
-              centerCoordinate={[
-                locationCustomer?.longitude ?? 0,
-                locationCustomer?.latitude ?? 0,
-              ]}
-              animationMode={'flyTo'}
-              animationDuration={500}
-              zoomLevel={12}
-            />
-
-            <Mapbox.MarkerView
-              coordinate={[
-                locationCustomer?.longitude ?? 0,
-                locationCustomer?.latitude ?? 0,
-              ]}>
-              <SvgIcon source="Location" size={32} colorTheme="action"  color={theme.colors.text_primary}  />
-            </Mapbox.MarkerView>
-          </Mapbox.MapView>
         </Block>
+        {renderMapView()}
       </MainLayout>
     </Block>
   );

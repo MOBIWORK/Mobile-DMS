@@ -9,8 +9,6 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {AuthorizeParamsList} from '../../navigation/screen-type';
 import FormData from './components/FormData';
 
-
-
 const EditCustomerScreen = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
@@ -26,7 +24,14 @@ const EditCustomerScreen = () => {
         }
       />
       <Block block>
-        <FormData data={params.data} />
+        <FormData
+          data={params.data}
+          goBack={() =>
+            setTimeout(() => {
+              goBack();
+            },1500)
+          }
+        />
       </Block>
     </SafeAreaView>
   );
