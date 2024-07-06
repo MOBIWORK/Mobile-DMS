@@ -513,6 +513,7 @@ export interface Address {
   address_title: string;
   address_location: string;
   address_line1?: string;
+  name?:any
 }
 
 export interface Contact {

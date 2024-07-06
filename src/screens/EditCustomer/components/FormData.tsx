@@ -31,6 +31,7 @@ import {useTheme, AppTheme} from '../../../layouts/theme';
 import {
   Address,
   Contact,
+  ContactCard,
   DetailCustomerType,
   ListCustomerTerritory,
 } from '../../../models/types';
@@ -58,12 +59,10 @@ import ModalChoose from './ModalChoose';
 import ModalData from './ModalData';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
-import { pop } from '../../../navigation/navigation-service';
-
 
 type Props = {
   data: DetailCustomerType;
-  goBack():void
+  goBack(): void;
 };
 
 const dateToTimestamp = (dateString: string): number => {
@@ -89,8 +88,23 @@ function dateToISOString(dateString: string): string {
   return date.toISOString(); // .toISOString() returns the ISO string
 }
 
+const updatePrimaryAddress = (
+  dataArray: Address[],
+  targetString: string | any,
+) => {
+  return dataArray.map(item => {
+    if (item.name === targetString) {
+      return {
+        ...item,
+        is_primary_address: 1,
+      };
+    }
+    return item;
+  });
+};
+
 const FormData = (props: Props) => {
-  const {data,goBack} = props;
+  const {data, goBack} = props;
   const {t: translate} = useTranslation();
   const theme = useTheme();
   const styles = formStyles(theme);
@@ -106,12 +120,23 @@ const FormData = (props: Props) => {
     image: data?.image || '',
 
     address:
-      data.address &&
-      data.address.map(item => ({
-        ...item,
-        name: data.customer_primary_address,
-      })),
-    contacts: data.contacts,
+      data.address && data.address.length > 0
+        ? updatePrimaryAddress(data.address, data.customer_primary_address).map(
+            item => ({
+              ...item,
+              is_primary_address:
+                item.name === data.customer_primary_address ? 1 : 0,
+            }),
+          )
+        : [],
+    contacts:
+      data.contacts && data.contacts.length > 0 && data.contacts.length === 1
+        ? data.contacts.map(item => ({
+            ...item,
+            is_primary_contact: 1,
+            is_billing_contact: 0,
+          }))
+        : data.contacts,
     credit_limits:
       data.credit_limits && data.credit_limits?.length > 0
         ? data.credit_limits
@@ -156,12 +181,7 @@ const FormData = (props: Props) => {
     }
   };
 
-  // const getCustomerRoute = useCallback(async () => {
-  //   const response: any = await CustomerService.getCustomerRoute();
-  //   if (response?.result.length > 0) {
-  //     dispatch(customerActions.setListCustomerRoute(response.result));
-  //   }
-  // },[]);
+  
 
   const handleImagePicker = useCallback(async () => {
     const granted = await PermissionsAndroid.requestMultiple([
@@ -254,6 +274,7 @@ const FormData = (props: Props) => {
       type: 'contact',
     });
   }, [modalChoose.type]);
+  console.log(dataCustomer.contacts, 'contact current');
 
   const onUpdateCustomer = useCallback(() => {
     // let dataAddress = dataCustomer.address;
@@ -266,7 +287,22 @@ const FormData = (props: Props) => {
     const dataUpdate = {
       name: dataCustomer.name,
       address: dataCustomer.address || [{}],
-      contact: dataCustomer.contacts || [{}],
+      contact:
+        dataCustomer.contacts && dataCustomer.contacts.length > 0
+          ? dataCustomer?.contacts?.find(
+              item => item.is_primary_contact === 1,
+            ) != undefined
+            ? [
+                dataCustomer?.contacts?.find(
+                  item => item.is_primary_contact === 1,
+                ),
+              ]
+            : dataCustomer?.contacts.map(item => ({
+                ...item,
+                is_primary_contact: 1,
+                is_billing_contact: 0,
+              }))
+          : [],
       // credit_limits: dataCustomer.credit_limits || '',
       customer_code: dataCustomer.customer_code || '',
       customer_group:
@@ -297,19 +333,12 @@ const FormData = (props: Props) => {
       ],
       // ...dataCustomer,
     };
-    // console.log(dataUpdate.contact,'contact update')
+    // console.log(dataCustomer.contact,'contact update')
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
       );
-      // goBack && goBack() 
-      // Keyboard.dismiss();
     });
-    // pop(1)
-
-    // pop(1);
-
-     goBack && goBack();
   }, [dataCustomer]);
 
   const onCloseEditAddress = useCallback(() => {
@@ -329,7 +358,7 @@ const FormData = (props: Props) => {
   }, [modalChoose.status, modalEditAddress.status, modalData.status]);
 
   const isPrimaryAddress = useMemo(() => {
-    if (dataCustomer.address) {
+    if (dataCustomer.address && dataCustomer.address.length > 0) {
       // Check if any address has is_primary_address equal to 1
       return dataCustomer.address.some(item => item.is_primary_address === 1);
     } else {
@@ -342,7 +371,7 @@ const FormData = (props: Props) => {
     modalEditAddress.status,
   ]);
   const isPrimaryContact = useMemo(() => {
-    if (dataCustomer.contacts) {
+    if (dataCustomer.contacts && dataCustomer.contacts.length > 0) {
       // Check if any address has is_primary_address equal to 1
       return dataCustomer.contacts?.some(item => item.is_primary_contact == 1);
     } else {
@@ -364,7 +393,7 @@ const FormData = (props: Props) => {
             return {...item, is_primary_address: 0};
           }
           // For other items, return them as they are
-          return item;
+          return {...item};
         })
       : [];
     setDataCustomer(prev => ({...prev, address: updatedAddressArray}));
@@ -376,7 +405,7 @@ const FormData = (props: Props) => {
           if (item.is_primary_contact && item.is_primary_contact === 1) {
             return {...item, is_primary_contact: 0};
           }
-          return item;
+          return {...item};
         })
       : [];
     setDataCustomer(prev => ({...prev, contacts: updateContactArray}));
@@ -391,35 +420,82 @@ const FormData = (props: Props) => {
     // }
   }, []);
 
-  // console.log(dataCustomer.contacts,'contact')
+  // console.log(dataCustomer.contacts?.find(item => item.is_primary_contact === 1),'contact')
+
   const onPressData = useCallback(
     (data: any, type: string) => {
       if (type === 'address') {
         let newData: Address = data;
-        console.log(newData, 'new Data');
+
         newData.is_primary_address = 1;
+        newData.name = newData.address_title; // Ensure name is set from address_title
+
         startTransition(() => {
-          setDataCustomer(prev => ({
-            ...prev,
-            address: [newData],
-          }));
+          setDataCustomer(prev => {
+            const updatedAddress =
+              prev.address?.map(addr => ({
+                ...addr,
+                is_primary_address: 0,
+              })) || [];
+
+            const existingIndex = updatedAddress.findIndex(
+              addr => addr.address_title === newData.address_title,
+            );
+
+            if (existingIndex !== -1) {
+              updatedAddress[existingIndex] = newData;
+            } else {
+              updatedAddress.push(newData);
+            }
+
+            return {
+              ...prev,
+              address: updatedAddress,
+            };
+          });
         });
         onCloseModal();
       } else {
-        let newData: Contact = data;
+        let newData: any = data;
         newData.is_primary_contact = 1;
-        console.log(newData, 'newData,');
+
+        // Ensure the name field is correctly set
+        if (!newData.name) {
+          newData.name =
+            newData.first_name || newData.last_name || 'Unnamed Contact';
+        }
+
         startTransition(() => {
-          setDataCustomer(prev => ({
-            ...prev,
-            contact: [newData],
-          }));
+          setDataCustomer(prev => {
+            const updatedContacts =
+              prev.contacts?.map(contact => ({
+                ...contact,
+                is_primary_contact: 0,
+              })) || [];
+
+            const existingIndex = updatedContacts.findIndex(
+              contact => contact.name === newData.name,
+            );
+
+            if (existingIndex !== -1) {
+              updatedContacts[existingIndex] = newData;
+            } else {
+              updatedContacts.push(newData);
+            }
+
+            return {
+              ...prev,
+              contacts: updatedContacts,
+            };
+          });
         });
         onCloseModal();
       }
     },
     [modalChoose.status],
   );
+
+  // console.log(dataCustomer.contacts, 's');
   const onEditdata = useCallback(
     (data: any, type: any) => {
       if (type === 'address') {
@@ -741,7 +817,8 @@ const FormData = (props: Props) => {
             return (
               <CardEditAddress
                 type="address"
-                key={index.toString()}
+                key={item.name}
+                onPressCard={onEditdata}
                 address={item}
                 primaryAddress={dataCustomer.customer_primary_address}
               />
@@ -786,6 +863,7 @@ const FormData = (props: Props) => {
                 type="contact"
                 key={item.name}
                 contact={item}
+                onPressCard={onEditdata}
                 primaryContact={dataCustomer.customer_primary_contact}
               />
             );
@@ -834,6 +912,7 @@ const FormData = (props: Props) => {
         dataCustomer={dataCustomer}
         type={modalEditAddress.type}
         defaultEditData={defaultDataEdit}
+        setDefaultEditData={setDefaultDataEdit}
       />
       <ModalChoose
         visible={modalChoose.status}
@@ -843,6 +922,7 @@ const FormData = (props: Props) => {
         listContact={dataCustomer.contacts || []}
         onPressData={onPressData}
         onEditData={onEditdata}
+        onPressAdding={onPressAddingAddress}
         // defaultData={defaultDataEdit}
       />
       <ModalData

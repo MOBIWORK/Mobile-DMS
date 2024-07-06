@@ -208,7 +208,7 @@ export default {
   customerCode: 'Customer Code',
   addAddress: 'Add address',
   addContact: 'Add contact',
-  setDeliveryAddress: 'Set as delivery address',
+  setDeliveryAddress: 'Set as main address',
   setOrderAddress: 'Set as order address',
   success: 'success',
   city: 'city',

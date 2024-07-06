@@ -31,6 +31,7 @@ import {goBack, navigate} from '../../navigation/navigation-service';
 import {CustomerService} from '../../services';
 import {useSelector} from '../../config/function';
 import {shallowEqual} from 'react-redux';
+import { dataCustomer } from '../Report/Statistical/components/data';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -112,6 +113,8 @@ const DetailCustomer = () => {
     }),
     [data,indexView.current],
   );
+
+  // console.log(data.contact,'data')
 
 
   const onPressAdding = useCallback(() => {

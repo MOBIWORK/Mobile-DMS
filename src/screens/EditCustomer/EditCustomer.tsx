@@ -14,24 +14,22 @@ const EditCustomerScreen = () => {
   const styles = rootStyles(theme);
   const params =
     useRoute<RouteProp<AuthorizeParamsList, 'EDIT_CUSTOMER'>>().params;
+
+  const goBackScreen = React.useCallback(() => {
+    goBack();
+  }, []);
+
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <AppHeader
         label="Chi tiết khách hàng"
-        onBack={() => goBack()}
+        onBack={goBackScreen}
         backButtonIcon={
           <SvgIcon source="arrowLeft" color={theme.colors.text_secondary} />
         }
       />
       <Block block>
-        <FormData
-          data={params.data}
-          goBack={() =>
-            setTimeout(() => {
-              goBack();
-            },1500)
-          }
-        />
+        <FormData data={params.data} goBack={goBackScreen} />
       </Block>
     </SafeAreaView>
   );

@@ -13,12 +13,15 @@ interface CardTypeAddress {
   type: 'address';
   address: Address;
   primaryAddress?: string;
+  onPressCard:(data:any,type:any) =>void 
 }
 
 interface CardContactAddress {
   type: 'contact';
   contact: ContactCard;
   primaryContact?: any;
+  onPressCard:(data:any,type:any) =>void 
+
 }
 
 const CardEditAddress = (props: Props) => {
@@ -30,7 +33,7 @@ const CardEditAddress = (props: Props) => {
     <>
       {props.type === 'address'
         ? props.address.is_primary_address === 1 && (
-            <Block style={styles.card}>
+            <TouchableOpacity style={styles.card} onPress={() => props.onPressCard(props.address,'address')}>
               <Block paddingHorizontal={16}>
                 <Block style={styles.containAddressLabel}>
                   <Block style={styles.containIcon}>
@@ -95,10 +98,10 @@ const CardEditAddress = (props: Props) => {
                   </Block>
                 )}
               </Block>
-            </Block>
+            </TouchableOpacity>
           )
         : props.contact.is_primary_contact === 1 && (
-            <Block style={styles.card}>
+            <TouchableOpacity style={styles.card} onPress={() => props.onPressCard(props.contact,'contact')}>
               <Block paddingHorizontal={16}>
                 <Block style={styles.containAddressLabel}>
                   <Text
@@ -155,7 +158,7 @@ const CardEditAddress = (props: Props) => {
                   </Block>
                 </Block>
               </Block>
-            </Block>
+            </TouchableOpacity>
           )}
     </>
   );

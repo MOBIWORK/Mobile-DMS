@@ -214,7 +214,7 @@ export default {
   customerCode: 'Mã khách hàng',
   addAddress: 'Thêm địa chỉ',
   addContact: 'Thêm người liên hệ',
-  setDeliveryAddress: 'Đặt làm địa chỉ giao hàng',
+  setDeliveryAddress: 'Đặt làm địa chỉ chính',
   setOrderAddress: 'Đặt làm địa chỉ đặt hàng',
   success: 'Thành công',
   city: 'Thành phố',

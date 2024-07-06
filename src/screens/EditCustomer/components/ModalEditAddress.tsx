@@ -56,6 +56,7 @@ type Props = {
   setData: React.Dispatch<React.SetStateAction<DetailCustomerType>>;
   dataCustomer: DetailCustomerType;
   defaultEditData?: any;
+  setDefaultEditData: React.Dispatch<React.SetStateAction<any>>;
 };
 
 const ModalEditAddress = ({
@@ -150,9 +151,7 @@ const ModalEditAddress = ({
     },
   ]);
 
-  const isValidAddress = useMemo(() => {
-    return addressSelectedData?.length === 3 && txtAddressDetail !== '';
-  }, [addressSelectedData, txtAddressDetail]);
+  
 
   useEffect(() => {
     if (listDataCity?.city?.length === 0) {
@@ -203,23 +202,23 @@ const ModalEditAddress = ({
     },
     [location?.coords.longitude, location?.coords.latitude, txtAddressDetail],
   );
-  // console.log(contactValue, 'contactValue');
+  
   const handleSaveMainContact = useCallback(() => {
     let newArr: ContactCard[] | undefined = dataCustomer.contacts;
-    const contact:any = {
+    const contact: any = {
       // last_name: contactValue.nameContact,
-      first_name: contactValue.nameContact,
-      phone: contactValue.phoneNumber,
+      first_name: contactValue.nameContact || defaultEditData.first_name,
+      phone: contactValue.phoneNumber || defaultEditData.phone,
       address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       is_billing_contact: 0,
-      is_primary_contact: 0,
+      is_primary_contact: contactValue.isMainAddress ? 1 : 0,
       // name: contactValue.nameContact,
-      city: contactSelectedData[0].id || '',
-      county: contactSelectedData[1].id|| '',
-      state: contactSelectedData[2].id || '',
-      address_title:` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
-      address_line1:txtContactDetail,
-      name:defaultEditData.name!
+      city: contactSelectedData[0]?.id || '',
+      county: contactSelectedData[1]?.id || '',
+      state: contactSelectedData[2]?.id || '',
+      address_title: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
+      address_line1: txtContactDetail,
+      name: defaultEditData.name!,
     };
     if (type === 'contact' || type === 'AddingContact') {
       // console.log('run case nor');
@@ -237,21 +236,20 @@ const ModalEditAddress = ({
         dataCustomer.contacts.length > 0
       ) {
         // console.log('run if');
-        if (defaultEditData) {
+        if (defaultEditData && Object.keys(defaultEditData).length > 0) {
           // console.log('run replace');
           let indexData = dataCustomer.contacts.findIndex(
             item => item.first_name === defaultEditData.first_name,
           );
-          // console.log(indexData,newArr,'check flag')
+          console.log(indexData,newArr,'check flag')
           if (indexData !== -1 && newArr && newArr.length > 0) {
-            
             // console.log('run done');
             newArr[indexData] = contact;
             setData(prev => ({...prev, contacts: newArr}));
-            console.log(newArr,'data push')
+            console.log(newArr, 'data push');
           }
         } else {
-          // console.log('run case new');
+          console.log('run case new');
           startTransition(() => {
             setData(prev => ({
               ...prev,
@@ -263,9 +261,12 @@ const ModalEditAddress = ({
     }
 
     setContactValue({});
-    setAddressSelectedData([]);
+    setContactSelectedData([]);
+    setTxtContactDetail('');
+    // setDefaultEditData({});
+    setScreen('');
     onBackButtonPress();
-  }, [contactValue, txtContactDetail, addressObj, addressSelectedData]);
+  }, [contactValue, txtContactDetail, addressObj, contactSelectedData, screen]);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
@@ -392,6 +393,8 @@ const ModalEditAddress = ({
 
   // console.log(addressObj,'addObj')
 
+  // console.log(screen,'type')
+
   const handleSaveMainAddress = useCallback(() => {
     let newArr: Address[] | undefined = dataCustomer.address;
 
@@ -453,10 +456,19 @@ const ModalEditAddress = ({
       }
     }
     setAddressValue({});
+    // setDefaultEditData({});
+    setTxtAddressDetail('');
     setAddressSelectedData([]);
+    setScreen('');
     // setData(prev => ({...prev, address: []}));
     onBackButtonPress();
-  }, [addressValue.addressGet, addressValue.addressOrder, addressObj]);
+  }, [
+    addressValue.addressGet,
+    addressValue.addressOrder,
+    addressObj,
+    screen,
+    addressSelectedData,
+  ]);
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
@@ -542,12 +554,14 @@ const ModalEditAddress = ({
     }
   }, []);
   useEffect(() => {
-    let data = dataCustomer.address?.[0].address_title || '';
+    let data = dataCustomer.address?.[0]?.address_title || '';
     startTransition(() => {
       setTxtAddressDetail(data);
     });
   }, [dataCustomer]);
   // console.log(contactSelectedData, 'datâ');
+
+  // console.log(contactValue.isMainAddress, 'rể');
   return (
     <Modal
       isVisible={visible}
@@ -610,9 +624,7 @@ const ModalEditAddress = ({
                 label={`${getLabel('province')}/${getLabel('city')}`}
                 contentStyle={styles.contentStyle}
                 onPress={() => {
-                  console.log(addressSelectedData, 'on press adding');
                   setScreen('Adding');
-                  // setAddressSelectedData([]);
                 }}
                 value={addressValue?.city?.value ?? ''}
                 editable={false}
@@ -828,9 +840,10 @@ const ModalEditAddress = ({
               <Block block>
                 <AppInput
                   label={getLabel('contactName')}
-                  value={contactValue.nameContact}
+                  value={contactValue.nameContact || defaultEditData.first_name}
                   editable={true}
                   contentStyle={styles.contentStyle}
+                  // onPress={() => setDefaultEditData((prev:any) =>({...prev,first_name:''}))}
                   hiddenRightIcon={true}
                   styles={styles.marginInputBlock}
                   onChangeValue={text =>
@@ -842,7 +855,7 @@ const ModalEditAddress = ({
                 />
                 <AppInput
                   label={getLabel('phoneNumber')}
-                  value={contactValue.phoneNumber}
+                  value={contactValue.phoneNumber || defaultEditData.phone}
                   editable={true}
                   contentStyle={styles.contentStyle}
                   styles={styles.marginInputBlock}
@@ -885,6 +898,10 @@ const ModalEditAddress = ({
                   value={contactValue?.district?.value ?? ''}
                   editable={false}
                   onPress={() => {
+                    const newData = contactSelectedData.filter(
+                      item => item.type !== AddressType.city,
+                    );
+                    setContactSelectedData(newData);
                     setScreen('AddingContact');
                   }}
                   contentStyle={styles.contentStyle}
@@ -903,6 +920,10 @@ const ModalEditAddress = ({
                   editable={false}
                   contentStyle={styles.contentStyle}
                   onPress={() => {
+                    const newData = contactSelectedData.filter(
+                      item => item.type !== AddressType.district,
+                    );
+                    setContactSelectedData(newData);
                     setScreen('AddingContact');
                   }}
                   styles={styles.marginInputBlock}
@@ -916,7 +937,7 @@ const ModalEditAddress = ({
                 />
                 <AppInput
                   label={getLabel('addressDetail')}
-                  value={txtContactDetail}
+                  value={txtContactDetail || defaultEditData.address}
                   editable={true}
                   contentStyle={styles.contentStyle}
                   styles={styles.marginInputBlock}
@@ -924,6 +945,26 @@ const ModalEditAddress = ({
                   hiddenRightIcon={true}
                 />
               </Block>
+              <TouchableOpacity
+                style={styles.checkBoxBlock}
+                onPress={() =>
+                  setContactValue((prev: any) => ({
+                    ...prev,
+                    isMainAddress: !contactValue.isMainAddress,
+                  }))
+                }>
+                <Block
+                  style={styles.boxMainContact(contactValue.isMainAddress)}
+                  marginRight={8}>
+                  <AppIcons
+                    iconType={AppConstant.ICON_TYPE.EntypoIcon}
+                    size={14}
+                    color={theme.colors.white}
+                    name="check"
+                  />
+                </Block>
+                <Text>Đặt làm người liên hệ chính</Text>
+              </TouchableOpacity>
             </ScrollView>
             <Block
               direction="row"
@@ -946,7 +987,7 @@ const ModalEditAddress = ({
                   style={styles.buttonApply}
                   onPress={() => {
                     handleSaveMainContact();
-                    setContactValue({});
+                    // setContactValue({});
                   }}>
                   <Text style={styles.applyText}>{getLabel('save')}</Text>
                 </TouchableOpacity>
@@ -1076,4 +1117,16 @@ const modalEditStyles = (theme: AppTheme) =>
       // width:'100%',
       flex: 1,
     } as ViewStyle,
+    boxMainContact: (isPrimary: boolean) =>
+      ({
+        width: 20,
+        height: 20,
+        borderRadius: 6,
+        borderWidth: !isPrimary ? 1 : 0,
+        borderColor: theme.colors.text_secondary,
+        marginBottom: 20,
+        backgroundColor: isPrimary ? theme.colors.primary : 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+      } as ViewStyle),
   });
