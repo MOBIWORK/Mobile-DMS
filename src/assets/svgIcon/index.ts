@@ -77,10 +77,12 @@ import CheckNonBorder from './checkNonBorder.svg'
 import Edit from './edit.svg'
 import BlackPlush from './blackPlush.svg';
 import BluePlush from './bluePlush.svg';
-import RedEdit from './redEdit.svg'
+import RedEdit from './redEdit.svg';
+import RedTrash from './redTrash.svg'
 export const SvgComponent = {
   RedEdit,
   TakePicture,
+  RedTrash,
   MoneyIcon,
   Edit,
   CheckNonBorder,

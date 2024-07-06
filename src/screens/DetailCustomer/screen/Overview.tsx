@@ -44,6 +44,7 @@ const Overview = (props: Props) => {
               <CardOverView
                 type="contact"
                 mainContactAddress={props.data.contacts[0]}
+                mobileNo={props.data.mobile_no}
               />
             </Block>
           )}

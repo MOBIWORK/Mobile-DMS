@@ -19,6 +19,7 @@ type CardContactType = {
   type: 'contact';
   mainContactAddress: ContactCard;
   priContact?: string;
+  mobileNo?:any
 };
 
 const CardAddress = (props: Props) => {
@@ -136,8 +137,8 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="text_primary"
               lineHeight={21}>
-              {props.mainContactAddress.phone != null
-                ? formatPhoneNumber(props.mainContactAddress.phone)
+              {props.mobileNo && props.mobileNo != null
+                ? formatPhoneNumber(props.mobileNo)
                 : '---'}
             </Text>
           </Block>

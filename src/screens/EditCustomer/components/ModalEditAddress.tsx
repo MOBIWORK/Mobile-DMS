@@ -41,7 +41,7 @@ import {
   RootEkMapResponse,
 } from '../../../models/types';
 import {getDetailLocation} from '../../../services/appService';
-import {ApiConstant, AppConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {AppService} from '../../../services';
 import Mapbox from '@rnmapbox/maps';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
@@ -49,6 +49,7 @@ import {backgroundErrorListener, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 type Props = {
   visible: boolean;
   onBackButtonPress: () => void;
@@ -57,6 +58,7 @@ type Props = {
   dataCustomer: DetailCustomerType;
   defaultEditData?: any;
   setDefaultEditData: React.Dispatch<React.SetStateAction<any>>;
+  screenPass?: any;
 };
 
 const ModalEditAddress = ({
@@ -66,6 +68,7 @@ const ModalEditAddress = ({
   setData,
   dataCustomer,
   defaultEditData,
+  screenPass,
 }: Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
@@ -151,8 +154,6 @@ const ModalEditAddress = ({
     },
   ]);
 
-  
-
   useEffect(() => {
     if (listDataCity?.city?.length === 0) {
       dispatch(appActions.onGetListCity());
@@ -167,7 +168,7 @@ const ModalEditAddress = ({
       err => backgroundErrorListener(err.code),
     );
   };
-
+  // console.log(defaultEditData,'def')
   const fetchData = useCallback(
     async (lat: any, lon: any) => {
       const data: RootEkMapResponse = await getDetailLocation(lat, lon);
@@ -202,8 +203,8 @@ const ModalEditAddress = ({
     },
     [location?.coords.longitude, location?.coords.latitude, txtAddressDetail],
   );
-  
-  const handleSaveMainContact = useCallback(() => {
+
+  const handleSaveMainContact = useCallback(async () => {
     let newArr: ContactCard[] | undefined = dataCustomer.contacts;
     const contact: any = {
       // last_name: contactValue.nameContact,
@@ -238,15 +239,29 @@ const ModalEditAddress = ({
         // console.log('run if');
         if (defaultEditData && Object.keys(defaultEditData).length > 0) {
           // console.log('run replace');
-          let indexData = dataCustomer.contacts.findIndex(
-            item => item.first_name === defaultEditData.first_name,
+          let indexData = dataCustomer.contacts.findIndex(item =>
+            item.first_name
+              ? item.first_name === defaultEditData.first_name
+              : item.name === defaultEditData.name,
           );
-          console.log(indexData,newArr,'check flag')
+          console.log(indexData, newArr, 'check flag');
           if (indexData !== -1 && newArr && newArr.length > 0) {
             // console.log('run done');
             newArr[indexData] = contact;
             setData(prev => ({...prev, contacts: newArr}));
-            console.log(newArr, 'data push');
+
+            if (screenPass === ScreenConstant.DETAIL_CUSTOMER) {
+              const dataUpdate = {
+                contact: newArr,
+                name: dataCustomer.name,
+              };
+              dispatch(
+                customerActions.updateCustomerAction(
+                  dataUpdate,
+                  dataCustomer.name || '',
+                ),
+              );
+            }
           }
         } else {
           console.log('run case new');
@@ -440,6 +455,20 @@ const ModalEditAddress = ({
               address: newArr,
               customer_primary_address: txtAddressDetail,
             }));
+
+            if (screenPass === ScreenConstant.DETAIL_CUSTOMER) {
+              const dataUpdate = {
+                address: newArr,
+                name: dataCustomer.name,
+                customer_primary_address: txtAddressDetail,
+              };
+              dispatch(
+                customerActions.updateCustomerAction(
+                  dataUpdate,
+                  dataCustomer.name || '',
+                ),
+              );
+            }
           }
         } else {
           startTransition(() => {
@@ -497,28 +526,32 @@ const ModalEditAddress = ({
   }, [addressSelectedData, keyboardVisitAble]);
 
   useEffect(() => {
-    if (addressSelectedData.length === 3) {
-      setAddressValue((prev: any) => ({
-        ...prev,
-        city: addressSelectedData[0],
-        district: addressSelectedData[1],
-        ward: addressSelectedData[2],
-      }));
-    } else if (addressSelectedData.length === 2) {
-      setAddressValue((prev: any) => ({
-        ...prev,
-        city: addressSelectedData[0],
-        district: addressSelectedData[1],
-      }));
-    } else if (addressSelectedData.length === 1) {
-      setAddressValue((prev: any) => ({
-        ...prev,
-        city: addressSelectedData[0],
-      }));
+    if (addressSelectedData.length > 0) {
+      if (addressSelectedData.length === 3) {
+        setAddressValue((prev: any) => ({
+          ...prev,
+          city: addressSelectedData[0],
+          district: addressSelectedData[1],
+          ward: addressSelectedData[2],
+        }));
+      } else if (addressSelectedData.length === 2) {
+        setAddressValue((prev: any) => ({
+          ...prev,
+          city: addressSelectedData[0],
+          district: addressSelectedData[1],
+        }));
+      } else if (addressSelectedData.length === 1) {
+        setAddressValue((prev: any) => ({
+          ...prev,
+          city: addressSelectedData[0],
+        }));
+      } else {
+        setAddressValue((prev: any) => ({
+          ...prev,
+        }));
+      }
     } else {
-      setAddressValue((prev: any) => ({
-        ...prev,
-      }));
+      return;
     }
   }, [addressSelectedData]);
 
@@ -554,7 +587,7 @@ const ModalEditAddress = ({
     }
   }, []);
   useEffect(() => {
-    let data = dataCustomer.address?.[0]?.address_title || '';
+    let data = dataCustomer?.address?.[0]?.address_title || '';
     startTransition(() => {
       setTxtAddressDetail(data);
     });

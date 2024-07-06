@@ -1,28 +1,37 @@
-import {Platform, StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  TextStyle,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
 import {Block, AppText as Text, SvgIcon} from '../../../components/common';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {formatPhoneNumber} from '../../../config/function';
-import {Contact, ContactCard} from '../../../models/types';
-import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallBack from '../../../layouts/ErrorFallBack';
-import { navigate } from '../../../navigation/navigation-service';
-import { ScreenConstant } from '../../../const';
+import {ContactCard} from '../../../models/types';
+import {ScreenConstant} from '../../../const';
 
 type Props = {
   data: ContactCard;
-  primary:string
+  primary: string;
+  onPressCard: (data: any, type: string, screen: any) => void;
+  mobileNo?: any;
 };
 
 const CardContactView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
+  const {onPressCard} = props;
+  console.log(props.mobileNo, 'ssss');
   return (
-   
+    <TouchableOpacity
+      onPress={() =>
+        onPressCard(props.data, 'editContact', ScreenConstant.DETAIL_CUSTOMER)
+      }>
       <Block style={styles.card}>
         <Block style={styles.rootLayout}>
           <Text
@@ -30,15 +39,18 @@ const CardContactView = (props: Props) => {
             fontWeight="500"
             lineHeight={24}
             style={styles.labelText}>
-            {props.data.first_name + ''} {props.data.last_name != null ? props.data.last_name :''}
+            {props.data.first_name + ''}{' '}
+            {props.data.last_name != null ? props.data.last_name : ''}
           </Text>
 
           <Block style={styles.labelView}>
             <SvgIcon source="Phone" size={18} />
             <Text numberOfLines={1}>
               {' '}
-              {props.data?.phone != null
+              {props.data?.phone
                 ? formatPhoneNumber(props.data?.phone)
+                : props.mobileNo && props.mobileNo != null
+                ? formatPhoneNumber(props.mobileNo)
                 : '---'}
             </Text>
           </Block>
@@ -57,26 +69,28 @@ const CardContactView = (props: Props) => {
             </Text>
           </Block>
         </Block>
-        {props.data.name.includes(props.primary)  && (
-          <Block style={styles.containAddress}>
-            <Block style={styles.mainContact}>
-              <Text fontSize={14} fontWeight="400" colorTheme="primary">
-                {getLabel('addressGet')}
-              </Text>
+        {props.data.is_primary_contact &&
+          props.data.is_primary_contact === 1 ||  (
+            <Block style={styles.containAddress}>
+              <Block style={styles.mainContact}>
+                <Text fontSize={14} fontWeight="400" colorTheme="primary">
+                  {getLabel('addressGet')}
+                </Text>
+              </Block>
             </Block>
-          </Block>
-        )}
-        {props.data.name.includes(props.primary)  && (
-          <Block style={styles.containAddress}>
-            <Block style={styles.mainContact}>
-              <Text fontSize={14} fontWeight="400" colorTheme="primary">
-                {getLabel('mainContact')}
-              </Text>
+          )}
+        {props.data.is_primary_contact &&
+          props.data.is_primary_contact === 1 && (
+            <Block style={styles.containAddress}>
+              <Block style={styles.mainContact}>
+                <Text fontSize={14} fontWeight="400" colorTheme="primary">
+                  {getLabel('mainContact')}
+                </Text>
+              </Block>
             </Block>
-          </Block>
-        )}
+          )}
       </Block>
-  
+    </TouchableOpacity>
   );
 };
 

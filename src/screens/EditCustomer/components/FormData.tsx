@@ -274,7 +274,7 @@ const FormData = (props: Props) => {
       type: 'contact',
     });
   }, [modalChoose.type]);
-  console.log(dataCustomer.contacts, 'contact current');
+  
 
   const onUpdateCustomer = useCallback(() => {
     // let dataAddress = dataCustomer.address;

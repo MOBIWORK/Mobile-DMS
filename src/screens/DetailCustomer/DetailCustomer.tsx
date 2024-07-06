@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   StyleSheet,
-  Text,
   TextStyle,
   TouchableOpacity,
   View,
@@ -9,6 +8,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import React, {
+  startTransition,
   useCallback,
   useEffect,
   useRef,
@@ -17,7 +17,13 @@ import React, {
 } from 'react';
 import {useIsFocused, useRoute} from '@react-navigation/native';
 import {RouterProp} from '../../navigation/screen-type';
-import {AppHeader, Block, SvgIcon} from '../../components/common';
+import {
+  AppBottomSheet,
+  AppHeader,
+  Block,
+  SvgIcon,
+  AppText as Text,
+} from '../../components/common';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import Modal from 'react-native-modal';
 import {AppTheme, useTheme} from '../../layouts/theme';
@@ -31,7 +37,9 @@ import {goBack, navigate} from '../../navigation/navigation-service';
 import {CustomerService} from '../../services';
 import {useSelector} from '../../config/function';
 import {shallowEqual} from 'react-redux';
-import { dataCustomer } from '../Report/Statistical/components/data';
+import {dataCustomer} from '../Report/Statistical/components/data';
+import {BottomSheetModalMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import ModalEditAddress from '../EditCustomer/components/ModalEditAddress';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -44,12 +52,20 @@ const DetailCustomer = () => {
   const [isPending, startTrans] = useTransition();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalEditAddress, setModalEditAddress] = useState({
+    type: 'address',
+    status: false,
+  });
+
+  const bottomAction = useRef<BottomSheetModalMethods>();
   const [modalShow, setModalShow] = useState({
     type: AppConstant.CustomerFilterType.loai_khach_hang,
     status: false,
   });
+  const [dataEdit, setDataEdit] = useState<any>({data:{},type:''});
   const isFocus = useIsFocused();
   const indexView = useRef<number>(0);
+  const snapPointsDetailPr = React.useMemo(() => ['25%'], []);
 
   const getDetailCustomer = async () => {
     try {
@@ -91,6 +107,26 @@ const DetailCustomer = () => {
     {key: 'third', title: getLabel('contact')},
   ]).current;
 
+  const onPressCard = useCallback((data: any,type:string,screen:any) => {
+    bottomAction.current?.snapToIndex(0);
+    setDataEdit({
+      data:data,
+      type:type,
+      screen:screen
+    });
+  }, []);
+
+  // console.log(dataEdit,'dataEdits')
+
+  const onPressEdit = useCallback(() =>{
+      setModalEditAddress({
+        status:true,
+        type:dataEdit.type
+      })
+    bottomAction.current?.close()
+  },[])
+
+  
   const renderScene = React.useCallback(
     SceneMap({
       first: () => (
@@ -101,21 +137,35 @@ const DetailCustomer = () => {
         // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
         <Address
           onPressAdding={onPressAdding}
+          onPressCard={onPressCard}
           data={data as any}
           listData={data && data?.address ? data.address : []}
         />
       ),
       third: () => (
         // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
-        <Contact onPressAdding={onPressAddingContact} data={data as any} />
+        <Contact   onPressCard={onPressCard} onPressAdding={onPressAddingContact} data={data as any} />
         // </ErrorBoundary>
       ),
     }),
-    [data,indexView.current],
+    [data, indexView.current],
   );
 
   // console.log(data.contact,'data')
 
+  const onCloseEditAddress = useCallback(() => {
+    if (modalEditAddress.status === true) {
+      setModalEditAddress(prev => ({...prev, status: false}));
+    }
+  }, [modalEditAddress.status]);
+  const onPressEditContact = useCallback(() => {
+    startTransition(() => {
+      setModalEditAddress({
+        type: 'contact',
+        status: true,
+      });
+    });
+  }, [modalEditAddress.type]);
 
   const onPressAdding = useCallback(() => {
     setModalShow({
@@ -130,6 +180,8 @@ const DetailCustomer = () => {
       status: true,
     });
   }, [modalShow.status, modalShow.type]);
+
+  // console.log(dataEdit,'dataEdit')
 
   const renderTabBar = useCallback((props: any) => {
     return (
@@ -220,6 +272,48 @@ const DetailCustomer = () => {
           />
         </Block>
       </Modal>
+      <AppBottomSheet
+        bottomSheetRef={bottomAction}
+        snapPointsCustom={snapPointsDetailPr}>
+        <Block paddingHorizontal={16}>
+          <Text fontSize={12} colorTheme="text_primary" fontWeight="bold">
+            {dataEdit.data.name}
+          </Text>
+          <Block marginTop={20}>
+            <TouchableOpacity style={styles.containIconButton} onPress={onPressEdit}>
+              <SvgIcon source="Edit" size={20} />
+              <Block paddingLeft={10}>
+                <Text fontSize={16} fontWeight="400" colorTheme="text_primary">
+                  {getLabel('edit')}
+                </Text>
+              </Block>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.containIconButton}>
+              <SvgIcon
+                source="RedTrash"
+                size={20}
+                colorTheme="error"
+                color={theme.colors.error}
+              />
+              <Block paddingLeft={10}>
+                <Text fontSize={16} fontWeight="400" colorTheme="error">
+                  {getLabel('delete')}
+                </Text>
+              </Block>
+            </TouchableOpacity>
+          </Block>
+        </Block>
+      </AppBottomSheet>
+      <ModalEditAddress
+        visible={modalEditAddress.status}
+        onBackButtonPress={onCloseEditAddress}
+        setData={setData}
+        dataCustomer={data}
+        type={dataEdit.type}
+        defaultEditData={dataEdit.data}
+        setDefaultEditData={setDataEdit}
+        screenPass={dataEdit.screen}
+      />
     </SafeAreaView>
   );
 };
@@ -259,5 +353,10 @@ const rootStyles = (theme: AppTheme) =>
     modalStyle: {
       marginHorizontal: 0,
       marginVertical: 0,
+    } as ViewStyle,
+    containIconButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
     } as ViewStyle,
   });
