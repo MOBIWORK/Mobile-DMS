@@ -26,13 +26,14 @@ const CardContactView = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   const {onPressCard} = props;
-  console.log(props.mobileNo, 'ssss');
   return (
     <TouchableOpacity
       onPress={() =>
         onPressCard(props.data, 'editContact', ScreenConstant.DETAIL_CUSTOMER)
-      }>
-      <Block style={styles.card}>
+      }
+      style={styles.card}
+      >
+      <Block >
         <Block style={styles.rootLayout}>
           <Text
             fontSize={16}

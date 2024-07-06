@@ -62,7 +62,7 @@ const DetailCustomer = () => {
     type: AppConstant.CustomerFilterType.loai_khach_hang,
     status: false,
   });
-  const [dataEdit, setDataEdit] = useState<any>({data:{},type:''});
+  const [dataEdit, setDataEdit] = useState<any>({data: {}, type: ''});
   const isFocus = useIsFocused();
   const indexView = useRef<number>(0);
   const snapPointsDetailPr = React.useMemo(() => ['25%'], []);
@@ -107,26 +107,25 @@ const DetailCustomer = () => {
     {key: 'third', title: getLabel('contact')},
   ]).current;
 
-  const onPressCard = useCallback((data: any,type:string,screen:any) => {
+  const onPressCard = useCallback((data: any, type: string, screen: any) => {
     bottomAction.current?.snapToIndex(0);
     setDataEdit({
-      data:data,
-      type:type,
-      screen:screen
+      data: data,
+      type: type,
+      screen: screen,
     });
   }, []);
 
   // console.log(dataEdit,'dataEdits')
 
-  const onPressEdit = useCallback(() =>{
-      setModalEditAddress({
-        status:true,
-        type:dataEdit.type
-      })
-    bottomAction.current?.close()
-  },[])
+  const onPressEdit = useCallback(() => {
+    setModalEditAddress({
+      status: true,
+      type: dataEdit.type,
+    });
+    bottomAction.current?.close();
+  }, []);
 
-  
   const renderScene = React.useCallback(
     SceneMap({
       first: () => (
@@ -144,7 +143,11 @@ const DetailCustomer = () => {
       ),
       third: () => (
         // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
-        <Contact   onPressCard={onPressCard} onPressAdding={onPressAddingContact} data={data as any} />
+        <Contact
+          onPressCard={onPressCard}
+          onPressAdding={onPressAddingContact}
+          data={data as any}
+        />
         // </ErrorBoundary>
       ),
     }),
@@ -276,11 +279,14 @@ const DetailCustomer = () => {
         bottomSheetRef={bottomAction}
         snapPointsCustom={snapPointsDetailPr}>
         <Block paddingHorizontal={16}>
-          <Text fontSize={12} colorTheme="text_primary" fontWeight="bold">
+          <Text fontSize={ dataEdit.type === 'editAddress' ? 12 : 16} colorTheme="text_primary" fontWeight="bold">
+            {dataEdit.type === 'editAddress' ? '' : 'Liên hệ'}{' '}
             {dataEdit.data.name}
           </Text>
           <Block marginTop={20}>
-            <TouchableOpacity style={styles.containIconButton} onPress={onPressEdit}>
+            <TouchableOpacity
+              style={styles.containIconButton}
+              onPress={onPressEdit}>
               <SvgIcon source="Edit" size={20} />
               <Block paddingLeft={10}>
                 <Text fontSize={16} fontWeight="400" colorTheme="text_primary">
@@ -288,7 +294,7 @@ const DetailCustomer = () => {
                 </Text>
               </Block>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.containIconButton}>
+            {/* <TouchableOpacity style={styles.containIconButton}>
               <SvgIcon
                 source="RedTrash"
                 size={20}
@@ -300,7 +306,7 @@ const DetailCustomer = () => {
                   {getLabel('delete')}
                 </Text>
               </Block>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </Block>
         </Block>
       </AppBottomSheet>
