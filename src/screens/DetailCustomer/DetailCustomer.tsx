@@ -1,5 +1,7 @@
 import {
   ActivityIndicator,
+  Image,
+  ImageStyle,
   StyleSheet,
   TextStyle,
   TouchableOpacity,
@@ -20,6 +22,7 @@ import {RouterProp} from '../../navigation/screen-type';
 import {
   AppBottomSheet,
   AppHeader,
+  AppImage,
   Block,
   SvgIcon,
   AppText as Text,
@@ -37,9 +40,11 @@ import {goBack, navigate} from '../../navigation/navigation-service';
 import {CustomerService} from '../../services';
 import {useSelector} from '../../config/function';
 import {shallowEqual} from 'react-redux';
-import {dataCustomer} from '../Report/Statistical/components/data';
+
 import {BottomSheetModalMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import ModalEditAddress from '../EditCustomer/components/ModalEditAddress';
+import {ImageAssets} from '../../assets';
+import {deleteCustomer} from '../../services/customerService';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -58,14 +63,18 @@ const DetailCustomer = () => {
   });
 
   const bottomAction = useRef<BottomSheetModalMethods>();
+
   const [modalShow, setModalShow] = useState({
     type: AppConstant.CustomerFilterType.loai_khach_hang,
     status: false,
   });
+  const [modalDelete, setModalDelete] = useState(false);
   const [dataEdit, setDataEdit] = useState<any>({data: {}, type: ''});
   const isFocus = useIsFocused();
   const indexView = useRef<number>(0);
+  // const [bottomType,setBottomType] = useState('delete')
   const snapPointsDetailPr = React.useMemo(() => ['25%'], []);
+  const snapPointsDelete = React.useMemo(() => ['15%'], []);
 
   const getDetailCustomer = async () => {
     try {
@@ -107,16 +116,38 @@ const DetailCustomer = () => {
     {key: 'third', title: getLabel('contact')},
   ]).current;
 
-  const onPressCard = useCallback((data: any, type: string, screen: any) => {
-    bottomAction.current?.snapToIndex(0);
-    setDataEdit({
-      data: data,
-      type: type,
-      screen: screen,
-    });
-  }, []);
+  const onPressCard = useCallback(
+    (data: any, type: string, screen: any) => {
+      bottomAction.current?.snapToIndex(0);
+      setDataEdit({
+        data: data,
+        type: type,
+        screen: screen,
+      });
+    },
+    [dataEdit.type],
+  );
 
   // console.log(dataEdit,'dataEdits')
+
+  const onDeleteContact = useCallback(async () => {
+    const dataDelete = {
+      name: dataEdit.data.name,
+      type: dataEdit.type === 'editAddress' ? 'address' : 'contact',
+      customer: params.data.name,
+    };
+
+    await deleteCustomer(dataDelete);
+    setTimeout(async () => {
+      await getDetailCustomer();
+    }, 1000);
+    setModalDelete(false);
+  }, [dataEdit]);
+
+  const onPressShowDelete = useCallback(() => {
+    bottomAction.current?.close();
+    setModalDelete(!modalDelete);
+  }, [dataEdit, modalDelete]);
 
   const onPressEdit = useCallback(() => {
     setModalEditAddress({
@@ -129,11 +160,11 @@ const DetailCustomer = () => {
   const renderScene = React.useCallback(
     SceneMap({
       first: () => (
-        // 
+        //
         <Overview data={data as any} />
       ),
       second: () => (
-        // 
+        //
         <Address
           onPressAdding={onPressAdding}
           onPressCard={onPressCard}
@@ -142,13 +173,13 @@ const DetailCustomer = () => {
         />
       ),
       third: () => (
-        // 
+        //
         <Contact
           onPressCard={onPressCard}
           onPressAdding={onPressAddingContact}
           data={data as any}
         />
-        // 
+        //
       ),
     }),
     [data, indexView.current],
@@ -161,14 +192,6 @@ const DetailCustomer = () => {
       setModalEditAddress(prev => ({...prev, status: false}));
     }
   }, [modalEditAddress.status]);
-  const onPressEditContact = useCallback(() => {
-    startTransition(() => {
-      setModalEditAddress({
-        type: 'contact',
-        status: true,
-      });
-    });
-  }, [modalEditAddress.type]);
 
   const onPressAdding = useCallback(() => {
     setModalShow({
@@ -279,7 +302,10 @@ const DetailCustomer = () => {
         bottomSheetRef={bottomAction}
         snapPointsCustom={snapPointsDetailPr}>
         <Block paddingHorizontal={16}>
-          <Text fontSize={ dataEdit.type === 'editAddress' ? 12 : 16} colorTheme="text_primary" fontWeight="bold">
+          <Text
+            fontSize={dataEdit.type === 'editAddress' ? 12 : 16}
+            colorTheme="text_primary"
+            fontWeight="bold">
             {dataEdit.type === 'editAddress' ? '' : 'Liên hệ'}{' '}
             {dataEdit.data.name}
           </Text>
@@ -294,7 +320,9 @@ const DetailCustomer = () => {
                 </Text>
               </Block>
             </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.containIconButton}>
+            <TouchableOpacity
+              style={styles.containIconButton}
+              onPress={onPressShowDelete}>
               <SvgIcon
                 source="RedTrash"
                 size={20}
@@ -306,10 +334,62 @@ const DetailCustomer = () => {
                   {getLabel('delete')}
                 </Text>
               </Block>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </Block>
         </Block>
       </AppBottomSheet>
+      <Modal
+        isVisible={modalDelete}
+        animationIn={'slideInUp'}
+        animationOut={'slideOutDown'}
+        backdropOpacity={0.5}
+        onBackButtonPress={() => setModalDelete(false)}
+        onBackdropPress={() => setModalDelete(false)}
+        style={styles.containerStyle}>
+        <Block
+          colorTheme="bg_default"
+          justifyContent="center"
+          alignItems="center"
+          paddingHorizontal={16}
+          borderRadius={16}>
+          <Image source={ImageAssets.ErrorApiIcon} style={styles.errorIcon} />
+          <Text textAlign="center" fontSize={12}>
+            Bạn có chắc chắn muốn xóa{' '}
+            {dataEdit.type === 'editAddress' ? 'địa chỉ' : 'liên hệ'}{' '}
+            {dataEdit.data.name} không?
+          </Text>
+          <Block
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            marginBottom={20}
+            marginTop={30}>
+            <TouchableOpacity
+              style={styles.buttonCancel}
+              onPress={() => setModalDelete(false)}>
+              <Text
+                fontSize={14}
+                lineHeight={24}
+                fontWeight="700"
+                colorTheme="text_secondary">
+                Hủy
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonContinue}
+              onPress={onDeleteContact}>
+              <Text
+                fontSize={14}
+                lineHeight={24}
+                fontWeight="700"
+                colorTheme="white">
+                Tiếp tục
+              </Text>
+            </TouchableOpacity>
+          </Block>
+        </Block>
+      </Modal>
+
       <ModalEditAddress
         visible={modalEditAddress.status}
         onBackButtonPress={onCloseEditAddress}
@@ -364,5 +444,37 @@ const rootStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 20,
+    } as ViewStyle,
+
+    containerStyle: {
+      justifyContent: 'center',
+      borderRadius: 16,
+      alignItems: 'center',
+      // width: '100%',
+      marginHorizontal: 16,
+    } as ViewStyle,
+    errorIcon: {
+      width: 66,
+      height: 66,
+      marginBottom: 8,
+      marginTop: 16,
+    } as ImageStyle,
+    buttonCancel: {
+      justifyContent: 'center',
+      backgroundColor: theme.colors.bg_neutral,
+      flex: 1,
+      borderRadius: 16,
+      height: 36,
+      alignItems: 'center',
+      marginHorizontal: 4,
+    } as ViewStyle,
+    buttonContinue: {
+      justifyContent: 'center',
+      backgroundColor: theme.colors.primary,
+      flex: 1,
+      borderRadius: 16,
+      height: 36,
+      alignItems: 'center',
+      marginHorizontal: 4,
     } as ViewStyle,
   });
