@@ -76,7 +76,7 @@ const ErrorFallback = ({error}: {error: Error}) => {
             {' '}
             Đã có lỗi xảy ra, xin vui lòng thử lại
           </Text>
-          <Text fontSize={15} color={theme.colors.error}>
+          <Text fontSize={15} color={'#C4161C'}>
             {error.message}
           </Text>
         </Block>
@@ -108,13 +108,13 @@ const styless = (theme: AppTheme) =>
       height: 200,
     } as ImageStyle,
     buttonReset: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: '#C4161C',
       borderRadius: 50,
       paddingHorizontal: 8,
       paddingVertical: 4,
       justifyContent: 'center',
       alignItems: 'center',
       marginTop: 20,
-      marginHorizontal:16
+      marginHorizontal: 16,
     } as ViewStyle,
   });
