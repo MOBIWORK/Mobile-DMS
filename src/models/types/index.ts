@@ -534,7 +534,8 @@ export interface ContactCard {
   is_billing_contact?: number;
   city?:any,
   county?:any,
-  state?:any
+  state?:any,
+  primary?:any
 }
 
 export interface IDataItem {

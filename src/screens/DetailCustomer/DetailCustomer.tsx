@@ -129,11 +129,11 @@ const DetailCustomer = () => {
   const renderScene = React.useCallback(
     SceneMap({
       first: () => (
-        // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})}   >
+        // 
         <Overview data={data as any} />
       ),
       second: () => (
-        // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})}>
+        // 
         <Address
           onPressAdding={onPressAdding}
           onPressCard={onPressCard}
@@ -142,13 +142,13 @@ const DetailCustomer = () => {
         />
       ),
       third: () => (
-        // <ErrorBoundary fallbackRender={ErrorFallBack} onError={err => navigate(ScreenConstant.ERROR, {error: err})} >
+        // 
         <Contact
           onPressCard={onPressCard}
           onPressAdding={onPressAddingContact}
           data={data as any}
         />
-        // </ErrorBoundary>
+        // 
       ),
     }),
     [data, indexView.current],

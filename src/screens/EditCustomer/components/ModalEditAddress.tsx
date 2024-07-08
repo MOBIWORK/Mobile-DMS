@@ -123,6 +123,7 @@ const ModalEditAddress = ({
     address_title: '',
     is_primary_address: 0,
     is_shipping_address: 0,
+    primary: 0,
     address_location: '',
     address_line1: '',
     city: '',
@@ -134,6 +135,7 @@ const ModalEditAddress = ({
     phoneNumber: '',
     addressContact: '',
     isMainAddress: true,
+    isPrimaryAddress: true,
   });
 
   const [txtAddressDetail, setTxtAddressDetail] = useState<string>('');
@@ -146,10 +148,14 @@ const ModalEditAddress = ({
   const listCheckBox = useRef([
     {
       id: '1',
-      label: getLabel('setDeliveryAddress'),
+      label: getLabel('setPrimaryAddress'),
     },
     {
       id: '2',
+      label: getLabel('setDeliveryAddress'),
+    },
+    {
+      id: '3',
       label: getLabel('setOrderAddress'),
     },
   ]);
@@ -416,6 +422,7 @@ const ModalEditAddress = ({
     const newAdd = {
       is_primary_address: addressValue.addressGet ? 1 : 0,
       is_shipping_address: addressValue.addressOrder ? 1 : 0,
+      primary: addressValue.primary ? 1 : 0,
       address_title: txtAddressDetail,
       address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
       name: txtAddressDetail + '-Billing',
@@ -626,7 +633,9 @@ const ModalEditAddress = ({
         ) : type === 'address' || type === 'editAddress' ? (
           <>
             <AppHeader
-              label={type === 'editAddress' ? 'Sửa địa chỉ' : 'Địa chỉ chính'}
+              label={
+                type === 'editAddress' ? 'Sửa địa chỉ' : 'Thêm địa chỉ mới'
+              }
               onBack={onBackButtonPress}
               backButtonIcon={
                 <SvgIcon source="Close" colorTheme="black" size={22} />
@@ -745,9 +754,14 @@ const ModalEditAddress = ({
                                 ...prev,
                                 addressGet: !addressValue.addressGet,
                               }))
-                            : setAddressValue((prev: any) => ({
+                            : item.id === '2'
+                            ? setAddressValue((prev: any) => ({
                                 ...prev,
                                 addressOrder: !addressValue.addressOrder,
+                              }))
+                            : setAddressValue((prev: any) => ({
+                                ...prev,
+                                primary: !addressValue.primary,
                               }));
                         }}
                         style={styles.checkBoxBlock}>
@@ -853,9 +867,7 @@ const ModalEditAddress = ({
         ) : (
           <Block block height={'100%'} paddingHorizontal={16}>
             <AppHeader
-              label={
-                type === 'contact' ? getLabel('mainContact') : 'Sửa liên hệ'
-              }
+              label={type === 'contact' ? 'Thêm liên hệ mới' : 'Sửa liên hệ'}
               onBack={() => {}}
               backButtonIcon={
                 <AppIcons

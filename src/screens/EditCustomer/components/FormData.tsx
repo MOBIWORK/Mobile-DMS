@@ -102,6 +102,7 @@ const updatePrimaryAddress = (
     return item;
   });
 };
+// const updat
 
 const FormData = (props: Props) => {
   const {data, goBack} = props;
@@ -180,8 +181,6 @@ const FormData = (props: Props) => {
       dispatch(customerActions.setListCustomerTerritory(response.result));
     }
   };
-
-  
 
   const handleImagePicker = useCallback(async () => {
     const granted = await PermissionsAndroid.requestMultiple([
@@ -274,7 +273,6 @@ const FormData = (props: Props) => {
       type: 'contact',
     });
   }, [modalChoose.type]);
-  
 
   const onUpdateCustomer = useCallback(() => {
     // let dataAddress = dataCustomer.address;
@@ -922,7 +920,11 @@ const FormData = (props: Props) => {
         listContact={dataCustomer.contacts || []}
         onPressData={onPressData}
         onEditData={onEditdata}
-        onPressAdding={onPressAddingAddress}
+        onPressAdding={() => {
+          modalChoose.type === 'address'
+            ? onPressAddingAddress()
+            : onPressAddingContact();
+        }}
         // defaultData={defaultDataEdit}
       />
       <ModalData

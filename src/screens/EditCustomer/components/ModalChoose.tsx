@@ -103,7 +103,7 @@ Props) => {
           style={styles.containButton}
           onPress={() => {
             onBackButtonPress();
-            onPressAdding();
+             onPressAdding()
           }}>
           <SvgIcon source="BluePlush" size={16} colorTheme="white" />
           <Text colorTheme="facebook" fontSize={14} fontWeight="500">

@@ -83,6 +83,7 @@ const FormAddress = (props: Props) => {
     detailAddress: '',
     addressOrder: false,
     addressGet: false,
+    primary: false,
   });
   const [contactValue, setContactValue] = useState<MainContactAddress>({
     nameContact: '',
@@ -102,10 +103,14 @@ const FormAddress = (props: Props) => {
   const listCheckBox = useRef([
     {
       id: '1',
-      label: getLabel('setDeliveryAddress'),
+      label: getLabel('setMainAddress'),
     },
     {
       id: '2',
+      label: getLabel('setDeliveryAddress'),
+    },
+    {
+      id: '3',
       label: getLabel('setOrderAddress'),
     },
   ]);
@@ -367,7 +372,7 @@ const FormAddress = (props: Props) => {
         phone: contactValue.phoneNumber,
         last_name: contactValue.nameContact,
         address: txtAddressDetail,
-        is_primary_contact:0,
+        is_primary_contact: 0,
         state: {
           code: locationIDRes.data.result.ward_id,
           name: addressValue.ward?.value ?? '',
@@ -552,9 +557,14 @@ const FormAddress = (props: Props) => {
                               ...prev,
                               addressGet: !addressValue.addressGet,
                             }))
-                          : setAddressValue(prev => ({
+                          : item.id === '2'
+                          ? setAddressValue(prev => ({
                               ...prev,
                               addressOrder: !addressValue.addressOrder,
+                            }))
+                          : setAddressValue((prev: any) => ({
+                              ...prev,
+                              primary: !addressValue.primary,
                             }));
                       }}
                       style={styles.checkBoxView}>
