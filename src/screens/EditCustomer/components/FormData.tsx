@@ -96,7 +96,7 @@ const updatePrimaryAddress = (
     if (item.name === targetString) {
       return {
         ...item,
-        is_primary_address: 1,
+        primary: 1,
       };
     }
     return item;
@@ -125,7 +125,7 @@ const FormData = (props: Props) => {
         ? updatePrimaryAddress(data.address, data.customer_primary_address).map(
             item => ({
               ...item,
-              is_primary_address:
+              primary:
                 item.name === data.customer_primary_address ? 1 : 0,
             }),
           )
@@ -134,6 +134,7 @@ const FormData = (props: Props) => {
       data.contacts && data.contacts.length > 0 && data.contacts.length === 1
         ? data.contacts.map(item => ({
             ...item,
+            primary:1,
             is_primary_contact: 1,
             is_billing_contact: 0,
           }))
@@ -288,15 +289,16 @@ const FormData = (props: Props) => {
       contact:
         dataCustomer.contacts && dataCustomer.contacts.length > 0
           ? dataCustomer?.contacts?.find(
-              item => item.is_primary_contact === 1,
+              item => item.primary === 1,
             ) != undefined
             ? [
                 dataCustomer?.contacts?.find(
-                  item => item.is_primary_contact === 1,
+                  item => item.primary === 1,
                 ),
               ]
             : dataCustomer?.contacts.map(item => ({
                 ...item,
+                primary:1,
                 is_primary_contact: 1,
                 is_billing_contact: 0,
               }))
@@ -357,8 +359,8 @@ const FormData = (props: Props) => {
 
   const isPrimaryAddress = useMemo(() => {
     if (dataCustomer.address && dataCustomer.address.length > 0) {
-      // Check if any address has is_primary_address equal to 1
-      return dataCustomer.address.some(item => item.is_primary_address === 1);
+      // Check if any address has primary equal to 1
+      return dataCustomer.address.some(item => item.primary === 1);
     } else {
       return false;
     }
@@ -370,8 +372,8 @@ const FormData = (props: Props) => {
   ]);
   const isPrimaryContact = useMemo(() => {
     if (dataCustomer.contacts && dataCustomer.contacts.length > 0) {
-      // Check if any address has is_primary_address equal to 1
-      return dataCustomer.contacts?.some(item => item.is_primary_contact == 1);
+      // Check if any address has primary equal to 1
+      return dataCustomer.contacts?.some(item => item.primary == 1);
     } else {
       return false;
     }
@@ -386,9 +388,9 @@ const FormData = (props: Props) => {
   const onPressTrash = useCallback(() => {
     const updatedAddressArray = dataCustomer.address
       ? dataCustomer?.address.map(item => {
-          // Check if is_primary_address is 1, then update it to 0
-          if (item.is_primary_address === 1) {
-            return {...item, is_primary_address: 0};
+          // Check if primary is 1, then update it to 0
+          if (item.primary === 1) {
+            return {...item, primary: 0};
           }
           // For other items, return them as they are
           return {...item};
@@ -400,8 +402,8 @@ const FormData = (props: Props) => {
   const onPressTrashContact = useCallback(() => {
     const updateContactArray = dataCustomer.contacts
       ? dataCustomer?.contacts?.map(item => {
-          if (item.is_primary_contact && item.is_primary_contact === 1) {
-            return {...item, is_primary_contact: 0};
+          if (item.primary && item.primary === 1) {
+            return {...item, primary: 0};
           }
           return {...item};
         })
@@ -423,9 +425,9 @@ const FormData = (props: Props) => {
   const onPressData = useCallback(
     (data: any, type: string) => {
       if (type === 'address') {
-        let newData: Address = data;
+        let newData: Address | any = data;
 
-        newData.is_primary_address = 1;
+        newData.primary = 1;
         newData.name = newData.address_title; // Ensure name is set from address_title
 
         startTransition(() => {
@@ -433,7 +435,7 @@ const FormData = (props: Props) => {
             const updatedAddress =
               prev.address?.map(addr => ({
                 ...addr,
-                is_primary_address: 0,
+                primary: 0,
               })) || [];
 
             const existingIndex = updatedAddress.findIndex(
@@ -455,7 +457,7 @@ const FormData = (props: Props) => {
         onCloseModal();
       } else {
         let newData: any = data;
-        newData.is_primary_contact = 1;
+        newData.primary = 1;
 
         // Ensure the name field is correctly set
         if (!newData.name) {
@@ -468,7 +470,7 @@ const FormData = (props: Props) => {
             const updatedContacts =
               prev.contacts?.map(contact => ({
                 ...contact,
-                is_primary_contact: 0,
+                primary: 0,
               })) || [];
 
             const existingIndex = updatedContacts.findIndex(

@@ -553,18 +553,18 @@ const FormAddress = (props: Props) => {
                     <TouchableOpacity
                       onPress={() => {
                         item.id === '1'
-                          ? setAddressValue(prev => ({
+                          ? setAddressValue((prev: any) => ({
+                              ...prev,
+                              primary: !addressValue.primary,
+                            }))
+                          : item.id === '2'
+                          ? setAddressValue((prev: any) => ({
                               ...prev,
                               addressGet: !addressValue.addressGet,
                             }))
-                          : item.id === '2'
-                          ? setAddressValue(prev => ({
-                              ...prev,
-                              addressOrder: !addressValue.addressOrder,
-                            }))
                           : setAddressValue((prev: any) => ({
                               ...prev,
-                              primary: !addressValue.primary,
+                              addressOrder: !addressValue.addressOrder,
                             }));
                       }}
                       style={styles.checkBoxView}>

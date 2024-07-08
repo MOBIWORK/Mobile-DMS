@@ -123,7 +123,7 @@ const ModalEditAddress = ({
     address_title: '',
     is_primary_address: 0,
     is_shipping_address: 0,
-    primary: 0,
+    // primary: false,
     address_location: '',
     address_line1: '',
     city: '',
@@ -166,6 +166,7 @@ const ModalEditAddress = ({
     }
   }, []);
 
+  // console.log(addressValue,'addressValue')
   const onPressButtonGetLocation = () => {
     CommonUtils.getCurrentLocation(
       locations => {
@@ -209,7 +210,7 @@ const ModalEditAddress = ({
     },
     [location?.coords.longitude, location?.coords.latitude, txtAddressDetail],
   );
-
+  console.log(addressValue, 'ac');
   const handleSaveMainContact = useCallback(async () => {
     let newArr: ContactCard[] | undefined = dataCustomer.contacts;
     const contact: any = {
@@ -219,6 +220,7 @@ const ModalEditAddress = ({
       address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       is_billing_contact: 0,
       is_primary_contact: contactValue.isMainAddress ? 1 : 0,
+      primary: contactValue.isMainAddress ? 1 : 0,
       // name: contactValue.nameContact,
       city: contactSelectedData[0]?.id || '',
       county: contactSelectedData[1]?.id || '',
@@ -434,6 +436,7 @@ const ModalEditAddress = ({
       address_line1: addressObj.detail,
     };
 
+      console.log(newAdd,'new add save',addressValue)
     if (type === 'address' || type === 'Adding') {
       startTransition(() => {
         setData(prev => ({
@@ -504,6 +507,7 @@ const ModalEditAddress = ({
     addressObj,
     screen,
     addressSelectedData,
+    addressValue.primary
   ]);
 
   useEffect(() => {
@@ -752,27 +756,30 @@ const ModalEditAddress = ({
                           item.id === '1'
                             ? setAddressValue((prev: any) => ({
                                 ...prev,
-                                addressGet: !addressValue.addressGet,
+                                primary: !addressValue.primary,
                               }))
                             : item.id === '2'
                             ? setAddressValue((prev: any) => ({
                                 ...prev,
-                                addressOrder: !addressValue.addressOrder,
+                                addressGet: !addressValue.addressGet,
                               }))
                             : setAddressValue((prev: any) => ({
                                 ...prev,
-                                primary: !addressValue.primary,
+                                addressOrder: !addressValue.addressOrder,
                               }));
                         }}
                         style={styles.checkBoxBlock}>
                         <Block
                           style={
                             item.id === '1'
-                              ? styles.boxIconGo(addressValue.addressGet)
+                              ? styles.boxIconGo(addressValue.primary)
+                              : item.id === '2'
+                              ? styles.boxIconOrder(addressValue.addressGet)
                               : styles.boxIconOrder(addressValue.addressOrder)
                           }>
                           {addressValue.addressGet ||
-                          addressValue.addressOrder ? (
+                          addressValue.addressOrder ||
+                          addressValue.primary ? (
                             <AppIcons
                               iconType={AppConstant.ICON_TYPE.EntypoIcon}
                               size={14}

@@ -514,6 +514,7 @@ export interface Address {
   address_location: string;
   address_line1?: string;
   name?:any
+  primary?:any
 }
 
 export interface Contact {

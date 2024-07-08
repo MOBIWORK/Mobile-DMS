@@ -3,11 +3,10 @@ import React from 'react';
 import isEqual from 'react-fast-compare';
 
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import {Address,  ContactCard} from '../../../models/types';
+import {Address, ContactCard} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import {formatPhoneNumber} from '../../../config/function';
-
 
 type Props = CardListAddress | CardListContact;
 
@@ -34,42 +33,44 @@ const CardChoose = (props: Props) => {
   // console.log(props.data, 'propsdata');
 
   return (
-
     <>
-
       {props.type === 'address' ? (
         <TouchableOpacity
           style={styles.card}
           onPress={() => props.onPress(props.data, props.type)}>
           <Block paddingHorizontal={16}>
-            <Block style={styles.containAddressLabel} justifyContent='space-between' >
+            <Block
+              style={styles.containAddressLabel}
+              justifyContent="space-between">
               <Block direction="row" alignItems="center">
                 <Block style={styles.containIcon}>
                   <SvgIcon source="MapPin" size={16} />
                 </Block>
                 <Block>
-                  {props.data.address_title.trim().length > 0 && (
-                    <Text
-                      numberOfLines={2}
-                      fontSize={16}
-                      fontWeight="300"
-                      colorTheme="black"
-                      lineHeight={21}>
-                      {props.data.address_title.split(',', 4)[0].trim()}
-                    </Text>
-                  )}
-                </Block>
-                <Block>
-                  {props.data.address_line1 && (
-                    <Text
-                      numberOfLines={2}
-                      fontSize={16}
-                      fontWeight="300"
-                      colorTheme="black"
-                      lineHeight={21}>
-                      {props.data.address_line1}
-                    </Text>
-                  )}
+                  <Block>
+                    {props.data.address_title.trim().length > 0 && (
+                      <Text
+                        numberOfLines={2}
+                        fontSize={16}
+                        fontWeight="300"
+                        colorTheme="black"
+                        lineHeight={21}>
+                        {props.data.address_title.split(',', 4)[0].trim()}
+                      </Text>
+                    )}
+                  </Block>
+                  <Block>
+                    {props.data.address_line1 && (
+                      <Text
+                        numberOfLines={2}
+                        fontSize={16}
+                        fontWeight="300"
+                        colorTheme="black"
+                        lineHeight={21}>
+                        {props.data.address_line1}
+                      </Text>
+                    )}
+                  </Block>
                 </Block>
               </Block>
               <TouchableOpacity
@@ -81,14 +82,14 @@ const CardChoose = (props: Props) => {
             </Block>
           </Block>
           <Block style={styles.containAddress}>
-            {props.data.is_primary_address === 1 && (
+            {props.data.primary === 1 && (
               <Block style={styles.addressGetAndOrder}>
                 <Text
                   fontSize={14}
                   lineHeight={21}
                   fontWeight="400"
                   colorTheme="primary">
-                  {getLabel('deliveryAddress')}
+                  {getLabel('mainAddress')}
                 </Text>
               </Block>
             )}
@@ -121,9 +122,7 @@ const CardChoose = (props: Props) => {
                   fontWeight="400"
                   colorTheme="black"
                   lineHeight={21}>
-                  {props.data.first_name
-                    ? props.data.first_name 
-                    : '---'}
+                  {props.data.first_name ? props.data.first_name : '---'}
                 </Text>
               </Block>
               <Block
@@ -156,7 +155,7 @@ const CardChoose = (props: Props) => {
                     : '---'}
                 </Text>
               </Block>
-              {props.data.is_primary_contact === 0 && (
+              {props.data.primary === 0 && (
                 <Block style={styles.containMain}>
                   <Block style={styles.addressGetAndOrder}>
                     <Text

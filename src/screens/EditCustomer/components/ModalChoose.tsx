@@ -1,4 +1,4 @@
-import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {FlatList, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React from 'react';
 import isEqual from 'react-fast-compare';
 import {
@@ -61,19 +61,24 @@ Props) => {
                 <SvgIcon source="Close" colorTheme="black" size={22} />
               }
             />
-            {listAddress &&
-              listAddress.length > 0 &&
-              listAddress.map((item, index) => {
-                return (
+            {listAddress && listAddress.length > 0 && (
+              <FlatList
+                data={listAddress}
+                initialNumToRender={listAddress.length}
+                showsVerticalScrollIndicator={false}
+                decelerationRate={'normal'}
+                keyExtractor={(item, index) => `${index}-${item.name}`}
+                renderItem={({item}) => (
                   <CardChoose
-                    key={index}
+                    // key={index}
                     type="address"
                     data={item}
                     onPress={onPressData}
                     onEditPress={onEditData}
                   />
-                );
-              })}
+                )}
+              />
+            )}
           </Block>
         ) : (
           <Block block>
@@ -84,26 +89,31 @@ Props) => {
                 <SvgIcon source="Close" colorTheme="black" size={22} />
               }
             />
-            {listContact &&
-              listContact.length > 0 &&
-              listContact.map((item, index) => {
-                return (
+            {listContact && listContact.length > 0 && (
+              <FlatList
+                data={listContact}
+                initialNumToRender={listContact.length}
+                showsVerticalScrollIndicator={false}
+                decelerationRate={'normal'}
+                keyExtractor={(item, index) => `${index}-${item.name}`}
+                renderItem={({item}) => (
                   <CardChoose
-                    key={index}
+                    // key={index}
                     type="contact"
                     data={item}
                     onPress={onPressData}
                     onEditContact={onEditData}
                   />
-                );
-              })}
+                )}
+              />
+            )}
           </Block>
         )}
         <TouchableOpacity
           style={styles.containButton}
           onPress={() => {
             onBackButtonPress();
-             onPressAdding()
+            onPressAdding();
           }}>
           <SvgIcon source="BluePlush" size={16} colorTheme="white" />
           <Text colorTheme="facebook" fontSize={14} fontWeight="500">

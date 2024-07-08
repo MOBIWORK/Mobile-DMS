@@ -32,7 +32,7 @@ const CardEditAddress = (props: Props) => {
   return (
     <>
       {props.type === 'address'
-        ? props.address.is_primary_address === 1 && (
+        ? props.address.primary === 1 && (
             <TouchableOpacity style={styles.card} onPress={() => props.onPressCard(props.address,'address')}>
               <Block paddingHorizontal={16}>
                 <Block style={styles.containAddressLabel}>
@@ -75,7 +75,7 @@ const CardEditAddress = (props: Props) => {
                 </Block>
               </Block>
               <Block style={styles.containAddress}>
-                {props.address.is_primary_address === 1 && (
+                {props.address.primary === 1 && (
                   <Block style={styles.addressGetAndOrder}>
                     <Text
                       fontSize={14}
@@ -100,7 +100,7 @@ const CardEditAddress = (props: Props) => {
               </Block>
             </TouchableOpacity>
           )
-        : props.contact.is_primary_contact === 1 && (
+        : props.contact.primary === 1 && (
             <TouchableOpacity style={styles.card} onPress={() => props.onPressCard(props.contact,'contact')}>
               <Block paddingHorizontal={16}>
                 <Block style={styles.containAddressLabel}>
