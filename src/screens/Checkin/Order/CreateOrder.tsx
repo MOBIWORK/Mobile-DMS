@@ -244,6 +244,12 @@ const CreateOrder = () => {
               item.key === 'return_order' ? {...item, isDone: true} : item,
             );
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
+      dispatch(
+        appActions.setDataCheckIn({
+          ...dataCheckin,
+          checkin_donhang: orderResultData?.name,
+        }),
+      );
     }
     if (customer) {
       dispatch(orderAction.setCustomerOder(null));
