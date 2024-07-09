@@ -26,14 +26,16 @@ const CardContactView = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   const {onPressCard} = props;
+
+  // console.log(props.data?.primary, 'data contact');
+
   return (
     <TouchableOpacity
       onPress={() =>
         onPressCard(props.data, 'editContact', ScreenConstant.DETAIL_CUSTOMER)
       }
-      style={styles.card}
-      >
-      <Block >
+      style={styles.card}>
+      <Block>
         <Block style={styles.rootLayout}>
           <Text
             fontSize={16}
@@ -70,26 +72,24 @@ const CardContactView = (props: Props) => {
             </Text>
           </Block>
         </Block>
-        {props.data.is_primary_contact &&
-          props.data.is_primary_contact === 1 ||  (
-            <Block style={styles.containAddress}>
-              <Block style={styles.mainContact}>
-                <Text fontSize={14} fontWeight="400" colorTheme="primary">
-                  {getLabel('addressGet')}
-                </Text>
-              </Block>
+        {props.data.is_primary_contact != null && props.data.is_primary_contact === 1 && (
+          <Block style={styles.containAddress}>
+            <Block style={styles.mainContact}>
+              <Text fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('addressGet')}
+              </Text>
             </Block>
-          )}
-        {props.data.is_primary_contact &&
-          props.data.is_primary_contact === 1 && (
-            <Block style={styles.containAddress}>
-              <Block style={styles.mainContact}>
-                <Text fontSize={14} fontWeight="400" colorTheme="primary">
-                  {getLabel('mainContact')}
-                </Text>
-              </Block>
+          </Block>
+        )}
+        {props.data.primary != null && props.data.primary === 1 && (
+          <Block style={styles.containAddress}>
+            <Block style={styles.mainContact}>
+              <Text fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('mainContact')}
+              </Text>
             </Block>
-          )}
+          </Block>
+        )}
       </Block>
     </TouchableOpacity>
   );

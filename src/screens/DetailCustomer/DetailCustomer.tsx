@@ -98,14 +98,14 @@ const DetailCustomer = () => {
 
   useEffect(() => {
     // setLoading(true);
-    setTimeout(() => {
-      getDetailCustomer();
+    setTimeout(async () => {
+      await getDetailCustomer();
     }, 1000);
 
     return () => {
       // mounted.current = false;
     };
-  }, [currentFocus]);
+  }, [currentFocus,modalEditAddress.status,modalShow.status]);
 
   const routes = useRef([
     {key: 'first', title: getLabel('overview')},
@@ -307,7 +307,7 @@ const DetailCustomer = () => {
             colorTheme="text_primary"
             fontWeight="bold">
             {dataEdit.type === 'editAddress' ? '' : 'Liên hệ'}{' '}
-            {dataEdit.data.name}
+            {dataEdit?.data?.name || ''}
           </Text>
           <Block marginTop={20}>
             <TouchableOpacity
@@ -356,7 +356,7 @@ const DetailCustomer = () => {
           <Text textAlign="center" fontSize={12}>
             Bạn có chắc chắn muốn xóa{' '}
             {dataEdit.type === 'editAddress' ? 'địa chỉ' : 'liên hệ'}{' '}
-            {dataEdit.data.name} không?
+            {dataEdit.data.name || ''} không?
           </Text>
           <Block
             direction="row"

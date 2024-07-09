@@ -80,7 +80,7 @@ const CardAddressView = (props: Props) => {
             </AppText>
           </Block>
         </Block>
-        {props.primary_address.includes(props.data.address_title) && (
+        {props.data.primary != null  && props.data.primary === 1  &&(
           <Block style={styles.containAddress}>
             <View style={styles.mainContact}>
               <AppText fontSize={14} fontWeight="400" colorTheme="primary">
@@ -89,7 +89,7 @@ const CardAddressView = (props: Props) => {
             </View>
           </Block>
         )}
-        {props.data.is_shipping_address === 1 && (
+        {  props.data.is_primary_address != null && props.data.is_primary_address  === 1 && (
           <Block style={styles.containAddress}>
             <View style={styles.mainContact}>
               <AppText fontSize={14} fontWeight="400" colorTheme="primary">

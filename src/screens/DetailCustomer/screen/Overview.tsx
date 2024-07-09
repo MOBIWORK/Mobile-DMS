@@ -43,7 +43,7 @@ const Overview = (props: Props) => {
               {/* <CardContactOverview data={props.data} /> */}
               <CardOverView
                 type="contact"
-                mainContactAddress={props.data.contacts[0]}
+                mainContactAddress={props.data.contacts.find(item => item.primary === 1) || props.data.contacts[0]   }
                 mobileNo={props.data.mobile_no}
               />
             </Block>

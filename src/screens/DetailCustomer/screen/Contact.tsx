@@ -30,7 +30,10 @@ const Contact = (props: Props) => {
   const {t: getLabel} = useTranslation();
   // const da
 
-  // console.log(props.data.contacts,'cintact')
+  // console.log(props.data,'cintacđt')
+
+
+
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <View style={styles.containLabel}>

@@ -42,7 +42,7 @@ import isEqual from 'react-fast-compare';
 import {backgroundErrorListener} from '../../../config/function';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {IUpdateAddress} from '../../../services/checkinService';
-import {dataCustomer} from '../../Report/Statistical/components/data';
+
 
 type Props = {
   onPressClose: () => void;
