@@ -35,7 +35,7 @@ import {ErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from '../../layouts/ErrorFallBack';
 import {OrderService} from '../../services';
 import {appActions} from '../../redux-store/app-reducer/reducer';
-import { navigate } from '../../navigation/navigation-service';
+import {navigate} from '../../navigation/navigation-service';
 
 const OrderList = () => {
   const {t: getLabel} = useTranslation();
@@ -230,7 +230,7 @@ const OrderList = () => {
                 styles.itemDesc as any,
                 {marginLeft: 6, color: colors.text_primary},
               ]}>
-              {item.name}
+              {item.name_so}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -247,7 +247,7 @@ const OrderList = () => {
                 styles.itemDesc as any,
                 {marginLeft: 6, color: colors.text_primary},
               ]}>
-              {item.address_display}
+              {item?.address_display ?? '---'}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -261,7 +261,9 @@ const OrderList = () => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.itemDesc as any, {marginLeft: 6}]}>
-              {CommonUtils.convertDateToString(item.creation * 1000)}
+              {item?.creation
+                ? CommonUtils.convertDateToString(item.creation)
+                : '---'}
             </Text>
           </View>
           <View style={styles.inforDes}>
@@ -415,7 +417,7 @@ const OrderList = () => {
               <Pressable
                 onPress={() =>
                   navigation.navigate(ScreenConstant.ORDER_DETAIL_SCREEN, {
-                    name: item.name,
+                    name: item.name_so,
                   })
                 }>
                 {renderUiItem(item)}

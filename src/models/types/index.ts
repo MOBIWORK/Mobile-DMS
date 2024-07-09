@@ -531,9 +531,9 @@ export interface ContactCard {
   phone: string;
   is_primary_contact?: number;
   is_billing_contact?: number;
-  city?:any,
-  county?:any,
-  state?:any
+  city?: any;
+  county?: any;
+  state?: any;
 }
 
 export interface IDataItem {
@@ -710,6 +710,7 @@ export type IOrderList = {
   rounding_adjustment: number;
   price_list_rate: number;
   creation: number;
+  name_so: string;
 };
 
 export type ItemProductOrder = {
