@@ -56,6 +56,7 @@ export type CheckinData = {
   createByName?: string;
   item: VisitListItemType;
   isDetail?: boolean;
+  is_check_inventory?: boolean;
 };
 
 export type DMSConfigMobile = {
@@ -290,6 +291,8 @@ export const getNotificationDetail = (name: any) => {
     .then(res => res.data);
 };
 
-export const logError = (data:any) =>{
-  return createApi().post(ApiConstant.LOG_API,data).then(res => res.data)
-}
+export const logError = (data: any) => {
+  return createApi()
+    .post(ApiConstant.LOG_API, data)
+    .then(res => res.data);
+};
