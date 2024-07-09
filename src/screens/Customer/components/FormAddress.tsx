@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, {useState, useRef, useEffect, useMemo} from 'react';
+import React, {useState, useRef, useEffect, useMemo, startTransition} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TextInput} from 'react-native-paper';
 import {
@@ -25,6 +25,7 @@ import Colors from '../../../assets/Colors';
 import {
   DetailCustomerType,
   IDataCustomer,
+  IDataCustomers,
   KeyAbleProps,
   RootEkMapResponse,
 } from '../../../models/types';
@@ -46,8 +47,8 @@ import {dataCustomer} from '../../Report/Statistical/components/data';
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
-  listData: IDataCustomer;
-  setData: (item: IDataCustomer) => void;
+  listData: IDataCustomers;
+  setData: (item: any) => void;
   dataCustomer?: DetailCustomerType;
   getDetailCustomer?: () => Promise<void>;
   setDataAddress?: React.Dispatch<React.SetStateAction<any>>;
@@ -99,11 +100,11 @@ const FormAddress = (props: Props) => {
   const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-
+console.log(listData,'data')
   const listCheckBox = useRef([
     {
       id: '1',
-      label: getLabel('setMainAddress'),
+      label: getLabel('setPrimaryAddress'),
     },
     {
       id: '2',
@@ -189,8 +190,10 @@ const FormAddress = (props: Props) => {
     }
   };
 
+
+
   const handleSaveMainAddress = async () => {
-    console.log('runnnn');
+    // console.log('runnnn');
     {
       const locationIDRes: any = await AppService.getIDLocation({
         province_name: addressValue.city?.value ?? '',
@@ -244,6 +247,7 @@ const FormAddress = (props: Props) => {
               address_title: txtAddressDetail,
               address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
               name: txtAddressDetail + '-Billing',
+              primary: addressValue.primary ? 1 : 0,
               // address_line1: txtAddressDetail,
               address_type: 'Billing',
               city: locationIDRes.data.result.province_id || '',
@@ -254,6 +258,7 @@ const FormAddress = (props: Props) => {
           ],
         };
         // setData(prev => )
+     
         // console.log(dataUpdate,'dataUpdateCus');
         dispatch(
           customerActions.updateCustomerAction(
@@ -272,11 +277,11 @@ const FormAddress = (props: Props) => {
         );
       }
       onPressClose();
-      setData({
-        ...listData,
-        latitude: location?.coords.latitude,
-        longitude: location?.coords.longitude,
-      });
+      // setData({
+      //   ...listData,
+      //   lat: location?.coords.latitude,
+      //   long: location?.coords.longitude,
+      // });
     }
   };
   useEffect(() => {
@@ -571,11 +576,14 @@ const FormAddress = (props: Props) => {
                       <Block
                         style={
                           item.id === '1'
-                            ? styles.boxIconGo(addressValue.addressGet)
+                            ? styles.boxIconGo(addressValue.primary)
+                            : item.id === '2'
+                            ? styles.boxIconOrder(addressValue.addressGet)
                             : styles.boxIconOrder(addressValue.addressOrder)
                         }>
                         {addressValue.addressGet ||
-                        addressValue.addressOrder ? (
+                        addressValue.addressOrder ||
+                        addressValue.primary ? (
                           <AppIcons
                             iconType={AppConstant.ICON_TYPE.EntypoIcon}
                             size={14}

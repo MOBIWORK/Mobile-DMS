@@ -10,7 +10,6 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import React, {
-  startTransition,
   useCallback,
   useEffect,
   useRef,
@@ -22,7 +21,6 @@ import {RouterProp} from '../../navigation/screen-type';
 import {
   AppBottomSheet,
   AppHeader,
-  AppImage,
   Block,
   SvgIcon,
   AppText as Text,
@@ -74,7 +72,7 @@ const DetailCustomer = () => {
   const indexView = useRef<number>(0);
   // const [bottomType,setBottomType] = useState('delete')
   const snapPointsDetailPr = React.useMemo(() => ['25%'], []);
-  const snapPointsDelete = React.useMemo(() => ['15%'], []);
+  const [currentFocus, setCurrentFocus] = useState<boolean>(isFocus);
 
   const getDetailCustomer = async () => {
     try {
@@ -97,18 +95,17 @@ const DetailCustomer = () => {
     state => state.customer.mainAddress,
     shallowEqual,
   );
-  // const [dataAddress,setDataAddress] = useState<any>(listData)
-  // console.log(dataAddress,'dataAddress')
+
   useEffect(() => {
     // setLoading(true);
-    getDetailCustomer();
+    setTimeout(() => {
+      getDetailCustomer();
+    }, 1000);
 
     return () => {
       // mounted.current = false;
     };
-  }, [isFocus]);
-
-  // console.log(data, 'data customer');
+  }, [currentFocus]);
 
   const routes = useRef([
     {key: 'first', title: getLabel('overview')},
@@ -191,21 +188,23 @@ const DetailCustomer = () => {
     if (modalEditAddress.status === true) {
       setModalEditAddress(prev => ({...prev, status: false}));
     }
-  }, [modalEditAddress.status]);
+  }, [modalEditAddress.status, currentFocus]);
 
   const onPressAdding = useCallback(() => {
     setModalShow({
       type: AppConstant.CustomerFilterType.dia_chi,
       status: true,
     });
-  }, [modalShow.status, modalShow.type]);
+    setCurrentFocus(false);
+  }, [modalShow.status, modalShow.type, currentFocus]);
 
   const onPressAddingContact = useCallback(() => {
     setModalShow({
       type: AppConstant.CustomerFilterType.nguoi_lien_he,
       status: true,
     });
-  }, [modalShow.status, modalShow.type]);
+    setCurrentFocus(false);
+  }, [modalShow.status, modalShow.type, currentFocus]);
 
   // console.log(dataEdit,'dataEdit')
 
@@ -229,6 +228,7 @@ const DetailCustomer = () => {
       ...prev,
       status: false,
     }));
+    setCurrentFocus(true);
   }, [modalShow.status]);
 
   const onIndexChange = useCallback(
@@ -239,7 +239,7 @@ const DetailCustomer = () => {
     },
     [indexView.current],
   );
-  // console.log(mounted.current,'mounted')
+  // console.log(isFocus,'us','mounted')
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.labelHeader}>
@@ -292,7 +292,7 @@ const DetailCustomer = () => {
             onPressClose={onBackButtonPress}
             typeFilter={modalShow.type}
             listData={listData as any}
-            setData={() => {}}
+            setData={setData}
             dataCustomer={data}
             getDetailCustomer={getDetailCustomer}
           />

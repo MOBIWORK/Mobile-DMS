@@ -50,6 +50,7 @@ import {shallowEqual} from 'react-redux';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import {ListDistrict, ListWard} from '../../../redux-store/app-reducer/type';
 type Props = {
   visible: boolean;
   onBackButtonPress: () => void;
@@ -185,8 +186,8 @@ const ModalEditAddress = ({
           detailAddress: data.results[0].formatted_address,
           name: data.results[0].formatted_address,
         }));
+        console.log(data.results, 'data res');
         const addressSplit = data.results[0].formatted_address.split(',', 4);
-
         const newData: AddressSelected[] = [
           {
             type: AddressType.city,
@@ -201,6 +202,7 @@ const ModalEditAddress = ({
             value: addressSplit[1] ?? '',
           },
         ];
+        // console.log(newData,'run ????')
 
         startTransition(() => {
           setAddressSelectedData(newData);
@@ -210,7 +212,7 @@ const ModalEditAddress = ({
     },
     [location?.coords.longitude, location?.coords.latitude, txtAddressDetail],
   );
-  console.log(addressValue, 'ac');
+
   const handleSaveMainContact = useCallback(async () => {
     let newArr: ContactCard[] | undefined = dataCustomer.contacts;
     const contact: any = {
@@ -290,6 +292,59 @@ const ModalEditAddress = ({
     setScreen('');
     onBackButtonPress();
   }, [contactValue, txtContactDetail, addressObj, contactSelectedData, screen]);
+
+  // console.log(addressSelectedData,'????')
+
+  const autoCompleteData = useCallback(async () => {
+    if (
+      listDataCity.city.length > 0 &&
+      (type === 'editAddress' || type === 'editContact')
+    ) {
+      let add: Address = defaultEditData.address;
+      if (add.city && add.county && add.state) {
+        let value = listDataCity.city.find(item => item.ma_tinh === add.city);
+        setAddressValue((prev: any) => ({
+          ...prev,
+          city: {
+            value: value?.ten_tinh,
+            id: value?.ma_tinh,
+          },
+        }));
+        const districtRes: any = await AppService.getListDistrict(
+          value?.ma_tinh,
+        );
+        if (districtRes?.status === ApiConstant.STT_OK) {
+          let districtVal: ListDistrict = districtRes.data.result?.find(
+            (item: ListDistrict) => item.ma_huyen === add.state,
+          );
+          setAddressValue((prev: any) => ({
+            ...prev,
+            district: {
+              value: districtVal?.ten_huyen,
+              id: districtVal?.ma_huyen,
+            },
+          }));
+          const wardRes: any = await AppService.getListWard(
+            districtVal.ma_huyen,
+          );
+          if (wardRes?.status === ApiConstant.STT_OK) {
+            let wardValue: ListWard = wardRes?.data?.result.find(
+              (item: ListWard) => item.ma_xa === add.county,
+            );
+            setAddressValue((prev: any) => ({
+              ...prev,
+              ward: {
+                value: wardValue?.ten_xa,
+                id: wardValue?.ma_xa,
+              },
+            }));
+          }
+        }
+      }
+    } else {
+      return;
+    }
+  }, []);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
@@ -436,7 +491,6 @@ const ModalEditAddress = ({
       address_line1: addressObj.detail,
     };
 
-      console.log(newAdd,'new add save',addressValue)
     if (type === 'address' || type === 'Adding') {
       startTransition(() => {
         setData(prev => ({
@@ -507,7 +561,7 @@ const ModalEditAddress = ({
     addressObj,
     screen,
     addressSelectedData,
-    addressValue.primary
+    addressValue.primary,
   ]);
 
   useEffect(() => {
@@ -598,11 +652,13 @@ const ModalEditAddress = ({
     }
   }, []);
   useEffect(() => {
-    let data = dataCustomer?.address?.[0]?.address_title || '';
+    let data = defaultEditData.address_title || '';
+
     startTransition(() => {
       setTxtAddressDetail(data);
+      autoCompleteData();
     });
-  }, [dataCustomer]);
+  }, [defaultEditData]);
   // console.log(contactSelectedData, 'datâ');
 
   // console.log(contactValue.isMainAddress, 'rể');

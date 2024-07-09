@@ -10,7 +10,7 @@ import {AppText, Block} from '../../../components/common';
 // import {MainLayout} from '../../../layouts';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 // import CardContactOverview from '../component/CardView';
-import {DetailCustomerType, IDataCustomers} from '../../../models/types';
+import {DetailCustomerType} from '../../../models/types';
 // import CardAddress from '../../Customer/components/CardAddress'; 
 
 import InforView from '../component/InforView';

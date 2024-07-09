@@ -340,6 +340,8 @@ export interface IDataCustomers {
   contact?: Contact[];
   address?: Address[];
   credit_limits?: CreLimid[];
+  lat?:any,
+  long?:any
 }
 
 export interface DetailCustomerType {
@@ -514,7 +516,10 @@ export interface Address {
   address_location: string;
   address_line1?: string;
   name?:any
-  primary?:any
+  primary?:any,
+  city?:any,
+  county?: any,
+  state?: any,
 }
 
 export interface Contact {
