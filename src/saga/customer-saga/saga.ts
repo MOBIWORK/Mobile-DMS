@@ -157,6 +157,7 @@ export function* updateCustomerSaga(action: PayloadAction) {
         updateCustomer,
         action.payload.data,
       );
+      console.log(action.payload,'action.payload')
       console.log(response,'response update customer')
       if (response.message === 'ok') {
         showSnack({

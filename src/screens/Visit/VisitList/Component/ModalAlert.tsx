@@ -76,7 +76,7 @@ const ModalAlert = ({
       location.long,
     );
     return res;
-  }, [curLocation.current,show.cal]);
+  }, [curLocation.current,show.cal,show.status]);
 
   
 
@@ -101,14 +101,6 @@ const ModalAlert = ({
     );
   };
 
-
-   useEffect(() =>{
-    setDistance(Math.ceil(
-      data * 1000 -
-        (systemConfig.saiso_chophep_kb_vitringoaisaiso +
-          AppConstant.additional_distance),
-    ),)
-   },[])
     // console.log(data,'data distance')
   return (
     <Modal

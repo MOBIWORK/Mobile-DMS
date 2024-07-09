@@ -91,6 +91,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
   }, [data.length]);
 
   // console.log(listCity, 'run ');
+  // console.log(data,'data')
 
   const ListAddressSelected = (item: AddressSelected, isBorder: boolean) => {
     return (
