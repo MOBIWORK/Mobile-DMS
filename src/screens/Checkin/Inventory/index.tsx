@@ -382,6 +382,12 @@ const CheckinInventory = () => {
       item.key === 'inventory' ? {...item, isDone: true} : item,
     );
     dispatch(checkinActions.setDataCategoriesCheckin(newData));
+    dispatch(
+      appActions.setDataCheckIn({
+        ...dataCheckin,
+        is_check_inventory: true,
+      }),
+    );
     dispatch(productActions.setProductSelected([]));
     navigation.goBack();
   };

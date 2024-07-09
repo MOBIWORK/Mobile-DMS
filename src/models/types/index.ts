@@ -542,6 +542,7 @@ export interface ContactCard {
   county?:any,
   state?:any,
   primary?:any
+
 }
 
 export interface IDataItem {
@@ -718,6 +719,7 @@ export type IOrderList = {
   rounding_adjustment: number;
   price_list_rate: number;
   creation: number;
+  name_so: string;
 };
 
 export type ItemProductOrder = {
