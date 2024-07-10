@@ -125,8 +125,7 @@ const FormData = (props: Props) => {
         ? updatePrimaryAddress(data.address, data.customer_primary_address).map(
             item => ({
               ...item,
-              primary:
-                item.name === data.customer_primary_address ? 1 : 0,
+              primary: item.name === data.customer_primary_address ? 1 : 0,
             }),
           )
         : [],
@@ -134,7 +133,7 @@ const FormData = (props: Props) => {
       data.contacts && data.contacts.length > 0 && data.contacts.length === 1
         ? data.contacts.map(item => ({
             ...item,
-            primary:1,
+            primary: 1,
             is_primary_contact: 1,
             is_billing_contact: 0,
           }))
@@ -283,22 +282,23 @@ const FormData = (props: Props) => {
     typeof route?.[0].frequency != 'string'
       ? route?.[0].frequency?.join(';')
       : dataCustomer.routers;
+
     const dataUpdate = {
       name: dataCustomer.name,
-      address: dataCustomer.address || [{}],
+      address:
+        dataCustomer.address && dataCustomer.address.length > 0
+          ? dataCustomer?.address.find(item => item.primary === 1) != undefined
+            ? [dataCustomer?.address?.find(item => item.primary === 1)]
+            : [dataCustomer?.address[dataCustomer?.address.length - 1]]
+          : [] || [{}],
       contact:
         dataCustomer.contacts && dataCustomer.contacts.length > 0
-          ? dataCustomer?.contacts?.find(
-              item => item.primary === 1,
-            ) != undefined
-            ? [
-                dataCustomer?.contacts?.find(
-                  item => item.primary === 1,
-                ),
-              ]
+          ? dataCustomer?.contacts?.find(item => item.primary === 1) !=
+            undefined
+            ? [dataCustomer?.contacts?.find(item => item.primary === 1)]
             : dataCustomer?.contacts.map(item => ({
                 ...item,
-                primary:1,
+                primary: 1,
                 is_primary_contact: 1,
                 is_billing_contact: 0,
               }))
