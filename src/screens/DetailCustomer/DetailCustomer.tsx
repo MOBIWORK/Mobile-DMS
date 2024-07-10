@@ -105,7 +105,7 @@ const DetailCustomer = () => {
     return () => {
       // mounted.current = false;
     };
-  }, [currentFocus,modalEditAddress.status,modalShow.status]);
+  }, [currentFocus,modalEditAddress.status,modalShow.status,dataEdit]);
 
   const routes = useRef([
     {key: 'first', title: getLabel('overview')},
@@ -127,9 +127,10 @@ const DetailCustomer = () => {
 
   // console.log(dataEdit,'dataEdits')
 
+  // console.log(data,'data')
   const onDeleteContact = useCallback(async () => {
     const dataDelete = {
-      name: dataEdit.data.name,
+      name: dataEdit?.data?.name,
       type: dataEdit.type === 'editAddress' ? 'address' : 'contact',
       customer: params.data.name,
     };
@@ -179,7 +180,7 @@ const DetailCustomer = () => {
         //
       ),
     }),
-    [data, indexView.current],
+    [data, indexView.current,currentFocus],
   );
 
   // console.log(data.contact,'data')
@@ -357,7 +358,7 @@ const DetailCustomer = () => {
           <Text textAlign="center" fontSize={12}>
             Bạn có chắc chắn muốn xóa{' '}
             {dataEdit.type === 'editAddress' ? 'địa chỉ' : 'liên hệ'}{' '}
-            {dataEdit.data.name || ''} không?
+            {dataEdit?.data?.name || ''} không?
           </Text>
           <Block
             direction="row"

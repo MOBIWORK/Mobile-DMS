@@ -31,7 +31,7 @@ const Contact = (props: Props) => {
   // const da
 
   // console.log(props.data,'cintacđt')
-
+console.log(props.data.contacts,'rd')
 
 
   return (

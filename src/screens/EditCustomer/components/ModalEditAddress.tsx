@@ -126,7 +126,7 @@ const ModalEditAddress = ({
     address_title: '',
     is_primary_address: 0,
     is_shipping_address: 0,
-    primary: defaultEditData.primary === 1 ? true : false,
+    primary:defaultEditData?.primary ? defaultEditData?.primary === 1 ? true : false : false,
     address_location: '',
     address_line1: '',
     city: '',
@@ -227,8 +227,8 @@ const ModalEditAddress = ({
     let newArr: ContactCard[] | undefined = dataCustomer.contacts;
     const contact: any = {
       // last_name: contactValue.nameContact,
-      first_name: contactValue.nameContact || defaultEditData.first_name,
-      phone: contactValue.phoneNumber || defaultEditData.phone,
+      first_name: contactValue.nameContact || defaultEditData?.first_name,
+      phone: contactValue.phoneNumber || defaultEditData?.phone,
       address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       is_billing_contact: 0,
       is_primary_contact: contactValue.isMainAddress ? 1 : 0,
@@ -239,7 +239,7 @@ const ModalEditAddress = ({
       state: contactSelectedData[2]?.id || '',
       address_title: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       address_line1: txtContactDetail,
-      name: defaultEditData.name!,
+      name: defaultEditData?.name!,
     };
     if (type === 'contact' || type === 'AddingContact') {
       // console.log('run case nor');
@@ -261,8 +261,8 @@ const ModalEditAddress = ({
           // console.log('run replace');
           let indexData = dataCustomer.contacts.findIndex(item =>
             item.first_name
-              ? item.first_name === defaultEditData.first_name
-              : item.name === defaultEditData.name,
+              ? item.first_name === defaultEditData?.first_name
+              : item.name === defaultEditData?.name,
           );
           // console.log(indexData, newArr, 'check flag');
           if (indexData !== -1 && newArr && newArr.length > 0) {
@@ -565,7 +565,7 @@ const ModalEditAddress = ({
       ) {
         if (defaultEditData) {
           let indexData = dataCustomer.address?.findIndex(
-            item => item.address_line1 === defaultEditData.address_line1,
+            item => item.address_line1 === defaultEditData?.address_line1,
           );
           if (indexData != -1 && newArr && newArr.length > 0) {
             newArr[indexData] = newAdd;
@@ -707,7 +707,7 @@ const ModalEditAddress = ({
     }
   }, []);
   useEffect(() => {
-    let data = defaultEditData.address_title || '';
+    let data = defaultEditData?.address_title || '';
 
     startTransition(() => {
       setTxtAddressDetail(data);
@@ -1009,7 +1009,7 @@ const ModalEditAddress = ({
               <Block block>
                 <AppInput
                   label={getLabel('contactName')}
-                  value={contactValue.nameContact || defaultEditData.first_name}
+                  value={contactValue.nameContact || defaultEditData?.first_name}
                   editable={true}
                   contentStyle={styles.contentStyle}
                   // onPress={() => setDefaultEditData((prev:any) =>({...prev,first_name:''}))}
@@ -1024,7 +1024,7 @@ const ModalEditAddress = ({
                 />
                 <AppInput
                   label={getLabel('phoneNumber')}
-                  value={contactValue.phoneNumber || defaultEditData.phone}
+                  value={contactValue.phoneNumber || defaultEditData?.phone}
                   editable={true}
                   contentStyle={styles.contentStyle}
                   styles={styles.marginInputBlock}
@@ -1106,7 +1106,7 @@ const ModalEditAddress = ({
                 />
                 <AppInput
                   label={getLabel('addressDetail')}
-                  value={txtContactDetail || defaultEditData.address}
+                  value={txtContactDetail || defaultEditData?.address}
                   editable={true}
                   contentStyle={styles.contentStyle}
                   styles={styles.marginInputBlock}

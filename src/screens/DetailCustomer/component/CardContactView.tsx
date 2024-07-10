@@ -50,9 +50,8 @@ const CardContactView = (props: Props) => {
             <SvgIcon source="Phone" size={18} />
             <Text numberOfLines={1}>
               {' '}
-              {props.data?.phone
-                ? formatPhoneNumber(props.data?.phone)
-                : props.mobileNo && props.mobileNo != null
+              {
+                 props.mobileNo && props.mobileNo != null
                 ? formatPhoneNumber(props.mobileNo)
                 : '---'}
             </Text>
