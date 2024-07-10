@@ -7,7 +7,13 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, {useState, useRef, useEffect, useMemo, startTransition} from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  startTransition,
+} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TextInput} from 'react-native-paper';
 import {
@@ -43,7 +49,6 @@ import {backgroundErrorListener} from '../../../config/function';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {IUpdateAddress} from '../../../services/checkinService';
 
-
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
@@ -52,7 +57,7 @@ type Props = {
   dataCustomer?: DetailCustomerType;
   getDetailCustomer?: () => Promise<void>;
   setDataAddress?: React.Dispatch<React.SetStateAction<any>>;
-  screen?:any
+  screen?: any;
 };
 
 export const AddressType = {
@@ -68,7 +73,12 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter, screen:screenPass,getDetailCustomer} = props;
+  const {
+    onPressClose,
+    typeFilter,
+    screen: screenPass,
+    getDetailCustomer,
+  } = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -101,7 +111,7 @@ const FormAddress = (props: Props) => {
   const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-// console.log(listData,'data')
+  // console.log(listData,'data')
   const listCheckBox = useRef([
     {
       id: '1',
@@ -191,8 +201,6 @@ const FormAddress = (props: Props) => {
     }
   };
 
-
-
   const handleSaveMainAddress = async () => {
     // console.log('runnnn');
     {
@@ -241,7 +249,6 @@ const FormAddress = (props: Props) => {
         const dataUpdate = {
           name: props.dataCustomer?.name || '',
           address: [
-            ...(props.dataCustomer?.address || []),
             {
               is_primary_address: addressValue.addressGet ? 1 : 0,
               is_shipping_address: addressValue.addressOrder ? 1 : 0,
@@ -259,7 +266,7 @@ const FormAddress = (props: Props) => {
           ],
         };
         // setData(prev => )
-     
+
         // console.log(dataUpdate,'dataUpdateCus');
         dispatch(
           customerActions.updateCustomerAction(
@@ -278,8 +285,12 @@ const FormAddress = (props: Props) => {
         );
       }
       onPressClose();
-      if(screenPass && screenPass === ScreenConstant.DETAIL_CUSTOMER && getDetailCustomer){
-          await getDetailCustomer()
+      if (
+        screenPass &&
+        screenPass === ScreenConstant.DETAIL_CUSTOMER &&
+        getDetailCustomer
+      ) {
+        await getDetailCustomer();
       }
     }
   };
@@ -403,9 +414,13 @@ const FormAddress = (props: Props) => {
         }),
       );
     }
-    if(screenPass && screenPass === ScreenConstant.DETAIL_CUSTOMER && getDetailCustomer){
-      await getDetailCustomer()
-  }
+    if (
+      screenPass &&
+      screenPass === ScreenConstant.DETAIL_CUSTOMER &&
+      getDetailCustomer
+    ) {
+      await getDetailCustomer();
+    }
 
     onPressClose();
   }, [contactValue, txtContactDetail]);

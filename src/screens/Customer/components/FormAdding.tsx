@@ -68,7 +68,7 @@ const FormAdding = (props: Props) => {
     setModalShow,
     imageSource,
     location,
-    setLocation,
+    // setLocation,
     setModalOpen,
   } = props;
   const theme = useTheme();

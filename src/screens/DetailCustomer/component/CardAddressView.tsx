@@ -12,18 +12,22 @@ import {Address} from '../../../models/types';
 import {AppText, Block, SvgIcon} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import { ScreenConstant } from '../../../const';
+import {ApiConstant, ScreenConstant} from '../../../const';
+import {useSelector} from '../../../config/function';
+import {shallowEqual} from 'react-redux';
+import {AppService} from '../../../services';
+import {ListDistrict, ListWard} from '../../../redux-store/app-reducer/type';
 
 type SingleAddress = {
   type: 'single';
   data: string;
-  onPressCard: (data: any,type:string,screen:any) => void;
+  onPressCard: (data: any, type: string, screen: any) => void;
 };
 type ListAddress = {
   data: Address;
   type: 'list';
   primary_address: string;
-  onPressCard: (data: any,type:string,screen:any) => void;
+  onPressCard: (data: any, type: string, screen: any) => void;
 };
 type Props = SingleAddress | ListAddress;
 
@@ -31,11 +35,91 @@ const CardAddressView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+  const listDataCity = useSelector(
+    state => state.app.listDataCity,
+    shallowEqual,
+  );
+  const [valueCity, setValue] = React.useState({
+    city: {
+      id: '',
+      value: '',
+    },
+    ward: {
+      id: '',
+      value: '',
+    },
+    district: {
+      id: '',
+      value: '',
+    },
+  });
   // console.log(props.data,'rpops data')
+
+  const autoCompleteData = React.useCallback(async () => {
+    if (props.type === 'list')
+      if (listDataCity.city.length > 0) {
+        let add: Address = props.data;
+        // console.log(add, 'editValue');
+        if (add.city != null) {
+          let value = listDataCity.city.find(item => item.ma_tinh === add.city);
+          // console.log(value, 'value');
+          setValue((prev: any) => ({
+            ...prev,
+            city: {
+              value: value?.ten_tinh,
+              id: value?.ma_tinh,
+            },
+          }));
+
+          const districtRes: any = await AppService.getListDistrict(
+            value?.ma_tinh,
+          );
+          if (districtRes?.status === ApiConstant.STT_OK) {
+            let districtVal: ListDistrict = districtRes.data.result?.find(
+              (item: ListDistrict) => item.ma_huyen === add.county,
+            );
+            setValue((prev: any) => ({
+              ...prev,
+              district: {
+                value: districtVal?.ten_huyen,
+                id: districtVal?.ma_huyen,
+              },
+            }));
+
+            const wardRes: any = await AppService.getListWard(
+              districtVal.ma_huyen,
+            );
+            if (wardRes?.status === ApiConstant.STT_OK) {
+              let wardValue: ListWard = wardRes?.data?.result.find(
+                (item: ListWard) => item.ma_xa === add.state,
+              );
+              setValue((prev: any) => ({
+                ...prev,
+                ward: {
+                  value: wardValue?.ten_xa,
+                  id: wardValue?.ma_xa,
+                },
+              }));
+            }
+          }
+        }
+      }
+  }, [props.type]);
+
+  React.useEffect(() => {
+    autoCompleteData();
+  }, [props.type]);
+
   return props.type === 'list' ? (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => props.onPressCard(props.data,'editAddress',ScreenConstant.DETAIL_CUSTOMER)}>
+      onPress={() =>
+        props.onPressCard(
+          props.data,
+          'editAddress',
+          ScreenConstant.DETAIL_CUSTOMER,
+        )
+      }>
       <Block>
         <Block style={styles.rootLayout}>
           <Block
@@ -62,25 +146,15 @@ const CardAddressView = (props: Props) => {
               fontSize={14}
               fontWeight="500"
               colorTheme="text_primary">
-              {props?.data?.address_title
-                ? props?.data?.address_title.split(',', 4)[1] === undefined
-                  ? ''
-                  : props?.data?.address_title.split(',', 4)[1] +
-                      ',' +
-                      props?.data?.address_title.split(',', 4)[2] ===
-                    undefined
-                  ? ''
-                  : props?.data?.address_title.split(',', 4)[2] +
-                      ',' +
-                      props?.data?.address_title.split(',', 4)[3] ===
-                    undefined
-                  ? ''
-                  : props?.data?.address_title.split(',', 4)[3]
-                : '___'}
+              {valueCity.city.value +
+                ', ' +
+                valueCity.ward.value +
+                ', ' +
+                valueCity.district.value}
             </AppText>
           </Block>
         </Block>
-        {props.data.primary != null  && props.data.primary === 1  &&(
+        {props.data.primary != null && props.data.primary === 1 && (
           <Block style={styles.containAddress}>
             <View style={styles.mainContact}>
               <AppText fontSize={14} fontWeight="400" colorTheme="primary">
@@ -89,21 +163,28 @@ const CardAddressView = (props: Props) => {
             </View>
           </Block>
         )}
-        {  props.data.is_primary_address != null && props.data.is_primary_address  === 1 && (
-          <Block style={styles.containAddress}>
-            <View style={styles.mainContact}>
-              <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-                {getLabel('addressOrder')}
-              </AppText>
-            </View>
-          </Block>
-        )}
+        {props.data.is_primary_address != null &&
+          props.data.is_primary_address === 1 && (
+            <Block style={styles.containAddress}>
+              <View style={styles.mainContact}>
+                <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                  {getLabel('addressOrder')}
+                </AppText>
+              </View>
+            </Block>
+          )}
       </Block>
     </TouchableOpacity>
   ) : (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => props.onPressCard(props.data,'editAddress',ScreenConstant.DETAIL_CUSTOMER)}>
+      onPress={() =>
+        props.onPressCard(
+          props.data,
+          'editAddress',
+          ScreenConstant.DETAIL_CUSTOMER,
+        )
+      }>
       <Block marginTop={10}>
         <Block style={styles.rootLayout}>
           <Block style={styles.labelView}>

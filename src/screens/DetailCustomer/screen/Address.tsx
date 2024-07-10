@@ -30,7 +30,7 @@ const Address = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   // console.log(props.listData,'data')
-
+// console.log(props.data.address,'add')
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <View style={styles.containLabel}>

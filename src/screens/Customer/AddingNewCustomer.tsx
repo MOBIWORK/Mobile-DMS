@@ -93,11 +93,9 @@ const AddingNewCustomer = () => {
     customer_group: '',
     territory: '',
     custom_birthday: new Date().getTime(),
-    mobile_no:'',
-    industry:'',
-    name:''
-    
-
+    mobile_no: '',
+    industry: '',
+    name: '',
   });
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
@@ -206,6 +204,12 @@ const AddingNewCustomer = () => {
           Object.keys(address).length > 0 ? address.addressOrder : false,
         is_shipping_address:
           Object.keys(address).length > 0 ? address.addressGet : false,
+        primary:
+          Object.keys(address).length > 0
+            ? address.primary
+              ? true
+              : false
+            : false,
       },
       contact: {
         address_title:

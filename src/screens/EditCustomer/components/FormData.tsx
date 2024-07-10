@@ -93,7 +93,7 @@ const updatePrimaryAddress = (
   targetString: string | any,
 ) => {
   return dataArray.map(item => {
-    if (item.name === targetString) {
+    if ( item && item?.name === targetString) {
       return {
         ...item,
         primary: 1,
@@ -125,7 +125,7 @@ const FormData = (props: Props) => {
         ? updatePrimaryAddress(data.address, data.customer_primary_address).map(
             item => ({
               ...item,
-              primary: item.name === data.customer_primary_address ? 1 : 0,
+              primary: item?.name === data.customer_primary_address ? 1 : 0,
             }),
           )
         : [],
@@ -290,7 +290,7 @@ const FormData = (props: Props) => {
           ? dataCustomer?.address.find(item => item.primary === 1) != undefined
             ? [dataCustomer?.address?.find(item => item.primary === 1)]
             : [dataCustomer?.address[dataCustomer?.address.length - 1]]
-          : [] || [{}],
+          : [{}] ,
       contact:
         dataCustomer.contacts && dataCustomer.contacts.length > 0
           ? dataCustomer?.contacts?.find(item => item.primary === 1) !=
@@ -336,7 +336,7 @@ const FormData = (props: Props) => {
     // console.log(dataCustomer.contact,'contact update')
     startTransition(() => {
       dispatch(
-        customerActions.updateCustomerAction(dataUpdate, dataCustomer.name!),
+        customerActions.updateCustomerAction(dataUpdate, dataCustomer?.name!),
       );
     });
   }, [dataCustomer]);
@@ -817,7 +817,7 @@ const FormData = (props: Props) => {
             return (
               <CardEditAddress
                 type="address"
-                key={item.name}
+                key={`${item?.name}-${index}`}
                 onPressCard={onEditdata}
                 address={item}
                 primaryAddress={dataCustomer.customer_primary_address}

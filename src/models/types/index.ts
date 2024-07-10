@@ -412,6 +412,7 @@ export type AddressUpdate = {
   state: string;
   is_primary_address: boolean;
   is_shipping_address: boolean;
+  primary?:any
 };
 export type ContactUpdate = {
   address_title: string;
@@ -443,6 +444,7 @@ export type DataCustomersUpdate = {
   contact: ContactUpdate;
   router: RouterUpdate;
   image?: any;
+  // primary?:any
 };
 
 export interface ContactCustomer {

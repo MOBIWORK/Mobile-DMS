@@ -354,7 +354,7 @@ const ModalEditAddress = ({
         }
       } else {
         let add: ContactCard = defaultEditData;
-        console.log(add, 'editContact');
+        // console.log(add, 'editContact');
         if (add.city != null) {
           let value = listDataCity.city.find(item => item.ma_tinh === add.city);
           console.log(value, 'value');
