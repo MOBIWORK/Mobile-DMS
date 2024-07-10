@@ -74,7 +74,7 @@ const DetailCustomer = () => {
   const snapPointsDetailPr = React.useMemo(() => ['25%'], []);
   const [currentFocus, setCurrentFocus] = useState<boolean>(isFocus);
 
-  const getDetailCustomer = async () => {
+  const getDetailCustomer = useCallback(async () => {
     try {
       setLoading(true);
       let res: any = await CustomerService.getCustomerDetail(params?.data.name);
@@ -87,7 +87,7 @@ const DetailCustomer = () => {
       // mounted.current = false;
       setLoading(false);
     }
-  };
+  },[modalEditAddress.status,currentFocus]);
 
   // console.log(data,'dataAddress')
 
