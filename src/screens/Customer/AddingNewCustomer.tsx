@@ -40,6 +40,7 @@ import {NavigationProp} from '../../navigation/screen-type';
 import {
   DataCustomersUpdate,
   IDataCustomer,
+  IDataCustomers,
   ListCustomerTerritory,
 } from '../../models/types';
 import {AppTheme, useTheme} from '../../layouts/theme';
@@ -85,20 +86,25 @@ const AddingNewCustomer = () => {
     listDataReducer,
     initValueState.current,
   );
-  const initStateData = useRef<IDataCustomer>({
+  const initStateData = useRef<IDataCustomers>({
     customer_code: '',
     customer_name: '',
     customer_type: '',
     customer_group: '',
     territory: '',
     custom_birthday: new Date().getTime(),
+    mobile_no:'',
+    industry:'',
+    name:''
+    
+
   });
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [modalAddress, setModalAddress] = useState(false);
   const [imageSource, setImageSource] = useState<string | undefined>('');
   const [date, setDate] = useState<Date>();
-  const [listData, setListData] = useState<IDataCustomer>(
+  const [listData, setListData] = useState<IDataCustomers>(
     initStateData.current,
   );
   const listTerritory: ListCustomerTerritory[] = useSelector(

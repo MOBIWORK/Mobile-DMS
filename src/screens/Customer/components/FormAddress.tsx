@@ -18,7 +18,7 @@ import {
   Block,
   SvgIcon,
 } from '../../../components/common';
-import {ApiConstant, AppConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
@@ -52,6 +52,7 @@ type Props = {
   dataCustomer?: DetailCustomerType;
   getDetailCustomer?: () => Promise<void>;
   setDataAddress?: React.Dispatch<React.SetStateAction<any>>;
+  screen?:any
 };
 
 export const AddressType = {
@@ -67,7 +68,7 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter, listData, setData, setDataAddress} = props;
+  const {onPressClose, typeFilter, screen:screenPass,getDetailCustomer} = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -100,7 +101,7 @@ const FormAddress = (props: Props) => {
   const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-console.log(listData,'data')
+// console.log(listData,'data')
   const listCheckBox = useRef([
     {
       id: '1',
@@ -277,11 +278,9 @@ console.log(listData,'data')
         );
       }
       onPressClose();
-      // setData({
-      //   ...listData,
-      //   lat: location?.coords.latitude,
-      //   long: location?.coords.longitude,
-      // });
+      if(screenPass && screenPass === ScreenConstant.DETAIL_CUSTOMER && getDetailCustomer){
+          await getDetailCustomer()
+      }
     }
   };
   useEffect(() => {
@@ -404,6 +403,9 @@ console.log(listData,'data')
         }),
       );
     }
+    if(screenPass && screenPass === ScreenConstant.DETAIL_CUSTOMER && getDetailCustomer){
+      await getDetailCustomer()
+  }
 
     onPressClose();
   }, [contactValue, txtContactDetail]);

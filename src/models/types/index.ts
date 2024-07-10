@@ -338,6 +338,7 @@ export interface IDataCustomers {
   customer_location_primary?: any;
   customer_details?: any;
   contact?: Contact[];
+  frequency?: any;
   address?: Address[];
   credit_limits?: CreLimid[];
   lat?:any,

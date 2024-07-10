@@ -295,6 +295,7 @@ const DetailCustomer = () => {
             setData={setData}
             dataCustomer={data}
             getDetailCustomer={getDetailCustomer}
+            screen={ScreenConstant.DETAIL_CUSTOMER}
           />
         </Block>
       </Modal>
