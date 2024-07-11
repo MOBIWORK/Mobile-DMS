@@ -338,8 +338,11 @@ export interface IDataCustomers {
   customer_location_primary?: any;
   customer_details?: any;
   contact?: Contact[];
+  frequency?: any;
   address?: Address[];
   credit_limits?: CreLimid[];
+  lat?:any,
+  long?:any
 }
 
 export interface DetailCustomerType {
@@ -409,6 +412,7 @@ export type AddressUpdate = {
   state: string;
   is_primary_address: boolean;
   is_shipping_address: boolean;
+  primary?:any
 };
 export type ContactUpdate = {
   address_title: string;
@@ -440,6 +444,7 @@ export type DataCustomersUpdate = {
   contact: ContactUpdate;
   router: RouterUpdate;
   image?: any;
+  // primary?:any
 };
 
 export interface ContactCustomer {
@@ -513,6 +518,11 @@ export interface Address {
   address_title: string;
   address_location: string;
   address_line1?: string;
+  name?:any
+  primary?:any,
+  city?:any,
+  county?: any,
+  state?: any,
 }
 
 export interface Contact {
@@ -531,9 +541,11 @@ export interface ContactCard {
   phone: string;
   is_primary_contact?: number;
   is_billing_contact?: number;
-  city?: any;
-  county?: any;
-  state?: any;
+  city?:any,
+  county?:any,
+  state?:any,
+  primary?:any
+
 }
 
 export interface IDataItem {

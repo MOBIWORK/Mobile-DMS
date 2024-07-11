@@ -20,16 +20,17 @@ import CardAddressView from '../component/CardAddressView';
 type Props = {
   onPressAdding: () => void;
   data: DetailCustomerType;
-  listData:any[],
+  listData: any[];
+  onPressCard: (data: any,type:string,screen:any) => void;
 };
 
 const Address = (props: Props) => {
-  const {onPressAdding} = props;
+  const {onPressAdding, onPressCard} = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   // console.log(props.listData,'data')
-
+// console.log(props.data.address,'add')
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <View style={styles.containLabel}>
@@ -61,6 +62,7 @@ const Address = (props: Props) => {
           renderItem={({item}) => {
             return (
               <CardAddressView
+                onPressCard={onPressCard}
                 type="list"
                 data={item as any}
                 primary_address={
@@ -76,6 +78,7 @@ const Address = (props: Props) => {
       ) : (
         <CardAddressView
           type="single"
+          onPressCard={onPressCard}
           data={
             props.data != null && props.data?.customer_primary_address != null
               ? props.data.customer_primary_address

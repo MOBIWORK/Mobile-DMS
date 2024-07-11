@@ -22,7 +22,7 @@ import {store} from './src/redux-store/';
 import {isIos} from './src/config/function';
 import {PortalProvider} from './src/components/common/portal';
 import React from 'react';
-import {ErrorBoundary} from 'react-error-boundary';
+import ErrorBoundary from 'react-native-error-boundary';
 import ErrorFallBack from './src/layouts/ErrorFallBack';
 import {storage} from './src/utils/commom.utils';
 
@@ -68,11 +68,7 @@ function App(): JSX.Element {
     close: 'Đóng',
   });
 
-  // Alert.alert(updateMessage)
 
-  // Alert.alert(updateMessage)
-
-  // Alert.alert(updateMessage)
 
   const errorHandler = (error: Error) => {
     storage.set('error', JSON.stringify(error));

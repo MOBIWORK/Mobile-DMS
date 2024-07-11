@@ -7,7 +7,13 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, {useState, useRef, useEffect, useMemo} from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  startTransition,
+} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TextInput} from 'react-native-paper';
 import {
@@ -18,13 +24,14 @@ import {
   Block,
   SvgIcon,
 } from '../../../components/common';
-import {ApiConstant, AppConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {
   DetailCustomerType,
   IDataCustomer,
+  IDataCustomers,
   KeyAbleProps,
   RootEkMapResponse,
 } from '../../../models/types';
@@ -41,16 +48,16 @@ import isEqual from 'react-fast-compare';
 import {backgroundErrorListener} from '../../../config/function';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {IUpdateAddress} from '../../../services/checkinService';
-import {dataCustomer} from '../../Report/Statistical/components/data';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
-  listData: IDataCustomer;
-  setData: (item: IDataCustomer) => void;
+  listData: IDataCustomers;
+  setData: (item: any) => void;
   dataCustomer?: DetailCustomerType;
   getDetailCustomer?: () => Promise<void>;
   setDataAddress?: React.Dispatch<React.SetStateAction<any>>;
+  screen?: any;
 };
 
 export const AddressType = {
@@ -66,7 +73,12 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter, listData, setData, setDataAddress} = props;
+  const {
+    onPressClose,
+    typeFilter,
+    screen: screenPass,
+    getDetailCustomer,
+  } = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -83,6 +95,7 @@ const FormAddress = (props: Props) => {
     detailAddress: '',
     addressOrder: false,
     addressGet: false,
+    primary: false,
   });
   const [contactValue, setContactValue] = useState<MainContactAddress>({
     nameContact: '',
@@ -98,14 +111,18 @@ const FormAddress = (props: Props) => {
   const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-
+  // console.log(listData,'data')
   const listCheckBox = useRef([
     {
       id: '1',
-      label: getLabel('setDeliveryAddress'),
+      label: getLabel('setPrimaryAddress'),
     },
     {
       id: '2',
+      label: getLabel('setDeliveryAddress'),
+    },
+    {
+      id: '3',
       label: getLabel('setOrderAddress'),
     },
   ]);
@@ -185,7 +202,7 @@ const FormAddress = (props: Props) => {
   };
 
   const handleSaveMainAddress = async () => {
-    console.log('runnnn');
+    // console.log('runnnn');
     {
       const locationIDRes: any = await AppService.getIDLocation({
         province_name: addressValue.city?.value ?? '',
@@ -232,13 +249,13 @@ const FormAddress = (props: Props) => {
         const dataUpdate = {
           name: props.dataCustomer?.name || '',
           address: [
-            ...(props.dataCustomer?.address || []),
             {
               is_primary_address: addressValue.addressGet ? 1 : 0,
               is_shipping_address: addressValue.addressOrder ? 1 : 0,
               address_title: txtAddressDetail,
               address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
               name: txtAddressDetail + '-Billing',
+              primary: addressValue.primary ? 1 : 0,
               // address_line1: txtAddressDetail,
               address_type: 'Billing',
               city: locationIDRes.data.result.province_id || '',
@@ -249,6 +266,7 @@ const FormAddress = (props: Props) => {
           ],
         };
         // setData(prev => )
+
         // console.log(dataUpdate,'dataUpdateCus');
         dispatch(
           customerActions.updateCustomerAction(
@@ -267,11 +285,13 @@ const FormAddress = (props: Props) => {
         );
       }
       onPressClose();
-      setData({
-        ...listData,
-        latitude: location?.coords.latitude,
-        longitude: location?.coords.longitude,
-      });
+      if (
+        screenPass &&
+        screenPass === ScreenConstant.DETAIL_CUSTOMER &&
+        getDetailCustomer
+      ) {
+        await getDetailCustomer();
+      }
     }
   };
   useEffect(() => {
@@ -367,7 +387,7 @@ const FormAddress = (props: Props) => {
         phone: contactValue.phoneNumber,
         last_name: contactValue.nameContact,
         address: txtAddressDetail,
-        is_primary_contact:0,
+        is_primary_contact: 0,
         state: {
           code: locationIDRes.data.result.ward_id,
           name: addressValue.ward?.value ?? '',
@@ -393,6 +413,13 @@ const FormAddress = (props: Props) => {
           addressContact: txtContactDetail,
         }),
       );
+    }
+    if (
+      screenPass &&
+      screenPass === ScreenConstant.DETAIL_CUSTOMER &&
+      getDetailCustomer
+    ) {
+      await getDetailCustomer();
     }
 
     onPressClose();
@@ -548,11 +575,16 @@ const FormAddress = (props: Props) => {
                     <TouchableOpacity
                       onPress={() => {
                         item.id === '1'
-                          ? setAddressValue(prev => ({
+                          ? setAddressValue((prev: any) => ({
+                              ...prev,
+                              primary: !addressValue.primary,
+                            }))
+                          : item.id === '2'
+                          ? setAddressValue((prev: any) => ({
                               ...prev,
                               addressGet: !addressValue.addressGet,
                             }))
-                          : setAddressValue(prev => ({
+                          : setAddressValue((prev: any) => ({
                               ...prev,
                               addressOrder: !addressValue.addressOrder,
                             }));
@@ -561,11 +593,14 @@ const FormAddress = (props: Props) => {
                       <Block
                         style={
                           item.id === '1'
-                            ? styles.boxIconGo(addressValue.addressGet)
+                            ? styles.boxIconGo(addressValue.primary)
+                            : item.id === '2'
+                            ? styles.boxIconOrder(addressValue.addressGet)
                             : styles.boxIconOrder(addressValue.addressOrder)
                         }>
                         {addressValue.addressGet ||
-                        addressValue.addressOrder ? (
+                        addressValue.addressOrder ||
+                        addressValue.primary ? (
                           <AppIcons
                             iconType={AppConstant.ICON_TYPE.EntypoIcon}
                             size={14}

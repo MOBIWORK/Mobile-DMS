@@ -41,7 +41,7 @@ import {
   RootEkMapResponse,
 } from '../../../models/types';
 import {getDetailLocation} from '../../../services/appService';
-import {ApiConstant, AppConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {AppService} from '../../../services';
 import Mapbox from '@rnmapbox/maps';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
@@ -49,6 +49,9 @@ import {backgroundErrorListener, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import {ListDistrict, ListWard} from '../../../redux-store/app-reducer/type';
+import { useIsFocused } from '@react-navigation/native';
 type Props = {
   visible: boolean;
   onBackButtonPress: () => void;
@@ -56,6 +59,8 @@ type Props = {
   setData: React.Dispatch<React.SetStateAction<DetailCustomerType>>;
   dataCustomer: DetailCustomerType;
   defaultEditData?: any;
+  setDefaultEditData: React.Dispatch<React.SetStateAction<any>>;
+  screenPass?: any;
 };
 
 const ModalEditAddress = ({
@@ -65,6 +70,8 @@ const ModalEditAddress = ({
   setData,
   dataCustomer,
   defaultEditData,
+  screenPass,
+  setDefaultEditData,
 }: Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
@@ -119,6 +126,7 @@ const ModalEditAddress = ({
     address_title: '',
     is_primary_address: 0,
     is_shipping_address: 0,
+    primary:defaultEditData?.primary ? defaultEditData?.primary === 1 ? true : false : false,
     address_location: '',
     address_line1: '',
     city: '',
@@ -130,8 +138,9 @@ const ModalEditAddress = ({
     phoneNumber: '',
     addressContact: '',
     isMainAddress: true,
+    isPrimaryAddress: true,
   });
-
+  const isFocus = useIsFocused()
   const [txtAddressDetail, setTxtAddressDetail] = useState<string>('');
   const [txtContactDetail, setTxtContactDetail] = useState<string>('');
 
@@ -142,17 +151,17 @@ const ModalEditAddress = ({
   const listCheckBox = useRef([
     {
       id: '1',
-      label: getLabel('setDeliveryAddress'),
+      label: getLabel('setPrimaryAddress'),
     },
     {
       id: '2',
+      label: getLabel('setDeliveryAddress'),
+    },
+    {
+      id: '3',
       label: getLabel('setOrderAddress'),
     },
   ]);
-
-  const isValidAddress = useMemo(() => {
-    return addressSelectedData?.length === 3 && txtAddressDetail !== '';
-  }, [addressSelectedData, txtAddressDetail]);
 
   useEffect(() => {
     if (listDataCity?.city?.length === 0) {
@@ -160,6 +169,7 @@ const ModalEditAddress = ({
     }
   }, []);
 
+  // console.log(addressValue,'addressValue')
   const onPressButtonGetLocation = () => {
     CommonUtils.getCurrentLocation(
       locations => {
@@ -168,6 +178,14 @@ const ModalEditAddress = ({
       err => backgroundErrorListener(err.code),
     );
   };
+  // console.log(defaultEditData,'def')
+
+  const onBack = useCallback(() => {
+    onBackButtonPress();
+    setDefaultEditData({});
+    setAddressValue({});
+    setContactValue({});
+  }, [defaultEditData, visible]);
 
   const fetchData = useCallback(
     async (lat: any, lon: any) => {
@@ -178,8 +196,8 @@ const ModalEditAddress = ({
           detailAddress: data.results[0].formatted_address,
           name: data.results[0].formatted_address,
         }));
+        // console.log(data.results, 'data res');
         const addressSplit = data.results[0].formatted_address.split(',', 4);
-
         const newData: AddressSelected[] = [
           {
             type: AddressType.city,
@@ -194,6 +212,7 @@ const ModalEditAddress = ({
             value: addressSplit[1] ?? '',
           },
         ];
+        // console.log(newData,'run ????')
 
         startTransition(() => {
           setAddressSelectedData(newData);
@@ -203,20 +222,24 @@ const ModalEditAddress = ({
     },
     [location?.coords.longitude, location?.coords.latitude, txtAddressDetail],
   );
-  // console.log(contactValue, 'contactValue');
-  const handleSaveMainContact = useCallback(() => {
+
+  const handleSaveMainContact = useCallback(async () => {
     let newArr: ContactCard[] | undefined = dataCustomer.contacts;
-    const contact = {
-      last_name: contactValue.nameContact,
-      first_name: contactValue.nameContact,
-      phone: contactValue.phoneNumber,
+    const contact: any = {
+      // last_name: contactValue.nameContact,
+      first_name: contactValue.nameContact || defaultEditData?.first_name,
+      phone: contactValue.phoneNumber || defaultEditData?.phone,
       address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       is_billing_contact: 0,
-      is_primary_contact: 0,
-      name: contactValue.nameContact,
-      city: addressObj.province.code || '',
-      county: addressObj.district.code || '',
-      state: addressObj.ward.code || '',
+      is_primary_contact: contactValue.isMainAddress ? 1 : 0,
+      primary: contactValue.isMainAddress ? 1 : 0,
+      // name: contactValue.nameContact,
+      city: contactSelectedData[0]?.id || '',
+      county: contactSelectedData[1]?.id || '',
+      state: contactSelectedData[2]?.id || '',
+      address_title: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
+      address_line1: txtContactDetail,
+      name: defaultEditData?.name!,
     };
     if (type === 'contact' || type === 'AddingContact') {
       // console.log('run case nor');
@@ -234,16 +257,31 @@ const ModalEditAddress = ({
         dataCustomer.contacts.length > 0
       ) {
         // console.log('run if');
-        if (defaultEditData) {
+        if (defaultEditData && Object.keys(defaultEditData).length > 0) {
           // console.log('run replace');
-          let indexData = dataCustomer.contacts.findIndex(
-            item => item.first_name === defaultEditData.first_name,
+          let indexData = dataCustomer.contacts.findIndex(item =>
+            item.first_name
+              ? item.first_name === defaultEditData?.first_name
+              : item.name === defaultEditData?.name,
           );
-          // console.log(indexData,newArr,'check flag')
+          // console.log(indexData, newArr, 'check flag');
           if (indexData !== -1 && newArr && newArr.length > 0) {
             // console.log('run done');
             newArr[indexData] = contact;
             setData(prev => ({...prev, contacts: newArr}));
+
+            if (screenPass === ScreenConstant.DETAIL_CUSTOMER) {
+              const dataUpdate = {
+                contact: newArr,
+                name: dataCustomer.name,
+              };
+              dispatch(
+                customerActions.updateCustomerAction(
+                  dataUpdate,
+                  dataCustomer.name || '',
+                ),
+              );
+            }
           }
         } else {
           // console.log('run case new');
@@ -258,9 +296,110 @@ const ModalEditAddress = ({
     }
 
     setContactValue({});
-    setAddressSelectedData([]);
+    setContactSelectedData([]);
+    setTxtContactDetail('');
+    // setDefaultEditData({});
+    setScreen('');
     onBackButtonPress();
-  }, [contactValue, txtContactDetail, addressObj, addressSelectedData]);
+  }, [contactValue, txtContactDetail, addressObj, contactSelectedData, screen]);
+
+  // console.log(type);
+
+  // console.log(contactValue,'contacst')
+  const autoCompleteData = useCallback(async () => {
+    if (listDataCity.city.length > 0) {
+      if (type === 'editAddress') {
+        let add: Address = defaultEditData;
+        // console.log(add, 'editValue');
+        if (add.city != null) {
+          let value = listDataCity.city.find(item => item.ma_tinh === add.city);
+          // console.log(value, 'value');
+          setAddressValue((prev: any) => ({
+            ...prev,
+            city: {
+              value: value?.ten_tinh,
+              id: value?.ma_tinh,
+            },
+          }));
+          const districtRes: any = await AppService.getListDistrict(
+            value?.ma_tinh,
+          );
+          if (districtRes?.status === ApiConstant.STT_OK) {
+            let districtVal: ListDistrict = districtRes.data.result?.find(
+              (item: ListDistrict) => item.ma_huyen === add.county,
+            );
+            setAddressValue((prev: any) => ({
+              ...prev,
+              district: {
+                value: districtVal?.ten_huyen,
+                id: districtVal?.ma_huyen,
+              },
+            }));
+            const wardRes: any = await AppService.getListWard(
+              districtVal.ma_huyen,
+            );
+            if (wardRes?.status === ApiConstant.STT_OK) {
+              let wardValue: ListWard = wardRes?.data?.result.find(
+                (item: ListWard) => item.ma_xa === add.state,
+              );
+              setAddressValue((prev: any) => ({
+                ...prev,
+                ward: {
+                  value: wardValue?.ten_xa,
+                  id: wardValue?.ma_xa,
+                },
+              }));
+            }
+          }
+        }
+      } else {
+        let add: ContactCard = defaultEditData;
+        // console.log(add, 'editContact');
+        if (add.city != null) {
+          let value = listDataCity.city.find(item => item.ma_tinh === add.city);
+          console.log(value, 'value');
+
+          setContactValue((prev: any) => ({
+            ...prev,
+            city: {
+              value: value?.ten_tinh,
+              id: value?.ma_tinh,
+            },
+          }));
+          const districtRes: any = await AppService.getListDistrict(
+            value?.ma_tinh,
+          );
+          if (districtRes?.status === ApiConstant.STT_OK) {
+            let districtVal: ListDistrict = districtRes.data.result?.find(
+              (item: ListDistrict) => item.ma_huyen === add.county,
+            );
+            setContactValue((prev: any) => ({
+              ...prev,
+              district: {
+                value: districtVal?.ten_huyen,
+                id: districtVal?.ma_huyen,
+              },
+            }));
+            const wardRes: any = await AppService.getListWard(
+              districtVal.ma_huyen,
+            );
+            if (wardRes?.status === ApiConstant.STT_OK) {
+              let wardValue: ListWard = wardRes?.data?.result.find(
+                (item: ListWard) => item.ma_xa === add.state,
+              );
+              setContactValue((prev: any) => ({
+                ...prev,
+                ward: {
+                  value: wardValue?.ten_xa,
+                  id: wardValue?.ma_xa,
+                },
+              }));
+            }
+          }
+        }
+      }
+    }
+  }, [defaultEditData,type,isFocus,addressValue,contactValue]);
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
@@ -387,12 +526,15 @@ const ModalEditAddress = ({
 
   // console.log(addressObj,'addObj')
 
+  // console.log(screen,'type')
+
   const handleSaveMainAddress = useCallback(() => {
     let newArr: Address[] | undefined = dataCustomer.address;
 
     const newAdd = {
       is_primary_address: addressValue.addressGet ? 1 : 0,
       is_shipping_address: addressValue.addressOrder ? 1 : 0,
+      primary: addressValue.primary ? 1 : 0,
       address_title: txtAddressDetail,
       address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
       name: txtAddressDetail + '-Billing',
@@ -423,7 +565,7 @@ const ModalEditAddress = ({
       ) {
         if (defaultEditData) {
           let indexData = dataCustomer.address?.findIndex(
-            item => item.address_line1 === defaultEditData.address_line1,
+            item => item.address_line1 === defaultEditData?.address_line1,
           );
           if (indexData != -1 && newArr && newArr.length > 0) {
             newArr[indexData] = newAdd;
@@ -432,6 +574,20 @@ const ModalEditAddress = ({
               address: newArr,
               customer_primary_address: txtAddressDetail,
             }));
+
+            if (screenPass === ScreenConstant.DETAIL_CUSTOMER) {
+              const dataUpdate = {
+                address: newArr,
+                name: dataCustomer.name,
+                customer_primary_address: txtAddressDetail,
+              };
+              dispatch(
+                customerActions.updateCustomerAction(
+                  dataUpdate,
+                  dataCustomer.name || '',
+                ),
+              );
+            }
           }
         } else {
           startTransition(() => {
@@ -448,10 +604,20 @@ const ModalEditAddress = ({
       }
     }
     setAddressValue({});
+    // setDefaultEditData({});
+    setTxtAddressDetail('');
     setAddressSelectedData([]);
+    setScreen('');
     // setData(prev => ({...prev, address: []}));
     onBackButtonPress();
-  }, [addressValue.addressGet, addressValue.addressOrder, addressObj]);
+  }, [
+    addressValue.addressGet,
+    addressValue.addressOrder,
+    addressObj,
+    screen,
+    addressSelectedData,
+    addressValue.primary,
+  ]);
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
@@ -480,28 +646,32 @@ const ModalEditAddress = ({
   }, [addressSelectedData, keyboardVisitAble]);
 
   useEffect(() => {
-    if (addressSelectedData.length === 3) {
-      setAddressValue((prev: any) => ({
-        ...prev,
-        city: addressSelectedData[0],
-        district: addressSelectedData[1],
-        ward: addressSelectedData[2],
-      }));
-    } else if (addressSelectedData.length === 2) {
-      setAddressValue((prev: any) => ({
-        ...prev,
-        city: addressSelectedData[0],
-        district: addressSelectedData[1],
-      }));
-    } else if (addressSelectedData.length === 1) {
-      setAddressValue((prev: any) => ({
-        ...prev,
-        city: addressSelectedData[0],
-      }));
+    if (addressSelectedData.length > 0) {
+      if (addressSelectedData.length === 3) {
+        setAddressValue((prev: any) => ({
+          ...prev,
+          city: addressSelectedData[0],
+          district: addressSelectedData[1],
+          ward: addressSelectedData[2],
+        }));
+      } else if (addressSelectedData.length === 2) {
+        setAddressValue((prev: any) => ({
+          ...prev,
+          city: addressSelectedData[0],
+          district: addressSelectedData[1],
+        }));
+      } else if (addressSelectedData.length === 1) {
+        setAddressValue((prev: any) => ({
+          ...prev,
+          city: addressSelectedData[0],
+        }));
+      } else {
+        setAddressValue((prev: any) => ({
+          ...prev,
+        }));
+      }
     } else {
-      setAddressValue((prev: any) => ({
-        ...prev,
-      }));
+      return;
     }
   }, [addressSelectedData]);
 
@@ -537,17 +707,27 @@ const ModalEditAddress = ({
     }
   }, []);
   useEffect(() => {
-    let data = dataCustomer.address?.[0].address_title || '';
+    let data = defaultEditData?.address_title || '';
+
     startTransition(() => {
       setTxtAddressDetail(data);
     });
-  }, [dataCustomer]);
+  }, [defaultEditData]);
   // console.log(contactSelectedData, 'datâ');
+
+  useEffect(() => {
+    startTransition(() => {
+      autoCompleteData();
+    });
+  }, [type, defaultEditData, visible,isFocus]);
+
+  // console.log(contactValue.isMainAddress, 'rể');
+  // console.log(defaultEditData,'??')
   return (
     <Modal
       isVisible={visible}
-      onBackButtonPress={onBackButtonPress}
-      onBackdropPress={onBackButtonPress}
+      onBackButtonPress={onBack}
+      onBackdropPress={onBack}
       animationIn={'slideInUp'}
       backdropOpacity={0.5}
       style={styles.modalStyle}
@@ -574,8 +754,10 @@ const ModalEditAddress = ({
         ) : type === 'address' || type === 'editAddress' ? (
           <>
             <AppHeader
-              label={type === 'editAddress' ? 'Sửa địa chỉ' : 'Địa chỉ chính'}
-              onBack={onBackButtonPress}
+              label={
+                type === 'editAddress' ? 'Sửa địa chỉ' : 'Thêm địa chỉ mới'
+              }
+              onBack={onBack}
               backButtonIcon={
                 <SvgIcon source="Close" colorTheme="black" size={22} />
               }
@@ -605,9 +787,7 @@ const ModalEditAddress = ({
                 label={`${getLabel('province')}/${getLabel('city')}`}
                 contentStyle={styles.contentStyle}
                 onPress={() => {
-                  console.log(addressSelectedData, 'on press adding');
                   setScreen('Adding');
-                  // setAddressSelectedData([]);
                 }}
                 value={addressValue?.city?.value ?? ''}
                 editable={false}
@@ -693,6 +873,11 @@ const ModalEditAddress = ({
                           item.id === '1'
                             ? setAddressValue((prev: any) => ({
                                 ...prev,
+                                primary: !addressValue.primary,
+                              }))
+                            : item.id === '2'
+                            ? setAddressValue((prev: any) => ({
+                                ...prev,
                                 addressGet: !addressValue.addressGet,
                               }))
                             : setAddressValue((prev: any) => ({
@@ -704,11 +889,14 @@ const ModalEditAddress = ({
                         <Block
                           style={
                             item.id === '1'
-                              ? styles.boxIconGo(addressValue.addressGet)
+                              ? styles.boxIconGo(addressValue.primary)
+                              : item.id === '2'
+                              ? styles.boxIconOrder(addressValue.addressGet)
                               : styles.boxIconOrder(addressValue.addressOrder)
                           }>
                           {addressValue.addressGet ||
-                          addressValue.addressOrder ? (
+                          addressValue.addressOrder ||
+                          addressValue.primary ? (
                             <AppIcons
                               iconType={AppConstant.ICON_TYPE.EntypoIcon}
                               size={14}
@@ -803,9 +991,7 @@ const ModalEditAddress = ({
         ) : (
           <Block block height={'100%'} paddingHorizontal={16}>
             <AppHeader
-              label={
-                type === 'contact' ? getLabel('mainContact') : 'Sửa liên hệ'
-              }
+              label={type === 'contact' ? 'Thêm liên hệ mới' : 'Sửa liên hệ'}
               onBack={() => {}}
               backButtonIcon={
                 <AppIcons
@@ -823,9 +1009,10 @@ const ModalEditAddress = ({
               <Block block>
                 <AppInput
                   label={getLabel('contactName')}
-                  value={contactValue.nameContact}
+                  value={contactValue.nameContact || defaultEditData?.first_name}
                   editable={true}
                   contentStyle={styles.contentStyle}
+                  // onPress={() => setDefaultEditData((prev:any) =>({...prev,first_name:''}))}
                   hiddenRightIcon={true}
                   styles={styles.marginInputBlock}
                   onChangeValue={text =>
@@ -837,7 +1024,7 @@ const ModalEditAddress = ({
                 />
                 <AppInput
                   label={getLabel('phoneNumber')}
-                  value={contactValue.phoneNumber}
+                  value={contactValue.phoneNumber || defaultEditData?.phone}
                   editable={true}
                   contentStyle={styles.contentStyle}
                   styles={styles.marginInputBlock}
@@ -880,6 +1067,10 @@ const ModalEditAddress = ({
                   value={contactValue?.district?.value ?? ''}
                   editable={false}
                   onPress={() => {
+                    const newData = contactSelectedData.filter(
+                      item => item.type !== AddressType.city,
+                    );
+                    setContactSelectedData(newData);
                     setScreen('AddingContact');
                   }}
                   contentStyle={styles.contentStyle}
@@ -898,6 +1089,10 @@ const ModalEditAddress = ({
                   editable={false}
                   contentStyle={styles.contentStyle}
                   onPress={() => {
+                    const newData = contactSelectedData.filter(
+                      item => item.type !== AddressType.district,
+                    );
+                    setContactSelectedData(newData);
                     setScreen('AddingContact');
                   }}
                   styles={styles.marginInputBlock}
@@ -911,7 +1106,7 @@ const ModalEditAddress = ({
                 />
                 <AppInput
                   label={getLabel('addressDetail')}
-                  value={txtContactDetail}
+                  value={txtContactDetail || defaultEditData?.address}
                   editable={true}
                   contentStyle={styles.contentStyle}
                   styles={styles.marginInputBlock}
@@ -919,6 +1114,26 @@ const ModalEditAddress = ({
                   hiddenRightIcon={true}
                 />
               </Block>
+              <TouchableOpacity
+                style={styles.checkBoxBlock}
+                onPress={() =>
+                  setContactValue((prev: any) => ({
+                    ...prev,
+                    isMainAddress: !contactValue.isMainAddress,
+                  }))
+                }>
+                <Block
+                  style={styles.boxMainContact(contactValue.isMainAddress)}
+                  marginRight={8}>
+                  <AppIcons
+                    iconType={AppConstant.ICON_TYPE.EntypoIcon}
+                    size={14}
+                    color={theme.colors.white}
+                    name="check"
+                  />
+                </Block>
+                <Text>Đặt làm người liên hệ chính</Text>
+              </TouchableOpacity>
             </ScrollView>
             <Block
               direction="row"
@@ -934,6 +1149,7 @@ const ModalEditAddress = ({
                     setContactSelectedData([]);
                     setScreen('');
                     onBackButtonPress();
+                    setDefaultEditData({});
                   }}>
                   <Text style={styles.restartText}>Hủy</Text>
                 </TouchableOpacity>
@@ -941,7 +1157,9 @@ const ModalEditAddress = ({
                   style={styles.buttonApply}
                   onPress={() => {
                     handleSaveMainContact();
-                    setContactValue({});
+                    setDefaultEditData({});
+
+                    // setContactValue({});
                   }}>
                   <Text style={styles.applyText}>{getLabel('save')}</Text>
                 </TouchableOpacity>
@@ -1071,4 +1289,16 @@ const modalEditStyles = (theme: AppTheme) =>
       // width:'100%',
       flex: 1,
     } as ViewStyle,
+    boxMainContact: (isPrimary: boolean) =>
+      ({
+        width: 20,
+        height: 20,
+        borderRadius: 6,
+        borderWidth: !isPrimary ? 1 : 0,
+        borderColor: theme.colors.text_secondary,
+        marginBottom: 20,
+        backgroundColor: isPrimary ? theme.colors.primary : 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+      } as ViewStyle),
   });

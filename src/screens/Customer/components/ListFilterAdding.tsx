@@ -19,6 +19,7 @@ import {AppTheme, useTheme} from '../../../layouts/theme';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {
   IDataCustomer,
+  IDataCustomers,
   ListCustomerRoute,
   ListCustomerTerritory,
   ListCustomerType,
@@ -32,7 +33,7 @@ type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
   setValueFilter: (value: React.SetStateAction<IValueType>) => void;
   valueFilter: IValueType;
-  setData: React.Dispatch<React.SetStateAction<IDataCustomer>>;
+  setData: React.Dispatch<React.SetStateAction<IDataCustomers>>;
   data: IDataCustomer;
 };
 

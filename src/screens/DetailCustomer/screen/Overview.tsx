@@ -10,7 +10,7 @@ import {AppText, Block} from '../../../components/common';
 // import {MainLayout} from '../../../layouts';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 // import CardContactOverview from '../component/CardView';
-import {DetailCustomerType, IDataCustomers} from '../../../models/types';
+import {DetailCustomerType} from '../../../models/types';
 // import CardAddress from '../../Customer/components/CardAddress'; 
 
 import InforView from '../component/InforView';
@@ -27,6 +27,8 @@ const Overview = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
 
+ 
+
     // console.log(props?.data?.credit_limits,'credit')
   return (
     <Block block  colorTheme='bg_neutral' >
@@ -41,7 +43,8 @@ const Overview = (props: Props) => {
               {/* <CardContactOverview data={props.data} /> */}
               <CardOverView
                 type="contact"
-                mainContactAddress={props.data.contacts[0]}
+                mainContactAddress={props.data.contacts.find(item => item.primary === 1) || props.data.contacts[0]   }
+                mobileNo={props.data.mobile_no}
               />
             </Block>
           )}

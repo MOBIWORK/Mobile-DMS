@@ -4,12 +4,8 @@ import isEqual from 'react-fast-compare';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
-import {Address, Contact, ContactCard} from '../../../models/types';
+import {Address, ContactCard} from '../../../models/types';
 import {formatPhoneNumber} from '../../../config/function';
-import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallBack from '../../../layouts/ErrorFallBack';
-import {navigate} from '../../../navigation/navigation-service';
-import {ScreenConstant} from '../../../const';
 
 type Props = CardTypeAddress | CardContactAddress;
 
@@ -17,24 +13,27 @@ interface CardTypeAddress {
   type: 'address';
   address: Address;
   primaryAddress?: string;
+  onPressCard:(data:any,type:any) =>void 
 }
 
 interface CardContactAddress {
   type: 'contact';
   contact: ContactCard;
   primaryContact?: any;
+  onPressCard:(data:any,type:any) =>void 
+
 }
 
 const CardEditAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-  // console.log(props.address)
+  // console.log(props.contact)
   return (
     <>
       {props.type === 'address'
-        ? props.address.is_primary_address === 1 && (
-            <Block style={styles.card}>
+        ? props.address.primary === 1 && (
+            <TouchableOpacity style={styles.card} onPress={() => props.onPressCard(props.address,'address')}>
               <Block paddingHorizontal={16}>
                 <Block style={styles.containAddressLabel}>
                   <Block style={styles.containIcon}>
@@ -76,7 +75,7 @@ const CardEditAddress = (props: Props) => {
                 </Block>
               </Block>
               <Block style={styles.containAddress}>
-                {props.address.is_primary_address === 1 && (
+                {props.address.primary === 1 && (
                   <Block style={styles.addressGetAndOrder}>
                     <Text
                       fontSize={14}
@@ -99,10 +98,10 @@ const CardEditAddress = (props: Props) => {
                   </Block>
                 )}
               </Block>
-            </Block>
+            </TouchableOpacity>
           )
-        : props.contact.is_primary_contact === 1 && (
-            <Block style={styles.card}>
+        : props.contact.primary === 1 && (
+            <TouchableOpacity style={styles.card} onPress={() => props.onPressCard(props.contact,'contact')}>
               <Block paddingHorizontal={16}>
                 <Block style={styles.containAddressLabel}>
                   <Text
@@ -111,7 +110,7 @@ const CardEditAddress = (props: Props) => {
                     colorTheme="black"
                     lineHeight={21}>
                     {props.contact.first_name
-                      ? props.contact.first_name + '' + props.contact.last_name
+                      ? props.contact.first_name
                       : '---'}
                   </Text>
                 </Block>
@@ -159,7 +158,7 @@ const CardEditAddress = (props: Props) => {
                   </Block>
                 </Block>
               </Block>
-            </Block>
+            </TouchableOpacity>
           )}
     </>
   );

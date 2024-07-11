@@ -1,4 +1,4 @@
-import {Animated, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {Animated, StyleSheet, View, ViewStyle} from 'react-native';
 import React, {useEffect} from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 

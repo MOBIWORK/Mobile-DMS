@@ -25,7 +25,7 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
-import {IDataCustomer} from '../../../models/types';
+import {IDataCustomer, IDataCustomers} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {
   convertToMoneyFormat,
@@ -40,14 +40,13 @@ import {AppService} from '../../../services';
 import isEqual from 'react-fast-compare';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {shallowEqual} from 'react-redux';
-import {formatCash} from '../../../utils/commom.utils';
-import {CommonUtils} from '../../../utils';
+
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
   setTypeFilter: React.Dispatch<React.SetStateAction<string>>;
   valueFilter: IDataCustomer;
-  setData: React.Dispatch<React.SetStateAction<IDataCustomer>>;
+  setData: React.Dispatch<React.SetStateAction<IDataCustomers>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   valueDate: Date | any;
   setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -69,7 +68,7 @@ const FormAdding = (props: Props) => {
     setModalShow,
     imageSource,
     location,
-    setLocation,
+    // setLocation,
     setModalOpen,
   } = props;
   const theme = useTheme();

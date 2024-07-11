@@ -25,6 +25,7 @@ export type MainAddress = {
   city?: AddressSelected;
   district?: AddressSelected;
   ward?: AddressSelected;
+  primary?:any
 };
 export type MainContactAddress = {
   nameContact: string;

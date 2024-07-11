@@ -45,5 +45,9 @@ export const getReportOrder = (data: IReportOrder) =>
     .then(res => res.data);
 export const updateCustomer = (data: DetailCustomerType | any) =>
   createApi()
-    .put(ApiConstant.UPDATE_CUSTOMER ,data)
+    .put(ApiConstant.UPDATE_CUSTOMER, data)
+    .then(res => res.data);
+export const deleteCustomer = (data: any) =>
+  createApi()
+    .delete(ApiConstant.DELETE_CONTACT, data)
     .then(res => res.data);

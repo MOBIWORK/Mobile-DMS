@@ -3,17 +3,12 @@ import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {
   DetailCustomerType,
-  IDataCustomer,
-  IDataCustomers,
 } from '../../../models/types';
 import {AppText, SvgIcon} from '../../../components/common';
 import {formatPhoneNumber} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallBack from '../../../layouts/ErrorFallBack';
-import { navigate } from '../../../navigation/navigation-service';
-import { ScreenConstant } from '../../../const';
+
 
 type Props = {
   data: DetailCustomerType;

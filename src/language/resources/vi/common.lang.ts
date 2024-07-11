@@ -216,6 +216,7 @@ export default {
   addContact: 'Thêm người liên hệ',
   setDeliveryAddress: 'Đặt làm địa chỉ giao hàng',
   setOrderAddress: 'Đặt làm địa chỉ đặt hàng',
+  setPrimaryAddress:'Đặt làm địa chỉ chính',
   success: 'Thành công',
   city: 'Thành phố',
   province: 'Tỉnh',

@@ -1,12 +1,16 @@
 import {StyleSheet, View, ViewStyle} from 'react-native';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {Platform} from 'react-native';
 import {AppText as Text, SvgIcon, Block} from '../../../components/common';
-import {formatPhoneNumber} from '../../../config/function';
+import {formatPhoneNumber, useSelector} from '../../../config/function';
 
 import {useTranslation} from 'react-i18next';
 import {Address, Contact, ContactCard} from '../../../models/types';
+import {shallowEqual} from 'react-redux';
+import {AppService} from '../../../services';
+import {ApiConstant} from '../../../const';
+import {ListDistrict, ListWard} from '../../../redux-store/app-reducer/type';
 
 type Props = CardAddressType | CardContactType;
 
@@ -19,14 +23,144 @@ type CardContactType = {
   type: 'contact';
   mainContactAddress: ContactCard;
   priContact?: string;
+  mobileNo?: any;
 };
 
 const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
+  const listDataCity = useSelector(
+    state => state.app.listDataCity,
+    shallowEqual,
+  );
+  const [valueAdd, setValueAdd] = React.useState({
+    city: {
+      id: '',
+      value: '',
+    },
+    ward: {
+      id: '',
+      value: '',
+    },
+    district: {
+      id: '',
+      value: '',
+    },
+  });
+  const [valueContact, setValueContact] = React.useState({
+    city: {
+      id: '',
+      value: '',
+    },
+    ward: {
+      id: '',
+      value: '',
+    },
+    district: {
+      id: '',
+      value: '',
+    },
+  });
 
-  // console.log(props,'props')
+  const autoCompleteData = useCallback(async () => {
+    if (listDataCity.city.length > 0) {
+      if (props.type === 'address') {
+        let add: Address = props.mainAddress;
+        // console.log(add, 'editValue');
+        if (add.city != null) {
+          let value = listDataCity.city.find(item => item.ma_tinh === add.city);
+          // console.log(value, 'value');
+          setValueAdd((prev: any) => ({
+            ...prev,
+            city: {
+              value: value?.ten_tinh,
+              id: value?.ma_tinh,
+            },
+          }));
+          const districtRes: any = await AppService.getListDistrict(
+            value?.ma_tinh,
+          );
+          if (districtRes?.status === ApiConstant.STT_OK) {
+            let districtVal: ListDistrict = districtRes.data.result?.find(
+              (item: ListDistrict) => item.ma_huyen === add.county,
+            );
+            setValueAdd((prev: any) => ({
+              ...prev,
+              district: {
+                value: districtVal?.ten_huyen,
+                id: districtVal?.ma_huyen,
+              },
+            }));
+            const wardRes: any = await AppService.getListWard(
+              districtVal.ma_huyen,
+            );
+            if (wardRes?.status === ApiConstant.STT_OK) {
+              let wardValue: ListWard = wardRes?.data?.result.find(
+                (item: ListWard) => item.ma_xa === add.state,
+              );
+              setValueAdd((prev: any) => ({
+                ...prev,
+                ward: {
+                  value: wardValue?.ten_xa,
+                  id: wardValue?.ma_xa,
+                },
+              }));
+            }
+          }
+        }
+      } else {
+        let add: ContactCard = props.mainContactAddress;
+        // console.log(add, 'editContact');
+        if (add.city != null) {
+          let value = listDataCity.city.find(item => item.ma_tinh === add.city);
+          console.log(value, 'value');
+
+          setValueContact((prev: any) => ({
+            ...prev,
+            city: {
+              value: value?.ten_tinh,
+              id: value?.ma_tinh,
+            },
+          }));
+          const districtRes: any = await AppService.getListDistrict(
+            value?.ma_tinh,
+          );
+          if (districtRes?.status === ApiConstant.STT_OK) {
+            let districtVal: ListDistrict = districtRes.data.result?.find(
+              (item: ListDistrict) => item.ma_huyen === add.county,
+            );
+            setValueContact((prev: any) => ({
+              ...prev,
+              district: {
+                value: districtVal?.ten_huyen,
+                id: districtVal?.ma_huyen,
+              },
+            }));
+            const wardRes: any = await AppService.getListWard(
+              districtVal.ma_huyen,
+            );
+            if (wardRes?.status === ApiConstant.STT_OK) {
+              let wardValue: ListWard = wardRes?.data?.result.find(
+                (item: ListWard) => item.ma_xa === add.state,
+              );
+              setValueContact((prev: any) => ({
+                ...prev,
+                ward: {
+                  value: wardValue?.ten_xa,
+                  id: wardValue?.ma_xa,
+                },
+              }));
+            }
+          }
+        }
+      }
+    }
+  }, [props.type]);
+
+  React.useEffect(() => {
+    autoCompleteData();
+  }, [props.type]);
 
   return (
     <Block style={styles.card}>
@@ -35,8 +169,12 @@ const CardAddress = (props: Props) => {
           <Block>
             <Block style={styles.containAddressLabel}>
               <Block style={styles.containIcon}>
-              <SvgIcon source="MapPin" size={16} color={theme.colors.text_primary} />
-              {/* <SvgIcon source="MapPin" size={16}  /> */}
+                <SvgIcon
+                  source="MapPin"
+                  size={16}
+                  color={theme.colors.text_primary}
+                />
+                {/* <SvgIcon source="MapPin" size={16}  /> */}
               </Block>
               <Block>
                 <Text
@@ -59,31 +197,29 @@ const CardAddress = (props: Props) => {
                 style={{maxWidth: '90%'}}
                 colorTheme="text_primary"
                 lineHeight={21}>
-                {props.mainAddress.address_title
-                  ? props.mainAddress.address_title.split(',', 4)[1] +
-                    ',' +
-                    props.mainAddress.address_title.split(',', 4)[2] +
-                    ',' +
-                    props.mainAddress.address_title.split(',', 4)[3]
-                  : '___'}
+                {valueAdd.city.value +
+                  ', ' +
+                  valueAdd.ward.value +
+                  ', ' +
+                  valueAdd.district.value}
                 {/* {`${props.mainAddress.state?.value}, ${props.mainAddress.city}, ${props.mainAddress.county}`} */}
               </Text>
             </Block>
           </Block>
           <Block style={styles.containAddress}>
-            {props.priAdd &&
-              props.priAdd?.includes(props.mainAddress.address_title) && (
+            {props.mainAddress.primary != null &&
+              props.mainAddress.primary === 1 && (
                 <Block style={styles.addressGetAndOrder}>
                   <Text
                     fontSize={14}
                     lineHeight={21}
                     fontWeight="400"
                     colorTheme="primary">
-                    {getLabel('deliveryAddress')}
+                    {getLabel('mainAddress')}
                   </Text>
                 </Block>
               )}
-            {props.mainAddress.is_shipping_address === 1 && (
+            {props?.mainAddress?.is_shipping_address === 1 && (
               <Block style={styles.addressGetAndOrder}>
                 <Text
                   fontSize={14}
@@ -94,6 +230,18 @@ const CardAddress = (props: Props) => {
                 </Text>
               </Block>
             )}
+            {props.mainAddress.is_primary_address != null &&
+              props.mainAddress.is_primary_address === 1 && (
+                <Block style={styles.addressGetAndOrder}>
+                  <Text
+                    fontSize={14}
+                    lineHeight={21}
+                    fontWeight="400"
+                    colorTheme="primary">
+                    {getLabel('deliveryAddress')}
+                  </Text>
+                </Block>
+              )}
           </Block>
         </>
       ) : (
@@ -111,7 +259,11 @@ const CardAddress = (props: Props) => {
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <Block style={styles.containIcon}>
-              <SvgIcon source="MapPin" size={16} color={theme.colors.text_primary} />
+              <SvgIcon
+                source="MapPin"
+                size={16}
+                color={theme.colors.text_primary}
+              />
             </Block>
             <Text
               numberOfLines={2}
@@ -119,16 +271,20 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="text_primary"
               lineHeight={21}>
-              {`${
-                props.mainContactAddress.address
-                  ? `${props.mainContactAddress.address.replace(/\//g, ', ')}, `
-                  : ''
-              }`}
+              {valueContact.city.value +
+                ', ' +
+                valueContact.ward.value +
+                ', ' +
+                valueContact.district.value}
             </Text>
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <Block style={styles.containIcon}>
-              <SvgIcon source="Phone" size={16} color={theme.colors.text_primary} />
+              <SvgIcon
+                source="Phone"
+                size={16}
+                color={theme.colors.text_primary}
+              />
             </Block>
             <Text
               numberOfLines={2}
@@ -136,8 +292,8 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="text_primary"
               lineHeight={21}>
-              {props.mainContactAddress.phone != null
-                ? formatPhoneNumber(props.mainContactAddress.phone)
+              {props.mobileNo && props.mobileNo != null
+                ? formatPhoneNumber(props.mobileNo)
                 : '---'}
             </Text>
           </Block>

@@ -33,7 +33,6 @@ const RootNavigation = () => {
           name={ScreenConstant.AUTHORIZED}
           component={AuthNavigation}
         />
-        <Stack.Screen name={ScreenConstant.ERROR} component={Error} />
       </RootStack.Navigator>
     </SafeAreaProvider>
   );

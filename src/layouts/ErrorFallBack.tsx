@@ -12,7 +12,7 @@ import {Block, AppText as Text} from '../components/common';
 import {AppTheme, useTheme} from './theme';
 import isEqual from 'react-fast-compare';
 import RNRestart from 'react-native-restart';
-import {ImageAssets} from '../assets';
+import {Colors, ImageAssets} from '../assets';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from '../config/function';
 import {shallowEqual} from 'react-redux';
@@ -25,21 +25,17 @@ const ErrorFallback = ({error}: {error: Error}) => {
   const onPressReset = useCallback(() => {
     // Immediately reload the React Native Bundle
     handleError(error);
-    RNRestart.Restart();
+
+    RNRestart.restart();
   }, [error]);
 
   const theme = useTheme();
   const styles = styless(theme);
-  const systemConfig: DMSConfigMobile = useSelector(
-    state => state.app.systemConfig,
-    shallowEqual,
-  );
+
   const [organiztion] = useMMKVObject<IResOrganization>(
     AppConstant.Organization,
   );
   const [userNameStore] = useMMKVString(AppConstant.userNameStore);
-
-
 
   const handleError = async (errorCrash: Error) => {
     // Ghi lại thông tin lỗi vào sv
@@ -58,13 +54,21 @@ const ErrorFallback = ({error}: {error: Error}) => {
   }
   return (
     <SafeAreaView style={styles.root}>
-      <Block marginLeft={16} marginRight={16}>
+      <Block
+        marginLeft={16}
+        marginRight={16}
+        justifyContent="center"
+        alignItems="center">
         <Image
           source={ImageAssets.ErrorApiIcon}
           style={styles.image}
           resizeMode="contain"
         />
-        <Block justifyContent="center" alignItems="center" maxWidth={200}>
+        <Block
+          justifyContent="center"
+          alignItems="center"
+          maxWidth={200}
+          marginTop={20}>
           <Text
             textAlign="center"
             fontSize={14}
@@ -72,19 +76,20 @@ const ErrorFallback = ({error}: {error: Error}) => {
             {' '}
             Đã có lỗi xảy ra, xin vui lòng thử lại
           </Text>
-          <Text fontSize={15} color={theme.colors.error}>
+          <Text fontSize={15} color={'#C4161C'}>
             {error.message}
           </Text>
         </Block>
-        <TouchableOpacity style={styles.buttonReset} onPress={onPressReset}>
-          <Text
-            fontSize={16}
-            color={theme.colors.bg_default}
-            textAlign="center">
-            Khởi động lại
-          </Text>
-        </TouchableOpacity>
       </Block>
+      <TouchableOpacity style={[styles.buttonReset]} onPress={onPressReset}>
+        <Text
+          fontSize={16}
+          // colorTheme="white"
+          color={'white'}
+          textAlign="center">
+          Khởi động lại
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -103,8 +108,13 @@ const styless = (theme: AppTheme) =>
       height: 200,
     } as ImageStyle,
     buttonReset: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: '#C4161C',
       borderRadius: 50,
-      padding: 16,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 20,
+      marginHorizontal: 16,
     } as ViewStyle,
   });
