@@ -1,12 +1,16 @@
 import {StyleSheet, View, ViewStyle} from 'react-native';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {Platform} from 'react-native';
 import {AppText as Text, SvgIcon, Block} from '../../../components/common';
-import {formatPhoneNumber} from '../../../config/function';
+import {formatPhoneNumber, useSelector} from '../../../config/function';
 
 import {useTranslation} from 'react-i18next';
 import {Address, Contact, ContactCard} from '../../../models/types';
+import {shallowEqual} from 'react-redux';
+import {AppService} from '../../../services';
+import {ApiConstant} from '../../../const';
+import {ListDistrict, ListWard} from '../../../redux-store/app-reducer/type';
 
 type Props = CardAddressType | CardContactType;
 
@@ -19,15 +23,13 @@ type CardContactType = {
   type: 'contact';
   mainContactAddress: ContactCard;
   priContact?: string;
+  mobileNo?: any;
 };
 
 const CardAddress = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-
-  // console.log(props,'props')
-
   return (
     <Block style={styles.card}>
       {props.type === 'address' ? (
@@ -35,8 +37,12 @@ const CardAddress = (props: Props) => {
           <Block>
             <Block style={styles.containAddressLabel}>
               <Block style={styles.containIcon}>
-              <SvgIcon source="MapPin" size={16} color={theme.colors.text_primary} />
-              {/* <SvgIcon source="MapPin" size={16}  /> */}
+                <SvgIcon
+                  source="MapPin"
+                  size={16}
+                  color={theme.colors.text_primary}
+                />
+                {/* <SvgIcon source="MapPin" size={16}  /> */}
               </Block>
               <Block>
                 <Text
@@ -45,45 +51,27 @@ const CardAddress = (props: Props) => {
                   fontWeight="300"
                   colorTheme="text_primary"
                   lineHeight={21}>
-                  {props.mainAddress.address_title
-                    ? props.mainAddress.address_title.split(',', 4)[0]
+                  {props.mainAddress?.address_title
+                    ? props.mainAddress.address_title
                     : '___'}
                 </Text>
               </Block>
             </Block>
-            <Block paddingLeft={28}>
-              <Text
-                numberOfLines={2}
-                fontSize={14}
-                fontWeight="300"
-                style={{maxWidth: '90%'}}
-                colorTheme="text_primary"
-                lineHeight={21}>
-                {props.mainAddress.address_title
-                  ? props.mainAddress.address_title.split(',', 4)[1] +
-                    ',' +
-                    props.mainAddress.address_title.split(',', 4)[2] +
-                    ',' +
-                    props.mainAddress.address_title.split(',', 4)[3]
-                  : '___'}
-                {/* {`${props.mainAddress.state?.value}, ${props.mainAddress.city}, ${props.mainAddress.county}`} */}
-              </Text>
-            </Block>
           </Block>
           <Block style={styles.containAddress}>
-            {props.priAdd &&
-              props.priAdd?.includes(props.mainAddress.address_title) && (
+            {props.mainAddress.primary != null &&
+              props.mainAddress.primary === 1 && (
                 <Block style={styles.addressGetAndOrder}>
                   <Text
                     fontSize={14}
                     lineHeight={21}
                     fontWeight="400"
                     colorTheme="primary">
-                    {getLabel('deliveryAddress')}
+                    {getLabel('mainAddress')}
                   </Text>
                 </Block>
               )}
-            {props.mainAddress.is_shipping_address === 1 && (
+            {props?.mainAddress?.is_shipping_address === 1 && (
               <Block style={styles.addressGetAndOrder}>
                 <Text
                   fontSize={14}
@@ -94,6 +82,18 @@ const CardAddress = (props: Props) => {
                 </Text>
               </Block>
             )}
+            {props.mainAddress.is_primary_address != null &&
+              props.mainAddress.is_primary_address === 1 && (
+                <Block style={styles.addressGetAndOrder}>
+                  <Text
+                    fontSize={14}
+                    lineHeight={21}
+                    fontWeight="400"
+                    colorTheme="primary">
+                    {getLabel('deliveryAddress')}
+                  </Text>
+                </Block>
+              )}
           </Block>
         </>
       ) : (
@@ -111,7 +111,11 @@ const CardAddress = (props: Props) => {
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <Block style={styles.containIcon}>
-              <SvgIcon source="MapPin" size={16} color={theme.colors.text_primary} />
+              <SvgIcon
+                source="MapPin"
+                size={16}
+                color={theme.colors.text_primary}
+              />
             </Block>
             <Text
               numberOfLines={2}
@@ -119,16 +123,16 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="text_primary"
               lineHeight={21}>
-              {`${
-                props.mainContactAddress.address
-                  ? `${props.mainContactAddress.address.replace(/\//g, ', ')}, `
-                  : ''
-              }`}
+              {props.mainContactAddress.address_title}
             </Text>
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
             <Block style={styles.containIcon}>
-              <SvgIcon source="Phone" size={16} color={theme.colors.text_primary} />
+              <SvgIcon
+                source="Phone"
+                size={16}
+                color={theme.colors.text_primary}
+              />
             </Block>
             <Text
               numberOfLines={2}
@@ -136,8 +140,8 @@ const CardAddress = (props: Props) => {
               fontWeight="300"
               colorTheme="text_primary"
               lineHeight={21}>
-              {props.mainContactAddress.phone != null
-                ? formatPhoneNumber(props.mainContactAddress.phone)
+              {props.mobileNo && props.mobileNo != null
+                ? formatPhoneNumber(props.mobileNo)
                 : '---'}
             </Text>
           </Block>

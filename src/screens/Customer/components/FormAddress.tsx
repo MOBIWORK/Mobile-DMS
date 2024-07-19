@@ -7,7 +7,13 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import React, {useState, useRef, useEffect, useMemo} from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  startTransition,
+} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TextInput} from 'react-native-paper';
 import {
@@ -18,13 +24,14 @@ import {
   Block,
   SvgIcon,
 } from '../../../components/common';
-import {ApiConstant, AppConstant} from '../../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {
   DetailCustomerType,
   IDataCustomer,
+  IDataCustomers,
   KeyAbleProps,
   RootEkMapResponse,
 } from '../../../models/types';
@@ -35,22 +42,24 @@ import {MainAddress, MainContactAddress} from './CardAddress';
 import {useTranslation} from 'react-i18next';
 import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
-import {AppService} from '../../../services';
+import {AppService, CustomerService} from '../../../services';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
-import {backgroundErrorListener} from '../../../config/function';
+import {backgroundErrorListener, useSelector} from '../../../config/function';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {IUpdateAddress} from '../../../services/checkinService';
-import {dataCustomer} from '../../Report/Statistical/components/data';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {shallowEqual} from 'react-redux';
 
 type Props = {
   onPressClose: () => void;
   typeFilter: any;
-  listData: IDataCustomer;
-  setData: (item: IDataCustomer) => void;
+  listData: IDataCustomers;
+  setData: (item: any) => void;
   dataCustomer?: DetailCustomerType;
   getDetailCustomer?: () => Promise<void>;
   setDataAddress?: React.Dispatch<React.SetStateAction<any>>;
+  screen?: any;
 };
 
 export const AddressType = {
@@ -66,7 +75,12 @@ export type AddressSelected = {
 };
 
 const FormAddress = (props: Props) => {
-  const {onPressClose, typeFilter, listData, setData, setDataAddress} = props;
+  const {
+    onPressClose,
+    typeFilter,
+    screen: screenPass,
+    getDetailCustomer,
+  } = props;
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
@@ -79,16 +93,17 @@ const FormAddress = (props: Props) => {
     AddressSelected[]
   >([]);
 
-  const [addressValue, setAddressValue] = useState<MainAddress>({
+  const [addressValue, setAddressValue] = useState<any>({
     detailAddress: '',
-    addressOrder: false,
-    addressGet: false,
+    is_primary_address: false,
+    is_shipping_address: false,
+    primary: false,
   });
-  const [contactValue, setContactValue] = useState<MainContactAddress>({
+  const [contactValue, setContactValue] = useState<any>({
     nameContact: '',
     phoneNumber: '',
     addressContact: '',
-    isMainAddress: true,
+    primary: false,
   });
 
   const [txtAddressDetail, setTxtAddressDetail] = useState<string>('');
@@ -99,13 +114,22 @@ const FormAddress = (props: Props) => {
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
 
+  const listDataCity = useSelector(
+    state => state.app.listDataCity,
+    shallowEqual,
+  );
+  // console.log(listData,'data')
   const listCheckBox = useRef([
     {
       id: '1',
-      label: getLabel('setDeliveryAddress'),
+      label: getLabel('setPrimaryAddress'),
     },
     {
       id: '2',
+      label: getLabel('setDeliveryAddress'),
+    },
+    {
+      id: '3',
       label: getLabel('setOrderAddress'),
     },
   ]);
@@ -130,29 +154,124 @@ const FormAddress = (props: Props) => {
   };
 
   const fetchData = async (lat: any, lon: any) => {
-    const data: RootEkMapResponse = await getDetailLocation(lat, lon);
-    if (data.status === 'OK' && data.results.length > 0) {
-      setAddressValue(prev => ({
-        ...prev,
-        detailAddress: data.results[0].formatted_address,
-      }));
-      const addressSplit = data.results[0].formatted_address.split(',', 4);
-      const newData: AddressSelected[] = [
-        {
-          type: AddressType.city,
-          value: addressSplit[3] ?? '',
+    dispatch(appActions.setProcessingStatus(true));
+    const response: KeyAbleProps = await AppService.getDetailLocation(lat, lon);
+    if (response.status === ApiConstant.STT_OK || 'OK') {
+      const address: any = response.results[0].address_components;
+      const cityValue = address[address.length - 1]?.long_name ?? '';
+      const districtValue = address[address.length - 2]?.long_name ?? '';
+      const wardValue = address[address.length - 3]?.long_name ?? '';
+      const addLine1 = address[address.length - 4]?.long_name ?? '';
+      const selectedAddress: AddressSelected[] = [];
+      let addressObj = {
+        province: {
+          code: '',
+          value: cityValue,
         },
-        {
-          type: AddressType.ward,
-          value: addressSplit[2] ?? '',
+        district: {
+          code: '',
+          value: districtValue,
         },
-        {
-          type: AddressType.district,
-          value: addressSplit[1] ?? '',
+        ward: {
+          code: '',
+          value: wardValue,
         },
-      ];
-      setAddressSelectedData(newData);
-      setTxtAddressDetail(addressSplit[0] ?? '');
+        address_line1: addLine1,
+      };
+      if (cityValue) {
+        const cityNameArr = listDataCity.city.map(
+          cityNameArrItem => cityNameArrItem.ten_tinh,
+        );
+
+        const citySelectedName = CommonUtils.findBestMatch(
+          cityValue,
+          cityNameArr,
+        );
+
+        const citySelected = listDataCity.city.find(
+          citySelectedItem => citySelectedItem.ten_tinh === citySelectedName,
+        );
+
+        addressObj = {
+          ...addressObj,
+          province: {
+            code: citySelected?.ma_tinh ?? '',
+            value: citySelected?.ten_tinh ?? '',
+          },
+        };
+        selectedAddress.push({
+          type: 'city',
+          value: citySelected?.ten_tinh ?? '',
+          id: citySelected?.ma_tinh,
+        });
+      }
+      if (districtValue && addressObj.province.code) {
+        const districtRes: any = await AppService.getListDistrict(
+          addressObj.province.code,
+        );
+        if (districtRes?.status === ApiConstant.STT_OK) {
+          const districtNameArr = districtRes.data.result.map(
+            (districtNameArrItem: any) => districtNameArrItem.ten_huyen,
+          );
+          const districtSelectedName = CommonUtils.findBestMatch(
+            districtValue,
+            districtNameArr,
+          );
+          const districtSelected = districtRes.data.result.find(
+            (item: any) => item.ten_huyen === districtSelectedName,
+          );
+          addressObj = {
+            ...addressObj,
+            district: {
+              code: districtSelected?.ma_huyen ?? '',
+              value: districtSelected?.ten_huyen ?? '',
+            },
+          };
+          selectedAddress.push({
+            type: 'district',
+            value: districtSelected?.ten_huyen ?? '',
+            id: districtSelected?.ma_huyen,
+          });
+        }
+      }
+      if (wardValue && addressObj.district.code) {
+        const wardRes: any = await AppService.getListWard(
+          addressObj.district.code,
+        );
+        if (wardRes?.status === ApiConstant.STT_OK) {
+          const wardNameArr = wardRes.data.result.map(
+            (wardNameArrItem: any) => wardNameArrItem.ten_xa,
+          );
+          const wardSelectedName = CommonUtils.findBestMatch(
+            wardValue,
+            wardNameArr,
+          );
+          const wardSelected = wardRes.data.result.find(
+            (item: any) => item.ten_xa === wardSelectedName,
+          );
+          addressObj = {
+            ...addressObj,
+            ward: {
+              code: wardSelected?.ma_xa ?? '',
+              value: wardSelected?.ten_xa ?? '',
+            },
+          };
+          selectedAddress.push({
+            type: 'ward',
+            value: wardSelected?.ten_xa ?? '',
+            id: wardSelected?.ma_xa ?? '',
+          });
+        }
+      }
+      if (addLine1) {
+        addressObj = {
+          ...addressObj,
+          address_line1: addLine1,
+        };
+      }
+      setAddressSelectedData(selectedAddress);
+      setTxtAddressDetail(addressObj.address_line1);
+      dispatch(appActions.setProcessingStatus(false));
     }
   };
 
@@ -185,95 +304,46 @@ const FormAddress = (props: Props) => {
   };
 
   const handleSaveMainAddress = async () => {
-    console.log('runnnn');
-    {
-      const locationIDRes: any = await AppService.getIDLocation({
-        province_name: addressValue.city?.value ?? '',
-        district_name: addressValue.district?.value ?? '',
-        ward_name: addressValue.ward?.value ?? '',
-      });
-      if (locationIDRes?.status === ApiConstant.STT_OK) {
-        const newAddressValue: MainAddress = {
-          ...addressValue,
-          city: {
-            ...addressValue.city,
-            id: locationIDRes.data.result.province_id,
-          } as any,
-          district: {
-            ...addressValue.district,
-            id: locationIDRes.data.result.district_id,
-          } as any,
-          ward: {
-            ...addressValue.ward,
-            id: locationIDRes.data.result.ward_id,
-          } as any,
-        };
-
-        const data: IUpdateAddress = {
-          customer: props.dataCustomer?.name! || '',
-          long: location?.coords.longitude || NaN,
-          lat: location?.coords.latitude || NaN,
+    dispatch(appActions.setProcessingStatus(true));
+    const dataUpdate = {
+      name: props.dataCustomer?.name || '',
+      address: [
+        {
+          is_primary_address: addressValue?.is_primary_address ? 1 : 0,
+          is_shipping_address: addressValue?.is_shipping_address ? 1 : 0,
+          address_title: `${txtAddressDetail}, ${addressValue?.ward?.value}, ${addressValue?.district?.value}, ${addressValue?.city?.value}`,
+          address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
+          name: txtAddressDetail + '-Billing',
+          primary: addressValue?.primary ? 1 : 0,
+          address_type: 'Billing',
+          city: addressValue?.city?.id || '',
+          county: addressValue?.district?.id || '',
+          state: addressValue?.ward?.id || '',
           address_line1: txtAddressDetail,
-          state: {
-            code: locationIDRes.data.result.ward_id,
-            name: addressValue.ward?.value ?? '',
-          },
-          county: {
-            code: locationIDRes.data.result.district_id,
-            name: addressValue.district?.value ?? '',
-          },
-          city: {
-            code: locationIDRes.data.result.province_id,
-            name: addressValue.city?.value ?? '',
-          },
-        };
-        // console.log(object)
-        // console.log(locationIDRes.data.result,'locaiton ID res')
-        const dataUpdate = {
-          name: props.dataCustomer?.name || '',
-          address: [
-            ...(props.dataCustomer?.address || []),
-            {
-              is_primary_address: addressValue.addressGet ? 1 : 0,
-              is_shipping_address: addressValue.addressOrder ? 1 : 0,
-              address_title: txtAddressDetail,
-              address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
-              name: txtAddressDetail + '-Billing',
-              // address_line1: txtAddressDetail,
-              address_type: 'Billing',
-              city: locationIDRes.data.result.province_id || '',
-              county: locationIDRes.data.result.district_id || '',
-              state: locationIDRes.data.result.ward_id || '',
-              address_line1: txtAddressDetail,
-            },
-          ],
-        };
-        // setData(prev => )
-        // console.log(dataUpdate,'dataUpdateCus');
-        dispatch(
-          customerActions.updateCustomerAction(
-            dataUpdate,
-            props.dataCustomer?.name || '',
-          ),
-        );
-        // setDataAddress!(prev =>({...prev,}))
-        // setData(prev =>({...prev,.}))
-        dispatch(
-          customerActions.setMainAddress({
-            ...newAddressValue,
-            data,
-            detailAddress: txtAddressDetail,
-          }),
-        );
+        },
+      ],
+    };
+    const response: any = await CustomerService.updateCustomer(dataUpdate);
+
+    if (response?.status === ApiConstant.STT_OK) {
+      if (
+        screenPass &&
+        screenPass === ScreenConstant.DETAIL_CUSTOMER &&
+        getDetailCustomer
+      ) {
+        await getDetailCustomer();
       }
-      onPressClose();
-      setData({
-        ...listData,
-        latitude: location?.coords.latitude,
-        longitude: location?.coords.longitude,
-      });
     }
+    dispatch(appActions.setProcessingStatus(false));
+    // onPressClose();
   };
+
+  useEffect(() => {
+    if (listDataCity?.city?.length === 0) {
+      dispatch(appActions.onGetListCity());
+    }
+  }, []);
+
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisitAble(true);
@@ -303,25 +373,25 @@ const FormAddress = (props: Props) => {
 
   useEffect(() => {
     if (addressSelectedData.length === 3) {
-      setAddressValue(prev => ({
+      setAddressValue((prev: any) => ({
         ...prev,
         city: addressSelectedData[0],
         district: addressSelectedData[1],
         ward: addressSelectedData[2],
       }));
     } else if (addressSelectedData.length === 2) {
-      setAddressValue(prev => ({
+      setAddressValue((prev: any) => ({
         ...prev,
         city: addressSelectedData[0],
         district: addressSelectedData[1],
       }));
     } else if (addressSelectedData.length === 1) {
-      setAddressValue(prev => ({
+      setAddressValue((prev: any) => ({
         ...prev,
         city: addressSelectedData[0],
       }));
     } else {
-      setAddressValue(prev => ({
+      setAddressValue((prev: any) => ({
         ...prev,
       }));
     }
@@ -329,25 +399,25 @@ const FormAddress = (props: Props) => {
 
   useEffect(() => {
     if (contactSelectedData.length === 3) {
-      setContactValue(prev => ({
+      setContactValue((prev: any) => ({
         ...prev,
         city: contactSelectedData[0],
         district: contactSelectedData[1],
         ward: contactSelectedData[2],
       }));
     } else if (contactSelectedData.length === 2) {
-      setContactValue(prev => ({
+      setContactValue((prev: any) => ({
         ...prev,
         city: contactSelectedData[0],
         district: contactSelectedData[1],
       }));
     } else if (contactSelectedData.length === 1) {
-      setContactValue(prev => ({
+      setContactValue((prev: any) => ({
         ...prev,
         city: contactSelectedData[0],
       }));
     } else {
-      setContactValue(prev => ({
+      setContactValue((prev: any) => ({
         ...prev,
       }));
     }
@@ -356,45 +426,36 @@ const FormAddress = (props: Props) => {
   // console.log(dataCustomer,'dataCus')
 
   const handleSaveMainContact = React.useCallback(async () => {
-    const locationIDRes: any = await AppService.getIDLocation({
-      province_name: addressValue.city?.value ?? '',
-      district_name: addressValue.district?.value ?? '',
-      ward_name: addressValue.ward?.value ?? '',
-    });
-    if (locationIDRes?.status === ApiConstant.STT_OK) {
-      const data = {
-        first_name: contactValue.nameContact,
-        phone: contactValue.phoneNumber,
-        last_name: contactValue.nameContact,
-        address: txtAddressDetail,
-        is_primary_contact:0,
-        state: {
-          code: locationIDRes.data.result.ward_id,
-          name: addressValue.ward?.value ?? '',
+    dispatch(appActions.setProcessingStatus(true));
+    const dataUpdate = {
+      name: props.dataCustomer?.name || '',
+      contacts: [
+        {
+          first_name: contactValue?.nameContact ?? '',
+          phone: contactValue?.phoneNumber ?? '',
+          is_primary_contact: contactValue?.is_primary_contact ? 1 : 0,
+          address_title: `${txtContactDetail}, ${contactValue?.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
+          name: txtAddressDetail + '-Billing',
+          address_type: 'Billing',
+          city: contactValue?.city?.id || '',
+          county: contactValue?.district?.id || '',
+          state: contactValue?.ward?.id || '',
+          address_line1: txtContactDetail,
         },
-        county: {
-          code: locationIDRes.data.result.district_id,
-          name: addressValue.district?.value ?? '',
-        },
-        city: {
-          code: locationIDRes.data.result.province_id,
-          name: addressValue.city?.value ?? '',
-        },
-      };
-      dispatch(
-        customerActions.updateCustomerAction(
-          data,
-          props.dataCustomer?.name || '',
-        ),
-      );
-      dispatch(
-        customerActions.setMainContactAddress({
-          ...data,
-          addressContact: txtContactDetail,
-        }),
-      );
-    }
+      ],
+    };
+    const response: any = await CustomerService.updateCustomer(dataUpdate);
 
+    if (response?.status === ApiConstant.STT_OK) {
+      if (
+        screenPass &&
+        screenPass === ScreenConstant.DETAIL_CUSTOMER &&
+        getDetailCustomer
+      ) {
+        await getDetailCustomer();
+      }
+    }
+    dispatch(appActions.setProcessingStatus(false));
     onPressClose();
   }, [contactValue, txtContactDetail]);
 
@@ -548,24 +609,38 @@ const FormAddress = (props: Props) => {
                     <TouchableOpacity
                       onPress={() => {
                         item.id === '1'
-                          ? setAddressValue(prev => ({
+                          ? setAddressValue((prev: any) => ({
                               ...prev,
-                              addressGet: !addressValue.addressGet,
+                              primary: !addressValue?.primary,
                             }))
-                          : setAddressValue(prev => ({
+                          : item.id === '2'
+                          ? setAddressValue((prev: any) => ({
                               ...prev,
-                              addressOrder: !addressValue.addressOrder,
+                              is_shipping_address:
+                                !addressValue?.is_shipping_address,
+                            }))
+                          : setAddressValue((prev: any) => ({
+                              ...prev,
+                              is_primary_address:
+                                !addressValue?.is_primary_address,
                             }));
                       }}
                       style={styles.checkBoxView}>
                       <Block
                         style={
                           item.id === '1'
-                            ? styles.boxIconGo(addressValue.addressGet)
-                            : styles.boxIconOrder(addressValue.addressOrder)
+                            ? styles.boxIconGo(addressValue.primary)
+                            : item.id === '2'
+                            ? styles.boxIconOrder(
+                                addressValue?.is_shipping_address,
+                              )
+                            : styles.boxIconOrder(
+                                addressValue?.is_primary_address,
+                              )
                         }>
-                        {addressValue.addressGet ||
-                        addressValue.addressOrder ? (
+                        {addressValue?.is_shipping_address ||
+                        addressValue?.is_primary_address ||
+                        addressValue?.primary ? (
                           <AppIcons
                             iconType={AppConstant.ICON_TYPE.EntypoIcon}
                             size={14}
@@ -682,7 +757,7 @@ const FormAddress = (props: Props) => {
               hiddenRightIcon={true}
               styles={styles.marginInputView}
               onChangeValue={text =>
-                setContactValue(prev => ({...prev, nameContact: text}))
+                setContactValue((prev: any) => ({...prev, nameContact: text}))
               }
             />
             <AppInput
@@ -695,7 +770,7 @@ const FormAddress = (props: Props) => {
               )}
               styles={styles.marginInputView}
               onChangeValue={text =>
-                setContactValue(prev => ({...prev, phoneNumber: text}))
+                setContactValue((prev: any) => ({...prev, phoneNumber: text}))
               }
               hiddenRightIcon={true}
             />

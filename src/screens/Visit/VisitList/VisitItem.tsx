@@ -12,13 +12,7 @@ import {ImageAssets} from '../../../assets';
 import {AppButton, Block, AppText as Text} from '../../../components/common';
 import {ExtendedTheme, useTheme} from '@react-navigation/native';
 
-import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallback from '../../../layouts/ErrorFallBack';
-import {
-  backgroundErrorListener,
-  calculateDistance,
-  useSelector,
-} from '../../../config/function';
+import {backgroundErrorListener, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 
@@ -48,7 +42,7 @@ const VisitItem: FC<VisitItemProps> = ({
   const theme = useTheme();
   const {t: getLabel} = useTranslation();
   // const batteryLevel = useBatteryLevel();
-  const [isPending, startTransition] = useTransition();
+  const [_, startTransition] = useTransition();
 
   const isEnable = React.useRef<boolean>(false);
 
@@ -202,23 +196,15 @@ const VisitItem: FC<VisitItemProps> = ({
               source={ImageAssets.SendIcon}
               style={{width: 16, height: 16}}
               resizeMode={'cover'}
-              tintColor={
-                item.distance != undefined
-                  ? colors.action
-                  : colors.text_secondary
-              }
+              tintColor={item?.distance ? colors.action : colors.text_secondary}
             />
             <Text
-              color={
-                item.distance != undefined
-                  ? colors.action
-                  : colors.text_secondary
-              }
+              color={item?.distance ? colors.action : colors.text_secondary}
               style={{
-                textDecorationLine: item.distance ? 'underline' : 'none',
+                textDecorationLine: item?.distance ? 'underline' : 'none',
               }}>
-              {item.distance != undefined
-                ? `${Math.floor(item.distance / 1000)}km`
+              {item?.distance
+                ? `${parseFloat(String(item.distance / 1000)).toFixed(2)}km`
                 : getLabel('unknown')}
             </Text>
           </TouchableOpacity>

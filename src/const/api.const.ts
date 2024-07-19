@@ -151,3 +151,5 @@ export const UPDATE_CUSTOMER =
 export const GET_REPORT_DEBT =
   '/api/method/mbw_dms.api.kpi.receivable_summary_report';
 export const LOG_API = '/api/method/mbw_dms.api.logs.write_log'
+
+export const DELETE_CONTACT = '/api/method/mbw_dms.api.selling.customer.remove_contact_address'

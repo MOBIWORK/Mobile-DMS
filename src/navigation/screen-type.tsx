@@ -89,7 +89,6 @@ export type AuthorizeParamsList = {
 export type RootStackParamList = {
   [ScreenConstant.UNAUTHORIZED]: NavigatorScreenParams<UnAuthorizeParamList>;
   [ScreenConstant.AUTHORIZED]: NavigatorScreenParams<AuthorizeParamsList>;
-  [ScreenConstant.ERROR]: {error: any};
 } & UnAuthorizeParamList &
   AuthorizeParamsList;
 

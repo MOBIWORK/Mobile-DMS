@@ -1,4 +1,4 @@
-import { StyleSheet, ViewStyle } from 'react-native';
+import {FlatList, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React from 'react';
 import isEqual from 'react-fast-compare';
 import {
@@ -8,9 +8,9 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import Modal from 'react-native-modal';
-import { AppTheme, useTheme } from '../../../layouts/theme';
+import {AppTheme, useTheme} from '../../../layouts/theme';
 
-import { Address, Contact, ContactCard } from '../../../models/types';
+import {Address, Contact, ContactCard} from '../../../models/types';
 import CardChoose from './CardChoose';
 type Props = {
   visible: boolean;
@@ -18,10 +18,8 @@ type Props = {
   type: string;
   listAddress: Address[];
   listContact: ContactCard[];
-  onPressData: (data: any, type: string) => void;
-  onEditData: (data: any, type: string) => void;
-  // defaultData?:any
-
+  onPressItem: (data: any, type: string) => void;
+  onPressAdding: () => void;
 };
 
 const ModalChoose = ({
@@ -30,17 +28,12 @@ const ModalChoose = ({
   type,
   listAddress,
   listContact,
-  onPressData,
-  onEditData,
-  // defaultData
-}: Props) => {
+  onPressItem,
+  onPressAdding,
+}: // defaultData
+Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
-
-  //  console.log(listAddress,'adâd')
-  
-
-  console.log(listContact,'listContact')
 
   return (
     <Modal
@@ -51,9 +44,9 @@ const ModalChoose = ({
       backdropOpacity={0.5}
       style={styles.modalStyle}
       animationOut={'slideOutDown'}>
-      <Block colorTheme="bg_default" block paddingHorizontal={16}>
+      <Block block paddingHorizontal={16}>
         {type === 'address' ? (
-          <Block>
+          <Block block>
             <AppHeader
               label="Chọn địa chỉ"
               onBack={onBackButtonPress}
@@ -61,14 +54,26 @@ const ModalChoose = ({
                 <SvgIcon source="Close" colorTheme="black" size={22} />
               }
             />
-            {listAddress &&
-              listAddress.length > 0 &&
-              listAddress.map((item, index) => {
-                return <CardChoose key={index} type="address" data={item} onPress={onPressData} onEditPress={onEditData} />;
-              })}
+            {listAddress && listAddress.length > 0 && (
+              <FlatList
+                data={listAddress}
+                initialNumToRender={listAddress.length}
+                showsVerticalScrollIndicator={false}
+                decelerationRate={'normal'}
+                keyExtractor={(item, index) => `${index}-${item.name}`}
+                renderItem={({item}) => (
+                  <CardChoose
+                    // key={index}
+                    type="address"
+                    data={item}
+                    onPressAddress={onPressItem}
+                  />
+                )}
+              />
+            )}
           </Block>
         ) : (
-          <Block>
+          <Block block>
             <AppHeader
               label="Chọn liên hệ"
               onBack={onBackButtonPress}
@@ -76,13 +81,37 @@ const ModalChoose = ({
                 <SvgIcon source="Close" colorTheme="black" size={22} />
               }
             />
-            {listContact &&
-              listContact.length > 0 &&
-              listContact.map((item, index) => {
-                return <CardChoose key={index} type="contact" data={item} onPress={onPressData}   onEditContact={onEditData} />;
-              })}
+            {listContact && listContact.length > 0 && (
+              <FlatList
+                data={listContact}
+                initialNumToRender={listContact.length}
+                showsVerticalScrollIndicator={false}
+                decelerationRate={'normal'}
+                keyExtractor={(item, index) => `${index}-${item.name}`}
+                renderItem={({item}) => (
+                  <CardChoose
+                    // key={index}
+                    type="contact"
+                    data={item}
+                    onPressContact={onPressItem}
+                  />
+                )}
+              />
+            )}
           </Block>
         )}
+        <TouchableOpacity
+          style={styles.containButton}
+          onPress={() => {
+            onBackButtonPress();
+            onPressAdding();
+          }}>
+          <SvgIcon source="BluePlush" size={16} colorTheme="white" />
+          <Text colorTheme="facebook" fontSize={14} fontWeight="500">
+            {'   '}
+            {type === 'address' ? 'Thêm địa chỉ mới' : 'Thêm liên hệ mới'}
+          </Text>
+        </TouchableOpacity>
       </Block>
     </Modal>
   );
@@ -96,5 +125,18 @@ const modalEditStyles = (theme: AppTheme) =>
       // paddingHorizontal:16,
       marginHorizontal: 0,
       marginVertical: 0,
+      paddingTop: 24,
+      backgroundColor: theme.colors.bg_neutral,
+    } as ViewStyle,
+    containButton: {
+      padding: 16,
+      borderRadius: 20,
+      backgroundColor: theme.colors.bg_default,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      marginHorizontal: 8,
+      marginBottom: 32,
+      borderColor: theme.colors.action,
     } as ViewStyle,
   });

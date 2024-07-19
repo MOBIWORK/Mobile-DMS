@@ -24,7 +24,7 @@ import {goBack, navigate} from '../../navigation/navigation-service';
 import {updateCustomer} from '../../services/customerService';
 import {showSnack} from '../../components/common';
 import data from '../../../node_modules/ansi-escapes/node_modules/type-fest/source/readonly-deep.d';
-import { Keyboard } from 'react-native';
+import {Keyboard} from 'react-native';
 
 export type ResponseGenerator = {
   config?: any;
@@ -152,29 +152,22 @@ export function* getMoreDataCustomer(action: PayloadAction) {
 export function* updateCustomerSaga(action: PayloadAction) {
   if (customerActions.updateCustomerAction.match(action)) {
     try {
+      console.log(action.payload.data, 'payload send');
       yield put(appActions.onLoadApp());
       const response: ResponseGenerator = yield call(
         updateCustomer,
         action.payload.data,
       );
-      console.log(action.payload,'action.payload')
-      console.log(response,'response update customer')
       if (response.message === 'ok') {
-        showSnack({
-          msg: 'Cập nhật thành công',
-          interval: 2000,
-          type: 'success',
-        });
-        Keyboard.dismiss()
+        Keyboard.dismiss();
       }
     } catch (err) {
       console.log('run error');
       console.error(err, 'err');
     } finally {
       yield put(appActions.onLoadAppEnd());
-      Keyboard.dismiss()
+      Keyboard.dismiss();
       // goBack()
-      
     }
   }
 }

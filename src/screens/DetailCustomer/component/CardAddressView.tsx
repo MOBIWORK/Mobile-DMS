@@ -1,23 +1,29 @@
-import {StyleSheet, View, Platform, ViewStyle, TextStyle} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Platform,
+  ViewStyle,
+  TextStyle,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {Address} from '../../../models/types';
 import {AppText, Block, SvgIcon} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import {ErrorBoundary} from 'react-error-boundary';
-import ErrorFallback from '../../../layouts/ErrorFallBack';
-import {navigate} from '../../../navigation/navigation-service';
 import {ScreenConstant} from '../../../const';
 
 type SingleAddress = {
   type: 'single';
   data: string;
+  onPressCard: (data: any, type: string, screen: any) => void;
 };
 type ListAddress = {
   data: Address;
   type: 'list';
   primary_address: string;
+  onPressCard: (data: any, type: string, screen: any) => void;
 };
 type Props = SingleAddress | ListAddress;
 
@@ -25,114 +31,132 @@ const CardAddressView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-  // console.log(props.data,'rpops data')
   return props.type === 'list' ? (
-    <Block style={styles.card}>
-      <Block style={styles.rootLayout}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() =>
+        props.onPressCard(
+          props.data,
+          'editAddress',
+          ScreenConstant.DETAIL_CUSTOMER,
+        )
+      }>
+      <Block>
+        <Block style={styles.rootLayout}>
+          <Block
+            style={styles.labelView}
+            justifyContent="center"
+            alignItems="center">
+            <Block direction={'row'} justifyContent={'flex-start'}>
+              <SvgIcon
+                source="MapPin"
+                size={18}
+                color={theme.colors.text_primary}
+              />
+              <AppText
+                style={{marginLeft: 8, maxWidth: '90%'}}
+                fontSize={14}
+                fontWeight="500"
+                colorTheme="text_primary">
+                {props.data?.address_title ? props.data?.address_title : '---'}
+              </AppText>
+            </Block>
+            <SvgIcon
+              source={'IconKebab'}
+              size={24}
+              onPress={() =>
+                props.onPressCard(
+                  props.data,
+                  'editAddress',
+                  ScreenConstant.DETAIL_CUSTOMER,
+                )
+              }
+            />
+          </Block>
+        </Block>
         <Block
-          style={styles.labelView}
-          justifyContent="center"
-          alignItems="center">
-          <SvgIcon
-            source="MapPin"
-            size={18}
-            color={theme.colors.text_primary}
-          />
-          <AppText
-            numberOfLines={1}
-            style={{maxWidth: '90%', marginLeft: 8}}
-            fontSize={14}
-            fontWeight="500"
-            colorTheme="text_primary">
-            {props.data?.address_title ? props.data?.address_title : '---'}
-          </AppText>
-        </Block>
-        <Block style={styles.labelView} marginLeft={28}>
-          <AppText
-            numberOfLines={1}
-            fontSize={14}
-            fontWeight="500"
-            colorTheme="text_primary">
-            {props?.data?.address_title
-              ? props?.data?.address_title.split(',', 4)[1] === undefined
-                ? ''
-                : props?.data?.address_title.split(',', 4)[1] +
-                    ',' +
-                    props?.data?.address_title.split(',', 4)[2] ===
-                  undefined
-                ? ''
-                : props?.data?.address_title.split(',', 4)[2] +
-                    ',' +
-                    props?.data?.address_title.split(',', 4)[3] ===
-                  undefined
-                ? ''
-                : props?.data?.address_title.split(',', 4)[3]
-              : '___'}
-          </AppText>
+          direction={'row'}
+          alignItems={'center'}
+          justifyContent={'flex-start'}
+          paddingHorizontal={16}>
+          {props.data?.primary === 1 && (
+            <Block style={styles.containAddress}>
+              <View style={styles.mainContact}>
+                <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                  {getLabel('mainAddress')}
+                </AppText>
+              </View>
+            </Block>
+          )}
+          {props.data?.is_primary_address === 1 && (
+            <Block style={styles.containAddress}>
+              <View style={styles.mainContact}>
+                <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                  Đặt hàng
+                </AppText>
+              </View>
+            </Block>
+          )}
+          {props.data?.is_shipping_address === 1 && (
+            <Block style={styles.containAddress}>
+              <View style={styles.mainContact}>
+                <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                  Giao hàng
+                </AppText>
+              </View>
+            </Block>
+          )}
         </Block>
       </Block>
-      {props.primary_address.includes(props.data.address_title) && (
-        <Block style={styles.containAddress}>
-          <View style={styles.mainContact}>
-            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('mainAddress')}
-            </AppText>
-          </View>
-        </Block>
-      )}
-      {props.data.is_shipping_address === 1 && (
-        <Block style={styles.containAddress}>
-          <View style={styles.mainContact}>
-            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('addressOrder')}
-            </AppText>
-          </View>
-        </Block>
-      )}
-    </Block>
+    </TouchableOpacity>
   ) : (
-    <Block
-      colorTheme="bg_default"
-      paddingVertical={12}
-      paddingHorizontal={16}
-      borderRadius={16}
-      marginTop={10}>
-      <Block style={styles.rootLayout}>
-        <Block style={styles.labelView}>
-          <SvgIcon
-            source="MapPin"
-            size={18}
-            colorTheme="text_primary"
-            color={theme.colors.text_primary}
-          />
-          <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
-            {props.data ? props.data.split(',', 4)[0] : '---'}
-          </AppText>
-        </Block>
-        <Block style={styles.labelView} paddingLeft={8}>
-          <AppText numberOfLines={2}>
-            {props?.data ? props.data : '---'}
-          </AppText>
-        </Block>
-      </Block>
-      <Block direction="row" alignItems="center" marginBottom={8}>
-        <Block style={styles.containAddress}>
-          <Block style={styles.mainContact}>
-            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('addressGet')}
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() =>
+        props.onPressCard(
+          props.data,
+          'editAddress',
+          ScreenConstant.DETAIL_CUSTOMER,
+        )
+      }>
+      <Block marginTop={10}>
+        <Block style={styles.rootLayout}>
+          <Block style={styles.labelView}>
+            <SvgIcon
+              source="MapPin"
+              size={18}
+              colorTheme="text_primary"
+              color={theme.colors.text_primary}
+            />
+            <AppText numberOfLines={1} style={{maxWidth: '90%'}}>
+              {props.data ? props.data.split(',', 4)[0] : '---'}
+            </AppText>
+          </Block>
+          <Block style={styles.labelView} paddingLeft={8}>
+            <AppText numberOfLines={2}>
+              {props?.data ? props.data : '---'}
             </AppText>
           </Block>
         </Block>
+        <Block direction="row" alignItems="center" marginBottom={8}>
+          <Block style={styles.containAddress}>
+            <Block style={styles.mainContact}>
+              <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('addressGet')}
+              </AppText>
+            </Block>
+          </Block>
 
-        <Block style={styles.containAddress}>
-          <Block style={styles.mainContact}>
-            <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-              {getLabel('addressOrder')}
-            </AppText>
+          <Block style={styles.containAddress}>
+            <Block style={styles.mainContact}>
+              <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                {getLabel('addressOrder')}
+              </AppText>
+            </Block>
           </Block>
         </Block>
       </Block>
-    </Block>
+    </TouchableOpacity>
   );
 };
 
@@ -169,7 +193,7 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     labelView: {
       flexDirection: 'row',
-      justifyContent: 'flex-start',
+      justifyContent: 'space-between',
       marginVertical: 8,
       marginHorizontal: 10,
     } as ViewStyle,
@@ -187,8 +211,7 @@ const rootStyles = (theme: AppTheme) =>
     } as ViewStyle,
     containAddress: {
       flexDirection: 'row',
-      marginLeft: 16,
-      alignContent: 'center',
+      alignItems: 'center',
       marginTop: 10,
     } as ViewStyle,
   });

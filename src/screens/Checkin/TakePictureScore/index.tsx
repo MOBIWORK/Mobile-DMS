@@ -62,10 +62,8 @@ const TakePictureScore = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [showModal, setShowModal] = React.useState(false);
   const itemParams =
-    useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>().params.data;
-  const screen =
-    useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>().params
-      .screen;
+    useRoute<RouteProp<RootStackParamList, 'TAKE_PICTURE_SCORE'>>()?.params?.data;
+
   const snapPoints = React.useMemo(() => ['45%'], []);
   const bottomSheetRef = React.useRef<BottomSheetMethods>();
   const isItemExists = useIsItemExists();

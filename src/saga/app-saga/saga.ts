@@ -110,18 +110,9 @@ export function* onGetSystemConfiguration(action: PayloadAction) {
           },
         );
         yield put(appActions.setSystemConfig(systemData));
-        if (
-          categoriesCheckinList
-            .filter(item => item.isDone)
-            .some(item => item.isDone === true)
-        ) {
-          return null;
-        } else {
-          console.log('systemconfigChange');
-          yield put(
-            checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
-          );
-        }
+        yield put(
+          checkinActions.setDataCategoriesCheckin(newCategoriesCheckin),
+        );
       } else {
         console.log('app System err');
       }

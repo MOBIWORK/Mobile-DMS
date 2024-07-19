@@ -49,9 +49,9 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
       data.length === 0
         ? AddressType.city
         : data.length === 1
-        ? AddressType.ward
-        : data.length === 2
         ? AddressType.district
+        : data.length === 2
+        ? AddressType.ward
         : '';
     startTransition(() => {
       setData([
@@ -90,9 +90,6 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
     }
   }, [data.length]);
 
-  // console.log(listCity, 'run ');
-  // console.log(data,'data')
-
   const ListAddressSelected = (item: AddressSelected, isBorder: boolean) => {
     return (
       <Block
@@ -107,7 +104,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         <Text color={theme.colors.text_primary} style={styles.textContainStyle}>
           {item.type === AddressType.city
             ? `${getLabel('province')}/${getLabel('city')}`
-            : item.type === AddressType.ward
+            : item.type === AddressType.district
             ? getLabel('district')
             : getLabel('ward')}
         </Text>

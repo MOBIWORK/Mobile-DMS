@@ -9,24 +9,31 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {AuthorizeParamsList} from '../../navigation/screen-type';
 import FormData from './components/FormData';
 
-
-
 const EditCustomerScreen = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const params =
     useRoute<RouteProp<AuthorizeParamsList, 'EDIT_CUSTOMER'>>().params;
+
+  const goBackScreen = React.useCallback(() => {
+    goBack();
+  }, []);
+
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <AppHeader
-        label="Chi tiết khách hàng"
-        onBack={() => goBack()}
+        label="Chỉnh sửa khách hàng"
+        onBack={goBackScreen}
         backButtonIcon={
-          <SvgIcon source="arrowLeft" color={theme.colors.text_secondary} />
+          <SvgIcon
+            source="arrowLeft"
+            color={theme.colors.text_secondary}
+            style={{marginLeft: 16}}
+          />
         }
       />
       <Block block>
-        <FormData data={params.data} />
+        <FormData data={params.data} goBack={goBackScreen} />
       </Block>
     </SafeAreaView>
   );

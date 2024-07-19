@@ -209,13 +209,6 @@ const ListVisit = () => {
     [modalErrorGPS],
   );
 
-  const customerCheckinCount = useMemo(() => {
-    if (listCustomer && customerDataSort && customerDataSort.length > 0) {
-      return customerDataSort.filter(item => item.is_checkin).length;
-    } else {
-      return 0;
-    }
-  }, [listCustomer, customerDataSort]);
   const onRefreshData = useCallback(async () => {
     dispatch(appActions.setSearchVisitValue(''));
     try {
@@ -483,6 +476,7 @@ const ListVisit = () => {
                 total: data.total,
                 page_size: data.page_size,
                 page_number: params?.page_number,
+                total_checkin: data.total_checkin,
               }),
             );
           } else {
@@ -892,9 +886,6 @@ const ListVisit = () => {
     [],
   );
 
-
-  
-
   const handleCompareDistance = useCallback(
     (item: VisitListItemType, isDetail: boolean) => {
       let location: LocationProps = JSON.parse(item.customer_location_primary!);
@@ -952,7 +943,7 @@ const ListVisit = () => {
         });
       }
     },
-    [modalAlert.status, modalUpdateLocation.status,currentSelect.current],
+    [modalAlert.status, modalUpdateLocation.status, currentSelect.current],
   );
 
   const handleBackground = useCallback((item: VisitListItemType) => {
@@ -1282,7 +1273,6 @@ const ListVisit = () => {
             visitItemSelected={visitItemSelected}
             location={location}
             mapboxCameraRef={mapboxCameraRef}
-            customerCheckinCount={customerCheckinCount}
             onScroll={onScroll}
             onRefreshData={onRefreshData}
             setVisitItemSelected={setVisitItemSelected}
