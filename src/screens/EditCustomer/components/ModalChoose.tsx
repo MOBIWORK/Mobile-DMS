@@ -18,10 +18,8 @@ type Props = {
   type: string;
   listAddress: Address[];
   listContact: ContactCard[];
-  onPressData: (data: any, type: string) => void;
-  onEditData: (data: any, type: string) => void;
+  onPressItem: (data: any, type: string) => void;
   onPressAdding: () => void;
-  // defaultData?:any
 };
 
 const ModalChoose = ({
@@ -30,17 +28,12 @@ const ModalChoose = ({
   type,
   listAddress,
   listContact,
-  onPressData,
-  onEditData,
+  onPressItem,
   onPressAdding,
 }: // defaultData
 Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
-
-  //  console.log(listAddress,'adâd')
-
-  // console.log(listContact,'listContact')
 
   return (
     <Modal
@@ -51,7 +44,7 @@ Props) => {
       backdropOpacity={0.5}
       style={styles.modalStyle}
       animationOut={'slideOutDown'}>
-      <Block colorTheme="bg_default" block paddingHorizontal={16}>
+      <Block block paddingHorizontal={16}>
         {type === 'address' ? (
           <Block block>
             <AppHeader
@@ -73,8 +66,7 @@ Props) => {
                     // key={index}
                     type="address"
                     data={item}
-                    onPress={onPressData}
-                    onEditPress={onEditData}
+                    onPressAddress={onPressItem}
                   />
                 )}
               />
@@ -101,8 +93,7 @@ Props) => {
                     // key={index}
                     type="contact"
                     data={item}
-                    onPress={onPressData}
-                    onEditContact={onEditData}
+                    onPressContact={onPressItem}
                   />
                 )}
               />
@@ -134,17 +125,18 @@ const modalEditStyles = (theme: AppTheme) =>
       // paddingHorizontal:16,
       marginHorizontal: 0,
       marginVertical: 0,
+      paddingTop: 24,
+      backgroundColor: theme.colors.bg_neutral,
     } as ViewStyle,
     containButton: {
-      height: 37,
+      padding: 16,
       borderRadius: 20,
-      backgroundColor: theme.colors.bg_neutral,
+      backgroundColor: theme.colors.bg_default,
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
-      // flex: 1,
       marginHorizontal: 8,
-      marginBottom: 20,
+      marginBottom: 32,
       borderColor: theme.colors.action,
     } as ViewStyle,
   });

@@ -12,11 +12,7 @@ import {Address} from '../../../models/types';
 import {AppText, Block, SvgIcon} from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
-import {ApiConstant, ScreenConstant} from '../../../const';
-import {useSelector} from '../../../config/function';
-import {shallowEqual} from 'react-redux';
-import {AppService} from '../../../services';
-import {ListDistrict, ListWard} from '../../../redux-store/app-reducer/type';
+import {ScreenConstant} from '../../../const';
 
 type SingleAddress = {
   type: 'single';
@@ -35,81 +31,6 @@ const CardAddressView = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-  const listDataCity = useSelector(
-    state => state.app.listDataCity,
-    shallowEqual,
-  );
-  const [valueCity, setValue] = React.useState({
-    city: {
-      id: '',
-      value: '',
-    },
-    ward: {
-      id: '',
-      value: '',
-    },
-    district: {
-      id: '',
-      value: '',
-    },
-  });
-  // console.log(props.data,'rpops data')
-
-  const autoCompleteData = React.useCallback(async () => {
-    if (props.type === 'list')
-      if (listDataCity.city.length > 0) {
-        let add: Address = props.data;
-        // console.log(add, 'editValue');
-        if (add.city != null) {
-          let value = listDataCity.city.find(item => item.ma_tinh === add.city);
-          // console.log(value, 'value');
-          setValue((prev: any) => ({
-            ...prev,
-            city: {
-              value: value?.ten_tinh,
-              id: value?.ma_tinh,
-            },
-          }));
-
-          const districtRes: any = await AppService.getListDistrict(
-            value?.ma_tinh,
-          );
-          if (districtRes?.status === ApiConstant.STT_OK) {
-            let districtVal: ListDistrict = districtRes.data.result?.find(
-              (item: ListDistrict) => item.ma_huyen === add.county,
-            );
-            setValue((prev: any) => ({
-              ...prev,
-              district: {
-                value: districtVal?.ten_huyen,
-                id: districtVal?.ma_huyen,
-              },
-            }));
-
-            const wardRes: any = await AppService.getListWard(
-              districtVal.ma_huyen,
-            );
-            if (wardRes?.status === ApiConstant.STT_OK) {
-              let wardValue: ListWard = wardRes?.data?.result.find(
-                (item: ListWard) => item.ma_xa === add.state,
-              );
-              setValue((prev: any) => ({
-                ...prev,
-                ward: {
-                  value: wardValue?.ten_xa,
-                  id: wardValue?.ma_xa,
-                },
-              }));
-            }
-          }
-        }
-      }
-  }, [props.type]);
-
-  React.useEffect(() => {
-    autoCompleteData();
-  }, [props.type]);
-
   return props.type === 'list' ? (
     <TouchableOpacity
       style={styles.card}
@@ -126,53 +47,66 @@ const CardAddressView = (props: Props) => {
             style={styles.labelView}
             justifyContent="center"
             alignItems="center">
+            <Block direction={'row'} justifyContent={'flex-start'}>
+              <SvgIcon
+                source="MapPin"
+                size={18}
+                color={theme.colors.text_primary}
+              />
+              <AppText
+                style={{marginLeft: 8, maxWidth: '90%'}}
+                fontSize={14}
+                fontWeight="500"
+                colorTheme="text_primary">
+                {props.data?.address_title ? props.data?.address_title : '---'}
+              </AppText>
+            </Block>
             <SvgIcon
-              source="MapPin"
-              size={18}
-              color={theme.colors.text_primary}
+              source={'IconKebab'}
+              size={24}
+              onPress={() =>
+                props.onPressCard(
+                  props.data,
+                  'editAddress',
+                  ScreenConstant.DETAIL_CUSTOMER,
+                )
+              }
             />
-            <AppText
-              numberOfLines={1}
-              style={{maxWidth: '90%', marginLeft: 8}}
-              fontSize={14}
-              fontWeight="500"
-              colorTheme="text_primary">
-              {props.data?.address_title ? props.data?.address_title : '---'}
-            </AppText>
-          </Block>
-          <Block style={styles.labelView} marginLeft={28}>
-            <AppText
-              numberOfLines={1}
-              fontSize={14}
-              fontWeight="500"
-              colorTheme="text_primary">
-              {valueCity.city.value +
-                ', ' +
-                valueCity.ward.value +
-                ', ' +
-                valueCity.district.value}
-            </AppText>
           </Block>
         </Block>
-        {props.data.primary != null && props.data.primary === 1 && (
-          <Block style={styles.containAddress}>
-            <View style={styles.mainContact}>
-              <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-                {getLabel('mainAddress')}
-              </AppText>
-            </View>
-          </Block>
-        )}
-        {props.data.is_primary_address != null &&
-          props.data.is_primary_address === 1 && (
+        <Block
+          direction={'row'}
+          alignItems={'center'}
+          justifyContent={'flex-start'}
+          paddingHorizontal={16}>
+          {props.data?.primary === 1 && (
             <Block style={styles.containAddress}>
               <View style={styles.mainContact}>
                 <AppText fontSize={14} fontWeight="400" colorTheme="primary">
-                  {getLabel('addressOrder')}
+                  {getLabel('mainAddress')}
                 </AppText>
               </View>
             </Block>
           )}
+          {props.data?.is_primary_address === 1 && (
+            <Block style={styles.containAddress}>
+              <View style={styles.mainContact}>
+                <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                  Đặt hàng
+                </AppText>
+              </View>
+            </Block>
+          )}
+          {props.data?.is_shipping_address === 1 && (
+            <Block style={styles.containAddress}>
+              <View style={styles.mainContact}>
+                <AppText fontSize={14} fontWeight="400" colorTheme="primary">
+                  Giao hàng
+                </AppText>
+              </View>
+            </Block>
+          )}
+        </Block>
       </Block>
     </TouchableOpacity>
   ) : (
@@ -259,7 +193,7 @@ const rootStyles = (theme: AppTheme) =>
     } as TextStyle,
     labelView: {
       flexDirection: 'row',
-      justifyContent: 'flex-start',
+      justifyContent: 'space-between',
       marginVertical: 8,
       marginHorizontal: 10,
     } as ViewStyle,
@@ -277,8 +211,7 @@ const rootStyles = (theme: AppTheme) =>
     } as ViewStyle,
     containAddress: {
       flexDirection: 'row',
-      marginLeft: 16,
-      alignContent: 'center',
+      alignItems: 'center',
       marginTop: 10,
     } as ViewStyle,
   });

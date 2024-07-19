@@ -13,14 +13,12 @@ type Props = CardListAddress | CardListContact;
 type CardListAddress = {
   type: 'address';
   data: Address;
-  onPress: (data: Address, type: 'address') => void;
-  onEditPress: (data: Address, type: 'address') => void;
+  onPressAddress: (data: Address, type: 'address') => void;
 };
 type CardListContact = {
   type: 'contact';
   data: ContactCard;
-  onPress: (data: ContactCard, type: 'contact') => void;
-  onEditContact: (data: ContactCard, type: 'contact') => void;
+  onPressContact: (data: ContactCard, type: 'contact') => void;
 };
 
 const CardChoose = (props: Props) => {
@@ -28,57 +26,33 @@ const CardChoose = (props: Props) => {
   const styles = cardStyles(theme);
   const {t: getLabel} = useTranslation();
 
-  // console.log(props.data)
-
-  // console.log(props.data, 'propsdata');
-
   return (
     <>
       {props.type === 'address' ? (
         <TouchableOpacity
           style={styles.card}
-          onPress={() => props.onPress(props.data, props.type)}>
+          onPress={() => props.onPressAddress(props.data, props.type)}>
           <Block paddingHorizontal={16}>
             <Block
               style={styles.containAddressLabel}
               justifyContent="space-between">
-              <Block direction="row" alignItems="center">
+              <Block direction="row" alignItems="flex-start">
                 <Block style={styles.containIcon}>
                   <SvgIcon source="MapPin" size={16} />
                 </Block>
                 <Block>
-                  <Block>
-                    {props.data.address_title.trim().length > 0 && (
-                      <Text
-                        numberOfLines={2}
-                        fontSize={16}
-                        fontWeight="300"
-                        colorTheme="black"
-                        lineHeight={21}>
-                        {props.data.address_title.split(',', 4)[0].trim()}
-                      </Text>
-                    )}
-                  </Block>
-                  <Block>
-                    {props.data.address_line1 && (
-                      <Text
-                        numberOfLines={2}
-                        fontSize={16}
-                        fontWeight="300"
-                        colorTheme="black"
-                        lineHeight={21}>
-                        {props.data.address_line1}
-                      </Text>
-                    )}
-                  </Block>
+                  {props.data?.address_title && (
+                    <Text
+                      numberOfLines={2}
+                      fontSize={16}
+                      fontWeight="300"
+                      colorTheme="black"
+                      lineHeight={21}>
+                      {props.data.address_title}
+                    </Text>
+                  )}
                 </Block>
               </Block>
-              <TouchableOpacity
-                onPress={() => props.onEditPress(props.data, props.type)}>
-                <Block>
-                  <SvgIcon source="RedEdit" size={24} />
-                </Block>
-              </TouchableOpacity>
             </Block>
           </Block>
           <Block style={styles.containAddress}>
@@ -109,7 +83,7 @@ const CardChoose = (props: Props) => {
       ) : (
         <TouchableOpacity
           style={styles.card}
-          onPress={() => props.onPress(props.data, props.type)}>
+          onPress={() => props.onPressContact(props.data, props.type)}>
           <Block
             paddingHorizontal={16}
             direction="row"
@@ -139,23 +113,26 @@ const CardChoose = (props: Props) => {
                   {`${props.data.address ? `${props.data.address}, ` : ''}`}
                 </Text>
               </Block>
-              <Block
-                style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
-                <Block style={styles.containIcon}>
-                  <SvgIcon source="Phone" size={16} />
+              {props.data?.phone && (
+                <Block
+                  style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
+                  <Block style={styles.containIcon}>
+                    <SvgIcon source="Phone" size={16} />
+                  </Block>
+                  <Text
+                    numberOfLines={2}
+                    fontSize={14}
+                    fontWeight="300"
+                    colorTheme="black"
+                    lineHeight={21}>
+                    {props.data?.phone
+                      ? formatPhoneNumber(props.data.phone)
+                      : '---'}
+                  </Text>
                 </Block>
-                <Text
-                  numberOfLines={2}
-                  fontSize={14}
-                  fontWeight="300"
-                  colorTheme="black"
-                  lineHeight={21}>
-                  {props.data.phone != null
-                    ? formatPhoneNumber(props.data.phone)
-                    : '---'}
-                </Text>
-              </Block>
-              {props.data.primary === 0 && (
+              )}
+
+              {props.data?.primary === 1 && (
                 <Block style={styles.containMain}>
                   <Block style={styles.addressGetAndOrder}>
                     <Text
@@ -169,12 +146,6 @@ const CardChoose = (props: Props) => {
                 </Block>
               )}
             </Block>
-            <TouchableOpacity
-              onPress={() => props.onEditContact(props.data, props.type)}>
-              <Block>
-                <SvgIcon source="RedEdit" size={24} />
-              </Block>
-            </TouchableOpacity>
           </Block>
         </TouchableOpacity>
       )}
@@ -187,7 +158,7 @@ export default React.memo(CardChoose, isEqual);
 const cardStyles = (theme: AppTheme) =>
   StyleSheet.create({
     card: {
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.bg_default,
       shadowColor: theme.colors.text_disable,
       borderRadius: 16,
       paddingVertical: 12,

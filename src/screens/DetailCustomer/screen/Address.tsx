@@ -21,7 +21,7 @@ type Props = {
   onPressAdding: () => void;
   data: DetailCustomerType;
   listData: any[];
-  onPressCard: (data: any,type:string,screen:any) => void;
+  onPressCard: (data: any, type: string, screen: any) => void;
 };
 
 const Address = (props: Props) => {
@@ -30,7 +30,7 @@ const Address = (props: Props) => {
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   // console.log(props.listData,'data')
-// console.log(props.data.address,'add')
+  // console.log(props.data.address,'add')
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <View style={styles.containLabel}>
@@ -46,10 +46,7 @@ const Address = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {props.data != null &&
-      props.data.address &&
-      props.data.address != null &&
-      props.data.address.length > 0 ? (
+      {props.listData.length > 0 && (
         <FlatList
           data={props.data.address}
           keyExtractor={(item, index) => index.toString()}
@@ -57,7 +54,6 @@ const Address = (props: Props) => {
           decelerationRate={'fast'}
           initialNumToRender={10}
           windowSize={11}
-          removeClippedSubviews={true}
           maxToRenderPerBatch={10}
           renderItem={({item}) => {
             return (
@@ -74,16 +70,6 @@ const Address = (props: Props) => {
               />
             );
           }}
-        />
-      ) : (
-        <CardAddressView
-          type="single"
-          onPressCard={onPressCard}
-          data={
-            props.data != null && props.data?.customer_primary_address != null
-              ? props.data.customer_primary_address
-              : ''
-          }
         />
       )}
     </SafeAreaView>

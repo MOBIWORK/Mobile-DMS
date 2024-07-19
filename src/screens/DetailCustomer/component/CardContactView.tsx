@@ -37,24 +37,26 @@ const CardContactView = (props: Props) => {
       style={styles.card}>
       <Block>
         <Block style={styles.rootLayout}>
-          <Text
-            fontSize={16}
-            fontWeight="500"
-            lineHeight={24}
-            style={styles.labelText}>
-            {props.data.first_name + ''}{' '}
-            {props.data.last_name != null ? props.data.last_name : ''}
-          </Text>
-
-          <Block style={styles.labelView}>
-            <SvgIcon source="Phone" size={18} />
-            <Text numberOfLines={1}>
-              {' '}
-              {
-                 props.mobileNo && props.mobileNo != null
-                ? formatPhoneNumber(props.mobileNo)
-                : '---'}
+          <Block direction={'row'} justifyContent={'space-between'}>
+            <Text
+              fontSize={16}
+              fontWeight="500"
+              lineHeight={24}
+              style={styles.labelText}>
+              {props.data.first_name + ''}{' '}
+              {props.data.last_name != null ? props.data.last_name : ''}
             </Text>
+            <SvgIcon
+              source={'IconKebab'}
+              size={24}
+              onPress={() =>
+                props.onPressCard(
+                  props.data,
+                  'editContact',
+                  ScreenConstant.DETAIL_CUSTOMER,
+                )
+              }
+            />
           </Block>
           <Block
             style={styles.labelView}
@@ -62,24 +64,20 @@ const CardContactView = (props: Props) => {
             alignItems="center">
             <SvgIcon source="MapPin" size={18} />
             <Text
-              numberOfLines={1}
-              style={{maxWidth: '90%', marginLeft: 8}}
+              style={{marginLeft: 8}}
               fontSize={14}
-              fontWeight="500"
               colorTheme="text_primary">
-              {props.data?.address ? props.data?.address : '---'}
+              {props.data?.address_title ? props.data.address_title : '---'}
+            </Text>
+          </Block>
+          <Block style={styles.labelView}>
+            <SvgIcon source="Phone" size={18} />
+            <Text numberOfLines={1}>
+              {' '}
+              {props?.mobileNo ? formatPhoneNumber(props.mobileNo) : '---'}
             </Text>
           </Block>
         </Block>
-        {props.data.is_primary_contact != null && props.data.is_primary_contact === 1 && (
-          <Block style={styles.containAddress}>
-            <Block style={styles.mainContact}>
-              <Text fontSize={14} fontWeight="400" colorTheme="primary">
-                {getLabel('addressGet')}
-              </Text>
-            </Block>
-          </Block>
-        )}
         {props.data.primary != null && props.data.primary === 1 && (
           <Block style={styles.containAddress}>
             <Block style={styles.mainContact}>

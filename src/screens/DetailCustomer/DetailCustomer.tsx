@@ -10,8 +10,10 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import React, {
+  memo,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   useTransition,
@@ -31,7 +33,7 @@ import {AppTheme, useTheme} from '../../layouts/theme';
 import {Address, Contact, Overview} from './screen';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import FormAddress from '../Customer/components/FormAddress';
-import {AppConstant, ScreenConstant} from '../../const';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'react-fast-compare';
 import {goBack, navigate} from '../../navigation/navigation-service';
@@ -43,6 +45,9 @@ import {BottomSheetModalMethods} from '@gorhom/bottom-sheet/lib/typescript/types
 import ModalEditAddress from '../EditCustomer/components/ModalEditAddress';
 import {ImageAssets} from '../../assets';
 import {deleteCustomer} from '../../services/customerService';
+import {dispatch} from '../../utils/redux';
+import {appActions} from '../../redux-store/app-reducer/reducer';
+import {CommonUtils} from '../../utils';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -59,8 +64,14 @@ const DetailCustomer = () => {
     type: 'address',
     status: false,
   });
+  const [itemDataProps, setItemDataProps] = useState<{
+    data: any;
+    type: string;
+    screen: string;
+  } | null>(null);
 
-  const bottomAction = useRef<BottomSheetModalMethods>();
+  const bottomAction = useRef<BottomSheetModalMethods>(null);
+  const editAddressRef = useRef<BottomSheetModalMethods>(null);
 
   const [modalShow, setModalShow] = useState({
     type: AppConstant.CustomerFilterType.loai_khach_hang,
@@ -74,7 +85,7 @@ const DetailCustomer = () => {
   const snapPointsDetailPr = React.useMemo(() => ['25%'], []);
   const [currentFocus, setCurrentFocus] = useState<boolean>(isFocus);
 
-  const getDetailCustomer = useCallback(async () => {
+  const getDetailCustomer = async () => {
     try {
       setLoading(true);
       let res: any = await CustomerService.getCustomerDetail(params?.data.name);
@@ -87,9 +98,7 @@ const DetailCustomer = () => {
       // mounted.current = false;
       setLoading(false);
     }
-  },[modalEditAddress.status,currentFocus]);
-
-  // console.log(data,'dataAddress')
+  };
 
   const listData = useSelector(
     state => state.customer.mainAddress,
@@ -97,15 +106,8 @@ const DetailCustomer = () => {
   );
 
   useEffect(() => {
-    // setLoading(true);
-    setTimeout(async () => {
-      await getDetailCustomer();
-    }, 1000);
-
-    return () => {
-      // mounted.current = false;
-    };
-  }, [currentFocus,modalEditAddress.status,modalShow.status,dataEdit]);
+    getDetailCustomer();
+  }, []);
 
   const routes = useRef([
     {key: 'first', title: getLabel('overview')},
@@ -114,33 +116,28 @@ const DetailCustomer = () => {
   ]).current;
 
   const onPressCard = useCallback(
-    (data: any, type: string, screen: any) => {
+    (dataCard: any, type: string, screen: any) => {
       bottomAction.current?.snapToIndex(0);
-      setDataEdit({
-        data: data,
-        type: type,
-        screen: screen,
-      });
+      setItemDataProps({data: dataCard, type: type, screen: screen});
     },
     [dataEdit.type],
   );
 
-  // console.log(dataEdit,'dataEdits')
-
-  // console.log(data,'data')
   const onDeleteContact = useCallback(async () => {
+    setModalDelete(false);
+    dispatch(appActions.setProcessingStatus(true));
     const dataDelete = {
-      name: dataEdit?.data?.name,
-      type: dataEdit.type === 'editAddress' ? 'address' : 'contact',
+      name: itemDataProps?.data?.name,
+      type: itemDataProps?.type === 'editAddress' ? 'address' : 'contact',
       customer: params.data.name,
     };
-
-    await deleteCustomer(dataDelete);
-    setTimeout(async () => {
+    const deteleRes: any = await deleteCustomer(dataDelete);
+    if (deteleRes?.status === ApiConstant.STT_OK) {
+      await CommonUtils.sleep(1000);
       await getDetailCustomer();
-    }, 1000);
-    setModalDelete(false);
-  }, [dataEdit]);
+    }
+    dispatch(appActions.setProcessingStatus(false));
+  }, [itemDataProps]);
 
   const onPressShowDelete = useCallback(() => {
     bottomAction.current?.close();
@@ -148,45 +145,41 @@ const DetailCustomer = () => {
   }, [dataEdit, modalDelete]);
 
   const onPressEdit = useCallback(() => {
+    bottomAction.current?.close();
+    setDataEdit({
+      data: itemDataProps?.data,
+      type: itemDataProps?.type,
+      screen: itemDataProps?.screen,
+    });
     setModalEditAddress({
       status: true,
-      type: dataEdit.type,
+      type: itemDataProps?.type ?? '',
     });
-    bottomAction.current?.close();
-  }, []);
+    editAddressRef.current?.snapToIndex(0);
+  }, [itemDataProps]);
 
-  const renderScene = React.useCallback(
-    SceneMap({
-      first: () => (
-        //
-        <Overview data={data as any} />
-      ),
-      second: () => (
-        //
-        <Address
-          onPressAdding={onPressAdding}
-          onPressCard={onPressCard}
-          data={data as any}
-          listData={data && data?.address ? data.address : []}
-        />
-      ),
-      third: () => (
-        //
-        <Contact
-          onPressCard={onPressCard}
-          onPressAdding={onPressAddingContact}
-          data={data as any}
-        />
-        //
-      ),
-    }),
-    [data, indexView.current,currentFocus],
-  );
-
-  // console.log(data.contact,'data')
+  const renderScene = SceneMap({
+    first: () => <Overview data={data as any} />,
+    second: () => (
+      <Address
+        onPressAdding={onPressAdding}
+        onPressCard={onPressCard}
+        data={data as any}
+        listData={data && data?.address ? data.address : []}
+      />
+    ),
+    third: () => (
+      <Contact
+        onPressCard={onPressCard}
+        onPressAdding={onPressAddingContact}
+        data={data as any}
+      />
+    ),
+  });
 
   const onCloseEditAddress = useCallback(() => {
-    if (modalEditAddress.status === true) {
+    editAddressRef.current?.close();
+    if (modalEditAddress.status) {
       setModalEditAddress(prev => ({...prev, status: false}));
     }
   }, [modalEditAddress.status, currentFocus]);
@@ -207,8 +200,6 @@ const DetailCustomer = () => {
     setCurrentFocus(false);
   }, [modalShow.status, modalShow.type, currentFocus]);
 
-  // console.log(dataEdit,'dataEdit')
-
   const renderTabBar = useCallback((props: any) => {
     return (
       <TabBar
@@ -225,11 +216,12 @@ const DetailCustomer = () => {
   }, []);
 
   const onBackButtonPress = useCallback(() => {
+    editAddressRef.current?.close();
     setModalShow(prev => ({
       ...prev,
       status: false,
     }));
-    setCurrentFocus(true);
+    // setCurrentFocus(true);
   }, [modalShow.status]);
 
   const onIndexChange = useCallback(
@@ -240,7 +232,6 @@ const DetailCustomer = () => {
     },
     [indexView.current],
   );
-  // console.log(isFocus,'us','mounted')
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.labelHeader}>
@@ -259,11 +250,7 @@ const DetailCustomer = () => {
           }
         />
       </View>
-      {!!loading ? (
-        <Block block justifyContent="center" alignItems="center">
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </Block>
-      ) : (
+      {data && Object.keys(data).length > 0 && (
         <TabView
           onIndexChange={onIndexChange}
           navigationState={{
@@ -305,11 +292,11 @@ const DetailCustomer = () => {
         snapPointsCustom={snapPointsDetailPr}>
         <Block paddingHorizontal={16}>
           <Text
-            fontSize={dataEdit.type === 'editAddress' ? 12 : 16}
+            fontSize={itemDataProps?.type === 'editAddress' ? 18 : 16}
             colorTheme="text_primary"
             fontWeight="bold">
-            {dataEdit.type === 'editAddress' ? '' : 'Liên hệ'}{' '}
-            {dataEdit?.data?.name || ''}
+            {itemDataProps?.type === 'editAddress' ? '' : 'Liên hệ'}{' '}
+            {itemDataProps?.data?.address_title || ''}
           </Text>
           <Block marginTop={20}>
             <TouchableOpacity
@@ -357,8 +344,8 @@ const DetailCustomer = () => {
           <Image source={ImageAssets.ErrorApiIcon} style={styles.errorIcon} />
           <Text textAlign="center" fontSize={12}>
             Bạn có chắc chắn muốn xóa{' '}
-            {dataEdit.type === 'editAddress' ? 'địa chỉ' : 'liên hệ'}{' '}
-            {dataEdit?.data?.name || ''} không?
+            {itemDataProps?.type === 'editAddress' ? 'địa chỉ' : 'liên hệ'}{' '}
+            {itemDataProps?.data?.name || ''} không?
           </Text>
           <Block
             direction="row"
@@ -391,17 +378,18 @@ const DetailCustomer = () => {
           </Block>
         </Block>
       </Modal>
-
-      <ModalEditAddress
-        visible={modalEditAddress.status}
-        onBackButtonPress={onCloseEditAddress}
-        setData={setData}
-        dataCustomer={data}
-        type={dataEdit.type}
-        defaultEditData={dataEdit.data}
-        setDefaultEditData={setDataEdit}
-        screenPass={dataEdit.screen}
-      />
+      <AppBottomSheet
+        bottomSheetRef={editAddressRef}
+        snapPointsCustom={['100%']}>
+        <ModalEditAddress
+          onBackButtonPress={onCloseEditAddress}
+          setData={setData}
+          dataCustomer={data}
+          type={dataEdit.type}
+          defaultEditData={dataEdit.data}
+          setDefaultEditData={setDataEdit}
+        />
+      </AppBottomSheet>
     </SafeAreaView>
   );
 };

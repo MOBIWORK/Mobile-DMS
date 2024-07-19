@@ -22,10 +22,14 @@ const EditCustomerScreen = () => {
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <AppHeader
-        label="Chi tiết khách hàng"
+        label="Chỉnh sửa khách hàng"
         onBack={goBackScreen}
         backButtonIcon={
-          <SvgIcon source="arrowLeft" color={theme.colors.text_secondary} />
+          <SvgIcon
+            source="arrowLeft"
+            color={theme.colors.text_secondary}
+            style={{marginLeft: 16}}
+          />
         }
       />
       <Block block>

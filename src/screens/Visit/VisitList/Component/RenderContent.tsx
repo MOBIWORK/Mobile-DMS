@@ -30,7 +30,6 @@ type Props = {
   visitItemSelected: VisitListItemType | null;
   location: GeolocationResponse | null;
   mapboxCameraRef: React.RefObject<CameraRef>;
-  customerCheckinCount: number;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   onRefreshData: () => Promise<void>;
   setVisitItemSelected: React.Dispatch<
@@ -56,7 +55,6 @@ const RenderContentVisit = ({
   loading,
   location,
   mapboxCameraRef,
-  customerCheckinCount,
   onScroll,
   onRefreshData,
   slideSizeRef,
@@ -102,7 +100,7 @@ const RenderContentVisit = ({
         <Block marginTop={16} paddingHorizontal={16}>
           <Text style={{color: colors.text_secondary, paddingBottom: 10}}>
             {StringFormat(getLabel('customerVisitedCount'), {
-              customerCheckinCount: customerCheckinCount,
+              customerCheckinCount: listCustomer.total_checkin,
               allCustomer: listCustomer?.total > 0 ? listCustomer.total : 0,
             })}
           </Text>

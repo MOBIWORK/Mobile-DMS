@@ -1,6 +1,6 @@
-import {StyleSheet, ViewStyle, Image, ImageStyle} from 'react-native';
+import {StyleSheet, ViewStyle, Image, ImageStyle, View} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {DetailCustomerType, IDataCustomers} from '../../../models/types';
+import {DetailCustomerType} from '../../../models/types';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {
   AppText,
@@ -13,7 +13,6 @@ import Mapbox from '@rnmapbox/maps';
 import {useTranslation} from 'react-i18next';
 import {formatMoney} from '../../../config/function';
 import {GeolocationCustomer} from '../../../services/customerService';
-import {AppConstant} from '../../../const';
 
 type Props = {
   data: DetailCustomerType;
@@ -25,12 +24,6 @@ const InforBlock = (props: Props) => {
   const ref = useRef<Mapbox.Camera>(null);
   const {t: translate} = useTranslation();
   const [isError, setIsError] = useState(false);
-  const [mapError, setMapError] = useState(false);
-  // const [location, setLocation] = useState<GeolocationResponse | null>(null);
-
-  // useEffect(() => {
-  //   CommonUtils.getCurrentLocation(locations => setLocation(locations));
-  // }, []);
 
   const [locationCustomer, setLocationCustomer] =
     useState<GeolocationCustomer | null>(null);
@@ -45,65 +38,13 @@ const InforBlock = (props: Props) => {
     }
   }, [props.data]);
 
-  const renderMapView = React.useCallback(() => {
-    return !mapError ? (
-      <Mapbox.MapView
-        pitchEnabled={false}
-        styleURL={Mapbox.StyleURL.Street}
-        attributionEnabled={false}
-        onMapLoadingError={() => {
-          setLocationCustomer({
-            longitude: 0,
-            latitude: 0,
-          });
-          setMapError(true);
-        }}
-        scaleBarEnabled={false}
-        logoEnabled={false}
-        style={styles.mapBlock}>
-        <Mapbox.RasterSource
-          id="adminmap"
-          tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-          <Mapbox.RasterLayer
-            id={'adminmap'}
-            sourceID={'admin'}
-            style={{visibility: 'visible'}}
-          />
-        </Mapbox.RasterSource>
-        <Mapbox.Camera
-          ref={ref}
-          centerCoordinate={[
-            locationCustomer?.longitude ?? 0,
-            locationCustomer?.latitude ?? 0,
-          ]}
-          animationMode={'flyTo'}
-          animationDuration={500}
-          zoomLevel={12}
-        />
-
-        <Mapbox.MarkerView
-          coordinate={[
-            locationCustomer?.longitude ?? 0,
-            locationCustomer?.latitude ?? 0,
-          ]}>
-          <SvgIcon
-            source="Location"
-            size={32}
-            colorTheme="action"
-            color={theme.colors.text_primary}
-          />
-        </Mapbox.MarkerView>
-      </Mapbox.MapView>
-    ) : null;
-  }, [locationCustomer?.latitude, locationCustomer?.longitude]);
-
   return (
     <Block style={styles.root}>
       <Block style={styles.containImage}>
         {props?.data?.image && !isError ? (
           <Image
             source={{
-              uri: props.data.image !== undefined && props.data.image,
+              uri: props?.data?.image,
             }}
             style={styles.imageStyle}
             resizeMode="center"
@@ -144,7 +85,7 @@ const InforBlock = (props: Props) => {
             fontWeight="400"
             colorTheme="text_primary"
             lineHeight={24}>
-            {props.data?.customer_name && props.data.customer_name != null
+            {props.data?.customer_name && props.data.customer_name !== null
               ? props.data.customer_name
               : ' ---'}
           </AppText>
@@ -302,16 +243,70 @@ const InforBlock = (props: Props) => {
           </AppText>
           <Block style={styles.divider} />
         </Block>
-        <Block marginTop={16}>
-          <AppText
-            fontSize={16}
-            fontWeight="400"
-            colorTheme="text_secondary"
-            lineHeight={24}>
-            {translate('location')}
-          </AppText>
-        </Block>
-        {renderMapView()}
+        {locationCustomer && Object.keys(locationCustomer).length > 0 && (
+          <Block marginTop={16}>
+            <AppText
+              fontSize={16}
+              fontWeight="400"
+              colorTheme="text_secondary"
+              lineHeight={24}>
+              {translate('location')}
+            </AppText>
+            <Mapbox.MapView
+              pitchEnabled={false}
+              styleURL={Mapbox.StyleURL.Street}
+              attributionEnabled={false}
+              scaleBarEnabled={false}
+              logoEnabled={false}
+              scrollEnabled={false}
+              zoomEnabled={false}
+              style={styles.mapBlock}>
+              <View
+                style={{
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.background,
+                  margin: 16,
+                  padding: 16,
+                  borderRadius: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  gap: 8,
+                }}>
+                <SvgIcon source={'MapLocation'} size={24} />
+                <Text
+                  style={{color: theme.colors.text_primary, maxWidth: '90%'}}
+                  ellipsizeMode={'tail'}
+                  numberOfLines={1}>
+                  {props?.data?.customer_primary_address}
+                </Text>
+              </View>
+              <Mapbox.Camera
+                ref={ref}
+                centerCoordinate={[
+                  locationCustomer?.longitude ?? 0,
+                  locationCustomer?.latitude ?? 0,
+                ]}
+                animationMode={'flyTo'}
+                animationDuration={500}
+                zoomLevel={14}
+              />
+
+              <Mapbox.MarkerView
+                coordinate={[
+                  locationCustomer?.longitude ?? 0,
+                  locationCustomer?.latitude ?? 0,
+                ]}>
+                <SvgIcon
+                  source="Location"
+                  size={32}
+                  colorTheme="action"
+                  color={theme.colors.text_primary}
+                />
+              </Mapbox.MarkerView>
+            </Mapbox.MapView>
+          </Block>
+        )}
       </MainLayout>
     </Block>
   );
@@ -338,6 +333,9 @@ const rootStyles = (theme: AppTheme) =>
     } as ImageStyle,
     containContent: {
       paddingTop: 0,
+      borderBottomLeftRadius: 12,
+      borderBottomRightRadius: 12,
+      paddingBottom: 16,
     } as ViewStyle,
     divider: {
       height: 1,

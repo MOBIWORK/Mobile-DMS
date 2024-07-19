@@ -15,6 +15,7 @@ import React, {
   useCallback,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   useTransition,
 } from 'react';
@@ -24,6 +25,7 @@ import {
   Block,
   SvgIcon,
   AppText as Text,
+  AppBottomSheet,
 } from '../../../components/common';
 import {useTranslation} from 'react-i18next';
 import {ImageAssets} from '../../../assets';
@@ -52,13 +54,14 @@ import {
   openImagePickerCamera,
 } from '../../../utils/camera.utils';
 import ModalCamera from './ModalCamera';
-import ButtonLayout from './ButtonLayout';
 import CardEditAddress from './CardEditAddress';
 import ModalEditAddress from './ModalEditAddress';
 import ModalChoose from './ModalChoose';
 import ModalData from './ModalData';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import {CommonUtils} from '../../../utils';
+import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 
 type Props = {
   data: DetailCustomerType;
@@ -93,7 +96,7 @@ const updatePrimaryAddress = (
   targetString: string | any,
 ) => {
   return dataArray.map(item => {
-    if ( item && item?.name === targetString) {
+    if (item && item?.name === targetString) {
       return {
         ...item,
         primary: 1,
@@ -150,7 +153,8 @@ const FormData = (props: Props) => {
     state => state.customer.listCustomerTerritory,
     shallowEqual,
   );
-  // console.log(dataCustomer.address,'dataCus')
+
+  const editAddressRef = useRef<BottomSheet>(null);
 
   const [isPending, startTransition] = useTransition();
   const [date, setDate] = useState<Date>();
@@ -279,7 +283,7 @@ const FormData = (props: Props) => {
     let route = dataCustomer?.routers;
     route?.[0].frequency &&
     Array(route?.[0].frequency) &&
-    typeof route?.[0].frequency != 'string'
+    typeof route?.[0].frequency !== 'string'
       ? route?.[0].frequency?.join(';')
       : dataCustomer.routers;
 
@@ -290,7 +294,7 @@ const FormData = (props: Props) => {
           ? dataCustomer?.address.find(item => item.primary === 1) != undefined
             ? [dataCustomer?.address?.find(item => item.primary === 1)]
             : [dataCustomer?.address[dataCustomer?.address.length - 1]]
-          : [{}] ,
+          : [{}],
       contact:
         dataCustomer.contacts && dataCustomer.contacts.length > 0
           ? dataCustomer?.contacts?.find(item => item.primary === 1) !=
@@ -333,7 +337,6 @@ const FormData = (props: Props) => {
       ],
       // ...dataCustomer,
     };
-    // console.log(dataCustomer.contact,'contact update')
     startTransition(() => {
       dispatch(
         customerActions.updateCustomerAction(dataUpdate, dataCustomer?.name!),
@@ -341,11 +344,9 @@ const FormData = (props: Props) => {
     });
   }, [dataCustomer]);
 
-  const onCloseEditAddress = useCallback(() => {
-    if (modalEditAddress.status === true) {
-      setModalEditAddress(prev => ({...prev, status: false}));
-    }
-  }, [modalEditAddress.status]);
+  const onCloseEditAddress = () => {
+    editAddressRef.current?.close();
+  };
 
   const onCloseModal = useCallback(() => {
     if (modalChoose.status === true) {
@@ -383,8 +384,7 @@ const FormData = (props: Props) => {
     modalData.status,
     modalEditAddress.status,
   ]);
-  // console.log(isPrimaryContact,'contact')
-  // console.log(dataCustomer?.credit_limits,'credit')
+
   const onPressTrash = useCallback(() => {
     const updatedAddressArray = dataCustomer.address
       ? dataCustomer?.address.map(item => {
@@ -411,16 +411,28 @@ const FormData = (props: Props) => {
     setDataCustomer(prev => ({...prev, contacts: updateContactArray}));
   }, [dataCustomer.contacts]);
 
+  const onEditData = (dataEdit: any, type: any) => {
+    setDefaultDataEdit(dataEdit);
+    editAddressRef.current?.snapToIndex(0);
+    setModalChoose(prevState => ({...prevState, status: false}));
+    if (type === 'address') {
+      setModalEditAddress({
+        type: 'editAddress',
+        status: true,
+      });
+    } else {
+      setModalEditAddress({
+        type: 'editContact',
+        status: true,
+      });
+    }
+  };
+
   useLayoutEffect(() => {
     if (listTerritory.length === 0) {
       getCustomerTerritory();
     }
-    // if (lisCustomerRoute.length === 0) {
-    //   getCustomerRoute();
-    // }
   }, []);
-
-  // console.log(dataCustomer.contacts?.find(item => item.is_primary_contact === 1),'contact')
 
   const onPressData = useCallback(
     (data: any, type: string) => {
@@ -495,29 +507,12 @@ const FormData = (props: Props) => {
     [modalChoose.status],
   );
 
-  // console.log(dataCustomer.contacts, 's');
-  const onEditdata = useCallback(
-    (data: any, type: any) => {
-      if (type === 'address') {
-        startTransition(() => {
-          setModalEditAddress({
-            type: 'editAddress',
-            status: true,
-          });
-          setDefaultDataEdit(data);
-        });
-      } else {
-        startTransition(() => {
-          setDefaultDataEdit(data);
-          setModalEditAddress({
-            type: 'editContact',
-            status: true,
-          });
-        });
-      }
-    },
-    [modalChoose.status],
-  );
+  // const onEditData = useCallback(
+  //   (dataEdit: any, type: any) => {
+  //
+  //   },
+  //   [modalChoose.status],
+  // );
   return (
     <Block block colorTheme="bg_default" marginTop={10} paddingHorizontal={16}>
       <ScrollView
@@ -753,9 +748,7 @@ const FormData = (props: Props) => {
           contentStyle={styles.contentStyle}
           styles={{marginBottom: 20}}
           onChangeValue={text => {
-            // console.log(val,'val')
             let revText = reverseFormatNumber(text);
-            // console.log(revText, 'revText');
             startTransition(() => {
               let val = convertToMoneyFormat(revText);
               setDataCustomer(prev => ({...prev, credit_limits: [val]}));
@@ -818,24 +811,21 @@ const FormData = (props: Props) => {
               <CardEditAddress
                 type="address"
                 key={`${item?.name}-${index}`}
-                onPressCard={onEditdata}
+                onPressCard={onPressChooseAddress}
                 address={item}
                 primaryAddress={dataCustomer.customer_primary_address}
               />
             );
           })
         ) : (
-          <ButtonLayout
-            firstLabel="Thêm mới"
-            secondLabel="Chọn địa chỉ"
-            onPressAdding={onPressAddingAddress}
-            onPressChoose={onPressChooseAddress}
-            isExist={
-              dataCustomer.address && dataCustomer.address?.length > 0
-                ? true
-                : false
-            }
-          />
+          <TouchableOpacity
+            style={styles.containButton}
+            onPress={onPressChooseAddress}>
+            <SvgIcon source="BluePlush" size={16} colorTheme="white" />
+            <Text colorTheme="facebook" fontSize={14} fontWeight="500">
+              Chọn địa chỉ
+            </Text>
+          </TouchableOpacity>
         )}
         <Block
           marginBottom={10}
@@ -861,25 +851,22 @@ const FormData = (props: Props) => {
             return (
               <CardEditAddress
                 type="contact"
-                key={item.name}
+                key={`${item?.name}-${index}`}
                 contact={item}
-                onPressCard={onEditdata}
+                onPressCard={onPressChooseContact}
                 primaryContact={dataCustomer.customer_primary_contact}
               />
             );
           })
         ) : (
-          <ButtonLayout
-            firstLabel="Thêm mới"
-            secondLabel="Chọn liên hệ"
-            onPressAdding={onPressAddingContact}
-            onPressChoose={onPressChooseContact}
-            isExist={
-              dataCustomer.contacts && dataCustomer.contacts?.length > 0
-                ? true
-                : false
-            }
-          />
+          <TouchableOpacity
+            style={styles.containButton}
+            onPress={onPressChooseContact}>
+            <SvgIcon source="BluePlush" size={16} colorTheme="white" />
+            <Text colorTheme="facebook" fontSize={14} fontWeight="500">
+              Chọn liên hệ
+            </Text>
+          </TouchableOpacity>
         )}
       </ScrollView>
       <DatePickerModal
@@ -905,23 +892,25 @@ const FormData = (props: Props) => {
         handleCameraPicker={handleCameraPicker}
         handleImagePicker={handleImagePicker}
       />
-      <ModalEditAddress
-        visible={modalEditAddress.status}
-        onBackButtonPress={onCloseEditAddress}
-        setData={setDataCustomer}
-        dataCustomer={dataCustomer}
-        type={modalEditAddress.type}
-        defaultEditData={defaultDataEdit}
-        setDefaultEditData={setDefaultDataEdit}
-      />
+      <AppBottomSheet
+        bottomSheetRef={editAddressRef}
+        snapPointsCustom={['100%']}>
+        <ModalEditAddress
+          onBackButtonPress={onCloseEditAddress}
+          setData={setDataCustomer}
+          dataCustomer={dataCustomer}
+          type={modalEditAddress.type}
+          defaultEditData={defaultDataEdit}
+          setDefaultEditData={setDefaultDataEdit}
+        />
+      </AppBottomSheet>
       <ModalChoose
         visible={modalChoose.status}
         onBackButtonPress={onCloseModal}
+        onPressItem={onPressData}
         type={modalChoose.type}
         listAddress={dataCustomer.address || []}
         listContact={dataCustomer.contacts || []}
-        onPressData={onPressData}
-        onEditData={onEditdata}
         onPressAdding={() => {
           modalChoose.type === 'address'
             ? onPressAddingAddress()
@@ -981,5 +970,15 @@ const formStyles = (theme: AppTheme) =>
       height: 36,
       borderRadius: 20,
       marginVertical: 8,
+    } as ViewStyle,
+    containButton: {
+      height: 37,
+      borderRadius: 20,
+      backgroundColor: theme.colors.bg_neutral,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      marginHorizontal: 8,
+      gap: 12,
     } as ViewStyle,
   });

@@ -28,11 +28,6 @@ const Contact = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
-  // const da
-
-  // console.log(props.data,'cintacđt')
-// console.log(props.data.contacts,'rd')
-
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
@@ -49,10 +44,7 @@ const Contact = (props: Props) => {
           />
         </TouchableOpacity>
       </View>
-      {props.data != null &&
-      props.data.contacts &&
-      props.data.contacts != null &&
-      props.data.contacts.length > 0 ? (
+      {props.data?.contacts && props.data.contacts?.length > 0 ? (
         <FlatList
           data={
             props.data.contacts.length === 1
@@ -67,7 +59,6 @@ const Contact = (props: Props) => {
           showsVerticalScrollIndicator={false}
           initialNumToRender={10}
           windowSize={11}
-          removeClippedSubviews={true}
           maxToRenderPerBatch={10}
           decelerationRate={'fast'}
           renderItem={({item}) => {

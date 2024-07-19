@@ -143,6 +143,7 @@ export type VisitListItemResult = {
   total: number;
   page_size: number;
   page_number: number;
+  total_checkin: number;
 };
 
 export interface RootObjectGeoDecoding {
@@ -341,8 +342,8 @@ export interface IDataCustomers {
   frequency?: any;
   address?: Address[];
   credit_limits?: CreLimid[];
-  lat?:any,
-  long?:any
+  lat?: any;
+  long?: any;
 }
 
 export interface DetailCustomerType {
@@ -412,7 +413,7 @@ export type AddressUpdate = {
   state: string;
   is_primary_address: boolean;
   is_shipping_address: boolean;
-  primary?:any
+  primary?: any;
 };
 export type ContactUpdate = {
   address_title: string;
@@ -518,11 +519,11 @@ export interface Address {
   address_title: string;
   address_location: string;
   address_line1?: string;
-  name?:any
-  primary?:any,
-  city?:any,
-  county?: any,
-  state?: any,
+  name?: any;
+  primary?: any;
+  city?: any;
+  county?: any;
+  state?: any;
 }
 
 export interface Contact {
@@ -541,11 +542,11 @@ export interface ContactCard {
   phone: string;
   is_primary_contact?: number;
   is_billing_contact?: number;
-  city?:any,
-  county?:any,
-  state?:any,
-  primary?:any
-
+  city?: any;
+  county?: any;
+  state?: any;
+  primary?: any;
+  address_title: string;
 }
 
 export interface IDataItem {
