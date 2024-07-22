@@ -20,6 +20,7 @@ import {
   AppHeader,
   AppIcons,
   AppInput,
+  AppText as Text,
   AppText,
   Block,
   SvgIcon,
@@ -855,6 +856,28 @@ const FormAddress = (props: Props) => {
               onChangeValue={setTxtContactDetail}
               hiddenRightIcon={true}
             />
+            <TouchableOpacity
+              style={styles.checkBoxView}
+              onPress={() =>
+                setContactValue((prev: any) => ({
+                  ...prev,
+                  is_primary_contact: contactValue?.is_primary_contact,
+                }))
+              }>
+              <Block
+                style={styles.boxMainContact(
+                  contactValue?.is_primary_contact === 1,
+                )}
+                marginRight={8}>
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.EntypoIcon}
+                  size={14}
+                  color={theme.colors.white}
+                  name="check"
+                />
+              </Block>
+              <Text>Đặt làm người liên hệ chính</Text>
+            </TouchableOpacity>
           </Block>
           <Block style={styles.containButtonBottom(typeFilter)}>
             <Block style={styles.containContentButton}>
@@ -1027,4 +1050,16 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       top: 30,
       right: 0,
     } as ViewStyle,
+    boxMainContact: (isPrimary: boolean) =>
+      ({
+        width: 20,
+        height: 20,
+        borderRadius: 6,
+        borderWidth: !isPrimary ? 1 : 0,
+        borderColor: theme.colors.text_secondary,
+        marginBottom: 20,
+        backgroundColor: isPrimary ? theme.colors.primary : 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+      } as ViewStyle),
   });
