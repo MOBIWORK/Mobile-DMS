@@ -146,9 +146,11 @@ const FormData = (props: Props) => {
         ? data.credit_limits
         : [],
   });
+
   const [dataCustomer, setDataCustomer] = useState<DetailCustomerType>(
     initStateData.current,
   );
+
   const listTerritory: ListCustomerTerritory[] = useSelector(
     state => state.customer.listCustomerTerritory,
     shallowEqual,

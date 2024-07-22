@@ -1,3 +1,4 @@
+import React from 'react';
 import {useEffect} from 'react';
 import {registerTranslation} from 'react-native-paper-dates';
 import './src/language';
@@ -21,10 +22,6 @@ import codePush from 'react-native-code-push';
 import {store} from './src/redux-store/';
 import {isIos} from './src/config/function';
 import {PortalProvider} from './src/components/common/portal';
-import React from 'react';
-import ErrorBoundary from 'react-native-error-boundary';
-import ErrorFallBack from './src/layouts/ErrorFallBack';
-import {storage} from './src/utils/commom.utils';
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.MANUAL,
@@ -68,29 +65,21 @@ function App(): JSX.Element {
     close: 'Đóng',
   });
 
-
-
-  const errorHandler = (error: Error) => {
-    storage.set('error', JSON.stringify(error));
-  };
-
   return (
     <SafeAreaProvider>
-      <ErrorBoundary FallbackComponent={ErrorFallBack} onError={errorHandler}>
-        <Provider store={store}>
-          <KeyboardAvoidingView
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{flex: 1}}>
-            <GestureHandlerRootView style={{flex: 1}}>
-              <PortalProvider>
-                <AppNavigationContainer />
-              </PortalProvider>
-            </GestureHandlerRootView>
-            <HandlingLoading />
-          </KeyboardAvoidingView>
-        </Provider>
-      </ErrorBoundary>
+      <Provider store={store}>
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{flex: 1}}>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <PortalProvider>
+              <AppNavigationContainer />
+            </PortalProvider>
+          </GestureHandlerRootView>
+          <HandlingLoading />
+        </KeyboardAvoidingView>
+      </Provider>
     </SafeAreaProvider>
   );
   // return(

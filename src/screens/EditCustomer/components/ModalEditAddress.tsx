@@ -1,4 +1,5 @@
 import {
+  Image,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -33,15 +34,8 @@ import {
   AddressType,
 } from '../../Customer/components/FormAddress';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {
-  Address,
-  ContactCard,
-  DetailCustomerType,
-  KeyAbleProps,
-  RootEkMapResponse,
-} from '../../../models/types';
-import {getDetailLocation} from '../../../services/appService';
-import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
+import {Address, DetailCustomerType, KeyAbleProps} from '../../../models/types';
+import {ApiConstant, AppConstant} from '../../../const';
 import {AppService, CustomerService} from '../../../services';
 import Mapbox from '@rnmapbox/maps';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
@@ -49,9 +43,9 @@ import {backgroundErrorListener, useSelector} from '../../../config/function';
 import {shallowEqual} from 'react-redux';
 import {dispatch} from '../../../utils/redux';
 import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {customerActions} from '../../../redux-store/customer-reducer/reducer';
 import {ListDistrict, ListWard} from '../../../redux-store/app-reducer/type';
-import {useIsFocused} from '@react-navigation/native';
+import {ImageAssets} from '../../../assets';
+import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 type Props = {
   onBackButtonPress: () => void;
   type: string;
@@ -68,7 +62,6 @@ const ModalEditAddress = ({
   setData,
   dataCustomer,
   defaultEditData,
-  screenPass,
   setDefaultEditData,
 }: Props) => {
   const theme = useTheme();
@@ -100,7 +93,11 @@ const ModalEditAddress = ({
   const [keyboardVisitAble, setKeyboardVisitAble] = useState<boolean>(false);
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [_, startTransition] = useTransition();
+
+  const zoomLevelRef = useRef<number>(15);
+  const mapboxCameraRef = useRef<CameraRef>(null);
+
   const listCheckBox = useRef([
     {
       id: '1',
@@ -146,12 +143,25 @@ const ModalEditAddress = ({
     }
   }, [defaultEditData]);
 
-  const onPressButtonGetLocation = () => {
+  const handleGetAddress = async () => {
+    if (location && Object.keys(location?.coords).length > 0) {
+      await fetchData(location.coords.latitude, location.coords.longitude);
+    }
+  };
+
+  const handleRegainLocation = () => {
     CommonUtils.getCurrentLocation(
-      locations => {
-        fetchData(locations.coords.latitude, locations.coords.longitude);
+      newLocation => {
+        setLocation(newLocation);
+        mapboxCameraRef.current &&
+          mapboxCameraRef.current.moveTo(
+            [newLocation.coords.longitude, newLocation.coords.latitude],
+            1000,
+          );
       },
-      err => backgroundErrorListener(err.code),
+      err => {
+        backgroundErrorListener(err.code);
+      },
     );
   };
 
@@ -639,23 +649,92 @@ const ModalEditAddress = ({
               <SvgIcon source="Close" colorTheme="black" size={22} />
             }
           />
-          <Block marginBottom={24} marginTop={10} paddingHorizontal={16}>
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              onPress={() => onPressButtonGetLocation()}>
-              <SvgIcon source="iconMap" size={20} color={theme.colors.action} />
-              <Text
-                style={styles.marginText}
-                fontSize={14}
-                colorTheme="action"
-                fontWeight="500">
-                Lấy vị trí hiện tại
-              </Text>
-            </TouchableOpacity>
-          </Block>
           <ScrollView
             style={styles.rootBlock}
             showsVerticalScrollIndicator={false}>
+            <Block style={styles.mapBlock}>
+              <Mapbox.MapView
+                onCameraChanged={state =>
+                  (zoomLevelRef.current = state.properties.zoom)
+                }
+                pitchEnabled={false}
+                attributionEnabled={false}
+                scaleBarEnabled={false}
+                scrollEnabled={true}
+                styleURL={Mapbox.StyleURL.Street}
+                logoEnabled={false}
+                style={{flex: 1}}
+                onPress={feature => {
+                  Keyboard.dismiss();
+                  setLocation({
+                    // @ts-ignore
+                    coords: {
+                      // @ts-ignore
+                      latitude: feature.geometry.coordinates[1],
+                      // @ts-ignore
+                      longitude: feature.geometry.coordinates[0],
+                    },
+                  });
+                }}>
+                <Mapbox.RasterSource
+                  id="adminmap"
+                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
+                  <Mapbox.RasterLayer
+                    id={'adminmap'}
+                    sourceID={'admin'}
+                    style={{visibility: 'visible'}}
+                  />
+                </Mapbox.RasterSource>
+
+                {location?.coords && (
+                  <>
+                    <Mapbox.Camera
+                      ref={mapboxCameraRef}
+                      centerCoordinate={[
+                        location?.coords.longitude ?? 105.7750996,
+                        location?.coords.latitude ?? 21.0564114,
+                      ]}
+                      animationMode={'flyTo'}
+                      animationDuration={300}
+                      zoomLevel={zoomLevelRef.current ?? 15}
+                    />
+                    <Mapbox.MarkerView
+                      coordinate={[
+                        Number(location?.coords.longitude),
+                        Number(location?.coords.latitude),
+                      ]}>
+                      <SvgIcon source={'LocationCheckIn'} size={40} />
+                    </Mapbox.MarkerView>
+                  </>
+                )}
+              </Mapbox.MapView>
+              <TouchableOpacity
+                onPress={handleRegainLocation}
+                style={styles.regainPosition}>
+                <Image
+                  source={ImageAssets.MapIcon}
+                  style={{width: 16, height: 16}}
+                  resizeMode={'cover'}
+                  tintColor={theme.colors.bg_default}
+                />
+                <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
+                  {getLabel('currentPosition')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleGetAddress}
+                style={styles.getLocation}>
+                <Image
+                  source={ImageAssets.MapPinIcon}
+                  style={{width: 16, height: 16}}
+                  resizeMode={'cover'}
+                  tintColor={theme.colors.text_secondary}
+                />
+                <Text style={{color: theme.colors.text_primary, marginLeft: 4}}>
+                  {getLabel('getAddress')}
+                </Text>
+              </TouchableOpacity>
+            </Block>
             <AppInput
               label={`${getLabel('province')}/${getLabel('city')}`}
               contentStyle={styles.contentStyle}
@@ -798,48 +877,6 @@ const ModalEditAddress = ({
                   </Block>
                 );
               })}
-            </Block>
-            <Block style={styles.mapBlock}>
-              <Mapbox.MapView
-                pitchEnabled={false}
-                attributionEnabled={false}
-                scaleBarEnabled={false}
-                scrollEnabled={true}
-                styleURL={Mapbox.StyleURL.Street}
-                logoEnabled={false}
-                style={{flex: 1}}>
-                <Mapbox.RasterSource
-                  id="adminmap"
-                  tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
-                  <Mapbox.RasterLayer
-                    id={'adminmap'}
-                    sourceID={'admin'}
-                    style={{visibility: 'visible'}}
-                  />
-                </Mapbox.RasterSource>
-
-                {location?.coords && (
-                  <>
-                    <Mapbox.Camera
-                      // ref={mapboxCameraRef}
-                      centerCoordinate={[
-                        location?.coords.longitude ?? 105.7750996,
-                        location?.coords.latitude ?? 21.0564114,
-                      ]}
-                      animationMode={'flyTo'}
-                      animationDuration={300}
-                      zoomLevel={13}
-                    />
-                    <Mapbox.MarkerView
-                      coordinate={[
-                        Number(location?.coords.longitude),
-                        Number(location?.coords.latitude),
-                      ]}>
-                      <SvgIcon source={'LocationCheckIn'} size={40} />
-                    </Mapbox.MarkerView>
-                  </>
-                )}
-              </Mapbox.MapView>
             </Block>
           </ScrollView>
           <Block
@@ -1166,6 +1203,7 @@ const modalEditStyles = (theme: AppTheme) =>
       width: '100%',
       borderRadius: 16,
       height: 350,
+      marginBottom: 16,
     } as ViewStyle,
     containContentButton: {
       flexDirection: 'row',
@@ -1195,4 +1233,31 @@ const modalEditStyles = (theme: AppTheme) =>
         justifyContent: 'center',
         alignItems: 'center',
       } as ViewStyle),
+    regainPosition: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.action,
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 300,
+      right: 0,
+    } as ViewStyle,
+    getLocation: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.bg_default,
+      alignSelf: 'flex-end',
+      marginRight: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      position: 'absolute',
+      top: 300,
+      left: 20,
+    } as ViewStyle,
   });
