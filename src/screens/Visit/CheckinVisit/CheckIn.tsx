@@ -49,7 +49,6 @@ import {AppDialog} from '../../../components/common';
 import {LocationProps} from '../VisitList/VisitItem';
 import {CommonUtils} from '../../../utils';
 import {GeolocationResponse} from '@react-native-community/geolocation';
-import {storage} from '../../../utils/commom.utils';
 import {isLocationEnabled} from 'react-native-android-location-enabler';
 import {useMMKVNumber} from 'react-native-mmkv';
 
@@ -243,7 +242,7 @@ const CheckIn = () => {
             if (intervalIdRef.current) {
               clearInterval(intervalIdRef.current);
             }
-            storage.delete(AppConstant.CheckinTime);
+            CommonUtils.storage.delete(AppConstant.CheckinTime);
             dispatch(checkinActions.resetData());
             dispatch(appActions.setDataCheckIn({}));
             dispatch(appActions.setProcessingStatus(false));
@@ -269,7 +268,7 @@ const CheckIn = () => {
         if (intervalIdRef.current) {
           clearInterval(intervalIdRef.current);
         }
-        storage.delete(AppConstant.CheckinTime);
+        CommonUtils.storage.delete(AppConstant.CheckinTime);
         dispatch(checkinActions.resetData());
         dispatch(appActions.setDataCheckIn({}));
         dispatch(appActions.setProcessingStatus(false));
@@ -406,9 +405,6 @@ const CheckIn = () => {
           dispatch(appActions.setProcessingStatus(false));
           return;
         } else {
-          if (intervalIdRef.current) {
-            clearInterval(intervalIdRef.current);
-          }
           dispatch(
             appActions.onCheckIn({
               ...dataCheckIn,
@@ -423,6 +419,9 @@ const CheckIn = () => {
               checkin_giora: new Date().getTime() / 1000,
             }),
           );
+          if (intervalIdRef.current) {
+            clearInterval(intervalIdRef.current);
+          }
         }
       },
       err => backgroundErrorListener(err.code),

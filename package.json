@@ -58,7 +58,7 @@
     "react-native-image-picker": "4.10.3",
     "react-native-installed-application": "^1.0.6",
     "react-native-linear-gradient": "^2.8.3",
-    "react-native-mmkv": "^2.11.0",
+    "react-native-mmkv": "2.12.2",
     "react-native-modal": "^13.0.1",
     "react-native-pager-view": "^6.2.3",
     "react-native-paper": "^5.11.3",
