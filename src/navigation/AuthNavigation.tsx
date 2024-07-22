@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {AuthorizeParamsList} from './screen-type';
+import {AuthorizeParamsList, NavigationProp} from './screen-type';
 import {AppConstant, ScreenConstant} from '../const';
 import {
   Home,
@@ -56,13 +56,18 @@ import {CommonUtils} from '../utils';
 import BeforeCheckin from '../screens/BeforeCheckin';
 import {CheckinData} from '../services/appService';
 import {useSelector} from '../config/function';
+import {useNavigation} from '@react-navigation/native';
 
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
   const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
+  const navigation = useNavigation<NavigationProp>();
 
   useEffect(() => {
     CommonUtils.storage.set(AppConstant.FirstLogin, true);
+    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+      navigation.navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
+    }
   }, []);
 
   return (
@@ -72,11 +77,7 @@ const AuthNavigation = () => {
         gestureEnabled: false,
         animation: 'slide_from_left',
       }}
-      initialRouteName={
-        dataCheckIn && Object.keys(dataCheckIn)?.length > 0
-          ? 'CHECKIN'
-          : 'MAIN_TAB'
-      }>
+      initialRouteName={'MAIN_TAB'}>
       <Stack.Screen name={ScreenConstant.MAIN_TAB} component={MainTab} />
       <Stack.Screen name={ScreenConstant.HOME_SCREEN} component={Home} />
       <Stack.Screen
@@ -147,11 +148,11 @@ const AuthNavigation = () => {
       <Stack.Screen
         name={ScreenConstant.CHECKIN}
         component={CheckIn}
-        initialParams={
-          dataCheckIn && Object.keys(dataCheckIn)?.length > 0
-            ? {item: dataCheckIn}
-            : undefined
-        }
+        // initialParams={
+        //   dataCheckIn && Object.keys(dataCheckIn)?.length > 0
+        //     ? {item: dataCheckIn}
+        //     : undefined
+        // }
       />
       <Stack.Screen
         name={ScreenConstant.TAKE_PICTURE_VISIT}

@@ -23,7 +23,7 @@ import {
   IItemCheckIn,
 } from '../../redux-store/checkin-reducer/type';
 import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
-import {storage} from '../../utils/commom.utils';
+import {CommonUtils} from '../../utils';
 
 export const checkKeyInObject = (T: any, key: string) => {
   return Object.keys(T).includes(key);
@@ -61,13 +61,14 @@ export function* onCheckInData(action: PayloadAction) {
         action.payload,
       );
       if (Object.keys(response?.result).length > 0) {
+        CommonUtils.storage.delete(AppConstant.CheckinTime);
         yield put(appActions.setDataCheckIn({}));
         yield put(checkinActions.resetData());
         yield put(checkinActions.setSelectedProgram([]));
         yield put(checkinActions.setListImageSelect([]));
         yield put(checkinActions.setListImageProgram([]));
         yield put(checkinActions.setRefreshVisitWhenCheckOut(true));
-        storage.delete(AppConstant.CheckinTime);
+
         // yield put(checkinActions.setDataCategoriesCheckin([]))
         navigate(ScreenConstant.AUTHORIZED, {
           screen: ScreenConstant.MAIN_TAB,
