@@ -151,6 +151,18 @@ const UpdateProductItem: FC<UpdateProductItemProps> = ({
         onPress={() => Keyboard.dismiss()}
       />
       <AppInput
+        label={getLabel('availableInventory')}
+        value={
+          productDetail?.total_projected_qty
+            ? productDetail.total_projected_qty.toString()
+            : '0'
+        }
+        hiddenRightIcon
+        disable
+        styles={{backgroundColor: colors.bg_neutral}}
+        onPress={() => Keyboard.dismiss()}
+      />
+      <AppInput
         label={getLabel('unit')}
         onPress={() => onOpenBottomSheetData('unit')}
         value={productDetail?.stock_uom || ''}

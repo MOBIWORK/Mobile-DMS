@@ -6,7 +6,7 @@ import {MainLayout} from '../../../layouts';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {useTheme} from '../../../layouts/theme';
-import { CommonUtils } from '../../../utils';
+import {CommonUtils} from '../../../utils';
 import RenderHTML from 'react-native-render-html';
 
 const NoteDetail = () => {
@@ -21,30 +21,25 @@ const NoteDetail = () => {
         onBack={() => navigation.goBack()}
         title={params.title}
         description={CommonUtils.convertDateToString(params.creation)}
-        rightButton={
-          <TouchableOpacity>
-            <Image
-              source={ImageAssets.IconKebab}
-              resizeMode={'cover'}
-              style={{width: 24, height: 24}}
-              tintColor={colors.text_secondary}
-            />
-          </TouchableOpacity>
-        }
+        // rightButton={
+        //   <TouchableOpacity>
+        //     <Image
+        //       source={ImageAssets.IconKebab}
+        //       resizeMode={'cover'}
+        //       style={{width: 24, height: 24}}
+        //       tintColor={colors.text_secondary}
+        //     />
+        //   </TouchableOpacity>
+        // }
       />
-      <Block
-      flex={8}
-      colorTheme='bg_neutral'
-      paddingLeft={16}
-      paddingRight={16}
-        >
-            <RenderHTML
-              source={{html : params.content}}
-              tagsStyles={{
-                span :{fontSize :16 , color :colors.text_primary},
-                p :{fontSize :16 ,color :colors.text_primary}
-              }}
-            />
+      <Block flex={8} colorTheme="bg_neutral" padding={16}>
+        <RenderHTML
+          source={{html: params.content}}
+          tagsStyles={{
+            span: {fontSize: 16, color: colors.text_primary},
+            p: {fontSize: 16, color: colors.text_primary},
+          }}
+        />
       </Block>
     </MainLayout>
   );

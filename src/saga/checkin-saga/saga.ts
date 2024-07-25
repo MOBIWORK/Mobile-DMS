@@ -20,7 +20,9 @@ export function* getDataNote(action: PayloadAction) {
       action.payload,
     );
     if (status === ApiConstant.STT_OK) {
-      yield put(checkinActions.setData({typeData: 'note', data: data.result}));
+      yield put(
+        checkinActions.setData({typeData: 'note', data: data.result.data}),
+      );
     }
   }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Alert,
   FlatList,
@@ -8,7 +8,12 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {ExtendedTheme, useNavigation, useTheme} from '@react-navigation/native';
+import {
+  ExtendedTheme,
+  useIsFocused,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import {MainLayout} from '../../../layouts';
 import {
   AppButton,
@@ -21,7 +26,7 @@ import {Button, IconButton} from 'react-native-paper';
 import {NoteType} from '../../../models/types';
 import {ImageAssets} from '../../../assets';
 import {NavigationProp} from '../../../navigation/screen-type';
-import {ScreenConstant} from '../../../const';
+import {ApiConstant, ScreenConstant} from '../../../const';
 import {dispatch} from '../../../utils/redux';
 import {useSelector} from '../../../config/function';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
@@ -30,6 +35,7 @@ import {useTranslation} from 'react-i18next';
 import {goBack} from '../../../navigation/navigation-service';
 import {shallowEqual} from 'react-redux';
 import isEqual from 'react-fast-compare';
+import {CheckinService} from '../../../services';
 
 const CheckinNote = () => {
   const theme = useTheme();
@@ -37,40 +43,20 @@ const CheckinNote = () => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const data = useSelector(state => state.checkin.dataNote, shallowEqual);
-  // const dataCheckin = useSelector(state => state.app.dataCheckIn);
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
   );
-  // const isFocus = useIsFocused();
-
-  // const getData = async () => {
-  //   {
-  //     const {status, data}: any = await CheckinService.getNoteCheckin({
-  //       custom_checkin_id: dataCheckin.checkin_id,
-  //     });
-  //     if (status == ApiConstant.STT_OK) {
-  //       dispatch(checkinActions.setData({typeData: 'note', data: data.result}));
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (isFocus) {
-  //     getData();
-  //   }
-  // }, [isFocus]);
 
   const completeCheckin = () => {
-    if(data.length > 0){
+    if (data.length > 0) {
       const newData = categoriesCheckin.map(item =>
         item.key === 'note' ? {...item, isDone: true} : item,
       );
       dispatch(checkinActions.setDataCategoriesCheckin(newData));
       navigation.goBack();
-    }else{
-      Alert.alert('Bạn chưa hoàn thành bước ghi chú')
+    } else {
+      Alert.alert('Bạn chưa hoàn thành bước ghi chú');
     }
-  
   };
 
   const EmptyNote = React.memo(() => {
@@ -173,7 +159,7 @@ const CheckinNote = () => {
         <AppButton
           style={{width: '100%'}}
           label={getLabel('completed')}
-          disabled={data.length > 0 ? false:true}
+          disabled={data.length > 0 ? false : true}
           onPress={() => completeCheckin()}
         />
       </View>

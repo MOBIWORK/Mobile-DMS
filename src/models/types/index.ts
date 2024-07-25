@@ -708,6 +708,7 @@ export type IProduct = {
   expiry?: string;
   total_item_money: number;
   total_item_tax: number;
+  total_projected_qty: number; // tổng tồn kho
   index: number; //phân biệt các sản phẩm với nhau cho dù cùng mã.
 };
 

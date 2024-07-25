@@ -101,7 +101,10 @@ const ItemProductOrderComponent = ({
               </View>
             </TouchableOpacity>
           </Block>
-
+          <Text style={{fontSize: 12, color: theme.colors.text_secondary}}>
+            {getLabel('availableInventory')} {': '}{' '}
+            {item?.total_projected_qty ?? 0}
+          </Text>
           <View
             style={[
               styles.flex as any,

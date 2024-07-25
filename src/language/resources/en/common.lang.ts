@@ -210,7 +210,7 @@ export default {
   addContact: 'Add contact',
   setDeliveryAddress: 'Set as take address',
   setOrderAddress: 'Set as order address',
-  setPrimaryAddress:'Set as main address',
+  setPrimaryAddress: 'Set as main address',
   success: 'success',
   city: 'city',
   province: 'province',
@@ -319,4 +319,5 @@ export default {
   noApplyPromotion: 'Apply manual promotions',
   totalCustomer: 'Total of customers',
   customerNotOrder: 'The customer has no orders yet',
+  availableInventory: 'Available inventory',
 };

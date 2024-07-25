@@ -105,6 +105,7 @@ const FormAddress = (props: Props) => {
     phoneNumber: '',
     addressContact: '',
     primary: false,
+    is_primary_contact: false,
   });
 
   const [txtAddressDetail, setTxtAddressDetail] = useState<string>('');
@@ -155,7 +156,7 @@ const FormAddress = (props: Props) => {
   };
 
   const fetchData = async (lat: any, lon: any) => {
-    dispatch(appActions.setProcessingStatus(true));
+    // dispatch(appActions.setProcessingStatus(true));
     const response: KeyAbleProps = await AppService.getDetailLocation(lat, lon);
     if (response.status === ApiConstant.STT_OK || 'OK') {
       const address: any = response.results[0].address_components;
@@ -190,7 +191,7 @@ const FormAddress = (props: Props) => {
         );
 
         const citySelected = listDataCity.city.find(
-          citySelectedItem => citySelectedItem.ten_tinh === citySelectedName,
+          citySelectedItem => citySelectedItem?.ten_tinh === citySelectedName,
         );
 
         addressObj = {
@@ -206,7 +207,7 @@ const FormAddress = (props: Props) => {
           id: citySelected?.ma_tinh,
         });
       }
-      if (districtValue && addressObj.province.code) {
+      if (districtValue && addressObj?.province?.code) {
         const districtRes: any = await AppService.getListDistrict(
           addressObj.province.code,
         );
@@ -219,7 +220,7 @@ const FormAddress = (props: Props) => {
             districtNameArr,
           );
           const districtSelected = districtRes.data.result.find(
-            (item: any) => item.ten_huyen === districtSelectedName,
+            (item: any) => item?.ten_huyen === districtSelectedName,
           );
           addressObj = {
             ...addressObj,
@@ -248,7 +249,7 @@ const FormAddress = (props: Props) => {
             wardNameArr,
           );
           const wardSelected = wardRes.data.result.find(
-            (item: any) => item.ten_xa === wardSelectedName,
+            (item: any) => item?.ten_xa === wardSelectedName,
           );
           addressObj = {
             ...addressObj,
@@ -272,7 +273,7 @@ const FormAddress = (props: Props) => {
       }
       setAddressSelectedData(selectedAddress);
       setTxtAddressDetail(addressObj.address_line1);
-      dispatch(appActions.setProcessingStatus(false));
+      // dispatch(appActions.setProcessingStatus(false));
     }
   };
 
@@ -305,6 +306,21 @@ const FormAddress = (props: Props) => {
   };
 
   const handleSaveMainAddress = async () => {
+    dispatch(
+      customerActions.setMainAddress({
+        ...addressValue,
+        detailAddress: txtAddressDetail,
+      }),
+    );
+    props.setData({
+      ...props.listData,
+      latitude: location?.coords?.latitude,
+      longitude: location?.coords?.longitude,
+    });
+    onPressClose();
+  };
+
+  const handleSaveMainAddressDetail = async () => {
     dispatch(appActions.setProcessingStatus(true));
     const dataUpdate = {
       name: props.dataCustomer?.name || '',
@@ -326,17 +342,11 @@ const FormAddress = (props: Props) => {
     };
     const response: any = await CustomerService.updateCustomer(dataUpdate);
 
-    if (response?.status === ApiConstant.STT_OK) {
-      if (
-        screenPass &&
-        screenPass === ScreenConstant.DETAIL_CUSTOMER &&
-        getDetailCustomer
-      ) {
-        await getDetailCustomer();
-      }
+    if (response?.status === ApiConstant.STT_OK && getDetailCustomer) {
+      await getDetailCustomer();
+      onPressClose();
     }
     dispatch(appActions.setProcessingStatus(false));
-    // onPressClose();
   };
 
   useEffect(() => {
@@ -427,6 +437,16 @@ const FormAddress = (props: Props) => {
   // console.log(dataCustomer,'dataCus')
 
   const handleSaveMainContact = React.useCallback(async () => {
+    dispatch(
+      customerActions.setMainContactAddress({
+        ...contactValue,
+        addressContact: txtContactDetail,
+      }),
+    );
+    onPressClose();
+  }, [contactValue, txtContactDetail]);
+
+  const handleSaveMainContactDetail = React.useCallback(async () => {
     dispatch(appActions.setProcessingStatus(true));
     const dataUpdate = {
       name: props.dataCustomer?.name || '',
@@ -447,17 +467,11 @@ const FormAddress = (props: Props) => {
     };
     const response: any = await CustomerService.updateCustomer(dataUpdate);
 
-    if (response?.status === ApiConstant.STT_OK) {
-      if (
-        screenPass &&
-        screenPass === ScreenConstant.DETAIL_CUSTOMER &&
-        getDetailCustomer
-      ) {
-        await getDetailCustomer();
-      }
+    if (response?.status === ApiConstant.STT_OK && getDetailCustomer) {
+      await getDetailCustomer();
+      onPressClose();
     }
     dispatch(appActions.setProcessingStatus(false));
-    onPressClose();
   }, [contactValue, txtContactDetail]);
 
   return (
@@ -503,8 +517,6 @@ const FormAddress = (props: Props) => {
               style={styles.buttonStyle}
               onPress={() => {
                 checkGPS();
-
-                onPressButtonGetLocation();
               }}>
               <SvgIcon source="iconMap" size={20} colorTheme="action" />
               <AppText
@@ -723,7 +735,11 @@ const FormAddress = (props: Props) => {
                   },
                 ]}
                 disabled={!isValidAddress}
-                onPress={handleSaveMainAddress}>
+                onPress={() =>
+                  screenPass && screenPass === ScreenConstant.DETAIL_CUSTOMER
+                    ? handleSaveMainAddressDetail()
+                    : handleSaveMainAddress()
+                }>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </Block>
@@ -746,7 +762,7 @@ const FormAddress = (props: Props) => {
               }
             />
           </Block>
-          <Block block>
+          <ScrollView keyboardDismissMode={'on-drag'}>
             <AppInput
               label={getLabel('contactName')}
               value={contactValue.nameContact}
@@ -861,13 +877,12 @@ const FormAddress = (props: Props) => {
               onPress={() =>
                 setContactValue((prev: any) => ({
                   ...prev,
-                  is_primary_contact: contactValue?.is_primary_contact,
+                  is_primary_contact: !contactValue?.is_primary_contact,
+                  primary: !contactValue?.is_primary_contact,
                 }))
               }>
               <Block
-                style={styles.boxMainContact(
-                  contactValue?.is_primary_contact === 1,
-                )}
+                style={styles.boxMainContact(contactValue?.is_primary_contact)}
                 marginRight={8}>
                 <AppIcons
                   iconType={AppConstant.ICON_TYPE.EntypoIcon}
@@ -878,7 +893,7 @@ const FormAddress = (props: Props) => {
               </Block>
               <Text>Đặt làm người liên hệ chính</Text>
             </TouchableOpacity>
-          </Block>
+          </ScrollView>
           <Block style={styles.containButtonBottom(typeFilter)}>
             <Block style={styles.containContentButton}>
               <TouchableOpacity
@@ -892,7 +907,11 @@ const FormAddress = (props: Props) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonApply}
-                onPress={handleSaveMainContact}>
+                onPress={() =>
+                  screenPass && screenPass === ScreenConstant.DETAIL_CUSTOMER
+                    ? handleSaveMainContactDetail()
+                    : handleSaveMainContact()
+                }>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </Block>
@@ -934,7 +953,7 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       ({
         marginHorizontal: 16,
         marginBottom: 20,
-        marginTop: 16,
+        marginTop: Platform.OS === 'ios' ? 16 : 0,
         // top: label === getLabel('mainAddress') ? 0 : 0,
       } as ViewStyle),
     containInput: {
