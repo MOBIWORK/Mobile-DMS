@@ -326,4 +326,5 @@ export default {
   noApplyPromotion: 'Áp dụng khuyến mại thủ công',
   totalCustomer: 'Tổng số khách hàng',
   customerNotOrder: 'Khách hàng chưa phát sinh đơn',
+  availableInventory: 'Tồn kho khả dụng',
 };

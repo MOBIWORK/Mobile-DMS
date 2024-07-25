@@ -1,6 +1,5 @@
-import {Platform, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React from 'react';
-import isEqual from 'react-fast-compare';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {useTranslation} from 'react-i18next';
 import {Block, SvgIcon, AppText as Text} from '../../../components/common';
@@ -104,7 +103,7 @@ const CardEditAddress = (props: Props) => {
                     fontWeight="400"
                     colorTheme="black"
                     lineHeight={21}>
-                    {props.contact.first_name
+                    {props.contact?.first_name
                       ? props.contact.first_name
                       : '---'}
                   </Text>
@@ -121,11 +120,13 @@ const CardEditAddress = (props: Props) => {
                     colorTheme="black"
                     lineHeight={21}>
                     {`${
-                      props.contact.address ? `${props.contact.address}, ` : ''
+                      props.contact?.address
+                        ? `${props.contact.address}, `
+                        : '---'
                     }`}
                   </Text>
                 </Block>
-                {props.contact?.phone ?? (
+                {props.contact?.phone && (
                   <Block
                     style={[
                       styles.containAddressLabel,

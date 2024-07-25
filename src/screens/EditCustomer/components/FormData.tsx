@@ -124,7 +124,7 @@ const FormData = (props: Props) => {
     image: data?.image || '',
 
     address:
-      data.address && data.address.length > 0
+      data?.address && data?.address?.length > 0
         ? updatePrimaryAddress(data.address, data.customer_primary_address).map(
             item => ({
               ...item,
@@ -133,7 +133,9 @@ const FormData = (props: Props) => {
           )
         : [],
     contacts:
-      data.contacts && data.contacts.length > 0 && data.contacts.length === 1
+      data?.contacts &&
+      data?.contacts?.length > 0 &&
+      data?.contacts?.length === 1
         ? data.contacts.map(item => ({
             ...item,
             primary: 1,
@@ -150,6 +152,7 @@ const FormData = (props: Props) => {
   const [dataCustomer, setDataCustomer] = useState<DetailCustomerType>(
     initStateData.current,
   );
+  console.log('dataCustomer', dataCustomer);
 
   const listTerritory: ListCustomerTerritory[] = useSelector(
     state => state.customer.listCustomerTerritory,
@@ -361,7 +364,7 @@ const FormData = (props: Props) => {
   }, [modalChoose.status, modalEditAddress.status, modalData.status]);
 
   const isPrimaryAddress = useMemo(() => {
-    if (dataCustomer.address && dataCustomer.address.length > 0) {
+    if (dataCustomer?.address && dataCustomer?.address?.length > 0) {
       // Check if any address has primary equal to 1
       return dataCustomer.address.some(item => item.primary === 1);
     } else {
@@ -374,7 +377,7 @@ const FormData = (props: Props) => {
     modalEditAddress.status,
   ]);
   const isPrimaryContact = useMemo(() => {
-    if (dataCustomer.contacts && dataCustomer.contacts.length > 0) {
+    if (dataCustomer?.contacts && dataCustomer?.contacts?.length > 0) {
       // Check if any address has primary equal to 1
       return dataCustomer.contacts?.some(item => item.primary == 1);
     } else {
@@ -388,7 +391,7 @@ const FormData = (props: Props) => {
   ]);
 
   const onPressTrash = useCallback(() => {
-    const updatedAddressArray = dataCustomer.address
+    const updatedAddressArray = dataCustomer?.address
       ? dataCustomer?.address.map(item => {
           // Check if primary is 1, then update it to 0
           if (item.primary === 1) {
@@ -848,7 +851,7 @@ const FormData = (props: Props) => {
           )}
         </Block>
         {isPrimaryContact ? (
-          dataCustomer.contacts &&
+          dataCustomer?.contacts &&
           dataCustomer.contacts.map((item, index) => {
             return (
               <CardEditAddress
