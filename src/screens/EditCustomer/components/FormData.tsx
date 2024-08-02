@@ -899,6 +899,7 @@ const FormData = (props: Props) => {
       />
       <AppBottomSheet
         bottomSheetRef={editAddressRef}
+        enablePanDownToClose={false}
         snapPointsCustom={['100%']}>
         <ModalEditAddress
           onBackButtonPress={onCloseEditAddress}

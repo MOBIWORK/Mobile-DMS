@@ -32,6 +32,7 @@ const productSlice = createSlice({
           ...item,
           price: priceUom ? priceUom.price_list_rate : 0,
           price_default: priceUom ? priceUom.price_list_rate : 0,
+          price_list: priceUom?.price_list ?? '',
         };
         return item.min_order_qty === 0
           ? {...neItem, quantity: 1}
@@ -54,7 +55,7 @@ const productSlice = createSlice({
           ? {...neItem, quantity: 1}
           : {...neItem, quantity: item.min_order_qty};
       });
-      state.dataCustomer =  newData;
+      state.dataCustomer = newData;
     },
     resetDataProduct: (state, action: PayloadAction) => {
       state.data = [];

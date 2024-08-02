@@ -59,7 +59,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         }}
         handleStyle={styles.handleStyle(backgroundColor)}
         backdropComponent={hiddenBackdrop ? null : renderBackdrop}
-        enablePanDownToClose={enablePanDownToClose ?? true}
+        enablePanDownToClose={enablePanDownToClose || true}
         enableHandlePanningGesture={false}
         enableContentPanningGesture={true}
         enableOverDrag={false}

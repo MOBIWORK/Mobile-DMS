@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   Keyboard,
   ScrollView,
@@ -367,6 +368,13 @@ const ModalEditAddress = ({
 
   const autoCompleteData = useCallback(async () => {
     dispatch(appActions.setProcessingStatus(true));
+    const geo =
+      defaultEditData?.address_location &&
+      JSON.parse(defaultEditData.address_location);
+    if (geo) {
+      // @ts-ignore
+      setLocation({coords: {latitude: geo?.lat, longitude: geo?.long}});
+    }
     if (listDataCity.city.length > 0) {
       let add: Address = defaultEditData;
       const selectedAddress: AddressSelected[] = [];
@@ -421,12 +429,14 @@ const ModalEditAddress = ({
 
   const autoCompleteGeo = async (address: string) => {
     if (address) {
+      console.log('adresss', address);
       await CommonUtils.CheckNetworkState();
       const res: KeyAbleProps = await AppService.autocompleteGeoLocation(
         address,
       );
       if (res.status === ApiConstant.STT_OK || 'OK') {
         const geometry: any = res.results[0].geometry;
+        console.log('1233', geometry);
         setLocation({
           // @ts-ignore
           coords: {
@@ -446,7 +456,9 @@ const ModalEditAddress = ({
       is_shipping_address: addressValue.is_shipping_address ? 1 : 0,
       primary: addressValue.primary ? 1 : 0,
       address_title: `${txtAddressDetail}, ${addressValue?.ward?.value}, ${addressValue?.district?.value}, ${addressValue?.city?.value}`,
-      address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
+      // address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
+      // longitude: location?.coords?.longitude,
+      // latitude: location?.coords?.latitude,
       address_line1: txtAddressDetail,
       city: addressValue?.city?.id || '',
       county: addressValue?.district?.id || '',
@@ -521,17 +533,17 @@ const ModalEditAddress = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (
-      addressSelectedData.length === 3 &&
-      // txtAddressDetail &&
-      !keyboardVisitAble
-    ) {
-      autoCompleteGeo(
-        ` ${addressSelectedData[2].value}, ${addressSelectedData[1].value}, ${addressSelectedData[0].value}`,
-      );
-    }
-  }, [addressSelectedData, keyboardVisitAble]);
+  // useEffect(() => {
+  //   if (
+  //     addressSelectedData.length === 3 &&
+  //     txtAddressDetail &&
+  //     !keyboardVisitAble
+  //   ) {
+  //     autoCompleteGeo(
+  //       `${addressSelectedData[2].value}, ${addressSelectedData[1].value}, ${addressSelectedData[0].value}`,
+  //     );
+  //   }
+  // }, [addressSelectedData, txtAddressDetail]);
 
   useEffect(() => {
     if (addressSelectedData.length > 0) {
@@ -608,7 +620,9 @@ const ModalEditAddress = ({
 
   useEffect(() => {
     if (defaultEditData) {
+      console.log('deaa', defaultEditData);
       startTransition(() => {
+        // setLocation({coords: {longitude: defaultEditData?}})
         autoCompleteData();
       });
     }
@@ -655,7 +669,8 @@ const ModalEditAddress = ({
             <Block style={styles.mapBlock}>
               <Mapbox.MapView
                 onCameraChanged={state =>
-                  (zoomLevelRef.current = state.properties.zoom)
+                  (zoomLevelRef.current =
+                    state.properties.zoom > 0 ? state.properties.zoom : 15)
                 }
                 pitchEnabled={false}
                 attributionEnabled={false}
@@ -685,23 +700,22 @@ const ModalEditAddress = ({
                     style={{visibility: 'visible'}}
                   />
                 </Mapbox.RasterSource>
-
-                {location?.coords && (
+                {location?.coords?.longitude && (
                   <>
                     <Mapbox.Camera
                       ref={mapboxCameraRef}
                       centerCoordinate={[
-                        location?.coords.longitude ?? 105.7750996,
-                        location?.coords.latitude ?? 21.0564114,
+                        location?.coords?.longitude ?? 105.7750996,
+                        location?.coords?.latitude ?? 21.0564114,
                       ]}
                       animationMode={'flyTo'}
                       animationDuration={300}
-                      zoomLevel={zoomLevelRef.current ?? 15}
+                      zoomLevel={zoomLevelRef.current || 15}
                     />
                     <Mapbox.MarkerView
                       coordinate={[
-                        Number(location?.coords.longitude),
-                        Number(location?.coords.latitude),
+                        Number(location?.coords?.longitude),
+                        Number(location?.coords?.latitude),
                       ]}>
                       <SvgIcon source={'LocationCheckIn'} size={40} />
                     </Mapbox.MarkerView>
@@ -889,6 +903,7 @@ const ModalEditAddress = ({
               <TouchableOpacity
                 style={styles.buttonRestart}
                 onPress={() => {
+                  Keyboard.dismiss();
                   setAddressSelectedData([]);
                   setScreen('');
                   onBackButtonPress();
@@ -906,7 +921,10 @@ const ModalEditAddress = ({
                   },
                 ]}
                 disabled={!isValidAddress}
-                onPress={handleSaveMainAddress}>
+                onPress={() => {
+                  Keyboard.dismiss();
+                  handleSaveMainAddress();
+                }}>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </Block>
@@ -1053,11 +1071,11 @@ const ModalEditAddress = ({
               onPress={() =>
                 setContactValue((prev: any) => ({
                   ...prev,
-                  primary: contactValue?.primary,
+                  primary: !contactValue?.primary,
                 }))
               }>
               <Block
-                style={styles.boxMainContact(contactValue?.primary === 1)}
+                style={styles.boxMainContact(contactValue?.primary)}
                 marginRight={8}>
                 <AppIcons
                   iconType={AppConstant.ICON_TYPE.EntypoIcon}
@@ -1080,6 +1098,7 @@ const ModalEditAddress = ({
               <TouchableOpacity
                 style={styles.buttonRestart}
                 onPress={() => {
+                  Keyboard.dismiss();
                   setContactSelectedData([]);
                   setScreen('');
                   onBackButtonPress();
@@ -1090,6 +1109,7 @@ const ModalEditAddress = ({
               <TouchableOpacity
                 style={styles.buttonApply}
                 onPress={() => {
+                  Keyboard.dismiss();
                   handleSaveMainContact();
                   // setContactValue({});
                 }}>
@@ -1103,7 +1123,7 @@ const ModalEditAddress = ({
   );
 };
 
-export default React.memo(ModalEditAddress, isEqual);
+export default ModalEditAddress;
 
 const modalEditStyles = (theme: AppTheme) =>
   StyleSheet.create({

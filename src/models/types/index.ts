@@ -650,6 +650,7 @@ export type ReportKPIType = {
 };
 type UinitProduct = {
   uom: string;
+  price_list: string;
   price_list_rate: number;
   valid_from: string;
   currency: string;
@@ -710,6 +711,7 @@ export type IProduct = {
   total_item_tax: number;
   total_projected_qty: number; // tổng tồn kho
   index: number; //phân biệt các sản phẩm với nhau cho dù cùng mã.
+  price_list: string; //Tên bảng giá
 };
 
 export type IOrderList = {
@@ -739,6 +741,7 @@ export type ItemProductOrder = {
   item_tax_template: string;
   item_tax_rate: number;
   is_free_item: number;
+  price_list_rate: number;
 };
 
 export type IOrderDetail = {
