@@ -17,7 +17,7 @@ import {NavigationProp} from '../../../../navigation/screen-type';
 import {useDispatch} from 'react-redux';
 import {productActions} from '../../../../redux-store/product-reducer/reducer';
 
-const UINoData: FC<UINoDataProp> = ({customer_id}) => {
+const UINoData: FC<UINoDataProp> = ({customer_id, warehouse}) => {
   const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const {colors} = useTheme();
@@ -50,6 +50,7 @@ const UINoData: FC<UINoDataProp> = ({customer_id}) => {
               dispatch(productActions.resetDataProduct());
               navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
                 customer_id: customer_id,
+                warehouse: warehouse,
               });
             }}>
             {getLabel('selectProduct')}
@@ -71,6 +72,7 @@ const UINoData: FC<UINoDataProp> = ({customer_id}) => {
 };
 interface UINoDataProp {
   customer_id: string;
+  warehouse: string;
 }
 export default UINoData;
 const styles = StyleSheet.create({

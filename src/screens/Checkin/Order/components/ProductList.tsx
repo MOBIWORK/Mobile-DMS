@@ -25,13 +25,13 @@ const ProductList: FC<UpdateItemProductProps> = ({
   showDetailProdcut,
   handlerRemoveItemProduct,
   customerId,
+  warehouse,
   isAddProduct,
 }) => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
   const {colors} = useTheme();
   const dispatch = useDispatch();
-
   if (tab === 1) {
     return (
       <>
@@ -42,6 +42,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
                 dispatch(productActions.resetDataProduct());
                 navigation.navigate(ScreenConstant.CHECKIN_SELECT_PRODUCT, {
                   customer_id: customerId,
+                  warehouse: warehouse,
                 });
               }}
               style={{
@@ -70,7 +71,9 @@ const ProductList: FC<UpdateItemProductProps> = ({
             {/*</Button>*/}
           </View>
         ) : (
-          isAddProduct && <UINoData customer_id={customerId} />
+          isAddProduct && (
+            <UINoData customer_id={customerId} warehouse={warehouse} />
+          )
         )}
         <View style={{marginTop: 20, rowGap: 8}}>
           {products.map((item, i) => (
@@ -121,6 +124,7 @@ export default ProductList;
 interface UpdateItemProductProps {
   tab: number;
   customerId: string;
+  warehouse: string;
   products: IProduct[];
   productsPromotion: IProductPromotion[];
   showDetailProdcut?: (item: IProduct) => void;

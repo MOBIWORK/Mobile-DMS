@@ -554,6 +554,7 @@ const SelectProducts = () => {
         page_number: pageNumber,
         page_size: 20,
         customer: route.params.customer_id,
+        warehouse: route.params.warehouse,
       });
       if (res?.status === ApiConstant.STT_OK) {
         dispatch(

@@ -82,6 +82,7 @@ const CreateOrder = () => {
   const styles = createSheetStyle(useTheme());
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetWh = useRef<BottomSheet>(null);
+  const whBottomSheet = useRef<BottomSheet>(null);
   const router =
     useRoute<RouteProp<AuthorizeParamsList, 'CHECKIN_ORDER_CREATE'>>();
   const type = router.params.type;
@@ -204,7 +205,7 @@ const CreateOrder = () => {
           rate_tax_item: element?.item_tax_rate ?? 0,
           discount_item_percent: element?.discount_percentage ?? 0,
           discount_item_amount: element?.discount_amount ?? 0,
-          price: element?.rate ?? 0,
+          price: element?.price_list_rate ?? 0,
           total_item_money: element?.amount ? Math.abs(element.amount) : 0,
         };
       } else {
@@ -296,10 +297,6 @@ const CreateOrder = () => {
       case 'discount':
         setLabelBottonSheet('typeDiscount');
         setDataCategorie(dataDiscount);
-        break;
-      case 'warehouse':
-        setLabelBottonSheet('warehouse');
-        setDataCategorie(DataWarehouse);
         break;
       case 'unit':
         {
@@ -483,6 +480,7 @@ const CreateOrder = () => {
       discount_amount: item?.discount_item_amount ?? 0,
     }));
     const objectData: any = {
+      price_list: products[0]?.price_list,
       set_warehouse: warehouse?.value,
       apply_discount_on: discount.label,
       additional_discount_percentage: percentageLabel
@@ -502,8 +500,8 @@ const CreateOrder = () => {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
         objectData.ignore_pricing_rule = isNotApplyPromotion ? 1 : 0;
-        // console.log('object', objectData);
         if (!orderResultData) {
+          // console.log('dataa', objectData);
           const orderRes: any = await OrderService.createdOrder(objectData);
           if (orderRes?.status === ApiConstant.STT_CREATED) {
             setOrderResultData({
@@ -601,12 +599,20 @@ const CreateOrder = () => {
                   ? colors.bg_neutral
                   : colors.bg_default,
               }}
-              onPress={() =>
-                !orderResultData && onOpenBottomSheetData('warehouse')
-              }
+              onPress={() => {
+                if (!orderResultData) {
+                  setLabelBottonSheet('warehouse');
+                  whBottomSheet.current?.snapToIndex(0);
+                }
+              }}
               rightIcon={
                 <TextInput.Icon
-                  onPress={() => onOpenBottomSheetData('warehouse')}
+                  onPress={() => {
+                    if (!orderResultData) {
+                      setLabelBottonSheet('warehouse');
+                      whBottomSheet.current?.snapToIndex(0);
+                    }
+                  }}
                   icon={'chevron-down'}
                   color={colors.text_secondary}
                 />
@@ -648,6 +654,7 @@ const CreateOrder = () => {
               <ProductList
                 tab={toggleTab}
                 customerId={router.params.data?.name ?? ''}
+                warehouse={warehouse ? warehouse.label : ''}
                 products={products}
                 productsPromotion={productsPromotion}
                 showDetailProdcut={item =>
@@ -898,6 +905,28 @@ const CreateOrder = () => {
           <FilterListComponent
             title={getLabel(labelBottonSheet)}
             data={dataCategorie}
+            searchPlaceholder={getLabel('search')}
+            onClose={() => {
+              bottomSheetWh.current && bottomSheetWh.current.close();
+              setDataCategorie([]);
+            }}
+            handleItem={onChangeData}
+          />
+        </BottomSheetScrollView>
+      </AppBottomSheet>
+      <AppBottomSheet
+        bottomSheetRef={whBottomSheet}
+        // enableDynamicSizing={true}
+        snapPointsCustom={animatedSnapPoints}
+        // @ts-ignore
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: 50}}
+          onLayout={handleContentLayout}>
+          <FilterListComponent
+            title={getLabel(labelBottonSheet)}
+            data={DataWarehouse}
             searchPlaceholder={getLabel('search')}
             onClose={() => {
               bottomSheetWh.current && bottomSheetWh.current.close();
