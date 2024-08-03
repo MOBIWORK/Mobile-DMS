@@ -308,14 +308,14 @@ const ModalEditAddress = ({
       first_name: contactValue.nameContact || defaultEditData?.first_name,
       phone: contactValue.phoneNumber || defaultEditData?.phone,
       mobile_no: contactValue.phoneNumber || defaultEditData?.phone,
-      address: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
+      address: `${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       is_billing_contact: 0,
       is_primary_contact: contactValue?.isMainAddress ? 1 : 0,
       primary: contactValue?.primary ? 1 : 0,
       city: contactValue?.city?.id || '',
       county: contactValue?.district?.id || '',
       state: contactValue?.ward?.id || '',
-      address_title: ` ${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
+      address_title: `${txtContactDetail}, ${contactValue.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
       address_line1: txtContactDetail,
     };
     if (type === 'contact' || type === 'AddingContact') {
@@ -340,6 +340,7 @@ const ModalEditAddress = ({
             name: dataCustomer.name,
             customer_primary_contact: txtContactDetail,
           };
+          console.log('dataa', dataUpdate);
           const response: any = await CustomerService.updateCustomer(
             dataUpdate,
           );
@@ -427,38 +428,38 @@ const ModalEditAddress = ({
     dispatch(appActions.setProcessingStatus(false));
   }, [defaultEditData, type, addressValue, contactValue]);
 
-  const autoCompleteGeo = async (address: string) => {
-    if (address) {
-      console.log('adresss', address);
-      await CommonUtils.CheckNetworkState();
-      const res: KeyAbleProps = await AppService.autocompleteGeoLocation(
-        address,
-      );
-      if (res.status === ApiConstant.STT_OK || 'OK') {
-        const geometry: any = res.results[0].geometry;
-        console.log('1233', geometry);
-        setLocation({
-          // @ts-ignore
-          coords: {
-            longitude: geometry.location.lng,
-            latitude: geometry.location.lat,
-          },
-        });
-      }
-    }
-  };
+  // const autoCompleteGeo = async (address: string) => {
+  //   if (address) {
+  //     console.log('adresss', address);
+  //     await CommonUtils.CheckNetworkState();
+  //     const res: KeyAbleProps = await AppService.autocompleteGeoLocation(
+  //       address,
+  //     );
+  //     if (res.status === ApiConstant.STT_OK || 'OK') {
+  //       const geometry: any = res.results[0].geometry;
+  //       console.log('1233', geometry);
+  //       setLocation({
+  //         // @ts-ignore
+  //         coords: {
+  //           longitude: geometry.location.lng,
+  //           latitude: geometry.location.lat,
+  //         },
+  //       });
+  //     }
+  //   }
+  // };
 
   const handleSaveMainAddress = useCallback(async () => {
     dispatch(appActions.setProcessingStatus(true));
     const newAdd = {
       ...defaultEditData,
+      name: defaultEditData?.name,
       is_primary_address: addressValue.is_primary_address ? 1 : 0,
       is_shipping_address: addressValue.is_shipping_address ? 1 : 0,
       primary: addressValue.primary ? 1 : 0,
       address_title: `${txtAddressDetail}, ${addressValue?.ward?.value}, ${addressValue?.district?.value}, ${addressValue?.city?.value}`,
-      // address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
-      // longitude: location?.coords?.longitude,
-      // latitude: location?.coords?.latitude,
+      longitude: location?.coords?.longitude,
+      latitude: location?.coords?.latitude,
       address_line1: txtAddressDetail,
       city: addressValue?.city?.id || '',
       county: addressValue?.district?.id || '',
@@ -966,7 +967,7 @@ const ModalEditAddress = ({
               />
               <AppInput
                 label={getLabel('phoneNumber')}
-                value={contactValue?.phoneNumber || defaultEditData?.phone}
+                value={contactValue?.mobile_no || defaultEditData?.mobile_no}
                 editable={true}
                 contentStyle={styles.contentStyle}
                 styles={styles.marginInputBlock}
