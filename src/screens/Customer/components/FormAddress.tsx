@@ -120,7 +120,6 @@ const FormAddress = (props: Props) => {
     state => state.app.listDataCity,
     shallowEqual,
   );
-  // console.log(listData,'data')
   const listCheckBox = useRef([
     {
       id: '1',
@@ -329,7 +328,9 @@ const FormAddress = (props: Props) => {
           is_primary_address: addressValue?.is_primary_address ? 1 : 0,
           is_shipping_address: addressValue?.is_shipping_address ? 1 : 0,
           address_title: `${txtAddressDetail}, ${addressValue?.ward?.value}, ${addressValue?.district?.value}, ${addressValue?.city?.value}`,
-          address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
+          // address_location: JSON.stringify(location?.coords), // Assuming txtAddressDetail contains the address location
+          longitude: location?.coords?.longitude,
+          latitude: location?.coords?.latitude,
           name: txtAddressDetail + '-Billing',
           primary: addressValue?.primary ? 1 : 0,
           address_type: 'Billing',
@@ -434,8 +435,6 @@ const FormAddress = (props: Props) => {
     }
   }, [contactSelectedData]);
 
-  // console.log(dataCustomer,'dataCus')
-
   const handleSaveMainContact = React.useCallback(async () => {
     dispatch(
       customerActions.setMainContactAddress({
@@ -456,7 +455,7 @@ const FormAddress = (props: Props) => {
           phone: contactValue?.phoneNumber ?? '',
           is_primary_contact: contactValue?.is_primary_contact ? 1 : 0,
           address_title: `${txtContactDetail}, ${contactValue?.ward?.value}, ${contactValue?.district?.value}, ${contactValue?.city?.value}`,
-          name: txtAddressDetail + '-Billing',
+          name: txtContactDetail + '-Billing',
           address_type: 'Billing',
           city: contactValue?.city?.id || '',
           county: contactValue?.district?.id || '',
@@ -465,6 +464,7 @@ const FormAddress = (props: Props) => {
         },
       ],
     };
+    // console.log('dataUpdate', dataUpdate);
     const response: any = await CustomerService.updateCustomer(dataUpdate);
 
     if (response?.status === ApiConstant.STT_OK && getDetailCustomer) {
@@ -475,7 +475,7 @@ const FormAddress = (props: Props) => {
   }, [contactValue, txtContactDetail]);
 
   return (
-    <SafeAreaView style={styles.root} edges={['bottom', 'top']}>
+    <SafeAreaView style={styles.root} edges={['bottom']}>
       {(screen === 'Adding' || screen === 'AddingContact') &&
       ((typeFilter === AppConstant.CustomerFilterType.dia_chi &&
         addressSelectedData.length !== 3) ||
@@ -528,7 +528,9 @@ const FormAddress = (props: Props) => {
               </AppText>
             </TouchableOpacity>
           </Block>
-          <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={{flex: 1, paddingHorizontal: 16}}
+            showsVerticalScrollIndicator={false}>
             <AppInput
               label={`${getLabel('province')}/${getLabel('city')}`}
               contentStyle={styles.contentStyle(
@@ -762,7 +764,9 @@ const FormAddress = (props: Props) => {
               }
             />
           </Block>
-          <ScrollView keyboardDismissMode={'on-drag'}>
+          <ScrollView
+            keyboardDismissMode={'on-drag'}
+            style={{flex: 1, paddingHorizontal: 16}}>
             <AppInput
               label={getLabel('contactName')}
               value={contactValue.nameContact}
@@ -785,6 +789,7 @@ const FormAddress = (props: Props) => {
                 contactValue.phoneNumber,
                 getLabel('phoneNumber'),
               )}
+              inputProp={{keyboardType: 'numeric', returnKeyType: 'done'}}
               styles={styles.marginInputView}
               onChangeValue={text =>
                 setContactValue((prev: any) => ({...prev, phoneNumber: text}))
@@ -953,8 +958,6 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       ({
         marginHorizontal: 16,
         marginBottom: 20,
-        marginTop: Platform.OS === 'ios' ? 16 : 0,
-        // top: label === getLabel('mainAddress') ? 0 : 0,
       } as ViewStyle),
     containInput: {
       paddingBottom: 24,

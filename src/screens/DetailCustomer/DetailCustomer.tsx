@@ -72,6 +72,7 @@ const DetailCustomer = () => {
 
   const bottomAction = useRef<BottomSheetModalMethods>(null);
   const editAddressRef = useRef<BottomSheetModalMethods>(null);
+  const formAddressRef = useRef<BottomSheetModalMethods>(null);
 
   const [modalShow, setModalShow] = useState({
     type: AppConstant.CustomerFilterType.loai_khach_hang,
@@ -189,6 +190,7 @@ const DetailCustomer = () => {
       type: AppConstant.CustomerFilterType.dia_chi,
       status: true,
     });
+    formAddressRef.current?.snapToIndex(0);
     setCurrentFocus(false);
   }, [modalShow.status, modalShow.type, currentFocus]);
 
@@ -197,6 +199,7 @@ const DetailCustomer = () => {
       type: AppConstant.CustomerFilterType.nguoi_lien_he,
       status: true,
     });
+    formAddressRef.current?.snapToIndex(0);
     setCurrentFocus(false);
   }, [modalShow.status, modalShow.type, currentFocus]);
 
@@ -221,6 +224,7 @@ const DetailCustomer = () => {
       ...prev,
       status: false,
     }));
+    formAddressRef.current?.close();
     // setCurrentFocus(true);
   }, [modalShow.status]);
 
@@ -266,27 +270,19 @@ const DetailCustomer = () => {
           initialLayout={{width: layout.width}}
         />
       )}
-
-      <Modal
-        isVisible={modalShow.status}
-        animationIn="slideInUp"
-        animationOut={'slideOutDown'}
-        backdropOpacity={0.5}
-        onBackButtonPress={onBackButtonPress}
-        onBackdropPress={onBackButtonPress}
-        style={styles.modalStyle}>
-        <Block block colorTheme="bg_default" paddingHorizontal={16}>
-          <FormAddress
-            onPressClose={onBackButtonPress}
-            typeFilter={modalShow.type}
-            listData={listData as any}
-            setData={setData}
-            dataCustomer={data}
-            getDetailCustomer={getDetailCustomer}
-            screen={ScreenConstant.DETAIL_CUSTOMER}
-          />
-        </Block>
-      </Modal>
+      <AppBottomSheet
+        bottomSheetRef={formAddressRef}
+        snapPointsCustom={['100%']}>
+        <FormAddress
+          onPressClose={onBackButtonPress}
+          typeFilter={modalShow.type}
+          listData={listData as any}
+          setData={setData}
+          dataCustomer={data}
+          getDetailCustomer={getDetailCustomer}
+          screen={ScreenConstant.DETAIL_CUSTOMER}
+        />
+      </AppBottomSheet>
       <AppBottomSheet
         bottomSheetRef={bottomAction}
         snapPointsCustom={snapPointsDetailPr}>
