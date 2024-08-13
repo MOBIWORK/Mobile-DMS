@@ -669,10 +669,10 @@ const ModalEditAddress = ({
             showsVerticalScrollIndicator={false}>
             <Block style={styles.mapBlock}>
               <Mapbox.MapView
-                onCameraChanged={state =>
-                  (zoomLevelRef.current =
-                    state.properties.zoom > 0 ? state.properties.zoom : 15)
-                }
+                // onCameraChanged={state =>
+                //   (zoomLevelRef.current =
+                //     state.properties.zoom > 0 ? state.properties.zoom : 15)
+                // }
                 pitchEnabled={false}
                 attributionEnabled={false}
                 scaleBarEnabled={false}
@@ -711,7 +711,7 @@ const ModalEditAddress = ({
                       ]}
                       animationMode={'flyTo'}
                       animationDuration={300}
-                      zoomLevel={zoomLevelRef.current || 15}
+                      zoomLevel={15}
                     />
                     <Mapbox.MarkerView
                       coordinate={[
