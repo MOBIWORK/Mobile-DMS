@@ -240,16 +240,16 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
           }}>
           <SvgIcon size={24} source="arrowLeft" colorTheme="text_primary" />
         </TouchableOpacity>
-        <Searchbar
-          placeholder={getLabel('search')}
-          value={searchValue}
-          onChangeText={setSearch}
-          onSubmitEditing={e => console.log(e.nativeEvent.text)}
-          icon={ImageAssets.SearchIcon}
-          placeholderTextColor={theme.colors.text_disable}
-          inputStyle={{color: theme.colors.text_primary}}
-          style={styles.searchBar}
-        />
+        {/*<Searchbar*/}
+        {/*  placeholder={getLabel('search')}*/}
+        {/*  value={searchValue}*/}
+        {/*  onChangeText={setSearch}*/}
+        {/*  onSubmitEditing={e => console.log(e.nativeEvent.text)}*/}
+        {/*  icon={ImageAssets.SearchIcon}*/}
+        {/*  placeholderTextColor={theme.colors.text_disable}*/}
+        {/*  inputStyle={{color: theme.colors.text_primary}}*/}
+        {/*  style={styles.searchBar}*/}
+        {/*/>*/}
       </Block>
       {data.map((item, index) => {
         return (

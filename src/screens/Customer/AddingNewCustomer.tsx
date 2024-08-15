@@ -180,12 +180,16 @@ const AddingNewCustomer = () => {
 
     const updateListData: DataCustomersUpdate = {
       // ...newListData,
-      router: {
-        frequency: newListData?.frequency
-          ? newListData.frequency.toString().replaceAll(',', ';')
-          : '',
-        router_name: newListData?.router_name?.[1] || '',
-      },
+      // router: {
+      //   frequency: newListData?.frequency
+      //     ? newListData.frequency.toString().replaceAll(',', ';')
+      //     : '',
+      //   router_name: newListData?.router_name?.[1] || '',
+      // },
+      router: ['mg1l6cimfg', 'mg1k761fsb'],
+      frequency: newListData?.frequency
+        ? newListData.frequency.toString().replaceAll(',', ';')
+        : '',
       address: {
         longitude: newListData.longitude || 0,
         latitude: newListData.latitude || 0,
@@ -211,20 +215,33 @@ const AddingNewCustomer = () => {
               : false
             : false,
       },
-      contact: {
-        address_title:
-          Object.keys(contact).length > 0
-            ? `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`
-            : '',
-        address_line1:
-          Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
-        first_name: contact?.nameContact || '',
-        phone: contact?.phoneNumber || '',
-        city: Object.keys(contact).length > 0 ? String(contact?.city?.id) : '',
-        county:
-          Object.keys(contact).length > 0 ? String(contact?.district?.id) : '',
-        state: Object.keys(contact).length > 0 ? String(contact?.ward?.id) : '',
-      },
+      contact:
+        Object.keys(contact).length > 0
+          ? {
+              address_title:
+                Object.keys(contact).length > 0
+                  ? `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`
+                  : '',
+              address_line1:
+                Object.keys(address).length > 0
+                  ? String(address?.detailAddress)
+                  : '',
+              first_name: contact?.nameContact || '',
+              phone: contact?.phoneNumber || '',
+              city:
+                Object.keys(contact).length > 0
+                  ? String(contact?.city?.id)
+                  : '',
+              county:
+                Object.keys(contact).length > 0
+                  ? String(contact?.district?.id)
+                  : '',
+              state:
+                Object.keys(contact).length > 0
+                  ? String(contact?.ward?.id)
+                  : '',
+            }
+          : undefined,
 
       customer_type:
         newListData.customer_type === getLabel('individual')
@@ -247,7 +264,7 @@ const AddingNewCustomer = () => {
       image: newListData.faceimage ? newListData.faceimage : '',
     };
 
-    // console.log(updateListData, 'update List Data');
+    console.log(updateListData, 'update List Data');
     if (isInvalid(newListData)) {
       dispatch(setNewCustomer(newListData));
     } else {

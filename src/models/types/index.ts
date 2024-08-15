@@ -424,11 +424,6 @@ export type ContactUpdate = {
   county: string;
   state: string;
 };
-
-export interface RouterUpdate {
-  router_name: string;
-  frequency: string;
-}
 export type DataCustomersUpdate = {
   customer_code: string;
   customer_name: string;
@@ -442,9 +437,10 @@ export type DataCustomersUpdate = {
   company?: string;
   credit_limit?: number;
   address: AddressUpdate;
-  contact: ContactUpdate;
-  router: RouterUpdate;
+  contact: ContactUpdate | undefined;
+  router: string[];
   image?: any;
+  frequency?: string;
   // primary?:any
 };
 

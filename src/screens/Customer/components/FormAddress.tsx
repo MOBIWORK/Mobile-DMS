@@ -588,7 +588,7 @@ const FormAddress = (props: Props) => {
               onPress={() => {
                 setScreen('Adding');
                 const newData = addressSelectedData.filter(
-                  item => item.type !== AddressType.district,
+                  item => item.type !== AddressType.ward,
                 );
                 setAddressSelectedData(newData);
               }}
@@ -812,6 +812,7 @@ const FormAddress = (props: Props) => {
               )}
               onPress={() => {
                 setScreen('AddingContact');
+                setContactSelectedData([]);
               }}
               value={contactValue?.city?.value ?? ''}
               editable={false}
@@ -831,6 +832,10 @@ const FormAddress = (props: Props) => {
               editable={false}
               onPress={() => {
                 setScreen('AddingContact');
+                const newData = contactSelectedData.filter(
+                  item => item.type === AddressType.city,
+                );
+                setContactSelectedData(newData);
               }}
               contentStyle={styles.contentStyle(
                 contactValue?.district?.value ?? '',
@@ -855,6 +860,10 @@ const FormAddress = (props: Props) => {
               )}
               onPress={() => {
                 setScreen('AddingContact');
+                const newData = contactSelectedData.filter(
+                  item => item.type !== AddressType.ward,
+                );
+                setContactSelectedData(newData);
               }}
               styles={styles.marginInputView}
               rightIcon={

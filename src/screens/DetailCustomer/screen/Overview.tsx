@@ -23,7 +23,8 @@ const Overview = (props: Props) => {
       <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
         {props.data &&
           props.data?.contacts &&
-          props.data.contacts.length > 0 && (
+          props.data.contacts.length > 0 &&
+          props.data.contacts.find(item => item.primary === 1) && (
             <Block paddingTop={16} paddingHorizontal={16}>
               <AppText fontSize={14} fontWeight="500" lineHeight={21}>
                 {getLabel('contactName')}
@@ -40,31 +41,28 @@ const Overview = (props: Props) => {
             </Block>
           )}
 
-        {props.data && props.data?.address && props.data.address.length > 0 && (
-          <Block paddingHorizontal={16} paddingTop={16}>
-            <AppText fontSize={14} fontWeight="500" lineHeight={21}>
-              {getLabel('mainAddress')}
-            </AppText>
-            {props.data.address.map((item, index) => {
-              return (
-                props.data?.customer_primary_address?.includes(
-                  item.address_title,
-                ) && (
-                  <CardOverView
-                    type="address"
-                    mainAddress={item}
-                    key={index.toString()}
-                    priAdd={
-                      props.data.customer_primary_address != null
-                        ? props.data.customer_primary_address
-                        : ''
-                    }
-                  />
-                )
-              );
-            })}
-          </Block>
-        )}
+        {props.data &&
+          props.data?.address &&
+          props.data.address.length > 0 &&
+          props.data.address.find(item => item.primary === 1) && (
+            <Block paddingHorizontal={16} paddingTop={16}>
+              <AppText fontSize={14} fontWeight="500" lineHeight={21}>
+                {getLabel('mainAddress')}
+              </AppText>
+              <CardOverView
+                type="address"
+                mainAddress={
+                  props.data.address.find(item => item.primary === 1) ||
+                  props.data.address[0]
+                }
+                priAdd={
+                  props.data.customer_primary_address != null
+                    ? props.data.customer_primary_address
+                    : ''
+                }
+              />
+            </Block>
+          )}
 
         <Block paddingHorizontal={16} paddingVertical={16}>
           <AppText
