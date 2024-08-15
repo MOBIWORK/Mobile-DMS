@@ -10,7 +10,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import React, {
   useRef,
   useMemo,
@@ -19,7 +19,7 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import {ScreenConstant} from '../../const';
+import { ScreenConstant } from '../../const';
 import AppImage from '../../components/common/AppImage';
 import ListCard from './components/ListCard';
 import {
@@ -28,29 +28,29 @@ import {
   Block,
   AppText as Text,
 } from '../../components/common';
-import {NavigationProp} from '../../navigation/screen-type';
-import {AppTheme, useTheme} from '../../layouts/theme';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { NavigationProp } from '../../navigation/screen-type';
+import { AppTheme, useTheme } from '../../layouts/theme';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import {
   calculateDistance,
   handleBackgroundLocation,
   useEffectOnce,
   useSelector,
 } from '../../config/function';
-import {customerActions} from '../../redux-store/customer-reducer/reducer';
-import {shallowEqual, useDispatch} from 'react-redux';
-import {IDataCustomers, ListCustomerType} from '../../models/types';
-import {LocationProps} from '../Visit/VisitList/VisitItem';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import { customerActions } from '../../redux-store/customer-reducer/reducer';
+import { shallowEqual, useDispatch } from 'react-redux';
+import { IDataCustomers, ListCustomerType } from '../../models/types';
+import { LocationProps } from '../Visit/VisitList/VisitItem';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import isEqual from 'react-fast-compare';
 import {
   appActions,
   onLoadApp,
   onLoadAppEnd,
 } from '../../redux-store/app-reducer/reducer';
-import {GeolocationResponse} from '@react-native-community/geolocation';
+import { GeolocationResponse } from '@react-native-community/geolocation';
 import SkeletonLoading from '../Visit/SkeletonLoading';
-import {isLocationEnabled} from 'react-native-android-location-enabler';
+import { isLocationEnabled } from 'react-native-android-location-enabler';
 import BottomSheet, {
   BottomSheetScrollView,
   useBottomSheetDynamicSnapPoints,
@@ -58,7 +58,7 @@ import BottomSheet, {
 import FilterListComponent, {
   IFilterType,
 } from '../../components/common/FilterListComponent';
-import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
+import { checkinActions } from '../../redux-store/checkin-reducer/reducer';
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -66,11 +66,11 @@ export type IValueType = {
 };
 
 const Customer = () => {
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
   const theme = useTheme();
   const styles = rootStyles(theme);
   const dispatch = useDispatch();
-  const {bottom} = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
   const isFocus = useIsFocused();
 
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
@@ -181,22 +181,22 @@ const Customer = () => {
       if (isFilterType) {
         const newData = filterTypeData.map(filterTypeItem => {
           if (item.value === filterTypeItem.value) {
-            return {...filterTypeItem, isSelected: true};
+            return { ...filterTypeItem, isSelected: true };
           } else {
-            return {...filterTypeItem, isSelected: false};
+            return { ...filterTypeItem, isSelected: false };
           }
         });
-        setValue(prevState => ({...prevState, first: item.label}));
+        setValue(prevState => ({ ...prevState, first: item.label }));
         setFilterTypeData(newData);
       } else {
         const newData = filterGroupData.map(filterGroupItem => {
           if (item.value === filterGroupItem.value) {
-            return {...filterGroupItem, isSelected: true};
+            return { ...filterGroupItem, isSelected: true };
           } else {
-            return {...filterGroupItem, isSelected: false};
+            return { ...filterGroupItem, isSelected: false };
           }
         });
-        setValue(prevState => ({...prevState, second: item.label}));
+        setValue(prevState => ({ ...prevState, second: item.label }));
         setFilterGroupData(newData);
       }
       bottomSheetRef.current?.close();
@@ -238,7 +238,7 @@ const Customer = () => {
         };
       });
       setFilterGroupData(
-        [{label: 'all', value: 0, isSelected: true}].concat(newDataGroup),
+        [{ label: 'all', value: 0, isSelected: true }].concat(newDataGroup),
       );
     }
   }, [customerType]);
@@ -246,7 +246,7 @@ const Customer = () => {
   React.useEffect(() => {
     if (!isFocus) {
       dispatch(appActions.setSearchCustomerValue(''));
-      setValue({first: 'all', second: 'all'});
+      setValue({ first: 'all', second: 'all' });
     }
   }, [isFocus]);
 
@@ -254,7 +254,7 @@ const Customer = () => {
     if (searchCustomerValue && searchCustomerValue.trim().length > 0) {
       console.log('run on search');
       dispatch(
-        customerActions.onGetCustomer({search_key: searchCustomerValue}),
+        customerActions.onGetCustomer({ search_key: searchCustomerValue }),
       );
     }
   }, [searchCustomerValue]);
@@ -415,7 +415,7 @@ const Customer = () => {
             bottomSheetRef.current && bottomSheetRef.current.snapToIndex(0);
           }}>
           <Text style={styles.titleTextFilter}>
-            {isCustomerType ? 'Loại KH' : 'Nhóm KH'}
+            {isCustomerType ? 'Loại hình KH' : 'Nhóm KH'}
             {': '}
             <Text style={styles.contentText}>
               {isCustomerType ? getLabel(value.first) : getLabel(value.second)}
@@ -472,10 +472,10 @@ const Customer = () => {
         handleHeight={animatedHandleHeight}
         contentHeight={animatedContentHeight}>
         <BottomSheetScrollView
-          style={{paddingBottom: bottom + 16, paddingHorizontal: 16}}
+          style={{ paddingBottom: bottom + 16, paddingHorizontal: 16 }}
           onLayout={handleContentLayout}>
           <FilterListComponent
-            title={isFilterType ? 'Loại khách hàng' : 'Nhóm khách hàng'}
+            title={isFilterType ? 'Loại hình khách hàng' : 'Nhóm khách hàng'}
             data={isFilterType ? filterTypeData : filterGroupData}
             handleItem={handleItemFilter}
             isSearch={false}
@@ -536,7 +536,7 @@ const rootStyles = (theme: AppTheme) =>
       width: 200,
       flex: 1,
     } as ViewStyle,
-    labelContentStyle: {alignSelf: 'flex-end'} as ViewStyle,
+    labelContentStyle: { alignSelf: 'flex-end' } as ViewStyle,
     rootHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -583,12 +583,12 @@ const rootStyles = (theme: AppTheme) =>
       // marginRight: 2,
     } as ViewStyle,
     itemText: (text: string, value: string) =>
-      ({
-        fontSize: 16,
-        fontWeight: text === value ? '600' : '400',
-        lineHeight: 21,
-        marginBottom: 16,
-      } as TextStyle),
+    ({
+      fontSize: 16,
+      fontWeight: text === value ? '600' : '400',
+      lineHeight: 21,
+      marginBottom: 16,
+    } as TextStyle),
     containListFilter: {
       marginTop: 24,
       flex: 1,
@@ -721,6 +721,16 @@ const CustomerTypeFilterData: IFilterType[] = [
   {
     label: 'Individual',
     value: 3,
+    isSelected: false,
+  },
+  {
+    label: 'Proprietorship',
+    value: 4,
+    isSelected: false,
+  },
+  {
+    label: 'Partnership',
+    value: 5,
     isSelected: false,
   },
 ];
