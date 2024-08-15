@@ -293,6 +293,8 @@ export type IDataCustomer = {
   customer_name: string;
   customer_type: string;
   customer_group: string;
+  sfa_customer_type: string;
+  sfa_sale_channel: string;
   territory: string;
   customer_details?: string;
   custom_birthday?: number;
@@ -328,6 +330,8 @@ export interface IDataCustomers {
   customer_code: string;
   customer_type: string;
   customer_group: string;
+  sfa_customer_type: string;
+  sfa_sale_channel: string;
   mobile_no: string;
   territory: string;
   industry: any;
@@ -360,6 +364,8 @@ export interface DetailCustomerType {
   customer_name?: string;
   customer_type?: string;
   customer_group?: string;
+  sfa_customer_type: string;
+  sfa_sale_channel: string;
   territory?: string;
   gender?: any;
   lead_name?: any;
@@ -446,6 +452,8 @@ export type DataCustomersUpdate = {
   router: RouterUpdate;
   image?: any;
   // primary?:any
+  sfa_customer_type: string;
+  sfa_sale_channel: string;
 };
 
 export interface ContactCustomer {
@@ -777,6 +785,18 @@ export type BrandProduct = {
 export type ListCustomerType = {
   name: string;
   customer_group_name: string;
+};
+
+export type ListTypeCustomer = {
+  name: string;
+  customer_type_id: number;
+  customer_type_name: string;
+};
+
+export type ListChannel = {
+  name: string;
+  sales_channel_id: number;
+  sales_channel_name: string;
 };
 
 export type ListCustomerTerritory = {
