@@ -7,25 +7,27 @@ import {
   TextInputSubmitEditingEventData,
   FlatList,
 } from 'react-native';
-import React, {useCallback, useMemo, useState, useTransition} from 'react';
+import React, { useCallback, useMemo, useState, useTransition } from 'react';
 import isEqual from 'react-fast-compare';
-import {AppIcons, Block, AppText as Text} from '../../../components/common';
+import { AppIcons, Block, AppText as Text } from '../../../components/common';
 import Modal from 'react-native-modal';
-import {AppTheme, useTheme} from '../../../layouts/theme';
-import {useTranslation} from 'react-i18next';
-import {AppConstant} from '../../../const';
+import { AppTheme, useTheme } from '../../../layouts/theme';
+import { useTranslation } from 'react-i18next';
+import { AppConstant } from '../../../const';
 import {
   listFilterType,
   listFrequencyType,
 } from '../../Customer/components/data';
 import {
   DetailCustomerType,
+  ListChannel,
   ListCustomerRoute,
   ListCustomerType,
+  ListTypeCustomer,
 } from '../../../models/types';
-import {Searchbar} from 'react-native-paper';
-import {ImageAssets} from '../../../assets';
-import {useSelector} from '../../../config/function';
+import { Searchbar } from 'react-native-paper';
+import { ImageAssets } from '../../../assets';
+import { useSelector } from '../../../config/function';
 type Props = {
   type: string;
   isVisible: boolean;
@@ -34,10 +36,10 @@ type Props = {
   setData: React.Dispatch<React.SetStateAction<DetailCustomerType>>;
 };
 
-const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
+const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
   const theme = useTheme();
   const styles = modalStyles(theme);
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
 
   const [filterText, setFilterText] = useState('');
   const [searchValue, setSearchValue] = useState('');
@@ -48,6 +50,14 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
   const listRoute: ListCustomerRoute[] = useSelector(
     state => state.customer.listCustomerRoute,
   );
+  const listTypeCustomer: ListTypeCustomer[] = useSelector(
+    state => state.customer.listTypeCustomer,
+  );
+
+  const listChannel: ListChannel[] = useSelector(
+    state => state.customer.listChannel,
+  );
+
   const dataMemo = useMemo(() => {
     const normalizedFilterText = filterText
       .normalize('NFD')
@@ -91,13 +101,13 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
         const isItemInFrequency = prev?.frequency?.includes(item.value);
         const updatedFrequency = isItemInFrequency
           ? prev?.frequency?.filter(
-              (selectedItem: any) => selectedItem !== item.value,
-            )
+            (selectedItem: any) => selectedItem !== item.value,
+          )
           : [...(prev?.frequency || []), item.value];
         return {
           ...prev,
           frequency: updatedFrequency,
-          routers:[{frequency:updatedFrequency,router_code:prev.routers?.[0]?.router_code  ? prev.routers?.[0]?.router_code : '', router_name:prev.routers?.[0]?.router_code  ? prev.routers?.[0]?.router_code : ''}]
+          routers: [{ frequency: updatedFrequency, router_code: prev.routers?.[0]?.router_code ? prev.routers?.[0]?.router_code : '', router_name: prev.routers?.[0]?.router_code ? prev.routers?.[0]?.router_code : '' }]
         };
       });
     },
@@ -198,7 +208,7 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
               onSubmitEditing={onSubmitEnd}
               icon={ImageAssets.SearchIcon}
               placeholderTextColor={theme.colors.text_disable}
-              inputStyle={{color: theme.colors.text_primary}}
+              inputStyle={{ color: theme.colors.text_primary }}
               style={styles.searchBar}
               iconColor={theme.colors.text_disable}
               onClearIconPress={() => setSearchValue('')}
@@ -210,7 +220,7 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
             showsVerticalScrollIndicator={false}
             windowSize={11}
             initialNumToRender={10}
-            renderItem={({item}) => {
+            renderItem={({ item }) => {
               return (
                 <TouchableOpacity
                   style={styles.containItemBottomView}
@@ -230,6 +240,162 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
                     {item.customer_group_name}
                   </Text>
                   {item.customer_group_name === data.customer_group && (
+                    <AppIcons
+                      iconType={AppConstant.ICON_TYPE.Feather}
+                      name="check"
+                      size={24}
+                      color={theme.colors.primary}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </Block>
+      ) : type === 'type_customer' ? (
+        <Block
+          height={400}
+          colorTheme="bg_default"
+          borderTopLeftRadius={16}
+          borderTopRightRadius={16}>
+          <Block style={styles.headerBottomSheet}>
+            <TouchableOpacity onPress={onBackButton}>
+              <AppIcons
+                iconType={AppConstant.ICON_TYPE.IonIcon}
+                name={'close'}
+                size={24}
+                color={theme.colors.text_primary}
+              />
+            </TouchableOpacity>
+
+            <Text style={styles.titleHeaderText}>
+              {getLabel('typeCustomer')}
+            </Text>
+            <Text style={styles.titleHeaderText} />
+          </Block>
+          {/* <Block
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            marginBottom={20}
+            width={'100%'}>
+            <Searchbar
+              placeholder={getLabel('search') + '...'}
+              value={searchValue}
+              onChangeText={handleItem}
+              onSubmitEditing={onSubmitEnd}
+              icon={ImageAssets.SearchIcon}
+              placeholderTextColor={theme.colors.text_disable}
+              inputStyle={{ color: theme.colors.text_primary }}
+              style={styles.searchBar}
+              iconColor={theme.colors.text_disable}
+              onClearIconPress={() => setSearchValue('')}
+            />
+          </Block> */}
+          <FlatList
+            data={listTypeCustomer || []}
+            keyExtractor={item => item.name}
+            showsVerticalScrollIndicator={false}
+            windowSize={11}
+            initialNumToRender={10}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity
+                  style={styles.containItemBottomView}
+                  key={item.name}
+                  onPress={() => {
+                    setData(prev => ({
+                      ...prev,
+                      sfa_customer_type: item.customer_type_name,
+                    }));
+                    onBackButton();
+                  }}>
+                  <Text
+                    style={styles.itemText(
+                      item.customer_type_name,
+                      data.sfa_customer_type,
+                    )}>
+                    {item.customer_type_name}
+                  </Text>
+                  {item.customer_type_name === data.sfa_customer_type && (
+                    <AppIcons
+                      iconType={AppConstant.ICON_TYPE.Feather}
+                      name="check"
+                      size={24}
+                      color={theme.colors.primary}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </Block>
+      ) : type === 'channel' ? (
+        <Block
+          height={400}
+          colorTheme="bg_default"
+          borderTopLeftRadius={16}
+          borderTopRightRadius={16}>
+          <Block style={styles.headerBottomSheet}>
+            <TouchableOpacity onPress={onBackButton}>
+              <AppIcons
+                iconType={AppConstant.ICON_TYPE.IonIcon}
+                name={'close'}
+                size={24}
+                color={theme.colors.text_primary}
+              />
+            </TouchableOpacity>
+
+            <Text style={styles.titleHeaderText}>
+              {getLabel('typeCustomer')}
+            </Text>
+            <Text style={styles.titleHeaderText} />
+          </Block>
+          {/* <Block
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            marginBottom={20}
+            width={'100%'}>
+            <Searchbar
+              placeholder={getLabel('search') + '...'}
+              value={searchValue}
+              onChangeText={handleItem}
+              onSubmitEditing={onSubmitEnd}
+              icon={ImageAssets.SearchIcon}
+              placeholderTextColor={theme.colors.text_disable}
+              inputStyle={{ color: theme.colors.text_primary }}
+              style={styles.searchBar}
+              iconColor={theme.colors.text_disable}
+              onClearIconPress={() => setSearchValue('')}
+            />
+          </Block> */}
+          <FlatList
+            data={listChannel || []}
+            keyExtractor={item => item.name}
+            showsVerticalScrollIndicator={false}
+            windowSize={11}
+            initialNumToRender={10}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity
+                  style={styles.containItemBottomView}
+                  key={item.name}
+                  onPress={() => {
+                    setData(prev => ({
+                      ...prev,
+                      sfa_sale_channel: item.name,
+                    }));
+                    onBackButton();
+                  }}>
+                  <Text
+                    style={styles.itemText(
+                      item.sales_channel_name,
+                      data.sfa_sale_channel,
+                    )}>
+                    {item.sales_channel_name}
+                  </Text>
+                  {item.sales_channel_name === data.sfa_sale_channel && (
                     <AppIcons
                       iconType={AppConstant.ICON_TYPE.Feather}
                       name="check"
@@ -266,7 +432,7 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
             <Text style={styles.titleHeaderText}>{getLabel('frequency')}</Text>
             <Text
               onPress={onBackButton}
-              style={[styles.titleHeaderText, {color: theme.colors.primary}]}>
+              style={[styles.titleHeaderText, { color: theme.colors.primary }]}>
               Lưu
             </Text>
           </Block>
@@ -276,7 +442,7 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() => handlePress(item)}>
-                <Text style={{marginVertical: 8}}>{item.title}</Text>
+                <Text style={{ marginVertical: 8 }}>{item.title}</Text>
                 {data.frequency && data.frequency.includes(item.value) && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
@@ -316,10 +482,10 @@ const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
                     style={styles.containItemBottomView}
                     key={item.name}
                     onPress={() => {
-                      console.log(item,'item')
+                      console.log(item, 'item')
                       setData(prev => ({
                         ...prev,
-                        routers:[{frequency:prev?.routers?.[0]?.frequency || '',  router_code:item.channel_code,router_name:item.channel_name}],
+                        routers: [{ frequency: prev?.routers?.[0]?.frequency || '', router_code: item.channel_code, router_name: item.channel_name }],
                       }));
                       onBackButton();
                     }}>
@@ -370,7 +536,7 @@ const modalStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginHorizontal: 16, 
+      marginHorizontal: 16,
       marginBottom: 5,
     } as ViewStyle,
     titleHeaderText: {
@@ -380,13 +546,13 @@ const modalStyles = (theme: AppTheme) =>
       color: theme.colors.text_primary,
     } as TextStyle,
     itemText: (text: string, value?: string) =>
-      ({
-        fontSize: 16,
-        fontWeight: text === value ? '600' : '400',
-        lineHeight: 21,
-        marginBottom: 16,
-        color: theme.colors.text_primary,
-      } as TextStyle),
+    ({
+      fontSize: 16,
+      fontWeight: text === value ? '600' : '400',
+      lineHeight: 21,
+      marginBottom: 16,
+      color: theme.colors.text_primary,
+    } as TextStyle),
     searchBar: {
       backgroundColor: theme.colors.bg_default,
       borderRadius: 10,

@@ -1,18 +1,18 @@
-import {StyleSheet, ViewStyle, Image, ImageStyle, View} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {DetailCustomerType} from '../../../models/types';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import { StyleSheet, ViewStyle, Image, ImageStyle, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { DetailCustomerType } from '../../../models/types';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 import {
   AppText,
   Block,
   SvgIcon,
   AppText as Text,
 } from '../../../components/common';
-import {MainLayout} from '../../../layouts';
+import { MainLayout } from '../../../layouts';
 import Mapbox from '@rnmapbox/maps';
-import {useTranslation} from 'react-i18next';
-import {formatMoney} from '../../../config/function';
-import {GeolocationCustomer} from '../../../services/customerService';
+import { useTranslation } from 'react-i18next';
+import { formatMoney } from '../../../config/function';
+import { GeolocationCustomer } from '../../../services/customerService';
 
 type Props = {
   data: DetailCustomerType;
@@ -22,7 +22,7 @@ const InforBlock = (props: Props) => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const ref = useRef<Mapbox.Camera>(null);
-  const {t: translate} = useTranslation();
+  const { t: translate } = useTranslation();
   const [isError, setIsError] = useState(false);
 
   const [locationCustomer, setLocationCustomer] =
@@ -148,7 +148,44 @@ const InforBlock = (props: Props) => {
           </AppText>
           <Block style={styles.divider} />
         </Block>
-
+        <Block>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_secondary"
+            lineHeight={24}>
+            {translate('typeCustomer')}
+          </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            {props.data.sfa_customer_type != null
+              ? translate(props.data.sfa_customer_type.toLowerCase())
+              : ' ---'}
+          </AppText>
+          <Block style={styles.divider} />
+        </Block>
+        <Block>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_secondary"
+            lineHeight={24}>
+            {translate('channel')}
+          </AppText>
+          <AppText
+            fontSize={16}
+            fontWeight="400"
+            colorTheme="text_primary"
+            lineHeight={24}>
+            {props.data.sfa_sale_channel != null
+              ? translate(props.data.sfa_sale_channel.toLowerCase())
+              : ' ---'}
+          </AppText>
+          <Block style={styles.divider} />
+        </Block>
         <Block>
           <AppText
             fontSize={16}
@@ -275,7 +312,7 @@ const InforBlock = (props: Props) => {
                 }}>
                 <SvgIcon source={'MapLocation'} size={24} />
                 <Text
-                  style={{color: theme.colors.text_primary, maxWidth: '90%'}}
+                  style={{ color: theme.colors.text_primary, maxWidth: '90%' }}
                   ellipsizeMode={'tail'}
                   numberOfLines={1}>
                   {props?.data?.customer_primary_address}

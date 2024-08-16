@@ -8,25 +8,28 @@ import {
   NativeSyntheticEvent,
   TextInputSubmitEditingEventData,
 } from 'react-native';
-import React, {useCallback, useMemo, useState, useTransition} from 'react';
-import {AppIcons, Block, AppText as Text} from '../../../components/common';
-import {AppConstant} from '../../../const';
-import {Searchbar} from 'react-native-paper';
+import React, { useCallback, useMemo, useState, useTransition } from 'react';
+import { AppIcons, Block, AppText as Text } from '../../../components/common';
+import { ApiConstant, AppConstant } from '../../../const';
+import { Searchbar } from 'react-native-paper';
 
-import {listBirthDayType, listFilterType, listFrequencyType} from './data';
-import {IValueType} from '../Customer';
-import {AppTheme, useTheme} from '../../../layouts/theme';
-import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import { listBirthDayType, listFilterType, listFrequencyType } from './data';
+import { IValueType } from '../Customer';
+import { AppTheme, useTheme } from '../../../layouts/theme';
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import {
   IDataCustomer,
   IDataCustomers,
+  ListChannel,
   ListCustomerRoute,
   ListCustomerTerritory,
   ListCustomerType,
+  ListTypeCustomer,
 } from '../../../models/types';
-import {useSelector} from '../../../config/function';
-import {useTranslation} from 'react-i18next';
-import {ImageAssets} from '../../../assets';
+import { useSelector } from '../../../config/function';
+import { useTranslation } from 'react-i18next';
+import { ImageAssets } from '../../../assets';
+import { AppService } from '../../../services';
 
 type Props = {
   type: string;
@@ -38,10 +41,10 @@ type Props = {
 };
 
 const ListFilterAdding = (props: Props) => {
-  const {type, filterRef, setValueFilter, valueFilter, setData, data} = props;
+  const { type, filterRef, setValueFilter, valueFilter, setData, data } = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
   const [filterText, setFilterText] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [isPending, startEffect] = useTransition();
@@ -51,6 +54,14 @@ const ListFilterAdding = (props: Props) => {
 
   const listRoute: ListCustomerRoute[] = useSelector(
     state => state.customer.listCustomerRoute,
+  );
+
+  const listTypeCustomer: ListTypeCustomer[] = useSelector(
+    state => state.customer.listTypeCustomer,
+  );
+
+  const listChannel: ListChannel[] = useSelector(
+    state => state.customer.listChannel,
   );
 
   const dataMemo = useMemo(() => {
@@ -96,8 +107,8 @@ const ListFilterAdding = (props: Props) => {
         const isItemInFrequency = prev?.frequency?.includes(item.value);
         const updatedFrequency = isItemInFrequency
           ? prev?.frequency?.filter(
-              (selectedItem: any) => selectedItem !== item.value,
-            )
+            (selectedItem: any) => selectedItem !== item.value,
+          )
           : [...(prev?.frequency || []), item.value];
         return {
           ...prev,
@@ -250,7 +261,7 @@ const ListFilterAdding = (props: Props) => {
               onSubmitEditing={onSubmitEnd}
               icon={ImageAssets.SearchIcon}
               placeholderTextColor={theme.colors.text_disable}
-              inputStyle={{color: theme.colors.text_primary}}
+              inputStyle={{ color: theme.colors.text_primary }}
               style={styles.searchBar}
               iconColor={theme.colors.text_disable}
               onClearIconPress={() => setSearchValue('')}
@@ -262,7 +273,7 @@ const ListFilterAdding = (props: Props) => {
             showsVerticalScrollIndicator={false}
             windowSize={11}
             initialNumToRender={10}
-            renderItem={({item}) => {
+            renderItem={({ item }) => {
               return (
                 <TouchableOpacity
                   style={styles.containItemBottomView}
@@ -334,75 +345,7 @@ const ListFilterAdding = (props: Props) => {
               );
             })} */}
         </Block>
-      ) : // ) : type === AppConstant.CustomerFilterType.khu_vuc ? (
-      //   <Block>
-      //     <Block style={styles.headerBottomSheet}>
-      //       <TouchableOpacity
-      //         onPress={() => {
-      //           filterRef.current?.close();
-      //         }}>
-      //         <AppIcons
-      //           iconType={AppConstant.ICON_TYPE.IonIcon}
-      //           name={'close'}
-      //           size={24}
-      //           color={theme.colors.text_primary}
-      //         />
-      //       </TouchableOpacity>
-
-      //       <Text style={styles.titleHeaderText}>{getLabel('area')}</Text>
-      //       <Text style={styles.titleHeaderText} />
-      //     </Block>
-      //     <FlatList
-      //       data={listTerritory || []}
-      //       keyExtractor={(item, index) => index.toString()}
-      //       showsVerticalScrollIndicator={false}
-      //       bounces
-      //       scrollEnabled={true}
-      //       style={{backgroundColor:'red'}}
-      //       renderItem={({item, index}) => {
-      //         return (
-      //           <TouchableOpacity
-      //             style={styles.containItemBottomView}
-      //             key={item.name}
-      //             onPress={() => {
-      //               setData(prev => ({
-      //                 ...prev,
-      //                 territory: item.territory_name,
-      //               }));
-      //               filterRef?.current?.close();
-      //             }}>
-      //             <Text
-      //               style={styles.itemText(
-      //                 item.territory_name,
-      //                 data.territory,
-      //               )}>
-      //               {item.territory_name}
-      //             </Text>
-      //             {item.territory_name === data.territory && (
-      //               <AppIcons
-      //                 iconType={AppConstant.ICON_TYPE.Feather}
-      //                 name="check"
-      //                 size={24}
-      //                 color={theme.colors.primary}
-      //               />
-      //             )}
-      //           </TouchableOpacity>
-      //         );
-      //       }}
-      //     />
-      //     {/* {listTerritory && listTerritory.length > 0 ? (
-      //       listTerritory?.map(item => {
-      //         return (
-
-      //         );
-      //       })
-      //     ) : (
-      //       <Block justifyContent="center" alignItems="center">
-      //         <ActivityIndicator size="large" color={theme.colors.primary} />
-      //       </Block>
-      //     )} */}
-      //   </Block>
-      type === AppConstant.CustomerFilterType.tuyen ? (
+      ) : type === AppConstant.CustomerFilterType.loai_hinh_khach_hang ? (
         <Block>
           <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
@@ -417,12 +360,37 @@ const ListFilterAdding = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>{getLabel('gland')}</Text>
+            <Text style={styles.titleHeaderText}>
+              {getLabel('typeCustomer')}
+            </Text>
             <Text style={styles.titleHeaderText} />
           </Block>
-          {listRoute &&
-            listRoute.length > 0 &&
-            listRoute?.map(item => {
+          {/* <Block
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            marginBottom={20}
+            width={'100%'}>
+            <Searchbar
+              placeholder={getLabel('search') + '...'}
+              value={searchValue}
+              onChangeText={handleItem}
+              onSubmitEditing={onSubmitEnd}
+              icon={ImageAssets.SearchIcon}
+              placeholderTextColor={theme.colors.text_disable}
+              inputStyle={{ color: theme.colors.text_primary }}
+              style={styles.searchBar}
+              iconColor={theme.colors.text_disable}
+              onClearIconPress={() => setSearchValue('')}
+            />
+          </Block> */}
+          <FlatList
+            data={listTypeCustomer || []}
+            keyExtractor={item => item.name}
+            showsVerticalScrollIndicator={false}
+            windowSize={11}
+            initialNumToRender={10}
+            renderItem={({ item }) => {
               return (
                 <TouchableOpacity
                   style={styles.containItemBottomView}
@@ -430,18 +398,268 @@ const ListFilterAdding = (props: Props) => {
                   onPress={() => {
                     setData(prev => ({
                       ...prev,
-                      router_name: [item.channel_name, item.name],
+                      sfa_customer_type: item.customer_type_name,
                     }));
+                    // setValueFilter(prev => ({
+                    //   ...prev,
+                    //   customerGroupType: item.customer_type_name,
+                    // }));
                     filterRef?.current?.close();
                   }}>
                   <Text
                     style={styles.itemText(
-                      item.channel_name,
-                      data.router_name?.[0] ?? '',
+                      item.customer_type_name,
+                      data.sfa_customer_type,
                     )}>
-                    {item.channel_name}
+                    {item.customer_type_name}
                   </Text>
-                  {item.channel_name === data.router_name?.[0] && (
+                  {item.customer_type_name === data.sfa_customer_type && (
+                    <AppIcons
+                      iconType={AppConstant.ICON_TYPE.Feather}
+                      name="check"
+                      size={24}
+                      color={theme.colors.primary}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </Block>
+      ) : type === AppConstant.CustomerFilterType.kenh ? (
+        <Block>
+          <Block style={styles.headerBottomSheet}>
+            <TouchableOpacity
+              onPress={() => {
+                filterRef.current?.close();
+              }}>
+              <AppIcons
+                iconType={AppConstant.ICON_TYPE.IonIcon}
+                name={'close'}
+                size={24}
+                color={theme.colors.text_primary}
+              />
+            </TouchableOpacity>
+
+            <Text style={styles.titleHeaderText}>
+              {getLabel('groupCustomer')}
+            </Text>
+            <Text style={styles.titleHeaderText} />
+          </Block>
+          {/* <Block
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            marginBottom={20}
+            width={'100%'}>
+            <Searchbar
+              placeholder={getLabel('search') + '...'}
+              value={searchValue}
+              onChangeText={handleItem}
+              onSubmitEditing={onSubmitEnd}
+              icon={ImageAssets.SearchIcon}
+              placeholderTextColor={theme.colors.text_disable}
+              inputStyle={{ color: theme.colors.text_primary }}
+              style={styles.searchBar}
+              iconColor={theme.colors.text_disable}
+              onClearIconPress={() => setSearchValue('')}
+            />
+          </Block> */}
+          <FlatList
+            data={listChannel || []}
+            keyExtractor={item => item.name}
+            showsVerticalScrollIndicator={false}
+            windowSize={11}
+            initialNumToRender={10}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity
+                  style={styles.containItemBottomView}
+                  key={item.name}
+                  onPress={() => {
+                    setData(prev => ({
+                      ...prev,
+                      sfa_sale_channel: item.name,
+                    }));
+                    // setValueFilter(prev => ({
+                    //   ...prev,
+                    //   customerGroupType: item.sales_channel_name,
+                    // }));
+                    filterRef?.current?.close();
+                  }}>
+                  <Text
+                    style={styles.itemText(
+                      item.sales_channel_name,
+                      data.sfa_sale_channel,
+                    )}>
+                    {item.sales_channel_name}
+                  </Text>
+                  {item.sales_channel_name === data.sfa_sale_channel && (
+                    <AppIcons
+                      iconType={AppConstant.ICON_TYPE.Feather}
+                      name="check"
+                      size={24}
+                      color={theme.colors.primary}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </Block>
+      ) :
+        // ) : type === AppConstant.CustomerFilterType.khu_vuc ? (
+        //   <Block>
+        //     <Block style={styles.headerBottomSheet}>
+        //       <TouchableOpacity
+        //         onPress={() => {
+        //           filterRef.current?.close();
+        //         }}>
+        //         <AppIcons
+        //           iconType={AppConstant.ICON_TYPE.IonIcon}
+        //           name={'close'}
+        //           size={24}
+        //           color={theme.colors.text_primary}
+        //         />
+        //       </TouchableOpacity>
+
+        //       <Text style={styles.titleHeaderText}>{getLabel('area')}</Text>
+        //       <Text style={styles.titleHeaderText} />
+        //     </Block>
+        //     <FlatList
+        //       data={listTerritory || []}
+        //       keyExtractor={(item, index) => index.toString()}
+        //       showsVerticalScrollIndicator={false}
+        //       bounces
+        //       scrollEnabled={true}
+        //       style={{backgroundColor:'red'}}
+        //       renderItem={({item, index}) => {
+        //         return (
+        //           <TouchableOpacity
+        //             style={styles.containItemBottomView}
+        //             key={item.name}
+        //             onPress={() => {
+        //               setData(prev => ({
+        //                 ...prev,
+        //                 territory: item.territory_name,
+        //               }));
+        //               filterRef?.current?.close();
+        //             }}>
+        //             <Text
+        //               style={styles.itemText(
+        //                 item.territory_name,
+        //                 data.territory,
+        //               )}>
+        //               {item.territory_name}
+        //             </Text>
+        //             {item.territory_name === data.territory && (
+        //               <AppIcons
+        //                 iconType={AppConstant.ICON_TYPE.Feather}
+        //                 name="check"
+        //                 size={24}
+        //                 color={theme.colors.primary}
+        //               />
+        //             )}
+        //           </TouchableOpacity>
+        //         );
+        //       }}
+        //     />
+        //     {/* {listTerritory && listTerritory.length > 0 ? (
+        //       listTerritory?.map(item => {
+        //         return (
+
+        //         );
+        //       })
+        //     ) : (
+        //       <Block justifyContent="center" alignItems="center">
+        //         <ActivityIndicator size="large" color={theme.colors.primary} />
+        //       </Block>
+        //     )} */}
+        //   </Block>
+        type === AppConstant.CustomerFilterType.tuyen ? (
+          <Block>
+            <Block style={styles.headerBottomSheet}>
+              <TouchableOpacity
+                onPress={() => {
+                  filterRef.current?.close();
+                }}>
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.IonIcon}
+                  name={'close'}
+                  size={24}
+                  color={theme.colors.text_primary}
+                />
+              </TouchableOpacity>
+
+              <Text style={styles.titleHeaderText}>{getLabel('gland')}</Text>
+              <Text style={styles.titleHeaderText} />
+            </Block>
+            {listRoute &&
+              listRoute.length > 0 &&
+              listRoute?.map(item => {
+                return (
+                  <TouchableOpacity
+                    style={styles.containItemBottomView}
+                    key={item.name}
+                    onPress={() => {
+                      setData(prev => ({
+                        ...prev,
+                        router_name: [item.channel_name, item.name],
+                      }));
+                      filterRef?.current?.close();
+                    }}>
+                    <Text
+                      style={styles.itemText(
+                        item.channel_name,
+                        data.router_name?.[0] ?? '',
+                      )}>
+                      {item.channel_name}
+                    </Text>
+                    {item.channel_name === data.router_name?.[0] && (
+                      <AppIcons
+                        iconType={AppConstant.ICON_TYPE.Feather}
+                        name="check"
+                        size={24}
+                        color={theme.colors.primary}
+                      />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+          </Block>
+        ) : type === AppConstant.CustomerFilterType.tan_suat ? (
+          <Block>
+            <Block style={styles.headerBottomSheet}>
+              <TouchableOpacity
+                onPress={() => {
+                  setData(prev => ({
+                    ...prev,
+                    frequency: '',
+                  }));
+                  filterRef.current?.close();
+                }}>
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.IonIcon}
+                  name={'close'}
+                  size={24}
+                  color={theme.colors.text_primary}
+                />
+              </TouchableOpacity>
+              <Text style={styles.titleHeaderText}>{getLabel('frequency')}</Text>
+              <Text
+                onPress={() => filterRef.current?.close()}
+                style={[styles.titleHeaderText, { color: theme.colors.primary }]}>
+                Lưu
+              </Text>
+            </Block>
+            {listFrequencyType.map((item: any) => {
+              return (
+                <TouchableOpacity
+                  style={styles.containItemBottomView}
+                  key={item.id.toString()}
+                  onPress={() => handlePress(item)}>
+                  <Text style={{ marginVertical: 8 }}>{item.title}</Text>
+                  {data.frequency && data.frequency.includes(item.value) && (
                     <AppIcons
                       iconType={AppConstant.ICON_TYPE.Feather}
                       name="check"
@@ -452,52 +670,8 @@ const ListFilterAdding = (props: Props) => {
                 </TouchableOpacity>
               );
             })}
-        </Block>
-      ) : type === AppConstant.CustomerFilterType.tan_suat ? (
-        <Block>
-          <Block style={styles.headerBottomSheet}>
-            <TouchableOpacity
-              onPress={() => {
-                setData(prev => ({
-                  ...prev,
-                  frequency: '',
-                }));
-                filterRef.current?.close();
-              }}>
-              <AppIcons
-                iconType={AppConstant.ICON_TYPE.IonIcon}
-                name={'close'}
-                size={24}
-                color={theme.colors.text_primary}
-              />
-            </TouchableOpacity>
-            <Text style={styles.titleHeaderText}>{getLabel('frequency')}</Text>
-            <Text
-              onPress={() => filterRef.current?.close()}
-              style={[styles.titleHeaderText, {color: theme.colors.primary}]}>
-              Lưu
-            </Text>
           </Block>
-          {listFrequencyType.map((item: any) => {
-            return (
-              <TouchableOpacity
-                style={styles.containItemBottomView}
-                key={item.id.toString()}
-                onPress={() => handlePress(item)}>
-                <Text style={{marginVertical: 8}}>{item.title}</Text>
-                {data.frequency && data.frequency.includes(item.value) && (
-                  <AppIcons
-                    iconType={AppConstant.ICON_TYPE.Feather}
-                    name="check"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </Block>
-      ) : null}
+        ) : null}
     </Block>
   );
 };
@@ -520,13 +694,13 @@ const rootStyles = (theme: AppTheme) =>
       justifyContent: 'space-between',
     } as ViewStyle,
     itemText: (text: string, value: string) =>
-      ({
-        fontSize: 16,
-        fontWeight: text === value ? '600' : '400',
-        lineHeight: 21,
-        marginBottom: 16,
-        color: theme.colors.text_primary,
-      } as TextStyle),
+    ({
+      fontSize: 16,
+      fontWeight: text === value ? '600' : '400',
+      lineHeight: 21,
+      marginBottom: 16,
+      color: theme.colors.text_primary,
+    } as TextStyle),
     containItemBottomView: {
       flexDirection: 'row',
       justifyContent: 'space-between',
