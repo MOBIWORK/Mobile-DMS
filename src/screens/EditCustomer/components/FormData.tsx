@@ -27,9 +27,9 @@ import {
   AppText as Text,
   AppBottomSheet,
 } from '../../../components/common';
-import {useTranslation} from 'react-i18next';
-import {ImageAssets} from '../../../assets';
-import {useTheme, AppTheme} from '../../../layouts/theme';
+import { useTranslation } from 'react-i18next';
+import { ImageAssets } from '../../../assets';
+import { useTheme, AppTheme } from '../../../layouts/theme';
 import {
   Address,
   Contact,
@@ -37,18 +37,18 @@ import {
   DetailCustomerType,
   ListCustomerTerritory,
 } from '../../../models/types';
-import {TextInput} from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import {
   convertToMoneyFormat,
   reverseFormatNumber,
   useSelector,
 } from '../../../config/function';
 import moment from 'moment';
-import {shallowEqual} from 'react-redux';
+import { shallowEqual } from 'react-redux';
 import ModalArea from '../../Customer/components/ModalArea';
-import {customerActions} from '../../../redux-store/customer-reducer/reducer';
-import {CustomerService} from '../../../services';
-import {dispatch} from '../../../utils/redux';
+import { customerActions } from '../../../redux-store/customer-reducer/reducer';
+import { CustomerService } from '../../../services';
+import { dispatch } from '../../../utils/redux';
 import {
   openImagePicker,
   openImagePickerCamera,
@@ -58,9 +58,9 @@ import CardEditAddress from './CardEditAddress';
 import ModalEditAddress from './ModalEditAddress';
 import ModalChoose from './ModalChoose';
 import ModalData from './ModalData';
-import {DatePickerModal} from 'react-native-paper-dates';
-import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
-import {CommonUtils} from '../../../utils';
+import { DatePickerModal } from 'react-native-paper-dates';
+import { SingleChange } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import { CommonUtils } from '../../../utils';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 
 type Props = {
@@ -108,8 +108,8 @@ const updatePrimaryAddress = (
 // const updat
 
 const FormData = (props: Props) => {
-  const {data, goBack} = props;
-  const {t: translate} = useTranslation();
+  const { data, goBack } = props;
+  const { t: translate } = useTranslation();
   const theme = useTheme();
   const styles = formStyles(theme);
   const initStateData = React.useRef<DetailCustomerType>({
@@ -118,6 +118,8 @@ const FormData = (props: Props) => {
     customer_name: data?.customer_name || '',
     customer_type: data?.customer_type || '',
     customer_group: data?.customer_group || '',
+    sfa_customer_type: data?.sfa_customer_type || '',
+    sfa_sale_channel: data?.sfa_sale_channel || '',
     territory: data?.territory || '',
     custom_birthday: data?.custom_birthday || '',
     routers: data?.routers || [],
@@ -126,22 +128,22 @@ const FormData = (props: Props) => {
     address:
       data?.address && data?.address?.length > 0
         ? updatePrimaryAddress(data.address, data.customer_primary_address).map(
-            item => ({
-              ...item,
-              primary: item?.name === data.customer_primary_address ? 1 : 0,
-            }),
-          )
+          item => ({
+            ...item,
+            primary: item?.name === data.customer_primary_address ? 1 : 0,
+          }),
+        )
         : [],
     contacts:
       data?.contacts &&
-      data?.contacts?.length > 0 &&
-      data?.contacts?.length === 1
+        data?.contacts?.length > 0 &&
+        data?.contacts?.length === 1
         ? data.contacts.map(item => ({
-            ...item,
-            primary: 1,
-            is_primary_contact: 1,
-            is_billing_contact: 0,
-          }))
+          ...item,
+          primary: 1,
+          is_primary_contact: 1,
+          is_billing_contact: 0,
+        }))
         : data.contacts,
     credit_limits:
       data.credit_limits && data.credit_limits?.length > 0
@@ -152,7 +154,6 @@ const FormData = (props: Props) => {
   const [dataCustomer, setDataCustomer] = useState<DetailCustomerType>(
     initStateData.current,
   );
-  console.log('dataCustomer', dataCustomer);
 
   const listTerritory: ListCustomerTerritory[] = useSelector(
     state => state.customer.listCustomerTerritory,
@@ -243,7 +244,7 @@ const FormData = (props: Props) => {
     params => {
       setOpenDate(false);
       setDate(params.date);
-      setDataCustomer(prev => ({...prev, custom_birthday: params.date}));
+      setDataCustomer(prev => ({ ...prev, custom_birthday: params.date }));
     },
     [setOpenDate],
   );
@@ -287,8 +288,8 @@ const FormData = (props: Props) => {
     // let dataAddress = dataCustomer.address;
     let route = dataCustomer?.routers;
     route?.[0].frequency &&
-    Array(route?.[0].frequency) &&
-    typeof route?.[0].frequency !== 'string'
+      Array(route?.[0].frequency) &&
+      typeof route?.[0].frequency !== 'string'
       ? route?.[0].frequency?.join(';')
       : dataCustomer.routers;
 
@@ -306,11 +307,11 @@ const FormData = (props: Props) => {
             undefined
             ? [dataCustomer?.contacts?.find(item => item.primary === 1)]
             : dataCustomer?.contacts.map(item => ({
-                ...item,
-                primary: 1,
-                is_primary_contact: 1,
-                is_billing_contact: 0,
-              }))
+              ...item,
+              primary: 1,
+              is_primary_contact: 1,
+              is_billing_contact: 0,
+            }))
           : [],
       // credit_limits: dataCustomer.credit_limits || '',
       customer_code: dataCustomer.customer_code || '',
@@ -318,14 +319,22 @@ const FormData = (props: Props) => {
         dataCustomer.customer_group != null
           ? dataCustomer.customer_group
           : null,
+      sfa_customer_type:
+        dataCustomer.sfa_customer_type != null
+          ? dataCustomer.sfa_customer_type
+          : null,
+      sfa_sale_channel:
+        dataCustomer.sfa_sale_channel != null
+          ? dataCustomer.sfa_sale_channel
+          : null,
       customer_name: dataCustomer.customer_name || '',
       customer_type:
         (dataCustomer.customer_type &&
           dataCustomer?.customer_type?.slice(0, 1).toUpperCase() +
-            dataCustomer?.customer_type?.slice(
-              1,
-              dataCustomer?.customer_type?.length,
-            )) ||
+          dataCustomer?.customer_type?.slice(
+            1,
+            dataCustomer?.customer_type?.length,
+          )) ||
         '',
       image: dataCustomer.image || '',
       routers: route || '',
@@ -355,11 +364,11 @@ const FormData = (props: Props) => {
 
   const onCloseModal = useCallback(() => {
     if (modalChoose.status === true) {
-      setModalChoose(prev => ({...prev, status: false}));
+      setModalChoose(prev => ({ ...prev, status: false }));
     } else if (modalEditAddress.status === true) {
-      setModalEditAddress(prev => ({...prev, status: false}));
+      setModalEditAddress(prev => ({ ...prev, status: false }));
     } else {
-      setModalData(prev => ({...prev, status: false}));
+      setModalData(prev => ({ ...prev, status: false }));
     }
   }, [modalChoose.status, modalEditAddress.status, modalData.status]);
 
@@ -393,33 +402,33 @@ const FormData = (props: Props) => {
   const onPressTrash = useCallback(() => {
     const updatedAddressArray = dataCustomer?.address
       ? dataCustomer?.address.map(item => {
-          // Check if primary is 1, then update it to 0
-          if (item.primary === 1) {
-            return {...item, primary: 0};
-          }
-          // For other items, return them as they are
-          return {...item};
-        })
+        // Check if primary is 1, then update it to 0
+        if (item.primary === 1) {
+          return { ...item, primary: 0 };
+        }
+        // For other items, return them as they are
+        return { ...item };
+      })
       : [];
-    setDataCustomer(prev => ({...prev, address: updatedAddressArray}));
+    setDataCustomer(prev => ({ ...prev, address: updatedAddressArray }));
   }, [dataCustomer.address]);
 
   const onPressTrashContact = useCallback(() => {
     const updateContactArray = dataCustomer.contacts
       ? dataCustomer?.contacts?.map(item => {
-          if (item.primary && item.primary === 1) {
-            return {...item, primary: 0};
-          }
-          return {...item};
-        })
+        if (item.primary && item.primary === 1) {
+          return { ...item, primary: 0 };
+        }
+        return { ...item };
+      })
       : [];
-    setDataCustomer(prev => ({...prev, contacts: updateContactArray}));
+    setDataCustomer(prev => ({ ...prev, contacts: updateContactArray }));
   }, [dataCustomer.contacts]);
 
   const onEditData = (dataEdit: any, type: any) => {
     setDefaultDataEdit(dataEdit);
     editAddressRef.current?.snapToIndex(0);
-    setModalChoose(prevState => ({...prevState, status: false}));
+    setModalChoose(prevState => ({ ...prevState, status: false }));
     if (type === 'address') {
       setModalEditAddress({
         type: 'editAddress',
@@ -541,7 +550,7 @@ const FormData = (props: Props) => {
                 <Image
                   source={
                     dataCustomer.image != null
-                      ? {uri: dataCustomer.image}
+                      ? { uri: dataCustomer.image }
                       : ImageAssets.CameraSelect
                   }
                   style={styles.imageStyle(dataCustomer.image)}
@@ -560,10 +569,10 @@ const FormData = (props: Props) => {
           hiddenRightIcon={true}
           isRequire={true}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onChangeValue={text =>
             startTransition(() => {
-              setDataCustomer(prev => ({...prev, customer_name: text}));
+              setDataCustomer(prev => ({ ...prev, customer_name: text }));
             })
           }
         />
@@ -576,10 +585,10 @@ const FormData = (props: Props) => {
           hiddenRightIcon={true}
           isRequire={true}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onChangeValue={text =>
             startTransition(() => {
-              setDataCustomer(prev => ({...prev, customer_code: text}));
+              setDataCustomer(prev => ({ ...prev, customer_code: text }));
             })
           }
         />
@@ -593,7 +602,7 @@ const FormData = (props: Props) => {
               : '---'
           }
           editable={false}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onPress={() => {
             //   setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
             setModalData({
@@ -606,7 +615,7 @@ const FormData = (props: Props) => {
           rightIcon={
             <TextInput.Icon
               icon={'chevron-down'}
-              style={{width: 24, height: 24}}
+              style={{ width: 24, height: 24 }}
               color={theme.colors.text_secondary}
             />
           }
@@ -619,7 +628,7 @@ const FormData = (props: Props) => {
           editable={false}
           isRequire={true}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onPress={() => {
             setModalData({
               type: 'customer_group',
@@ -631,7 +640,57 @@ const FormData = (props: Props) => {
           rightIcon={
             <TextInput.Icon
               icon={'chevron-down'}
-              style={{width: 24, height: 24}}
+              style={{ width: 24, height: 24 }}
+              color={theme.colors.text_secondary}
+            />
+          }
+        />
+        <AppInput
+          label={translate('typeCustomer')}
+          value={
+            dataCustomer.sfa_customer_type ? dataCustomer.sfa_customer_type : '---'
+          }
+          editable={false}
+          isRequire={true}
+          contentStyle={styles.contentStyle}
+          styles={{ marginBottom: 20 }}
+          onPress={() => {
+            setModalData({
+              type: 'type_customer',
+              status: true,
+            });
+            //   setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
+            //   filterRef.current?.snapToIndex(0);
+          }}
+          rightIcon={
+            <TextInput.Icon
+              icon={'chevron-down'}
+              style={{ width: 24, height: 24 }}
+              color={theme.colors.text_secondary}
+            />
+          }
+        />
+        <AppInput
+          label={translate('channel')}
+          value={
+            dataCustomer.sfa_sale_channel ? dataCustomer.sfa_sale_channel : '---'
+          }
+          editable={false}
+          isRequire={true}
+          contentStyle={styles.contentStyle}
+          styles={{ marginBottom: 20 }}
+          onPress={() => {
+            setModalData({
+              type: 'channel',
+              status: true,
+            });
+            //   setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
+            //   filterRef.current?.snapToIndex(0);
+          }}
+          rightIcon={
+            <TextInput.Icon
+              icon={'chevron-down'}
+              style={{ width: 24, height: 24 }}
               color={theme.colors.text_secondary}
             />
           }
@@ -644,14 +703,14 @@ const FormData = (props: Props) => {
           editable={false}
           isRequire={false}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onPress={() => {
             setModalOpen(true);
           }}
           rightIcon={
             <TextInput.Icon
               icon={'chevron-down'}
-              style={{width: 24, height: 24}}
+              style={{ width: 24, height: 24 }}
               color={theme.colors.text_secondary}
             />
           }
@@ -661,14 +720,14 @@ const FormData = (props: Props) => {
           value={moment(date).format('DD/MM/YYYY')}
           editable={false}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onPress={() => {
             setOpenDate(true);
           }}
           rightIcon={
             <TextInput.Icon
               icon={'calendar'}
-              style={{width: 24, height: 24}}
+              style={{ width: 24, height: 24 }}
               color={theme.colors.text_secondary}
             />
           }
@@ -683,7 +742,7 @@ const FormData = (props: Props) => {
           editable={false}
           isRequire={true}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onPress={() => {
             setModalData({
               type: 'gland',
@@ -695,7 +754,7 @@ const FormData = (props: Props) => {
           rightIcon={
             <TextInput.Icon
               icon={'chevron-down'}
-              style={{width: 24, height: 24}}
+              style={{ width: 24, height: 24 }}
               color={theme.colors.text_secondary}
             />
           }
@@ -711,14 +770,14 @@ const FormData = (props: Props) => {
                 ? dataCustomer.routers[0].frequency
                 : dataCustomer?.routers?.[0].frequency &&
                   dataCustomer?.routers[0].frequency.length > 0
-                ? dataCustomer?.routers?.[0].frequency.join(';')
-                : ''
+                  ? dataCustomer?.routers?.[0].frequency.join(';')
+                  : ''
               : ''
           }
           editable={false}
           isRequire={false}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onPress={() => {
             setModalData({
               type: 'frequency',
@@ -730,7 +789,7 @@ const FormData = (props: Props) => {
           rightIcon={
             <TextInput.Icon
               icon={'chevron-down'}
-              style={{width: 24, height: 24}}
+              style={{ width: 24, height: 24 }}
               color={theme.colors.text_secondary}
             />
           }
@@ -740,10 +799,10 @@ const FormData = (props: Props) => {
           value={
             dataCustomer.credit_limits && dataCustomer.credit_limits?.length > 0
               ? String(
-                  convertToMoneyFormat(
-                    reverseFormatNumber(dataCustomer.credit_limits[0]),
-                  ),
-                )
+                convertToMoneyFormat(
+                  reverseFormatNumber(dataCustomer.credit_limits[0]),
+                ),
+              )
               : ''
           }
           editable={true}
@@ -751,12 +810,12 @@ const FormData = (props: Props) => {
           isRequire={false}
           rightIcon={<TextInput.Affix text="VND" />}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           onChangeValue={text => {
             let revText = reverseFormatNumber(text);
             startTransition(() => {
               let val = convertToMoneyFormat(revText);
-              setDataCustomer(prev => ({...prev, credit_limits: [val]}));
+              setDataCustomer(prev => ({ ...prev, credit_limits: [val] }));
             });
           }}
         />
@@ -766,14 +825,14 @@ const FormData = (props: Props) => {
           editable={true}
           isRequire={false}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           inputProp={{
             multiline: true,
           }}
           hiddenRightIcon={true}
           onChangeValue={text =>
             startTransition(() => {
-              setDataCustomer(prev => ({...prev, customer_details: text}));
+              setDataCustomer(prev => ({ ...prev, customer_details: text }));
             })
           }
         />
@@ -783,11 +842,11 @@ const FormData = (props: Props) => {
           editable={true}
           isRequire={false}
           contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
+          styles={{ marginBottom: 20 }}
           hiddenRightIcon={true}
           onChangeValue={text =>
             startTransition(() => {
-              setDataCustomer(prev => ({...prev, website: text}));
+              setDataCustomer(prev => ({ ...prev, website: text }));
             })
           }
         />
@@ -922,7 +981,7 @@ const FormData = (props: Props) => {
             ? onPressAddingAddress()
             : onPressAddingContact();
         }}
-        // defaultData={defaultDataEdit}
+      // defaultData={defaultDataEdit}
       />
       <ModalData
         isVisible={modalData.status}
@@ -954,11 +1013,11 @@ export default React.memo(FormData, isEqual);
 const formStyles = (theme: AppTheme) =>
   StyleSheet.create({
     imageStyle: (image: string) =>
-      ({
-        width: image != null ? 98 : 32,
-        height: image != null ? 98 : 32,
-        borderRadius: 16,
-      } as ImageStyle),
+    ({
+      width: image != null ? 98 : 32,
+      height: image != null ? 98 : 32,
+      borderRadius: 16,
+    } as ImageStyle),
     contentStyle: {
       color: theme.colors.text_secondary,
       fontWeight: '400',

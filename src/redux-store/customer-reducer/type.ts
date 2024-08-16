@@ -12,4 +12,6 @@ export type IProduct = {
   mainContactAddress: any;
   listCustomerTerritory: any[];
   listCustomerRoute: any[];
+  listTypeCustomer: any[];
+  listChannel: any[],
 };

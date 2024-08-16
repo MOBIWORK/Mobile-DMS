@@ -24,6 +24,8 @@ const initialState: IProduct = {
   listCustomerRoute: [],
   mainAddress: {},
   mainContactAddress: {},
+  listTypeCustomer: [],
+  listChannel: [],
 };
 
 const customerSlice = createSlice({
@@ -41,6 +43,12 @@ const customerSlice = createSlice({
     },
     setListCustomerType: (state, action: PayloadAction<any>) =>
       void (state.listCustomerType = action.payload),
+    setListTypeCustomer: (state, action: PayloadAction<any>) => {
+      state.listTypeCustomer = action.payload;
+    },
+    setListChannel: (state, action: PayloadAction<any>) => {
+      state.listChannel = action.payload;
+    },
     setListCustomerTerritory: (state, action: PayloadAction<any>) => {
       state.listCustomerTerritory = action.payload;
     },
@@ -67,6 +75,8 @@ const customerSlice = createSlice({
       state.mainContactAddress = null;
       state.listCustomerType = [];
       state.mainAddress = null;
+      state.listTypeCustomer = [];
+      state.listChannel = [];
     },
   },
 });
@@ -105,6 +115,8 @@ export const {
   setCustomer,
   setCustomerVisit,
   setListCustomerType,
+  setListTypeCustomer,
+  setListChannel,
   setListCustomerTerritory,
   setNewCustomer,
 } = customerSlice.actions;

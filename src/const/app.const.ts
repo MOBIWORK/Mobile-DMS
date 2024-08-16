@@ -83,6 +83,8 @@ export enum CustomerFilterType {
   khu_vuc = 'khu_vuc',
   tuyen = 'tuyen',
   tan_suat = 'tan_suat',
+  loai_hinh_khach_hang = 'loai_hinh_khach_hang',
+  kenh = 'kenh',
 }
 const DURATION_HIDE = 1000;
 const DURATION_ANIMATED = 500;

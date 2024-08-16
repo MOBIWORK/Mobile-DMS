@@ -45,6 +45,7 @@ export default {
   lookingMore: 'Xem thêm',
   groupCustomer: 'Nhóm khách hàng',
   customerType: 'Loại khách hàng',
+  typeCustomer: 'Loại hình khách hàng',
   customerBirthDay: 'Ngày sinh nhật',
   debt: 'Công nợ',
   debtLimit: 'Hạn mức công nợ',
@@ -77,6 +78,10 @@ export default {
   Company: 'Công ty',
   Individual: 'Cá nhân',
   individual: 'Cá nhân',
+  Proprietorship: 'Doanh nghiệp tư nhân',
+  proprietorship: 'Doanh nghiệp tư nhân',
+  Partnership: 'Công ty hợp danh',
+  partnership: 'Công ty hợp danh',
 
   loyal: 'Thân thiết',
   Sunday: 'CN',
