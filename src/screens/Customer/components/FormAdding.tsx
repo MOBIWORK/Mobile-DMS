@@ -10,13 +10,13 @@ import {
   Pressable,
   Keyboard,
 } from 'react-native';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, {useEffect, useState, useTransition} from 'react';
 
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { useTranslation } from 'react-i18next';
-import { TextInput } from 'react-native-paper';
-import { ApiConstant, AppConstant } from '../../../const';
-import { Colors } from '../../../assets';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import {useTranslation} from 'react-i18next';
+import {TextInput} from 'react-native-paper';
+import {ApiConstant, AppConstant} from '../../../const';
+import {Colors} from '../../../assets';
 import {
   AppIcons,
   AppInput,
@@ -25,8 +25,8 @@ import {
   AppText as Text,
 } from '../../../components/common';
 import AppImage from '../../../components/common/AppImage';
-import { IDataCustomer, IDataCustomers } from '../../../models/types';
-import { AppTheme, useTheme } from '../../../layouts/theme';
+import {IDataCustomer, IDataCustomers} from '../../../models/types';
+import {AppTheme, useTheme} from '../../../layouts/theme';
 import {
   convertToMoneyFormat,
   formatMoney,
@@ -34,13 +34,12 @@ import {
   useSelector,
 } from '../../../config/function';
 import CardAddress from './CardAddress';
-import { dispatch } from '../../../utils/redux';
-import { customerActions } from '../../../redux-store/customer-reducer/reducer';
-import { AppService } from '../../../services';
+import {dispatch} from '../../../utils/redux';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import {AppService} from '../../../services';
 import isEqual from 'react-fast-compare';
-import { GeolocationResponse } from '@react-native-community/geolocation';
-import { shallowEqual } from 'react-redux';
-
+import {GeolocationResponse} from '@react-native-community/geolocation';
+import {shallowEqual} from 'react-redux';
 
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
@@ -73,7 +72,7 @@ const FormAdding = (props: Props) => {
   } = props;
   const theme = useTheme();
   const styles = rootStyles(theme);
-  const { t: translate } = useTranslation();
+  const {t: translate} = useTranslation();
   const mainAddress = useSelector(
     state => state.customer.mainAddress,
     shallowEqual,
@@ -126,7 +125,7 @@ const FormAdding = (props: Props) => {
         <View style={styles.containImageCamera}>
           {imageSource !== undefined && imageSource ? (
             <Image
-              source={{ uri: imageSource }}
+              source={{uri: imageSource}}
               resizeMode="cover"
               style={styles.imageStyle}
             />
@@ -142,10 +141,10 @@ const FormAdding = (props: Props) => {
         hiddenRightIcon={true}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onChangeValue={text =>
           startTransition(() => {
-            setData(prev => ({ ...prev, customer_name: text }));
+            setData(prev => ({...prev, customer_name: text}));
           })
         }
       />
@@ -156,10 +155,10 @@ const FormAdding = (props: Props) => {
         hiddenRightIcon={true}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onChangeValue={text =>
           startTransition(() => {
-            setData(prev => ({ ...prev, customer_code: text }));
+            setData(prev => ({...prev, customer_code: text}));
           })
         }
       />
@@ -169,7 +168,7 @@ const FormAdding = (props: Props) => {
         contentStyle={styles.contentStyle}
         value={valueFilter.customer_type}
         editable={false}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onPress={() => {
           setTypeFilter(AppConstant.CustomerFilterType.loai_khach_hang);
           Keyboard.dismiss();
@@ -178,7 +177,7 @@ const FormAdding = (props: Props) => {
         rightIcon={
           <TextInput.Icon
             icon={'chevron-down'}
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
         }
@@ -189,7 +188,7 @@ const FormAdding = (props: Props) => {
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onPress={() => {
           Keyboard.dismiss();
           setTypeFilter(AppConstant.CustomerFilterType.nhom_khach_hang);
@@ -198,7 +197,7 @@ const FormAdding = (props: Props) => {
         rightIcon={
           <TextInput.Icon
             icon={'chevron-down'}
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
         }
@@ -209,7 +208,7 @@ const FormAdding = (props: Props) => {
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onPress={() => {
           Keyboard.dismiss();
           setTypeFilter(AppConstant.CustomerFilterType.loai_hinh_khach_hang);
@@ -218,7 +217,7 @@ const FormAdding = (props: Props) => {
         rightIcon={
           <TextInput.Icon
             icon={'chevron-down'}
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
         }
@@ -229,7 +228,7 @@ const FormAdding = (props: Props) => {
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onPress={() => {
           Keyboard.dismiss();
           setTypeFilter(AppConstant.CustomerFilterType.kenh);
@@ -238,7 +237,7 @@ const FormAdding = (props: Props) => {
         rightIcon={
           <TextInput.Icon
             icon={'chevron-down'}
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
         }
@@ -249,7 +248,7 @@ const FormAdding = (props: Props) => {
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onPress={() => {
           Keyboard.dismiss();
           setModalOpen(true);
@@ -257,7 +256,7 @@ const FormAdding = (props: Props) => {
         rightIcon={
           <TextInput.Icon
             icon={'chevron-down'}
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
         }
@@ -267,7 +266,7 @@ const FormAdding = (props: Props) => {
         value={valueDate}
         editable={false}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onPress={() => {
           Keyboard.dismiss();
           setOpen(true);
@@ -275,18 +274,22 @@ const FormAdding = (props: Props) => {
         rightIcon={
           <TextInput.Icon
             icon={'calendar'}
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
         }
       />
       <AppInput
         label={translate('gland')}
-        value={valueFilter.router_name ? valueFilter.router_name[0] : ''}
+        value={
+          valueFilter?.router && valueFilter?.router?.length > 0
+            ? valueFilter.router?.map(item => item.channel_name).toString()
+            : ''
+        }
         editable={false}
         isRequire={true}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onPress={() => {
           Keyboard.dismiss();
           setTypeFilter(AppConstant.CustomerFilterType.tuyen);
@@ -295,7 +298,7 @@ const FormAdding = (props: Props) => {
         rightIcon={
           <TextInput.Icon
             icon={'chevron-down'}
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
         }
@@ -307,7 +310,7 @@ const FormAdding = (props: Props) => {
         editable={false}
         isRequire
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onPress={() => {
           Keyboard.dismiss();
           setTypeFilter(AppConstant.CustomerFilterType.tan_suat);
@@ -316,7 +319,7 @@ const FormAdding = (props: Props) => {
         rightIcon={
           <TextInput.Icon
             icon={'chevron-down'}
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             color={theme.colors.text_secondary}
           />
         }
@@ -333,12 +336,12 @@ const FormAdding = (props: Props) => {
         isRequire={false}
         rightIcon={<TextInput.Affix text="VND" />}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         onChangeValue={text => {
           let revText = reverseFormatNumber(text);
           startTransition(() => {
             let val = convertToMoneyFormat(revText);
-            setData(prev => ({ ...prev, credit_limit: val }));
+            setData(prev => ({...prev, credit_limit: val}));
           });
         }}
       />
@@ -348,14 +351,14 @@ const FormAdding = (props: Props) => {
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         inputProp={{
           multiline: true,
         }}
         hiddenRightIcon={true}
         onChangeValue={text =>
           startTransition(() => {
-            setData(prev => ({ ...prev, customer_details: text }));
+            setData(prev => ({...prev, customer_details: text}));
           })
         }
       />
@@ -365,11 +368,11 @@ const FormAdding = (props: Props) => {
         editable={true}
         isRequire={false}
         contentStyle={styles.contentStyle}
-        styles={{ marginBottom: 20 }}
+        styles={{marginBottom: 20}}
         hiddenRightIcon={true}
         onChangeValue={text =>
           startTransition(() => {
-            setData(prev => ({ ...prev, website: text }));
+            setData(prev => ({...prev, website: text}));
           })
         }
       />

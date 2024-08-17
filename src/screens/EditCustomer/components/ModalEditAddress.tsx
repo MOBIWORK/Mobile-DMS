@@ -1,5 +1,4 @@
 import {
-  Alert,
   Image,
   Keyboard,
   ScrollView,
@@ -16,7 +15,6 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import isEqual from 'react-fast-compare';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {
   AppHeader,
@@ -340,7 +338,7 @@ const ModalEditAddress = ({
             name: dataCustomer.name,
             customer_primary_contact: txtContactDetail,
           };
-          console.log('dataa', dataUpdate);
+          // console.log('dataa', dataUpdate);
           const response: any = await CustomerService.updateCustomer(
             dataUpdate,
           );
@@ -967,7 +965,7 @@ const ModalEditAddress = ({
               />
               <AppInput
                 label={getLabel('phoneNumber')}
-                value={contactValue?.mobile_no || defaultEditData?.mobile_no}
+                value={contactValue?.phoneNumber || defaultEditData?.phone}
                 editable={true}
                 contentStyle={styles.contentStyle}
                 styles={styles.marginInputBlock}

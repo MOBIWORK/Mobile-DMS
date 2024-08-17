@@ -323,6 +323,7 @@ export type IDataCustomer = {
   latitude?: number;
   name_image?: '';
   faceimage?: string;
+  router?: [{channel_name: string; name: string; isSelected?: boolean}];
 };
 export interface IDataCustomers {
   name: string;
@@ -348,6 +349,7 @@ export interface IDataCustomers {
   credit_limits?: CreLimid[];
   lat?: any;
   long?: any;
+  router?: [{channel_name: string; name: string; isSelected?: boolean}];
 }
 
 export interface DetailCustomerType {
@@ -430,11 +432,6 @@ export type ContactUpdate = {
   county: string;
   state: string;
 };
-
-export interface RouterUpdate {
-  router_name: string;
-  frequency: string;
-}
 export type DataCustomersUpdate = {
   customer_code: string;
   customer_name: string;
@@ -448,9 +445,10 @@ export type DataCustomersUpdate = {
   company?: string;
   credit_limit?: number;
   address: AddressUpdate;
-  contact: ContactUpdate;
-  router: RouterUpdate;
+  contact: ContactUpdate | undefined;
+  router: string[];
   image?: any;
+  frequency?: string;
   // primary?:any
   sfa_customer_type: string;
   sfa_sale_channel: string;
@@ -810,6 +808,7 @@ export type ListCustomerRoute = {
   channel_code: string;
   is_today: boolean;
   travel_date?: string;
+  isSelected?: boolean;
 };
 
 export type IProductPromotion = {

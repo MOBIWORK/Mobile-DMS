@@ -76,6 +76,14 @@ export const listFilterType: any = [
     id: 2,
     title: 'Company',
   },
+  {
+    id: 3,
+    title: 'proprietorship',
+  },
+  {
+    id: 4,
+    title: 'partnership',
+  },
 ];
 export const listBirthDayType: any = [
   {
@@ -95,23 +103,21 @@ export const listFrequencyType: any = [
   {
     id: 0,
     title: 'Tuần 1',
-    value :1
+    value: 1,
   },
   {
     id: 1,
     title: 'Tuần 2',
-    value :2
-
+    value: 2,
   },
   {
     id: 2,
     title: 'Tuần 3',
-    value :3
-
+    value: 3,
   },
   {
     id: 3,
     title: 'Tuần 4',
-    value :4
+    value: 4,
   },
 ];

@@ -65,7 +65,7 @@ const Contact = (props: Props) => {
             return (
               <CardContactView
                 data={item}
-                mobileNo={props.data.mobile_no}
+                mobileNo={item?.phone}
                 onPressCard={onPressCard}
                 primary={props.data.customer_primary_contact || ''}
               />
