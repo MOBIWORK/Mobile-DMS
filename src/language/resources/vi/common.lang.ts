@@ -78,9 +78,7 @@ export default {
   Company: 'Công ty',
   Individual: 'Cá nhân',
   individual: 'Cá nhân',
-  Proprietorship: 'Doanh nghiệp tư nhân',
   proprietorship: 'Doanh nghiệp tư nhân',
-  Partnership: 'Công ty hợp danh',
   partnership: 'Công ty hợp danh',
 
   loyal: 'Thân thiết',

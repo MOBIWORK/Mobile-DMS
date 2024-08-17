@@ -18,14 +18,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { DatePickerModal } from 'react-native-paper-dates';
-import { useNavigation } from '@react-navigation/native';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { SingleChange } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import {DatePickerModal} from 'react-native-paper-dates';
+import {useNavigation} from '@react-navigation/native';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import moment from 'moment';
-import { IValueType } from './Customer';
+import {IValueType} from './Customer';
 
-import { MainLayout } from '../../layouts';
+import {MainLayout} from '../../layouts';
 import {
   AppBottomSheet,
   AppHeader,
@@ -35,28 +35,28 @@ import {
   SvgIcon,
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
-import { ApiConstant, AppConstant, ScreenConstant } from '../../const';
-import { NavigationProp } from '../../navigation/screen-type';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
+import {NavigationProp} from '../../navigation/screen-type';
 import {
   DataCustomersUpdate,
   IDataCustomer,
   IDataCustomers,
   ListCustomerTerritory,
 } from '../../models/types';
-import { AppTheme, useTheme } from '../../layouts/theme';
+import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
-import { openImagePicker, openImagePickerCamera } from '../../utils/camera.utils';
-import { dispatch } from '../../utils/redux';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { customerActions } from '../../redux-store/customer-reducer/reducer';
-import { CustomerService } from '../../services';
-import { useSelector } from '../../config/function';
-import { MainAddress, MainContactAddress } from './components/CardAddress';
+import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
+import {dispatch} from '../../utils/redux';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {CustomerService} from '../../services';
+import {useSelector} from '../../config/function';
+import {MainAddress, MainContactAddress} from './components/CardAddress';
 
-import { CommonUtils } from '../../utils';
-import { useTranslation } from 'react-i18next';
-import { GeolocationResponse } from '@react-native-community/geolocation';
+import {CommonUtils} from '../../utils';
+import {useTranslation} from 'react-i18next';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 import {
   setNewCustomer,
   setProcessingStatus,
@@ -64,18 +64,18 @@ import {
 import isEqual from 'react-fast-compare';
 import Modal from 'react-native-modal';
 import ModalArea from './components/ModalArea';
-import { storage } from '../../utils/commom.utils';
-import { checkinActions } from '../../redux-store/checkin-reducer/reducer';
+import {storage} from '../../utils/commom.utils';
+import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 
 function listDataReducer(newState: any, oldState: any) {
-  return { ...newState, ...oldState };
+  return {...newState, ...oldState};
 }
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
-  const { bottom } = useSafeAreaInsets();
+  const {bottom} = useSafeAreaInsets();
   const styles = rootStyles(theme);
-  const { t: getLabel } = useTranslation();
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const initValueState = useRef<IValueType>({
     customerType: 'Cá nhân',
@@ -129,68 +129,29 @@ const AddingNewCustomer = () => {
   const listTypeCustomer = useSelector(
     state => state.customer.listTypeCustomer,
   );
-  const listChannel = useSelector(
-    state => state.customer.listChannel,
-  );
+  const listChannel = useSelector(state => state.customer.listChannel);
   const snapPoint = useMemo(() => ['60%'], []);
   const filterRef = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
 
-  const isInvalid = useCallback((newListdata: IDataCustomer) => {
-    let check: boolean = false;
-    if (
-      newListdata?.router_name?.[1] &&
-      newListdata?.router_name?.[1].length > 0
-    ) {
-      return (check = true);
-    }
-    if (
-      newListdata.customer_code &&
-      newListdata.customer_code?.trim()?.length > 0
-    ) {
-      return (check = true);
-    }
-    if (
-      newListdata.customer_name &&
-      newListdata.customer_name?.trim()?.length > 0
-    ) {
-      return (check = true);
-    }
-    if (
-      newListdata.customer_group &&
-      newListdata.customer_group?.trim()?.length > 0
-    ) {
-      return (check = true);
-    }
-    if (
-      newListdata.sfa_customer_type &&
-      newListdata.sfa_customer_type?.trim()?.length > 0
-    ) {
-      return (check = true);
-    }
-    if (
-      newListdata.sfa_sale_channel &&
-      newListdata.sfa_sale_channel?.trim()?.length > 0
-    ) {
-      return (check = true);
-    }
-    if (
-      newListdata.customer_type &&
-      newListdata.customer_type?.trim()?.length > 0
-    ) {
-      return (check = true);
-    }
-    if (
-      newListdata.frequency &&
-      newListdata.frequency?.toString()?.length > 0
-    ) {
-      return (check = true);
-    }
-    if (newListdata.territory && newListdata.territory.length > 0) {
-      return (check = true);
-    }
-    return check;
-  }, []);
+  // const isInvalid = useCallback((newListData: IDataCustomer) => {
+  //
+  // }, []);
+
+  const isInvalid = (newListData: IDataCustomer) => {
+    return (
+      newListData?.customer_name &&
+      newListData?.customer_code &&
+      newListData?.customer_type &&
+      newListData?.customer_group &&
+      newListData?.sfa_customer_type &&
+      newListData?.sfa_sale_channel &&
+      newListData?.territory &&
+      newListData?.frequency &&
+      newListData?.router &&
+      newListData?.router?.length > 0
+    );
+  };
 
   const onPressAdding = async (newListData: IDataCustomer) => {
     dispatch(setProcessingStatus(true));
@@ -198,14 +159,9 @@ const AddingNewCustomer = () => {
     let contact: MainContactAddress = mainContactAddress;
 
     const updateListData: DataCustomersUpdate = {
-      // ...newListData,
-      // router: {
-      //   frequency: newListData?.frequency
-      //     ? newListData.frequency.toString().replaceAll(',', ';')
-      //     : '',
-      //   router_name: newListData?.router_name?.[1] || '',
-      // },
-      router: ['mg1l6cimfg', 'mg1k761fsb'],
+      router: newListData?.router
+        ? newListData?.router.map(item => item.name)
+        : [],
       frequency: newListData?.frequency
         ? newListData.frequency.toString().replaceAll(',', ';')
         : '',
@@ -265,7 +221,11 @@ const AddingNewCustomer = () => {
       customer_type:
         newListData.customer_type === getLabel('individual')
           ? 'Individual'
-          : 'Company',
+          : newListData.customer_type === getLabel('company')
+          ? 'Company'
+          : newListData.customer_type === getLabel('proprietorship')
+          ? 'Proprietorship'
+          : 'Partnership',
 
       website: newListData.website ?? '',
 
@@ -285,20 +245,24 @@ const AddingNewCustomer = () => {
       image: newListData.faceimage ? newListData.faceimage : '',
     };
 
-    console.log(updateListData, 'update List Data');
+    // console.log(updateListData, 'update List Data');
     if (isInvalid(newListData)) {
-      dispatch(setNewCustomer(newListData));
-    } else {
-      // Alert.alert('Thiếu thông tin, xin vui lòng thử lại');
-    }
-    await CommonUtils.CheckNetworkState();
-    const response: any = await CustomerService.addNewCustomer(updateListData);
-    if (response?.status === ApiConstant.STT_CREATED) {
-      navigation.navigate(ScreenConstant.MAIN_TAB, {
-        screen: ScreenConstant.CUSTOMER,
-      });
       dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
+      // dispatch(setNewCustomer(newListData));
+      // await CommonUtils.CheckNetworkState();
+      // const response: any = await CustomerService.addNewCustomer(
+      //   updateListData,
+      // );
+      // if (response?.status === ApiConstant.STT_CREATED) {
+      //   dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
+      //   navigation.navigate(ScreenConstant.MAIN_TAB, {
+      //     screen: ScreenConstant.CUSTOMER,
+      //   });
+      // }
+    } else {
+      Alert.alert('Vui lòng nhập đầy đủ thông tin');
     }
+
     dispatch(setProcessingStatus(false));
   };
 
@@ -357,7 +321,7 @@ const AddingNewCustomer = () => {
     params => {
       setOpenDate(false);
       setDate(params.date);
-      setListData(prev => ({ ...prev, custom_birthday: params.date?.getTime() }));
+      setListData(prev => ({...prev, custom_birthday: params.date?.getTime()}));
     },
     [setOpenDate, setDate],
   );
@@ -381,13 +345,13 @@ const AddingNewCustomer = () => {
     if (response?.result.length > 0) {
       dispatch(customerActions.setListTypeCustomer(response.result));
     }
-  }
+  };
   const getChannel = async () => {
     const response: any = await CustomerService.getChannel();
     if (response?.result.length > 0) {
       dispatch(customerActions.setListChannel(response.result));
     }
-  }
+  };
   //get Cur Location
   useEffect(() => {
     if (!location) {
@@ -424,7 +388,7 @@ const AddingNewCustomer = () => {
           label={getLabel('customer')}
           onBack={() => navigation.goBack()}
         />
-        <View style={[styles.containContentView, { marginBottom: bottom + 60 }]}>
+        <View style={[styles.containContentView, {marginBottom: bottom + 60}]}>
           <FormAdding
             filterRef={filterRef}
             setTypeFilter={setTypeFilter}
@@ -472,7 +436,7 @@ const AddingNewCustomer = () => {
             <View>
               <AppHeader
                 label={getLabel('chooseImage')}
-                onBack={() => { }}
+                onBack={() => {}}
                 backButtonIcon={
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.IonIcon}
@@ -571,7 +535,7 @@ const rootStyles = (theme: AppTheme) =>
       fontWeight: '700',
       lineHeight: 24,
     } as TextStyle,
-    mainLayout: { paddingTop: 0 } as ViewStyle,
+    mainLayout: {paddingTop: 0} as ViewStyle,
     containButton: {
       flexDirection: 'row',
       justifyContent: 'space-between',
