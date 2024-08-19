@@ -225,7 +225,7 @@ const ListFilterAdding = (props: Props) => {
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>
-              {getLabel('customerType')}
+              {getLabel('typeCustomer')}
             </Text>
             <Text style={styles.titleHeaderText} />
           </Block>
@@ -397,7 +397,7 @@ const ListFilterAdding = (props: Props) => {
             </TouchableOpacity>
 
             <Text style={styles.titleHeaderText}>
-              {getLabel('typeCustomer')}
+              {getLabel('customerType')}
             </Text>
             <Text style={styles.titleHeaderText} />
           </Block>
