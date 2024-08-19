@@ -248,17 +248,17 @@ const AddingNewCustomer = () => {
     // console.log(updateListData, 'update List Data');
     if (isInvalid(newListData)) {
       dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
-      // dispatch(setNewCustomer(newListData));
-      // await CommonUtils.CheckNetworkState();
-      // const response: any = await CustomerService.addNewCustomer(
-      //   updateListData,
-      // );
-      // if (response?.status === ApiConstant.STT_CREATED) {
-      //   dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
-      //   navigation.navigate(ScreenConstant.MAIN_TAB, {
-      //     screen: ScreenConstant.CUSTOMER,
-      //   });
-      // }
+      dispatch(setNewCustomer(newListData));
+      await CommonUtils.CheckNetworkState();
+      const response: any = await CustomerService.addNewCustomer(
+        updateListData,
+      );
+      if (response?.status === ApiConstant.STT_CREATED) {
+        dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
+        navigation.navigate(ScreenConstant.MAIN_TAB, {
+          screen: ScreenConstant.CUSTOMER,
+        });
+      }
     } else {
       Alert.alert('Vui lòng nhập đầy đủ thông tin');
     }
