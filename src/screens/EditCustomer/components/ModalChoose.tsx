@@ -100,18 +100,18 @@ Props) => {
             )}
           </Block>
         )}
-        <TouchableOpacity
-          style={styles.containButton}
-          onPress={() => {
-            onBackButtonPress();
-            onPressAdding();
-          }}>
-          <SvgIcon source="BluePlush" size={16} colorTheme="white" />
-          <Text colorTheme="facebook" fontSize={14} fontWeight="500">
-            {'   '}
-            {type === 'address' ? 'Thêm địa chỉ mới' : 'Thêm liên hệ mới'}
-          </Text>
-        </TouchableOpacity>
+        {/*<TouchableOpacity*/}
+        {/*  style={styles.containButton}*/}
+        {/*  onPress={() => {*/}
+        {/*    onBackButtonPress();*/}
+        {/*    onPressAdding();*/}
+        {/*  }}>*/}
+        {/*  <SvgIcon source="BluePlush" size={16} colorTheme="white" />*/}
+        {/*  <Text colorTheme="facebook" fontSize={14} fontWeight="500">*/}
+        {/*    {'   '}*/}
+        {/*    {type === 'address' ? 'Thêm địa chỉ mới' : 'Thêm liên hệ mới'}*/}
+        {/*  </Text>*/}
+        {/*</TouchableOpacity>*/}
       </Block>
     </Modal>
   );
@@ -122,10 +122,9 @@ export default React.memo(ModalChoose, isEqual);
 const modalEditStyles = (theme: AppTheme) =>
   StyleSheet.create({
     modalStyle: {
-      // paddingHorizontal:16,
       marginHorizontal: 0,
       marginVertical: 0,
-      paddingTop: 24,
+      paddingTop: 32,
       backgroundColor: theme.colors.bg_neutral,
     } as ViewStyle,
     containButton: {

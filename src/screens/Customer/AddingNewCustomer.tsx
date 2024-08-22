@@ -183,12 +183,7 @@ const AddingNewCustomer = () => {
           Object.keys(address).length > 0 ? address.addressOrder : false,
         is_shipping_address:
           Object.keys(address).length > 0 ? address.addressGet : false,
-        primary:
-          Object.keys(address).length > 0
-            ? address.primary
-              ? true
-              : false
-            : false,
+        primary: Object.keys(address).length > 0 ? address.primary : false,
       },
       contact:
         Object.keys(contact).length > 0
@@ -247,7 +242,6 @@ const AddingNewCustomer = () => {
 
     // console.log(updateListData, 'update List Data');
     if (isInvalid(newListData)) {
-      dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
       dispatch(setNewCustomer(newListData));
       await CommonUtils.CheckNetworkState();
       const response: any = await CustomerService.addNewCustomer(

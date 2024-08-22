@@ -154,6 +154,19 @@ const FormAddress = (props: Props) => {
     }
   };
 
+  const onResetData = (type: string) => {
+    if (type == 'address') {
+      setAddressSelectedData([]);
+      setAddressValue({});
+      setTxtAddressDetail('');
+      setLocation(null);
+    } else {
+      setContactSelectedData([]);
+      setContactValue({});
+      setTxtContactDetail('');
+    }
+  };
+
   const fetchData = async (lat: any, lon: any) => {
     // dispatch(appActions.setProcessingStatus(true));
     const response: KeyAbleProps = await AppService.getDetailLocation(lat, lon);
@@ -498,7 +511,7 @@ const FormAddress = (props: Props) => {
         <Block block>
           <Block style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
-              label="Địa chỉ chính"
+              label={getLabel('mainAddress')}
               onBack={() => {}}
               backButtonIcon={
                 <AppIcons
@@ -506,7 +519,10 @@ const FormAddress = (props: Props) => {
                   name="close"
                   size={26}
                   color={theme.colors.black}
-                  onPress={onPressClose}
+                  onPress={() => {
+                    onResetData('address');
+                    onPressClose();
+                  }}
                 />
               }
             />
@@ -721,11 +737,13 @@ const FormAddress = (props: Props) => {
               <TouchableOpacity
                 style={styles.buttonRestart}
                 onPress={() => {
-                  setAddressSelectedData([]);
                   setScreen('');
+                  onResetData('address');
                   onPressClose();
                 }}>
-                <AppText style={styles.restartText}>Hủy</AppText>
+                <AppText style={styles.restartText}>
+                  {getLabel('cancel')}
+                </AppText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
@@ -759,7 +777,10 @@ const FormAddress = (props: Props) => {
                   name="close"
                   size={26}
                   color={theme.colors.black}
-                  onPress={onPressClose}
+                  onPress={() => {
+                    onResetData('contact');
+                    onPressClose();
+                  }}
                 />
               }
             />
@@ -913,11 +934,13 @@ const FormAddress = (props: Props) => {
               <TouchableOpacity
                 style={styles.buttonRestart}
                 onPress={() => {
-                  setContactSelectedData([]);
                   setScreen('');
+                  onResetData('contact');
                   onPressClose();
                 }}>
-                <AppText style={styles.restartText}>Hủy</AppText>
+                <AppText style={styles.restartText}>
+                  {getLabel('cancel')}
+                </AppText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonApply}
@@ -943,6 +966,7 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
     root: {
       flex: 1,
       marginBottom: 8,
+      marginTop: 16,
     } as ViewStyle,
     buttonStyle: {
       backgroundColor: theme.colors.bg_neutral,

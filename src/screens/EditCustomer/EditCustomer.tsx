@@ -14,7 +14,6 @@ const EditCustomerScreen = () => {
   const styles = rootStyles(theme);
   const params =
     useRoute<RouteProp<AuthorizeParamsList, 'EDIT_CUSTOMER'>>().params;
-  console.log('params', params);
 
   const goBackScreen = React.useCallback(() => {
     goBack();
