@@ -163,7 +163,7 @@ const FormAdding = (props: Props) => {
         }
       />
       <AppInput
-        label={translate('customerType')}
+        label={translate('typeCustomer')}
         isRequire={true}
         contentStyle={styles.contentStyle}
         value={valueFilter.customer_type}
@@ -186,7 +186,6 @@ const FormAdding = (props: Props) => {
         label={translate('groupCustomer')}
         value={valueFilter.customer_group}
         editable={false}
-        isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
@@ -203,10 +202,9 @@ const FormAdding = (props: Props) => {
         }
       />
       <AppInput
-        label={translate('typeCustomer')}
+        label={translate('customerType')}
         value={valueFilter.sfa_customer_type}
         editable={false}
-        isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
@@ -226,7 +224,6 @@ const FormAdding = (props: Props) => {
         label={translate('channel')}
         value={valueFilter.sfa_sale_channel}
         editable={false}
-        isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {
@@ -246,7 +243,6 @@ const FormAdding = (props: Props) => {
         label={translate('area')}
         value={valueFilter.territory!}
         editable={false}
-        isRequire={true}
         contentStyle={styles.contentStyle}
         styles={{marginBottom: 20}}
         onPress={() => {

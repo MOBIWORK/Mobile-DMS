@@ -477,9 +477,7 @@ const ListFilterAdding = (props: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>
-              {getLabel('groupCustomer')}
-            </Text>
+            <Text style={styles.titleHeaderText}>{getLabel('channel')}</Text>
             <Text style={styles.titleHeaderText} />
           </Block>
           {/* <Block
@@ -681,7 +679,7 @@ const ListFilterAdding = (props: Props) => {
                 color={theme.colors.text_primary}
               />
             </TouchableOpacity>
-            <Text style={styles.titleHeaderText}>{getLabel('frequency')}</Text>
+            <Text style={styles.titleHeaderText}>{getLabel('router')}</Text>
             <Text
               onPress={() => filterRef.current?.close()}
               style={[styles.titleHeaderText, {color: theme.colors.primary}]}>

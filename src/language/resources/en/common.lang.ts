@@ -323,4 +323,5 @@ export default {
   totalCustomer: 'Total of customers',
   customerNotOrder: 'The customer has no orders yet',
   availableInventory: 'Available inventory',
+  router: 'Router',
 };

@@ -444,8 +444,8 @@ export type DataCustomersUpdate = {
   // faceimage?: string
   company?: string;
   credit_limit?: number;
-  address: AddressUpdate;
-  contact: ContactUpdate | undefined;
+  address: AddressUpdate | null;
+  contact: ContactUpdate | null;
   router: string[];
   image?: any;
   frequency?: string;

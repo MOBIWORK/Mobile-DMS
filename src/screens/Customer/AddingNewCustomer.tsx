@@ -143,10 +143,6 @@ const AddingNewCustomer = () => {
       newListData?.customer_name &&
       newListData?.customer_code &&
       newListData?.customer_type &&
-      newListData?.customer_group &&
-      newListData?.sfa_customer_type &&
-      newListData?.sfa_sale_channel &&
-      newListData?.territory &&
       newListData?.frequency &&
       newListData?.router &&
       newListData?.router?.length > 0
@@ -165,26 +161,40 @@ const AddingNewCustomer = () => {
       frequency: newListData?.frequency
         ? newListData.frequency.toString().replaceAll(',', ';')
         : '',
-      address: {
-        longitude: newListData.longitude || 0,
-        latitude: newListData.latitude || 0,
-        address_title:
-          Object.keys(address).length > 0
-            ? `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`
-            : '',
-        address_type: 'Billing',
-        address_line1:
-          Object.keys(address).length > 0 ? String(address?.detailAddress) : '',
-        city: Object.keys(address).length > 0 ? String(address?.city?.id) : '',
-        county:
-          Object.keys(address).length > 0 ? String(address?.district?.id) : '',
-        state: Object.keys(address).length > 0 ? String(address?.ward?.id) : '',
-        is_primary_address:
-          Object.keys(address).length > 0 ? address.addressOrder : false,
-        is_shipping_address:
-          Object.keys(address).length > 0 ? address.addressGet : false,
-        primary: Object.keys(address).length > 0 ? address.primary : false,
-      },
+      address:
+        Object.keys(address).length > 0
+          ? {
+              longitude: newListData.longitude || 0,
+              latitude: newListData.latitude || 0,
+              address_title:
+                Object.keys(address).length > 0
+                  ? `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`
+                  : '',
+              address_type: 'Billing',
+              address_line1:
+                Object.keys(address).length > 0
+                  ? String(address?.detailAddress)
+                  : '',
+              city:
+                Object.keys(address).length > 0
+                  ? String(address?.city?.id)
+                  : '',
+              county:
+                Object.keys(address).length > 0
+                  ? String(address?.district?.id)
+                  : '',
+              state:
+                Object.keys(address).length > 0
+                  ? String(address?.ward?.id)
+                  : '',
+              is_primary_address:
+                Object.keys(address).length > 0 ? address.addressOrder : false,
+              is_shipping_address:
+                Object.keys(address).length > 0 ? address.addressGet : false,
+              primary:
+                Object.keys(address).length > 0 ? address.primary : false,
+            }
+          : null,
       contact:
         Object.keys(contact).length > 0
           ? {
@@ -211,7 +221,7 @@ const AddingNewCustomer = () => {
                   ? String(contact?.ward?.id)
                   : '',
             }
-          : undefined,
+          : null,
 
       customer_type:
         newListData.customer_type === getLabel('individual')
