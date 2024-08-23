@@ -148,7 +148,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
             initialNumToRender={10}
             windowSize={21}
             decelerationRate={'fast'}
-            bounces={true}
+            bounces={false}
             renderItem={({item}) => (
               <Pressable
                 style={{marginVertical: 8}}

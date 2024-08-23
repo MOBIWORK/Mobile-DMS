@@ -55,6 +55,7 @@ export function* onLoadAppModeAndTheme() {
 export function* onCheckInData(action: PayloadAction) {
   if (appActions.onCheckIn.match(action)) {
     try {
+      // console.log('actionCheckin', action.payload);
       yield put(appActions.setProcessingStatus(true));
       const response: ResponseGenerator = yield call(
         postChecking,
