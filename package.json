@@ -65,7 +65,7 @@
     "react-native-paper-dates": "^0.20.5",
     "react-native-pie-chart": "^3.0.2",
     "react-native-progress-circle": "^2.1.0",
-    "react-native-reanimated": "~3.3.0",
+    "react-native-reanimated": "3.15.1",
     "react-native-redash": "^18.1.2",
     "react-native-render-html": "^6.3.4",
     "react-native-restart": "^0.0.27",

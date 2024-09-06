@@ -40,7 +40,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
         paddingTop: 0,
       }}>
       <AppHeader
-        style={{marginTop: 0}}
+        style={{marginTop: 16}}
         label={title}
         labelStyle={{fontSize: 18}}
         hiddenBackButton={!onClose}
