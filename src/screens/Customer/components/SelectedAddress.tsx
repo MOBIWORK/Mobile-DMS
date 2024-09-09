@@ -5,31 +5,33 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import {MainLayout} from '../../../layouts';
-import {Block, SvgIcon, AppText as Text} from '../../../components/common';
+import { MainLayout } from '../../../layouts';
+import { Block, SvgIcon, AppText as Text } from '../../../components/common';
 import {
   FlatList,
   Pressable,
+  // ScrollView,
   StyleSheet,
   TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
-import {Searchbar} from 'react-native-paper';
-import {ImageAssets} from '../../../assets';
-import {ExtendedTheme, useTheme} from '@react-navigation/native';
-import {AddressSelected, AddressType} from './FormAddress';
-import {ResponseGenerator} from '../../../saga/app-saga/saga';
-import {AppService} from '../../../services';
-import {ApiConstant, AppConstant} from '../../../const';
-import {IFilterType} from '../../../components/common/FilterListComponent';
+import { Searchbar } from 'react-native-paper';
+import { ImageAssets } from '../../../assets';
+import { ExtendedTheme, useTheme } from '@react-navigation/native';
+import { AddressSelected, AddressType } from './FormAddress';
+import { ResponseGenerator } from '../../../saga/app-saga/saga';
+import { AppService } from '../../../services';
+import { ApiConstant, AppConstant } from '../../../const';
+import { IFilterType } from '../../../components/common/FilterListComponent';
 import {
   ListCity,
   ListDistrict,
   ListWard,
 } from '../../../redux-store/app-reducer/type';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { ScrollView } from 'react-native-gesture-handler';
 const SelectedAddress: FC<SelectedAddressProps> = ({
   setScreen,
   data,
@@ -38,7 +40,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
 }) => {
   const theme = useTheme();
   const styles = createStyle(theme);
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
 
   const [searchValue, setSearch] = useState<string>('');
   const [listCity, setListCity] = useState<IFilterType[]>([]);
@@ -49,14 +51,14 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
       data.length === 0
         ? AddressType.city
         : data.length === 1
-        ? AddressType.district
-        : data.length === 2
-        ? AddressType.ward
-        : '';
+          ? AddressType.district
+          : data.length === 2
+            ? AddressType.ward
+            : '';
     startTransition(() => {
       setData([
         ...data,
-        {type: type, value: item.label!.toString(), id: item.value},
+        { type: type, value: item.label!.toString(), id: item.value },
       ]);
     });
   };
@@ -105,8 +107,8 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
           {item.type === AddressType.city
             ? `${getLabel('province')}/${getLabel('city')}`
             : item.type === AddressType.district
-            ? getLabel('district')
-            : getLabel('ward')}
+              ? getLabel('district')
+              : getLabel('ward')}
         </Text>
         <Block
           direction="row"
@@ -132,34 +134,32 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
   const ListAddressContent = () => {
     return (
       <Block marginTop={16}>
-        <Text style={{color: theme.colors.text_primary}}>
+        <Text style={{ color: theme.colors.text_primary }}>
           {data.length === 0
             ? `${getLabel('province')}/${getLabel('city')}`
             : data.length === 1
-            ? getLabel('district')
-            : data.length === 2
-            ? getLabel('ward')
-            : ''}
+              ? getLabel('district')
+              : data.length === 2
+                ? getLabel('ward')
+                : ''}
         </Text>
         {listCity.length > 0 && (
-          <FlatList
-            style={{marginTop: 16, height: data.length === 0 ? '80%' : '70%'}}
-            data={listCity}
-            initialNumToRender={10}
-            windowSize={21}
-            decelerationRate={'fast'}
-            bounces={false}
-            renderItem={({item}) => (
+          <ScrollView
+            style={{ marginTop: 16, height: data.length === 0 ? '80%' : '70%' }}
+            showsVerticalScrollIndicator={false}
+          >
+            {listCity.map((item, index) => (
               <Pressable
-                style={{marginVertical: 8}}
-                onPress={() => handleItem(item)}>
+                key={item.value}
+                style={{ marginVertical: 8 }}
+                onPress={() => handleItem(item)}
+              >
                 <Text color={theme.colors.text_primary} fontSize={16}>
                   {item.label}
                 </Text>
               </Pressable>
-            )}
-            showsVerticalScrollIndicator={false}
-          />
+            ))}
+          </ScrollView>
         )}
       </Block>
     );
@@ -227,7 +227,7 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
   }, [data.length]);
 
   return (
-    <MainLayout style={{paddingHorizontal: 16}}>
+    <MainLayout style={{ paddingHorizontal: 16 }}>
       <Block
         direction="row"
         alignItems="center"
@@ -259,6 +259,8 @@ const SelectedAddress: FC<SelectedAddressProps> = ({
         );
       })}
       <ListAddressContent />
+
+
     </MainLayout>
   );
 };
