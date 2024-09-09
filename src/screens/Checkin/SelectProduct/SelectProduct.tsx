@@ -113,7 +113,6 @@ const SelectProducts = () => {
   const [industry, setIndustry] = useState<IFilterType>(initFilterValue);
   const [isSearch, setShowSearch] = useState<boolean>(false);
   const [textSearch, setTextSearch] = useState<string>('');
-  const [productName, setProductName] = useState<string>('');
   const [filterProduct, setFilterProduct] = useState({
     brand: '',
     group: '',
@@ -431,7 +430,7 @@ const SelectProducts = () => {
       item_group: filterProduct.group,
       brand: filterProduct.brand,
       industry: filterProduct.industry,
-      item_name: textSearch,
+      key_search: textSearch,
       page_number: null,
       page_size: 20,
       customer: route.params.customer_id,
@@ -550,7 +549,6 @@ const SelectProducts = () => {
         item_group: filterProduct.group,
         brand: filterProduct.brand,
         industry: filterProduct.industry,
-        item_name: productName,
         page_number: pageNumber,
         page_size: 20,
         customer: route.params.customer_id,

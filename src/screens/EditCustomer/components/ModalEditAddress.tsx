@@ -465,7 +465,6 @@ const ModalEditAddress = ({
     };
 
     if (type === 'address' || type === 'Adding') {
-      console.log('case 1');
       startTransition(() => {
         setData(prev => ({
           ...prev,
