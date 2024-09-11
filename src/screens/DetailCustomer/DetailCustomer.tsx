@@ -1,5 +1,4 @@
 import {
-  ActivityIndicator,
   Image,
   ImageStyle,
   StyleSheet,
@@ -10,10 +9,8 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import React, {
-  memo,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   useTransition,
@@ -48,6 +45,7 @@ import {deleteCustomer} from '../../services/customerService';
 import {dispatch} from '../../utils/redux';
 import {appActions} from '../../redux-store/app-reducer/reducer';
 import {CommonUtils} from '../../utils';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
 
 const DetailCustomer = () => {
   const theme = useTheme();
@@ -56,6 +54,9 @@ const DetailCustomer = () => {
   const {t: getLabel} = useTranslation();
 
   const params = useRoute<RouterProp<'DETAIL_CUSTOMER'>>().params;
+  const isRefreshCustomerDetail = useSelector(
+    state => state.customer.isRefreshCustomerDetail,
+  );
 
   const [isPending, startTrans] = useTransition();
   const [data, setData] = useState<any>(null);
@@ -107,8 +108,10 @@ const DetailCustomer = () => {
   );
 
   useEffect(() => {
-    getDetailCustomer();
-  }, []);
+    if (isFocus) {
+      getDetailCustomer();
+    }
+  }, [isFocus]);
 
   const routes = useRef([
     {key: 'first', title: getLabel('overview')},

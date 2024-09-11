@@ -1,11 +1,13 @@
 export type IProduct = {
   listCustomerVisit: any;
-  listCustomer: {
-    data: any[];
-    page_number: number;
-    page_size: number;
-    total: number;
-  } | any;
+  listCustomer:
+    | {
+        data: any[];
+        page_number: number;
+        page_size: number;
+        total: number;
+      }
+    | any;
   newCustomer: any[];
   listCustomerType: any[];
   mainAddress: any;
@@ -13,5 +15,6 @@ export type IProduct = {
   listCustomerTerritory: any[];
   listCustomerRoute: any[];
   listTypeCustomer: any[];
-  listChannel: any[],
+  listChannel: any[];
+  isRefreshCustomerDetail: boolean;
 };

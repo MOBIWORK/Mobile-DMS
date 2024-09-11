@@ -62,6 +62,8 @@ import {DatePickerModal} from 'react-native-paper-dates';
 import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import {CommonUtils} from '../../../utils';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {ApiConstant} from '../../../const';
 
 type Props = {
   data: DetailCustomerType;
@@ -284,7 +286,8 @@ const FormData = (props: Props) => {
     });
   }, [modalChoose.type]);
 
-  const onUpdateCustomer = useCallback(() => {
+  const onUpdateCustomer = useCallback(async () => {
+    dispatch(appActions.setProcessingStatus(true));
     // let dataAddress = dataCustomer.address;
     let route = dataCustomer?.routers;
     route?.[0].frequency &&
@@ -351,11 +354,13 @@ const FormData = (props: Props) => {
       ],
       // ...dataCustomer,
     };
-    startTransition(() => {
-      dispatch(
-        customerActions.updateCustomerAction(dataUpdate, dataCustomer?.name!),
-      );
-    });
+    const response: any = await CustomerService.updateCustomer(dataUpdate);
+    if (response?.status === ApiConstant.STT_OK) {
+      customerActions.onRefreshCustomerDetail(true);
+      props.goBack();
+    }
+
+    dispatch(appActions.setProcessingStatus(false));
   }, [dataCustomer]);
 
   const onCloseEditAddress = () => {
