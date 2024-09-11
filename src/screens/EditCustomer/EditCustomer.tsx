@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View, ViewStyle} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import isEqual from 'react-fast-compare';
-import {AppHeader, Block, SvgIcon} from '../../components/common';
+import {AppDialog, AppHeader, Block, SvgIcon} from '../../components/common';
 import {AppTheme, useTheme} from '../../layouts/theme';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {goBack} from '../../navigation/navigation-service';

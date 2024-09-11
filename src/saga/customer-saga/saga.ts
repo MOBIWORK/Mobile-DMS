@@ -153,14 +153,14 @@ export function* updateCustomerSaga(action: PayloadAction) {
   if (customerActions.updateCustomerAction.match(action)) {
     try {
       console.log(action.payload.data, 'payload send');
-      yield put(appActions.onLoadApp());
+      // yield put(appActions.onLoadApp());
       const response: ResponseGenerator = yield call(
         updateCustomer,
         action.payload.data,
       );
-      if (response.message === 'ok') {
-        Keyboard.dismiss();
-      }
+      // if (response.message === 'ok') {
+      //   Keyboard.dismiss();
+      // }
     } catch (err) {
       console.log('run error');
       console.error(err, 'err');

@@ -98,6 +98,7 @@ const AddingNewCustomer = () => {
     mobile_no: '',
     industry: '',
     name: '',
+    frequency: [1, 2, 3, 4],
   });
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
@@ -153,6 +154,8 @@ const AddingNewCustomer = () => {
     dispatch(setProcessingStatus(true));
     let address: MainAddress = mainAddress;
     let contact: MainContactAddress = mainContactAddress;
+
+    console.log('frequency', newListData?.frequency);
 
     const updateListData: DataCustomersUpdate = {
       router: newListData?.router
@@ -251,21 +254,21 @@ const AddingNewCustomer = () => {
     };
 
     // console.log(updateListData, 'update List Data');
-    if (isInvalid(newListData)) {
-      dispatch(setNewCustomer(newListData));
-      await CommonUtils.CheckNetworkState();
-      const response: any = await CustomerService.addNewCustomer(
-        updateListData,
-      );
-      if (response?.status === ApiConstant.STT_CREATED) {
-        dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
-        navigation.navigate(ScreenConstant.MAIN_TAB, {
-          screen: ScreenConstant.CUSTOMER,
-        });
-      }
-    } else {
-      Alert.alert('Vui lòng nhập đầy đủ thông tin');
-    }
+    // if (isInvalid(newListData)) {
+    //   dispatch(setNewCustomer(newListData));
+    //   await CommonUtils.CheckNetworkState();
+    //   const response: any = await CustomerService.addNewCustomer(
+    //     updateListData,
+    //   );
+    //   if (response?.status === ApiConstant.STT_CREATED) {
+    //     dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
+    //     navigation.navigate(ScreenConstant.MAIN_TAB, {
+    //       screen: ScreenConstant.CUSTOMER,
+    //     });
+    //   }
+    // } else {
+    //   Alert.alert('Vui lòng nhập đầy đủ thông tin');
+    // }
 
     dispatch(setProcessingStatus(false));
   };

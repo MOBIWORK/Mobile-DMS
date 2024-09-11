@@ -711,10 +711,6 @@ const ListFilterAdding = (props: Props) => {
           <Block style={styles.headerBottomSheet}>
             <TouchableOpacity
               onPress={() => {
-                setData(prev => ({
-                  ...prev,
-                  frequency: '',
-                }));
                 filterRef.current?.close();
               }}>
               <AppIcons
