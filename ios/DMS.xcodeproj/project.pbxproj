@@ -711,7 +711,7 @@
 				CODE_SIGN_ENTITLEMENTS = DMS/DMS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5YLS976TT9;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
@@ -733,7 +733,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.20;
+				MARKETING_VERSION = 1.0.23;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -760,7 +760,7 @@
 				CODE_SIGN_ENTITLEMENTS = DMS/DMS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5YLS976TT9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DMS/Info.plist;
@@ -780,7 +780,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.20;
+				MARKETING_VERSION = 1.0.23;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

@@ -328,7 +328,7 @@ export type IDataCustomer = {
 export interface IDataCustomers {
   name: string;
   customer_name: string;
-  customer_code: string;
+  customer_code?: string;
   customer_type: string;
   customer_group: string;
   sfa_customer_type: string;
@@ -350,6 +350,8 @@ export interface IDataCustomers {
   lat?: any;
   long?: any;
   router?: [{channel_name: string; name: string; isSelected?: boolean}];
+  longitude?: number;
+  latitude?: number;
 }
 
 export interface DetailCustomerType {
@@ -433,7 +435,7 @@ export type ContactUpdate = {
   state: string;
 };
 export type DataCustomersUpdate = {
-  customer_code: string;
+  customer_code?: string;
   customer_name: string;
   customer_group: string;
   territory?: string;

@@ -16,26 +16,23 @@ import React, {
   useTransition,
 } from 'react';
 import {AppIcons, Block, AppText as Text} from '../../../components/common';
-import {ApiConstant, AppConstant} from '../../../const';
+import {AppConstant} from '../../../const';
 import {Searchbar} from 'react-native-paper';
 
-import {listBirthDayType, listFilterType, listFrequencyType} from './data';
+import {listFilterType, listFrequencyType} from './data';
 import {IValueType} from '../Customer';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {
-  IDataCustomer,
   IDataCustomers,
   ListChannel,
   ListCustomerRoute,
-  ListCustomerTerritory,
   ListCustomerType,
   ListTypeCustomer,
 } from '../../../models/types';
 import {useSelector} from '../../../config/function';
 import {useTranslation} from 'react-i18next';
 import {ImageAssets} from '../../../assets';
-import {AppService} from '../../../services';
 
 type Props = {
   type: string;
@@ -43,7 +40,7 @@ type Props = {
   setValueFilter: (value: React.SetStateAction<IValueType>) => void;
   valueFilter: IValueType;
   setData: React.Dispatch<React.SetStateAction<IDataCustomers>>;
-  data: IDataCustomer;
+  data: IDataCustomers;
 };
 
 const ListFilterAdding = (props: Props) => {

@@ -44,7 +44,7 @@ import {shallowEqual} from 'react-redux';
 type Props = {
   filterRef: React.RefObject<BottomSheetMethods>;
   setTypeFilter: React.Dispatch<React.SetStateAction<string>>;
-  valueFilter: IDataCustomer;
+  valueFilter: IDataCustomers;
   setData: React.Dispatch<React.SetStateAction<IDataCustomers>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   valueDate: Date | any;
@@ -148,20 +148,20 @@ const FormAdding = (props: Props) => {
           })
         }
       />
-      <AppInput
-        label={translate('customerCode')}
-        value={valueFilter.customer_code}
-        editable={true}
-        hiddenRightIcon={true}
-        isRequire={true}
-        contentStyle={styles.contentStyle}
-        styles={{marginBottom: 20}}
-        onChangeValue={text =>
-          startTransition(() => {
-            setData(prev => ({...prev, customer_code: text}));
-          })
-        }
-      />
+      {/*<AppInput*/}
+      {/*  label={translate('customerCode')}*/}
+      {/*  value={valueFilter.customer_code}*/}
+      {/*  editable={true}*/}
+      {/*  hiddenRightIcon={true}*/}
+      {/*  isRequire={true}*/}
+      {/*  contentStyle={styles.contentStyle}*/}
+      {/*  styles={{marginBottom: 20}}*/}
+      {/*  onChangeValue={text =>*/}
+      {/*    startTransition(() => {*/}
+      {/*      setData(prev => ({...prev, customer_code: text}));*/}
+      {/*    })*/}
+      {/*  }*/}
+      {/*/>*/}
       <AppInput
         label={translate('typeCustomer')}
         isRequire={true}
