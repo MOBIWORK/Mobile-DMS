@@ -317,7 +317,6 @@ const FormData = (props: Props) => {
               }))
           : [],
       // credit_limits: dataCustomer.credit_limits || '',
-      customer_code: dataCustomer.customer_code || '',
       customer_group:
         dataCustomer.customer_group != null
           ? dataCustomer.customer_group
@@ -578,22 +577,6 @@ const FormData = (props: Props) => {
           onChangeValue={text =>
             startTransition(() => {
               setDataCustomer(prev => ({...prev, customer_name: text}));
-            })
-          }
-        />
-        <AppInput
-          label={translate('customerCode')}
-          value={
-            dataCustomer.customer_code ? dataCustomer.customer_code : '---'
-          }
-          editable={true}
-          hiddenRightIcon={true}
-          isRequire={true}
-          contentStyle={styles.contentStyle}
-          styles={{marginBottom: 20}}
-          onChangeValue={text =>
-            startTransition(() => {
-              setDataCustomer(prev => ({...prev, customer_code: text}));
             })
           }
         />

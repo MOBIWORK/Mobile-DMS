@@ -64,7 +64,6 @@ import {
 import isEqual from 'react-fast-compare';
 import Modal from 'react-native-modal';
 import ModalArea from './components/ModalArea';
-import {storage} from '../../utils/commom.utils';
 import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 
 function listDataReducer(newState: any, oldState: any) {
@@ -87,7 +86,6 @@ const AddingNewCustomer = () => {
     initValueState.current,
   );
   const initStateData = useRef<IDataCustomers>({
-    customer_code: '',
     customer_name: '',
     customer_type: '',
     customer_group: '',
@@ -130,7 +128,6 @@ const AddingNewCustomer = () => {
   const listTypeCustomer = useSelector(
     state => state.customer.listTypeCustomer,
   );
-  const listChannel = useSelector(state => state.customer.listChannel);
   const snapPoint = useMemo(() => ['60%'], []);
   const filterRef = useRef<BottomSheetMethods>(null);
   const cameraBottomRef = useRef<BottomSheetMethods>(null);
@@ -139,10 +136,9 @@ const AddingNewCustomer = () => {
   //
   // }, []);
 
-  const isInvalid = (newListData: IDataCustomer) => {
+  const isInvalid = (newListData: any) => {
     return (
       newListData?.customer_name &&
-      newListData?.customer_code &&
       newListData?.customer_type &&
       newListData?.frequency &&
       newListData?.router &&
@@ -150,16 +146,14 @@ const AddingNewCustomer = () => {
     );
   };
 
-  const onPressAdding = async (newListData: IDataCustomer) => {
+  const onPressAdding = async (newListData: any) => {
     dispatch(setProcessingStatus(true));
     let address: MainAddress = mainAddress;
     let contact: MainContactAddress = mainContactAddress;
 
-    console.log('frequency', newListData?.frequency);
-
     const updateListData: DataCustomersUpdate = {
       router: newListData?.router
-        ? newListData?.router.map(item => item.name)
+        ? newListData?.router.map((item: any) => item.name)
         : [],
       frequency: newListData?.frequency
         ? newListData.frequency.toString().replaceAll(',', ';')
@@ -240,7 +234,6 @@ const AddingNewCustomer = () => {
       custom_birthday: newListData.custom_birthday
         ? newListData.custom_birthday / 1000
         : new Date().getTime() / 1000,
-      customer_code: newListData.customer_code || '',
       customer_name: newListData.customer_name || '',
       customer_group: newListData.customer_group || '',
       sfa_customer_type: newListData.sfa_customer_type || '',
@@ -254,21 +247,21 @@ const AddingNewCustomer = () => {
     };
 
     // console.log(updateListData, 'update List Data');
-    // if (isInvalid(newListData)) {
-    //   dispatch(setNewCustomer(newListData));
-    //   await CommonUtils.CheckNetworkState();
-    //   const response: any = await CustomerService.addNewCustomer(
-    //     updateListData,
-    //   );
-    //   if (response?.status === ApiConstant.STT_CREATED) {
-    //     dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
-    //     navigation.navigate(ScreenConstant.MAIN_TAB, {
-    //       screen: ScreenConstant.CUSTOMER,
-    //     });
-    //   }
-    // } else {
-    //   Alert.alert('Vui lòng nhập đầy đủ thông tin');
-    // }
+    if (isInvalid(newListData)) {
+      dispatch(setNewCustomer(newListData));
+      await CommonUtils.CheckNetworkState();
+      const response: any = await CustomerService.addNewCustomer(
+        updateListData,
+      );
+      if (response?.status === ApiConstant.STT_CREATED) {
+        dispatch(checkinActions.setRefreshCustomerWhenAddNew(true));
+        navigation.navigate(ScreenConstant.MAIN_TAB, {
+          screen: ScreenConstant.CUSTOMER,
+        });
+      }
+    } else {
+      Alert.alert('Vui lòng nhập đầy đủ thông tin');
+    }
 
     dispatch(setProcessingStatus(false));
   };
