@@ -18,6 +18,7 @@ import React, {
   useTransition,
   useState,
   useEffect,
+  useLayoutEffect,
 } from 'react';
 import { ScreenConstant } from '../../const';
 import AppImage from '../../components/common/AppImage';
@@ -59,6 +60,7 @@ import FilterListComponent, {
   IFilterType,
 } from '../../components/common/FilterListComponent';
 import { checkinActions } from '../../redux-store/checkin-reducer/reducer';
+import { CustomerService } from '../../services';
 export type IValueType = {
   customerType: string;
   customerGroupType: string;
@@ -127,6 +129,9 @@ const Customer = () => {
     first: 'all',
     second: 'all',
   });
+  const listTypeCustomer = useSelector(
+    state => state.customer.listTypeCustomer,
+  );
   const [loading, setLoading] = useState(true);
   const currentIndex = useRef<number>(0);
   const [isPending, startTransition] = useTransition();
@@ -351,6 +356,26 @@ const Customer = () => {
       dispatch(customerActions.onGetCustomer());
     }
   }, [value]);
+  const getTypeCustomer = async () => {
+    const response: any = await CustomerService.getTypeCusTomer();
+    if (response?.result.length > 0) {
+      dispatch(customerActions.setListTypeCustomer(response.result));
+    }
+  };
+  const getChannel = async () => {
+    const response: any = await CustomerService.getChannel();
+    if (response?.result.length > 0) {
+      dispatch(customerActions.setListChannel(response.result));
+    }
+  };
+  useLayoutEffect(() => {
+    if (listTypeCustomer.length === 0) {
+      getTypeCustomer();
+    }
+    if (listTypeCustomer.length === 0) {
+      getChannel();
+    }
+  }, []);
 
   const onEndReachedThreshold = useCallback(() => {
     const totalPage = Math.ceil(
