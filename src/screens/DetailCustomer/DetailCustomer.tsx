@@ -54,9 +54,6 @@ const DetailCustomer = () => {
   const {t: getLabel} = useTranslation();
 
   const params = useRoute<RouterProp<'DETAIL_CUSTOMER'>>().params;
-  const isRefreshCustomerDetail = useSelector(
-    state => state.customer.isRefreshCustomerDetail,
-  );
 
   const [isPending, startTrans] = useTransition();
   const [data, setData] = useState<any>(null);
@@ -89,7 +86,7 @@ const DetailCustomer = () => {
 
   const getDetailCustomer = async () => {
     try {
-      setLoading(true);
+      dispatch(appActions.setProcessingStatus(true));
       let res: any = await CustomerService.getCustomerDetail(params?.data.name);
       if (res.message === 'ok' || Object.keys(res.result).length > 0) {
         setData(res.result);
@@ -97,8 +94,7 @@ const DetailCustomer = () => {
     } catch (err) {
       console.log('[error]: ', err);
     } finally {
-      // mounted.current = false;
-      setLoading(false);
+      dispatch(appActions.setProcessingStatus(false));
     }
   };
 

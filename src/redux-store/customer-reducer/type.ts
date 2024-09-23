@@ -16,5 +16,4 @@ export type IProduct = {
   listCustomerRoute: any[];
   listTypeCustomer: any[];
   listChannel: any[];
-  isRefreshCustomerDetail: boolean;
 };
