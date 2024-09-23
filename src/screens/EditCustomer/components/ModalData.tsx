@@ -7,13 +7,13 @@ import {
   TextInputSubmitEditingEventData,
   FlatList,
 } from 'react-native';
-import React, { useCallback, useMemo, useState, useTransition } from 'react';
+import React, {useCallback, useMemo, useState, useTransition} from 'react';
 import isEqual from 'react-fast-compare';
-import { AppIcons, Block, AppText as Text } from '../../../components/common';
+import {AppIcons, Block, AppText as Text} from '../../../components/common';
 import Modal from 'react-native-modal';
-import { AppTheme, useTheme } from '../../../layouts/theme';
-import { useTranslation } from 'react-i18next';
-import { AppConstant } from '../../../const';
+import {AppTheme, useTheme} from '../../../layouts/theme';
+import {useTranslation} from 'react-i18next';
+import {AppConstant} from '../../../const';
 import {
   listFilterType,
   listFrequencyType,
@@ -25,9 +25,9 @@ import {
   ListCustomerType,
   ListTypeCustomer,
 } from '../../../models/types';
-import { Searchbar } from 'react-native-paper';
-import { ImageAssets } from '../../../assets';
-import { useSelector } from '../../../config/function';
+import {Searchbar} from 'react-native-paper';
+import {ImageAssets} from '../../../assets';
+import {useSelector} from '../../../config/function';
 type Props = {
   type: string;
   isVisible: boolean;
@@ -36,10 +36,10 @@ type Props = {
   setData: React.Dispatch<React.SetStateAction<DetailCustomerType>>;
 };
 
-const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
+const ModalData = ({onBackButton, type, isVisible, setData, data}: Props) => {
   const theme = useTheme();
   const styles = modalStyles(theme);
-  const { t: getLabel } = useTranslation();
+  const {t: getLabel} = useTranslation();
 
   const [filterText, setFilterText] = useState('');
   const [searchValue, setSearchValue] = useState('');
@@ -101,13 +101,23 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
         const isItemInFrequency = prev?.frequency?.includes(item.value);
         const updatedFrequency = isItemInFrequency
           ? prev?.frequency?.filter(
-            (selectedItem: any) => selectedItem !== item.value,
-          )
+              (selectedItem: any) => selectedItem !== item.value,
+            )
           : [...(prev?.frequency || []), item.value];
         return {
           ...prev,
           frequency: updatedFrequency,
-          routers: [{ frequency: updatedFrequency, router_code: prev.routers?.[0]?.router_code ? prev.routers?.[0]?.router_code : '', router_name: prev.routers?.[0]?.router_code ? prev.routers?.[0]?.router_code : '' }]
+          routers: [
+            {
+              frequency: updatedFrequency,
+              router_code: prev.routers?.[0]?.router_code
+                ? prev.routers?.[0]?.router_code
+                : '',
+              router_name: prev.routers?.[0]?.router_code
+                ? prev.routers?.[0]?.router_code
+                : '',
+            },
+          ],
         };
       });
     },
@@ -154,6 +164,7 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
                     ...prev,
                     customer_type: item.title,
                   }));
+                  onBackButton();
                 }}>
                 <Text
                   style={styles.itemText(
@@ -208,7 +219,7 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
               onSubmitEditing={onSubmitEnd}
               icon={ImageAssets.SearchIcon}
               placeholderTextColor={theme.colors.text_disable}
-              inputStyle={{ color: theme.colors.text_primary }}
+              inputStyle={{color: theme.colors.text_primary}}
               style={styles.searchBar}
               iconColor={theme.colors.text_disable}
               onClearIconPress={() => setSearchValue('')}
@@ -220,7 +231,7 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
             showsVerticalScrollIndicator={false}
             windowSize={11}
             initialNumToRender={10}
-            renderItem={({ item }) => {
+            renderItem={({item}) => {
               return (
                 <TouchableOpacity
                   style={styles.containItemBottomView}
@@ -298,7 +309,7 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
             showsVerticalScrollIndicator={false}
             windowSize={11}
             initialNumToRender={10}
-            renderItem={({ item }) => {
+            renderItem={({item}) => {
               return (
                 <TouchableOpacity
                   style={styles.containItemBottomView}
@@ -346,9 +357,7 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.titleHeaderText}>
-              {getLabel('channel')}
-            </Text>
+            <Text style={styles.titleHeaderText}>{getLabel('channel')}</Text>
             <Text style={styles.titleHeaderText} />
           </Block>
           {/* <Block
@@ -376,7 +385,7 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
             showsVerticalScrollIndicator={false}
             windowSize={11}
             initialNumToRender={10}
-            renderItem={({ item }) => {
+            renderItem={({item}) => {
               return (
                 <TouchableOpacity
                   style={styles.containItemBottomView}
@@ -432,7 +441,7 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
             <Text style={styles.titleHeaderText}>{getLabel('frequency')}</Text>
             <Text
               onPress={onBackButton}
-              style={[styles.titleHeaderText, { color: theme.colors.primary }]}>
+              style={[styles.titleHeaderText, {color: theme.colors.primary}]}>
               Lưu
             </Text>
           </Block>
@@ -442,7 +451,7 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
                 style={styles.containItemBottomView}
                 key={item.id.toString()}
                 onPress={() => handlePress(item)}>
-                <Text style={{ marginVertical: 8 }}>{item.title}</Text>
+                <Text style={{marginVertical: 8}}>{item.title}</Text>
                 {data.frequency && data.frequency.includes(item.value) && (
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.Feather}
@@ -482,10 +491,16 @@ const ModalData = ({ onBackButton, type, isVisible, setData, data }: Props) => {
                     style={styles.containItemBottomView}
                     key={item.name}
                     onPress={() => {
-                      console.log(item, 'item')
+                      console.log(item, 'item');
                       setData(prev => ({
                         ...prev,
-                        routers: [{ frequency: prev?.routers?.[0]?.frequency || '', router_code: item.channel_code, router_name: item.channel_name }],
+                        routers: [
+                          {
+                            frequency: prev?.routers?.[0]?.frequency || '',
+                            router_code: item.channel_code,
+                            router_name: item.channel_name,
+                          },
+                        ],
                       }));
                       onBackButton();
                     }}>
@@ -546,13 +561,13 @@ const modalStyles = (theme: AppTheme) =>
       color: theme.colors.text_primary,
     } as TextStyle,
     itemText: (text: string, value?: string) =>
-    ({
-      fontSize: 16,
-      fontWeight: text === value ? '600' : '400',
-      lineHeight: 21,
-      marginBottom: 16,
-      color: theme.colors.text_primary,
-    } as TextStyle),
+      ({
+        fontSize: 16,
+        fontWeight: text === value ? '600' : '400',
+        lineHeight: 21,
+        marginBottom: 16,
+        color: theme.colors.text_primary,
+      } as TextStyle),
     searchBar: {
       backgroundColor: theme.colors.bg_default,
       borderRadius: 10,

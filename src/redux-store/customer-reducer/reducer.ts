@@ -26,7 +26,6 @@ const initialState: IProduct = {
   mainContactAddress: {},
   listTypeCustomer: [],
   listChannel: [],
-  isRefreshCustomerDetail: false,
 };
 
 const customerSlice = createSlice({
@@ -78,9 +77,6 @@ const customerSlice = createSlice({
       state.mainAddress = null;
       state.listTypeCustomer = [];
       state.listChannel = [];
-    },
-    onRefreshCustomerDetail: (state, action: PayloadAction<boolean>) => {
-      state.isRefreshCustomerDetail = action.payload;
     },
   },
 });

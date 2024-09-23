@@ -785,23 +785,25 @@ const ListVisit = () => {
       if (Object.keys(filterDataRef.current).length > 0) {
         await getCustomer({
           ...filterDataRef.current,
+          lat: location?.coords?.latitude,
+          long: location?.coords?.longitude,
           search_key: searchVisit,
         });
-        // sortDataCustomer(distanceFilterValue);
       } else {
         await getCustomer({
           ...filterParams,
+          lat: location?.coords?.latitude,
+          long: location?.coords?.longitude,
           router: filterParams?.router?.channel_code,
           search_key: searchVisit,
         });
-        // sortDataCustomer(distanceFilterValue);
       }
     } catch (er) {
       console.log('errDispatch: ', er);
     } finally {
       setLoading(false);
     }
-  }, [listCustomer, searchVisit]);
+  }, [listCustomer, searchVisit, filterDataRef.current, filterParams]);
 
   const handleCheckin = useCallback(
     (
