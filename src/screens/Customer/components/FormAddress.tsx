@@ -1,7 +1,6 @@
 import {
   Keyboard,
   Platform,
-  ScrollView,
   StyleSheet,
   TextStyle,
   TouchableOpacity,
@@ -51,6 +50,7 @@ import { isLocationEnabled } from 'react-native-android-location-enabler';
 import { IUpdateAddress } from '../../../services/checkinService';
 import { appActions } from '../../../redux-store/app-reducer/reducer';
 import { shallowEqual } from 'react-redux';
+import { ScrollView } from 'react-native-gesture-handler';
 
 type Props = {
   onPressClose: () => void;
@@ -509,7 +509,7 @@ const FormAddress = (props: Props) => {
           }
         />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
-        <Block block>
+        < >
           <Block style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
               label={getLabel('mainAddress')}
@@ -765,7 +765,7 @@ const FormAddress = (props: Props) => {
               </TouchableOpacity>
             </Block>
           </Block>
-        </Block>
+        </>
       ) : (
         <>
           <Block style={styles.headerContentView(getLabel('mainContact'))}>
