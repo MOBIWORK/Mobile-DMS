@@ -313,7 +313,13 @@ const CheckInLocation = () => {
           ...dataCheckIn,
           item: {
             ...dataCheckIn.item,
-            customer_primary_address: `${addressObj.detail},${addressObj.ward.value},${addressObj.district.value},${addressObj.province.value}`,
+            customer_primary_address: {
+              address_title: `${addressObj.detail},${addressObj.ward.value},${addressObj.district.value},${addressObj.province.value}`,
+              address_line1: addressObj.detail,
+              city: addressObj.province.code,
+              county: addressObj.district.code,
+              state: addressObj.ward.code,
+            },
           },
         }),
       );

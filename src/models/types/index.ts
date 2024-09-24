@@ -352,6 +352,7 @@ export interface IDataCustomers {
   router?: [{channel_name: string; name: string; isSelected?: boolean}];
   longitude?: number;
   latitude?: number;
+  credit_limit?: any;
 }
 
 export interface DetailCustomerType {
