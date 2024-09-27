@@ -10,25 +10,20 @@ import {
 } from 'react-native';
 import {NavigationProp, RouterProp} from '../../../navigation/screen-type';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
-import {AppBottomSheet, AppHeader, Block} from '../../../components/common';
+import {AppHeader, Block} from '../../../components/common';
 import Detail from './Detail';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Report from './Report/Report';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {AppConstant} from '../../../const';
-import FilterListComponent, {
-  IFilterType,
-} from '../../../components/common/FilterListComponent';
 import moment from 'moment';
-import {CommonUtils} from '../../../utils';
-import {DatePickerModal} from 'react-native-paper-dates';
-import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
-import {useMMKVString} from 'react-native-mmkv';
 import {CustomerService} from '../../../services';
-import {IVisitRouteDetail} from '../../../models/types';
+import {ItemNoteVisitDetail, IVisitRouteDetail} from '../../../models/types';
 import {useDeepCompareEffect} from '../../../config/function';
 
 import isEqual from 'react-fast-compare';
+import {useDispatch} from 'react-redux';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {ApiConstant} from '../../../const';
 
 const Index = () => {
   const {t: getLabel} = useTranslation();
@@ -37,89 +32,22 @@ const Index = () => {
   const layout = useWindowDimensions();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouterProp<'VISIT_DETAIL'>>();
-  const snapPoints = useMemo(() => ['30%'], []);
+  const dispatch = useDispatch();
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [isPending, startEffect] = useTransition();
-
-  const [languageCode] = useMMKVString(AppConstant.Language_Code);
-
-  const [openDate, setOpenDate] = React.useState<boolean>(false);
-  const [date, setDate] = useState<Date>();
 
   const [filterTime, setFilterTime] = useState<string>(
     `${getLabel('today')}, ${moment(new Date()).format('DD/MM/YYYY')}`,
   );
-  const [filterData, setFilterData] = useState<IFilterType[]>(
-    AppConstant.SelectedDateFilterData,
-  );
 
   const [detailData, setDetailData] = useState<IVisitRouteDetail>();
-  const [isPendin, startTrans] = useTransition();
-  const onDismissSingle = React.useCallback(() => {
-    setOpenDate(false);
-  }, [setOpenDate]);
-
-  const onConfirmSingle = React.useCallback<SingleChange>(
-    params => {
-      setOpenDate(false);
-      setDate(params.date);
-      setFilterTime(`${moment(params.date).format('DD/MM/YYYY')}`);
-      const newData = filterData.map(filter => {
-        if (filter.value === 4) {
-          return {...filter, isSelected: true};
-        } else {
-          return {...filter, isSelected: false};
-        }
-      });
-      setFilterData(newData);
-    },
-    [setOpenDate, setDate],
-  );
-
-  const renderFilterLabel = (value: any) => {
-    switch (value) {
-      case 1:
-        return `${getLabel('today')}, ${moment(new Date()).format(
-          'DD/MM/YYYY',
-        )}`;
-      case 2: {
-        const timeObj: any = CommonUtils.dateToDate('weekly');
-        return `${moment(new Date(timeObj.from_date)).format(
-          'DD/MM/YYYY',
-        )} - ${moment(new Date(timeObj.to_date)).format('DD/MM/YYYY')}`;
-      }
-
-      case 3: {
-        const timeObj: any = CommonUtils.dateToDate('monthly');
-        return `${moment(new Date(timeObj.from_date)).format(
-          'DD/MM/YYYY',
-        )} - ${moment(new Date(timeObj.to_date)).format('DD/MM/YYYY')}`;
-      }
-    }
-  };
-
-  const handleItem = (item: IFilterType) => {
-    bottomSheetRef.current?.close();
-    if (item.value === 4) {
-      setOpenDate(true);
-    } else {
-      const time: any = renderFilterLabel(item.value);
-      setFilterTime(time);
-      const newData = filterData.map(filter => {
-        if (item.value === filter.value) {
-          return {...filter, isSelected: true};
-        } else {
-          return {...filter, isSelected: false};
-        }
-      });
-      setFilterData(newData);
-    }
-  };
+  const [noteData, setNoteData] = useState<ItemNoteVisitDetail[]>([]);
 
   const DetailScreen = React.memo(
     () => (
       <Block block style={{marginBottom: bottom}} padding={16}>
-        {isPendin ? (
+        {isPending ? (
           <Block block justifyContent="center" alignItems="center">
             {' '}
             <ActivityIndicator size={'large'} color={colors.primary} />{' '}
@@ -128,6 +56,7 @@ const Index = () => {
           <Detail
             item={route.params && route.params.data}
             otherInfo={detailData}
+            noteData={noteData}
           />
         )}
       </Block>
@@ -187,12 +116,21 @@ const Index = () => {
 
   useDeepCompareEffect(() => {
     const getDetail = async (customer_name: string) => {
+      dispatch(appActions.setProcessingStatus(true));
       const response: any = await CustomerService.getVisitRouteDetail(
         customer_name,
       );
       if (Object.keys(response?.result).length > 0) {
         setDetailData(response.result);
       }
+      const noteResponse: any = await CustomerService.getListCheckinNote(
+        route.params?.data?.customer_code,
+      );
+      if (noteResponse?.status === ApiConstant.STT_OK) {
+        setNoteData(noteResponse.data.result.data);
+      }
+
+      dispatch(appActions.setProcessingStatus(false));
     };
     startEffect(() => {
       getDetail(route.params.data.name);
@@ -201,7 +139,7 @@ const Index = () => {
 
   const onIndexChange = React.useCallback(
     (indx: number) => {
-      startTrans(() => {
+      startEffect(() => {
         index.current = indx;
       });
     },

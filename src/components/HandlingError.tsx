@@ -16,7 +16,6 @@ const HandlingError: FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const {t: getLabel} = useTranslation();
 
-
   const error = useSelector(state => state.app.error);
 
   const isShowModalError = useSelector(state => state.app.showModal);
@@ -37,9 +36,7 @@ const HandlingError: FC = () => {
           return error?.message;
       }
     } else {
-
       return error?.message;
-
     }
   }, [error]);
 
@@ -47,7 +44,10 @@ const HandlingError: FC = () => {
     dispatch(setError(null));
     dispatch(setShowErrorModalStatus(true));
     if (error?.status === ApiConstant.STT_UNAUTHORIZED) {
-      navigation.navigate(ScreenConstant.SIGN_IN, {});
+      // @ts-ignore
+      navigation.navigate(ScreenConstant.UNAUTHORIZED, {
+        screen: 'SIGN_IN',
+      });
     }
   };
 

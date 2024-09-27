@@ -25,8 +25,9 @@ import {DMSConfigMobile} from '../../../services/appService';
 import {calculateDistance, useSelector} from '../../../config/function';
 import {LocationProps} from '../VisitList/VisitItem';
 import {ObjectId} from 'bson';
+import {convertDate} from '../../../utils/commom.utils';
 
-const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
+const Detail: FC<VisitItemProps> = ({item, otherInfo, noteData}) => {
   const {colors} = useTheme();
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp>();
@@ -42,40 +43,6 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
     state => state.app.systemConfig,
     shallowEqual,
   );
-  const NoteData = React.useRef<ItemNoteVisitDetail[]>([
-    {
-      noteType: 'Loại ghi chú',
-      description: 'Mô tả ghi chú',
-      content:
-        'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
-      time: '10:20:00',
-      date: '21/11/2023',
-    },
-    {
-      noteType: 'Loại ghi chú',
-      description: 'Mô tả ghi chú',
-      content:
-        'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
-      time: '10:20:00',
-      date: '21/11/2023',
-    },
-    {
-      noteType: 'Loại ghi chú',
-      description: 'Mô tả ghi chú',
-      content:
-        'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
-      time: '10:20:00',
-      date: '21/11/2023',
-    },
-    {
-      noteType: 'Loại ghi chú',
-      description: 'Mô tả ghi chú',
-      content:
-        'Ghi chú cho đơn hàng ngày 20/12/2023 Unleash your professional potential with Wordtune GenAI tools for work. Busy professionals have tons of work to get through. Some accept the frustration while others choose Wordtune to speed up their tasks.',
-      time: '10:20:00',
-      date: '21/11/2023',
-    },
-  ]).current;
 
   const statusItem = (status: boolean) => {
     return (
@@ -201,10 +168,11 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
         <Block
           key={index}
           paddingVertical={16}
-          borderBottomWidth={index !== NoteData.length - 1 ? 1 : 0}
+          style={{gap: 6}}
+          borderBottomWidth={index !== noteData.length - 1 ? 1 : 0}
           borderColor={colors.border}>
           <Text colorTheme="text_primary" fontSize={16} fontWeight="500">
-            {item.noteType}
+            {item.title}
           </Text>
           <Block style={[styles.infoContainer]} marginVertical={4}>
             <Image
@@ -213,7 +181,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
               resizeMode={'cover'}
             />
             <Text style={{color: colors.text_secondary, marginLeft: 4}}>
-              {item.description}
+              {item.content[0]}
             </Text>
           </Block>
           <Block style={styles.infoContainer}>
@@ -223,7 +191,8 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
               resizeMode={'cover'}
             />
             <Text style={{color: colors.text_secondary, marginLeft: 4}}>
-              {item.time}, {item.date}
+              {CommonUtils.formatTime2(item.creation)},{' '}
+              {CommonUtils.convertDate(item.creation)}
             </Text>
           </Block>
         </Block>
@@ -248,7 +217,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1}} edges={[ 'bottom']}>
+    <SafeAreaView style={{flex: 1}} edges={['bottom']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* {item?.is_checkin && (
           <StatisticalItem
@@ -270,16 +239,16 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
               dispatch(appActions.setDataCheckIn(item));
             }}
           />
-        ) : (
+        ) : noteData?.length > 0 ? (
           <View style={{marginTop: 16}}>
             <Text style={{color: colors.text_secondary, fontSize: 16}}>
               Ghi chú
             </Text>
             <View style={[styles.viewContainer, {paddingVertical: 0}]}>
-              {NoteData.map((item, index) => _renderNoteItem(item, index))}
+              {noteData.map((item, index) => _renderNoteItem(item, index))}
             </View>
           </View>
-        )}
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -287,6 +256,7 @@ const Detail: FC<VisitItemProps> = ({item, otherInfo}) => {
 interface VisitItemProps {
   item: any;
   otherInfo: IVisitRouteDetail | undefined;
+  noteData: ItemNoteVisitDetail[] | [];
 }
 
 export default React.memo(Detail, isEqual);
