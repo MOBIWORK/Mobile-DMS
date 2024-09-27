@@ -47,13 +47,16 @@ export const updateCustomer = (data: DetailCustomerType | any) =>
   createApi().put(ApiConstant.UPDATE_CUSTOMER, data);
 export const deleteCustomer = (data: any) =>
   createApi().delete(ApiConstant.DELETE_CONTACT, data);
-   
+
 export const getTypeCusTomer = () =>
   createApi()
     .get(ApiConstant.GET_SFA_TYPE_CUSTOMER)
-    .then(res => res.data); 
-    
+    .then(res => res.data);
+
 export const getChannel = () =>
   createApi()
     .get(ApiConstant.GET_SFA_CHANNEL)
-    .then(res => res.data);   
+    .then(res => res.data);
+
+export const getListCheckinNote = (customerCode: string) =>
+  createApi().get(ApiConstant.GET_CHECKIN_NOTE, {customer: customerCode});

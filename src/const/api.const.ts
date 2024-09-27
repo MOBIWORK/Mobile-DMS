@@ -73,8 +73,8 @@ export const GET_CUSTOMER_ROUTE =
 export const POST_ADD_NEW_CUSTOMER =
   '/api/method/mbw_dms.api.selling.customer.create_customer';
 export const GET_SFA_TYPE_CUSTOMER =
-  '/api/method/mbw_dms.api.selling.customer.get_type_customer';  
-  export const GET_SFA_CHANNEL =
+  '/api/method/mbw_dms.api.selling.customer.get_type_customer';
+export const GET_SFA_CHANNEL =
   '/api/method/mbw_dms.api.selling.customer.get_channel';
 // Order
 export const GET_ORDER = URL_PREFIX + '.api.selling.order.get_list_sales_order';
@@ -154,6 +154,8 @@ export const UPDATE_CUSTOMER =
   URL_PREFIX + '.api.selling.customer.update_customer';
 export const GET_REPORT_DEBT =
   '/api/method/mbw_dms.api.kpi.receivable_summary_report';
-export const LOG_API = '/api/method/mbw_dms.api.logs.write_log'
+export const LOG_API = '/api/method/mbw_dms.api.logs.write_log';
 
-export const DELETE_CONTACT = '/api/method/mbw_dms.api.selling.customer.remove_contact_address'
+export const DELETE_CONTACT =
+  '/api/method/mbw_dms.api.selling.customer.remove_contact_address';
+export const GET_CHECKIN_NOTE = '/api/method/mbw_dms.api.note.list_note';

@@ -190,11 +190,10 @@ export interface IWidget {
   isUse?: boolean;
 }
 export type ItemNoteVisitDetail = {
-  noteType: string;
-  description: string;
+  name: string;
+  title: string[];
   content: string;
-  time: string;
-  date: string;
+  creation: string;
 };
 
 export interface RootEkMapResponse {
