@@ -1,7 +1,6 @@
 import {
   Image,
   Keyboard,
-  ScrollView,
   StyleSheet,
   TextStyle,
   TouchableOpacity,
@@ -15,7 +14,7 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import {AppTheme, useTheme} from '../../../layouts/theme';
+import { AppTheme, useTheme } from '../../../layouts/theme';
 import {
   AppHeader,
   AppIcons,
@@ -25,26 +24,27 @@ import {
   AppText as Text,
   AppText,
 } from '../../../components/common';
-import {CommonUtils} from '../../../utils';
-import {useTranslation} from 'react-i18next';
-import {TextInput} from 'react-native-paper';
+import { CommonUtils } from '../../../utils';
+import { useTranslation } from 'react-i18next';
+import { TextInput } from 'react-native-paper';
 import {
   AddressSelected,
   AddressType,
 } from '../../Customer/components/FormAddress';
-import {GeolocationResponse} from '@react-native-community/geolocation';
-import {Address, DetailCustomerType, KeyAbleProps} from '../../../models/types';
-import {ApiConstant, AppConstant} from '../../../const';
-import {AppService, CustomerService} from '../../../services';
+import { GeolocationResponse } from '@react-native-community/geolocation';
+import { Address, DetailCustomerType, KeyAbleProps } from '../../../models/types';
+import { ApiConstant, AppConstant } from '../../../const';
+import { AppService, CustomerService } from '../../../services';
 import Mapbox from '@rnmapbox/maps';
 import SelectedAddress from '../../Customer/components/SelectedAddress';
-import {backgroundErrorListener, useSelector} from '../../../config/function';
-import {shallowEqual} from 'react-redux';
-import {dispatch} from '../../../utils/redux';
-import {appActions} from '../../../redux-store/app-reducer/reducer';
-import {ListDistrict, ListWard} from '../../../redux-store/app-reducer/type';
-import {ImageAssets} from '../../../assets';
-import {CameraRef} from '@rnmapbox/maps/lib/typescript/src/components/Camera';
+import { backgroundErrorListener, useSelector } from '../../../config/function';
+import { shallowEqual } from 'react-redux';
+import { dispatch } from '../../../utils/redux';
+import { appActions } from '../../../redux-store/app-reducer/reducer';
+import { ListDistrict, ListWard } from '../../../redux-store/app-reducer/type';
+import { ImageAssets } from '../../../assets';
+import { CameraRef } from '@rnmapbox/maps/lib/typescript/src/components/Camera';
+import { ScrollView } from 'react-native-gesture-handler';
 type Props = {
   onBackButtonPress: () => void;
   type: string;
@@ -65,7 +65,7 @@ const ModalEditAddress = ({
 }: Props) => {
   const theme = useTheme();
   const styles = modalEditStyles(theme);
-  const {t: getLabel} = useTranslation();
+  const { t: getLabel } = useTranslation();
 
   const [screen, setScreen] = useState('');
   const listDataCity = useSelector(
@@ -93,6 +93,8 @@ const ModalEditAddress = ({
 
   const [location, setLocation] = useState<GeolocationResponse | null>(null);
   const [_, startTransition] = useTransition();
+
+  const [scrollEnabled, setScrollEnabled] = useState<boolean>(true);
 
   const zoomLevelRef = useRef<number>(15);
   const mapboxCameraRef = useRef<CameraRef>(null);
@@ -334,7 +336,7 @@ const ModalEditAddress = ({
             item => item.name === defaultEditData.name,
           );
           const dataUpdate = {
-            contacts: [{...addressSelected, ...contact}],
+            contacts: [{ ...addressSelected, ...contact }],
             name: dataCustomer.name,
             customer_primary_contact: txtContactDetail,
           };
@@ -345,7 +347,7 @@ const ModalEditAddress = ({
           if (response?.status === ApiConstant.STT_OK) {
             const newDataContact = dataCustomer.contacts.map(item => {
               if (item.name === dataUpdate.contacts[0].name) {
-                return {...item, ...dataUpdate.contacts[0]};
+                return { ...item, ...dataUpdate.contacts[0] };
               } else {
                 return item;
               }
@@ -372,7 +374,7 @@ const ModalEditAddress = ({
       JSON.parse(defaultEditData.address_location);
     if (geo) {
       // @ts-ignore
-      setLocation({coords: {latitude: geo?.lat, longitude: geo?.long}});
+      setLocation({ coords: { latitude: geo?.lat, longitude: geo?.long } });
     }
     if (listDataCity.city.length > 0) {
       let add: Address = defaultEditData;
@@ -486,7 +488,7 @@ const ModalEditAddress = ({
             item => item.name === defaultEditData.name,
           );
           const dataUpdate = {
-            address: [{...addressSelected, ...newAdd}],
+            address: [{ ...addressSelected, ...newAdd }],
             name: dataCustomer.name,
             customer_primary_address: txtAddressDetail,
           };
@@ -496,7 +498,7 @@ const ModalEditAddress = ({
           if (response?.status === ApiConstant.STT_OK) {
             const newDataAddress = dataCustomer.address.map(item => {
               if (item.name === dataUpdate.address[0].name) {
-                return {...item, ...dataUpdate.address[0]};
+                return { ...item, ...dataUpdate.address[0] };
               } else {
                 return item;
               }
@@ -635,10 +637,10 @@ const ModalEditAddress = ({
       paddingHorizontal={16}
       paddingTop={16}>
       {(screen === 'Adding' || screen === 'AddingContact') &&
-      ((type === 'editAddress' && addressSelectedData.length !== 3) ||
-        (type === 'address' && addressSelectedData.length !== 3) ||
-        (type === 'editContact' && contactSelectedData.length !== 3) ||
-        (type === 'contact' && contactSelectedData.length !== 3)) ? (
+        ((type === 'editAddress' && addressSelectedData.length !== 3) ||
+          (type === 'address' && addressSelectedData.length !== 3) ||
+          (type === 'editContact' && contactSelectedData.length !== 3) ||
+          (type === 'contact' && contactSelectedData.length !== 3)) ? (
         <SelectedAddress
           setScreen={setScreen}
           data={
@@ -663,20 +665,25 @@ const ModalEditAddress = ({
           />
           <ScrollView
             style={styles.rootBlock}
-            showsVerticalScrollIndicator={false}>
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnabled}
+          >
+
             <Block style={styles.mapBlock}>
               <Mapbox.MapView
                 // onCameraChanged={state =>
                 //   (zoomLevelRef.current =
                 //     state.properties.zoom > 0 ? state.properties.zoom : 15)
                 // }
+                onTouchStart={() => setScrollEnabled(false)}
+                onTouchEnd={() => setScrollEnabled(true)}
                 pitchEnabled={false}
                 attributionEnabled={false}
                 scaleBarEnabled={false}
                 scrollEnabled={true}
                 styleURL={Mapbox.StyleURL.Street}
                 logoEnabled={false}
-                style={{flex: 1}}
+                style={{ flex: 1 }}
                 onPress={feature => {
                   Keyboard.dismiss();
                   setLocation({
@@ -695,7 +702,7 @@ const ModalEditAddress = ({
                   <Mapbox.RasterLayer
                     id={'adminmap'}
                     sourceID={'admin'}
-                    style={{visibility: 'visible'}}
+                    style={{ visibility: 'visible' }}
                   />
                 </Mapbox.RasterSource>
                 {location?.coords?.longitude && (
@@ -725,11 +732,11 @@ const ModalEditAddress = ({
                 style={styles.regainPosition}>
                 <Image
                   source={ImageAssets.MapIcon}
-                  style={{width: 16, height: 16}}
+                  style={{ width: 16, height: 16 }}
                   resizeMode={'cover'}
                   tintColor={theme.colors.bg_default}
                 />
-                <Text style={{color: theme.colors.bg_default, marginLeft: 4}}>
+                <Text style={{ color: theme.colors.bg_default, marginLeft: 4 }}>
                   {getLabel('currentPosition')}
                 </Text>
               </TouchableOpacity>
@@ -738,11 +745,11 @@ const ModalEditAddress = ({
                 style={styles.getLocation}>
                 <Image
                   source={ImageAssets.MapPinIcon}
-                  style={{width: 16, height: 16}}
+                  style={{ width: 16, height: 16 }}
                   resizeMode={'cover'}
                   tintColor={theme.colors.text_secondary}
                 />
-                <Text style={{color: theme.colors.text_primary, marginLeft: 4}}>
+                <Text style={{ color: theme.colors.text_primary, marginLeft: 4 }}>
                   {getLabel('getAddress')}
                 </Text>
               </TouchableOpacity>
@@ -842,16 +849,16 @@ const ModalEditAddress = ({
                       onPress={() => {
                         item.id === '1'
                           ? setAddressValue((prev: any) => ({
-                              ...prev,
-                              primary: !addressValue.primary,
-                            }))
+                            ...prev,
+                            primary: !addressValue.primary,
+                          }))
                           : item.id === '2'
-                          ? setAddressValue((prev: any) => ({
+                            ? setAddressValue((prev: any) => ({
                               ...prev,
                               is_shipping_address:
                                 !addressValue.is_shipping_address,
                             }))
-                          : setAddressValue((prev: any) => ({
+                            : setAddressValue((prev: any) => ({
                               ...prev,
                               is_primary_address:
                                 !addressValue.is_primary_address,
@@ -863,16 +870,16 @@ const ModalEditAddress = ({
                           item.id === '1'
                             ? styles.boxIconGo(addressValue?.primary)
                             : item.id === '2'
-                            ? styles.boxIconOrder(
+                              ? styles.boxIconOrder(
                                 addressValue?.is_shipping_address,
                               )
-                            : styles.boxIconOrder(
+                              : styles.boxIconOrder(
                                 addressValue?.is_primary_address,
                               )
                         }>
                         {addressValue?.is_shipping_address ||
-                        addressValue?.is_primary_address ||
-                        addressValue?.primary ? (
+                          addressValue?.is_primary_address ||
+                          addressValue?.primary ? (
                           <AppIcons
                             iconType={AppConstant.ICON_TYPE.EntypoIcon}
                             size={14}
@@ -932,7 +939,7 @@ const ModalEditAddress = ({
         <Block block height={'100%'} paddingHorizontal={16}>
           <AppHeader
             label={type === 'contact' ? 'Thêm liên hệ mới' : 'Sửa liên hệ'}
-            onBack={() => {}}
+            onBack={() => { }}
             backButtonIcon={
               <AppIcons
                 iconType={AppConstant.ICON_TYPE.IonIcon}
@@ -974,7 +981,7 @@ const ModalEditAddress = ({
                     phoneNumber: text,
                   }))
                 }
-                inputProp={{keyboardType: 'numeric', returnKeyType: 'done'}}
+                inputProp={{ keyboardType: 'numeric', returnKeyType: 'done' }}
                 hiddenRightIcon={true}
               />
               <Block marginTop={8} marginBottom={8}>
@@ -1090,7 +1097,7 @@ const ModalEditAddress = ({
             justifyContent="space-around"
             alignItems="center"
             marginBottom={20}
-            // color='red'
+          // color='red'
           >
             <Block style={styles.containContentButton}>
               <TouchableOpacity
@@ -1154,29 +1161,29 @@ const modalEditStyles = (theme: AppTheme) =>
       marginTop: 20,
     } as ViewStyle,
     boxIconGo: (addressGo: boolean) =>
-      ({
-        width: 20,
-        height: 20,
-        borderRadius: 6,
-        borderWidth: !addressGo ? 1 : 0,
-        borderColor: theme.colors.text_secondary,
-        marginBottom: 20,
-        backgroundColor: addressGo ? theme.colors.primary : 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center',
-      } as ViewStyle),
+    ({
+      width: 20,
+      height: 20,
+      borderRadius: 6,
+      borderWidth: !addressGo ? 1 : 0,
+      borderColor: theme.colors.text_secondary,
+      marginBottom: 20,
+      backgroundColor: addressGo ? theme.colors.primary : 'transparent',
+      justifyContent: 'center',
+      alignItems: 'center',
+    } as ViewStyle),
     boxIconOrder: (addressOrder: boolean) =>
-      ({
-        width: 20,
-        height: 20,
-        borderRadius: 6,
-        borderWidth: !addressOrder ? 1 : 0,
-        borderColor: theme.colors.text_secondary,
-        marginBottom: 20,
-        backgroundColor: addressOrder ? theme.colors.primary : 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center',
-      } as ViewStyle),
+    ({
+      width: 20,
+      height: 20,
+      borderRadius: 6,
+      borderWidth: !addressOrder ? 1 : 0,
+      borderColor: theme.colors.text_secondary,
+      marginBottom: 20,
+      backgroundColor: addressOrder ? theme.colors.primary : 'transparent',
+      justifyContent: 'center',
+      alignItems: 'center',
+    } as ViewStyle),
     buttonStyle: {
       backgroundColor: theme.colors.bg_neutral,
       borderRadius: 12,
@@ -1240,17 +1247,17 @@ const modalEditStyles = (theme: AppTheme) =>
       flex: 1,
     } as ViewStyle,
     boxMainContact: (isPrimary: boolean) =>
-      ({
-        width: 20,
-        height: 20,
-        borderRadius: 6,
-        borderWidth: !isPrimary ? 1 : 0,
-        borderColor: theme.colors.text_secondary,
-        marginBottom: 20,
-        backgroundColor: isPrimary ? theme.colors.primary : 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center',
-      } as ViewStyle),
+    ({
+      width: 20,
+      height: 20,
+      borderRadius: 6,
+      borderWidth: !isPrimary ? 1 : 0,
+      borderColor: theme.colors.text_secondary,
+      marginBottom: 20,
+      backgroundColor: isPrimary ? theme.colors.primary : 'transparent',
+      justifyContent: 'center',
+      alignItems: 'center',
+    } as ViewStyle),
     regainPosition: {
       paddingHorizontal: 16,
       paddingVertical: 8,
