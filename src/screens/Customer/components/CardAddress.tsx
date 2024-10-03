@@ -25,7 +25,7 @@ export type MainAddress = {
   city?: AddressSelected;
   district?: AddressSelected;
   ward?: AddressSelected;
-  primary?:any
+  primary?: any;
 };
 export type MainContactAddress = {
   nameContact: string;
@@ -124,9 +124,11 @@ const CardAddress = (props: Props) => {
                 props.mainContactAddress.addressContact
                   ? `${props.mainContactAddress.addressContact}, `
                   : ''
-              }${props.mainContactAddress.ward?.value}, ${
-                props.mainContactAddress.district?.value
-              }, ${props.mainContactAddress.city?.value}`}
+              } ${
+                props.mainContactAddress?.city?.id
+                  ? `${props.mainContactAddress.ward?.value}, ${props.mainContactAddress.district?.value}, ${props.mainContactAddress.city?.value}`
+                  : '---'
+              }`}
             </Text>
           </Block>
           <Block style={[styles.containAddressLabel, {paddingHorizontal: 4}]}>
@@ -218,7 +220,7 @@ const rootStyles = (theme: AppTheme) =>
       borderWidth: 1,
       borderColor: theme.colors.border,
       paddingVertical: 3,
-      borderRadius:16
+      borderRadius: 16,
     } as ViewStyle,
     containMain: {
       marginLeft: 8,

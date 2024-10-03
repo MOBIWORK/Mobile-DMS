@@ -13,8 +13,8 @@ import React, {
   useMemo,
   startTransition,
 } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { TextInput } from 'react-native-paper';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {TextInput} from 'react-native-paper';
 import {
   AppHeader,
   AppIcons,
@@ -24,9 +24,9 @@ import {
   Block,
   SvgIcon,
 } from '../../../components/common';
-import { ApiConstant, AppConstant, ScreenConstant } from '../../../const';
-import { AppTheme, useTheme } from '../../../layouts/theme';
-import { getDetailLocation } from '../../../services/appService';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../../const';
+import {AppTheme, useTheme} from '../../../layouts/theme';
+import {getDetailLocation} from '../../../services/appService';
 import Colors from '../../../assets/Colors';
 import {
   DetailCustomerType,
@@ -35,22 +35,22 @@ import {
   KeyAbleProps,
   RootEkMapResponse,
 } from '../../../models/types';
-import { dispatch } from '../../../utils/redux';
+import {dispatch} from '../../../utils/redux';
 import SelectedAddress from './SelectedAddress';
-import { customerActions } from '../../../redux-store/customer-reducer/reducer';
-import { MainAddress, MainContactAddress } from './CardAddress';
-import { useTranslation } from 'react-i18next';
-import { CommonUtils } from '../../../utils';
+import {customerActions} from '../../../redux-store/customer-reducer/reducer';
+import {MainAddress, MainContactAddress} from './CardAddress';
+import {useTranslation} from 'react-i18next';
+import {CommonUtils} from '../../../utils';
 import Mapbox from '@rnmapbox/maps';
-import { AppService, CustomerService } from '../../../services';
-import { GeolocationResponse } from '@react-native-community/geolocation';
+import {AppService, CustomerService} from '../../../services';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 import isEqual from 'react-fast-compare';
-import { backgroundErrorListener, useSelector } from '../../../config/function';
-import { isLocationEnabled } from 'react-native-android-location-enabler';
-import { IUpdateAddress } from '../../../services/checkinService';
-import { appActions } from '../../../redux-store/app-reducer/reducer';
-import { shallowEqual } from 'react-redux';
-import { ScrollView } from 'react-native-gesture-handler';
+import {backgroundErrorListener, useSelector} from '../../../config/function';
+import {isLocationEnabled} from 'react-native-android-location-enabler';
+import {IUpdateAddress} from '../../../services/checkinService';
+import {appActions} from '../../../redux-store/app-reducer/reducer';
+import {shallowEqual} from 'react-redux';
+import {ScrollView} from 'react-native-gesture-handler';
 
 type Props = {
   onPressClose: () => void;
@@ -83,7 +83,7 @@ const FormAddress = (props: Props) => {
     getDetailCustomer,
   } = props;
   const theme = useTheme();
-  const { t: getLabel } = useTranslation();
+  const {t: getLabel} = useTranslation();
   const styles = rootStyles(theme, getLabel);
   const [screen, setScreen] = useState('');
   const [addressSelectedData, setAddressSelectedData] = useState<
@@ -136,8 +136,13 @@ const FormAddress = (props: Props) => {
   ]);
 
   const isValidAddress = useMemo(() => {
-    return addressSelectedData?.length === 3 && txtAddressDetail !== '';
-  }, [addressSelectedData, txtAddressDetail]);
+    return (
+      addressSelectedData?.length === 3 &&
+      txtAddressDetail !== '' &&
+      location &&
+      Object.keys(location).length > 0
+    );
+  }, [addressSelectedData, txtAddressDetail, location]);
 
   const checkGPS = async () => {
     if (Platform.OS === 'android') {
@@ -164,7 +169,11 @@ const FormAddress = (props: Props) => {
       setContactSelectedData([]);
       setContactValue({});
       setTxtContactDetail('');
-      setContactValue((prev: any) => ({ ...prev, nameContact: '', phoneNumber: '' }));
+      setContactValue((prev: any) => ({
+        ...prev,
+        nameContact: '',
+        phoneNumber: '',
+      }));
     }
   };
 
@@ -491,10 +500,10 @@ const FormAddress = (props: Props) => {
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       {(screen === 'Adding' || screen === 'AddingContact') &&
-        ((typeFilter === AppConstant.CustomerFilterType.dia_chi &&
-          addressSelectedData.length !== 3) ||
-          (typeFilter === AppConstant.CustomerFilterType.nguoi_lien_he &&
-            contactSelectedData.length !== 3)) ? (
+      ((typeFilter === AppConstant.CustomerFilterType.dia_chi &&
+        addressSelectedData.length !== 3) ||
+        (typeFilter === AppConstant.CustomerFilterType.nguoi_lien_he &&
+          contactSelectedData.length !== 3)) ? (
         <SelectedAddress
           setScreen={setScreen}
           data={
@@ -509,11 +518,11 @@ const FormAddress = (props: Props) => {
           }
         />
       ) : typeFilter === AppConstant.CustomerFilterType.dia_chi ? (
-        < >
+        <>
           <Block style={styles.headerContentView('Địa chỉ chính')}>
             <AppHeader
               label={getLabel('mainAddress')}
-              onBack={() => { }}
+              onBack={() => {}}
               backButtonIcon={
                 <AppIcons
                   iconType={AppConstant.ICON_TYPE.IonIcon}
@@ -529,7 +538,7 @@ const FormAddress = (props: Props) => {
             />
           </Block>
 
-          <Block style={[styles.buttonView, { marginBottom: 24 }]}>
+          <Block style={[styles.buttonView, {marginBottom: 24}]}>
             <TouchableOpacity
               style={styles.buttonStyle}
               onPress={() => {
@@ -546,7 +555,7 @@ const FormAddress = (props: Props) => {
             </TouchableOpacity>
           </Block>
           <ScrollView
-            style={{ flex: 1, paddingHorizontal: 16 }}
+            style={{flex: 1, paddingHorizontal: 16}}
             showsVerticalScrollIndicator={false}>
             <AppInput
               label={`${getLabel('province')}/${getLabel('city')}`}
@@ -642,16 +651,16 @@ const FormAddress = (props: Props) => {
                       onPress={() => {
                         item.id === '1'
                           ? setAddressValue((prev: any) => ({
-                            ...prev,
-                            primary: !addressValue?.primary,
-                          }))
+                              ...prev,
+                              primary: !addressValue?.primary,
+                            }))
                           : item.id === '2'
-                            ? setAddressValue((prev: any) => ({
+                          ? setAddressValue((prev: any) => ({
                               ...prev,
                               is_shipping_address:
                                 !addressValue?.is_shipping_address,
                             }))
-                            : setAddressValue((prev: any) => ({
+                          : setAddressValue((prev: any) => ({
                               ...prev,
                               is_primary_address:
                                 !addressValue?.is_primary_address,
@@ -663,16 +672,16 @@ const FormAddress = (props: Props) => {
                           item.id === '1'
                             ? styles.boxIconGo(addressValue.primary)
                             : item.id === '2'
-                              ? styles.boxIconOrder(
+                            ? styles.boxIconOrder(
                                 addressValue?.is_shipping_address,
                               )
-                              : styles.boxIconOrder(
+                            : styles.boxIconOrder(
                                 addressValue?.is_primary_address,
                               )
                         }>
                         {addressValue?.is_shipping_address ||
-                          addressValue?.is_primary_address ||
-                          addressValue?.primary ? (
+                        addressValue?.is_primary_address ||
+                        addressValue?.primary ? (
                           <AppIcons
                             iconType={AppConstant.ICON_TYPE.EntypoIcon}
                             size={14}
@@ -698,14 +707,14 @@ const FormAddress = (props: Props) => {
                 scrollEnabled={true}
                 styleURL={Mapbox.StyleURL.Street}
                 logoEnabled={false}
-                style={{ flex: 1 }}>
+                style={{flex: 1}}>
                 <Mapbox.RasterSource
                   id="adminmap"
                   tileUrlTemplates={[AppConstant.MAP_TITLE_URL.adminMap]}>
                   <Mapbox.RasterLayer
                     id={'adminmap'}
                     sourceID={'admin'}
-                    style={{ visibility: 'visible' }}
+                    style={{visibility: 'visible'}}
                   />
                 </Mapbox.RasterSource>
 
@@ -756,11 +765,12 @@ const FormAddress = (props: Props) => {
                   },
                 ]}
                 disabled={!isValidAddress}
-                onPress={() =>
+                onPress={() => {
+                  Keyboard.dismiss();
                   screenPass && screenPass === ScreenConstant.DETAIL_CUSTOMER
                     ? handleSaveMainAddressDetail()
-                    : handleSaveMainAddress()
-                }>
+                    : handleSaveMainAddress();
+                }}>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </Block>
@@ -771,7 +781,7 @@ const FormAddress = (props: Props) => {
           <Block style={styles.headerContentView(getLabel('mainContact'))}>
             <AppHeader
               label={getLabel('mainContact')}
-              onBack={() => { }}
+              onBack={() => {}}
               backButtonIcon={
                 <AppIcons
                   iconType={AppConstant.ICON_TYPE.IonIcon}
@@ -788,7 +798,7 @@ const FormAddress = (props: Props) => {
           </Block>
           <ScrollView
             keyboardDismissMode={'on-drag'}
-            style={{ flex: 1, paddingHorizontal: 16 }}>
+            style={{flex: 1, paddingHorizontal: 16}}>
             <AppInput
               label={getLabel('contactName')}
               value={contactValue.nameContact}
@@ -800,7 +810,7 @@ const FormAddress = (props: Props) => {
               hiddenRightIcon={true}
               styles={styles.marginInputView}
               onChangeValue={text =>
-                setContactValue((prev: any) => ({ ...prev, nameContact: text }))
+                setContactValue((prev: any) => ({...prev, nameContact: text}))
               }
             />
             <AppInput
@@ -811,10 +821,10 @@ const FormAddress = (props: Props) => {
                 contactValue.phoneNumber,
                 getLabel('phoneNumber'),
               )}
-              inputProp={{ keyboardType: 'numeric', returnKeyType: 'done' }}
+              inputProp={{keyboardType: 'numeric', returnKeyType: 'done'}}
               styles={styles.marginInputView}
               onChangeValue={text =>
-                setContactValue((prev: any) => ({ ...prev, phoneNumber: text }))
+                setContactValue((prev: any) => ({...prev, phoneNumber: text}))
               }
               hiddenRightIcon={true}
             />
@@ -945,11 +955,12 @@ const FormAddress = (props: Props) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonApply}
-                onPress={() =>
+                onPress={() => {
+                  Keyboard.dismiss();
                   screenPass && screenPass === ScreenConstant.DETAIL_CUSTOMER
                     ? handleSaveMainContactDetail()
-                    : handleSaveMainContact()
-                }>
+                    : handleSaveMainContact();
+                }}>
                 <AppText style={styles.applyText}>{getLabel('save')}</AppText>
               </TouchableOpacity>
             </Block>
@@ -989,22 +1000,22 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
     } as ViewStyle,
     buttonView: {} as ViewStyle,
     headerContentView: (label: string) =>
-    ({
-      marginHorizontal: 16,
-      marginBottom: 20,
-    } as ViewStyle),
+      ({
+        marginHorizontal: 16,
+        marginBottom: 20,
+      } as ViewStyle),
     containInput: {
       paddingBottom: 24,
       justifyContent: 'center',
       marginBottom: 20,
     } as ViewStyle,
     contentStyle: (text: string, label: string) =>
-    ({
-      color: theme.colors.text_primary,
-      fontSize: 16,
-      fontWeight: '400',
-      lineHeight: 24,
-    } as TextStyle),
+      ({
+        color: theme.colors.text_primary,
+        fontSize: 16,
+        fontWeight: '400',
+        lineHeight: 24,
+      } as TextStyle),
     iconStyle: {
       width: 24,
       height: 24,
@@ -1013,41 +1024,41 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       // backgroundColor: 'red',
     } as ViewStyle,
     boxIconGo: (addressGo: boolean) =>
-    ({
-      width: 20,
-      height: 20,
-      borderRadius: 6,
-      borderWidth: !addressGo ? 1 : 0,
-      borderColor: theme.colors.text_secondary,
-      marginBottom: 20,
-      backgroundColor: addressGo ? theme.colors.primary : 'transparent',
-      justifyContent: 'center',
-      alignItems: 'center',
-    } as ViewStyle),
+      ({
+        width: 20,
+        height: 20,
+        borderRadius: 6,
+        borderWidth: !addressGo ? 1 : 0,
+        borderColor: theme.colors.text_secondary,
+        marginBottom: 20,
+        backgroundColor: addressGo ? theme.colors.primary : 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+      } as ViewStyle),
     boxIconOrder: (addressOrder: boolean) =>
-    ({
-      width: 20,
-      height: 20,
-      borderRadius: 6,
-      borderWidth: !addressOrder ? 1 : 0,
-      borderColor: theme.colors.text_secondary,
-      marginBottom: 20,
-      backgroundColor: addressOrder ? theme.colors.primary : 'transparent',
-      justifyContent: 'center',
-      alignItems: 'center',
-    } as ViewStyle),
+      ({
+        width: 20,
+        height: 20,
+        borderRadius: 6,
+        borderWidth: !addressOrder ? 1 : 0,
+        borderColor: theme.colors.text_secondary,
+        marginBottom: 20,
+        backgroundColor: addressOrder ? theme.colors.primary : 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+      } as ViewStyle),
     checkBoxView: {
       flexDirection: 'row',
     } as ViewStyle,
     containButtonBottom: (typeFilter: string) =>
-    ({
-      flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 0 : 0,
-      padding: 16,
-      flexDirection: 'column',
-      justifyContent: 'flex-end',
-      paddingHorizontal: 16,
-      // backgroundColor:'red'
-    } as ViewStyle),
+      ({
+        flex: typeFilter !== AppConstant.CustomerFilterType.dia_chi ? 0 : 0,
+        padding: 16,
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        paddingHorizontal: 16,
+        // backgroundColor:'red'
+      } as ViewStyle),
     containContentButton: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -1107,15 +1118,15 @@ const rootStyles = (theme: AppTheme, getLabel: any) =>
       right: 0,
     } as ViewStyle,
     boxMainContact: (isPrimary: boolean) =>
-    ({
-      width: 20,
-      height: 20,
-      borderRadius: 6,
-      borderWidth: !isPrimary ? 1 : 0,
-      borderColor: theme.colors.text_secondary,
-      marginBottom: 20,
-      backgroundColor: isPrimary ? theme.colors.primary : 'transparent',
-      justifyContent: 'center',
-      alignItems: 'center',
-    } as ViewStyle),
+      ({
+        width: 20,
+        height: 20,
+        borderRadius: 6,
+        borderWidth: !isPrimary ? 1 : 0,
+        borderColor: theme.colors.text_secondary,
+        marginBottom: 20,
+        backgroundColor: isPrimary ? theme.colors.primary : 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+      } as ViewStyle),
   });

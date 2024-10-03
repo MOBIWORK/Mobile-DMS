@@ -162,9 +162,7 @@ const FormData = (props: Props) => {
     shallowEqual,
   );
 
-  const editAddressRef = useRef<BottomSheet>(null);
-
-  const [isPending, startTransition] = useTransition();
+  const [_, startTransition] = useTransition();
   const [date, setDate] = useState<Date>();
   const [open, setOpen] = useState(false);
   const [openDate, setOpenDate] = useState(false);
@@ -363,10 +361,6 @@ const FormData = (props: Props) => {
     dispatch(appActions.setProcessingStatus(false));
   }, [dataCustomer]);
 
-  const onCloseEditAddress = () => {
-    editAddressRef.current?.close();
-  };
-
   const onCloseModal = useCallback(() => {
     if (modalChoose.status === true) {
       setModalChoose(prev => ({...prev, status: false}));
@@ -429,23 +423,6 @@ const FormData = (props: Props) => {
       : [];
     setDataCustomer(prev => ({...prev, contacts: updateContactArray}));
   }, [dataCustomer.contacts]);
-
-  const onEditData = (dataEdit: any, type: any) => {
-    setDefaultDataEdit(dataEdit);
-    editAddressRef.current?.snapToIndex(0);
-    setModalChoose(prevState => ({...prevState, status: false}));
-    if (type === 'address') {
-      setModalEditAddress({
-        type: 'editAddress',
-        status: true,
-      });
-    } else {
-      setModalEditAddress({
-        type: 'editContact',
-        status: true,
-      });
-    }
-  };
 
   useLayoutEffect(() => {
     if (listTerritory.length === 0) {
@@ -950,19 +927,6 @@ const FormData = (props: Props) => {
         handleCameraPicker={handleCameraPicker}
         handleImagePicker={handleImagePicker}
       />
-      <AppBottomSheet
-        bottomSheetRef={editAddressRef}
-        enablePanDownToClose={false}
-        snapPointsCustom={['100%']}>
-        <ModalEditAddress
-          onBackButtonPress={onCloseEditAddress}
-          setData={setDataCustomer}
-          dataCustomer={dataCustomer}
-          type={modalEditAddress.type}
-          defaultEditData={defaultDataEdit}
-          setDefaultEditData={setDefaultDataEdit}
-        />
-      </AppBottomSheet>
       <ModalChoose
         visible={modalChoose.status}
         onBackButtonPress={onCloseModal}
