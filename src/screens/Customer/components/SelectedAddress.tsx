@@ -282,6 +282,7 @@ const createStyle = (theme: ExtendedTheme) =>
     textContainStyle: {
       marginHorizontal: 16,
       marginTop: 8,
+      paddingHorizontal: 32
     } as TextStyle,
     containAddress: {
       marginHorizontal: 16,
