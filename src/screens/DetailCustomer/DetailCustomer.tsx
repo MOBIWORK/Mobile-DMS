@@ -55,9 +55,8 @@ const DetailCustomer = () => {
 
   const params = useRoute<RouterProp<'DETAIL_CUSTOMER'>>().params;
 
-  const [isPending, startTrans] = useTransition();
+  const [_, startTrans] = useTransition();
   const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
   const [modalEditAddress, setModalEditAddress] = useState({
     type: 'address',
     status: false,
@@ -69,7 +68,6 @@ const DetailCustomer = () => {
   } | null>(null);
 
   const bottomAction = useRef<BottomSheetModalMethods>(null);
-  const editAddressRef = useRef<BottomSheetModalMethods>(null);
   const formAddressRef = useRef<BottomSheetModalMethods>(null);
 
   const [modalShow, setModalShow] = useState({
@@ -155,7 +153,6 @@ const DetailCustomer = () => {
       status: true,
       type: itemDataProps?.type ?? '',
     });
-    editAddressRef.current?.snapToIndex(0);
   }, [itemDataProps]);
 
   const renderScene = SceneMap({
@@ -178,7 +175,6 @@ const DetailCustomer = () => {
   });
 
   const onCloseEditAddress = useCallback(() => {
-    editAddressRef.current?.close();
     if (modalEditAddress.status) {
       setModalEditAddress(prev => ({...prev, status: false}));
     }
@@ -218,7 +214,10 @@ const DetailCustomer = () => {
   }, []);
 
   const onBackButtonPress = useCallback(() => {
-    editAddressRef.current?.close();
+    setModalEditAddress(prev => ({
+      ...prev,
+      status: false,
+    }));
     setModalShow(prev => ({
       ...prev,
       status: false,
@@ -373,9 +372,19 @@ const DetailCustomer = () => {
           </Block>
         </Block>
       </Modal>
-      <AppBottomSheet
-        bottomSheetRef={editAddressRef}
-        snapPointsCustom={['100%']}>
+      <Modal
+        isVisible={modalEditAddress.status}
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        style={styles.modalStyle}
+        backdropColor="white"
+        backdropOpacity={1}
+        onBackButtonPress={() =>
+          setModalEditAddress({...modalEditAddress, status: false})
+        }
+        onBackdropPress={() =>
+          setModalEditAddress({...modalEditAddress, status: false})
+        }>
         <ModalEditAddress
           onBackButtonPress={onCloseEditAddress}
           setData={setData}
@@ -384,7 +393,7 @@ const DetailCustomer = () => {
           defaultEditData={dataEdit.data}
           setDefaultEditData={setDataEdit}
         />
-      </AppBottomSheet>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -424,6 +433,9 @@ const rootStyles = (theme: AppTheme) =>
     modalStyle: {
       marginHorizontal: 0,
       marginVertical: 0,
+      flex: 1,
+      width: '100%',
+      height: '100%',
     } as ViewStyle,
     containIconButton: {
       flexDirection: 'row',

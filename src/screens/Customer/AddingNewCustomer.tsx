@@ -18,14 +18,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { DatePickerModal } from 'react-native-paper-dates';
-import { useNavigation } from '@react-navigation/native';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { SingleChange } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import {DatePickerModal} from 'react-native-paper-dates';
+import {useNavigation} from '@react-navigation/native';
+import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import {SingleChange} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import moment from 'moment';
-import { IValueType } from './Customer';
+import {IValueType} from './Customer';
 
-import { MainLayout } from '../../layouts';
+import {MainLayout} from '../../layouts';
 import {
   AppBottomSheet,
   AppHeader,
@@ -35,28 +35,28 @@ import {
   SvgIcon,
 } from '../../components/common';
 import FormAdding from './components/FormAdding';
-import { ApiConstant, AppConstant, ScreenConstant } from '../../const';
-import { NavigationProp } from '../../navigation/screen-type';
+import {ApiConstant, AppConstant, ScreenConstant} from '../../const';
+import {NavigationProp} from '../../navigation/screen-type';
 import {
   DataCustomersUpdate,
   IDataCustomer,
   IDataCustomers,
   ListCustomerTerritory,
 } from '../../models/types';
-import { AppTheme, useTheme } from '../../layouts/theme';
+import {AppTheme, useTheme} from '../../layouts/theme';
 import ListFilterAdding from './components/ListFilterAdding';
 import FormAddress from './components/FormAddress';
-import { openImagePicker, openImagePickerCamera } from '../../utils/camera.utils';
-import { dispatch } from '../../utils/redux';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { customerActions } from '../../redux-store/customer-reducer/reducer';
-import { CustomerService } from '../../services';
-import { useSelector } from '../../config/function';
-import { MainAddress, MainContactAddress } from './components/CardAddress';
+import {openImagePicker, openImagePickerCamera} from '../../utils/camera.utils';
+import {dispatch} from '../../utils/redux';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {customerActions} from '../../redux-store/customer-reducer/reducer';
+import {CustomerService} from '../../services';
+import {useSelector} from '../../config/function';
+import {MainAddress, MainContactAddress} from './components/CardAddress';
 
-import { CommonUtils } from '../../utils';
-import { useTranslation } from 'react-i18next';
-import { GeolocationResponse } from '@react-native-community/geolocation';
+import {CommonUtils} from '../../utils';
+import {useTranslation} from 'react-i18next';
+import {GeolocationResponse} from '@react-native-community/geolocation';
 import {
   setNewCustomer,
   setProcessingStatus,
@@ -64,17 +64,17 @@ import {
 import isEqual from 'react-fast-compare';
 import Modal from 'react-native-modal';
 import ModalArea from './components/ModalArea';
-import { checkinActions } from '../../redux-store/checkin-reducer/reducer';
+import {checkinActions} from '../../redux-store/checkin-reducer/reducer';
 
 function listDataReducer(newState: any, oldState: any) {
-  return { ...newState, ...oldState };
+  return {...newState, ...oldState};
 }
 
 const AddingNewCustomer = () => {
   const theme = useTheme();
-  const { bottom } = useSafeAreaInsets();
+  const {bottom} = useSafeAreaInsets();
   const styles = rootStyles(theme);
-  const { t: getLabel } = useTranslation();
+  const {t: getLabel} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const initValueState = useRef<IValueType>({
     customerType: 'Cá nhân',
@@ -161,73 +161,56 @@ const AddingNewCustomer = () => {
       address:
         Object.keys(address).length > 0
           ? {
-            longitude: newListData.longitude || 0,
-            latitude: newListData.latitude || 0,
-            address_title:
-              Object.keys(address).length > 0
-                ? `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`
-                : '',
-            address_type: 'Billing',
-            address_line1:
-              Object.keys(address).length > 0
+              longitude: newListData.longitude || 0,
+              latitude: newListData.latitude || 0,
+              address_title:
+                Object.keys(address).length > 0
+                  ? `${address?.detailAddress},${address.ward?.value},${address.district?.value},${address.city?.value},Vietnam`
+                  : '',
+              address_type: 'Billing',
+              address_line1: address?.detailAddress
                 ? String(address?.detailAddress)
                 : '',
-            city:
-              Object.keys(address).length > 0
-                ? String(address?.city?.id)
-                : '',
-            county:
-              Object.keys(address).length > 0
+              city: address?.city?.id ? String(address?.city?.id) : '',
+              county: address?.district?.id
                 ? String(address?.district?.id)
                 : '',
-            state:
-              Object.keys(address).length > 0
-                ? String(address?.ward?.id)
-                : '',
-            is_primary_address:
-              Object.keys(address).length > 0 ? address.addressOrder : false,
-            is_shipping_address:
-              Object.keys(address).length > 0 ? address.addressGet : false,
-            primary:
-              Object.keys(address).length > 0 ? address.primary : false,
-          }
+              state: address?.ward?.id ? String(address?.ward?.id) : '',
+              is_primary_address:
+                Object.keys(address).length > 0 ? address.addressOrder : false,
+              is_shipping_address:
+                Object.keys(address).length > 0 ? address.addressGet : false,
+              primary:
+                Object.keys(address).length > 0 ? address.primary : false,
+            }
           : null,
+      // @ts-ignore
       contact:
         Object.keys(contact).length > 0
           ? {
-            address_title:
-              Object.keys(contact).length > 0
-                ? `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`
-                : '',
-            address_line1:
-              Object.keys(address).length > 0
-                ? String(address?.detailAddress)
-                : '',
-            first_name: contact?.nameContact || '',
-            phone: contact?.phoneNumber || '',
-            city:
-              Object.keys(contact).length > 0
-                ? String(contact?.city?.id)
-                : '',
-            county:
-              Object.keys(contact).length > 0
-                ? String(contact?.district?.id)
-                : '',
-            state:
-              Object.keys(contact).length > 0
-                ? String(contact?.ward?.id)
-                : '',
-          }
+              address_title:
+                Object.keys(contact).length > 0 &&
+                contact.ward?.value &&
+                `${contact.ward?.value}/${contact.district?.value}/${contact.city?.value}`,
+              address_line1:
+                Object.keys(contact).length > 0 &&
+                String(contact?.addressContact),
+              first_name: contact?.nameContact,
+              phone: contact?.phoneNumber,
+              city: contact?.city?.id && String(contact?.city?.id),
+              county: contact?.district?.id && String(contact?.district?.id),
+              state: contact?.ward?.id && String(contact?.ward?.id),
+            }
           : null,
 
       customer_type:
         newListData.customer_type === getLabel('individual')
           ? 'Individual'
           : newListData.customer_type === getLabel('company')
-            ? 'Company'
-            : newListData.customer_type === getLabel('proprietorship')
-              ? 'Proprietorship'
-              : 'Partnership',
+          ? 'Company'
+          : newListData.customer_type === getLabel('proprietorship')
+          ? 'Proprietorship'
+          : 'Partnership',
 
       website: newListData.website ?? '',
 
@@ -321,7 +304,7 @@ const AddingNewCustomer = () => {
     params => {
       setOpenDate(false);
       setDate(params.date);
-      setListData(prev => ({ ...prev, custom_birthday: params.date?.getTime() }));
+      setListData(prev => ({...prev, custom_birthday: params.date?.getTime()}));
     },
     [setOpenDate, setDate],
   );
@@ -370,7 +353,7 @@ const AddingNewCustomer = () => {
           label={getLabel('customer')}
           onBack={() => navigation.goBack()}
         />
-        <View style={[styles.containContentView, { marginBottom: bottom + 60 }]}>
+        <View style={[styles.containContentView, {marginBottom: bottom + 60}]}>
           <FormAdding
             filterRef={filterRef}
             setTypeFilter={setTypeFilter}
@@ -418,7 +401,7 @@ const AddingNewCustomer = () => {
             <View>
               <AppHeader
                 label={getLabel('chooseImage')}
-                onBack={() => { }}
+                onBack={() => {}}
                 backButtonIcon={
                   <AppIcons
                     iconType={AppConstant.ICON_TYPE.IonIcon}
@@ -517,7 +500,7 @@ const rootStyles = (theme: AppTheme) =>
       fontWeight: '700',
       lineHeight: 24,
     } as TextStyle,
-    mainLayout: { paddingTop: 0 } as ViewStyle,
+    mainLayout: {paddingTop: 0} as ViewStyle,
     containButton: {
       flexDirection: 'row',
       justifyContent: 'space-between',
