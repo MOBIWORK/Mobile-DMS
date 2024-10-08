@@ -804,7 +804,7 @@ const ModalEditAddress = ({
               editable={false}
               contentStyle={styles.contentStyle}
               onPress={() => {
-                console.log('dataAddressRef', dataAddressRef.current);
+                // console.log('dataAddressRef', dataAddressRef.current);
                 const newData =
                   dataAddressRef.current &&
                   dataAddressRef.current.filter(

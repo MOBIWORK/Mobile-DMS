@@ -62,6 +62,7 @@ import {NavigationProp} from '../../navigation/screen-type';
 import ModalErrorLocation from './components/ModalErrorLocation';
 import {
   CheckinData,
+  DMSConfigMobile,
   getCustomerVisit,
   IListVisitParams,
 } from '../../services/appService';
@@ -92,6 +93,9 @@ const HomeScreen = () => {
   const userProfile: IUser = useSelector(
     state => state.app.userProfile,
     shallowEqual,
+  );
+  const systemConfig: DMSConfigMobile = useSelector(
+    state => state.app.systemConfig,
   );
   const listCustomerVisit: VisitListItemType[] = useSelector(
     state => state.customer.listCustomerVisit,
@@ -131,8 +135,6 @@ const HomeScreen = () => {
       setWidgets(JSON.stringify(arrWg));
     }
   };
-
-
 
   const renderUiWidget = useCallback(() => {
     return (
@@ -437,7 +439,9 @@ const HomeScreen = () => {
   }, []);
 
   const getSystemConfig = () => {
-    dispatch(appActions.onGetSystemConfig());
+    if (Object.keys(systemConfig).length === 0) {
+      dispatch(appActions.onGetSystemConfig());
+    }
   };
 
   const onSyncStatusChanged = React.useCallback(
