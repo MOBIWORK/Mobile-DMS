@@ -168,15 +168,17 @@ export const rootStyles = (theme: AppTheme) =>
       marginHorizontal: 16,
     } as ViewStyle,
     containWidgetView: {
-      marginLeft: -16,
+      // marginLeft: -16,
       flexDirection: 'row',
       flexWrap: 'wrap',
       paddingTop: 8,
+      borderRadius: 8,
+      backgroundColor: theme.colors.bg_default,
     } as ViewStyle,
     containItemWidget: {
       marginBottom: 16,
       marginLeft: 16,
-      width: (AppConstant.WIDTH - 80) / 4,
+      width: (AppConstant.WIDTH - 100) / 4,
     } as ViewStyle,
     containProgressView: {
       marginHorizontal: 16,

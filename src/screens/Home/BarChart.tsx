@@ -81,6 +81,7 @@ const BarChartStatistical = ({color, isSales, data}: PropTypes) => {
           width={AppConstant.WIDTH * 0.7}
           xAxisColor={colors.border}
           yAxisColor={colors.border}
+          yAxisTextStyle={{color: colors.text_primary}}
         />
       </View>
     </View>
