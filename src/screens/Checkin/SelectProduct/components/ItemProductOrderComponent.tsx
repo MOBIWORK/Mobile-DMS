@@ -34,9 +34,7 @@ const ItemProductOrderComponent = ({
   return (
     <Block
       style={[styles.itemProduct]}
-      color={
-        item.isSelected ? 'rgba(196, 22, 28, 0.08)' : theme.colors.bg_default
-      }>
+      color={item.isSelected ? theme.colors.border : theme.colors.bg_default}>
       <Block
         style={[styles.flex, {columnGap: 6} as ViewStyle]}
         alignItems="flex-start">
@@ -89,9 +87,7 @@ const ItemProductOrderComponent = ({
               activeOpacity={0.6}
               onPress={() => openBottomSheetDataFilter('unit', item)}>
               <View style={[styles.flex as any, styles.containerUnit]}>
-                <Text style={[styles.filter, {marginHorizontal: 20}]}>
-                  {item.stock_uom}
-                </Text>
+                <Text style={[styles.filter]}>{item.stock_uom}</Text>
                 <AppIcons
                   iconType={ICON_TYPE.Feather}
                   name="chevron-down"
@@ -202,6 +198,7 @@ const createStyles = (theme: AppTheme) =>
     flex: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
     } as ViewStyle,
     filter: {
       fontSize: 14,
@@ -232,9 +229,11 @@ const createStyles = (theme: AppTheme) =>
       justifyContent: 'space-between',
     } as ViewStyle,
     containerUnit: {
+      gap: 8,
       borderRadius: 8,
       borderWidth: 1,
       borderColor: theme.colors.border,
       paddingVertical: 8,
+      paddingHorizontal: 16,
     } as ViewStyle,
   });

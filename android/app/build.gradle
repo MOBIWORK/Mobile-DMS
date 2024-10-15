@@ -89,10 +89,10 @@ android {
     namespace "mbw.next.dms"
     defaultConfig {
         applicationId 'mbw.next.dms'
-        minSdkVersion 34
-        targetSdkVersion 34
-        versionCode 66
-        versionName "1.0.26"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 68
+        versionName "1.0.28"
         multiDexEnabled true
     }
     signingConfigs {

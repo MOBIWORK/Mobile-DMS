@@ -450,15 +450,13 @@ const AddingNewCustomer = () => {
           backdropOpacity={1}
           onBackButtonPress={() => setModalAddress(false)}
           onBackdropPress={() => setModalAddress(false)}>
-          <Block block>
-            <FormAddress
-              onPressClose={onPressClose}
-              typeFilter={typeFilter}
-              listData={listData}
-              setData={setListData}
-              dataCustomer={listData}
-            />
-          </Block>
+          <FormAddress
+            onPressClose={onPressClose}
+            typeFilter={typeFilter}
+            listData={listData}
+            setData={setListData}
+            dataCustomer={listData}
+          />
         </Modal>
         <ModalArea
           openModal={openModal}
@@ -521,5 +519,6 @@ const rootStyles = (theme: AppTheme) =>
       height: '100%',
       marginVertical: 0,
       paddingHorizontal: 16,
+      backgroundColor: theme.colors.bg_default,
     } as ViewStyle,
   });

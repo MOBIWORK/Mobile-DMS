@@ -528,7 +528,7 @@ const FormAddress = (props: Props) => {
                   iconType={AppConstant.ICON_TYPE.IonIcon}
                   name="close"
                   size={26}
-                  color={theme.colors.black}
+                  color={theme.colors.text_primary}
                   onPress={() => {
                     onResetData('address');
                     onPressClose();
@@ -685,7 +685,7 @@ const FormAddress = (props: Props) => {
                           <AppIcons
                             iconType={AppConstant.ICON_TYPE.EntypoIcon}
                             size={14}
-                            color={theme.colors.white}
+                            color={theme.colors.bg_default}
                             name="check"
                           />
                         ) : null}
@@ -933,7 +933,7 @@ const FormAddress = (props: Props) => {
                 <AppIcons
                   iconType={AppConstant.ICON_TYPE.EntypoIcon}
                   size={14}
-                  color={theme.colors.white}
+                  color={theme.colors.bg_default}
                   name="check"
                 />
               </Block>

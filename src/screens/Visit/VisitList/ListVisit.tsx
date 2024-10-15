@@ -1403,7 +1403,7 @@ const rootStyles = (theme: ExtendedTheme) =>
       fontWeight: '500',
     } as TextStyle,
     contentText: {
-      color: '#000',
+      color: theme.colors.text_primary,
       fontSize: 14,
       lineHeight: 21,
       fontWeight: '500',
@@ -1414,7 +1414,7 @@ const rootStyles = (theme: ExtendedTheme) =>
       marginRight: 4,
     } as ImageStyle,
     contentSecondText: {
-      color: '#000',
+      color: theme.colors.text_primary,
       fontSize: 14,
       lineHeight: 21,
       fontWeight: '400',

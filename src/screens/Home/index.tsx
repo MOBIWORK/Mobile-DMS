@@ -168,7 +168,7 @@ const HomeScreen = () => {
         </View>
       </Block>
     );
-  }, [widgets]);
+  }, [widgets, colors]);
 
   const renderUiStatistical = useCallback(() => {
     return (
