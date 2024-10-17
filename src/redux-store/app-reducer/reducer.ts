@@ -117,7 +117,9 @@ const appSlice = createSlice({
       state.userProfile = action.payload;
     },
     resetDataApp: state =>
-      void ((state.dataCheckIn = {}), (state.userProfile = {})),
+      void ((state.dataCheckIn = {}),
+      (state.userProfile = {}),
+      (state.systemConfig = {})),
     setAutomaticLocation: (state, action: PayloadAction<any>) => {
       state.automaticLocation = action.payload;
     },
