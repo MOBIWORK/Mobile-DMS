@@ -24,7 +24,7 @@ const ItemCheckIn = ({item, navData}: Props) => {
   );
 
   return (
-    <Block colorTheme="bg_default">
+    <Block colorTheme="bg_neutral">
       <TouchableOpacity
         onPress={() =>
           startTrans(() => {

@@ -444,12 +444,11 @@ const CheckIn = () => {
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
-      <Block block colorTheme="bg_neutral">
+      <Block block colorTheme="bg_default">
         <Block
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          colorTheme="white"
           paddingRight={16}>
           <Block
             direction="row"
@@ -463,10 +462,14 @@ const CheckIn = () => {
                   setShow(true);
                   // checkGPS();
                 }}>
-                <SvgIcon source="arrowLeft" size={24} />
+                <SvgIcon
+                  color={theme.colors.text_primary}
+                  source="arrowLeft"
+                  size={24}
+                />
               </TouchableOpacity>
             </Block>
-            <Text fontSize={14} colorTheme="text" fontWeight="400">
+            <Text fontSize={14} colorTheme="text_primary" fontWeight="400">
               {' '}
               {getLabel('visit')} {formatTime(elapsedTime)}
             </Text>
@@ -479,10 +482,10 @@ const CheckIn = () => {
             title={title}
           />
         </Block>
-        <Block colorTheme="white" paddingHorizontal={32}>
+        <Block paddingHorizontal={32}>
           <Block direction="row" paddingTop={20} marginBottom={8}>
             <SvgIcon source="UserGroup" size={20} colorTheme="main" />
-            <Text fontSize={16} fontWeight="500" colorTheme="text">
+            <Text fontSize={16} fontWeight="500" colorTheme="text_primary">
               {' '}
               {params.kh_ten}
             </Text>
@@ -490,7 +493,11 @@ const CheckIn = () => {
           <Block colorTheme="border" height={1} />
           <Block paddingTop={8}>
             <Block direction="row" alignItems="center" marginRight={32}>
-              <SvgIcon source="MapPin" size={16} />
+              <SvgIcon
+                color={theme.colors.text_primary}
+                source="MapPin"
+                size={16}
+              />
               <Text numberOfLines={1}>
                 {' '}
                 {params?.item?.customer_primary_address?.address_title}{' '}
@@ -502,7 +509,11 @@ const CheckIn = () => {
               marginTop={8}
               marginRight={32}
               paddingBottom={20}>
-              <SvgIcon source="Phone" size={16} />
+              <SvgIcon
+                color={theme.colors.text_primary}
+                source="Phone"
+                size={16}
+              />
               <Text numberOfLines={1}>
                 {' '}
                 {params?.item?.mobile_no === null
@@ -517,7 +528,7 @@ const CheckIn = () => {
           paddingHorizontal={16}
           marginLeft={16}
           marginRight={16}
-          colorTheme="white"
+          colorTheme="bg_neutral"
           borderRadius={16}>
           {categoriesCheckin &&
             categoriesCheckin?.length > 0 &&
