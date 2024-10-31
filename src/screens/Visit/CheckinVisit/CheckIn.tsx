@@ -395,7 +395,13 @@ const CheckIn = () => {
       }
       return true;
     },
-    [openDialogErr, msgCheckOutErr, categoriesCheckin, dataCheckIn],
+    [
+      openDialogErr,
+      msgCheckOutErr,
+      categoriesCheckin,
+      dataCheckIn,
+      systemConfig,
+    ],
   );
 
   const onCheckout = useCallback(() => {
