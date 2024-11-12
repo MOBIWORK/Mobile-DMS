@@ -63,8 +63,7 @@ const ReportDebt = () => {
     CustomerGroupFilterData,
   );
   const [isFilterType, setFilterType] = useState<boolean>(true);
-  const [fromDate, setFromDate] = useState<number>(new Date().getTime());
-  const [toDate, setToDate] = useState<number>(new Date().getTime());
+  const [date, setDate] = useState<number>(new Date().getTime());
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const filerBottomSheetRef = useRef<BottomSheet>(null);
@@ -85,36 +84,19 @@ const ReportDebt = () => {
 
   const onChangeHeaderDate = (item: IFilterType) => {
     if (CommonUtils.isNumber(item.value)) {
-      setFromDate(Number(item.value));
-      setToDate(Number(item.value));
+      setDate(Number(item.value));
       const newDateLabel = CommonUtils.isToday(Number(item.value))
         ? `${getLabel('today')}, ${CommonUtils.convertDate(Number(item.value))}`
         : `${CommonUtils.convertDate(Number(item.value))}`;
       setHeaderDate(newDateLabel);
     } else {
-      const {from_date, to_date} = CommonUtils.dateToDate(
-        item.value?.toString() || '',
-      );
-      setFromDate(new Date(from_date).getTime());
-      setToDate(new Date(to_date).getTime());
       setHeaderDate(getLabel(String(item.label)));
     }
   };
 
-  const onChangeDateCalender = (startDate: any, endDate?: any) => {
-    setHeaderDate(
-      endDate
-        ? `${CommonUtils.convertDate(
-            Number(startDate),
-          )} - ${CommonUtils.convertDate(Number(endDate))}`
-        : CommonUtils.convertDate(Number(startDate)),
-    );
-    setFromDate(new Date(startDate).getTime());
-    if (endDate) {
-      setToDate(new Date(endDate).getTime());
-    } else {
-      setToDate(new Date(startDate).getTime());
-    }
+  const onChangeDateCalender = (date: any) => {
+    setHeaderDate(CommonUtils.convertDate(Number(date)));
+    setDate(new Date(date).getTime());
   };
 
   const handleItemFilter = useCallback(
@@ -185,8 +167,7 @@ const ReportDebt = () => {
     const getData = async () => {
       dispatch(appActions.setProcessingStatus(true));
       const res: any = await ReportService.getReportDebt({
-        from_date: fromDate / 1000,
-        to_date: toDate / 1000,
+        report_date: date / 1000,
       });
       if (res?.status === ApiConstant.STT_OK) {
         setDebtData(res.data.result);
@@ -195,7 +176,7 @@ const ReportDebt = () => {
       dispatch(appActions.setProcessingStatus(false));
     };
     getData().then();
-  }, [fromDate, toDate]);
+  }, [date]);
 
   const _renderChart = () => {
     const chartSize = AppConstant.WIDTH * 0.5;
@@ -372,7 +353,7 @@ const ReportDebt = () => {
       />
       <AppContainer style={{marginBottom: bottom, marginTop: 24}}>
         {_renderChart()}
-        {debtData && debtData?.customers?.length > 0 && _renderFilter()}
+        {_renderFilter()}
         {_renderListCustomer()}
       </AppContainer>
       <AppBottomSheet
@@ -396,6 +377,7 @@ const ReportDebt = () => {
         </BottomSheetScrollView>
       </AppBottomSheet>
       <ReportFilterBottomSheet
+        isDebt
         filerBottomSheetRef={filerBottomSheetRef}
         onChange={onChangeHeaderDate}
         onChangeDateCalender={onChangeDateCalender}

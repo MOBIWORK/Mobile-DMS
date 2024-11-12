@@ -6,8 +6,7 @@ type getTravelLogReportType = {
   todate: number;
 };
 type getReportResultRouter = {
-  from_date: number;
-  to_date: number;
+  report_date: number;
 };
 
 export const getTravelLogReport = (params: getTravelLogReportType) =>

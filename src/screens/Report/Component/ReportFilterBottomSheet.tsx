@@ -29,6 +29,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   onChangeDateCalender,
   isKPI,
   isNonCustomer,
+  isDebt,
 }) => {
   const theme = useTheme();
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
@@ -42,7 +43,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
   const [data, setData] = useState<IFilterType[]>(
     isKPI
       ? AppConstant.ReportFilterKPIData
-      : isNonCustomer
+      : isNonCustomer || isDebt
       ? AppConstant.ReportFilterNonCustomerData
       : AppConstant.ReportFilterData,
   );
@@ -155,7 +156,7 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
                   </Text>
                 </TouchableOpacity>
               </Block>
-              {!isNonCustomer && (
+              {isNonCustomer || !isDebt ? (
                 <Block
                   direction="row"
                   justifyContent="space-around"
@@ -185,12 +186,12 @@ const ReportFilterBottomSheet: FC<ReportFilterBottomSheetProps> = ({
                     onChangeValue={() => setEndDate(null)}
                   />
                 </Block>
-              )}
+              ) : null}
             </Block>
 
             <CalendarPicker
               startFromMonday={true}
-              allowRangeSelection={!isNonCustomer}
+              allowRangeSelection={isNonCustomer ? false : !isDebt}
               weekdays={calenderConfig.weekdays}
               maxDate={new Date()}
               maxRangeDuration={[6]}
@@ -245,6 +246,7 @@ interface ReportFilterBottomSheetProps {
   onChangeDateCalender: (date: any, endDate?: any) => void;
   isKPI?: boolean;
   isNonCustomer?: boolean;
+  isDebt?: boolean;
 }
 
 const styles = StyleSheet.create({
