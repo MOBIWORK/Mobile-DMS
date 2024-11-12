@@ -404,16 +404,24 @@ const CheckIn = () => {
     ],
   );
 
-  const onCheckout = useCallback(() => {
+  const onCheckout = useCallback(async () => {
     CommonUtils.getCurrentLocation(
       locations => {
         if (!isValidCheckOut(locations)) {
           dispatch(appActions.setProcessingStatus(false));
-          return;
         } else {
           dispatch(
             appActions.onCheckIn({
               ...dataCheckIn,
+              checkin_khoangcach:
+                dataCheckIn?.kh_lat && dataCheckIn?.kh_long
+                  ? calculateDistance(
+                      locations.coords.latitude,
+                      locations.coords.longitude,
+                      dataCheckIn.kh_lat,
+                      dataCheckIn.kh_long,
+                    )
+                  : 0,
               is_check_inventory: dataCheckIn?.is_check_inventory
                 ? dataCheckIn.is_check_inventory
                 : false,

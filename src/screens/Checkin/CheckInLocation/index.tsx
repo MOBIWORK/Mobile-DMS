@@ -311,6 +311,8 @@ const CheckInLocation = () => {
       dispatch(
         appActions.setDataCheckIn({
           ...dataCheckIn,
+          kh_lat: location?.coords?.latitude,
+          kh_long: location?.coords?.longitude,
           kh_diachi: `${addressObj.detail},${addressObj.ward.value},${addressObj.district.value},${addressObj.province.value}`,
           item: {
             ...dataCheckIn.item,
