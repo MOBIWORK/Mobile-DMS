@@ -60,7 +60,7 @@ export function* onCheckInData(action: PayloadAction) {
         postChecking,
         action.payload,
       );
-      if (Object.keys(response?.result).length > 0) {
+      if (response?.status === ApiConstant.STT_CREATED) {
         CommonUtils.storage.delete(AppConstant.CheckinTime);
         yield put(appActions.setDataCheckIn({}));
         yield put(checkinActions.resetData());

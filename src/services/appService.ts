@@ -191,9 +191,7 @@ export const updateProfile = (data: IProfile) =>
   createApi().put(ApiConstant.PUT_USER_PROFILE, data);
 
 export const postChecking = (data: CheckinData) =>
-  createApi()
-    .post(ApiConstant.POST_CHECKIN, data)
-    .then(res => res.data);
+  createApi().post(ApiConstant.POST_CHECKIN, data);
 
 export const checkOut = (checkin_id: string, customer_id: any) =>
   createApi().post(ApiConstant.CHECK_OUT, {
