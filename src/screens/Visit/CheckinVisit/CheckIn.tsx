@@ -54,6 +54,7 @@ import {useMMKVNumber} from 'react-native-mmkv';
 
 // @ts-ignore
 import StringFormat from 'string-format';
+import {put} from 'typed-redux-saga';
 
 const CheckIn = () => {
   const theme = useTheme();
@@ -404,44 +405,62 @@ const CheckIn = () => {
     ],
   );
 
-  const onCheckout = useCallback(async () => {
+  const onCheckout = useCallback(() => {
     CommonUtils.getCurrentLocation(
-      locations => {
-        if (!isValidCheckOut(locations)) {
-          dispatch(appActions.setProcessingStatus(false));
-        } else {
-          dispatch(
-            appActions.onCheckIn({
-              ...dataCheckIn,
-              checkin_khoangcach:
-                dataCheckIn?.kh_lat && dataCheckIn?.kh_long
-                  ? calculateDistance(
-                      locations.coords.latitude,
-                      locations.coords.longitude,
-                      dataCheckIn.kh_lat,
-                      dataCheckIn.kh_long,
-                    )
-                  : 0,
-              is_check_inventory: dataCheckIn?.is_check_inventory
-                ? dataCheckIn.is_check_inventory
-                : false,
-              checkin_trangthaicuahang: status,
-              checkin_pinra:
-                batteryLevel > 0
-                  ? Math.round(batteryLevel * 10000) / 100
-                  : -Math.round(batteryLevel * 10000) / 100,
-              checkin_giora: new Date().getTime() / 1000,
-            }),
+      async locations => {
+        const isValid = await isValidCheckOut(locations);
+        if (isValid) {
+          dispatch(appActions.setProcessingStatus(true));
+          const paramsCheckIn: any = {
+            ...dataCheckIn,
+            checkin_khoangcach:
+              dataCheckIn?.kh_lat && dataCheckIn?.kh_long
+                ? calculateDistance(
+                    locations.coords.latitude,
+                    locations.coords.longitude,
+                    dataCheckIn.kh_lat,
+                    dataCheckIn.kh_long,
+                  )
+                : 0,
+            is_check_inventory: dataCheckIn?.is_check_inventory
+              ? dataCheckIn.is_check_inventory
+              : false,
+            checkin_trangthaicuahang: status,
+            checkin_pinra:
+              batteryLevel > 0
+                ? Math.round(batteryLevel * 10000) / 100
+                : -Math.round(batteryLevel * 10000) / 100,
+            checkin_giora: new Date().getTime() / 1000,
+          };
+          const postCheckinResponse: any = await AppService.postChecking(
+            paramsCheckIn,
           );
-          if (intervalIdRef.current) {
-            clearInterval(intervalIdRef.current);
+          if (postCheckinResponse?.status === ApiConstant.STT_CREATED) {
+            if (intervalIdRef.current) {
+              clearInterval(intervalIdRef.current);
+            }
+            dispatch(appActions.setDataCheckIn({}));
+            dispatch(checkinActions.resetData());
+            dispatch(checkinActions.setSelectedProgram([]));
+            dispatch(checkinActions.setListImageSelect([]));
+            dispatch(checkinActions.setListImageProgram([]));
+            dispatch(checkinActions.setRefreshVisitWhenCheckOut(true));
+
+            // yield put(checkinActions.setDataCategoriesCheckin([]))
+            navigate(ScreenConstant.AUTHORIZED, {
+              screen: ScreenConstant.MAIN_TAB,
+              params: {
+                screen: ScreenConstant.VISIT,
+              },
+            });
           }
+          dispatch(appActions.setProcessingStatus(false));
         }
       },
-      err => backgroundErrorListener(err.code),
+      () => backgroundErrorListener(0),
     );
     setShow(false);
-  }, [dataCheckIn, categoriesCheckin, enableGPS]);
+  }, [dataCheckIn, categoriesCheckin, enableGPS, systemConfig]);
 
   useDeepCompareEffect(() => {
     if (route === false) {
