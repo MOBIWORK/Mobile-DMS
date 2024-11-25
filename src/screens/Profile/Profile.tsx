@@ -1,4 +1,4 @@
-import {StyleSheet, View, ViewStyle} from 'react-native';
+import {Platform, StyleSheet, Text, View, ViewStyle} from 'react-native';
 import React, {useCallback, useEffect} from 'react';
 import {MainLayout} from '../../layouts';
 import {
@@ -119,6 +119,11 @@ const Profile = () => {
         label={getLabel('signOut')}
         styleLabel={{color: theme.colors.error}}
       />
+      <Text style={{position: 'absolute', bottom: 50, right: 16}}>
+        {Platform.OS === 'ios'
+          ? AppConstant.IOS_VERSION
+          : AppConstant.ANDROID_VERSION}
+      </Text>
     </MainLayout>
   );
 };

@@ -405,7 +405,11 @@ const CheckIn = () => {
     ],
   );
 
-  const onCheckout = useCallback(() => {
+  // const onCheckout = useCallback(() => {
+  //
+  // }, [dataCheckIn, categoriesCheckin, enableGPS, systemConfig]);
+
+  const onCheckout = () => {
     CommonUtils.getCurrentLocation(
       async locations => {
         const isValid = await isValidCheckOut(locations);
@@ -460,7 +464,7 @@ const CheckIn = () => {
       () => backgroundErrorListener(0),
     );
     setShow(false);
-  }, [dataCheckIn, categoriesCheckin, enableGPS, systemConfig]);
+  };
 
   useDeepCompareEffect(() => {
     if (route === false) {
