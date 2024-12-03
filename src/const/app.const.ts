@@ -62,6 +62,14 @@ export const BiometricType = {
   null: 'null',
 };
 
+export const PROMOTION_TYPE_VALUE = {
+  SP_SL_SP: 'SP_SL_SP', //Trường hợp khuyến mãi tặng sản phẩm
+  SP_SL_CKSP: 'SP_SL_CKSP', //Trường hợp khuyến mãi SP_SL_CKSP và SP_ST_CKSP (Chiết khấu item)
+  SP_SL_TIEN: 'SP_SL_TIEN', //Trường hợp khuyến mãi SP_SL_TIEN và SP_ST_TIEN (Của item)
+  TIEN_CKDH: 'TIEN_CKDH', //Trường hợp TIEN_CKDH (chiết khấu % cả đơn)
+  TIEN_TIEN: 'TIEN_TIEN', //Trường hợp TIEN_TIEN (chiết khấu tổng tiền cả đơn)
+};
+
 export const ProductFilterType = {
   nhom_sp: 'nhom_sp',
   thuong_hieu: 'thuong_hieu',
@@ -104,28 +112,6 @@ export {
   BG_ERROR,
   BG_WARN,
 };
-export const SelectedDateFilterData: IFilterType[] = [
-  {
-    label: 'today',
-    value: 1,
-    isSelected: true,
-  },
-  {
-    label: 'thisWeek',
-    value: 2,
-    isSelected: false,
-  },
-  {
-    label: 'thisMonth',
-    value: 3,
-    isSelected: false,
-  },
-  {
-    label: 'selectDate',
-    value: 4,
-    isSelected: false,
-  },
-];
 
 export const ReportFilterData: IFilterType[] = [
   {

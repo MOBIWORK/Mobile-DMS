@@ -37,7 +37,7 @@ import {
 } from 'react-native';
 import {AppTheme, useTheme} from '../../../layouts/theme';
 import {TextInput} from 'react-native-paper';
-import {ICON_TYPE} from '../../../const/app.const';
+import {ICON_TYPE, PROMOTION_TYPE_VALUE} from '../../../const/app.const';
 import {Image} from 'react-native';
 import {ImageAssets} from '../../../assets';
 import {CommonUtils} from '../../../utils';
@@ -75,6 +75,7 @@ import {appActions} from '../../../redux-store/app-reducer/reducer';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {shallowEqual} from 'react-redux';
 import {checkinActions} from '../../../redux-store/checkin-reducer/reducer';
+import {listFrequencyType} from '../../Customer/components/data';
 
 const CreateOrder = () => {
   const navigation = useNavigation<NavigationProp<AuthorizeParamsList>>();
@@ -82,6 +83,7 @@ const CreateOrder = () => {
   const styles = createSheetStyle(useTheme());
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetWh = useRef<BottomSheet>(null);
+  const promotionBottomSheetRef = useRef<BottomSheet>(null);
   const whBottomSheet = useRef<BottomSheet>(null);
   const router =
     useRoute<RouteProp<AuthorizeParamsList, 'CHECKIN_ORDER_CREATE'>>();
@@ -102,8 +104,6 @@ const CreateOrder = () => {
     handleContentLayout,
   } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
 
-  const [isNotApplyPromotion, setNotApplyPromotion] = useState<boolean>(false);
-
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [openDate, setOpenDate] = useState<boolean>(false);
   const [organization, _] = useMMKVObject<IResOrganization>(
@@ -111,6 +111,10 @@ const CreateOrder = () => {
   );
   const [date, setDate] = useState<number>(new Date().getTime());
   const [DataWarehouse, setDataWarehouse] = useState<IFilterType[]>([]);
+  const [listPromotionSelected, setListPromotionSelected] = useState<string[]>(
+    [],
+  );
+  const [listPromotions, setListPromotions] = useState<IFilterType[]>([]);
   const [dataDiscount, setDataDiscount] = useState<IFilterType[]>([
     {
       label: 'Grand Total',
@@ -123,6 +127,11 @@ const CreateOrder = () => {
       isSelected: false,
     },
   ]);
+  const [discount_percent_applyPromotion, setDiscount_percent_applyPromotion] =
+    useState<number>(0);
+  const [discount_amount_applyPromotion, setDiscount_amount_applyPromotion] =
+    useState<number>(0);
+
   const dataProductSelected = useSelector(
     state => state.product.dataSelected,
     shallowEqual,
@@ -225,6 +234,7 @@ const CreateOrder = () => {
             rate: orderItem.rate,
             qty: orderItem.qty,
             uom: orderItem.uom,
+            is_free_item: 1,
           });
         }
       });
@@ -409,11 +419,161 @@ const CreateOrder = () => {
     dispatch(appActions.setProcessingStatus(false));
   };
 
+  const fetchDataPromotionList = async (dataProduct: IProduct[]) => {
+    dispatch(appActions.setProcessingStatus(true));
+    const listItem = dataProduct.map(item => item.item_code);
+    const res: KeyAbleProps = await ProductService.getListPromotional({
+      customer: customer?.name ?? '',
+      item_code_list: listItem.toString(),
+    });
+    if (Object.keys(res?.data?.message).length > 0) {
+      const newData: IFilterType[] = res.data.message.map((element: any) => {
+        return {
+          value: element.code,
+          label: element.name_promotion,
+          isSelected: false,
+        };
+      });
+      startEffect(() => {
+        setListPromotions(newData);
+      });
+    }
+    dispatch(appActions.setProcessingStatus(false));
+  };
+
   const handlerRemoveItemProduct = (id: string, index: number) => {
     const newProducts = products.filter(item => item.index !== index);
     dispatch(productActions.updateProductSelect(newProducts));
     setProducts(newProducts);
   };
+
+  const onSelectedPromotions = (item: any) => {
+    const newLisPromotion = listPromotions.map(list_item => {
+      if (list_item.label === item.label) {
+        return {...list_item, isSelected: !list_item.isSelected};
+      } else {
+        return list_item;
+      }
+    });
+    setListPromotions(newLisPromotion);
+  };
+
+  const onUpdateProductAfterApplyPromotion = (result: any, pType: string) => {
+    switch (pType) {
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_SP: {
+        const listPromotion: IProductPromotion[] = [];
+        result.forEach((orderItem: IProductPromotion) => {
+          if (orderItem.is_free_item) {
+            listPromotion.push({
+              item_name: orderItem.item_name,
+              item_code: orderItem.item_code,
+              rate: orderItem.rate,
+              qty: orderItem.qty,
+              uom: orderItem.uom,
+              is_free_item: 1,
+            });
+          }
+        });
+        setProductsPromotion(listPromotion);
+        break;
+      }
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_CKSP:
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_TIEN: {
+        const newProduct = products.map((productItem, index) => {
+          const element = result[index];
+          if (element.item_code === productItem.item_code) {
+            return {
+              ...productItem,
+              discount_item_percent: element?.discount_percentage ?? 0,
+              discount_item_amount: element?.discount_amount ?? 0,
+              price: element?.rate ?? productItem.price,
+            };
+          } else {
+            return productItem;
+          }
+        });
+        setProducts(newProduct);
+        break;
+      }
+      case AppConstant.PROMOTION_TYPE_VALUE.TIEN_CKDH: {
+        setDiscount_percent_applyPromotion(result);
+        break;
+      }
+      case AppConstant.PROMOTION_TYPE_VALUE.TIEN_TIEN: {
+        setDiscount_amount_applyPromotion(result);
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
+  const onApplyPromotion = useCallback(async () => {
+    dispatch(appActions.setProcessingStatus(true));
+    listPromotions.forEach((item, index) => {
+      if (item.label !== listPromotionSelected[index] && item.isSelected) {
+        setListPromotionSelected(prevState => [
+          ...new Set([...prevState, item.label]),
+        ]);
+      } else if (
+        item.label === listPromotionSelected[index] &&
+        !item.isSelected
+      ) {
+        setListPromotionSelected(prevState =>
+          prevState.filter(itemPrev => itemPrev !== item.label),
+        );
+      }
+    });
+
+    const arrItems = products.map(item => ({
+      item_code: item?.item_code,
+      qty: item?.quantity,
+      rate: item?.price,
+      uom: item?.stock_uom,
+    }));
+
+    const applyRes: any = await ProductService.applyPromotion({
+      listPromotions: listPromotions
+        .filter(item => item.isSelected)
+        .map(item => item.label),
+      totalAmount: arrItems.reduce(
+        (sum, item) => sum + item.rate * item.qty,
+        0,
+      ),
+      listItem: arrItems,
+    });
+    if (
+      applyRes?.status === ApiConstant.STT_OK &&
+      (applyRes?.data?.message[0]?.result?.length > 0 ||
+        applyRes?.data?.message[0]?.result > 0)
+    ) {
+      // console.log('resulttApply', applyRes.data.message[0].result);
+      onUpdateProductAfterApplyPromotion(
+        applyRes.data.message[0].result,
+        applyRes.data.message[0].ptype_value,
+      );
+    }
+    dispatch(appActions.setProcessingStatus(false));
+  }, [listPromotions]);
+
+  const onCancelPromotion = useCallback(() => {
+    if (listPromotionSelected.length > 0) {
+      const newListPromotion = listPromotions.map((item, index) => {
+        if (item.label === listPromotionSelected[index]) {
+          return {...item, isSelected: true};
+        } else {
+          return {...item, isSelected: false};
+        }
+      });
+      setListPromotions(newListPromotion);
+    } else {
+      setListPromotions(prevState =>
+        prevState.map(item => {
+          return {...item, isSelected: false};
+        }),
+      );
+    }
+  }, [listPromotionSelected]);
 
   const updateProductOrder = useCallback(() => {
     Keyboard.dismiss();
@@ -441,6 +601,7 @@ const CreateOrder = () => {
           : item,
       );
       setProducts(newProducts);
+      onApplyPromotion();
       dispatch(productActions.updateProductSelect(newProducts));
     }
     if (bottomSheetRef.current) {
@@ -476,18 +637,26 @@ const CreateOrder = () => {
       uom: item?.stock_uom,
       item_tax_template: item?.item_tax_template[0]?.item_tax_template ?? '',
       rate_tax_item: item?.rate_tax_item,
-      discount_percentage: item?.discount_item_percent ?? 0,
+      // discount_percentage: item?.discount_item_percent ?? 0,
       discount_amount: item?.discount_item_amount ?? 0,
     }));
     const objectData: any = {
       price_list: products[0]?.price_list,
       set_warehouse: warehouse?.value,
       apply_discount_on: discount.label,
-      additional_discount_percentage: percentageLabel
-        ? Number(percentageLabel.replace(',', '.'))
-        : 0,
+      additional_discount_percentage:
+        discount_percent_applyPromotion > 0
+          ? discount_percent_applyPromotion
+          : percentageLabel
+          ? Number(percentageLabel.replace(',', '.'))
+          : 0,
+      discount_amount:
+        discount_amount_applyPromotion > 0 ? discount_amount_applyPromotion : 0,
       company: organization?.company_name,
-      items: arrItems,
+      items:
+        listPromotionSelected.length > 0
+          ? [...arrItems, ...productsPromotion]
+          : arrItems,
     };
     if (dataCheckin) {
       objectData.checkin_id = dataCheckin.checkin_id;
@@ -499,7 +668,8 @@ const CreateOrder = () => {
     switch (type) {
       case 'ORDER':
         objectData.delivery_date = new Date(date).getTime() / 1000;
-        objectData.ignore_pricing_rule = isNotApplyPromotion ? 1 : 0;
+        objectData.ignore_pricing_rule =
+          listPromotionSelected.length > 0 ? 1 : 0;
         if (!orderResultData) {
           // console.log('dataa', objectData);
           const orderRes: any = await OrderService.createdOrder(objectData);
@@ -547,6 +717,7 @@ const CreateOrder = () => {
       setPercentageLabel('');
     } else {
       setProducts(dataProductSelected);
+      fetchDataPromotionList(dataProductSelected);
     }
   }, [dataProductSelected]);
 
@@ -618,23 +789,55 @@ const CreateOrder = () => {
                 />
               }
             />
-            {type === 'ORDER' && !orderResultData && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                  gap: 8,
-                }}>
-                <AppCheckBox
-                  status={isNotApplyPromotion}
-                  onChangeValue={() => setNotApplyPromotion(prev => !prev)}
-                />
-                <Text style={{color: colors.text_primary}}>
-                  {getLabel('noApplyPromotion')}
-                </Text>
-              </View>
+            {type === 'ORDER' && (
+              <AppInput
+                label="Chương trình khuyến mại"
+                value={
+                  listPromotionSelected.length > 0
+                    ? listPromotionSelected.toString()
+                    : 'Chương trình khuyến mại'
+                }
+                editable={false}
+                styles={{
+                  backgroundColor: orderResultData
+                    ? colors.bg_neutral
+                    : colors.bg_default,
+                }}
+                onPress={() => {
+                  if (!orderResultData) {
+                    promotionBottomSheetRef.current?.snapToIndex(0);
+                  }
+                }}
+                rightIcon={
+                  <TextInput.Icon
+                    onPress={() => {
+                      if (!orderResultData) {
+                        promotionBottomSheetRef.current?.snapToIndex(0);
+                      }
+                    }}
+                    icon={'chevron-down'}
+                    color={colors.text_secondary}
+                  />
+                }
+              />
             )}
+            {/*{type === 'ORDER' && !orderResultData && (*/}
+            {/*  <View*/}
+            {/*    style={{*/}
+            {/*      flexDirection: 'row',*/}
+            {/*      alignItems: 'center',*/}
+            {/*      justifyContent: 'flex-start',*/}
+            {/*      gap: 8,*/}
+            {/*    }}>*/}
+            {/*    <AppCheckBox*/}
+            {/*      status={isNotApplyPromotion}*/}
+            {/*      onChangeValue={() => setNotApplyPromotion(prev => !prev)}*/}
+            {/*    />*/}
+            {/*    <Text style={{color: colors.text_primary}}>*/}
+            {/*      {getLabel('noApplyPromotion')}*/}
+            {/*    </Text>*/}
+            {/*  </View>*/}
+            {/*)}*/}
           </View>
 
           <View>
@@ -706,7 +909,9 @@ const CreateOrder = () => {
               />
               <AppInput
                 value={
-                  orderResultData
+                  discount_percent_applyPromotion > 0
+                    ? discount_percent_applyPromotion.toString()
+                    : orderResultData
                     ? orderResultData?.additional_discount_percentage > 0
                       ? orderResultData.additional_discount_percentage.toString()
                       : '0'
@@ -725,21 +930,20 @@ const CreateOrder = () => {
                 inputProp={{
                   keyboardType: 'numeric',
                   returnKeyType: 'done',
-                  // onEndEditing: event => {
-                  //   const txt = event.nativeEvent.text;
-                  //   setDiscount((prev: any) => ({
-                  //     ...prev,
-                  //     discount_percentage: Number(txt.replace(',', '.')),
-                  //   }));
-                  // },
                 }}
                 rightIcon={<TextInput.Affix text="%" />}
               />
-              {orderResultData && (
+              {(discount_amount_applyPromotion > 0 || orderResultData) && (
                 <AppInput
-                  value={CommonUtils.convertToTwoDecimalPlaces(
-                    orderResultData?.discount_amount ?? 0,
-                  )}
+                  value={
+                    discount_amount_applyPromotion > 0
+                      ? CommonUtils.convertToTwoDecimalPlaces(
+                          discount_amount_applyPromotion,
+                        )
+                      : CommonUtils.convertToTwoDecimalPlaces(
+                          orderResultData?.discount_amount ?? 0,
+                        )
+                  }
                   label={getLabel('discountAmount')}
                   inputProp={{
                     keyboardType: 'number-pad',
@@ -857,7 +1061,7 @@ const CreateOrder = () => {
                 }
               />
               <UpdateProductItem
-                isNotApplyPromotion={isNotApplyPromotion}
+                isNotApplyPromotion={listPromotionSelected.length === 0}
                 productDetail={productDetail}
                 setProductDetail={item =>
                   dispatch(productActions.setDataProductDetail(item))
@@ -915,6 +1119,65 @@ const CreateOrder = () => {
         </BottomSheetScrollView>
       </AppBottomSheet>
       <AppBottomSheet
+        bottomSheetRef={promotionBottomSheetRef}
+        // enableDynamicSizing={true}
+        snapPointsCustom={animatedSnapPoints}
+        enableDownToClose={false}
+        // @ts-ignore
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}>
+        <BottomSheetScrollView
+          style={{paddingBottom: 50}}
+          onLayout={handleContentLayout}>
+          <Block>
+            <Block style={styles.headerBottomSheet}>
+              <TouchableOpacity
+                onPress={() => {
+                  promotionBottomSheetRef.current?.close();
+                  onCancelPromotion();
+                }}>
+                <AppIcons
+                  iconType={AppConstant.ICON_TYPE.IonIcon}
+                  name={'close'}
+                  size={24}
+                  color={colors.text_primary}
+                />
+              </TouchableOpacity>
+              <Text style={styles.titleHeaderText}>
+                {getLabel('frequency')}
+              </Text>
+              <Text
+                onPress={() => {
+                  promotionBottomSheetRef.current?.close();
+                  onApplyPromotion();
+                }}
+                style={[styles.titleHeaderText, {color: colors.primary}]}>
+                {getLabel('save')}
+              </Text>
+            </Block>
+            {listPromotions?.length > 0 &&
+              listPromotions.map(item => {
+                return (
+                  <TouchableOpacity
+                    style={styles.containItemBottomView}
+                    key={item?.value}
+                    onPress={() => onSelectedPromotions(item)}>
+                    <Text style={{marginVertical: 8}}>{item.label}</Text>
+                    {item.isSelected && (
+                      <AppIcons
+                        iconType={AppConstant.ICON_TYPE.Feather}
+                        name="check"
+                        size={24}
+                        color={colors.primary}
+                      />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+          </Block>
+        </BottomSheetScrollView>
+      </AppBottomSheet>
+      <AppBottomSheet
         bottomSheetRef={whBottomSheet}
         // enableDynamicSizing={true}
         snapPointsCustom={animatedSnapPoints}
@@ -929,7 +1192,7 @@ const CreateOrder = () => {
             data={DataWarehouse}
             searchPlaceholder={getLabel('search')}
             onClose={() => {
-              bottomSheetWh.current && bottomSheetWh.current.close();
+              whBottomSheet.current && whBottomSheet.current.close();
               setDataCategorie([]);
             }}
             handleItem={onChangeData}
@@ -1072,5 +1335,25 @@ const createSheetStyle = (theme: AppTheme) =>
       shadowOpacity: 0.3,
       shadowRadius: 10,
       elevation: 12,
+    } as ViewStyle,
+    headerBottomSheet: {
+      marginHorizontal: 16,
+      marginBottom: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    } as ViewStyle,
+    titleHeaderText: {
+      fontSize: 18,
+      fontWeight: '500',
+      lineHeight: 24,
+      color: theme.colors.text_primary,
+    } as TextStyle,
+    containItemBottomView: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginHorizontal: 16,
+      marginBottom: 5,
     } as ViewStyle,
   });
