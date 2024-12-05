@@ -63,6 +63,7 @@ export const BiometricType = {
 };
 
 export const PROMOTION_TYPE_VALUE = {
+  TIEN_SP: 'TIEN_SP', // Tổ tiền hàng đủ khuyến mãi tặng sp
   SP_SL_SP: 'SP_SL_SP', //Trường hợp khuyến mãi tặng sản phẩm
   SP_SL_CKSP: 'SP_SL_CKSP', //Trường hợp khuyến mãi SP_SL_CKSP và SP_ST_CKSP (Chiết khấu item)
   SP_SL_TIEN: 'SP_SL_TIEN', //Trường hợp khuyến mãi SP_SL_TIEN và SP_ST_TIEN (Của item)

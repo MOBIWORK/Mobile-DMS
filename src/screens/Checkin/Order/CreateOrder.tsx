@@ -245,6 +245,7 @@ const CreateOrder = () => {
   const completeCheckin = () => {
     Keyboard.dismiss();
     setOrderResultData(null);
+    setProductsPromotion([]);
     if (dataCheckin) {
       const newData =
         type === 'ORDER'
@@ -460,7 +461,8 @@ const CreateOrder = () => {
 
   const onUpdateProductAfterApplyPromotion = (result: any, pType: string) => {
     switch (pType) {
-      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_SP: {
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_SP:
+      case AppConstant.PROMOTION_TYPE_VALUE.TIEN_SP: {
         const listPromotion: IProductPromotion[] = [];
         result.forEach((orderItem: IProductPromotion) => {
           if (orderItem.is_free_item) {
@@ -474,7 +476,7 @@ const CreateOrder = () => {
             });
           }
         });
-        setProductsPromotion(listPromotion);
+        setProductsPromotion(prevState => [...prevState, ...listPromotion]);
         break;
       }
       case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_CKSP:
@@ -544,14 +546,13 @@ const CreateOrder = () => {
     });
     if (
       applyRes?.status === ApiConstant.STT_OK &&
-      (applyRes?.data?.message[0]?.result?.length > 0 ||
-        applyRes?.data?.message[0]?.result > 0)
+      applyRes?.data?.message?.length > 0
     ) {
       // console.log('resulttApply', applyRes.data.message[0].result);
-      onUpdateProductAfterApplyPromotion(
-        applyRes.data.message[0].result,
-        applyRes.data.message[0].ptype_value,
-      );
+
+      applyRes.data.message.forEach((dataPro: any) => {
+        onUpdateProductAfterApplyPromotion(dataPro.result, dataPro.ptype_value);
+      });
     }
     dispatch(appActions.setProcessingStatus(false));
   }, [listPromotions]);
