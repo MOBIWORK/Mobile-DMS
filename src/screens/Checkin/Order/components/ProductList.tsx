@@ -103,7 +103,7 @@ const ProductList: FC<UpdateItemProductProps> = ({
   } else {
     return (
       <>
-        <View>
+        <View style={{rowGap: 8}}>
           {productsPromotion.map((item, i) => (
             <Pressable key={i}>
               <ItemProduct

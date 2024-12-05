@@ -1,5 +1,6 @@
 import {createApi} from '../api';
 import {ApiConstant} from '../const';
+import {APPLY_PROMOTION} from '../const/api.const';
 
 export type PramsTypeProduct = {
   name?: string;
@@ -14,41 +15,16 @@ export type PramsTypeProduct = {
   key_search?: string;
 };
 
-interface GET_PRODUCT_PROMOTION {
-  items: Item[];
+export type GET_PRODUCT_PROMOTION = {
   customer: string;
-  territory: string;
-  currency: string;
-  price_list: string;
-  price_list_currency: string;
-  company: string;
-  doctype: string;
-  name: string;
-  transaction_date: string;
-}
-interface Item {
-  doctype: string;
-  name: string;
-  child_docname: string;
-  item_code: string;
-  qty?: number;
-  stock_qty?: number;
-  uom: string;
-  parenttype: string;
-  parent: string;
-  is_free_item?: number;
-  conversion_factor?: number;
-}
+  item_code_list: any;
+};
 
-interface GET_PRICE_LIST {
-  items: Item[];
-  customer: string;
-  conversion_rate: number;
-  price_list: string;
-  company: string;
-  doctype: string;
-  name: string;
-}
+export type APPLY_PROMOTION_TYPE = {
+  listPromotions: string[];
+  totalAmount: number;
+  listItem: any;
+};
 
 export const get = (params?: PramsTypeProduct) =>
   createApi().get(ApiConstant.GET_PRODUCT, params);
@@ -58,9 +34,9 @@ export const getIndustry = () =>
 export const getGroup = () => createApi().get(ApiConstant.GET_GROUP_PRODUCT);
 export const getWarehouse = (company: string) =>
   createApi().get(ApiConstant.GET_WAREHOUSES, {company});
-export const getPromotionalProducts = (data: GET_PRODUCT_PROMOTION) =>
-  createApi().post(ApiConstant.GET_PRODUCT_PROMOTION, data);
-export const getPriceListProducts = (data: GET_PRICE_LIST) =>
-  createApi().post(ApiConstant.GET_PRICE_PRODUCT, data);
+export const getListPromotional = (data: GET_PRODUCT_PROMOTION) =>
+  createApi().get(ApiConstant.GET_PRODUCT_PROMOTION, data);
+export const applyPromotion = (data: APPLY_PROMOTION_TYPE) =>
+  createApi().post(ApiConstant.APPLY_PROMOTION, data);
 export const getListProductCampaign = (params: PramsTypeProduct) =>
   createApi().get(ApiConstant.GET_PRODUCT_CAMPAIGN, params);

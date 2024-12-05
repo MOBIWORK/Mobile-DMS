@@ -44,9 +44,10 @@ export const GET_INDUSTRY_PRODUCT =
   URL_PREFIX + '.api.selling.product.list_industry';
 export const GET_GROUP_PRODUCT =
   URL_PREFIX + '.api.selling.product.list_item_group';
-export const GET_PRICE_PRODUCT = URL_PREFIX + '.api.selling.order.price_list';
 export const GET_PRODUCT_PROMOTION =
-  URL_PREFIX + '.api.selling.order.pricing_rule';
+  URL_PREFIX + '.api.promotion.sfa_promotion.get_available_promotions';
+export const APPLY_PROMOTION =
+  URL_PREFIX + '.api.promotion.sfa_promotion.get_list_promotion';
 export const GET_PRODUCT_CAMPAIGN =
   '/api/method/mbw_dms.api.selling.product.list_product_campaign';
 

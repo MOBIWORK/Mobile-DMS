@@ -16,7 +16,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
   snapPointsCustom,
   hiddenBackdrop,
   useBottomSheetView,
-  enablePanDownToClose,
+  enableDownToClose,
   onClose,
   children,
   contentHeight,
@@ -59,7 +59,7 @@ const AppBottomSheet: FC<AppBottomSheetProps> = ({
         }}
         handleStyle={styles.handleStyle(backgroundColor)}
         backdropComponent={hiddenBackdrop ? null : renderBackdrop}
-        enablePanDownToClose={enablePanDownToClose || true}
+        enablePanDownToClose={enableDownToClose ?? true}
         enableHandlePanningGesture={false}
         enableContentPanningGesture={true}
         enableOverDrag={false}
@@ -84,7 +84,7 @@ interface AppBottomSheetProps {
   bottomSheetRef: any;
   snapPointsCustom?: any;
   hiddenBackdrop?: boolean;
-  enablePanDownToClose?: boolean;
+  enableDownToClose?: boolean;
   useBottomSheetView?: boolean;
   onClose?: () => void;
   footer?: boolean;

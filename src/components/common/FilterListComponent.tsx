@@ -51,6 +51,7 @@ const FilterListComponent: FC<FilterListComponentProps> = ({
             name={'close'}
             size={24}
             color={colors.text_primary}
+            onPress={onClose}
           />
         }
       />
