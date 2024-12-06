@@ -18,8 +18,8 @@ export const CHANNEL_ID = 'ngocson_DMS';
 export const CHANNEL_NAME = 'Ngọc Sơn MBW DMS';
 
 //version
-export const IOS_VERSION = '1.0.11';
-export const ANDROID_VERSION = '1.0.11';
+export const IOS_VERSION = '1.0.12';
+export const ANDROID_VERSION = '1.0.12';
 
 //mmkv KEY
 export const Theme = 'Theme';
@@ -69,6 +69,9 @@ export const PROMOTION_TYPE_VALUE = {
   SP_SL_TIEN: 'SP_SL_TIEN', //Trường hợp khuyến mãi SP_SL_TIEN và SP_ST_TIEN (Của item)
   TIEN_CKDH: 'TIEN_CKDH', //Trường hợp TIEN_CKDH (chiết khấu % cả đơn)
   TIEN_TIEN: 'TIEN_TIEN', //Trường hợp TIEN_TIEN (chiết khấu tổng tiền cả đơn)
+  SP_ST_SP: 'SP_ST_SP', //Trường hợp mua đủ số tiền tặng SP
+  SP_ST_CKSP: 'SP_ST_CKSP', //Trường hợp mua đủ số tiền khuyến mãi SP_SL_CKSP và SP_ST_CKSP (Chiết khấu item)
+  SP_ST_TIEN: 'SP_ST_TIEN', //Trường hợp mua đủ số tiền khuyến mãi SP_SL_TIEN và SP_ST_TIEN (Của item)
 };
 
 export const ProductFilterType = {

@@ -462,7 +462,8 @@ const CreateOrder = () => {
   const onUpdateProductAfterApplyPromotion = (result: any, pType: string) => {
     switch (pType) {
       case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_SP:
-      case AppConstant.PROMOTION_TYPE_VALUE.TIEN_SP: {
+      case AppConstant.PROMOTION_TYPE_VALUE.TIEN_SP:
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_ST_SP: {
         const listPromotion: IProductPromotion[] = [];
         result.forEach((orderItem: IProductPromotion) => {
           if (orderItem.is_free_item) {
@@ -480,7 +481,9 @@ const CreateOrder = () => {
         break;
       }
       case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_CKSP:
-      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_TIEN: {
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_TIEN:
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_ST_CKSP:
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_ST_TIEN: {
         const newProduct = products.map((productItem, index) => {
           const element = result[index];
           if (element.item_code === productItem.item_code) {
@@ -534,6 +537,17 @@ const CreateOrder = () => {
       uom: item?.stock_uom,
     }));
 
+    console.log('params', {
+      listPromotions: listPromotions
+        .filter(item => item.isSelected)
+        .map(item => item.label),
+      totalAmount: arrItems.reduce(
+        (sum, item) => sum + item.rate * item.qty,
+        0,
+      ),
+      listItem: arrItems,
+    });
+
     const applyRes: any = await ProductService.applyPromotion({
       listPromotions: listPromotions
         .filter(item => item.isSelected)
@@ -548,7 +562,7 @@ const CreateOrder = () => {
       applyRes?.status === ApiConstant.STT_OK &&
       applyRes?.data?.message?.length > 0
     ) {
-      // console.log('resulttApply', applyRes.data.message[0].result);
+      console.log('resulttApply', applyRes.data.message[0].result);
 
       applyRes.data.message.forEach((dataPro: any) => {
         onUpdateProductAfterApplyPromotion(dataPro.result, dataPro.ptype_value);
