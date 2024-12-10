@@ -1170,7 +1170,7 @@ const CreateOrder = () => {
                 {getLabel('save')}
               </Text>
             </Block>
-            {listPromotions?.length > 0 &&
+            {listPromotions?.length > 0 ? (
               listPromotions.map(item => {
                 return (
                   <TouchableOpacity
@@ -1188,7 +1188,23 @@ const CreateOrder = () => {
                     )}
                   </TouchableOpacity>
                 );
-              })}
+              })
+            ) : (
+              <View
+                style={{
+                  height: '100%',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.text_primary,
+                    textAlign: 'center',
+                    fontSize: 16,
+                  }}>
+                  {getLabel('nonPromotion')}
+                </Text>
+              </View>
+            )}
           </Block>
         </BottomSheetScrollView>
       </AppBottomSheet>

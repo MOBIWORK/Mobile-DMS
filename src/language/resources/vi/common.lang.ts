@@ -332,4 +332,5 @@ export default {
   availableInventory: 'Tồn kho khả dụng',
   router: 'Tuyến',
   promotionalProgram: 'Chương trình khuyến mại',
+  nonPromotion: 'Hiện không có chương trình khuyến mại nào khả dụng',
 };

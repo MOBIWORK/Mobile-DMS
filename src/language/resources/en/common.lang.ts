@@ -325,4 +325,5 @@ export default {
   availableInventory: 'Available inventory',
   router: 'Router',
   promotionalProgram: 'Promotional program',
+  nonPromotion: 'Currently, no promotional programs are available.',
 };
