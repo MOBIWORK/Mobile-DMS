@@ -54,14 +54,21 @@ import {useMMKVNumber} from 'react-native-mmkv';
 
 // @ts-ignore
 import StringFormat from 'string-format';
-import {put} from 'typed-redux-saga';
 
 const CheckIn = () => {
   const theme = useTheme();
   const styles = rootStyles(theme);
   const {t: getLabel} = useTranslation();
   const [show, setShow] = useState(false);
-  const [title, setTitle] = useState<string>(getLabel('openDoor'));
+  const dataCheckIn: CheckinData = useSelector(
+    state => state.app.dataCheckIn,
+    shallowEqual,
+  );
+  const [title, setTitle] = useState<string>(
+    dataCheckIn?.checkin_trangthaicuahang
+      ? getLabel('openDoor')
+      : getLabel('closeDoor'),
+  );
   const navigation =
     useNavigation<NavigationProp<AuthorizeParamsList, 'CHECKIN'>>();
   const batteryLevel = useBatteryLevel();
@@ -76,10 +83,6 @@ const CheckIn = () => {
       : 0,
   );
   const appState = useRef(AppState.currentState);
-  const dataCheckIn: CheckinData = useSelector(
-    state => state.app.dataCheckIn,
-    shallowEqual,
-  );
   const categoriesCheckin = useSelector(
     state => state.checkin.categoriesCheckin,
     shallowEqual,
@@ -443,7 +446,7 @@ const CheckIn = () => {
             if (intervalIdRef.current) {
               clearInterval(intervalIdRef.current);
             }
-            dispatch(appActions.setDataCheckIn({}));
+            dispatch(appActions.setDataCheckIn(null));
             dispatch(checkinActions.resetData());
             dispatch(checkinActions.setSelectedProgram([]));
             dispatch(checkinActions.setListImageSelect([]));

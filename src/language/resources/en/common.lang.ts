@@ -324,4 +324,6 @@ export default {
   customerNotOrder: 'The customer has no orders yet',
   availableInventory: 'Available inventory',
   router: 'Router',
+  promotionalProgram: 'Promotional program',
+  nonPromotion: 'Currently, no promotional programs are available.',
 };

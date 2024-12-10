@@ -1,5 +1,5 @@
-import {StyleSheet} from 'react-native';
-import React, {useEffect} from 'react';
+import {AppState, AppStateStatus, StyleSheet} from 'react-native';
+import React, {useEffect, useRef} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {AuthorizeParamsList, NavigationProp} from './screen-type';
 import {AppConstant, ScreenConstant} from '../const';
@@ -56,19 +56,22 @@ import {CommonUtils} from '../utils';
 import BeforeCheckin from '../screens/BeforeCheckin';
 import {CheckinData} from '../services/appService';
 import {useSelector} from '../config/function';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const AuthNavigation = () => {
   const Stack = createNativeStackNavigator<AuthorizeParamsList>();
   const dataCheckIn: CheckinData = useSelector(state => state.app.dataCheckIn);
   const navigation = useNavigation<NavigationProp>();
+  const isFocus = useIsFocused();
 
   useEffect(() => {
-    CommonUtils.storage.set(AppConstant.FirstLogin, true);
-    if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
-      navigation.navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
+    if (isFocus) {
+      CommonUtils.storage.set(AppConstant.FirstLogin, true);
+      if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+        navigation.navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
+      }
     }
-  }, []);
+  }, [isFocus]);
 
   return (
     <Stack.Navigator

@@ -462,7 +462,8 @@ const CreateOrder = () => {
   const onUpdateProductAfterApplyPromotion = (result: any, pType: string) => {
     switch (pType) {
       case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_SP:
-      case AppConstant.PROMOTION_TYPE_VALUE.TIEN_SP: {
+      case AppConstant.PROMOTION_TYPE_VALUE.TIEN_SP:
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_ST_SP: {
         const listPromotion: IProductPromotion[] = [];
         result.forEach((orderItem: IProductPromotion) => {
           if (orderItem.is_free_item) {
@@ -480,7 +481,9 @@ const CreateOrder = () => {
         break;
       }
       case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_CKSP:
-      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_TIEN: {
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_SL_TIEN:
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_ST_CKSP:
+      case AppConstant.PROMOTION_TYPE_VALUE.SP_ST_TIEN: {
         const newProduct = products.map((productItem, index) => {
           const element = result[index];
           if (element.item_code === productItem.item_code) {
@@ -534,6 +537,17 @@ const CreateOrder = () => {
       uom: item?.stock_uom,
     }));
 
+    console.log('params', {
+      listPromotions: listPromotions
+        .filter(item => item.isSelected)
+        .map(item => item.label),
+      totalAmount: arrItems.reduce(
+        (sum, item) => sum + item.rate * item.qty,
+        0,
+      ),
+      listItem: arrItems,
+    });
+
     const applyRes: any = await ProductService.applyPromotion({
       listPromotions: listPromotions
         .filter(item => item.isSelected)
@@ -548,7 +562,7 @@ const CreateOrder = () => {
       applyRes?.status === ApiConstant.STT_OK &&
       applyRes?.data?.message?.length > 0
     ) {
-      // console.log('resulttApply', applyRes.data.message[0].result);
+      console.log('resulttApply', applyRes.data.message[0].result);
 
       applyRes.data.message.forEach((dataPro: any) => {
         onUpdateProductAfterApplyPromotion(dataPro.result, dataPro.ptype_value);
@@ -792,11 +806,11 @@ const CreateOrder = () => {
             />
             {type === 'ORDER' && (
               <AppInput
-                label="Chương trình khuyến mại"
+                label={getLabel('promotionalProgram')}
                 value={
                   listPromotionSelected.length > 0
                     ? listPromotionSelected.toString()
-                    : 'Chương trình khuyến mại'
+                    : getLabel('promotionalProgram')
                 }
                 editable={false}
                 styles={{
@@ -1145,7 +1159,7 @@ const CreateOrder = () => {
                 />
               </TouchableOpacity>
               <Text style={styles.titleHeaderText}>
-                {getLabel('frequency')}
+                {getLabel('promotionalProgram')}
               </Text>
               <Text
                 onPress={() => {
@@ -1156,7 +1170,7 @@ const CreateOrder = () => {
                 {getLabel('save')}
               </Text>
             </Block>
-            {listPromotions?.length > 0 &&
+            {listPromotions?.length > 0 ? (
               listPromotions.map(item => {
                 return (
                   <TouchableOpacity
@@ -1174,7 +1188,23 @@ const CreateOrder = () => {
                     )}
                   </TouchableOpacity>
                 );
-              })}
+              })
+            ) : (
+              <View
+                style={{
+                  height: '100%',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.text_primary,
+                    textAlign: 'center',
+                    fontSize: 16,
+                  }}>
+                  {getLabel('nonPromotion')}
+                </Text>
+              </View>
+            )}
           </Block>
         </BottomSheetScrollView>
       </AppBottomSheet>
