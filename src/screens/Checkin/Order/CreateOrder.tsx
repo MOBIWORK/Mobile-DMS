@@ -806,11 +806,11 @@ const CreateOrder = () => {
             />
             {type === 'ORDER' && (
               <AppInput
-                label="Chương trình khuyến mại"
+                label={getLabel('promotionalProgram')}
                 value={
                   listPromotionSelected.length > 0
                     ? listPromotionSelected.toString()
-                    : 'Chương trình khuyến mại'
+                    : getLabel('promotionalProgram')
                 }
                 editable={false}
                 styles={{
@@ -1159,7 +1159,7 @@ const CreateOrder = () => {
                 />
               </TouchableOpacity>
               <Text style={styles.titleHeaderText}>
-                {getLabel('frequency')}
+                {getLabel('promotionalProgram')}
               </Text>
               <Text
                 onPress={() => {
