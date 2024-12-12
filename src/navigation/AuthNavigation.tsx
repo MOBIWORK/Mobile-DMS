@@ -67,7 +67,11 @@ const AuthNavigation = () => {
   useEffect(() => {
     if (isFocus) {
       CommonUtils.storage.set(AppConstant.FirstLogin, true);
-      if (dataCheckIn && Object.keys(dataCheckIn)?.length > 0) {
+      if (
+        dataCheckIn &&
+        Object.keys(dataCheckIn)?.length > 0 &&
+        dataCheckIn?.kh_ten
+      ) {
         navigation.navigate(ScreenConstant.CHECKIN, {item: dataCheckIn});
       }
     }

@@ -537,16 +537,16 @@ const CreateOrder = () => {
       uom: item?.stock_uom,
     }));
 
-    console.log('params', {
-      listPromotions: listPromotions
-        .filter(item => item.isSelected)
-        .map(item => item.label),
-      totalAmount: arrItems.reduce(
-        (sum, item) => sum + item.rate * item.qty,
-        0,
-      ),
-      listItem: arrItems,
-    });
+    // console.log('params', {
+    //   listPromotions: listPromotions
+    //     .filter(item => item.isSelected)
+    //     .map(item => item.label),
+    //   totalAmount: arrItems.reduce(
+    //     (sum, item) => sum + item.rate * item.qty,
+    //     0,
+    //   ),
+    //   listItem: arrItems,
+    // });
 
     const applyRes: any = await ProductService.applyPromotion({
       listPromotions: listPromotions
@@ -562,7 +562,7 @@ const CreateOrder = () => {
       applyRes?.status === ApiConstant.STT_OK &&
       applyRes?.data?.message?.length > 0
     ) {
-      console.log('resulttApply', applyRes.data.message[0].result);
+      // console.log('resulttApply', applyRes.data.message[0].result);
 
       applyRes.data.message.forEach((dataPro: any) => {
         onUpdateProductAfterApplyPromotion(dataPro.result, dataPro.ptype_value);
@@ -652,7 +652,7 @@ const CreateOrder = () => {
       uom: item?.stock_uom,
       item_tax_template: item?.item_tax_template[0]?.item_tax_template ?? '',
       rate_tax_item: item?.rate_tax_item,
-      // discount_percentage: item?.discount_item_percent ?? 0,
+      discount_percentage: item?.discount_item_percent ?? 0,
       discount_amount: item?.discount_item_amount ?? 0,
     }));
     const objectData: any = {
@@ -686,7 +686,7 @@ const CreateOrder = () => {
         objectData.ignore_pricing_rule =
           listPromotionSelected.length > 0 ? 1 : 0;
         if (!orderResultData) {
-          // console.log('dataa', objectData);
+          console.log('dataa', objectData);
           const orderRes: any = await OrderService.createdOrder(objectData);
           if (orderRes?.status === ApiConstant.STT_CREATED) {
             setOrderResultData({
