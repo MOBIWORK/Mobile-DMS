@@ -422,10 +422,20 @@ const CreateOrder = () => {
 
   const fetchDataPromotionList = async (dataProduct: IProduct[]) => {
     dispatch(appActions.setProcessingStatus(true));
-    const listItem = dataProduct.map(item => item.item_code);
+    const arrItems = dataProduct.map(item => ({
+      item_code: item?.item_code,
+      qty: item?.quantity,
+      rate: item?.price,
+      uom: item?.stock_uom,
+    }));
+
     const res: KeyAbleProps = await ProductService.getListPromotional({
       customer: customer?.name ?? '',
-      item_code_list: listItem.toString(),
+      totalAmount: arrItems.reduce(
+        (sum, item) => sum + item.rate * item.qty,
+        0,
+      ),
+      listItem: JSON.stringify(arrItems),
     });
     if (Object.keys(res?.data?.message).length > 0) {
       const newData: IFilterType[] = res.data.message.map((element: any) => {
@@ -537,16 +547,16 @@ const CreateOrder = () => {
       uom: item?.stock_uom,
     }));
 
-    console.log('params', {
-      listPromotions: listPromotions
-        .filter(item => item.isSelected)
-        .map(item => item.label),
-      totalAmount: arrItems.reduce(
-        (sum, item) => sum + item.rate * item.qty,
-        0,
-      ),
-      listItem: arrItems,
-    });
+    // console.log('params', {
+    //   listPromotions: listPromotions
+    //     .filter(item => item.isSelected)
+    //     .map(item => item.label),
+    //   totalAmount: arrItems.reduce(
+    //     (sum, item) => sum + item.rate * item.qty,
+    //     0,
+    //   ),
+    //   listItem: arrItems,
+    // });
 
     const applyRes: any = await ProductService.applyPromotion({
       listPromotions: listPromotions
@@ -562,7 +572,7 @@ const CreateOrder = () => {
       applyRes?.status === ApiConstant.STT_OK &&
       applyRes?.data?.message?.length > 0
     ) {
-      console.log('resulttApply', applyRes.data.message[0].result);
+      // console.log('resulttApply', applyRes.data.message[0].result);
 
       applyRes.data.message.forEach((dataPro: any) => {
         onUpdateProductAfterApplyPromotion(dataPro.result, dataPro.ptype_value);
@@ -652,7 +662,7 @@ const CreateOrder = () => {
       uom: item?.stock_uom,
       item_tax_template: item?.item_tax_template[0]?.item_tax_template ?? '',
       rate_tax_item: item?.rate_tax_item,
-      // discount_percentage: item?.discount_item_percent ?? 0,
+      discount_percentage: item?.discount_item_percent ?? 0,
       discount_amount: item?.discount_item_amount ?? 0,
     }));
     const objectData: any = {

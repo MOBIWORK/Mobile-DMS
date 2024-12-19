@@ -18,8 +18,8 @@ export const CHANNEL_ID = 'ngocson_DMS';
 export const CHANNEL_NAME = 'Ngọc Sơn MBW DMS';
 
 //version
-export const IOS_VERSION = '1.0.12';
-export const ANDROID_VERSION = '1.0.12';
+export const IOS_VERSION = '1.0.15';
+export const ANDROID_VERSION = '1.0.15';
 
 //mmkv KEY
 export const Theme = 'Theme';

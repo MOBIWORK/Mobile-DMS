@@ -17,7 +17,8 @@ export type PramsTypeProduct = {
 
 export type GET_PRODUCT_PROMOTION = {
   customer: string;
-  item_code_list: any;
+  totalAmount: number;
+  listItem: any;
 };
 
 export type APPLY_PROMOTION_TYPE = {
