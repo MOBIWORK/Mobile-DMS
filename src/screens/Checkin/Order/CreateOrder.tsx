@@ -422,10 +422,20 @@ const CreateOrder = () => {
 
   const fetchDataPromotionList = async (dataProduct: IProduct[]) => {
     dispatch(appActions.setProcessingStatus(true));
-    const listItem = dataProduct.map(item => item.item_code);
+    const arrItems = dataProduct.map(item => ({
+      item_code: item?.item_code,
+      qty: item?.quantity,
+      rate: item?.price,
+      uom: item?.stock_uom,
+    }));
+
     const res: KeyAbleProps = await ProductService.getListPromotional({
       customer: customer?.name ?? '',
-      item_code_list: listItem.toString(),
+      totalAmount: arrItems.reduce(
+        (sum, item) => sum + item.rate * item.qty,
+        0,
+      ),
+      listItem: JSON.stringify(arrItems),
     });
     if (Object.keys(res?.data?.message).length > 0) {
       const newData: IFilterType[] = res.data.message.map((element: any) => {
@@ -686,7 +696,7 @@ const CreateOrder = () => {
         objectData.ignore_pricing_rule =
           listPromotionSelected.length > 0 ? 1 : 0;
         if (!orderResultData) {
-          console.log('dataa', objectData);
+          // console.log('dataa', objectData);
           const orderRes: any = await OrderService.createdOrder(objectData);
           if (orderRes?.status === ApiConstant.STT_CREATED) {
             setOrderResultData({
